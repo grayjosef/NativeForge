@@ -66,3 +66,41 @@ class SamRegistrationStatus(StrEnum):
     active = "active"
     expired = "expired"
     unknown = "unknown"
+
+
+class GrantSparkSource(StrEnum):
+    """Where the opportunity record originated (ingestion source key)."""
+
+    grants_gov = "grants_gov"
+    sam_assistance = "sam_assistance"
+    bia = "bia"
+    ihs = "ihs"
+    ana = "ana"
+    ctas = "ctas"
+    doe = "doe"
+    hud = "hud"
+    epa = "epa"
+    usda = "usda"
+    ntia = "ntia"
+    manual = "manual"
+
+
+class GrantAwardType(StrEnum):
+    """SAM/Grants.gov-style assistance instrument."""
+
+    grant = "grant"
+    cooperative_agreement = "cooperative_agreement"
+    formula = "formula"
+    competitive = "competitive"
+
+
+class GrantPipelineStage(StrEnum):
+    """Org workflow stage for a tracked Spark."""
+
+    new = "new"
+    evaluating = "evaluating"
+    pursuing = "pursuing"
+    drafting = "drafting"
+    submitted = "submitted"
+    awarded = "awarded"
+    not_pursuing = "not_pursuing"

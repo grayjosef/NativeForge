@@ -12,7 +12,10 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Integer,
+    Numeric,
     String,
+    Text,
     Uuid,
     func,
 )
@@ -20,6 +23,9 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from nativeforge.db.base import Base
 from nativeforge.domain.enums import (
+    GrantAwardType,
+    GrantPipelineStage,
+    GrantSparkSource,
     OrganizationOrgType,
     SamRegistrationStatus,
     TribalEntityType,
@@ -29,6 +35,21 @@ from nativeforge.domain.enums import (
 def _tribal_entity_type_in_sql() -> str:
     vals = ", ".join(f"'{e.value}'" for e in TribalEntityType)
     return f"entity_type IN ({vals})"
+
+
+def _grant_spark_source_in_sql() -> str:
+    vals = ", ".join(f"'{s.value}'" for s in GrantSparkSource)
+    return f"source IN ({vals})"
+
+
+def _grant_award_type_in_sql() -> str:
+    vals = ", ".join(f"'{a.value}'" for a in GrantAwardType)
+    return f"award_type IN ({vals})"
+
+
+def _grant_pipeline_stage_in_sql() -> str:
+    vals = ", ".join(f"'{p.value}'" for p in GrantPipelineStage)
+    return f"pipeline_stage IN ({vals})"
 
 
 class Organization(Base):
@@ -134,6 +155,99 @@ class NfTribalProfile(Base):
     certifications: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     standard_narratives: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     attachment_index: Mapped[list | dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    organization: Mapped[Organization] = relationship()
+
+
+class NfGrantSpark(Base):
+    """Grant opportunity (Spark) tracked for an organization (Sprint 2)."""
+
+    __tablename__ = "nf_grant_sparks"
+    __table_args__ = (
+        CheckConstraint(
+            _grant_spark_source_in_sql(),
+            name="ck_nf_grant_sparks_source",
+        ),
+        CheckConstraint(
+            _grant_award_type_in_sql(),
+            name="ck_nf_grant_sparks_award_type",
+        ),
+        CheckConstraint(
+            _grant_pipeline_stage_in_sql(),
+            name="ck_nf_grant_sparks_pipeline_stage",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    source: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_id: Mapped[str] = mapped_column(String(256), nullable=False)
+    agency: Mapped[str] = mapped_column(String(512), nullable=False)
+    sub_agency: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    program_name: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    opportunity_title: Mapped[str] = mapped_column(String(512), nullable=False)
+    opportunity_number: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    cfda_assistance_listing: Mapped[str | None] = mapped_column(
+        String(64), nullable=True
+    )
+    url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    funding_floor: Mapped[object | None] = mapped_column(Numeric(18, 2), nullable=True)
+    funding_ceiling: Mapped[object | None] = mapped_column(
+        Numeric(18, 2), nullable=True
+    )
+    total_program_funding: Mapped[object | None] = mapped_column(
+        Numeric(18, 2), nullable=True
+    )
+    expected_awards: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    award_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    match_required: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    match_percent: Mapped[object | None] = mapped_column(Numeric(5, 2), nullable=True)
+    match_waiver_available: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+    indirect_cost_allowable: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=True
+    )
+    posted_date: Mapped[object | None] = mapped_column(Date, nullable=True)
+    loi_deadline: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    application_deadline: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    performance_period_start: Mapped[object | None] = mapped_column(Date, nullable=True)
+    performance_period_end: Mapped[object | None] = mapped_column(Date, nullable=True)
+    raw_nofo_text: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    raw_nofo_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    eligibility_tags: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    tribal_eligible: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+    pipeline_stage: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=GrantPipelineStage.new.value,
+    )
+    ingested_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
