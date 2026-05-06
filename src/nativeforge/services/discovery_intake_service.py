@@ -275,6 +275,9 @@ def _preview_normalization(
     ):
         if k in raw and raw[k] is not None:
             extras[k] = raw[k]
+    for k, val in raw.items():
+        if isinstance(k, str) and k.startswith("connector_") and val is not None:
+            extras[k] = val
     return _NormalizedPreview(
         duplicate_key=dup_key,
         native_relevance_score=nscore,
@@ -642,7 +645,9 @@ def process_structured_candidates(
             source_registry_id=run.source_registry_id,
             candidate_status=DiscoveryCandidateStatus.accepted.value,
             raw_candidate_json=raw_obj,
-            normalized_candidate_json=_normalized_json_from_spark(spark, registry),
+            normalized_candidate_json=_normalized_json_from_spark_with_connector_extras(
+                spark, registry, raw_obj
+            ),
             duplicate_key=spark.duplicate_key,
             created_spark_id=spark.id,
             decision_reason="accepted_into_grant_spark",
@@ -754,3 +759,22 @@ def _normalized_json_from_spark(
         },
         "grant_spark_id": str(spark.id),
     }
+
+
+def _normalized_json_from_spark_with_connector_extras(
+    spark: NfGrantSpark,
+    registry: NfOpportunitySource,
+    raw: dict[str, Any],
+) -> dict[str, Any]:
+    """Accepted-spark snapshot plus connector provenance keys copied from raw intake."""
+    base = _normalized_json_from_spark(spark, registry)
+    conn = {
+        k: v
+        for k, v in raw.items()
+        if isinstance(k, str) and k.startswith("connector_") and v is not None
+    }
+    if not conn:
+        return base
+    out = dict(base)
+    out["extras"] = dict(conn)
+    return out
