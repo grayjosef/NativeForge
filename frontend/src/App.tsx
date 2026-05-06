@@ -46,6 +46,7 @@ import {
   buildWhatsNext,
   type NextActionId,
 } from "./workspaceProgress";
+import { readSurface, type AppSurface } from "./viewSurface";
 
 const LS_ORG = "nf-m0-org-id";
 const LS_PLANE = "nf-m0-plane";
@@ -59,15 +60,6 @@ const UUID_RE =
 
 function looksLikeUuid(s: string): boolean {
   return UUID_RE.test(s.trim());
-}
-
-function readSurface(): "workspace" | "workbench" {
-  try {
-    const q = new URLSearchParams(window.location.search).get("view");
-    return q === "workbench" ? "workbench" : "workspace";
-  } catch {
-    return "workspace";
-  }
 }
 
 function str(v: unknown): string {
@@ -137,11 +129,9 @@ export default function App() {
   const [runnerBusy, setRunnerBusy] = useState(false);
   const [operatorOpen, setOperatorOpen] = useState(false);
 
-  const [surface, setSurfaceState] = useState<"workspace" | "workbench">(() =>
-    readSurface(),
-  );
+  const [surface, setSurfaceState] = useState<AppSurface>(() => readSurface());
 
-  const setSurface = useCallback((s: "workspace" | "workbench") => {
+  const setSurface = useCallback((s: AppSurface) => {
     setSurfaceState(s);
     try {
       const u = new URL(window.location.href);

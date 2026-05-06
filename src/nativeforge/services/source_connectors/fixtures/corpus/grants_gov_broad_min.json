@@ -1,0 +1,15 @@
+{
+  "fixture_profile": "grants_gov_broad_min",
+  "description": "Deterministic offline sample shaped like a Grants.gov opportunity export.",
+  "rows": [
+    {
+      "title": "Illustrative tribal broadband infrastructure NOFO",
+      "agencyName": "Illustrative NTIA",
+      "OpportunityNumber": "CORPUS-GGB-001",
+      "OpportunityURL": "https://example.test/corpus/grants-gov-broad-001",
+      "FundingInstrumentType": "Grant",
+      "tribal_eligible": true,
+      "application_deadline": "2099-12-31T23:59:59Z"
+    }
+  ]
+}

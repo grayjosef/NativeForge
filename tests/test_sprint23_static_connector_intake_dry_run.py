@@ -123,7 +123,11 @@ def test_intake_bridge_completes_run_with_tribal_fixture() -> None:
         s.commit()
         assert out["intake_run"]["run_status"] == "completed"
         assert int(out["intake_run"]["accepted_count"]) >= 1
+        cm = out["connector_manifest"]
+        assert cm["schema_version"] == "nf_connector_run_manifest_v1"
+        assert cm["dry_run"] is True
         rid = uuid.UUID(out["intake_run"]["id"])
+        assert cm["ids"]["intake_run_id"] == str(rid)
         rows_db = _candidates_for_run(s, oid, rid)
         assert len(rows_db) == 1
         assert rows_db[0].candidate_status == DiscoveryCandidateStatus.accepted.value

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import uuid
 from collections import Counter
 from copy import deepcopy
@@ -33,6 +32,15 @@ from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import source_freshness_service as sfs
+from nativeforge.services.discovery_coverage_gap_ids import (
+    gap_id as _gap_id,
+)
+from nativeforge.services.discovery_coverage_gap_ids import (
+    recommendation_id as _recommendation_id,
+)
+from nativeforge.services.discovery_coverage_gap_ids import (
+    severity_rank as _severity_rank,
+)
 
 # Stable API contract version (also exposed as coverage_gap_intel_version).
 SCHEMA_VERSION = "nf_discovery_coverage_gap_intelligence_v1"
@@ -124,25 +132,6 @@ _COVERAGE_GAP_TYPES_FOR_COVERAGE_SCORE = frozenset(
         CoverageGapType.undercovered_tribal_group.value,
     }
 )
-
-
-def _gap_id(*parts: str) -> str:
-    payload = "|".join(parts)
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:22]
-
-
-def _recommendation_id(gap_id: str) -> str:
-    return hashlib.sha256(f"rec|{gap_id}".encode()).hexdigest()[:22]
-
-
-def _severity_rank(sev: str) -> int:
-    order = {
-        CoverageGapSeverity.critical.value: 0,
-        CoverageGapSeverity.high.value: 1,
-        CoverageGapSeverity.medium.value: 2,
-        CoverageGapSeverity.low.value: 3,
-    }
-    return order.get(sev, 9)
 
 
 def _collect_applicant_tokens(rows: list[NfOpportunitySource]) -> dict[str, int]:

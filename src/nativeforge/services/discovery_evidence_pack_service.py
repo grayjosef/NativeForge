@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
-import json
 import uuid
 from datetime import UTC, datetime
 from typing import Any
@@ -52,6 +50,18 @@ from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import operator_action_service as oa_svc
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import source_freshness_service as sfs
+from nativeforge.services.discovery_evidence_pack_formatting import (
+    digest_json_blob as _digest_json_blob,
+)
+from nativeforge.services.discovery_evidence_pack_formatting import (
+    evidence_dt as _dt,
+)
+from nativeforge.services.discovery_evidence_pack_formatting import (
+    evidence_section as _section,
+)
+from nativeforge.services.discovery_evidence_pack_formatting import (
+    evidence_warn as _warn,
+)
 from nativeforge.services.discovery_operator_workbench_service import (
     DECISION_PACK_SCHEMA_VERSION,
 )
@@ -74,59 +84,6 @@ _UNRESOLVED_OA = frozenset(
         OperatorActionStatus.reopened.value,
     },
 )
-
-
-def _dt(v: object | None) -> str | None:
-    if v is None:
-        return None
-    if isinstance(v, datetime):
-        return v.isoformat()
-    return str(v)
-
-
-def _digest_json_blob(blob: object | None) -> str | None:
-    if blob is None:
-        return None
-    try:
-        raw = json.dumps(blob, sort_keys=True, default=str).encode()
-    except TypeError:
-        return None
-    return hashlib.sha256(raw).hexdigest()
-
-
-def _warn(
-    warning_type: EvidencePackWarningType,
-    severity: EvidencePackWarningSeverity,
-    title: str,
-    rationale: str,
-    recommended_action: str,
-) -> dict[str, Any]:
-    return {
-        "warning_type": warning_type.value,
-        "severity": severity.value,
-        "title": title,
-        "rationale": rationale,
-        "recommended_action": recommended_action,
-    }
-
-
-def _section(
-    section_type: EvidencePackSectionType,
-    title: str,
-    summary: str,
-    records: list[Any],
-    warnings: list[dict[str, Any]],
-    *,
-    generated_at: str,
-) -> dict[str, Any]:
-    return {
-        "section_type": section_type.value,
-        "title": title,
-        "summary": summary,
-        "records": records,
-        "warnings": warnings,
-        "generated_at": generated_at,
-    }
 
 
 def _find_candidate_for_created_spark(

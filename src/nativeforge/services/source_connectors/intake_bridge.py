@@ -19,6 +19,9 @@ from nativeforge.services.source_connectors.base import (
     ConnectorRunContext,
     ConnectorSourceConfig,
 )
+from nativeforge.services.source_connectors.connector_run_manifest import (
+    build_connector_run_manifest_v1,
+)
 from nativeforge.services.source_connectors.normalization import (
     to_discovery_intake_candidate_payload,
 )
@@ -66,10 +69,19 @@ def static_fixture_connector_intake_dry_run(
         intake_mode=intake_mode,
         operator_note=operator_note,
     )
-    return process_structured_candidates(
+    out = process_structured_candidates(
         session,
         org=org,
         org_type=org_type,
         run_id=run.id,
         candidates=candidates,
     )
+    manifest = build_connector_run_manifest_v1(
+        source_registry_id=source_registry_id,
+        intake_run_id=run.id,
+        dry_run=ctx.dry_run,
+        connector_run_id=ctx.run_id,
+        fixture_row_count=len(fixture_rows),
+        normalized_candidate_count=len(candidates),
+    )
+    return {**out, "connector_manifest": manifest}
