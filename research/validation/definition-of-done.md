@@ -16,6 +16,8 @@ Every NativeForge M0 unit of work — sprint, ticket, PR — passes this checkli
 - [ ] **No demo data is reachable from a real-org context.** New code paths are exercised by the cross-tenant fuzz test.
 - [ ] **Any new `nf_*` table has the `is_demo` column, the FK to `organizations`, and the trigger enforcing alignment.**
 - [ ] **(Postgres only)** Any new `nf_*` table has RLS enabled with the standard org-scope and demo-scope policies.
+- [ ] **New `nf_*` product APIs use DB-backed org context** (`organizations.org_type` authoritative). **`NF_DEMO_ORG_IDS` is not** used for new product features (legacy `/v1/isolation/*` only). See **`docs/nativeforge-db-context-rules.md`**.
+- [ ] **Postgres paths apply `apply_org_rls_gucs()`** via the established DB-backed dependencies; no bypass queries on `nf_*` from handlers.
 
 ## Server-side enforcement
 
@@ -68,3 +70,5 @@ All future NativeForge work requires the hard Human-in-the-Pipeline commit gate 
 No agent may commit automatically. Backend validation, frontend validation, migration status, diff stat, known risks, and intentionally untested items must be shown before commit approval. The agent must stop and wait for one of the valid approval phrases before running `git commit`.
 
 No commit may be made based only on backend tests.
+
+Full local validation before merge approval: **`bash scripts/nativeforge_full_validation.sh`** (see **`docs/HITP_COMMIT_GATE.md`**).

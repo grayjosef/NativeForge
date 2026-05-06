@@ -8,7 +8,7 @@ Full layered enforcement is described in [`execution/03-demo-isolation-spec.md`]
 
 | Variable | Purpose |
 |----------|---------|
-| `NF_DEMO_ORG_IDS` | Comma-separated org UUIDs classified as **demo** orgs. Any other UUID is treated as **real** for isolation helpers until a persistent `organizations` table exists. |
+| `NF_DEMO_ORG_IDS` | Comma-separated org UUIDs for **NF-001 smoke routes only** (`/v1/isolation/*`). **Not** authoritative for new `nf_*` product APIs — see [`nativeforge-db-context-rules.md`](nativeforge-db-context-rules.md). |
 | `NF_DEV_ORG_HEADERS` | When `true` (default in local dev), the backend accepts `X-NF-Org-Id` to build dev org context. When `false`, isolation routes that depend on this return **503** — simulating production without dev headers. |
 
 See `.env.example`.
@@ -23,18 +23,32 @@ See `.env.example`.
 
 ## Dev HTTP routes (`/v1/isolation/*`)
 
-Smoke endpoints prove Layer 3 separation using **only** `X-NF-Org-Id` and the demo allowlist (no second header to spoof org type).
+Smoke endpoints prove Layer 3 separation using **only** `X-NF-Org-Id` and the demo allowlist (no second header to spoof org type). This path is **legacy/smoke-test** isolation.
 
-Production must replace dev headers with authenticated identity and a DB-backed `org_type`.
+## Sprint 0+ product routes (`nf_*`)
 
-## Not implemented yet (later tickets)
+DB-backed routes (e.g. under `/v1/nf/...`) resolve **`organizations.org_type`** from the database. **`organizations.org_type` is authoritative** for real vs demo on product surfaces; **`NF_DEMO_ORG_IDS` must not** drive new `nf_*` features.
 
-- RLS policies, DB triggers, and the full seven CI checks from the spec
-- `nf_*` DDL and repository-layer SQL (see `scripts/check_nf_sql_grep.py`)
+Rules for dependencies, RLS, and repositories: **[`nativeforge-db-context-rules.md`](nativeforge-db-context-rules.md)**.
+
+Production must replace dev headers with authenticated identity; **`org_type` remains DB-backed**.
+
+## Implemented in Sprint 0 (see codebase)
+
+- `organizations`, `nf_review_artifacts`, `nf_audit_events`; SQLite alignment triggers; Postgres RLS + GUC helper (`apply_org_rls_gucs`).
+- Repository-scoped queries and `scripts/check_nf_sql_grep.py`.
+
+Remaining gaps vs `03-demo-isolation-spec.md` are tracked in architecture review (e.g. optional Hypothesis fuzz parity).
 
 ## Validation
 
-Full repo checks:
+**Preferred full stack + migrations listing (HITP-aligned):**
+
+```bash
+bash scripts/nativeforge_full_validation.sh
+```
+
+Backend-only quick checks:
 
 ```bash
 ruff check src tests && ruff format --check src tests

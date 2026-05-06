@@ -16,6 +16,13 @@ These documents override older notes elsewhere in the repo when anything conflic
 6. **`research/validation/*`** — definition of done, checklists, human validation planning.
 7. **`nativeforge-scaffold-execution-plan.md`** — scaffold and ticket-style sequencing for this codebase.
 
+### DB-backed org context (`nf_*` routes)
+
+- **`organizations.org_type`** is **authoritative** for real vs demo on **product** routes that touch `nf_*` data.
+- **`NF_DEMO_ORG_IDS`** is **legacy/smoke-test only** (`/v1/isolation/*`); do **not** use it for new `nf_*` features.
+- New routes must use the DB-backed dependency path that applies **`apply_org_rls_gucs()`** on Postgres; access **`nf_*`** only via **repositories/services**.
+- Full rules: **`docs/nativeforge-db-context-rules.md`**.
+
 **ContractForge** (`contract-iq` or similar) may be used **only** as **architectural inspiration or prior-art** when reading patterns (auth shapes, job patterns). It is **not** a dependency, submodule, or shared database. There is **no** in-place extension of ContractForge in this repository.
 
 ### NativeForge-native domain language
@@ -127,3 +134,5 @@ All future NativeForge work requires the hard Human-in-the-Pipeline commit gate 
 No agent may commit automatically. Backend validation, frontend validation, migration status, diff stat, known risks, and intentionally untested items must be shown before commit approval. The agent must stop and wait for one of the valid approval phrases before running `git commit`.
 
 No commit may be made based only on backend tests.
+
+Before requesting commit approval, run **`bash scripts/nativeforge_full_validation.sh`** (see **`docs/HITP_COMMIT_GATE.md`**).

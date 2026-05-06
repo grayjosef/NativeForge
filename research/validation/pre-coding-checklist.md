@@ -98,3 +98,5 @@ All future NativeForge work requires the hard Human-in-the-Pipeline commit gate 
 No agent may commit automatically. Backend validation, frontend validation, migration status, diff stat, known risks, and intentionally untested items must be shown before commit approval. The agent must stop and wait for one of the valid approval phrases before running `git commit`.
 
 No commit may be made based only on backend tests.
+
+**Sprint 1+ prep:** Implement **`nf_*` routes** only with **DB-backed** org context and repository/service layers — **`docs/nativeforge-db-context-rules.md`**. Full validation: **`bash scripts/nativeforge_full_validation.sh`**.
