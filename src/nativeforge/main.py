@@ -23,6 +23,7 @@ from nativeforge.api.tribal_profile_routes import (
     demo_profile_router,
     real_profile_router,
 )
+from nativeforge.api.trust_routes import demo_trust_router, real_trust_router
 from nativeforge.lib.settings import get_settings
 
 
@@ -45,6 +46,8 @@ def create_app() -> FastAPI:
     app.include_router(real_pursuit_router)
     app.include_router(demo_form_pkg_router)
     app.include_router(real_form_pkg_router)
+    app.include_router(demo_trust_router)
+    app.include_router(real_trust_router)
     return app
 
 
