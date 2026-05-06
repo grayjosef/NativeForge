@@ -46,6 +46,7 @@ from nativeforge.services import discovery_intake_service as d_intake
 from nativeforge.services import discovery_operator_workbench_service as op_wb
 from nativeforge.services import discovery_review_service as d_review
 from nativeforge.services import grant_spark_service as gss
+from nativeforge.services import operator_action_service as oa_svc
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import source_freshness_service as sfs
 from nativeforge.services.grant_spark_service import DuplicateGrantSparkError
@@ -252,6 +253,43 @@ class SourceCheckRunCreateBody(BaseModel):
     operator_notes: str | None = Field(default=None, max_length=65536)
     checked_for_period_start: datetime | None = None
     checked_for_period_end: datetime | None = None
+
+
+class OperatorActionCreateManualBody(BaseModel):
+    decision_id: str = Field(min_length=1, max_length=256)
+    action_title: str = Field(min_length=1, max_length=512)
+    operator_action: str | None = None
+    item_type: str = Field(min_length=1, max_length=64)
+    severity: str = Field(min_length=1, max_length=32)
+    action: str = Field(min_length=1, max_length=64)
+    assigned_to: str | None = Field(default=None, max_length=512)
+    due_at: datetime | None = None
+    operator_notes: str | None = None
+    action_summary: str | None = None
+    source_registry_id: uuid.UUID | None = None
+    review_item_id: uuid.UUID | None = None
+    intake_run_id: uuid.UUID | None = None
+
+
+class OperatorActionFromDecisionBody(BaseModel):
+    decision_item: dict[str, Any]
+    assigned_to: str | None = Field(default=None, max_length=512)
+    due_at: datetime | None = None
+    operator_notes: str | None = None
+    force_new: bool = False
+
+
+class OperatorActionLedgerPatchBody(BaseModel):
+    status: str | None = Field(default=None, max_length=32)
+    assigned_to: str | None = Field(default=None, max_length=512)
+    due_at: datetime | None = None
+    operator_notes: str | None = None
+    resolution_notes: str | None = None
+    resolution_code: str | None = Field(default=None, max_length=80)
+    deferred_until: datetime | None = None
+
+
+NF_OPERATOR_ACTIONS_LEDGER_LIST_SCHEMA_VERSION = "nf_operator_actions_ledger_list_v1"
 
 
 class SourceCheckRunPatchBody(BaseModel):
@@ -554,6 +592,193 @@ def demo_operator_actions(
         limit=limit,
         include_snapshots=include_snapshots,
     )
+
+
+@demo_discovery_router.get("/{org_id}/discovery/operator-actions-ledger/summary")
+def demo_operator_actions_ledger_summary(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    return oa_svc.build_ledger_summary(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+    )
+
+
+@demo_discovery_router.get("/{org_id}/discovery/operator-actions-ledger")
+def demo_list_operator_actions_ledger(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    status: Annotated[str | None, Query()] = None,
+    severity: Annotated[str | None, Query()] = None,
+    item_type: Annotated[str | None, Query()] = None,
+    action: Annotated[str | None, Query()] = None,
+    assigned_to: Annotated[str | None, Query()] = None,
+    source_registry_id: Annotated[uuid.UUID | None, Query()] = None,
+    review_item_id: Annotated[uuid.UUID | None, Query()] = None,
+    intake_run_id: Annotated[uuid.UUID | None, Query()] = None,
+    decision_id: Annotated[str | None, Query()] = None,
+    open_only: Annotated[bool, Query()] = False,
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    from nativeforge.repositories import operator_actions as oa_repo
+
+    rows = oa_repo.list_operator_actions_for_org(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        status=status,
+        severity=severity,
+        item_type=item_type,
+        action=action,
+        assigned_to=assigned_to,
+        source_registry_id=source_registry_id,
+        review_item_id=review_item_id,
+        intake_run_id=intake_run_id,
+        decision_id=decision_id,
+        open_only=open_only,
+        limit=limit,
+    )
+    return {
+        "schema_version": NF_OPERATOR_ACTIONS_LEDGER_LIST_SCHEMA_VERSION,
+        "organization_id": str(ctx.org_id),
+        "operator_actions": [oa_svc.operator_action_to_dict(r) for r in rows],
+        "count": len(rows),
+    }
+
+
+@demo_discovery_router.get(
+    "/{org_id}/discovery/operator-actions-ledger/{operator_action_id}"
+)
+def demo_get_operator_action_ledger_item(
+    org_id: uuid.UUID,
+    operator_action_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    from nativeforge.repositories import operator_actions as oa_repo
+
+    row = oa_repo.get_operator_action_scoped(
+        db,
+        action_id=operator_action_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="operator action not found")
+    return oa_svc.operator_action_to_dict(row)
+
+
+@demo_discovery_router.post(
+    "/{org_id}/discovery/operator-actions-ledger",
+    status_code=status.HTTP_201_CREATED,
+)
+def demo_create_operator_action_manual(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: OperatorActionCreateManualBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        out = oa_svc.create_operator_action_manual(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            decision_id=body.decision_id,
+            action_title=body.action_title,
+            operator_action=body.operator_action,
+            item_type=body.item_type,
+            severity=body.severity,
+            action=body.action,
+            assigned_to=body.assigned_to,
+            due_at=body.due_at,
+            operator_notes=body.operator_notes,
+            action_summary=body.action_summary,
+            source_registry_id=body.source_registry_id,
+            review_item_id=body.review_item_id,
+            intake_run_id=body.intake_run_id,
+        )
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return out
+
+
+@demo_discovery_router.post(
+    "/{org_id}/discovery/operator-actions-ledger/from-decision",
+    status_code=status.HTTP_201_CREATED,
+)
+def demo_create_operator_action_from_decision(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: OperatorActionFromDecisionBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        out, outcome = oa_svc.create_operator_action_from_decision_item(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            decision_item=body.decision_item,
+            assigned_to=body.assigned_to,
+            due_at=body.due_at,
+            operator_notes=body.operator_notes,
+            force_new=body.force_new,
+        )
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return {"outcome": outcome, "operator_action": out}
+
+
+@demo_discovery_router.patch(
+    "/{org_id}/discovery/operator-actions-ledger/{operator_action_id}"
+)
+def demo_patch_operator_action_ledger_item(
+    org_id: uuid.UUID,
+    operator_action_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: OperatorActionLedgerPatchBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    patch = body.model_dump(exclude_unset=True, mode="json")
+    try:
+        out = oa_svc.patch_operator_action(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            operator_action_id=operator_action_id,
+            patch=patch,
+        )
+        if out is None:
+            db.rollback()
+            raise HTTPException(status_code=404, detail="operator action not found")
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return out
 
 
 @demo_discovery_router.get("/{org_id}/discovery/sources")
@@ -1104,6 +1329,193 @@ def real_operator_actions(
         limit=limit,
         include_snapshots=include_snapshots,
     )
+
+
+@real_discovery_router.get("/{org_id}/discovery/operator-actions-ledger/summary")
+def real_operator_actions_ledger_summary(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    return oa_svc.build_ledger_summary(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+    )
+
+
+@real_discovery_router.get("/{org_id}/discovery/operator-actions-ledger")
+def real_list_operator_actions_ledger(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    status: Annotated[str | None, Query()] = None,
+    severity: Annotated[str | None, Query()] = None,
+    item_type: Annotated[str | None, Query()] = None,
+    action: Annotated[str | None, Query()] = None,
+    assigned_to: Annotated[str | None, Query()] = None,
+    source_registry_id: Annotated[uuid.UUID | None, Query()] = None,
+    review_item_id: Annotated[uuid.UUID | None, Query()] = None,
+    intake_run_id: Annotated[uuid.UUID | None, Query()] = None,
+    decision_id: Annotated[str | None, Query()] = None,
+    open_only: Annotated[bool, Query()] = False,
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    from nativeforge.repositories import operator_actions as oa_repo
+
+    rows = oa_repo.list_operator_actions_for_org(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        status=status,
+        severity=severity,
+        item_type=item_type,
+        action=action,
+        assigned_to=assigned_to,
+        source_registry_id=source_registry_id,
+        review_item_id=review_item_id,
+        intake_run_id=intake_run_id,
+        decision_id=decision_id,
+        open_only=open_only,
+        limit=limit,
+    )
+    return {
+        "schema_version": NF_OPERATOR_ACTIONS_LEDGER_LIST_SCHEMA_VERSION,
+        "organization_id": str(ctx.org_id),
+        "operator_actions": [oa_svc.operator_action_to_dict(r) for r in rows],
+        "count": len(rows),
+    }
+
+
+@real_discovery_router.get(
+    "/{org_id}/discovery/operator-actions-ledger/{operator_action_id}"
+)
+def real_get_operator_action_ledger_item(
+    org_id: uuid.UUID,
+    operator_action_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    from nativeforge.repositories import operator_actions as oa_repo
+
+    row = oa_repo.get_operator_action_scoped(
+        db,
+        action_id=operator_action_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="operator action not found")
+    return oa_svc.operator_action_to_dict(row)
+
+
+@real_discovery_router.post(
+    "/{org_id}/discovery/operator-actions-ledger",
+    status_code=status.HTTP_201_CREATED,
+)
+def real_create_operator_action_manual(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: OperatorActionCreateManualBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        out = oa_svc.create_operator_action_manual(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            decision_id=body.decision_id,
+            action_title=body.action_title,
+            operator_action=body.operator_action,
+            item_type=body.item_type,
+            severity=body.severity,
+            action=body.action,
+            assigned_to=body.assigned_to,
+            due_at=body.due_at,
+            operator_notes=body.operator_notes,
+            action_summary=body.action_summary,
+            source_registry_id=body.source_registry_id,
+            review_item_id=body.review_item_id,
+            intake_run_id=body.intake_run_id,
+        )
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return out
+
+
+@real_discovery_router.post(
+    "/{org_id}/discovery/operator-actions-ledger/from-decision",
+    status_code=status.HTTP_201_CREATED,
+)
+def real_create_operator_action_from_decision(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: OperatorActionFromDecisionBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        out, outcome = oa_svc.create_operator_action_from_decision_item(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            decision_item=body.decision_item,
+            assigned_to=body.assigned_to,
+            due_at=body.due_at,
+            operator_notes=body.operator_notes,
+            force_new=body.force_new,
+        )
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return {"outcome": outcome, "operator_action": out}
+
+
+@real_discovery_router.patch(
+    "/{org_id}/discovery/operator-actions-ledger/{operator_action_id}"
+)
+def real_patch_operator_action_ledger_item(
+    org_id: uuid.UUID,
+    operator_action_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: OperatorActionLedgerPatchBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    patch = body.model_dump(exclude_unset=True, mode="json")
+    try:
+        out = oa_svc.patch_operator_action(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            operator_action_id=operator_action_id,
+            patch=patch,
+        )
+        if out is None:
+            db.rollback()
+            raise HTTPException(status_code=404, detail="operator action not found")
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return out
 
 
 @real_discovery_router.get("/{org_id}/discovery/sources")

@@ -67,6 +67,12 @@ class AuditAction(StrEnum):
     source_check_run_completed = "source_check_run_completed"
     source_freshness_evaluated = "source_freshness_evaluated"
     source_marked_overdue = "source_marked_overdue"
+    operator_action_created = "operator_action_created"
+    operator_action_updated = "operator_action_updated"
+    operator_action_resolved = "operator_action_resolved"
+    operator_action_deferred = "operator_action_deferred"
+    operator_action_dismissed = "operator_action_dismissed"
+    operator_action_reopened = "operator_action_reopened"
 
 
 class TribalEntityType(StrEnum):
@@ -498,3 +504,36 @@ class OperatorDecisionAction(StrEnum):
     improve_source_quality = "improve_source_quality"
     monitor = "monitor"
     defer = "defer"
+
+
+class OperatorActionStatus(StrEnum):
+    """Operator action ledger row lifecycle (Sprint 18)."""
+
+    open = "open"
+    in_progress = "in_progress"
+    deferred = "deferred"
+    resolved = "resolved"
+    dismissed = "dismissed"
+    reopened = "reopened"
+
+
+class OperatorActionResolutionCode(StrEnum):
+    """Resolution taxonomy for operator actions (Sprint 18)."""
+
+    completed = "completed"
+    no_longer_needed = "no_longer_needed"
+    duplicate = "duplicate"
+    false_positive = "false_positive"
+    source_fixed = "source_fixed"
+    source_verified = "source_verified"
+    review_completed = "review_completed"
+    coverage_updated = "coverage_updated"
+    deferred_by_operator = "deferred_by_operator"
+    dismissed_by_operator = "dismissed_by_operator"
+
+
+class OperatorActionCreatedFrom(StrEnum):
+    """How an nf_operator_actions row was created."""
+
+    decision_pack = "decision_pack"
+    manual = "manual"

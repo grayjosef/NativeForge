@@ -660,7 +660,7 @@ def build_operator_decision_pack(
         }
     )
 
-    return {
+    pack = {
         "schema_version": DECISION_PACK_SCHEMA_VERSION,
         "organization_id": str(org_id),
         "is_demo": is_demo,
@@ -684,3 +684,11 @@ def build_operator_decision_pack(
         "decision_summary_export": compact_export,
         "operator_brief": compact_export,
     }
+    from nativeforge.services import operator_action_service as oa_svc
+
+    return oa_svc.enrich_decision_pack_with_ledger(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        pack=pack,
+    )

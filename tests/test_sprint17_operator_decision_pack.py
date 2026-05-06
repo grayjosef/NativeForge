@@ -80,6 +80,15 @@ def _assert_decision_pack_shape(body: dict) -> None:
     assert isinstance(body["intake_runs_flagged"], list)
     assert isinstance(body["decision_items"], list)
     assert isinstance(body["priority_next_actions"], list)
+    lc = body["ledger_context"]
+    assert isinstance(lc, dict)
+    assert isinstance(lc.get("open_operator_actions"), int)
+    assert isinstance(lc.get("active_decision_ids"), list)
+    assert isinstance(lc.get("resolved_recently_count"), int)
+    if body["decision_items"]:
+        di0 = body["decision_items"][0]
+        assert "has_active_operator_action" in di0
+        assert "operator_action_id" in di0
     export = body["decision_summary_export"]
     assert isinstance(export, dict)
     assert export["decision_pack_schema_version"] == DECISION_PACK_SCHEMA_VERSION

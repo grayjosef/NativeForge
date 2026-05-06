@@ -16,6 +16,7 @@ from nativeforge.db.models import (
     NfGrantPursuit,
     NfGrantSpark,
     NfNofoExtractionRun,
+    NfOperatorAction,
     NfOpportunitySource,
     NfPursuitBrief,
     NfPursuitCalendarEvent,
@@ -596,4 +597,42 @@ def select_calendar_events_for_org_between(
         .where(NfPursuitCalendarEvent.occurs_at >= start_at)
         .where(NfPursuitCalendarEvent.occurs_at <= end_at)
         .order_by(NfPursuitCalendarEvent.occurs_at.asc())
+    )
+
+
+def nf_operator_action_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfOperatorAction.organization_id == org_id,
+        NfOperatorAction.is_demo.is_(is_demo),
+    )
+
+
+def select_operator_actions_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_operator_action_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfOperatorAction)
+        .where(*scope)
+        .order_by(NfOperatorAction.updated_at.desc())
+    )
+
+
+def select_operator_action_scoped(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    operator_action_id: uuid.UUID,
+) -> Select:
+    scope = nf_operator_action_scope(org_id=org_id, org_type=org_type)
+    return select(NfOperatorAction).where(
+        NfOperatorAction.id == operator_action_id,
+        *scope,
     )

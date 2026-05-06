@@ -33,6 +33,7 @@ from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import discovery_operator_workbench_service as op_wb
 from nativeforge.services import discovery_review_service as dr_svc
 from nativeforge.services import grant_spark_service as gss
+from nativeforge.services import operator_action_service as oa_svc
 from nativeforge.services import pursuit_service as psvc
 from nativeforge.services import source_freshness_service as sfs
 from nativeforge.services import tribal_profile_service as tps
@@ -276,6 +277,14 @@ def export_org_data_snapshot(
         operator_pack,
         cap=50,
     )
+    operator_action_ledger_summary, operator_actions_sample = (
+        oa_svc.ledger_export_blocks(
+            session,
+            org_id=org_id,
+            org_type=org_type,
+            sample_limit=50,
+        )
+    )
     check_run_rows = scr_repo.list_source_check_runs_for_org(
         session,
         org_id=org_id,
@@ -333,6 +342,8 @@ def export_org_data_snapshot(
         "operator_decision_pack_summary": operator_decision_summary,
         "operator_workbench_summary": operator_decision_summary,
         "operator_priority_actions_sample": operator_priority_actions_sample,
+        "operator_action_ledger_summary": operator_action_ledger_summary,
+        "operator_actions_sample": operator_actions_sample,
         "source_check_runs_sample": [
             sfs.check_run_to_dict(r) for r in check_run_rows[:50]
         ],
@@ -349,6 +360,10 @@ def export_org_data_snapshot(
             "source_recommendations": len(gap_intel_full["source_recommendations"]),
             "operator_priority_actions": int(
                 operator_pack["summary"]["decision_items_returned"]
+            ),
+            "operator_actions": operator_action_ledger_summary.get("total_actions", 0),
+            "open_operator_actions": operator_action_ledger_summary.get(
+                "open_operator_actions", 0
             ),
         },
         "audit_events_sample": [audit_repo.audit_event_to_dict(e) for e in audit_tail],
