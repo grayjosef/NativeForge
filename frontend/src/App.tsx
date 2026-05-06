@@ -5,6 +5,10 @@ import {
   buildM0Path,
   expandPathSuffix,
 } from "./m0Flow";
+import {
+  runM0LiveDemoSequence,
+  type RunnerLogStep,
+} from "./m0LiveDemoRunner";
 
 const LS_ORG = "nf-m0-org-id";
 const LS_PLANE = "nf-m0-plane";
@@ -43,6 +47,8 @@ export default function App() {
   const [healthErr, setHealthErr] = useState(false);
   const [trustStatus, setTrustStatus] = useState<string | null>(null);
   const [trustErr, setTrustErr] = useState(false);
+  const [runnerSteps, setRunnerSteps] = useState<RunnerLogStep[]>([]);
+  const [runnerBusy, setRunnerBusy] = useState(false);
 
   useEffect(() => {
     try {
@@ -96,6 +102,28 @@ export default function App() {
       setHealthStatus(e instanceof Error ? e.message : "request failed");
     }
   }, []);
+
+  const runLiveSequence = useCallback(async () => {
+    if (!orgOk) {
+      return;
+    }
+    setRunnerBusy(true);
+    try {
+      const base = apiFetchBase();
+      const result = await runM0LiveDemoSequence(
+        base,
+        plane,
+        orgId.trim(),
+        setRunnerSteps,
+      );
+      if (result.ok && result.sparkId && result.pursuitId) {
+        setSparkId(result.sparkId);
+        setPursuitId(result.pursuitId);
+      }
+    } finally {
+      setRunnerBusy(false);
+    }
+  }, [orgId, orgOk, plane]);
 
   const pingTrustManifest = useCallback(async () => {
     setTrustStatus(null);
@@ -225,6 +253,63 @@ export default function App() {
             />
           </div>
         </div>
+
+        <div className="runner-block">
+          <h3 className="runner-title">Run live M0 demo sequence</h3>
+          <p className="runner-intro">
+            Calls the shipped M0 APIs in order (deterministic NOFO stub, rule-based
+            score, SF-424 <strong>preview</strong> only — no Grants.gov submit, no
+            live AI). Requires <code>NF_DEV_ORG_HEADERS=true</code> and a seeded org
+            UUID matching this plane. New Grant Spark and Pursuit IDs are written to
+            the fields above when the run completes successfully.
+          </p>
+          <div className="btn-row">
+            <button
+              type="button"
+              className="primary"
+              onClick={() => void runLiveSequence()}
+              disabled={!orgOk || runnerBusy}
+            >
+              {runnerBusy ? "Running…" : "Run M0 sequence"}
+            </button>
+          </div>
+          {runnerSteps.length > 0 && (
+            <div className="runner-log-wrap" aria-live="polite">
+              <table className="runner-log">
+                <thead>
+                  <tr>
+                    <th scope="col">Step</th>
+                    <th scope="col">Method / path</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Summary / error</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {runnerSteps.map((row) => (
+                    <tr
+                      key={row.key}
+                      className={`runner-row runner-row--${row.status}`}
+                    >
+                      <td>{row.name}</td>
+                      <td>
+                        <code className="runner-path">{row.pathLine}</code>
+                      </td>
+                      <td className="runner-status">{row.status}</td>
+                      <td className="runner-detail">
+                        {row.error ? (
+                          <span className="runner-err">{row.error}</span>
+                        ) : (
+                          (row.summary ?? "—")
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
         <div className="btn-row">
           <button type="button" className="primary" onClick={pingHealth}>
             Ping GET /health

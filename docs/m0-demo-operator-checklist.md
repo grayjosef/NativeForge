@@ -119,6 +119,8 @@ npm ci
 npm run dev
 ```
 
+On **`http://127.0.0.1:5173/`**, choose **API plane** and **Organization UUID**, then **Run M0 sequence** to execute the full M0 chain live against the backend (step log in-page). Same prerequisites as manual curls: **file-backed** `DATABASE_URL`, migrations, seeded org, **`NF_DEV_ORG_HEADERS=true`**, and backend running.
+
 ---
 
 ## 8. Verify `/health`

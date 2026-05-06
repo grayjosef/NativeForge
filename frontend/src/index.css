@@ -317,3 +317,88 @@ button:disabled {
   font-size: 0.82rem;
   color: var(--nf-muted);
 }
+
+.runner-block {
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--nf-border);
+}
+
+.runner-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.98rem;
+  font-weight: 650;
+}
+
+.runner-intro {
+  margin: 0 0 0.85rem;
+  font-size: 0.88rem;
+  color: var(--nf-muted);
+  line-height: 1.5;
+}
+
+.runner-intro code {
+  font-size: 0.85em;
+}
+
+.runner-log-wrap {
+  margin-top: 0.85rem;
+  overflow-x: auto;
+}
+
+.runner-log {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.runner-log th,
+.runner-log td {
+  text-align: left;
+  padding: 0.35rem 0.5rem;
+  border-bottom: 1px solid var(--nf-border);
+  vertical-align: top;
+}
+
+.runner-log th {
+  color: var(--nf-muted);
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.runner-path {
+  font-size: 0.74rem;
+  word-break: break-all;
+}
+
+.runner-status {
+  white-space: nowrap;
+  font-family: ui-monospace, monospace;
+}
+
+.runner-detail {
+  max-width: 14rem;
+}
+
+.runner-row--pending .runner-status {
+  color: var(--nf-muted);
+}
+
+.runner-row--running .runner-status {
+  color: var(--nf-warn);
+}
+
+.runner-row--success .runner-status {
+  color: var(--nf-accent);
+}
+
+.runner-row--error .runner-status {
+  color: #e07070;
+}
+
+.runner-err {
+  color: #e07070;
+  word-break: break-word;
+}
