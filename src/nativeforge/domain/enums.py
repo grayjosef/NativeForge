@@ -173,3 +173,62 @@ class PursuitCalendarKind(StrEnum):
     internal_milestone = "internal_milestone"
     task_due = "task_due"
     custom = "custom"
+
+
+# --- Discovery Engine (Sprint 10) ---
+
+
+class OpportunitySourceType(StrEnum):
+    """Taxonomy for opportunity source registry entries and Grant Spark attribution."""
+
+    federal = "federal"
+    state = "state"
+    local = "local"
+    tribal = "tribal"
+    foundation = "foundation"
+    nonprofit = "nonprofit"
+    university = "university"
+    corporate = "corporate"
+    regional = "regional"
+    philanthropic_network = "philanthropic_network"
+    private = "private"
+    other = "other"
+
+
+class SourceReliabilityRating(StrEnum):
+    """Qualitative reliability for an opportunity source registry row."""
+
+    unknown = "unknown"
+    low = "low"
+    medium = "medium"
+    high = "high"
+
+
+class OpportunityVerificationStatus(StrEnum):
+    """Verification status for registry rows and Grant Spark discovery metadata."""
+
+    unverified = "unverified"
+    operator_reviewed = "operator_reviewed"
+    trusted = "trusted"
+    deprecated = "deprecated"
+
+
+class SparkFreshnessStatus(StrEnum):
+    """Deterministic freshness classification for a Grant Spark."""
+
+    fresh = "fresh"
+    stale = "stale"
+    unknown = "unknown"
+    closed = "closed"
+
+
+class FundingInstrument(StrEnum):
+    """Funding instrument for discovery normalization (grant-forward vocabulary)."""
+
+    grant = "grant"
+    cooperative_agreement = "cooperative_agreement"
+    formula = "formula"
+    competitive = "competitive"
+    loan = "loan"
+    prize = "prize"
+    other = "other"

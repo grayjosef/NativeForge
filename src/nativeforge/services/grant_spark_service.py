@@ -13,10 +13,14 @@ from sqlalchemy.orm import Session
 
 from nativeforge.db.models import NfGrantSpark, Organization, is_demo_for_org_type
 from nativeforge.domain.enums import (
+    FundingInstrument,
     GrantAwardType,
     GrantPipelineStage,
     GrantSparkSource,
+    OpportunitySourceType,
+    OpportunityVerificationStatus,
     OrganizationOrgType,
+    SparkFreshnessStatus,
 )
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories import grant_sparks as gs_repo
@@ -79,6 +83,26 @@ def spark_to_dict(row: NfGrantSpark) -> dict[str, Any]:
         "eligibility_tags": row.eligibility_tags,
         "tribal_eligible": row.tribal_eligible,
         "pipeline_stage": row.pipeline_stage,
+        "source_registry_id": (
+            str(row.source_registry_id) if row.source_registry_id else None
+        ),
+        "source_type": row.source_type,
+        "source_url": row.source_url,
+        "publisher_name": row.publisher_name,
+        "discovered_at": _d(row.discovered_at),
+        "last_verified_at": _d(row.last_verified_at),
+        "freshness_status": row.freshness_status,
+        "verification_status": row.verification_status,
+        "duplicate_key": row.duplicate_key,
+        "duplicate_cluster_id": (
+            str(row.duplicate_cluster_id) if row.duplicate_cluster_id else None
+        ),
+        "native_relevance_score": row.native_relevance_score,
+        "native_relevance_reasons_json": row.native_relevance_reasons_json,
+        "eligibility_tags_json": row.eligibility_tags_json,
+        "geographic_scope_json": row.geographic_scope_json,
+        "funding_instrument": row.funding_instrument,
+        "applicant_types_json": row.applicant_types_json,
         "ingested_at": _d(row.ingested_at),
         "created_at": _d(row.created_at),
         "updated_at": _d(row.updated_at),
@@ -115,6 +139,22 @@ class GrantSparkPayload:
     eligibility_tags: list[str] | None = None
     tribal_eligible: bool = False
     pipeline_stage: GrantPipelineStage = GrantPipelineStage.new
+    source_registry_id: uuid.UUID | None = None
+    opportunity_source_type: OpportunitySourceType | None = None
+    source_url: str | None = None
+    publisher_name: str | None = None
+    discovered_at: datetime | None = None
+    last_verified_at: datetime | None = None
+    freshness_status: SparkFreshnessStatus | None = None
+    verification_status: OpportunityVerificationStatus | None = None
+    duplicate_key: str | None = None
+    duplicate_cluster_id: uuid.UUID | None = None
+    native_relevance_score: int | None = None
+    native_relevance_reasons_json: list | dict | None = None
+    eligibility_tags_json: list | dict | None = None
+    geographic_scope_json: dict | list | None = None
+    funding_instrument: FundingInstrument | None = None
+    applicant_types_json: list | dict | None = None
 
 
 def create_grant_spark(
@@ -155,6 +195,28 @@ def create_grant_spark(
         eligibility_tags=body.eligibility_tags,
         tribal_eligible=body.tribal_eligible,
         pipeline_stage=body.pipeline_stage.value,
+        source_registry_id=body.source_registry_id,
+        source_type=body.opportunity_source_type.value
+        if body.opportunity_source_type
+        else None,
+        source_url=body.source_url,
+        publisher_name=body.publisher_name,
+        discovered_at=body.discovered_at,
+        last_verified_at=body.last_verified_at,
+        freshness_status=body.freshness_status.value if body.freshness_status else None,
+        verification_status=body.verification_status.value
+        if body.verification_status
+        else None,
+        duplicate_key=body.duplicate_key,
+        duplicate_cluster_id=body.duplicate_cluster_id,
+        native_relevance_score=body.native_relevance_score,
+        native_relevance_reasons_json=body.native_relevance_reasons_json,
+        eligibility_tags_json=body.eligibility_tags_json,
+        geographic_scope_json=body.geographic_scope_json,
+        funding_instrument=body.funding_instrument.value
+        if body.funding_instrument
+        else None,
+        applicant_types_json=body.applicant_types_json,
         ingested_at=datetime.now(UTC),
     )
     session.add(row)
@@ -210,6 +272,8 @@ def update_grant_spark(
     row.eligibility_tags = body.eligibility_tags
     row.tribal_eligible = body.tribal_eligible
     row.pipeline_stage = body.pipeline_stage.value
+    # Discovery Engine columns are seeded via Discovery intake and are not overwritten
+    # by the legacy Grant Spark PUT contract (payload omits discovery fields).
     session.flush()
     return row
 

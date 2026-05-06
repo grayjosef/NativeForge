@@ -24,15 +24,20 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from nativeforge.db.base import Base
 from nativeforge.domain.enums import (
+    FundingInstrument,
     GrantAwardType,
     GrantPipelineStage,
     GrantSparkSource,
+    OpportunitySourceType,
+    OpportunityVerificationStatus,
     OrganizationOrgType,
     PursuitCalendarKind,
     PursuitTaskStatus,
     PursuitWorkflowStatus,
     RecommendationTier,
     SamRegistrationStatus,
+    SourceReliabilityRating,
+    SparkFreshnessStatus,
     SparkRequirementKind,
     TribalEntityType,
 )
@@ -81,6 +86,41 @@ def _pursuit_task_status_in_sql() -> str:
 def _pursuit_calendar_kind_in_sql() -> str:
     vals = ", ".join(f"'{k.value}'" for k in PursuitCalendarKind)
     return f"kind IN ({vals})"
+
+
+def _opportunity_source_type_in_sql() -> str:
+    vals = ", ".join(f"'{t.value}'" for t in OpportunitySourceType)
+    return f"source_type IN ({vals})"
+
+
+def _source_reliability_rating_in_sql() -> str:
+    vals = ", ".join(f"'{r.value}'" for r in SourceReliabilityRating)
+    return f"reliability_rating IN ({vals})"
+
+
+def _opportunity_verification_status_in_sql() -> str:
+    vals = ", ".join(f"'{v.value}'" for v in OpportunityVerificationStatus)
+    return f"verification_status IN ({vals})"
+
+
+def _grant_spark_optional_source_type_sql() -> str:
+    vals = ", ".join(f"'{t.value}'" for t in OpportunitySourceType)
+    return f"(source_type IS NULL OR source_type IN ({vals}))"
+
+
+def _grant_spark_optional_freshness_sql() -> str:
+    vals = ", ".join(f"'{f.value}'" for f in SparkFreshnessStatus)
+    return f"(freshness_status IS NULL OR freshness_status IN ({vals}))"
+
+
+def _grant_spark_optional_verification_sql() -> str:
+    vals = ", ".join(f"'{v.value}'" for v in OpportunityVerificationStatus)
+    return f"(verification_status IS NULL OR verification_status IN ({vals}))"
+
+
+def _grant_spark_optional_funding_instrument_sql() -> str:
+    vals = ", ".join(f"'{i.value}'" for i in FundingInstrument)
+    return f"(funding_instrument IS NULL OR funding_instrument IN ({vals}))"
 
 
 class Organization(Base):
@@ -199,6 +239,76 @@ class NfTribalProfile(Base):
     organization: Mapped[Organization] = relationship()
 
 
+class NfOpportunitySource(Base):
+    """Discovery Engine — opportunity source registry entry."""
+
+    __tablename__ = "nf_opportunity_sources"
+    __table_args__ = (
+        CheckConstraint(
+            _opportunity_source_type_in_sql(),
+            name="ck_nf_opportunity_sources_source_type",
+        ),
+        CheckConstraint(
+            _source_reliability_rating_in_sql(),
+            name="ck_nf_opportunity_sources_reliability_rating",
+        ),
+        CheckConstraint(
+            _opportunity_verification_status_in_sql(),
+            name="ck_nf_opportunity_sources_verification_status",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=True,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    source_name: Mapped[str] = mapped_column(String(512), nullable=False)
+    source_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    publisher_name: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    description: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    geographic_scope_json: Mapped[dict | list | None] = mapped_column(
+        JSON, nullable=True
+    )
+    native_relevance_notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    reliability_rating: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=SourceReliabilityRating.unknown.value,
+    )
+    freshness_interval_days: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    last_checked_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_successful_check_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_error: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    verification_status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=OpportunityVerificationStatus.unverified.value,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    organization: Mapped[Organization | None] = relationship()
+
+
 class NfGrantSpark(Base):
     """Grant opportunity (Spark) tracked for an organization (Sprint 2)."""
 
@@ -215,6 +325,22 @@ class NfGrantSpark(Base):
         CheckConstraint(
             _grant_pipeline_stage_in_sql(),
             name="ck_nf_grant_sparks_pipeline_stage",
+        ),
+        CheckConstraint(
+            _grant_spark_optional_source_type_sql(),
+            name="ck_nf_grant_sparks_source_type_discovery",
+        ),
+        CheckConstraint(
+            _grant_spark_optional_freshness_sql(),
+            name="ck_nf_grant_sparks_freshness_status",
+        ),
+        CheckConstraint(
+            _grant_spark_optional_verification_sql(),
+            name="ck_nf_grant_sparks_verification_status_discovery",
+        ),
+        CheckConstraint(
+            _grant_spark_optional_funding_instrument_sql(),
+            name="ck_nf_grant_sparks_funding_instrument",
         ),
     )
 
@@ -276,6 +402,41 @@ class NfGrantSpark(Base):
         nullable=False,
         default=GrantPipelineStage.new.value,
     )
+    source_registry_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_opportunity_sources.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    source_type: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    source_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    publisher_name: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    discovered_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_verified_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    freshness_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    verification_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    duplicate_key: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    duplicate_cluster_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True), nullable=True, index=True
+    )
+    native_relevance_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    native_relevance_reasons_json: Mapped[list | dict | None] = mapped_column(
+        JSON, nullable=True
+    )
+    eligibility_tags_json: Mapped[list | dict | None] = mapped_column(
+        JSON, nullable=True
+    )
+    geographic_scope_json: Mapped[dict | list | None] = mapped_column(
+        JSON, nullable=True
+    )
+    funding_instrument: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    applicant_types_json: Mapped[list | dict | None] = mapped_column(
+        JSON, nullable=True
+    )
     ingested_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
@@ -290,6 +451,9 @@ class NfGrantSpark(Base):
     )
 
     organization: Mapped[Organization] = relationship()
+    source_registry: Mapped[NfOpportunitySource | None] = relationship(
+        foreign_keys=[source_registry_id],
+    )
 
 
 class NfNofoExtractionRun(Base):

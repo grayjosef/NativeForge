@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Select, select
+from sqlalchemy import Select, and_, or_, select
 
 from nativeforge.db.models import (
     NfAuditEvent,
@@ -13,6 +13,7 @@ from nativeforge.db.models import (
     NfGrantPursuit,
     NfGrantSpark,
     NfNofoExtractionRun,
+    NfOpportunitySource,
     NfPursuitBrief,
     NfPursuitCalendarEvent,
     NfPursuitTask,
@@ -79,6 +80,37 @@ def nf_grant_spark_scope(
     return (
         NfGrantSpark.organization_id == org_id,
         NfGrantSpark.is_demo.is_(is_demo),
+    )
+
+
+def nf_opportunity_source_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+):
+    """Rows visible to an org: tenant-owned plus global (NULL org_id) for this plane."""
+    is_demo = org_type == "demo"
+    tenant_match = and_(
+        NfOpportunitySource.organization_id == org_id,
+        NfOpportunitySource.is_demo.is_(is_demo),
+    )
+    global_match = and_(
+        NfOpportunitySource.organization_id.is_(None),
+        NfOpportunitySource.is_demo.is_(is_demo),
+    )
+    return (or_(tenant_match, global_match),)
+
+
+def select_opportunity_sources_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_opportunity_source_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfOpportunitySource)
+        .where(*scope)
+        .order_by(NfOpportunitySource.source_name.asc())
     )
 
 
