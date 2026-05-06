@@ -4,7 +4,7 @@ Short handoff for another operator, a buyer-demo prep chat, or a teammate: what 
 
 ## Current git head
 
-`72f004f` — fix: accept NativeForge M0 fixture org IDs
+`90b9c76` — docs: add NativeForge M0 demo readiness closeout
 
 ## What M0 can do
 
@@ -40,7 +40,8 @@ The following were verified on this head:
 
 ## How to run the demo
 
-1. From the repo root, start the stack: **`nf-up`**
+0. **Optional — clean slate before a walkthrough:** **`nf-reset`** (stops managed processes, clears **`.run/`**, **`logs/`**, local **`nativeforge.local.db`**, **`uv.lock`**, then migrates and seeds). Use **`nf-reset --up`** to reset and immediately run the same stack boot as **`nf-up`**. Does **not** remove **`.env`**.
+1. From the repo root, start the stack: **`nf-up`** (skip if you used **`nf-reset --up`**).
 2. Open **`http://127.0.0.1:5173/`**
 3. Use demo org ID: **`bbbbbbbb-cccc-dddd-eeee-ffffffffffff`**
 4. Click **`Run M0 sequence`**
@@ -77,7 +78,7 @@ Ordered for typical post-demo follow-through:
 
 1. **Buyer-demo polish** — UX copy, empty states, and anything that makes the 12-step story crisp in a live screen share.
 2. **Add screenshots / demo script** — one PDF or doc buyers can skim without running the stack.
-3. **Add frontend reset-demo-data control** — optional convenience for repeat demos (design-only until implemented).
+3. **Frontend reset-demo-data control (optional)** — operator-side **`nf-reset`** already resets local demo DB and runtime files; a shell button remains optional UX polish.
 4. **Begin Sprint 8 planning only after demo polish** — keep scope sequencing honest: demo hardening before the next build phase.
 
 ---

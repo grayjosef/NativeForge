@@ -49,6 +49,31 @@ Then **start the backend in a shell that uses the same exports** (see [section 6
 
 ---
 
+## 3b. Operator shortcut — full local demo reset (`nf-reset`)
+
+Use **before a walkthrough** when you want the browser **Run M0 sequence** to start from a **known-clean file database** (buyer-safe: resets **local demo state only**, does **not** delete **`.env`** or source trees).
+
+From the repo root:
+
+```bash
+cd ~/projects/nativeforge
+./nf-reset
+# equivalent: bash scripts/m0_demo_reset.sh
+```
+
+**What it does:**
+
+1. Stops managed backend/frontend processes if running (same as **`nf-down`** / `scripts/m0_demo_down.sh`).
+2. Removes local runtime paths under the repo only: **`.run/`**, **`logs/`**, **`nativeforge.local.db`**, **`uv.lock`**.
+3. Recreates the DB with **`DATABASE_URL=sqlite+pysqlite:///./nativeforge.local.db`**, **`NF_DEV_ORG_HEADERS=true`**, then **`uv run alembic upgrade head`** and **`uv run python scripts/seed_m0_demo_data.py`**.
+4. Does **not** start servers unless you pass **`--up`** (then runs **`scripts/m0_demo_up.sh`** after reset).
+
+```bash
+./nf-reset --up    # reset, then same managed start as nf-up
+```
+
+---
+
 ## 4. Required environment variables
 
 | Variable | Required | Notes |

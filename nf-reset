@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec /home/josefgray/projects/nativeforge/scripts/m0_demo_reset.sh "$@"

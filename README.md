@@ -15,6 +15,8 @@ The backend is a **FastAPI** app with **SQLAlchemy**, **Alembic**, **psycopg**, 
 
 Step-by-step startup, env vars, seed orgs, `/health`, `/docs`, trust manifest, and buyer talk track: **[`docs/m0-demo-operator-checklist.md`](docs/m0-demo-operator-checklist.md)**. **What is proven at a given commit and how to run the closeout demo:** [`docs/m0-demo-readiness-closeout.md`](docs/m0-demo-readiness-closeout.md). For the **browser demo**, use a **file-backed** `DATABASE_URL` (not the default in-memory SQLite) so Alembic, seed, and `uvicorn` share one database — see the checklist warning and bootstrap sequence.
 
+**Repo-root helpers (paths are absolute in these wrappers — adjust if your clone is elsewhere):** `nf-up`, `nf-down`, `nf-status`, **`nf-reset`** (clean local `.run/`, `logs/`, `nativeforge.local.db`, `uv.lock`, then migrate + seed; optional **`nf-reset --up`** to start the stack). Implementations: `scripts/m0_demo_up.sh`, `m0_demo_down.sh`, `m0_demo_status.sh`, **`m0_demo_reset.sh`**.
+
 ### Local backend setup
 
 ```bash
