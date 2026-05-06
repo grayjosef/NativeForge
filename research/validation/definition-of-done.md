@@ -60,3 +60,11 @@ If any of these phrases shows up in PR review, the PR is not done.
 ## Escalation
 
 If a checklist item cannot be satisfied for a legitimate reason (e.g., the test framework doesn't yet support the scenario), the PR explicitly calls it out, the human signs off on the gap, and a follow-up ticket is created and linked. The default is satisfied; documented exceptions are rare.
+
+## HITP Commit Gate
+
+All future NativeForge work requires the hard Human-in-the-Pipeline commit gate defined in `docs/HITP_COMMIT_GATE.md`.
+
+No agent may commit automatically. Backend validation, frontend validation, migration status, diff stat, known risks, and intentionally untested items must be shown before commit approval. The agent must stop and wait for one of the valid approval phrases before running `git commit`.
+
+No commit may be made based only on backend tests.

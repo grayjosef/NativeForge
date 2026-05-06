@@ -90,3 +90,11 @@ M0 internal demo work can proceed in parallel with these. External-facing work c
 ## Open question
 
 Should item 5 (sovereignty architecture review) gate the M0 demo too? Argument for: the demo's sovereignty page is the product's most differentiating claim, and shipping it without expert review is risky. Argument against: the demo is internal/buyer-only; the page is a description of intent, not a deployed system. **Working assumption: review is required before any external buyer demo, not internal practice runs.**
+
+## HITP Commit Gate
+
+All future NativeForge work requires the hard Human-in-the-Pipeline commit gate defined in `docs/HITP_COMMIT_GATE.md`.
+
+No agent may commit automatically. Backend validation, frontend validation, migration status, diff stat, known risks, and intentionally untested items must be shown before commit approval. The agent must stop and wait for one of the valid approval phrases before running `git commit`.
+
+No commit may be made based only on backend tests.

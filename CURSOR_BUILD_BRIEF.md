@@ -119,3 +119,11 @@ After each milestone, record a short status update (PR description or updates to
 NativeForge is viable; the wedge is real. In this repo, speed and trust come from a **clean grant-native model**, **tenant and demo isolation first**, and **sovereignty-respecting defaults** — not from wiring into ContractForge’s production schema.
 
 Build the walls around the launchpad first. Then build the rocket.
+
+## HITP Commit Gate
+
+All future NativeForge work requires the hard Human-in-the-Pipeline commit gate defined in `docs/HITP_COMMIT_GATE.md`.
+
+No agent may commit automatically. Backend validation, frontend validation, migration status, diff stat, known risks, and intentionally untested items must be shown before commit approval. The agent must stop and wait for one of the valid approval phrases before running `git commit`.
+
+No commit may be made based only on backend tests.

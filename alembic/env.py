@@ -2,9 +2,8 @@
 
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine, pool
-
 from alembic import context
+from sqlalchemy import create_engine, pool
 
 from nativeforge.db import models  # noqa: F401 — register models on metadata
 from nativeforge.db.base import Base

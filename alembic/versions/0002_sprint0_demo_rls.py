@@ -8,7 +8,7 @@ Create Date: 2026-05-05
 
 from __future__ import annotations
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
 import sqlalchemy as sa
 from alembic import op
@@ -17,9 +17,9 @@ from sqlalchemy.engine import Connection
 
 # revision identifiers, used by Alembic.
 revision: str = "0002"
-down_revision: Union[str, Sequence[str], None] = "0001"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "0001"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def _sqlite_demo_triggers(connection: Connection) -> None:
@@ -72,7 +72,7 @@ BEGIN
   IF NEW.is_demo IS DISTINCT FROM (
     SELECT (org_type = 'demo') FROM organizations WHERE id = NEW.organization_id
   ) THEN
-    RAISE EXCEPTION 'nf is_demo does not match organizations.org_type for %', NEW.organization_id;
+    RAISE EXCEPTION 'nf is_demo/org_type mismatch for %', NEW.organization_id;
   END IF;
   RETURN NEW;
 END;
@@ -240,7 +240,9 @@ def downgrade() -> None:
             connection.execute(
                 text(f"DROP POLICY IF EXISTS {table}_org_demo_scope ON {table};")
             )
-            connection.execute(text(f"ALTER TABLE {table} NO FORCE ROW LEVEL SECURITY;"))
+            connection.execute(
+                text(f"ALTER TABLE {table} NO FORCE ROW LEVEL SECURITY;")
+            )
             connection.execute(text(f"ALTER TABLE {table} DISABLE ROW LEVEL SECURITY;"))
         for table in ("nf_review_artifacts", "nf_audit_events"):
             connection.execute(
