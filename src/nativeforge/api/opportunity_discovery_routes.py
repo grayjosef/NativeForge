@@ -23,6 +23,7 @@ from nativeforge.domain.enums import (
     DiscoveryRecommendedAction,
     DiscoveryReviewItemType,
     DiscoveryReviewQueueStatus,
+    EvidencePackSubjectType,
     ExpectedOpportunityFrequency,
     FundingInstrument,
     GrantAwardType,
@@ -42,6 +43,7 @@ from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.repositories import organizations as org_repo
 from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
+from nativeforge.services import discovery_evidence_pack_service as ev_pack_svc
 from nativeforge.services import discovery_intake_service as d_intake
 from nativeforge.services import discovery_operator_workbench_service as op_wb
 from nativeforge.services import discovery_review_service as d_review
@@ -2198,3 +2200,361 @@ def real_get_grant_spark_discovery_quality(
         db.rollback()
         raise HTTPException(status_code=404, detail=str(e)) from e
     return out
+
+
+def _discovery_evidence_pack_handler(
+    org_id: uuid.UUID,
+    subject_type: EvidencePackSubjectType,
+    subject_id: uuid.UUID,
+    ctx: OrgContext,
+    db: Session,
+    *,
+    include_audit_trail: bool,
+    include_linked_records: bool,
+    include_sections: bool,
+    audit_limit: int,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        return ev_pack_svc.build_discovery_evidence_pack(
+            db,
+            org,
+            ctx.org_type,
+            subject_type,
+            subject_id,
+            include_audit_trail=include_audit_trail,
+            include_linked_records=include_linked_records,
+            include_sections=include_sections,
+            audit_limit=audit_limit,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e)) from e
+
+
+@demo_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/sources/{source_id}",
+)
+def demo_get_evidence_pack_source(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.opportunity_source,
+        source_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@demo_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/intake-candidates/{candidate_id}",
+)
+def demo_get_evidence_pack_intake_candidate(
+    org_id: uuid.UUID,
+    candidate_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.intake_candidate,
+        candidate_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@demo_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/grant-sparks/{spark_id}",
+)
+def demo_get_evidence_pack_grant_spark(
+    org_id: uuid.UUID,
+    spark_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.grant_spark,
+        spark_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@demo_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/review-items/{review_item_id}",
+)
+def demo_get_evidence_pack_review_item(
+    org_id: uuid.UUID,
+    review_item_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.discovery_review_item,
+        review_item_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@demo_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/operator-actions/{operator_action_id}",
+)
+def demo_get_evidence_pack_operator_action(
+    org_id: uuid.UUID,
+    operator_action_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.operator_action,
+        operator_action_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@demo_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/{subject_path}/{subject_id}",
+)
+def demo_get_evidence_pack_generic(
+    org_id: uuid.UUID,
+    subject_path: str,
+    subject_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    st = ev_pack_svc.subject_path_to_type(subject_path)
+    if st is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"unknown evidence-pack subject_path: {subject_path}",
+        )
+    return _discovery_evidence_pack_handler(
+        org_id,
+        st,
+        subject_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@real_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/sources/{source_id}",
+)
+def real_get_evidence_pack_source(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.opportunity_source,
+        source_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@real_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/intake-candidates/{candidate_id}",
+)
+def real_get_evidence_pack_intake_candidate(
+    org_id: uuid.UUID,
+    candidate_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.intake_candidate,
+        candidate_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@real_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/grant-sparks/{spark_id}",
+)
+def real_get_evidence_pack_grant_spark(
+    org_id: uuid.UUID,
+    spark_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.grant_spark,
+        spark_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@real_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/review-items/{review_item_id}",
+)
+def real_get_evidence_pack_review_item(
+    org_id: uuid.UUID,
+    review_item_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.discovery_review_item,
+        review_item_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@real_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/operator-actions/{operator_action_id}",
+)
+def real_get_evidence_pack_operator_action(
+    org_id: uuid.UUID,
+    operator_action_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    return _discovery_evidence_pack_handler(
+        org_id,
+        EvidencePackSubjectType.operator_action,
+        operator_action_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )
+
+
+@real_discovery_router.get(
+    "/{org_id}/discovery/evidence-pack/{subject_path}/{subject_id}",
+)
+def real_get_evidence_pack_generic(
+    org_id: uuid.UUID,
+    subject_path: str,
+    subject_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    include_audit_trail: Annotated[bool, Query()] = True,
+    include_linked_records: Annotated[bool, Query()] = True,
+    include_sections: Annotated[bool, Query()] = True,
+    audit_limit: Annotated[int, Query(ge=0, le=200)] = 50,
+) -> dict[str, Any]:
+    st = ev_pack_svc.subject_path_to_type(subject_path)
+    if st is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"unknown evidence-pack subject_path: {subject_path}",
+        )
+    return _discovery_evidence_pack_handler(
+        org_id,
+        st,
+        subject_id,
+        ctx,
+        db,
+        include_audit_trail=include_audit_trail,
+        include_linked_records=include_linked_records,
+        include_sections=include_sections,
+        audit_limit=audit_limit,
+    )

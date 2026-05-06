@@ -30,6 +30,7 @@ from nativeforge.repositories import review_artifacts as ra_repo
 from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.repositories import spark_scores as score_repo
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
+from nativeforge.services import discovery_evidence_pack_service as ev_pack_svc
 from nativeforge.services import discovery_operator_workbench_service as op_wb
 from nativeforge.services import discovery_review_service as dr_svc
 from nativeforge.services import grant_spark_service as gss
@@ -285,6 +286,12 @@ def export_org_data_snapshot(
             sample_limit=50,
         )
     )
+    evidence_export = ev_pack_svc.build_evidence_pack_export_summary(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        now=datetime.now(UTC),
+    )
     check_run_rows = scr_repo.list_source_check_runs_for_org(
         session,
         org_id=org_id,
@@ -344,6 +351,8 @@ def export_org_data_snapshot(
         "operator_priority_actions_sample": operator_priority_actions_sample,
         "operator_action_ledger_summary": operator_action_ledger_summary,
         "operator_actions_sample": operator_actions_sample,
+        "evidence_pack_summary": evidence_export["evidence_pack_summary"],
+        "evidence_subjects_sample": evidence_export["evidence_subjects_sample"],
         "source_check_runs_sample": [
             sfs.check_run_to_dict(r) for r in check_run_rows[:50]
         ],
@@ -365,6 +374,9 @@ def export_org_data_snapshot(
             "open_operator_actions": operator_action_ledger_summary.get(
                 "open_operator_actions", 0
             ),
+            "evidence_subjects_available": evidence_export["counts"][
+                "evidence_subjects_available"
+            ],
         },
         "audit_events_sample": [audit_repo.audit_event_to_dict(e) for e in audit_tail],
     }

@@ -65,6 +65,8 @@ def list_operator_actions_for_org(
     source_registry_id: uuid.UUID | None = None,
     review_item_id: uuid.UUID | None = None,
     intake_run_id: uuid.UUID | None = None,
+    intake_candidate_id: uuid.UUID | None = None,
+    grant_spark_id: uuid.UUID | None = None,
     decision_id: str | None = None,
     open_only: bool = False,
     limit: int = 50,
@@ -87,6 +89,10 @@ def list_operator_actions_for_org(
         filters.append(NfOperatorAction.review_item_id == review_item_id)
     if intake_run_id is not None:
         filters.append(NfOperatorAction.intake_run_id == intake_run_id)
+    if intake_candidate_id is not None:
+        filters.append(NfOperatorAction.intake_candidate_id == intake_candidate_id)
+    if grant_spark_id is not None:
+        filters.append(NfOperatorAction.grant_spark_id == grant_spark_id)
     if decision_id is not None:
         filters.append(NfOperatorAction.decision_id == decision_id)
     if open_only:

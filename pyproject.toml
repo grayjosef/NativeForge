@@ -36,6 +36,9 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.ruff.lint.per-file-ignores]
 "src/nativeforge/services/opportunity_source_catalog.py" = ["E501"]
+"src/nativeforge/services/discovery_evidence_pack_service.py" = ["E501"]
+"src/nativeforge/repositories/evidence_pack.py" = ["E501"]
+"tests/test_sprint19_evidence_pack.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"

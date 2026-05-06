@@ -537,3 +537,66 @@ class OperatorActionCreatedFrom(StrEnum):
 
     decision_pack = "decision_pack"
     manual = "manual"
+
+
+# --- Discovery evidence pack (Sprint 19) ---
+#
+# AuditAction.evidence_pack_generated is intentionally omitted: GET endpoints must not
+# append audit rows on each read (noisy, unlike explicit export/snapshot actions).
+
+
+class EvidencePackSubjectType(StrEnum):
+    """Primary subject for an nf_discovery_evidence_pack_v1 payload."""
+
+    opportunity_source = "opportunity_source"
+    intake_run = "intake_run"
+    intake_candidate = "intake_candidate"
+    grant_spark = "grant_spark"
+    discovery_review_item = "discovery_review_item"
+    source_check_run = "source_check_run"
+    coverage_gap = "coverage_gap"
+    operator_decision = "operator_decision"
+    operator_action = "operator_action"
+
+
+class EvidencePackSectionType(StrEnum):
+    """Structured sections inside evidence_sections[]."""
+
+    subject_summary = "subject_summary"
+    provenance = "provenance"
+    source_registry = "source_registry"
+    intake_history = "intake_history"
+    quality = "quality"
+    review = "review"
+    freshness = "freshness"
+    coverage = "coverage"
+    decision = "decision"
+    action_ledger = "action_ledger"
+    audit_trail = "audit_trail"
+    export_trace = "export_trace"
+    trust_warnings = "trust_warnings"
+
+
+class EvidencePackWarningType(StrEnum):
+    """Deterministic trust warnings for discovery evidence packs."""
+
+    missing_source_url = "missing_source_url"
+    unverified_source = "unverified_source"
+    stale_source = "stale_source"
+    failed_source_checks = "failed_source_checks"
+    duplicate_risk = "duplicate_risk"
+    low_quality_score = "low_quality_score"
+    unresolved_review_item = "unresolved_review_item"
+    unresolved_operator_action = "unresolved_operator_action"
+    missing_deadline = "missing_deadline"
+    weak_provenance = "weak_provenance"
+    no_audit_trail = "no_audit_trail"
+
+
+class EvidencePackWarningSeverity(StrEnum):
+    """Severity for trust_warnings[]."""
+
+    low = "low"
+    medium = "medium"
+    high = "high"
+    critical = "critical"
