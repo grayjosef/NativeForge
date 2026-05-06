@@ -3,13 +3,17 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
 
 from sqlalchemy import Select, select
 
 from nativeforge.db.models import (
     NfAuditEvent,
+    NfGrantPursuit,
     NfGrantSpark,
     NfNofoExtractionRun,
+    NfPursuitCalendarEvent,
+    NfPursuitTask,
     NfReviewArtifact,
     NfSparkRequirement,
     NfSparkScore,
@@ -195,4 +199,68 @@ def select_audit_events_for_artifact(
         .where(NfAuditEvent.review_artifact_id == artifact_id)
         .where(*scope)
         .order_by(NfAuditEvent.created_at.asc())
+    )
+
+
+def nf_grant_pursuit_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfGrantPursuit.organization_id == org_id,
+        NfGrantPursuit.is_demo.is_(is_demo),
+    )
+
+
+def nf_pursuit_task_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfPursuitTask.organization_id == org_id,
+        NfPursuitTask.is_demo.is_(is_demo),
+    )
+
+
+def nf_pursuit_calendar_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfPursuitCalendarEvent.organization_id == org_id,
+        NfPursuitCalendarEvent.is_demo.is_(is_demo),
+    )
+
+
+def select_grant_pursuits_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_grant_pursuit_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfGrantPursuit).where(*scope).order_by(NfGrantPursuit.updated_at.desc())
+    )
+
+
+def select_calendar_events_for_org_between(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    start_at: datetime,
+    end_at: datetime,
+) -> Select:
+    scope = nf_pursuit_calendar_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfPursuitCalendarEvent)
+        .where(*scope)
+        .where(NfPursuitCalendarEvent.occurs_at >= start_at)
+        .where(NfPursuitCalendarEvent.occurs_at <= end_at)
+        .order_by(NfPursuitCalendarEvent.occurs_at.asc())
     )

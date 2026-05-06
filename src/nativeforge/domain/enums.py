@@ -47,6 +47,12 @@ class AuditAction(StrEnum):
     nofo_extraction_completed = "nofo_extraction_completed"
     spark_scored = "spark_scored"
     spark_score_overridden = "spark_score_overridden"
+    grant_pursuit_created = "grant_pursuit_created"
+    grant_pursuit_updated = "grant_pursuit_updated"
+    pursuit_task_created = "pursuit_task_created"
+    pursuit_task_updated = "pursuit_task_updated"
+    pursuit_calendar_event_created = "pursuit_calendar_event_created"
+    pursuit_calendar_event_updated = "pursuit_calendar_event_updated"
 
 
 class TribalEntityType(StrEnum):
@@ -132,3 +138,32 @@ class RecommendationTier(StrEnum):
     needs_review = "needs_review"
     do_not_pursue = "do_not_pursue"
     disqualified = "disqualified"
+
+
+class PursuitWorkflowStatus(StrEnum):
+    """Grant pursuit record status (Sprint 5 pipeline)."""
+
+    active = "active"
+    paused = "paused"
+    submitted = "submitted"
+    closed = "closed"
+
+
+class PursuitTaskStatus(StrEnum):
+    """Checklist task completion state."""
+
+    pending = "pending"
+    in_progress = "in_progress"
+    blocked = "blocked"
+    done = "done"
+    cancelled = "cancelled"
+
+
+class PursuitCalendarKind(StrEnum):
+    """Calendar anchor type for pursuits."""
+
+    application_deadline = "application_deadline"
+    loi_deadline = "loi_deadline"
+    internal_milestone = "internal_milestone"
+    task_due = "task_due"
+    custom = "custom"

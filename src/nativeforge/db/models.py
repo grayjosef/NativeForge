@@ -16,6 +16,7 @@ from sqlalchemy import (
     Numeric,
     String,
     Text,
+    UniqueConstraint,
     Uuid,
     func,
 )
@@ -27,6 +28,9 @@ from nativeforge.domain.enums import (
     GrantPipelineStage,
     GrantSparkSource,
     OrganizationOrgType,
+    PursuitCalendarKind,
+    PursuitTaskStatus,
+    PursuitWorkflowStatus,
     RecommendationTier,
     SamRegistrationStatus,
     SparkRequirementKind,
@@ -62,6 +66,21 @@ def _spark_requirement_kind_in_sql() -> str:
 def _recommendation_tier_in_sql() -> str:
     vals = ", ".join(f"'{t.value}'" for t in RecommendationTier)
     return f"recommendation IN ({vals})"
+
+
+def _pursuit_workflow_status_in_sql() -> str:
+    vals = ", ".join(f"'{s.value}'" for s in PursuitWorkflowStatus)
+    return f"status IN ({vals})"
+
+
+def _pursuit_task_status_in_sql() -> str:
+    vals = ", ".join(f"'{s.value}'" for s in PursuitTaskStatus)
+    return f"status IN ({vals})"
+
+
+def _pursuit_calendar_kind_in_sql() -> str:
+    vals = ", ".join(f"'{k.value}'" for k in PursuitCalendarKind)
+    return f"kind IN ({vals})"
 
 
 class Organization(Base):
@@ -418,6 +437,172 @@ class NfSparkScore(Base):
     )
 
     grant_spark: Mapped[NfGrantSpark] = relationship()
+
+
+class NfGrantPursuit(Base):
+    """Active grant pursuit — handoff from scored Spark (Sprint 5)."""
+
+    __tablename__ = "nf_grant_pursuits"
+    __table_args__ = (
+        CheckConstraint(
+            _pursuit_workflow_status_in_sql(),
+            name="ck_nf_grant_pursuits_status",
+        ),
+        UniqueConstraint(
+            "grant_spark_id",
+            name="uq_nf_grant_pursuits_grant_spark_id",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    grant_spark_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_sparks.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    spark_score_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_spark_scores.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=PursuitWorkflowStatus.active.value,
+    )
+    notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    grant_spark: Mapped[NfGrantSpark] = relationship()
+
+
+class NfPursuitTask(Base):
+    """Work item under a grant pursuit."""
+
+    __tablename__ = "nf_pursuit_tasks"
+    __table_args__ = (
+        CheckConstraint(
+            _pursuit_task_status_in_sql(),
+            name="ck_nf_pursuit_tasks_status",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    grant_pursuit_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_pursuits.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    title: Mapped[str] = mapped_column(String(512), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=PursuitTaskStatus.pending.value,
+    )
+    sort_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    due_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    spark_requirement_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_spark_requirements.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    grant_pursuit: Mapped[NfGrantPursuit] = relationship()
+
+
+class NfPursuitCalendarEvent(Base):
+    """Calendar anchor — deadlines and milestones for a pursuit."""
+
+    __tablename__ = "nf_pursuit_calendar_events"
+    __table_args__ = (
+        CheckConstraint(
+            _pursuit_calendar_kind_in_sql(),
+            name="ck_nf_pursuit_calendar_events_kind",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    grant_pursuit_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_pursuits.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    title: Mapped[str] = mapped_column(String(512), nullable=False)
+    occurs_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    pursuit_task_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_pursuit_tasks.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    grant_pursuit: Mapped[NfGrantPursuit] = relationship()
 
 
 class NfAuditEvent(Base):
