@@ -11,6 +11,10 @@ The backend is a **FastAPI** app with **SQLAlchemy**, **Alembic**, **psycopg**, 
 - Python **3.11+**
 - **PostgreSQL** (optional for `GET /health` only; required for Alembic against a real DB when you add migrations with DDL)
 
+### M0 buyer / operator demo (checklist)
+
+Step-by-step startup, env vars, seed orgs, `/health`, `/docs`, trust manifest, and buyer talk track: **[`docs/m0-demo-operator-checklist.md`](docs/m0-demo-operator-checklist.md)**.
+
 ### Local backend setup
 
 ```bash
