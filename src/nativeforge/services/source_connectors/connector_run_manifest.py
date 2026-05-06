@@ -10,7 +10,7 @@ from typing import Any
 def build_connector_run_manifest_v1(
     *,
     source_registry_id: uuid.UUID,
-    intake_run_id: uuid.UUID,
+    intake_run_id: uuid.UUID | None,
     dry_run: bool,
     connector_run_id: str | None,
     fixture_row_count: int,
@@ -24,13 +24,26 @@ def build_connector_run_manifest_v1(
     Shapes are versioned; callers merge alongside existing intake responses.
     """
     now = datetime.now(UTC)
-    hints = evidence_pack_subject_hints or {
-        "intake_run": {"subject_path": "intake-runs", "subject_id": str(intake_run_id)},
-        "opportunity_source": {
-            "subject_path": "sources",
-            "subject_id": str(source_registry_id),
-        },
-    }
+    hints: dict[str, Any]
+    if evidence_pack_subject_hints is not None:
+        hints = dict(evidence_pack_subject_hints)
+    else:
+        hints = {
+            "opportunity_source": {
+                "subject_path": "sources",
+                "subject_id": str(source_registry_id),
+            },
+        }
+        if intake_run_id is not None:
+            hints["intake_run"] = {
+                "subject_path": "intake-runs",
+                "subject_id": str(intake_run_id),
+            }
+    if source_check_run_id is not None:
+        hints["source_check_run"] = {
+            "subject_path": "source-check-runs",
+            "subject_id": str(source_check_run_id),
+        }
     return {
         "schema_version": "nf_connector_run_manifest_v1",
         "generated_at": now.isoformat(),
@@ -38,7 +51,7 @@ def build_connector_run_manifest_v1(
         "timestamps": {"manifest_generated_at": now.isoformat()},
         "ids": {
             "source_registry_id": str(source_registry_id),
-            "intake_run_id": str(intake_run_id),
+            "intake_run_id": str(intake_run_id) if intake_run_id else None,
             "source_check_run_id": str(source_check_run_id)
             if source_check_run_id
             else None,

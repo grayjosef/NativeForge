@@ -2011,13 +2011,19 @@ def _pack_source_check_run(
             "opportunity_source": ods.opportunity_source_to_dict(src),
         }
 
+    intake_run_hint: str | None = None
+    if isinstance(run.result_summary_json, dict):
+        hint_val = run.result_summary_json.get("intake_run_id")
+        if hint_val is not None:
+            intake_run_hint = str(hint_val)
+
     subject = {
         "subject_type": EvidencePackSubjectType.source_check_run.value,
         "subject_id": str(run.id),
         "title": f"Source check ({run.check_mode})",
         "status": run.check_status,
         "source_registry_id": str(run.source_registry_id),
-        "intake_run_id": None,
+        "intake_run_id": intake_run_hint,
         "intake_candidate_id": None,
     }
     prov = {

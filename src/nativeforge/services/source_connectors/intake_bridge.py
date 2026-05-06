@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+import dataclasses
 import uuid
-from dataclasses import replace
 from typing import Any
 
 from sqlalchemy.orm import Session
@@ -18,6 +18,7 @@ from nativeforge.services.discovery_intake_service import (
 from nativeforge.services.source_connectors.base import (
     ConnectorRunContext,
     ConnectorSourceConfig,
+    NormalizedOpportunityCandidate,
 )
 from nativeforge.services.source_connectors.connector_run_manifest import (
     build_connector_run_manifest_v1,
@@ -49,6 +50,9 @@ def static_fixture_connector_intake_dry_run(
     run_context: ConnectorRunContext | None = None,
     intake_mode: DiscoveryIntakeMode = DiscoveryIntakeMode.structured_batch,
     operator_note: str | None = None,
+    source_check_run_id: uuid.UUID | None = None,
+    connector_provenance_extras: dict[str, Any] | None = None,
+    evidence_pack_subject_hints: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Run the Sprint 22 static fixture connector, then the existing intake pipeline.
@@ -57,11 +61,17 @@ def static_fixture_connector_intake_dry_run(
     intake system. Persists through the same code path as API-originated batches.
     """
     ctx = run_context or ConnectorRunContext()
-    cfg = replace(connector_config, source_registry_id=source_registry_id)
+    cfg = dataclasses.replace(connector_config, source_registry_id=source_registry_id)
     dry = dry_run_fixture_rows(fixture_rows, config=cfg, ctx=ctx)
     if dry.errors:
         raise IntakeBridgeFixtureError(dry.errors)
-    candidates = [to_discovery_intake_candidate_payload(c) for c in dry.candidates]
+    merged_norm: list[NormalizedOpportunityCandidate] = []
+    for c in dry.candidates:
+        prov = dict(c.provenance)
+        if connector_provenance_extras:
+            prov.update(connector_provenance_extras)
+        merged_norm.append(dataclasses.replace(c, provenance=prov))
+    candidates = [to_discovery_intake_candidate_payload(c) for c in merged_norm]
     run = start_intake_run(
         session,
         org=org,
@@ -83,5 +93,7 @@ def static_fixture_connector_intake_dry_run(
         connector_run_id=ctx.run_id,
         fixture_row_count=len(fixture_rows),
         normalized_candidate_count=len(candidates),
+        source_check_run_id=source_check_run_id,
+        evidence_pack_subject_hints=evidence_pack_subject_hints,
     )
     return {**out, "connector_manifest": manifest}
