@@ -27,6 +27,9 @@ from nativeforge.domain.enums import (
     DiscoveryCandidateStatus,
     DiscoveryIntakeMode,
     DiscoveryIntakeRunStatus,
+    DiscoveryRecommendedAction,
+    DiscoveryReviewItemType,
+    DiscoveryReviewQueueStatus,
     ExpectedOpportunityFrequency,
     FundingInstrument,
     GrantAwardType,
@@ -162,6 +165,21 @@ def _discovery_candidate_status_in_sql() -> str:
 def _discovery_candidate_optional_freshness_sql() -> str:
     vals = ", ".join(f"'{f.value}'" for f in SparkFreshnessStatus)
     return f"(freshness_status IS NULL OR freshness_status IN ({vals}))"
+
+
+def _discovery_review_item_type_in_sql() -> str:
+    vals = ", ".join(f"'{t.value}'" for t in DiscoveryReviewItemType)
+    return f"review_item_type IN ({vals})"
+
+
+def _discovery_review_queue_status_in_sql() -> str:
+    vals = ", ".join(f"'{s.value}'" for s in DiscoveryReviewQueueStatus)
+    return f"review_status IN ({vals})"
+
+
+def _discovery_recommended_action_optional_sql() -> str:
+    vals = ", ".join(f"'{a.value}'" for a in DiscoveryRecommendedAction)
+    return f"(recommended_action IS NULL OR recommended_action IN ({vals}))"
 
 
 class Organization(Base):
@@ -681,6 +699,100 @@ class NfDiscoveryIntakeCandidate(Base):
     )
     created_spark: Mapped[NfGrantSpark | None] = relationship(
         foreign_keys=[created_spark_id],
+    )
+
+
+class NfDiscoveryReviewItem(Base):
+    """Operator review queue for discovery QC, deduplication, promotion gates."""
+
+    __tablename__ = "nf_discovery_review_items"
+    __table_args__ = (
+        CheckConstraint(
+            _discovery_review_item_type_in_sql(),
+            name="ck_nf_discovery_review_items_item_type",
+        ),
+        CheckConstraint(
+            _discovery_review_queue_status_in_sql(),
+            name="ck_nf_discovery_review_items_review_status",
+        ),
+        CheckConstraint(
+            _discovery_recommended_action_optional_sql(),
+            name="ck_nf_discovery_review_items_recommended_action",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    source_registry_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_opportunity_sources.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    intake_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_discovery_intake_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    intake_candidate_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_discovery_intake_candidates.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    grant_spark_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_sparks.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    review_item_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    review_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    reason_codes_json: Mapped[list | dict | None] = mapped_column(JSON, nullable=True)
+    quality_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    confidence_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    duplicate_risk_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    native_relevance_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    recommended_action: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    review_notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    assigned_to: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True), nullable=True, index=True
+    )
+    resolved_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    organization: Mapped[Organization] = relationship()
+    source_registry: Mapped[NfOpportunitySource | None] = relationship(
+        foreign_keys=[source_registry_id],
+    )
+    intake_run: Mapped[NfDiscoveryIntakeRun | None] = relationship(
+        foreign_keys=[intake_run_id],
+    )
+    intake_candidate: Mapped[NfDiscoveryIntakeCandidate | None] = relationship(
+        foreign_keys=[intake_candidate_id],
+    )
+    grant_spark: Mapped[NfGrantSpark | None] = relationship(
+        foreign_keys=[grant_spark_id],
     )
 
 

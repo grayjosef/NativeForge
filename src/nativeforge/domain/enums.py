@@ -327,3 +327,40 @@ class DiscoveryCandidateStatus(StrEnum):
     duplicate = "duplicate"
     rejected = "rejected"
     error = "error"
+
+
+# --- Discovery review queue (Sprint 13) ---
+
+
+class DiscoveryReviewItemType(StrEnum):
+    """Why this row exists in the discovery review queue."""
+
+    candidate_quality = "candidate_quality"
+    duplicate_review = "duplicate_review"
+    eligibility_review = "eligibility_review"
+    source_verification = "source_verification"
+    deadline_review = "deadline_review"
+    native_relevance_review = "native_relevance_review"
+    manual_review = "manual_review"
+
+
+class DiscoveryReviewQueueStatus(StrEnum):
+    """Operator workflow status for a discovery review queue row."""
+
+    open = "open"
+    in_review = "in_review"
+    approved = "approved"
+    rejected = "rejected"
+    merged = "merged"
+    deferred = "deferred"
+
+
+class DiscoveryRecommendedAction(StrEnum):
+    """Deterministic or operator-selected next step for discovery QC."""
+
+    approve = "approve"
+    reject = "reject"
+    merge = "merge"
+    verify_source = "verify_source"
+    verify_deadline = "verify_deadline"
+    needs_human_review = "needs_human_review"

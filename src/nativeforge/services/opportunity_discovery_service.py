@@ -287,6 +287,24 @@ def compute_duplicate_key(
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
+def compute_structural_duplicate_fingerprint(
+    *,
+    agency: str | None,
+    publisher_name: str | None,
+    opportunity_number: str | None,
+    opportunity_title: str | None,
+) -> str:
+    """Secondary fingerprint without URL (clusters noisy duplicates across URLs)."""
+    parts = [
+        (agency or "").strip().lower(),
+        (publisher_name or "").strip().lower(),
+        (opportunity_number or "").strip().lower(),
+        (opportunity_title or "").strip().lower()[:320],
+    ]
+    payload = "::".join(parts)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
 def compute_native_relevance_reasons(
     *,
     tribal_eligible: bool,
