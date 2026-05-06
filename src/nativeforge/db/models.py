@@ -27,6 +27,7 @@ from nativeforge.domain.enums import (
     GrantPipelineStage,
     GrantSparkSource,
     OrganizationOrgType,
+    RecommendationTier,
     SamRegistrationStatus,
     SparkRequirementKind,
     TribalEntityType,
@@ -56,6 +57,11 @@ def _grant_pipeline_stage_in_sql() -> str:
 def _spark_requirement_kind_in_sql() -> str:
     vals = ", ".join(f"'{k.value}'" for k in SparkRequirementKind)
     return f"requirement_type IN ({vals})"
+
+
+def _recommendation_tier_in_sql() -> str:
+    vals = ", ".join(f"'{t.value}'" for t in RecommendationTier)
+    return f"recommendation IN ({vals})"
 
 
 class Organization(Base):
@@ -349,6 +355,69 @@ class NfSparkRequirement(Base):
     notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
 
     extraction_run: Mapped[NfNofoExtractionRun] = relationship()
+
+
+class NfSparkScore(Base):
+    """Deterministic pursuit-readiness score for a Grant Spark (Sprint 4)."""
+
+    __tablename__ = "nf_spark_scores"
+    __table_args__ = (
+        CheckConstraint(
+            _recommendation_tier_in_sql(),
+            name="ck_nf_spark_scores_recommendation",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    grant_spark_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_sparks.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    tribal_profile_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_tribal_profiles.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    nofo_extraction_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_nofo_extraction_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    scorer_engine: Mapped[str] = mapped_column(String(64), nullable=False)
+    dimension_scores: Mapped[dict] = mapped_column(JSON, nullable=False)
+    weights_used: Mapped[dict] = mapped_column(JSON, nullable=False)
+    composite: Mapped[object] = mapped_column(Numeric(5, 2), nullable=False)
+    recommendation: Mapped[str] = mapped_column(String(32), nullable=False)
+    explanation_text: Mapped[str] = mapped_column(Text(), nullable=False)
+    rationale_detail: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    disqualified: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    disqualification_reason: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    override_reason: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    override_actor_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        nullable=True,
+    )
+    overridden_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    grant_spark: Mapped[NfGrantSpark] = relationship()
 
 
 class NfAuditEvent(Base):

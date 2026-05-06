@@ -12,6 +12,7 @@ from nativeforge.db.models import (
     NfNofoExtractionRun,
     NfReviewArtifact,
     NfSparkRequirement,
+    NfSparkScore,
     NfTribalProfile,
 )
 from nativeforge.lib.demo_isolation import OrgType
@@ -127,6 +128,34 @@ def select_requirements_for_extraction_run(
         .where(NfSparkRequirement.extraction_run_id == extraction_run_id)
         .where(*scope)
         .order_by(NfSparkRequirement.sort_order.asc())
+    )
+
+
+def nf_spark_score_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfSparkScore.organization_id == org_id,
+        NfSparkScore.is_demo.is_(is_demo),
+    )
+
+
+def select_latest_spark_score_for_spark(
+    *,
+    spark_id: uuid.UUID,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_spark_score_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfSparkScore)
+        .where(NfSparkScore.grant_spark_id == spark_id)
+        .where(*scope)
+        .order_by(NfSparkScore.created_at.desc())
+        .limit(1)
     )
 
 

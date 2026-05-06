@@ -45,6 +45,8 @@ class AuditAction(StrEnum):
     profile_updated = "profile_updated"
     profile_exported = "profile_exported"
     nofo_extraction_completed = "nofo_extraction_completed"
+    spark_scored = "spark_scored"
+    spark_score_overridden = "spark_score_overridden"
 
 
 class TribalEntityType(StrEnum):
@@ -119,3 +121,14 @@ class SparkRequirementKind(StrEnum):
     resolution = "resolution"
     reporting = "reporting"
     special_condition = "special_condition"
+
+
+class RecommendationTier(StrEnum):
+    """Deterministic pursuit recommendation from composite score."""
+
+    strong_pursue = "strong_pursue"
+    pursue = "pursue"
+    pursue_with_conditions = "pursue_with_conditions"
+    needs_review = "needs_review"
+    do_not_pursue = "do_not_pursue"
+    disqualified = "disqualified"

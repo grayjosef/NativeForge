@@ -9,6 +9,10 @@ from nativeforge.api.grant_spark_routes import (
 from nativeforge.api.health import router as health_router
 from nativeforge.api.isolation_routes import router as isolation_router
 from nativeforge.api.nofo_extraction_routes import demo_nofo_router, real_nofo_router
+from nativeforge.api.spark_scoring_routes import (
+    demo_spark_scoring_router,
+    real_spark_scoring_router,
+)
 from nativeforge.api.sprint0_routes import demo_router, real_router
 from nativeforge.api.tribal_profile_routes import (
     demo_profile_router,
@@ -30,6 +34,8 @@ def create_app() -> FastAPI:
     app.include_router(real_grant_spark_router)
     app.include_router(demo_nofo_router)
     app.include_router(real_nofo_router)
+    app.include_router(demo_spark_scoring_router)
+    app.include_router(real_spark_scoring_router)
     return app
 
 

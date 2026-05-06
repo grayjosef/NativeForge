@@ -39,6 +39,7 @@ def _truncate_nf_tables() -> None:
     with SessionLocal() as s:
         s.execute(text("DELETE FROM nf_audit_events"))
         s.execute(text("DELETE FROM nf_spark_requirements"))
+        s.execute(text("DELETE FROM nf_spark_scores"))
         s.execute(text("DELETE FROM nf_nofo_extraction_runs"))
         s.execute(text("DELETE FROM nf_tribal_profiles"))
         s.execute(text("DELETE FROM nf_grant_sparks"))
