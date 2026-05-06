@@ -6,7 +6,7 @@ import uuid
 from datetime import date, datetime
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -18,6 +18,9 @@ from nativeforge.api.deps_db import (
 from nativeforge.api.org_context import OrgContext
 from nativeforge.domain.enums import (
     DiscoveryIntakeMode,
+    DiscoveryRecommendedAction,
+    DiscoveryReviewItemType,
+    DiscoveryReviewQueueStatus,
     ExpectedOpportunityFrequency,
     FundingInstrument,
     GrantAwardType,
@@ -33,6 +36,7 @@ from nativeforge.repositories import discovery_intake_runs as intake_repo
 from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.repositories import organizations as org_repo
 from nativeforge.services import discovery_intake_service as d_intake
+from nativeforge.services import discovery_review_service as d_review
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services.grant_spark_service import DuplicateGrantSparkError
@@ -189,6 +193,14 @@ class DiscoveryIntakeRunCreateBody(BaseModel):
 
 class StructuredCandidatesBatchBody(BaseModel):
     candidates: list[dict[str, Any]]
+
+
+class ReviewItemPatchBody(BaseModel):
+    review_status: DiscoveryReviewQueueStatus | None = None
+    review_notes: str | None = Field(default=None, max_length=65536)
+    assigned_to: str | None = Field(default=None, max_length=512)
+    recommended_action: DiscoveryRecommendedAction | None = None
+    priority: int | None = Field(default=None, ge=-(10**9), le=10**9)
 
 
 def _validate_registry_id(
@@ -719,3 +731,299 @@ def real_list_intake_candidates(
         intake_run_id=run_id,
     )
     return [d_intake.intake_candidate_to_dict(r) for r in rows]
+
+
+@demo_discovery_router.get("/{org_id}/discovery/review-items")
+def demo_list_discovery_review_items(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    review_status: Annotated[
+        DiscoveryReviewQueueStatus | None,
+        Query(),
+    ] = None,
+    review_item_type: Annotated[
+        DiscoveryReviewItemType | None,
+        Query(),
+    ] = None,
+    priority: Annotated[int | None, Query()] = None,
+    source_registry_id: Annotated[uuid.UUID | None, Query()] = None,
+    intake_run_id: Annotated[uuid.UUID | None, Query()] = None,
+    intake_candidate_id: Annotated[uuid.UUID | None, Query()] = None,
+    grant_spark_id: Annotated[uuid.UUID | None, Query()] = None,
+    open_queue_only: Annotated[bool, Query()] = False,
+    limit: Annotated[int, Query(ge=1, le=2000)] = 500,
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    return d_review.list_review_items(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        review_status=review_status.value if review_status else None,
+        review_item_type=review_item_type.value if review_item_type else None,
+        priority=priority,
+        source_registry_id=source_registry_id,
+        intake_run_id=intake_run_id,
+        intake_candidate_id=intake_candidate_id,
+        grant_spark_id=grant_spark_id,
+        open_queue_only=open_queue_only,
+        limit=limit,
+    )
+
+
+@demo_discovery_router.get("/{org_id}/discovery/review-items/{review_item_id}")
+def demo_get_discovery_review_item(
+    org_id: uuid.UUID,
+    review_item_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    row = d_review.get_review_item(
+        db,
+        review_item_id=review_item_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="discovery review item not found")
+    return row
+
+
+@demo_discovery_router.patch("/{org_id}/discovery/review-items/{review_item_id}")
+def demo_patch_discovery_review_item(
+    org_id: uuid.UUID,
+    review_item_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: ReviewItemPatchBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    patch = body.model_dump(exclude_unset=True, mode="json")
+    try:
+        out = d_review.patch_review_item(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            review_item_id=review_item_id,
+            patch=patch,
+        )
+        if out is None:
+            db.rollback()
+            raise HTTPException(
+                status_code=404, detail="discovery review item not found"
+            )
+        db.commit()
+    except HTTPException:
+        raise
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return out
+
+
+@real_discovery_router.get("/{org_id}/discovery/review-items")
+def real_list_discovery_review_items(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    review_status: Annotated[
+        DiscoveryReviewQueueStatus | None,
+        Query(),
+    ] = None,
+    review_item_type: Annotated[
+        DiscoveryReviewItemType | None,
+        Query(),
+    ] = None,
+    priority: Annotated[int | None, Query()] = None,
+    source_registry_id: Annotated[uuid.UUID | None, Query()] = None,
+    intake_run_id: Annotated[uuid.UUID | None, Query()] = None,
+    intake_candidate_id: Annotated[uuid.UUID | None, Query()] = None,
+    grant_spark_id: Annotated[uuid.UUID | None, Query()] = None,
+    open_queue_only: Annotated[bool, Query()] = False,
+    limit: Annotated[int, Query(ge=1, le=2000)] = 500,
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    return d_review.list_review_items(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        review_status=review_status.value if review_status else None,
+        review_item_type=review_item_type.value if review_item_type else None,
+        priority=priority,
+        source_registry_id=source_registry_id,
+        intake_run_id=intake_run_id,
+        intake_candidate_id=intake_candidate_id,
+        grant_spark_id=grant_spark_id,
+        open_queue_only=open_queue_only,
+        limit=limit,
+    )
+
+
+@real_discovery_router.get("/{org_id}/discovery/review-items/{review_item_id}")
+def real_get_discovery_review_item(
+    org_id: uuid.UUID,
+    review_item_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    row = d_review.get_review_item(
+        db,
+        review_item_id=review_item_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="discovery review item not found")
+    return row
+
+
+@real_discovery_router.patch("/{org_id}/discovery/review-items/{review_item_id}")
+def real_patch_discovery_review_item(
+    org_id: uuid.UUID,
+    review_item_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: ReviewItemPatchBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    patch = body.model_dump(exclude_unset=True, mode="json")
+    try:
+        out = d_review.patch_review_item(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            review_item_id=review_item_id,
+            patch=patch,
+        )
+        if out is None:
+            db.rollback()
+            raise HTTPException(
+                status_code=404, detail="discovery review item not found"
+            )
+        db.commit()
+    except HTTPException:
+        raise
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return out
+
+
+@demo_discovery_router.get(
+    "/{org_id}/discovery/intake-candidates/{candidate_id}/quality",
+)
+def demo_get_intake_candidate_quality(
+    org_id: uuid.UUID,
+    candidate_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    create_review_item: Annotated[bool, Query()] = False,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        out = d_review.get_intake_candidate_quality_bundle(
+            db,
+            org,
+            ctx.org_type,
+            candidate_id,
+            create_review_item=create_review_item,
+        )
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    return out
+
+
+@demo_discovery_router.get("/{org_id}/grant-sparks/{spark_id}/discovery-quality")
+def demo_get_grant_spark_discovery_quality(
+    org_id: uuid.UUID,
+    spark_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    create_review_item: Annotated[bool, Query()] = False,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        out = d_review.get_grant_spark_quality_bundle(
+            db,
+            org,
+            ctx.org_type,
+            spark_id,
+            create_review_item=create_review_item,
+        )
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    return out
+
+
+@real_discovery_router.get(
+    "/{org_id}/discovery/intake-candidates/{candidate_id}/quality",
+)
+def real_get_intake_candidate_quality(
+    org_id: uuid.UUID,
+    candidate_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    create_review_item: Annotated[bool, Query()] = False,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        out = d_review.get_intake_candidate_quality_bundle(
+            db,
+            org,
+            ctx.org_type,
+            candidate_id,
+            create_review_item=create_review_item,
+        )
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    return out
+
+
+@real_discovery_router.get("/{org_id}/grant-sparks/{spark_id}/discovery-quality")
+def real_get_grant_spark_discovery_quality(
+    org_id: uuid.UUID,
+    spark_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    create_review_item: Annotated[bool, Query()] = False,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        out = d_review.get_grant_spark_quality_bundle(
+            db,
+            org,
+            ctx.org_type,
+            spark_id,
+            create_review_item=create_review_item,
+        )
+        db.commit()
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=404, detail=str(e)) from e
+    return out

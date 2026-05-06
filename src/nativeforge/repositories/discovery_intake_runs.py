@@ -11,6 +11,7 @@ from nativeforge.db.models import NfDiscoveryIntakeCandidate, NfDiscoveryIntakeR
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories.scoping import (
     nf_discovery_intake_run_scope,
+    select_discovery_intake_candidate_scoped,
     select_discovery_intake_candidates_for_run,
     select_discovery_intake_runs_for_org_source,
 )
@@ -72,3 +73,18 @@ def list_discovery_intake_candidates_for_run(
         intake_run_id=intake_run_id,
     )
     return list(session.scalars(q))
+
+
+def get_discovery_intake_candidate_scoped(
+    *,
+    session: Session,
+    candidate_id: uuid.UUID,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> NfDiscoveryIntakeCandidate | None:
+    stmt = select_discovery_intake_candidate_scoped(
+        org_id=org_id,
+        org_type=org_type,
+        candidate_id=candidate_id,
+    )
+    return session.scalar(stmt)

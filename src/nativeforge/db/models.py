@@ -765,9 +765,7 @@ class NfDiscoveryReviewItem(Base):
     native_relevance_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
     recommended_action: Mapped[str | None] = mapped_column(String(32), nullable=True)
     review_notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
-    assigned_to: Mapped[uuid.UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True, index=True
-    )
+    assigned_to: Mapped[str | None] = mapped_column(String(512), nullable=True)
     resolved_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )

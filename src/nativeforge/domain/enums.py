@@ -60,6 +60,9 @@ class AuditAction(StrEnum):
     org_data_snapshot_exported = "org_data_snapshot_exported"
     pursuit_brief_generated = "pursuit_brief_generated"
     discovery_intake_run_completed = "discovery_intake_run_completed"
+    discovery_review_item_created = "discovery_review_item_created"
+    discovery_review_item_updated = "discovery_review_item_updated"
+    discovery_quality_scored = "discovery_quality_scored"
 
 
 class TribalEntityType(StrEnum):

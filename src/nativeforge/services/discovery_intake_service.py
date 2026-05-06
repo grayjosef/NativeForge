@@ -33,6 +33,7 @@ from nativeforge.repositories import audit_events as audit_repo
 from nativeforge.repositories import discovery_intake_runs as intake_repo
 from nativeforge.repositories import grant_sparks as gs_repo
 from nativeforge.repositories import opportunity_sources as os_repo
+from nativeforge.services import discovery_review_service as d_rev
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services.opportunity_discovery_service import (
@@ -44,6 +45,26 @@ from nativeforge.services.opportunity_discovery_service import (
 
 RUN_SCHEMA_VERSION = 1
 INTAKE_SUMMARY_VERSION = "nf_discovery_intake_summary_v1"
+
+
+def _after_candidate_persisted(
+    session: Session,
+    *,
+    org: Organization,
+    org_type: OrgType,
+    candidate_row: NfDiscoveryIntakeCandidate,
+    registry: NfOpportunitySource,
+    now: datetime,
+) -> None:
+    session.flush()
+    d_rev.process_intake_candidate_review_side_effects(
+        session,
+        org=org,
+        org_type=org_type,
+        candidate=candidate_row,
+        registry=registry,
+        now=now,
+    )
 
 
 class IntakeRunStateError(Exception):
@@ -471,23 +492,30 @@ def process_structured_candidates(
 
         if rejection:
             rejected += 1
-            session.add(
-                NfDiscoveryIntakeCandidate(
-                    organization_id=run.organization_id,
-                    is_demo=run.is_demo,
-                    intake_run_id=run.id,
-                    source_registry_id=run.source_registry_id,
-                    candidate_status=DiscoveryCandidateStatus.rejected.value,
-                    raw_candidate_json=raw_obj,
-                    normalized_candidate_json={"duplicate_key": dup_key_val}
-                    if dup_key_val
-                    else None,
-                    normalization_errors_json={"warnings": norm_warnings}
-                    if norm_warnings
-                    else None,
-                    duplicate_key=dup_key_val,
-                    decision_reason=rejection,
-                )
+            cand = NfDiscoveryIntakeCandidate(
+                organization_id=run.organization_id,
+                is_demo=run.is_demo,
+                intake_run_id=run.id,
+                source_registry_id=run.source_registry_id,
+                candidate_status=DiscoveryCandidateStatus.rejected.value,
+                raw_candidate_json=raw_obj,
+                normalized_candidate_json={"duplicate_key": dup_key_val}
+                if dup_key_val
+                else None,
+                normalization_errors_json={"warnings": norm_warnings}
+                if norm_warnings
+                else None,
+                duplicate_key=dup_key_val,
+                decision_reason=rejection,
+            )
+            session.add(cand)
+            _after_candidate_persisted(
+                session,
+                org=org,
+                org_type=org_type,
+                candidate_row=cand,
+                registry=registry,
+                now=now,
             )
             continue
 
@@ -501,24 +529,31 @@ def process_structured_candidates(
         )
         if existing is not None:
             dup += 1
-            session.add(
-                NfDiscoveryIntakeCandidate(
-                    organization_id=run.organization_id,
-                    is_demo=run.is_demo,
-                    intake_run_id=run.id,
-                    source_registry_id=run.source_registry_id,
-                    candidate_status=DiscoveryCandidateStatus.duplicate.value,
-                    raw_candidate_json=raw_obj,
-                    normalized_candidate_json=_normalized_json_from_preview(
-                        preview, registry
-                    ),
-                    duplicate_key=preview.duplicate_key,
-                    duplicate_of_spark_id=existing.id,
-                    decision_reason="duplicate_key_matches_existing_grant_spark",
-                    native_relevance_score=preview.native_relevance_score,
-                    native_relevance_reasons_json=preview.native_relevance_reasons_json,
-                    freshness_status=preview.freshness_status,
-                )
+            cand = NfDiscoveryIntakeCandidate(
+                organization_id=run.organization_id,
+                is_demo=run.is_demo,
+                intake_run_id=run.id,
+                source_registry_id=run.source_registry_id,
+                candidate_status=DiscoveryCandidateStatus.duplicate.value,
+                raw_candidate_json=raw_obj,
+                normalized_candidate_json=_normalized_json_from_preview(
+                    preview, registry
+                ),
+                duplicate_key=preview.duplicate_key,
+                duplicate_of_spark_id=existing.id,
+                decision_reason="duplicate_key_matches_existing_grant_spark",
+                native_relevance_score=preview.native_relevance_score,
+                native_relevance_reasons_json=preview.native_relevance_reasons_json,
+                freshness_status=preview.freshness_status,
+            )
+            session.add(cand)
+            _after_candidate_persisted(
+                session,
+                org=org,
+                org_type=org_type,
+                candidate_row=cand,
+                registry=registry,
+                now=now,
             )
             continue
 
@@ -535,24 +570,31 @@ def process_structured_candidates(
             )
             if spark is not None:
                 dup += 1
-                session.add(
-                    NfDiscoveryIntakeCandidate(
-                        organization_id=run.organization_id,
-                        is_demo=run.is_demo,
-                        intake_run_id=run.id,
-                        source_registry_id=run.source_registry_id,
-                        candidate_status=DiscoveryCandidateStatus.duplicate.value,
-                        raw_candidate_json=raw_obj,
-                        normalized_candidate_json=_normalized_json_from_preview(
-                            preview, registry
-                        ),
-                        duplicate_key=preview.duplicate_key,
-                        duplicate_of_spark_id=spark.id,
-                        decision_reason="unique_grant_spark_conflict_on_source_and_source_id",
-                        native_relevance_score=preview.native_relevance_score,
-                        native_relevance_reasons_json=preview.native_relevance_reasons_json,
-                        freshness_status=preview.freshness_status,
-                    )
+                cand = NfDiscoveryIntakeCandidate(
+                    organization_id=run.organization_id,
+                    is_demo=run.is_demo,
+                    intake_run_id=run.id,
+                    source_registry_id=run.source_registry_id,
+                    candidate_status=DiscoveryCandidateStatus.duplicate.value,
+                    raw_candidate_json=raw_obj,
+                    normalized_candidate_json=_normalized_json_from_preview(
+                        preview, registry
+                    ),
+                    duplicate_key=preview.duplicate_key,
+                    duplicate_of_spark_id=spark.id,
+                    decision_reason="unique_grant_spark_conflict_on_source_and_source_id",
+                    native_relevance_score=preview.native_relevance_score,
+                    native_relevance_reasons_json=preview.native_relevance_reasons_json,
+                    freshness_status=preview.freshness_status,
+                )
+                session.add(cand)
+                _after_candidate_persisted(
+                    session,
+                    org=org,
+                    org_type=org_type,
+                    candidate_row=cand,
+                    registry=registry,
+                    now=now,
                 )
             else:
                 err_cnt += 1
@@ -593,22 +635,29 @@ def process_structured_candidates(
             continue
 
         accepted += 1
-        session.add(
-            NfDiscoveryIntakeCandidate(
-                organization_id=run.organization_id,
-                is_demo=run.is_demo,
-                intake_run_id=run.id,
-                source_registry_id=run.source_registry_id,
-                candidate_status=DiscoveryCandidateStatus.accepted.value,
-                raw_candidate_json=raw_obj,
-                normalized_candidate_json=_normalized_json_from_spark(spark, registry),
-                duplicate_key=spark.duplicate_key,
-                created_spark_id=spark.id,
-                decision_reason="accepted_into_grant_spark",
-                native_relevance_score=spark.native_relevance_score,
-                native_relevance_reasons_json=spark.native_relevance_reasons_json,
-                freshness_status=spark.freshness_status,
-            )
+        cand = NfDiscoveryIntakeCandidate(
+            organization_id=run.organization_id,
+            is_demo=run.is_demo,
+            intake_run_id=run.id,
+            source_registry_id=run.source_registry_id,
+            candidate_status=DiscoveryCandidateStatus.accepted.value,
+            raw_candidate_json=raw_obj,
+            normalized_candidate_json=_normalized_json_from_spark(spark, registry),
+            duplicate_key=spark.duplicate_key,
+            created_spark_id=spark.id,
+            decision_reason="accepted_into_grant_spark",
+            native_relevance_score=spark.native_relevance_score,
+            native_relevance_reasons_json=spark.native_relevance_reasons_json,
+            freshness_status=spark.freshness_status,
+        )
+        session.add(cand)
+        _after_candidate_persisted(
+            session,
+            org=org,
+            org_type=org_type,
+            candidate_row=cand,
+            registry=registry,
+            now=now,
         )
 
     run.candidate_count = len(candidates)

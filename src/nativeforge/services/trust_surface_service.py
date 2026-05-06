@@ -20,12 +20,14 @@ from nativeforge.db.models import (
 from nativeforge.domain.enums import AuditAction
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories import audit_events as audit_repo
+from nativeforge.repositories import discovery_review_items as nf_rev_repo
 from nativeforge.repositories import form_packages as fp_repo
 from nativeforge.repositories import grant_sparks as gs_repo
 from nativeforge.repositories import nofo_extraction as ne_repo
 from nativeforge.repositories import pursuits as pursuit_repo
 from nativeforge.repositories import review_artifacts as ra_repo
 from nativeforge.repositories import spark_scores as score_repo
+from nativeforge.services import discovery_review_service as dr_svc
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import pursuit_service as psvc
 from nativeforge.services import tribal_profile_service as tps
@@ -231,6 +233,13 @@ def export_org_data_snapshot(
         org_id=org_id,
         org_type=org_type,
     )
+    rev_rows = nf_rev_repo.list_review_items_for_org(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        limit=5000,
+    )
+    rev_by_status = Counter(r.review_status for r in rev_rows)
     manifest = build_trust_manifest(org_type=org_type)
     spark_title_by_id = {s.id: s.opportunity_title for s in sparks}
     audit_tail = audit_repo.list_audit_events_for_org(
@@ -268,6 +277,13 @@ def export_org_data_snapshot(
             _form_pkg_brief(pkg, include_sf424=include_sf424_previews)
             for pkg in packages
         ],
+        "discovery_review_summary": {
+            "total": len(rev_rows),
+            "by_review_status": dict(rev_by_status),
+        },
+        "discovery_review_items_sample": [
+            dr_svc.review_item_to_dict(r) for r in rev_rows[:50]
+        ],
         "counts": {
             "grant_sparks": len(sparks),
             "pursuits": len(pursuits),
@@ -275,6 +291,7 @@ def export_org_data_snapshot(
             "nofo_extraction_runs": len(runs),
             "form_packages": len(packages),
             "review_artifacts": len(review_arts),
+            "discovery_review_items": len(rev_rows),
         },
         "audit_events_sample": [audit_repo.audit_event_to_dict(e) for e in audit_tail],
     }

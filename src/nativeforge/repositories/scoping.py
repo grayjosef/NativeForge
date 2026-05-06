@@ -11,6 +11,7 @@ from nativeforge.db.models import (
     NfAuditEvent,
     NfDiscoveryIntakeCandidate,
     NfDiscoveryIntakeRun,
+    NfDiscoveryReviewItem,
     NfFormPackage,
     NfGrantPursuit,
     NfGrantSpark,
@@ -171,6 +172,60 @@ def select_discovery_intake_candidates_for_run(
             *scope,
         )
         .order_by(NfDiscoveryIntakeCandidate.created_at.asc())
+    )
+
+
+def select_discovery_intake_candidate_scoped(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    candidate_id: uuid.UUID,
+) -> Select:
+    scope = nf_discovery_intake_candidate_scope(org_id=org_id, org_type=org_type)
+    return select(NfDiscoveryIntakeCandidate).where(
+        NfDiscoveryIntakeCandidate.id == candidate_id,
+        *scope,
+    )
+
+
+def nf_discovery_review_item_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfDiscoveryReviewItem.organization_id == org_id,
+        NfDiscoveryReviewItem.is_demo.is_(is_demo),
+    )
+
+
+def select_discovery_review_items_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_discovery_review_item_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfDiscoveryReviewItem)
+        .where(*scope)
+        .order_by(
+            NfDiscoveryReviewItem.priority.desc(),
+            NfDiscoveryReviewItem.created_at.asc(),
+        )
+    )
+
+
+def select_discovery_review_item_scoped(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    review_item_id: uuid.UUID,
+) -> Select:
+    scope = nf_discovery_review_item_scope(org_id=org_id, org_type=org_type)
+    return select(NfDiscoveryReviewItem).where(
+        NfDiscoveryReviewItem.id == review_item_id,
+        *scope,
     )
 
 
