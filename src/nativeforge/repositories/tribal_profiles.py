@@ -39,6 +39,7 @@ def append_profile_audit(
         is_demo=profile.is_demo,
         review_artifact_id=None,
         tribal_profile_id=profile.id,
+        extraction_run_id=None,
         action=action.value,
         payload=payload or {},
         actor_id=actor_id,

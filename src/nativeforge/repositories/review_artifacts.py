@@ -45,6 +45,7 @@ def create_review_artifact(
             is_demo=is_demo,
             review_artifact_id=art.id,
             tribal_profile_id=None,
+            extraction_run_id=None,
             action=AuditAction.artifact_created.value,
             payload={
                 "artifact_type": artifact_type.value,
@@ -101,6 +102,7 @@ def append_audit(
     action: AuditAction,
     payload: dict | None,
     actor_id: uuid.UUID | None,
+    extraction_run_id: uuid.UUID | None = None,
 ) -> NfAuditEvent:
     ev = NfAuditEvent(
         id=uuid.uuid4(),
@@ -108,6 +110,7 @@ def append_audit(
         is_demo=artifact.is_demo,
         review_artifact_id=artifact.id,
         tribal_profile_id=None,
+        extraction_run_id=extraction_run_id,
         action=action.value,
         payload=payload or {},
         actor_id=actor_id,

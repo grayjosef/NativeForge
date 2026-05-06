@@ -18,6 +18,7 @@ class ReviewArtifactType(StrEnum):
     sprint0_placeholder = "sprint0_placeholder"
     ai_generated = "ai_generated"
     form_preview = "form_preview"
+    nofo_extraction = "nofo_extraction"
 
 
 class ReviewStatus(StrEnum):
@@ -43,6 +44,7 @@ class AuditAction(StrEnum):
     profile_created = "profile_created"
     profile_updated = "profile_updated"
     profile_exported = "profile_exported"
+    nofo_extraction_completed = "nofo_extraction_completed"
 
 
 class TribalEntityType(StrEnum):
@@ -104,3 +106,16 @@ class GrantPipelineStage(StrEnum):
     submitted = "submitted"
     awarded = "awarded"
     not_pursuing = "not_pursuing"
+
+
+class SparkRequirementKind(StrEnum):
+    """Requirement row kind (denormalized NOFO extraction projection)."""
+
+    form = "form"
+    attachment = "attachment"
+    narrative_section = "narrative_section"
+    eligibility = "eligibility"
+    match = "match"
+    resolution = "resolution"
+    reporting = "reporting"
+    special_condition = "special_condition"

@@ -9,7 +9,9 @@ from sqlalchemy import Select, select
 from nativeforge.db.models import (
     NfAuditEvent,
     NfGrantSpark,
+    NfNofoExtractionRun,
     NfReviewArtifact,
+    NfSparkRequirement,
     NfTribalProfile,
 )
 from nativeforge.lib.demo_isolation import OrgType
@@ -70,6 +72,61 @@ def nf_grant_spark_scope(
     return (
         NfGrantSpark.organization_id == org_id,
         NfGrantSpark.is_demo.is_(is_demo),
+    )
+
+
+def nf_nofo_extraction_run_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfNofoExtractionRun.organization_id == org_id,
+        NfNofoExtractionRun.is_demo.is_(is_demo),
+    )
+
+
+def nf_spark_requirement_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfSparkRequirement.organization_id == org_id,
+        NfSparkRequirement.is_demo.is_(is_demo),
+    )
+
+
+def select_latest_nofo_run_for_spark(
+    *,
+    spark_id: uuid.UUID,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_nofo_extraction_run_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfNofoExtractionRun)
+        .where(NfNofoExtractionRun.grant_spark_id == spark_id)
+        .where(*scope)
+        .order_by(NfNofoExtractionRun.created_at.desc())
+        .limit(1)
+    )
+
+
+def select_requirements_for_extraction_run(
+    *,
+    extraction_run_id: uuid.UUID,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_spark_requirement_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfSparkRequirement)
+        .where(NfSparkRequirement.extraction_run_id == extraction_run_id)
+        .where(*scope)
+        .order_by(NfSparkRequirement.sort_order.asc())
     )
 
 

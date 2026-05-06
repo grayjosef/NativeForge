@@ -28,6 +28,7 @@ from nativeforge.domain.enums import (
     GrantSparkSource,
     OrganizationOrgType,
     SamRegistrationStatus,
+    SparkRequirementKind,
     TribalEntityType,
 )
 
@@ -50,6 +51,11 @@ def _grant_award_type_in_sql() -> str:
 def _grant_pipeline_stage_in_sql() -> str:
     vals = ", ".join(f"'{p.value}'" for p in GrantPipelineStage)
     return f"pipeline_stage IN ({vals})"
+
+
+def _spark_requirement_kind_in_sql() -> str:
+    vals = ", ".join(f"'{k.value}'" for k in SparkRequirementKind)
+    return f"requirement_type IN ({vals})"
 
 
 class Organization(Base):
@@ -261,6 +267,90 @@ class NfGrantSpark(Base):
     organization: Mapped[Organization] = relationship()
 
 
+class NfNofoExtractionRun(Base):
+    """Auditable NOFO extraction run (stub or future LLM pipeline)."""
+
+    __tablename__ = "nf_nofo_extraction_runs"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    grant_spark_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_sparks.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    review_artifact_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_review_artifacts.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    extractor_engine: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_text_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    nofo_summary: Mapped[str] = mapped_column(Text(), nullable=False)
+    structured_requirements: Mapped[dict] = mapped_column(JSON, nullable=False)
+    checklist_snapshot: Mapped[list | dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    grant_spark: Mapped[NfGrantSpark] = relationship()
+    review_artifact: Mapped[NfReviewArtifact | None] = relationship()
+
+
+class NfSparkRequirement(Base):
+    """Checklist-ready projection row for one extraction run."""
+
+    __tablename__ = "nf_spark_requirements"
+    __table_args__ = (
+        CheckConstraint(
+            _spark_requirement_kind_in_sql(),
+            name="ck_nf_spark_requirements_kind",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    grant_spark_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_sparks.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    extraction_run_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_nofo_extraction_runs.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    requirement_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    label: Mapped[str] = mapped_column(String(512), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    required: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    page_limit: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    sort_order: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
+
+    extraction_run: Mapped[NfNofoExtractionRun] = relationship()
+
+
 class NfAuditEvent(Base):
     """Append-only audit trail for review transitions and artifact creation."""
 
@@ -288,6 +378,12 @@ class NfAuditEvent(Base):
         nullable=True,
         index=True,
     )
+    extraction_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_nofo_extraction_runs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     action: Mapped[str] = mapped_column(String(64), nullable=False)
     payload: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     actor_id: Mapped[uuid.UUID | None] = mapped_column(
@@ -300,6 +396,7 @@ class NfAuditEvent(Base):
 
     review_artifact: Mapped[NfReviewArtifact | None] = relationship()
     tribal_profile: Mapped[NfTribalProfile | None] = relationship()
+    extraction_run: Mapped[NfNofoExtractionRun | None] = relationship()
 
 
 def is_demo_for_org_type(org_type: str) -> bool:
