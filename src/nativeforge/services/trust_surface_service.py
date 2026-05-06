@@ -30,6 +30,7 @@ from nativeforge.repositories import review_artifacts as ra_repo
 from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.repositories import spark_scores as score_repo
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
+from nativeforge.services import discovery_operator_workbench_service as op_wb
 from nativeforge.services import discovery_review_service as dr_svc
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import pursuit_service as psvc
@@ -260,6 +261,21 @@ def export_org_data_snapshot(
         now=datetime.now(UTC),
     )
     coverage_gap_compact = dcg_svc.coverage_gap_intel_summary_compact(gap_intel_full)
+    operator_pack = op_wb.build_operator_decision_pack(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        now=datetime.now(UTC),
+        limit=50,
+        intake_run_limit=40,
+    )
+    operator_decision_summary = op_wb.operator_decision_pack_export_summary(
+        operator_pack
+    )
+    operator_priority_actions_sample = op_wb.export_priority_actions_sample(
+        operator_pack,
+        cap=50,
+    )
     check_run_rows = scr_repo.list_source_check_runs_for_org(
         session,
         org_id=org_id,
@@ -314,6 +330,9 @@ def export_org_data_snapshot(
         "coverage_gap_intelligence": coverage_gap_compact,
         "coverage_gap_sample": gap_intel_full["coverage_gaps"][:50],
         "source_recommendations_sample": gap_intel_full["source_recommendations"][:50],
+        "operator_decision_pack_summary": operator_decision_summary,
+        "operator_workbench_summary": operator_decision_summary,
+        "operator_priority_actions_sample": operator_priority_actions_sample,
         "source_check_runs_sample": [
             sfs.check_run_to_dict(r) for r in check_run_rows[:50]
         ],
@@ -328,6 +347,9 @@ def export_org_data_snapshot(
             "source_check_runs": len(check_run_rows),
             "coverage_gap_rows": len(gap_intel_full["coverage_gaps"]),
             "source_recommendations": len(gap_intel_full["source_recommendations"]),
+            "operator_priority_actions": int(
+                operator_pack["summary"]["decision_items_returned"]
+            ),
         },
         "audit_events_sample": [audit_repo.audit_event_to_dict(e) for e in audit_tail],
     }

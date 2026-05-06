@@ -214,6 +214,19 @@ def select_discovery_intake_runs_for_org_source(
     )
 
 
+def select_discovery_intake_runs_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_discovery_intake_run_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfDiscoveryIntakeRun)
+        .where(*scope)
+        .order_by(NfDiscoveryIntakeRun.started_at.desc())
+    )
+
+
 def select_discovery_intake_candidates_for_run(
     *,
     org_id: uuid.UUID,

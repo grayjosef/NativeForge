@@ -13,6 +13,7 @@ from nativeforge.repositories.scoping import (
     nf_discovery_intake_run_scope,
     select_discovery_intake_candidate_scoped,
     select_discovery_intake_candidates_for_run,
+    select_discovery_intake_runs_for_org,
     select_discovery_intake_runs_for_org_source,
 )
 
@@ -41,6 +42,20 @@ def list_discovery_intake_runs_for_org_source(
         org_type=org_type,
         source_registry_id=source_registry_id,
     )
+    return list(session.scalars(q))
+
+
+def list_discovery_intake_runs_for_org(
+    *,
+    session: Session,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    limit: int = 50,
+) -> list[NfDiscoveryIntakeRun]:
+    q = select_discovery_intake_runs_for_org(
+        org_id=org_id,
+        org_type=org_type,
+    ).limit(max(1, min(limit, 500)))
     return list(session.scalars(q))
 
 

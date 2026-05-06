@@ -43,6 +43,7 @@ from nativeforge.repositories import organizations as org_repo
 from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import discovery_intake_service as d_intake
+from nativeforge.services import discovery_operator_workbench_service as op_wb
 from nativeforge.services import discovery_review_service as d_review
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import opportunity_discovery_service as ods
@@ -494,6 +495,65 @@ def demo_discovery_source_recommendations(
         "generated_at": filtered["generated_at"],
         "source_recommendations": filtered["source_recommendations"],
     }
+
+
+@demo_discovery_router.get("/{org_id}/discovery/operator-decision-pack")
+@demo_discovery_router.get("/{org_id}/discovery/operator-workbench")
+def demo_operator_decision_pack(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+    intake_run_limit: Annotated[int, Query(ge=1, le=200)] = 40,
+    severity: Annotated[str | None, Query()] = None,
+    item_type: Annotated[str | None, Query()] = None,
+    action: Annotated[str | None, Query()] = None,
+    source_registry_id: Annotated[uuid.UUID | None, Query()] = None,
+    include_snapshots: Annotated[bool, Query()] = True,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    return op_wb.build_operator_decision_pack(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+        intake_run_limit=intake_run_limit,
+        severity=severity,
+        item_type=item_type,
+        action=action,
+        source_registry_id=source_registry_id,
+        limit=limit,
+        include_snapshots=include_snapshots,
+    )
+
+
+@demo_discovery_router.get("/{org_id}/discovery/operator-actions")
+def demo_operator_actions(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+    intake_run_limit: Annotated[int, Query(ge=1, le=200)] = 40,
+    severity: Annotated[str | None, Query()] = None,
+    item_type: Annotated[str | None, Query()] = None,
+    action: Annotated[str | None, Query()] = None,
+    source_registry_id: Annotated[uuid.UUID | None, Query()] = None,
+    include_snapshots: Annotated[bool, Query()] = True,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    return op_wb.build_operator_actions_pack(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+        intake_run_limit=intake_run_limit,
+        severity=severity,
+        item_type=item_type,
+        action=action,
+        source_registry_id=source_registry_id,
+        limit=limit,
+        include_snapshots=include_snapshots,
+    )
 
 
 @demo_discovery_router.get("/{org_id}/discovery/sources")
@@ -985,6 +1045,65 @@ def real_discovery_source_recommendations(
         "generated_at": filtered["generated_at"],
         "source_recommendations": filtered["source_recommendations"],
     }
+
+
+@real_discovery_router.get("/{org_id}/discovery/operator-decision-pack")
+@real_discovery_router.get("/{org_id}/discovery/operator-workbench")
+def real_operator_decision_pack(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+    intake_run_limit: Annotated[int, Query(ge=1, le=200)] = 40,
+    severity: Annotated[str | None, Query()] = None,
+    item_type: Annotated[str | None, Query()] = None,
+    action: Annotated[str | None, Query()] = None,
+    source_registry_id: Annotated[uuid.UUID | None, Query()] = None,
+    include_snapshots: Annotated[bool, Query()] = True,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    return op_wb.build_operator_decision_pack(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+        intake_run_limit=intake_run_limit,
+        severity=severity,
+        item_type=item_type,
+        action=action,
+        source_registry_id=source_registry_id,
+        limit=limit,
+        include_snapshots=include_snapshots,
+    )
+
+
+@real_discovery_router.get("/{org_id}/discovery/operator-actions")
+def real_operator_actions(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+    intake_run_limit: Annotated[int, Query(ge=1, le=200)] = 40,
+    severity: Annotated[str | None, Query()] = None,
+    item_type: Annotated[str | None, Query()] = None,
+    action: Annotated[str | None, Query()] = None,
+    source_registry_id: Annotated[uuid.UUID | None, Query()] = None,
+    include_snapshots: Annotated[bool, Query()] = True,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    return op_wb.build_operator_actions_pack(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+        intake_run_limit=intake_run_limit,
+        severity=severity,
+        item_type=item_type,
+        action=action,
+        source_registry_id=source_registry_id,
+        limit=limit,
+        include_snapshots=include_snapshots,
+    )
 
 
 @real_discovery_router.get("/{org_id}/discovery/sources")

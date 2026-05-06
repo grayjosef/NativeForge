@@ -456,3 +456,45 @@ class DiscoveryRecommendedAction(StrEnum):
     verify_source = "verify_source"
     verify_deadline = "verify_deadline"
     needs_human_review = "needs_human_review"
+
+
+# --- Discovery operator workbench (Sprint 17) ---
+
+
+class OperatorDecisionItemType(StrEnum):
+    """Unified classification for operator decision-pack rows."""
+
+    review_item = "review_item"
+    source_due = "source_due"
+    source_overdue = "source_overdue"
+    source_failing = "source_failing"
+    coverage_gap = "coverage_gap"
+    source_recommendation = "source_recommendation"
+    intake_run_attention = "intake_run_attention"
+    quality_risk = "quality_risk"
+    source_verification = "source_verification"
+    source_yield_issue = "source_yield_issue"
+
+
+class OperatorDecisionSeverity(StrEnum):
+    """Relative urgency for an operator decision row."""
+
+    info = "info"
+    low = "low"
+    medium = "medium"
+    high = "high"
+    critical = "critical"
+
+
+class OperatorDecisionAction(StrEnum):
+    """Suggested operator verb for a decision row."""
+
+    review = "review"
+    verify = "verify"
+    check_source = "check_source"
+    resolve_failure = "resolve_failure"
+    expand_coverage = "expand_coverage"
+    inspect_intake_run = "inspect_intake_run"
+    improve_source_quality = "improve_source_quality"
+    monitor = "monitor"
+    defer = "defer"
