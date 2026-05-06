@@ -1,9 +1,26 @@
 /**
- * Live M0 API sequence for the buyer shell — matches tests/test_m0_full_chain_demo.py.
+ * Live M0 API sequence for operator tools — matches tests/test_m0_full_chain_demo.py.
  * Deterministic stub / rule-based M0 only; no live AI or Grants.gov.
+ * Core HTTP calls live in m0ApiClient.ts for reuse by the product workspace.
  */
 
 import { buildM0Path, type Plane } from "./m0Flow";
+import {
+  createGrantSpark,
+  createOrUpdateTribalProfile,
+  demoGrantSparkBody,
+  demoTribalProfileBody,
+  getAuditEvents,
+  getNofoRequirements,
+  getOrgDataSnapshot,
+  getTrustManifest,
+  getReviewSummary,
+  openPursuit,
+  postFormPackage,
+  postNofoExtractStub,
+  postScoreSpark,
+  getPursuitDetail,
+} from "./m0ApiClient";
 
 export type RunnerStepStatus = "pending" | "running" | "success" | "error";
 
@@ -22,67 +39,6 @@ export interface RunM0LiveDemoResult {
   sparkId?: string;
   pursuitId?: string;
   failedStepKey?: string;
-}
-
-function jsonHeaders(orgId: string): Record<string, string> {
-  return {
-    "X-NF-Org-Id": orgId.trim(),
-    "Content-Type": "application/json",
-  };
-}
-
-function orgHeaderOnly(orgId: string): Record<string, string> {
-  return { "X-NF-Org-Id": orgId.trim() };
-}
-
-async function readHttpError(res: Response): Promise<string> {
-  const t = await res.text();
-  try {
-    const j = JSON.parse(t) as { detail?: unknown };
-    if (j.detail !== undefined) {
-      return typeof j.detail === "string" ? j.detail : JSON.stringify(j.detail);
-    }
-  } catch {
-    /* ignore */
-  }
-  return t.slice(0, 500) || `HTTP ${res.status}`;
-}
-
-/** Synthetic profile labels only — not customer data. */
-function demoTribalProfileBody() {
-  return {
-    legal_name: "M0 buyer shell demo profile",
-    entity_type: "tribal_government",
-    uei: "UEIM0SHELL00000",
-    ein: "00-0000000",
-    physical_address: {
-      line1: "1 Demo Lane",
-      city: "Tahlequah",
-      state: "OK",
-      zip: "74464",
-    },
-    grants_manager: {
-      name: "M0 shell operator",
-      email: "m0-shell.operator@example.invalid",
-    },
-  };
-}
-
-function demoGrantSparkBody(sourceId: string, applicationDeadlineIso: string) {
-  return {
-    source: "manual",
-    source_id: sourceId,
-    agency: "HUD",
-    opportunity_title: "M0 shell demo opportunity",
-    award_type: "grant",
-    cfda_assistance_listing: "14.134",
-    opportunity_number: "M0-SHELL-001",
-    raw_nofo_text:
-      "SECTION I. Eligibility: federally recognized tribes. " +
-      "SECTION II. Forms: SF-424 required.",
-    tribal_eligible: true,
-    application_deadline: applicationDeadlineIso,
-  };
 }
 
 const STEP_TEMPLATE: Omit<RunnerLogStep, "status" | "summary" | "error">[] = [
@@ -124,7 +80,6 @@ export async function runM0LiveDemoSequence(
   onStepsChange: (steps: RunnerLogStep[]) => void,
 ): Promise<RunM0LiveDemoResult> {
   const o = orgId.trim();
-  const h = jsonHeaders(o);
   const actorId = crypto.randomUUID();
   const sourceId = `m0-shell-${crypto.randomUUID()}`;
   const applicationDeadline = new Date(Date.now() + 50 * 86_400_000).toISOString();
@@ -141,283 +96,192 @@ export async function runM0LiveDemoSequence(
     sync();
   };
 
-  const abort = (key: string): RunM0LiveDemoResult => ({
-    ok: false,
-    failedStepKey: key,
-  });
-
-  const requireOk = async (res: Response, key: string): Promise<boolean> => {
-    if (res.ok) {
-      return true;
+  const runStep = async (key: string, fn: () => Promise<void>) => {
+    setStatus(key, { status: "running" });
+    try {
+      await fn();
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "request failed";
+      setStatus(key, { status: "error", error: msg });
+      throw e;
     }
-    setStatus(key, { status: "error", error: await readHttpError(res) });
-    return false;
   };
 
-  // 1) Tribal profile — POST, or PUT on 409
-  {
-    const k = "tribal_profile";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, "/tribal-profile");
-    const body = demoTribalProfileBody();
-    let res = await fetch(`${baseUrl}${path}`, {
-      method: "POST",
-      headers: h,
-      body: JSON.stringify(body),
-    });
-    let summary: string;
-    if (res.status === 409) {
-      res = await fetch(`${baseUrl}${path}`, {
-        method: "PUT",
-        headers: h,
-        body: JSON.stringify(body),
+  let sparkId = "";
+  let pursuitId = "";
+
+  try {
+    await runStep("tribal_profile", async () => {
+      const path = buildM0Path(plane, o, "/tribal-profile");
+      const { mode } = await createOrUpdateTribalProfile(
+        baseUrl,
+        plane,
+        o,
+        demoTribalProfileBody(),
+      );
+      const summary =
+        mode === "updated"
+          ? "updated (PUT) — existing profile for org"
+          : "created (POST)";
+      setStatus("tribal_profile", {
+        status: "success",
+        summary,
+        pathLine: `POST|PUT ${path}`,
       });
-      if (!(await requireOk(res, k))) {
-        return abort(k);
+    });
+
+    await runStep("grant_spark", async () => {
+      const row = await createGrantSpark(
+        baseUrl,
+        plane,
+        o,
+        demoGrantSparkBody(sourceId, applicationDeadline),
+      );
+      const id = row.id as string | undefined;
+      if (!id) {
+        throw new Error("response missing id");
       }
-      summary = "updated (PUT) — existing profile for org";
-    } else {
-      if (!(await requireOk(res, k))) {
-        return abort(k);
+      sparkId = id;
+      setStatus("grant_spark", {
+        status: "success",
+        summary: `spark id ${sparkId.slice(0, 8)}…`,
+      });
+    });
+
+    await runStep("nofo_extract", async () => {
+      const path = buildM0Path(
+        plane,
+        o,
+        `/grant-sparks/${sparkId}/nofo/extract-stub`,
+      );
+      setStatus("nofo_extract", { pathLine: `POST ${path}` });
+      const j = await postNofoExtractStub(baseUrl, plane, o, sparkId);
+      const n = j.checklist_row_count ?? "?";
+      setStatus("nofo_extract", {
+        status: "success",
+        summary: `checklist rows: ${n}`,
+      });
+    });
+
+    await runStep("requirements", async () => {
+      const path = buildM0Path(
+        plane,
+        o,
+        `/grant-sparks/${sparkId}/nofo/requirements`,
+      );
+      setStatus("requirements", { pathLine: `GET ${path}` });
+      const j = await getNofoRequirements(baseUrl, plane, o, sparkId);
+      const n = Array.isArray(j.requirements) ? j.requirements.length : 0;
+      setStatus("requirements", {
+        status: "success",
+        summary: `${n} requirement(s)`,
+      });
+    });
+
+    await runStep("score", async () => {
+      const path = buildM0Path(plane, o, `/grant-sparks/${sparkId}/score`);
+      setStatus("score", { pathLine: `POST ${path}` });
+      await postScoreSpark(baseUrl, plane, o, sparkId);
+      setStatus("score", { status: "success", summary: "score persisted" });
+    });
+
+    await runStep("pursuit", async () => {
+      const path = buildM0Path(plane, o, `/grant-sparks/${sparkId}/pursuit`);
+      const url = new URL(path, "http://local.example");
+      url.searchParams.set("actor_id", actorId);
+      setStatus("pursuit", { pathLine: `POST ${url.pathname}${url.search}` });
+      const j = await openPursuit(baseUrl, plane, o, sparkId, actorId, "M0 shell demo pursuit.");
+      const id = j.id as string | undefined;
+      if (!id) {
+        throw new Error("response missing id");
       }
-      summary = "created (POST)";
-    }
-    setStatus(k, { status: "success", summary, pathLine: `POST|PUT ${path}` });
-  }
+      pursuitId = id;
+      setStatus("pursuit", {
+        status: "success",
+        summary: `pursuit id ${pursuitId.slice(0, 8)}…`,
+      });
+    });
 
-  // 2) Grant Spark
-  let sparkId: string;
-  {
-    const k = "grant_spark";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, "/grant-sparks");
-    const res = await fetch(`${baseUrl}${path}`, {
-      method: "POST",
-      headers: h,
-      body: JSON.stringify(demoGrantSparkBody(sourceId, applicationDeadline)),
+    await runStep("pursuit_detail", async () => {
+      const path = buildM0Path(plane, o, `/pursuits/${pursuitId}`);
+      setStatus("pursuit_detail", { pathLine: `GET ${path}` });
+      const j = await getPursuitDetail(baseUrl, plane, o, pursuitId);
+      const tasks = j.tasks as unknown[] | undefined;
+      const cal = j.calendar_events as unknown[] | undefined;
+      const t = tasks?.length ?? 0;
+      const c = cal?.length ?? 0;
+      setStatus("pursuit_detail", {
+        status: "success",
+        summary: `${t} task(s), ${c} calendar event(s)`,
+      });
     });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { id?: string };
-    if (!j.id) {
-      setStatus(k, { status: "error", error: "response missing id" });
-      return abort(k);
-    }
-    sparkId = j.id;
-    setStatus(k, {
-      status: "success",
-      summary: `spark id ${sparkId.slice(0, 8)}…`,
-    });
-  }
 
-  // 3) NOFO extract-stub
-  {
-    const k = "nofo_extract";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(
-      plane,
-      o,
-      `/grant-sparks/${sparkId}/nofo/extract-stub`,
-    );
-    setStatus(k, { pathLine: `POST ${path}` });
-    const res = await fetch(`${baseUrl}${path}`, {
-      method: "POST",
-      headers: orgHeaderOnly(o),
+    await runStep("form_package", async () => {
+      const path = buildM0Path(plane, o, `/pursuits/${pursuitId}/form-package`);
+      const url = new URL(path, "http://local.example");
+      url.searchParams.set("actor_id", actorId);
+      setStatus("form_package", { pathLine: `POST ${url.pathname}${url.search}` });
+      const j = await postFormPackage(baseUrl, plane, o, pursuitId, actorId);
+      const engine = j.package_engine as string | undefined;
+      setStatus("form_package", {
+        status: "success",
+        summary: engine ?? "form package created",
+      });
     });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { checklist_row_count?: number };
-    setStatus(k, {
-      status: "success",
-      summary: `checklist rows: ${j.checklist_row_count ?? "?"}`,
-    });
-  }
 
-  // 4) Requirements
-  {
-    const k = "requirements";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(
-      plane,
-      o,
-      `/grant-sparks/${sparkId}/nofo/requirements`,
-    );
-    setStatus(k, { pathLine: `GET ${path}` });
-    const res = await fetch(`${baseUrl}${path}`, { headers: { "X-NF-Org-Id": o } });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { requirements?: unknown[] };
-    const n = Array.isArray(j.requirements) ? j.requirements.length : 0;
-    setStatus(k, { status: "success", summary: `${n} requirement(s)` });
-  }
+    await runStep("trust_manifest", async () => {
+      const path = buildM0Path(plane, o, "/trust/manifest");
+      setStatus("trust_manifest", { pathLine: `GET ${path}` });
+      const j = await getTrustManifest(baseUrl, plane, o);
+      const ver = j.manifest_schema_version as string | undefined;
+      setStatus("trust_manifest", {
+        status: "success",
+        summary: ver ?? "ok",
+      });
+    });
 
-  // 5) Score
-  {
-    const k = "score";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, `/grant-sparks/${sparkId}/score`);
-    setStatus(k, { pathLine: `POST ${path}` });
-    const res = await fetch(`${baseUrl}${path}`, {
-      method: "POST",
-      headers: orgHeaderOnly(o),
+    await runStep("audit_events", async () => {
+      const path = buildM0Path(plane, o, "/trust/audit-events");
+      const url = new URL(path, "http://local.example");
+      url.searchParams.set("limit", "100");
+      setStatus("audit_events", { pathLine: `GET ${url.pathname}${url.search}` });
+      const j = await getAuditEvents(baseUrl, plane, o, 100);
+      const n = Array.isArray(j.events) ? j.events.length : 0;
+      setStatus("audit_events", { status: "success", summary: `${n} event(s)` });
     });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    setStatus(k, { status: "success", summary: "score persisted" });
-  }
 
-  // 6) Pursuit
-  let pursuitId: string;
-  {
-    const k = "pursuit";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, `/grant-sparks/${sparkId}/pursuit`);
-    const url = new URL(path, "http://local.example");
-    url.searchParams.set("actor_id", actorId);
-    const withQuery = `${url.pathname}${url.search}`;
-    setStatus(k, { pathLine: `POST ${withQuery}` });
-    const res = await fetch(`${baseUrl}${withQuery}`, {
-      method: "POST",
-      headers: h,
-      body: JSON.stringify({ notes: "M0 shell demo pursuit." }),
+    await runStep("review_summary", async () => {
+      const path = buildM0Path(plane, o, "/trust/review-summary");
+      setStatus("review_summary", { pathLine: `GET ${path}` });
+      const j = await getReviewSummary(baseUrl, plane, o);
+      const n = j.review_artifact_count ?? "?";
+      setStatus("review_summary", {
+        status: "success",
+        summary: `artifacts: ${n}`,
+      });
     });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { id?: string };
-    if (!j.id) {
-      setStatus(k, { status: "error", error: "response missing id" });
-      return abort(k);
-    }
-    pursuitId = j.id;
-    setStatus(k, {
-      status: "success",
-      summary: `pursuit id ${pursuitId.slice(0, 8)}…`,
-    });
-  }
 
-  // 7) Pursuit detail
-  {
-    const k = "pursuit_detail";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, `/pursuits/${pursuitId}`);
-    setStatus(k, { pathLine: `GET ${path}` });
-    const res = await fetch(`${baseUrl}${path}`, { headers: { "X-NF-Org-Id": o } });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as {
-      tasks?: unknown[];
-      calendar_events?: { kind?: string }[];
-    };
-    const t = j.tasks?.length ?? 0;
-    const c = j.calendar_events?.length ?? 0;
-    setStatus(k, { status: "success", summary: `${t} task(s), ${c} calendar event(s)` });
-  }
-
-  // 8) Form package
-  {
-    const k = "form_package";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, `/pursuits/${pursuitId}/form-package`);
-    const url = new URL(path, "http://local.example");
-    url.searchParams.set("actor_id", actorId);
-    const withQuery = `${url.pathname}${url.search}`;
-    setStatus(k, { pathLine: `POST ${withQuery}` });
-    const res = await fetch(`${baseUrl}${withQuery}`, {
-      method: "POST",
-      headers: orgHeaderOnly(o),
+    await runStep("org_export", async () => {
+      const path = buildM0Path(plane, o, "/export/org-data-snapshot");
+      const url = new URL(path, "http://local.example");
+      url.searchParams.set("audit_sample_limit", "50");
+      url.searchParams.set("actor_id", actorId);
+      url.searchParams.set("include_sf424_previews", "false");
+      setStatus("org_export", { pathLine: `GET ${url.pathname}${url.search}` });
+      const j = await getOrgDataSnapshot(baseUrl, plane, o, {
+        actorId,
+        auditSampleLimit: 50,
+        includeSf424Previews: false,
+      });
+      const ver = j.snapshot_schema_version as string | undefined;
+      setStatus("org_export", {
+        status: "success",
+        summary: ver ?? "exported",
+      });
     });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { package_engine?: string };
-    setStatus(k, {
-      status: "success",
-      summary: j.package_engine ?? "form package created",
-    });
-  }
-
-  // 9) Trust manifest
-  {
-    const k = "trust_manifest";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, "/trust/manifest");
-    setStatus(k, { pathLine: `GET ${path}` });
-    const res = await fetch(`${baseUrl}${path}`, { headers: { "X-NF-Org-Id": o } });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { manifest_schema_version?: string };
-    setStatus(k, {
-      status: "success",
-      summary: j.manifest_schema_version ?? "ok",
-    });
-  }
-
-  // 10) Audit events
-  {
-    const k = "audit_events";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, "/trust/audit-events");
-    const url = new URL(path, "http://local.example");
-    url.searchParams.set("limit", "100");
-    const withQuery = `${url.pathname}${url.search}`;
-    setStatus(k, { pathLine: `GET ${withQuery}` });
-    const res = await fetch(`${baseUrl}${withQuery}`, {
-      headers: { "X-NF-Org-Id": o },
-    });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { events?: unknown[] };
-    const n = Array.isArray(j.events) ? j.events.length : 0;
-    setStatus(k, { status: "success", summary: `${n} event(s)` });
-  }
-
-  // 11) Review summary
-  {
-    const k = "review_summary";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, "/trust/review-summary");
-    setStatus(k, { pathLine: `GET ${path}` });
-    const res = await fetch(`${baseUrl}${path}`, { headers: { "X-NF-Org-Id": o } });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { review_artifact_count?: number };
-    setStatus(k, {
-      status: "success",
-      summary: `artifacts: ${j.review_artifact_count ?? "?"}`,
-    });
-  }
-
-  // 12) Org export
-  {
-    const k = "org_export";
-    setStatus(k, { status: "running" });
-    const path = buildM0Path(plane, o, "/export/org-data-snapshot");
-    const url = new URL(path, "http://local.example");
-    url.searchParams.set("audit_sample_limit", "50");
-    url.searchParams.set("actor_id", actorId);
-    url.searchParams.set("include_sf424_previews", "false");
-    const withQuery = `${url.pathname}${url.search}`;
-    setStatus(k, { pathLine: `GET ${withQuery}` });
-    const res = await fetch(`${baseUrl}${withQuery}`, {
-      headers: { "X-NF-Org-Id": o },
-    });
-    if (!(await requireOk(res, k))) {
-      return abort(k);
-    }
-    const j = (await res.json()) as { snapshot_schema_version?: string };
-    setStatus(k, {
-      status: "success",
-      summary: j.snapshot_schema_version ?? "exported",
-    });
+  } catch {
+    const failed = steps.find((s) => s.status === "error");
+    return { ok: false, failedStepKey: failed?.key };
   }
 
   return { ok: true, sparkId, pursuitId };
