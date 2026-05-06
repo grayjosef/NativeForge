@@ -6,6 +6,7 @@ from sqlalchemy import create_engine, pool
 
 from alembic import context
 
+from nativeforge.db import models  # noqa: F401 — register models on metadata
 from nativeforge.db.base import Base
 from nativeforge.lib.settings import get_settings
 
