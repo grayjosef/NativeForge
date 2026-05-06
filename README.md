@@ -13,7 +13,7 @@ The backend is a **FastAPI** app with **SQLAlchemy**, **Alembic**, **psycopg**, 
 
 ### M0 buyer / operator demo (checklist)
 
-Step-by-step startup, env vars, seed orgs, `/health`, `/docs`, trust manifest, and buyer talk track: **[`docs/m0-demo-operator-checklist.md`](docs/m0-demo-operator-checklist.md)**.
+Step-by-step startup, env vars, seed orgs, `/health`, `/docs`, trust manifest, and buyer talk track: **[`docs/m0-demo-operator-checklist.md`](docs/m0-demo-operator-checklist.md)**. For the **browser demo**, use a **file-backed** `DATABASE_URL` (not the default in-memory SQLite) so Alembic, seed, and `uvicorn` share one database — see the checklist warning and bootstrap sequence.
 
 ### Local backend setup
 
