@@ -56,6 +56,7 @@ class AuditAction(StrEnum):
     pursuit_calendar_event_updated = "pursuit_calendar_event_updated"
     form_package_created = "form_package_created"
     sf424_preview_regenerated = "sf424_preview_regenerated"
+    org_data_snapshot_exported = "org_data_snapshot_exported"
 
 
 class TribalEntityType(StrEnum):

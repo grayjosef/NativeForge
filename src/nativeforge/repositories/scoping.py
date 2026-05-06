@@ -121,6 +121,19 @@ def select_latest_nofo_run_for_spark(
     )
 
 
+def select_nofo_extraction_runs_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_nofo_extraction_run_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfNofoExtractionRun)
+        .where(*scope)
+        .order_by(NfNofoExtractionRun.created_at.desc())
+    )
+
+
 def select_requirements_for_extraction_run(
     *,
     extraction_run_id: uuid.UUID,
@@ -164,6 +177,15 @@ def select_latest_spark_score_for_spark(
     )
 
 
+def select_spark_scores_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_spark_score_scope(org_id=org_id, org_type=org_type)
+    return select(NfSparkScore).where(*scope).order_by(NfSparkScore.created_at.desc())
+
+
 def select_grant_sparks_for_org(
     *,
     org_id: uuid.UUID,
@@ -200,6 +222,21 @@ def select_audit_events_for_artifact(
         .where(NfAuditEvent.review_artifact_id == artifact_id)
         .where(*scope)
         .order_by(NfAuditEvent.created_at.asc())
+    )
+
+
+def select_audit_events_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    limit: int,
+) -> Select:
+    scope = nf_audit_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfAuditEvent)
+        .where(*scope)
+        .order_by(NfAuditEvent.created_at.desc())
+        .limit(limit)
     )
 
 
@@ -273,6 +310,15 @@ def select_form_package_for_pursuit(
         NfFormPackage.grant_pursuit_id == pursuit_id,
         *scope,
     )
+
+
+def select_form_packages_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_form_package_scope(org_id=org_id, org_type=org_type)
+    return select(NfFormPackage).where(*scope).order_by(NfFormPackage.created_at.desc())
 
 
 def select_calendar_events_for_org_between(

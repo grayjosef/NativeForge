@@ -10,6 +10,7 @@ from nativeforge.db.models import NfNofoExtractionRun, NfSparkRequirement
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories.scoping import (
     select_latest_nofo_run_for_spark,
+    select_nofo_extraction_runs_for_org,
     select_requirements_for_extraction_run,
 )
 
@@ -27,6 +28,16 @@ def get_latest_extraction_run(
         org_type=org_type,
     )
     return session.scalar(stmt)
+
+
+def list_extraction_runs_for_org(
+    *,
+    session: Session,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> list[NfNofoExtractionRun]:
+    stmt = select_nofo_extraction_runs_for_org(org_id=org_id, org_type=org_type)
+    return list(session.scalars(stmt))
 
 
 def list_requirements_for_run(

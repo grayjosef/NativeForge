@@ -15,6 +15,7 @@ from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories.scoping import (
     nf_spark_score_scope,
     select_latest_spark_score_for_spark,
+    select_spark_scores_for_org,
 )
 
 
@@ -48,6 +49,16 @@ def get_spark_score_for_spark(
         *scope,
     )
     return session.scalar(stmt)
+
+
+def list_spark_scores_for_org(
+    *,
+    session: Session,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> list[NfSparkScore]:
+    stmt = select_spark_scores_for_org(org_id=org_id, org_type=org_type)
+    return list(session.scalars(stmt))
 
 
 def append_spark_score_audit(
