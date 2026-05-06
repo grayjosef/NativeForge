@@ -9,6 +9,7 @@ from sqlalchemy import Select, select
 
 from nativeforge.db.models import (
     NfAuditEvent,
+    NfFormPackage,
     NfGrantPursuit,
     NfGrantSpark,
     NfNofoExtractionRun,
@@ -246,6 +247,31 @@ def select_grant_pursuits_for_org(
     scope = nf_grant_pursuit_scope(org_id=org_id, org_type=org_type)
     return (
         select(NfGrantPursuit).where(*scope).order_by(NfGrantPursuit.updated_at.desc())
+    )
+
+
+def nf_form_package_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfFormPackage.organization_id == org_id,
+        NfFormPackage.is_demo.is_(is_demo),
+    )
+
+
+def select_form_package_for_pursuit(
+    *,
+    pursuit_id: uuid.UUID,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_form_package_scope(org_id=org_id, org_type=org_type)
+    return select(NfFormPackage).where(
+        NfFormPackage.grant_pursuit_id == pursuit_id,
+        *scope,
     )
 
 

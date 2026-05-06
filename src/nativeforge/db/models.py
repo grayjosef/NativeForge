@@ -605,6 +605,56 @@ class NfPursuitCalendarEvent(Base):
     grant_pursuit: Mapped[NfGrantPursuit] = relationship()
 
 
+class NfFormPackage(Base):
+    """Review-gated SF-424 (and future forms) package tied to a pursuit (Sprint 6)."""
+
+    __tablename__ = "nf_form_packages"
+    __table_args__ = (
+        UniqueConstraint(
+            "grant_pursuit_id",
+            name="uq_nf_form_packages_grant_pursuit_id",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    grant_pursuit_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_pursuits.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    review_artifact_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_review_artifacts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    package_engine: Mapped[str] = mapped_column(String(64), nullable=False)
+    sf424_preview: Mapped[dict] = mapped_column(JSON, nullable=False)
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    grant_pursuit: Mapped[NfGrantPursuit] = relationship()
+    review_artifact: Mapped[NfReviewArtifact] = relationship()
+
+
 class NfAuditEvent(Base):
     """Append-only audit trail for review transitions and artifact creation."""
 

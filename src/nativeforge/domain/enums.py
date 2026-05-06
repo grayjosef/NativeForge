@@ -18,6 +18,7 @@ class ReviewArtifactType(StrEnum):
     sprint0_placeholder = "sprint0_placeholder"
     ai_generated = "ai_generated"
     form_preview = "form_preview"
+    form_package = "form_package"
     nofo_extraction = "nofo_extraction"
 
 
@@ -53,6 +54,8 @@ class AuditAction(StrEnum):
     pursuit_task_updated = "pursuit_task_updated"
     pursuit_calendar_event_created = "pursuit_calendar_event_created"
     pursuit_calendar_event_updated = "pursuit_calendar_event_updated"
+    form_package_created = "form_package_created"
+    sf424_preview_regenerated = "sf424_preview_regenerated"
 
 
 class TribalEntityType(StrEnum):

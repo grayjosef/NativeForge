@@ -2,6 +2,10 @@
 
 from fastapi import FastAPI
 
+from nativeforge.api.form_package_routes import (
+    demo_form_pkg_router,
+    real_form_pkg_router,
+)
 from nativeforge.api.grant_spark_routes import (
     demo_grant_spark_router,
     real_grant_spark_router,
@@ -39,6 +43,8 @@ def create_app() -> FastAPI:
     app.include_router(real_spark_scoring_router)
     app.include_router(demo_pursuit_router)
     app.include_router(real_pursuit_router)
+    app.include_router(demo_form_pkg_router)
+    app.include_router(real_form_pkg_router)
     return app
 
 
