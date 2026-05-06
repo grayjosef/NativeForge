@@ -1,118 +1,121 @@
 # Cursor Build Brief
 
-You are Cursor. You are working on NativeForge, a sovereignty-first tribal grant pursuit and compliance platform that extends the existing ContractForge engine.
+You are Cursor. You are working on **NativeForge**, a sovereignty-first tribal grant pursuit and compliance platform in a **standalone product repository**.
 
 This file is your entry point. Read it once, then follow the order it gives you.
 
+## Binding stack (sources of truth)
+
+These documents override older notes elsewhere in the repo when anything conflicts:
+
+1. **`README.md`** — repo layout, how to run the app, where application code lives.
+2. **`nativeforge-separate-repo-architecture-decision.md`** — separate product; no shared ContractForge database or runtime.
+3. **`research/execution/*`** — audit prompt (historical), architecture boundary, demo isolation (Sprint 0), M0 sprint plan.
+4. **`research/domain/*`** — personas, lifecycle, schemas, scoring, forms, sovereignty, sources, etc.
+5. **`research/context/*`** — thesis, M0 narrative, pillars, guardrails, operating principles.
+6. **`research/validation/*`** — definition of done, checklists, human validation planning.
+7. **`nativeforge-scaffold-execution-plan.md`** — scaffold and ticket-style sequencing for this codebase.
+
+**ContractForge** (`contract-iq` or similar) may be used **only** as **architectural inspiration or prior-art** when reading patterns (auth shapes, job patterns). It is **not** a dependency, submodule, or shared database. There is **no** in-place extension of ContractForge in this repository.
+
+### NativeForge-native domain language
+
+Do **not** model the product on federal contracting vocabulary or ContractForge table names. Use:
+
+| Use this (NativeForge) | Not this (contracting / ContractForge) |
+|------------------------|------------------------------------------|
+| Sparks (grant opportunities) | Contracts |
+| Grant pursuits / pursuit pipeline | Bids |
+| NOFOs / assistance listings | Solicitations |
+| Entity (tribal) profiles | Vendor / capability profiles |
+| Tribal eligibility and fit scoring | Contract / NAICS scoring |
+| `nf_*` tables and grant-native rows | `contracts`, `org_contract_scoring`, or other ContractForge runtime tables |
+
+Implementation uses **first-class NativeForge concepts** and the **`nf_*` namespace** (see `research/execution/02-architecture-boundary.md` and `nativeforge-separate-repo-architecture-decision.md`).
+
+### Canonical product and business sources
+
+- **`research/source/nativeforge-product-intelligence-report.md`** — strategy, market gap, personas, lifecycle, sources, forms, scoring, sovereignty, M0–M3 scope.
+- **`research/source/nativeforge-revenue-model.md`** — tiers, unit economics, procurement, projections.
+
+Where the product-intelligence report and the revenue model overlap (e.g., pricing, deployment), **`research/source/nativeforge-revenue-model.md` wins.**
+
+The domain files (`research/domain/*.md`) are working references per sprint. Do not load all of them at once.
+
+**The revenue model’s five tiers (Core / Pro / Enterprise / Sovereignty / Consortium) have build implications even when M0 bills nothing.** In particular:
+
+- **Sovereignty** (private/dedicated cloud, M3) must remain feasible without a tenant-isolation rewrite. Follow `research/execution/03-demo-isolation-spec.md`.
+- **Consortium** (one buyer, multiple member tribes) implies a future one-to-many relationship. M0 may use one org ↔ one tribal profile, but avoid schema choices that block consortium later.
+- **License vs. SaaS** enforcement is **M3**, not M0. Do not build license-key or subscription metering in M0.
+
 ## Your job
 
-Take this research repo and the existing ContractForge codebase, and produce, in this order:
+Work **in this repository only**, using NativeForge tables and APIs. Produce, in order:
 
-1. An **audit report** of the existing ContractForge codebase.
-2. An **architecture-boundary decision** (A, B, or C) with a defended recommendation and the M0 schema proposal filled in.
-3. **Sprint 0** — demo isolation + review-gate state machine — implemented, tested, and merged.
-4. **Sprints 1–7** of M0 — tribal profile, Spark ingestion, NOFO summary + extraction, scoring, pipeline + tasks, SF-424 preview, sovereignty page + export — implemented, tested, and merged.
+1. **Architecture and M0 data design** — Align implementation with `nativeforge-separate-repo-architecture-decision.md` and complete the schema-oriented sections of **`research/execution/02-architecture-boundary.md`** for **`nf_*`** grant-native storage (not shared ContractForge tables). Root-level **`audit-output.md`** is **archived prior-art** from a ContractForge audit; use it for pattern context if helpful. A fresh audit of another repo is **optional** and does not block this codebase.
+2. **Human sign-off** — Pause for review where **`02-architecture-boundary.md`** requires answers (e.g., section 5 sign-off questions). Do not silently assume shared-database or monorepo options.
+3. **Sprint 0 (required before feature sprints)** — **`research/execution/03-demo-isolation-spec.md`**: demo isolation plus review-gate state machine, implemented, tested, and merged. **M0 engineering starts here:** no Sprints 1–7 until Sprint 0 acceptance criteria and CI gates are satisfied.
+4. **Sprints 1–7 (M0)** — **`research/execution/04-m0-implementation-plan.md`**: tribal profile, Spark ingestion, NOFO summary + extraction, scoring, pipeline + tasks, SF-424 preview, sovereignty page + export — in order, without parallelizing sprints.
 
-You stop and hand control back to the human after step 1, after step 2, and after Sprint 0. You do not auto-advance through gates.
+Stop and hand control back to the human after architecture sign-off, after Sprint 0, and after M0 if that is your working agreement. Do not auto-advance through gates.
 
-## Read order (right now, before anything else)
+## Read order (before deep implementation)
 
-1. **`context/operating-principles.md`** — the rules. Read these first. Every PR is reviewed against them. Violations block merge.
-2. **`context/product-thesis.md`** — one-page why.
-3. **`context/m0-demo-narrative.md`** — what the demo has to do, end to end.
-4. **`context/five-pillars.md`** — what's in scope and what isn't.
-5. **`context/guardrails-and-risks.md`** — what cannot go wrong.
-6. **`execution/README.md`** — the four-document sequence.
-7. **`execution/01-audit-prompt.md`** — your first action.
+Paths are under **`research/`** in this repo:
 
-The two source reports are canonical:
+1. **`research/context/operating-principles.md`** — rules; violations block merge.
+2. **`research/context/product-thesis.md`** — one-page why.
+3. **`research/context/m0-demo-narrative.md`** — end-to-end demo.
+4. **`research/context/five-pillars.md`** — in scope / out of scope.
+5. **`research/context/guardrails-and-risks.md`** — non-negotiables.
+6. **`research/execution/README.md`** — execution document sequence.
+7. **`research/execution/01-audit-prompt.md`** — **optional**; describes a historical ContractForge audit workflow. This repo does **not** implement NativeForge inside ContractForge.
 
-- **`source/nativeforge-product-intelligence-report.md`** — product strategy, market gap, personas, lifecycle, sources, forms, scoring, sovereignty, M0/M1/M2/M3 scope. Reference for any product or feature question.
-- **`source/nativeforge-revenue-model.md`** — pricing tiers (Core / Pro / Enterprise / Sovereignty / Consortium), unit economics, tribal procurement mechanics, monetization models, financial projections. Reference for any business-model, tier-gating, or licensing-architecture question.
+## Step 1 — Architecture boundary (not a ContractForge code audit)
 
-Both are sources of truth. Where the product-intelligence report and the revenue-model report touch the same surface (e.g., pricing tiers, deployment models), the revenue model takes precedence — it is the more recent and more rigorous treatment.
+Fill in **`research/execution/02-architecture-boundary.md`** for the **standalone NativeForge product**: `nf_*` schema, isolation, and coexistence rules **without** relying on ContractForge runtime tables. If the document still lists monorepo options (A/B/C), the **effective decision for this repository** is documented in **`nativeforge-separate-repo-architecture-decision.md`** — a **separate repo**, separate database, grant-native model.
 
-The domain files (`domain/*.md`) are working references for the build. Read each one as the relevant sprint comes up. Do not try to load them all at once.
+When the architecture sections are updated, **stop** for human sign-off on open questions before Sprint 0 unless your team agrees otherwise.
 
-**The revenue model defines five tiers (Core / Pro / Enterprise / Sovereignty / Consortium) that have build implications even though M0 ships none of them as billable products.** Specifically:
+## Step 2 — Sprint 0 (demo isolation + review gate)
 
-- The **Sovereignty** tier (private/dedicated cloud deployment) is a hard architectural commitment that the M3 product must support without a rewrite. Decisions made in Sprint 0 about tenant isolation must not preclude private deployment later. This is already reflected in `execution/03-demo-isolation-spec.md`; do not regress on it.
-- The **Consortium** tier (one paying customer org with up to 8 member tribes) implies a one-to-many relationship between the buying organization and the operating tribal entities. M0 ships a one-to-one (org → tribal profile) for simplicity, but the data model should not preclude future consortium support. Flag any M0 decision that hard-binds the relationship in a way that would force a costly migration later.
-- The **license vs. SaaS** distinction is M3 enforcement, not M0 enforcement. Do not build license-key infrastructure or subscription metering in M0.
+After architecture is acceptable, implement Sprint 0 per **`research/execution/03-demo-isolation-spec.md`**.
 
-## Step 1 — Run the audit
+All acceptance criteria at the bottom of that document must pass. CI must show demo-isolation tests passing on the main branch before **Sprints 1–7**.
 
-Open `execution/01-audit-prompt.md`. Execute the prompt block exactly as written. Do not modify it; if you have suggestions, surface them in the audit's open-questions section, not by editing the prompt.
+When Sprint 0 is done, **stop** until the human confirms merge.
 
-The audit produces a single markdown file at:
+## Step 3 — Sprints 1–7 (M0 build)
 
-```
-nativeforge-research/audit-output.md
-```
+Open **`research/execution/04-m0-implementation-plan.md`**. Execute the sprint sequence in order.
 
-Every claim in the audit cites a file path and line range from the ContractForge repo. No "appears to" without a citation.
+For every PR, run **`research/validation/definition-of-done.md`**.
 
-When the audit is written, **stop**. Do not proceed to step 2 until the human has read it and signed off.
-
-## Step 2 — Architecture-boundary decision
-
-After the human signs off on the audit, open `execution/02-architecture-boundary.md`.
-
-Fill in:
-
-- Section 1: the A/B/C recommendation, with reasoning anchored in audit findings.
-- Section 3: the M0 schema, finalized against the audit's findings about which generic tables already exist.
-- Section 5: the seven sign-off questions for the human.
-
-When the document is updated, **stop**. Do not proceed to step 3 until the human has answered all seven sign-off questions.
-
-## Step 3 — Sprint 0 (demo isolation + review gate)
-
-After the human signs off on the architecture-boundary decision, open `execution/03-demo-isolation-spec.md` and implement Sprint 0 exactly as specified.
-
-The acceptance criteria are at the bottom of that document. All checkboxes must be checked before Sprint 0 is done. CI must show all 7 demo-isolation tests passing on the main branch before any feature work begins.
-
-When Sprint 0 is done, **stop**. Do not proceed to step 4 until the human confirms Sprint 0 is merged.
-
-## Step 4 — Sprints 1–7 (M0 build)
-
-Open `execution/04-m0-implementation-plan.md`. Execute the sprint sequence in order. Do not parallelize.
-
-For every PR, run the checklist in `validation/definition-of-done.md`. Every box must be checked. The PR description references the relevant operating principles and any near-violations avoided.
-
-When all seven sprints are merged and the M0 validation gate at the bottom of `04-m0-implementation-plan.md` is satisfied, declare M0 done and hand off to the human for the buyer demo.
+When the M0 validation gate at the bottom of `04-m0-implementation-plan.md` is satisfied, declare M0 done and hand off for the buyer demo.
 
 ## What you do not do
 
-- Do not write code in steps 1 or 2.
-- Do not commit secrets, ever.
-- Do not touch production secrets.
-- Do not create demo data in real orgs.
-- Do not broadly refactor ContractForge.
-- Do not skip review gates.
-- Do not auto-submit anything.
-- Do not edit the operating principles.
-- Do not silently violate any operating principle. If something seems to require violating one, surface the contradiction and ask.
+- Do **not** depend on ContractForge at runtime (no shared DB, no imported ContractForge services).
+- Do **not** implement NativeForge as rows in `contracts`, `org_contract_scoring`, or other ContractForge tables.
+- Do **not** write application code in the architecture-doc phase beyond what the team explicitly allows.
+- Do **not** commit secrets or touch production secrets.
+- Do **not** create demo data in real orgs.
+- Do **not** skip review gates or auto-submit to Grants.gov.
+- Do **not** edit **`research/context/operating-principles.md`** without explicit owner approval.
+- Do **not** silently violate an operating principle; surface conflicts and ask.
 
 ## How to report
 
-After each step, write a short status update in the PR description (or, for steps 1 and 2, at the bottom of `audit-output.md` or `02-architecture-boundary.md` respectively). The update lists:
-
-- What changed (file paths, line ranges, test names).
-- What tests pass.
-- Which operating principles were relevant to the decisions made.
-- Any open questions for the human.
-
-Chat is for synchronous coordination. PR descriptions and execution-doc updates are the durable record. Default to the durable record.
+After each milestone, record a short status update (PR description or updates to the relevant execution doc): what changed, tests, principles touched, open questions. Prefer the durable record over chat alone.
 
 ## When you are stuck
 
-- If the audit reveals something that contradicts what's in this repo (e.g., ContractForge's tenancy model is fundamentally different from what we assumed), surface it in the audit's open-questions section. Do not silently work around it.
-- If a guardrail in `context/guardrails-and-risks.md` would force you to skip a feature in the demo, raise that. Do not work around the guardrail.
-- If you cannot satisfy a `definition-of-done` checkbox for a legitimate reason, explicitly call it out in the PR description, propose a follow-up ticket, and let the human approve the gap. Do not quietly skip it.
+- If **`research/execution/*`** still mentions shared ContractForge tables, resolve implementation using **`nativeforge-separate-repo-architecture-decision.md`** and ask the human whether to refresh those execution docs.
+- If a guardrail in **`research/context/guardrails-and-risks.md`** blocks a demo feature, raise it; do not bypass it.
+- If a **`research/validation/definition-of-done`** item cannot be met, call it out, propose a follow-up, and get explicit approval for the gap.
 
 ## The mission, restated
 
-NativeForge is viable. The wedge is real. ContractForge gives you a head start. But the first engineering priority is not features — it is product separation and demo/tenant isolation, so we do not poison customer trust on day one.
+NativeForge is viable; the wedge is real. In this repo, speed and trust come from a **clean grant-native model**, **tenant and demo isolation first**, and **sovereignty-respecting defaults** — not from wiring into ContractForge’s production schema.
 
 Build the walls around the launchpad first. Then build the rocket.
