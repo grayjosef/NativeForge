@@ -24,6 +24,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from nativeforge.db.base import Base
 from nativeforge.domain.enums import (
+    ExpectedOpportunityFrequency,
     FundingInstrument,
     GrantAwardType,
     GrantPipelineStage,
@@ -36,6 +37,8 @@ from nativeforge.domain.enums import (
     PursuitWorkflowStatus,
     RecommendationTier,
     SamRegistrationStatus,
+    SourceCheckMethod,
+    SourcePriorityLevel,
     SourceReliabilityRating,
     SparkFreshnessStatus,
     SparkRequirementKind,
@@ -121,6 +124,21 @@ def _grant_spark_optional_verification_sql() -> str:
 def _grant_spark_optional_funding_instrument_sql() -> str:
     vals = ", ".join(f"'{i.value}'" for i in FundingInstrument)
     return f"(funding_instrument IS NULL OR funding_instrument IN ({vals}))"
+
+
+def _source_check_method_in_sql() -> str:
+    vals = ", ".join(f"'{m.value}'" for m in SourceCheckMethod)
+    return f"check_method IN ({vals})"
+
+
+def _expected_opportunity_frequency_in_sql() -> str:
+    vals = ", ".join(f"'{f.value}'" for f in ExpectedOpportunityFrequency)
+    return f"expected_opportunity_frequency IN ({vals})"
+
+
+def _source_priority_level_in_sql() -> str:
+    vals = ", ".join(f"'{p.value}'" for p in SourcePriorityLevel)
+    return f"priority_level IN ({vals})"
 
 
 class Organization(Base):
@@ -256,6 +274,18 @@ class NfOpportunitySource(Base):
             _opportunity_verification_status_in_sql(),
             name="ck_nf_opportunity_sources_verification_status",
         ),
+        CheckConstraint(
+            _source_check_method_in_sql(),
+            name="ck_nf_opportunity_sources_check_method",
+        ),
+        CheckConstraint(
+            _expected_opportunity_frequency_in_sql(),
+            name="ck_nf_opportunity_sources_expected_frequency",
+        ),
+        CheckConstraint(
+            _source_priority_level_in_sql(),
+            name="ck_nf_opportunity_sources_priority_level",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -295,6 +325,29 @@ class NfOpportunitySource(Base):
         String(32),
         nullable=False,
         default=OpportunityVerificationStatus.unverified.value,
+    )
+    funding_domains_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    applicant_types_json: Mapped[list | dict | None] = mapped_column(
+        JSON, nullable=True
+    )
+    covered_states_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    covered_regions_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    covered_tribal_groups_json: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    coverage_notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    check_method: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=SourceCheckMethod.unknown.value,
+    )
+    expected_opportunity_frequency: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=ExpectedOpportunityFrequency.unknown.value,
+    )
+    priority_level: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=SourcePriorityLevel.medium.value,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

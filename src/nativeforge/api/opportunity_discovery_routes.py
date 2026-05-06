@@ -17,12 +17,15 @@ from nativeforge.api.deps_db import (
 )
 from nativeforge.api.org_context import OrgContext
 from nativeforge.domain.enums import (
+    ExpectedOpportunityFrequency,
     FundingInstrument,
     GrantAwardType,
     GrantPipelineStage,
     GrantSparkSource,
     OpportunitySourceType,
     OpportunityVerificationStatus,
+    SourceCheckMethod,
+    SourcePriorityLevel,
     SourceReliabilityRating,
 )
 from nativeforge.repositories import opportunity_sources as os_repo
@@ -59,6 +62,45 @@ class OpportunitySourceCreateBody(BaseModel):
     )
     is_active: bool = True
     scope_global: bool = False
+    funding_domains_json: list[str] | None = None
+    applicant_types_json: list | dict | None = None
+    covered_states_json: list[str] | None = None
+    covered_regions_json: list | None = None
+    covered_tribal_groups_json: list[str] | None = None
+    coverage_notes: str | None = None
+    check_method: SourceCheckMethod = SourceCheckMethod.unknown
+    expected_opportunity_frequency: ExpectedOpportunityFrequency = (
+        ExpectedOpportunityFrequency.unknown
+    )
+    priority_level: SourcePriorityLevel = SourcePriorityLevel.medium
+
+
+def _source_payload_from_body(
+    body: OpportunitySourceCreateBody,
+) -> OpportunitySourcePayload:
+    return OpportunitySourcePayload(
+        source_name=body.source_name,
+        source_type=body.source_type,
+        source_url=body.source_url,
+        publisher_name=body.publisher_name,
+        description=body.description,
+        geographic_scope_json=body.geographic_scope_json,
+        native_relevance_notes=body.native_relevance_notes,
+        reliability_rating=body.reliability_rating,
+        freshness_interval_days=body.freshness_interval_days,
+        verification_status=body.verification_status,
+        is_active=body.is_active,
+        scope_global=body.scope_global,
+        funding_domains_json=body.funding_domains_json,
+        applicant_types_json=body.applicant_types_json,
+        covered_states_json=body.covered_states_json,
+        covered_regions_json=body.covered_regions_json,
+        covered_tribal_groups_json=body.covered_tribal_groups_json,
+        coverage_notes=body.coverage_notes,
+        check_method=body.check_method,
+        expected_opportunity_frequency=body.expected_opportunity_frequency,
+        priority_level=body.priority_level,
+    )
 
 
 class DiscoverySparkCreateBody(BaseModel):
@@ -183,24 +225,40 @@ def demo_create_source(
     org = org_repo.get_organization(db, org_id)
     if org is None:
         raise HTTPException(status_code=404, detail="organization not found")
-    payload = OpportunitySourcePayload(
-        source_name=body.source_name,
-        source_type=body.source_type,
-        source_url=body.source_url,
-        publisher_name=body.publisher_name,
-        description=body.description,
-        geographic_scope_json=body.geographic_scope_json,
-        native_relevance_notes=body.native_relevance_notes,
-        reliability_rating=body.reliability_rating,
-        freshness_interval_days=body.freshness_interval_days,
-        verification_status=body.verification_status,
-        is_active=body.is_active,
-        scope_global=body.scope_global,
+    row = ods.create_opportunity_source(
+        db, org=org, body=_source_payload_from_body(body)
     )
-    row = ods.create_opportunity_source(db, org=org, body=payload)
     db.commit()
     db.refresh(row)
     return ods.opportunity_source_to_dict(row)
+
+
+@demo_discovery_router.post("/{org_id}/discovery/sources/seed-catalog")
+def demo_seed_source_catalog(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    stats = ods.seed_opportunity_source_catalog(db, org=org)
+    db.commit()
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    summary = ods.discovery_coverage_summary(rows)
+    return {**stats, "coverage_summary": summary}
+
+
+@demo_discovery_router.get("/{org_id}/discovery/coverage-summary")
+def demo_discovery_coverage_summary(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    return ods.discovery_coverage_summary(rows)
 
 
 @demo_discovery_router.get("/{org_id}/discovery/sources")
@@ -294,24 +352,40 @@ def real_create_source(
     org = org_repo.get_organization(db, org_id)
     if org is None:
         raise HTTPException(status_code=404, detail="organization not found")
-    payload = OpportunitySourcePayload(
-        source_name=body.source_name,
-        source_type=body.source_type,
-        source_url=body.source_url,
-        publisher_name=body.publisher_name,
-        description=body.description,
-        geographic_scope_json=body.geographic_scope_json,
-        native_relevance_notes=body.native_relevance_notes,
-        reliability_rating=body.reliability_rating,
-        freshness_interval_days=body.freshness_interval_days,
-        verification_status=body.verification_status,
-        is_active=body.is_active,
-        scope_global=body.scope_global,
+    row = ods.create_opportunity_source(
+        db, org=org, body=_source_payload_from_body(body)
     )
-    row = ods.create_opportunity_source(db, org=org, body=payload)
     db.commit()
     db.refresh(row)
     return ods.opportunity_source_to_dict(row)
+
+
+@real_discovery_router.post("/{org_id}/discovery/sources/seed-catalog")
+def real_seed_source_catalog(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    stats = ods.seed_opportunity_source_catalog(db, org=org)
+    db.commit()
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    summary = ods.discovery_coverage_summary(rows)
+    return {**stats, "coverage_summary": summary}
+
+
+@real_discovery_router.get("/{org_id}/discovery/coverage-summary")
+def real_discovery_coverage_summary(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    return ods.discovery_coverage_summary(rows)
 
 
 @real_discovery_router.get("/{org_id}/discovery/sources")

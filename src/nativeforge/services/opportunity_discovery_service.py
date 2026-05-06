@@ -18,12 +18,16 @@ from nativeforge.db.models import (
     is_demo_for_org_type,
 )
 from nativeforge.domain.enums import (
+    ExpectedOpportunityFrequency,
+    FundingDomain,
     FundingInstrument,
     GrantAwardType,
     GrantPipelineStage,
     GrantSparkSource,
     OpportunitySourceType,
     OpportunityVerificationStatus,
+    SourceCheckMethod,
+    SourcePriorityLevel,
     SourceReliabilityRating,
     SparkFreshnessStatus,
 )
@@ -33,6 +37,7 @@ from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.services import grant_spark_service as gss
 
 INTELLIGENCE_VERSION = "nf_discovery_v1"
+COVERAGE_SUMMARY_VERSION = "nf_discovery_coverage_v1"
 
 _NATIVE_TAG_HINTS = frozenset(
     {
@@ -85,6 +90,15 @@ def opportunity_source_to_dict(row: NfOpportunitySource) -> dict[str, Any]:
         "last_error": row.last_error,
         "is_active": row.is_active,
         "verification_status": row.verification_status,
+        "funding_domains_json": row.funding_domains_json,
+        "applicant_types_json": row.applicant_types_json,
+        "covered_states_json": row.covered_states_json,
+        "covered_regions_json": row.covered_regions_json,
+        "covered_tribal_groups_json": row.covered_tribal_groups_json,
+        "coverage_notes": row.coverage_notes,
+        "check_method": row.check_method,
+        "expected_opportunity_frequency": row.expected_opportunity_frequency,
+        "priority_level": row.priority_level,
         "created_at": _d(row.created_at),
         "updated_at": _d(row.updated_at),
     }
@@ -106,6 +120,17 @@ class OpportunitySourcePayload:
     )
     is_active: bool = True
     scope_global: bool = False
+    funding_domains_json: list[str] | None = None
+    applicant_types_json: list | dict | None = None
+    covered_states_json: list[str] | None = None
+    covered_regions_json: list | None = None
+    covered_tribal_groups_json: list[str] | None = None
+    coverage_notes: str | None = None
+    check_method: SourceCheckMethod = SourceCheckMethod.unknown
+    expected_opportunity_frequency: ExpectedOpportunityFrequency = (
+        ExpectedOpportunityFrequency.unknown
+    )
+    priority_level: SourcePriorityLevel = SourcePriorityLevel.medium
 
 
 def create_opportunity_source(
@@ -131,10 +156,91 @@ def create_opportunity_source(
         freshness_interval_days=body.freshness_interval_days,
         verification_status=body.verification_status.value,
         is_active=body.is_active,
+        funding_domains_json=body.funding_domains_json,
+        applicant_types_json=body.applicant_types_json,
+        covered_states_json=body.covered_states_json,
+        covered_regions_json=body.covered_regions_json,
+        covered_tribal_groups_json=body.covered_tribal_groups_json,
+        coverage_notes=body.coverage_notes,
+        check_method=body.check_method.value,
+        expected_opportunity_frequency=body.expected_opportunity_frequency.value,
+        priority_level=body.priority_level.value,
     )
     session.add(row)
     session.flush()
     return row
+
+
+def seed_opportunity_source_catalog(
+    session: Session,
+    *,
+    org: Organization,
+) -> dict[str, int]:
+    """Insert global illustrative catalog sources for this org plane (idempotent)."""
+    from nativeforge.services.opportunity_source_catalog import (
+        OPPORTUNITY_SOURCE_SEED_CATALOG,
+        catalog_source_row_id,
+    )
+
+    is_demo = is_demo_for_org_type(org.org_type)
+    inserted = 0
+    skipped = 0
+    for entry in OPPORTUNITY_SOURCE_SEED_CATALOG:
+        catalog_key = entry["catalog_key"]
+        pk = catalog_source_row_id(catalog_key=catalog_key, is_demo=is_demo)
+        if session.get(NfOpportunitySource, pk) is not None:
+            skipped += 1
+            continue
+        fields = {k: v for k, v in entry.items() if k != "catalog_key"}
+        row = NfOpportunitySource(
+            id=pk,
+            organization_id=None,
+            is_demo=is_demo,
+            is_active=True,
+            **fields,
+        )
+        session.add(row)
+        inserted += 1
+    session.flush()
+    return {"inserted": inserted, "skipped": skipped}
+
+
+def discovery_coverage_summary(
+    rows: list[NfOpportunitySource],
+) -> dict[str, Any]:
+    """Deterministic coverage rollup for registry rows visible to an organization."""
+    by_source_type: dict[str, int] = {}
+    by_priority: dict[str, int] = {}
+    by_check_method: dict[str, int] = {}
+    by_frequency: dict[str, int] = {}
+    domain_hist: dict[str, int] = {}
+    for r in rows:
+        by_source_type[r.source_type] = by_source_type.get(r.source_type, 0) + 1
+        by_priority[r.priority_level] = by_priority.get(r.priority_level, 0) + 1
+        by_check_method[r.check_method] = by_check_method.get(r.check_method, 0) + 1
+        by_frequency[r.expected_opportunity_frequency] = (
+            by_frequency.get(r.expected_opportunity_frequency, 0) + 1
+        )
+        fds = r.funding_domains_json
+        if isinstance(fds, list):
+            for d in fds:
+                domain_hist[str(d)] = domain_hist.get(str(d), 0) + 1
+    universe = [e.value for e in OpportunitySourceType]
+    represented = {k for k, v in by_source_type.items() if v > 0}
+    source_type_gaps = [t for t in universe if t not in represented]
+    all_domains = [e.value for e in FundingDomain]
+    missing_domains = [d for d in all_domains if domain_hist.get(d, 0) == 0]
+    return {
+        "coverage_summary_version": COVERAGE_SUMMARY_VERSION,
+        "source_row_count": len(rows),
+        "by_source_type": by_source_type,
+        "by_priority_level": by_priority,
+        "by_check_method": by_check_method,
+        "by_expected_opportunity_frequency": by_frequency,
+        "funding_domain_histogram": domain_hist,
+        "source_type_gaps_in_registry": source_type_gaps,
+        "funding_domain_gaps_in_registry": missing_domains,
+    }
 
 
 def list_sources(

@@ -232,3 +232,62 @@ class FundingInstrument(StrEnum):
     loan = "loan"
     prize = "prize"
     other = "other"
+
+
+# --- Discovery coverage (Sprint 11) ---
+
+
+class FundingDomain(StrEnum):
+    """Native-relevant funding domain tags for source coverage (also stored as JSON)."""
+
+    broadband = "broadband"
+    housing = "housing"
+    public_safety = "public_safety"
+    energy = "energy"
+    water = "water"
+    education = "education"
+    health = "health"
+    economic_development = "economic_development"
+    climate_resilience = "climate_resilience"
+    language_culture = "language_culture"
+    infrastructure = "infrastructure"
+    workforce = "workforce"
+    food_sovereignty = "food_sovereignty"
+    justice = "justice"
+    governance = "governance"
+    emergency_management = "emergency_management"
+    other = "other"
+
+
+class SourceCheckMethod(StrEnum):
+    """How an opportunity source is checked for updates (intent, not live wiring)."""
+
+    manual = "manual"
+    rss = "rss"
+    api = "api"
+    web_page = "web_page"
+    email_newsletter = "email_newsletter"
+    pdf_bulletin = "pdf_bulletin"
+    partner_feed = "partner_feed"
+    unknown = "unknown"
+
+
+class ExpectedOpportunityFrequency(StrEnum):
+    """Typical publishing cadence for a source (planning metadata)."""
+
+    daily = "daily"
+    weekly = "weekly"
+    monthly = "monthly"
+    quarterly = "quarterly"
+    annual = "annual"
+    irregular = "irregular"
+    unknown = "unknown"
+
+
+class SourcePriorityLevel(StrEnum):
+    """Operator priority for monitoring and expansion."""
+
+    low = "low"
+    medium = "medium"
+    high = "high"
+    critical = "critical"
