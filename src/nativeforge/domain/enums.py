@@ -40,3 +40,29 @@ class AuditAction(StrEnum):
     finalized = "finalized"
     reset_to_draft = "reset_to_draft"
     transition_rejected = "transition_rejected"
+    profile_created = "profile_created"
+    profile_updated = "profile_updated"
+    profile_exported = "profile_exported"
+
+
+class TribalEntityType(StrEnum):
+    """Applicant organization classification for tribal grant pursuit."""
+
+    federally_recognized_tribe = "federally_recognized_tribe"
+    tribal_government = "tribal_government"
+    tribal_organization = "tribal_organization"
+    tribal_nonprofit = "tribal_nonprofit"
+    tribal_college = "tribal_college"
+    alaska_native_corporation = "alaska_native_corporation"
+    alaska_native_village = "alaska_native_village"
+    native_hawaiian_organization = "native_hawaiian_organization"
+    native_serving_nonprofit = "native_serving_nonprofit"
+    other = "other"
+
+
+class SamRegistrationStatus(StrEnum):
+    """SAM.gov registration snapshot on the profile (manual until API verification)."""
+
+    active = "active"
+    expired = "expired"
+    unknown = "unknown"

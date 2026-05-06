@@ -6,7 +6,7 @@ import uuid
 
 from sqlalchemy import Select, select
 
-from nativeforge.db.models import NfAuditEvent, NfReviewArtifact
+from nativeforge.db.models import NfAuditEvent, NfReviewArtifact, NfTribalProfile
 from nativeforge.lib.demo_isolation import OrgType
 
 
@@ -33,6 +33,27 @@ def nf_audit_scope(
         NfAuditEvent.organization_id == org_id,
         NfAuditEvent.is_demo.is_(is_demo),
     )
+
+
+def nf_tribal_profile_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfTribalProfile.organization_id == org_id,
+        NfTribalProfile.is_demo.is_(is_demo),
+    )
+
+
+def select_tribal_profile_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_tribal_profile_scope(org_id=org_id, org_type=org_type)
+    return select(NfTribalProfile).where(*scope)
 
 
 def select_review_artifacts_for_org(

@@ -44,6 +44,7 @@ def create_review_artifact(
             organization_id=org.id,
             is_demo=is_demo,
             review_artifact_id=art.id,
+            tribal_profile_id=None,
             action=AuditAction.artifact_created.value,
             payload={
                 "artifact_type": artifact_type.value,
@@ -106,6 +107,7 @@ def append_audit(
         organization_id=artifact.organization_id,
         is_demo=artifact.is_demo,
         review_artifact_id=artifact.id,
+        tribal_profile_id=None,
         action=action.value,
         payload=payload or {},
         actor_id=actor_id,
