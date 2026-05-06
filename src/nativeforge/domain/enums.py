@@ -59,6 +59,7 @@ class AuditAction(StrEnum):
     sf424_preview_regenerated = "sf424_preview_regenerated"
     org_data_snapshot_exported = "org_data_snapshot_exported"
     pursuit_brief_generated = "pursuit_brief_generated"
+    discovery_intake_run_completed = "discovery_intake_run_completed"
 
 
 class TribalEntityType(StrEnum):
@@ -291,3 +292,38 @@ class SourcePriorityLevel(StrEnum):
     medium = "medium"
     high = "high"
     critical = "critical"
+
+
+# --- Discovery intake (Sprint 12) ---
+
+
+class DiscoveryIntakeRunStatus(StrEnum):
+    """Lifecycle for a discovery intake run."""
+
+    created = "created"
+    processing = "processing"
+    completed = "completed"
+    completed_with_errors = "completed_with_errors"
+    failed = "failed"
+
+
+class DiscoveryIntakeMode(StrEnum):
+    """How raw candidates entered this intake run."""
+
+    manual = "manual"
+    structured_batch = "structured_batch"
+    seed_catalog = "seed_catalog"
+    partner_feed = "partner_feed"
+    future_scrape = "future_scrape"
+    future_api = "future_api"
+    unknown = "unknown"
+
+
+class DiscoveryCandidateStatus(StrEnum):
+    """Per-candidate disposition after normalization."""
+
+    pending = "pending"
+    accepted = "accepted"
+    duplicate = "duplicate"
+    rejected = "rejected"
+    error = "error"

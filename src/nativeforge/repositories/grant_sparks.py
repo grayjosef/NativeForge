@@ -35,3 +35,40 @@ def get_grant_spark_scoped(
     scope = nf_grant_spark_scope(org_id=org_id, org_type=org_type)
     stmt = select(NfGrantSpark).where(NfGrantSpark.id == spark_id, *scope)
     return session.scalar(stmt)
+
+
+def find_grant_spark_by_duplicate_key(
+    *,
+    session: Session,
+    duplicate_key: str,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> NfGrantSpark | None:
+    scope = nf_grant_spark_scope(org_id=org_id, org_type=org_type)
+    stmt = (
+        select(NfGrantSpark)
+        .where(NfGrantSpark.duplicate_key == duplicate_key, *scope)
+        .limit(1)
+    )
+    return session.scalar(stmt)
+
+
+def find_grant_spark_by_source_key(
+    *,
+    session: Session,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    source: str,
+    source_id: str,
+) -> NfGrantSpark | None:
+    scope = nf_grant_spark_scope(org_id=org_id, org_type=org_type)
+    stmt = (
+        select(NfGrantSpark)
+        .where(
+            NfGrantSpark.source == source,
+            NfGrantSpark.source_id == source_id,
+            *scope,
+        )
+        .limit(1)
+    )
+    return session.scalar(stmt)

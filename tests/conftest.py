@@ -47,6 +47,8 @@ def _truncate_nf_tables() -> None:
         s.execute(text("DELETE FROM nf_spark_scores"))
         s.execute(text("DELETE FROM nf_nofo_extraction_runs"))
         s.execute(text("DELETE FROM nf_tribal_profiles"))
+        s.execute(text("DELETE FROM nf_discovery_intake_candidates"))
+        s.execute(text("DELETE FROM nf_discovery_intake_runs"))
         s.execute(text("DELETE FROM nf_grant_sparks"))
         s.execute(text("DELETE FROM nf_opportunity_sources"))
         s.execute(text("DELETE FROM nf_review_artifacts"))

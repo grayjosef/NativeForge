@@ -221,9 +221,9 @@ def create_grant_spark(
     )
     session.add(row)
     try:
-        session.flush()
+        with session.begin_nested():
+            session.flush()
     except IntegrityError as e:
-        session.rollback()
         raise DuplicateGrantSparkError from e
     return row
 

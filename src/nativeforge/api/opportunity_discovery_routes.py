@@ -17,6 +17,7 @@ from nativeforge.api.deps_db import (
 )
 from nativeforge.api.org_context import OrgContext
 from nativeforge.domain.enums import (
+    DiscoveryIntakeMode,
     ExpectedOpportunityFrequency,
     FundingInstrument,
     GrantAwardType,
@@ -28,8 +29,10 @@ from nativeforge.domain.enums import (
     SourcePriorityLevel,
     SourceReliabilityRating,
 )
+from nativeforge.repositories import discovery_intake_runs as intake_repo
 from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.repositories import organizations as org_repo
+from nativeforge.services import discovery_intake_service as d_intake
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services.grant_spark_service import DuplicateGrantSparkError
@@ -177,6 +180,15 @@ def _body_to_discovery_seed(
         duplicate_cluster_id=body.duplicate_cluster_id,
         stale_after_days=body.stale_after_days,
     )
+
+
+class DiscoveryIntakeRunCreateBody(BaseModel):
+    intake_mode: DiscoveryIntakeMode
+    operator_note: str | None = Field(default=None, max_length=4096)
+
+
+class StructuredCandidatesBatchBody(BaseModel):
+    candidates: list[dict[str, Any]]
 
 
 def _validate_registry_id(
@@ -338,6 +350,128 @@ def demo_discovery_intelligence(
     return ods.opportunity_intelligence_summary(spark)
 
 
+@demo_discovery_router.post(
+    "/{org_id}/discovery/sources/{source_id}/intake-runs",
+    status_code=status.HTTP_201_CREATED,
+)
+def demo_start_intake_run(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: DiscoveryIntakeRunCreateBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        row = d_intake.start_intake_run(
+            db,
+            org=org,
+            source_registry_id=source_id,
+            intake_mode=body.intake_mode,
+            operator_note=body.operator_note,
+        )
+        db.commit()
+        db.refresh(row)
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return d_intake.intake_run_to_dict(row)
+
+
+@demo_discovery_router.get("/{org_id}/discovery/sources/{source_id}/intake-runs")
+def demo_list_intake_runs_for_source(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    rows = intake_repo.list_discovery_intake_runs_for_org_source(
+        session=db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        source_registry_id=source_id,
+    )
+    return [d_intake.intake_run_to_dict(r) for r in rows]
+
+
+@demo_discovery_router.get("/{org_id}/discovery/intake-runs/{run_id}")
+def demo_get_intake_run(
+    org_id: uuid.UUID,
+    run_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    row = intake_repo.get_discovery_intake_run_scoped(
+        session=db,
+        run_id=run_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="intake run not found")
+    return d_intake.intake_run_to_dict(row)
+
+
+@demo_discovery_router.post("/{org_id}/discovery/intake-runs/{run_id}/candidates")
+def demo_process_intake_candidates(
+    org_id: uuid.UUID,
+    run_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: StructuredCandidatesBatchBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        result = d_intake.process_structured_candidates(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            run_id=run_id,
+            candidates=body.candidates,
+        )
+        db.commit()
+    except d_intake.IntakeRunStateError as e:
+        db.rollback()
+        raise HTTPException(status_code=409, detail=str(e)) from e
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return result
+
+
+@demo_discovery_router.get("/{org_id}/discovery/intake-runs/{run_id}/candidates")
+def demo_list_intake_candidates(
+    org_id: uuid.UUID,
+    run_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    run = intake_repo.get_discovery_intake_run_scoped(
+        session=db,
+        run_id=run_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if run is None:
+        raise HTTPException(status_code=404, detail="intake run not found")
+    rows = intake_repo.list_discovery_intake_candidates_for_run(
+        session=db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        intake_run_id=run_id,
+    )
+    return [d_intake.intake_candidate_to_dict(r) for r in rows]
+
+
 @real_discovery_router.post(
     "/{org_id}/discovery/sources",
     status_code=status.HTTP_201_CREATED,
@@ -463,3 +597,125 @@ def real_discovery_intelligence(
     if spark is None:
         raise HTTPException(status_code=404, detail="grant spark not found")
     return ods.opportunity_intelligence_summary(spark)
+
+
+@real_discovery_router.post(
+    "/{org_id}/discovery/sources/{source_id}/intake-runs",
+    status_code=status.HTTP_201_CREATED,
+)
+def real_start_intake_run(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: DiscoveryIntakeRunCreateBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        row = d_intake.start_intake_run(
+            db,
+            org=org,
+            source_registry_id=source_id,
+            intake_mode=body.intake_mode,
+            operator_note=body.operator_note,
+        )
+        db.commit()
+        db.refresh(row)
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return d_intake.intake_run_to_dict(row)
+
+
+@real_discovery_router.get("/{org_id}/discovery/sources/{source_id}/intake-runs")
+def real_list_intake_runs_for_source(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    rows = intake_repo.list_discovery_intake_runs_for_org_source(
+        session=db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        source_registry_id=source_id,
+    )
+    return [d_intake.intake_run_to_dict(r) for r in rows]
+
+
+@real_discovery_router.get("/{org_id}/discovery/intake-runs/{run_id}")
+def real_get_intake_run(
+    org_id: uuid.UUID,
+    run_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    row = intake_repo.get_discovery_intake_run_scoped(
+        session=db,
+        run_id=run_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="intake run not found")
+    return d_intake.intake_run_to_dict(row)
+
+
+@real_discovery_router.post("/{org_id}/discovery/intake-runs/{run_id}/candidates")
+def real_process_intake_candidates(
+    org_id: uuid.UUID,
+    run_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: StructuredCandidatesBatchBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    try:
+        result = d_intake.process_structured_candidates(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            run_id=run_id,
+            candidates=body.candidates,
+        )
+        db.commit()
+    except d_intake.IntakeRunStateError as e:
+        db.rollback()
+        raise HTTPException(status_code=409, detail=str(e)) from e
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return result
+
+
+@real_discovery_router.get("/{org_id}/discovery/intake-runs/{run_id}/candidates")
+def real_list_intake_candidates(
+    org_id: uuid.UUID,
+    run_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    run = intake_repo.get_discovery_intake_run_scoped(
+        session=db,
+        run_id=run_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if run is None:
+        raise HTTPException(status_code=404, detail="intake run not found")
+    rows = intake_repo.list_discovery_intake_candidates_for_run(
+        session=db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        intake_run_id=run_id,
+    )
+    return [d_intake.intake_candidate_to_dict(r) for r in rows]

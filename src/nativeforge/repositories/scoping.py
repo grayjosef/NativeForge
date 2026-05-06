@@ -9,6 +9,8 @@ from sqlalchemy import Select, and_, or_, select
 
 from nativeforge.db.models import (
     NfAuditEvent,
+    NfDiscoveryIntakeCandidate,
+    NfDiscoveryIntakeRun,
     NfFormPackage,
     NfGrantPursuit,
     NfGrantSpark,
@@ -111,6 +113,64 @@ def select_opportunity_sources_for_org(
         select(NfOpportunitySource)
         .where(*scope)
         .order_by(NfOpportunitySource.source_name.asc())
+    )
+
+
+def nf_discovery_intake_run_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfDiscoveryIntakeRun.organization_id == org_id,
+        NfDiscoveryIntakeRun.is_demo.is_(is_demo),
+    )
+
+
+def nf_discovery_intake_candidate_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfDiscoveryIntakeCandidate.organization_id == org_id,
+        NfDiscoveryIntakeCandidate.is_demo.is_(is_demo),
+    )
+
+
+def select_discovery_intake_runs_for_org_source(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    source_registry_id: uuid.UUID,
+) -> Select:
+    scope = nf_discovery_intake_run_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfDiscoveryIntakeRun)
+        .where(
+            NfDiscoveryIntakeRun.source_registry_id == source_registry_id,
+            *scope,
+        )
+        .order_by(NfDiscoveryIntakeRun.started_at.desc())
+    )
+
+
+def select_discovery_intake_candidates_for_run(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    intake_run_id: uuid.UUID,
+) -> Select:
+    scope = nf_discovery_intake_candidate_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfDiscoveryIntakeCandidate)
+        .where(
+            NfDiscoveryIntakeCandidate.intake_run_id == intake_run_id,
+            *scope,
+        )
+        .order_by(NfDiscoveryIntakeCandidate.created_at.asc())
     )
 
 
