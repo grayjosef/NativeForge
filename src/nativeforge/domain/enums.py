@@ -63,6 +63,10 @@ class AuditAction(StrEnum):
     discovery_review_item_created = "discovery_review_item_created"
     discovery_review_item_updated = "discovery_review_item_updated"
     discovery_quality_scored = "discovery_quality_scored"
+    source_check_run_created = "source_check_run_created"
+    source_check_run_completed = "source_check_run_completed"
+    source_freshness_evaluated = "source_freshness_evaluated"
+    source_marked_overdue = "source_marked_overdue"
 
 
 class TribalEntityType(StrEnum):
@@ -295,6 +299,48 @@ class SourcePriorityLevel(StrEnum):
     medium = "medium"
     high = "high"
     critical = "critical"
+
+
+class SourceLastCheckStatus(StrEnum):
+    """Outcome of the most recent scheduled source check (engine bookkeeping)."""
+
+    pending = "pending"
+    success = "success"
+    failed = "failed"
+    skipped = "skipped"
+    partial = "partial"
+
+
+class SourceHealthStatus(StrEnum):
+    """Roll-up operator-facing health for discovery source monitoring."""
+
+    unknown = "unknown"
+    healthy = "healthy"
+    stale = "stale"
+    degraded = "degraded"
+    failing = "failing"
+    attention_needed = "attention_needed"
+
+
+class SourceCheckRunStatus(StrEnum):
+    """Lifecycle for nf_source_check_runs (operator source checks)."""
+
+    scheduled = "scheduled"
+    running = "running"
+    succeeded = "succeeded"
+    succeeded_with_warnings = "succeeded_with_warnings"
+    failed = "failed"
+    canceled = "canceled"
+
+
+class SourceCheckMode(StrEnum):
+    """How a source check run was initiated (engine bookkeeping)."""
+
+    manual = "manual"
+    scheduled = "scheduled"
+    backfill = "backfill"
+    verification = "verification"
+    freshness_probe = "freshness_probe"
 
 
 # --- Discovery intake (Sprint 12) ---

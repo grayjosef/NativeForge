@@ -24,12 +24,15 @@ from nativeforge.repositories import discovery_review_items as nf_rev_repo
 from nativeforge.repositories import form_packages as fp_repo
 from nativeforge.repositories import grant_sparks as gs_repo
 from nativeforge.repositories import nofo_extraction as ne_repo
+from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.repositories import pursuits as pursuit_repo
 from nativeforge.repositories import review_artifacts as ra_repo
+from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.repositories import spark_scores as score_repo
 from nativeforge.services import discovery_review_service as dr_svc
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import pursuit_service as psvc
+from nativeforge.services import source_freshness_service as sfs
 from nativeforge.services import tribal_profile_service as tps
 
 MANIFEST_SCHEMA_VERSION = "m0_trust_v1"
@@ -240,6 +243,21 @@ def export_org_data_snapshot(
         limit=5000,
     )
     rev_by_status = Counter(r.review_status for r in rev_rows)
+    opp_sources = os_repo.list_opportunity_sources_for_org(
+        session=session,
+        org_id=org_id,
+        org_type=org_type,
+    )
+    source_freshness_summary = sfs.build_freshness_summary_payload(
+        opp_sources,
+        now=datetime.now(UTC),
+    )
+    check_run_rows = scr_repo.list_source_check_runs_for_org(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        limit=5000,
+    )
     manifest = build_trust_manifest(org_type=org_type)
     spark_title_by_id = {s.id: s.opportunity_title for s in sparks}
     audit_tail = audit_repo.list_audit_events_for_org(
@@ -284,6 +302,10 @@ def export_org_data_snapshot(
         "discovery_review_items_sample": [
             dr_svc.review_item_to_dict(r) for r in rev_rows[:50]
         ],
+        "source_freshness_summary": source_freshness_summary,
+        "source_check_runs_sample": [
+            sfs.check_run_to_dict(r) for r in check_run_rows[:50]
+        ],
         "counts": {
             "grant_sparks": len(sparks),
             "pursuits": len(pursuits),
@@ -292,6 +314,7 @@ def export_org_data_snapshot(
             "form_packages": len(packages),
             "review_artifacts": len(review_arts),
             "discovery_review_items": len(rev_rows),
+            "source_check_runs": len(check_run_rows),
         },
         "audit_events_sample": [audit_repo.audit_event_to_dict(e) for e in audit_tail],
     }

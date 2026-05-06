@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -16,7 +16,9 @@ from nativeforge.api.deps_db import (
     require_real_org_db,
 )
 from nativeforge.api.org_context import OrgContext
+from nativeforge.db.models import is_demo_for_org_type
 from nativeforge.domain.enums import (
+    AuditAction,
     DiscoveryIntakeMode,
     DiscoveryRecommendedAction,
     DiscoveryReviewItemType,
@@ -29,16 +31,21 @@ from nativeforge.domain.enums import (
     OpportunitySourceType,
     OpportunityVerificationStatus,
     SourceCheckMethod,
+    SourceCheckMode,
+    SourceCheckRunStatus,
     SourcePriorityLevel,
     SourceReliabilityRating,
 )
+from nativeforge.repositories import audit_events as audit_repo
 from nativeforge.repositories import discovery_intake_runs as intake_repo
 from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.repositories import organizations as org_repo
+from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.services import discovery_intake_service as d_intake
 from nativeforge.services import discovery_review_service as d_review
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import opportunity_discovery_service as ods
+from nativeforge.services import source_freshness_service as sfs
 from nativeforge.services.grant_spark_service import DuplicateGrantSparkError
 from nativeforge.services.opportunity_discovery_service import (
     DiscoverySparkSeedPayload,
@@ -203,6 +210,27 @@ class ReviewItemPatchBody(BaseModel):
     priority: int | None = Field(default=None, ge=-(10**9), le=10**9)
 
 
+class SourceCheckRunCreateBody(BaseModel):
+    check_mode: SourceCheckMode
+    operator_notes: str | None = Field(default=None, max_length=65536)
+    checked_for_period_start: datetime | None = None
+    checked_for_period_end: datetime | None = None
+
+
+class SourceCheckRunPatchBody(BaseModel):
+    check_status: SourceCheckRunStatus
+    opportunities_seen_count: int = 0
+    new_candidates_count: int = 0
+    accepted_count: int = 0
+    duplicate_count: int = 0
+    rejected_count: int = 0
+    review_items_created_count: int = 0
+    error_code: str | None = Field(default=None, max_length=128)
+    error_message: str | None = None
+    operator_notes: str | None = Field(default=None, max_length=65536)
+    result_summary: dict[str, Any] | None = None
+
+
 def _validate_registry_id(
     db: Session,
     *,
@@ -285,6 +313,43 @@ def demo_discovery_coverage_summary(
     return ods.discovery_coverage_summary(rows)
 
 
+@demo_discovery_router.get("/{org_id}/discovery/sources/due")
+def demo_list_sources_due(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    now = datetime.now(UTC)
+    out = sfs.filter_sources_due(rows, now=now)
+    return [ods.opportunity_source_to_dict(r) for r in out]
+
+
+@demo_discovery_router.get("/{org_id}/discovery/sources/overdue")
+def demo_list_sources_overdue(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    now = datetime.now(UTC)
+    out = sfs.filter_sources_overdue(rows, now=now)
+    return [ods.opportunity_source_to_dict(r) for r in out]
+
+
+@demo_discovery_router.get("/{org_id}/discovery/sources/freshness-summary")
+def demo_discovery_sources_freshness_summary(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    return sfs.build_freshness_summary_payload(rows, now=datetime.now(UTC))
+
+
 @demo_discovery_router.get("/{org_id}/discovery/sources")
 def demo_list_sources(
     org_id: uuid.UUID,
@@ -294,6 +359,101 @@ def demo_list_sources(
     _same_org(org_id, ctx)
     rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
     return [ods.opportunity_source_to_dict(r) for r in rows]
+
+
+@demo_discovery_router.get("/{org_id}/discovery/sources/{source_id}/freshness")
+def demo_get_source_freshness(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    row = os_repo.get_opportunity_source_scoped(
+        session=db,
+        source_id=source_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="opportunity source not found")
+    return sfs.opportunity_source_freshness_detail(row, now=datetime.now(UTC))
+
+
+@demo_discovery_router.post(
+    "/{org_id}/discovery/sources/{source_id}/check-runs",
+    status_code=status.HTTP_201_CREATED,
+)
+def demo_create_source_check_run(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: SourceCheckRunCreateBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    src = os_repo.get_opportunity_source_scoped(
+        session=db,
+        source_id=source_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if src is None:
+        raise HTTPException(status_code=404, detail="opportunity source not found")
+    row = scr_repo.create_source_check_run(
+        db,
+        organization_id=org.id,
+        is_demo=is_demo_for_org_type(org.org_type),
+        source_registry_id=source_id,
+        check_mode=body.check_mode.value,
+        check_status=SourceCheckRunStatus.running.value,
+        operator_notes=body.operator_notes,
+        checked_for_period_start=body.checked_for_period_start,
+        checked_for_period_end=body.checked_for_period_end,
+    )
+    audit_repo.append_org_audit_event(
+        db,
+        organization_id=org.id,
+        is_demo=is_demo_for_org_type(org.org_type),
+        action=AuditAction.source_check_run_created,
+        payload={
+            "source_check_run_id": str(row.id),
+            "source_registry_id": str(source_id),
+            "check_mode": body.check_mode.value,
+        },
+        actor_id=None,
+    )
+    db.commit()
+    db.refresh(row)
+    return sfs.check_run_to_dict(row)
+
+
+@demo_discovery_router.get("/{org_id}/discovery/sources/{source_id}/check-runs")
+def demo_list_source_check_runs(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    src = os_repo.get_opportunity_source_scoped(
+        session=db,
+        source_id=source_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if src is None:
+        raise HTTPException(status_code=404, detail="opportunity source not found")
+    rows = scr_repo.list_source_check_runs_for_source(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        source_registry_id=source_id,
+    )
+    return [sfs.check_run_to_dict(r) for r in rows]
 
 
 @demo_discovery_router.post(
@@ -534,6 +694,43 @@ def real_discovery_coverage_summary(
     return ods.discovery_coverage_summary(rows)
 
 
+@real_discovery_router.get("/{org_id}/discovery/sources/due")
+def real_list_sources_due(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    now = datetime.now(UTC)
+    out = sfs.filter_sources_due(rows, now=now)
+    return [ods.opportunity_source_to_dict(r) for r in out]
+
+
+@real_discovery_router.get("/{org_id}/discovery/sources/overdue")
+def real_list_sources_overdue(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    now = datetime.now(UTC)
+    out = sfs.filter_sources_overdue(rows, now=now)
+    return [ods.opportunity_source_to_dict(r) for r in out]
+
+
+@real_discovery_router.get("/{org_id}/discovery/sources/freshness-summary")
+def real_discovery_sources_freshness_summary(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    return sfs.build_freshness_summary_payload(rows, now=datetime.now(UTC))
+
+
 @real_discovery_router.get("/{org_id}/discovery/sources")
 def real_list_sources(
     org_id: uuid.UUID,
@@ -543,6 +740,101 @@ def real_list_sources(
     _same_org(org_id, ctx)
     rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
     return [ods.opportunity_source_to_dict(r) for r in rows]
+
+
+@real_discovery_router.get("/{org_id}/discovery/sources/{source_id}/freshness")
+def real_get_source_freshness(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    row = os_repo.get_opportunity_source_scoped(
+        session=db,
+        source_id=source_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if row is None:
+        raise HTTPException(status_code=404, detail="opportunity source not found")
+    return sfs.opportunity_source_freshness_detail(row, now=datetime.now(UTC))
+
+
+@real_discovery_router.post(
+    "/{org_id}/discovery/sources/{source_id}/check-runs",
+    status_code=status.HTTP_201_CREATED,
+)
+def real_create_source_check_run(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: SourceCheckRunCreateBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    src = os_repo.get_opportunity_source_scoped(
+        session=db,
+        source_id=source_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if src is None:
+        raise HTTPException(status_code=404, detail="opportunity source not found")
+    row = scr_repo.create_source_check_run(
+        db,
+        organization_id=org.id,
+        is_demo=is_demo_for_org_type(org.org_type),
+        source_registry_id=source_id,
+        check_mode=body.check_mode.value,
+        check_status=SourceCheckRunStatus.running.value,
+        operator_notes=body.operator_notes,
+        checked_for_period_start=body.checked_for_period_start,
+        checked_for_period_end=body.checked_for_period_end,
+    )
+    audit_repo.append_org_audit_event(
+        db,
+        organization_id=org.id,
+        is_demo=is_demo_for_org_type(org.org_type),
+        action=AuditAction.source_check_run_created,
+        payload={
+            "source_check_run_id": str(row.id),
+            "source_registry_id": str(source_id),
+            "check_mode": body.check_mode.value,
+        },
+        actor_id=None,
+    )
+    db.commit()
+    db.refresh(row)
+    return sfs.check_run_to_dict(row)
+
+
+@real_discovery_router.get("/{org_id}/discovery/sources/{source_id}/check-runs")
+def real_list_source_check_runs(
+    org_id: uuid.UUID,
+    source_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+) -> list[dict[str, Any]]:
+    _same_org(org_id, ctx)
+    src = os_repo.get_opportunity_source_scoped(
+        session=db,
+        source_id=source_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if src is None:
+        raise HTTPException(status_code=404, detail="opportunity source not found")
+    rows = scr_repo.list_source_check_runs_for_source(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        source_registry_id=source_id,
+    )
+    return [sfs.check_run_to_dict(r) for r in rows]
 
 
 @real_discovery_router.post(
@@ -733,6 +1025,52 @@ def real_list_intake_candidates(
     return [d_intake.intake_candidate_to_dict(r) for r in rows]
 
 
+@demo_discovery_router.patch("/{org_id}/discovery/source-check-runs/{check_run_id}")
+def demo_patch_source_check_run(
+    org_id: uuid.UUID,
+    check_run_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: SourceCheckRunPatchBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    run = scr_repo.get_source_check_run_scoped(
+        db,
+        check_run_id=check_run_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if run is None:
+        raise HTTPException(status_code=404, detail="source check run not found")
+    src = os_repo.get_opportunity_source_scoped(
+        session=db,
+        source_id=run.source_registry_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if src is None:
+        raise HTTPException(status_code=404, detail="opportunity source not found")
+    patch = body.model_dump(mode="json")
+    try:
+        sfs.finalize_completed_source_check(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            run=run,
+            source=src,
+            patch=patch,
+        )
+        db.commit()
+        db.refresh(run)
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return sfs.check_run_to_dict(run)
+
+
 @demo_discovery_router.get("/{org_id}/discovery/review-items")
 def demo_list_discovery_review_items(
     org_id: uuid.UUID,
@@ -823,6 +1161,52 @@ def demo_patch_discovery_review_item(
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e)) from e
     return out
+
+
+@real_discovery_router.patch("/{org_id}/discovery/source-check-runs/{check_run_id}")
+def real_patch_source_check_run(
+    org_id: uuid.UUID,
+    check_run_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: SourceCheckRunPatchBody,
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    run = scr_repo.get_source_check_run_scoped(
+        db,
+        check_run_id=check_run_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if run is None:
+        raise HTTPException(status_code=404, detail="source check run not found")
+    src = os_repo.get_opportunity_source_scoped(
+        session=db,
+        source_id=run.source_registry_id,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+    )
+    if src is None:
+        raise HTTPException(status_code=404, detail="opportunity source not found")
+    patch = body.model_dump(mode="json")
+    try:
+        sfs.finalize_completed_source_check(
+            db,
+            org=org,
+            org_type=ctx.org_type,
+            run=run,
+            source=src,
+            patch=patch,
+        )
+        db.commit()
+        db.refresh(run)
+    except ValueError as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e)) from e
+    return sfs.check_run_to_dict(run)
 
 
 @real_discovery_router.get("/{org_id}/discovery/review-items")

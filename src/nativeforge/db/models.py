@@ -44,6 +44,10 @@ from nativeforge.domain.enums import (
     RecommendationTier,
     SamRegistrationStatus,
     SourceCheckMethod,
+    SourceCheckMode,
+    SourceCheckRunStatus,
+    SourceHealthStatus,
+    SourceLastCheckStatus,
     SourcePriorityLevel,
     SourceReliabilityRating,
     SparkFreshnessStatus,
@@ -145,6 +149,26 @@ def _expected_opportunity_frequency_in_sql() -> str:
 def _source_priority_level_in_sql() -> str:
     vals = ", ".join(f"'{p.value}'" for p in SourcePriorityLevel)
     return f"priority_level IN ({vals})"
+
+
+def _source_last_check_status_optional_sql() -> str:
+    vals = ", ".join(f"'{s.value}'" for s in SourceLastCheckStatus)
+    return f"(last_check_status IS NULL OR last_check_status IN ({vals}))"
+
+
+def _source_health_status_optional_sql() -> str:
+    vals = ", ".join(f"'{h.value}'" for h in SourceHealthStatus)
+    return f"(source_health_status IS NULL OR source_health_status IN ({vals}))"
+
+
+def _source_check_run_status_in_sql() -> str:
+    vals = ", ".join(f"'{s.value}'" for s in SourceCheckRunStatus)
+    return f"check_status IN ({vals})"
+
+
+def _source_check_mode_in_sql() -> str:
+    vals = ", ".join(f"'{m.value}'" for m in SourceCheckMode)
+    return f"check_mode IN ({vals})"
 
 
 def _discovery_intake_run_status_in_sql() -> str:
@@ -327,6 +351,14 @@ class NfOpportunitySource(Base):
             _source_priority_level_in_sql(),
             name="ck_nf_opportunity_sources_priority_level",
         ),
+        CheckConstraint(
+            _source_last_check_status_optional_sql(),
+            name="ck_nf_opportunity_sources_last_check_status",
+        ),
+        CheckConstraint(
+            _source_health_status_optional_sql(),
+            name="ck_nf_opportunity_sources_source_health_status",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -390,6 +422,27 @@ class NfOpportunitySource(Base):
         nullable=False,
         default=SourcePriorityLevel.medium.value,
     )
+    check_interval_days: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    next_check_due_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_check_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    last_check_run_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True), nullable=True
+    )
+    last_check_summary_json: Mapped[dict | list | None] = mapped_column(
+        JSON, nullable=True
+    )
+    consecutive_failure_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0
+    )
+    consecutive_empty_check_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0
+    )
+    source_health_status: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    freshness_checked_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -401,6 +454,79 @@ class NfOpportunitySource(Base):
     )
 
     organization: Mapped[Organization | None] = relationship()
+
+
+class NfSourceCheckRun(Base):
+    """Operator-facing record of a discovery source check (Sprint 15)."""
+
+    __tablename__ = "nf_source_check_runs"
+    __table_args__ = (
+        CheckConstraint(
+            _source_check_run_status_in_sql(),
+            name="ck_nf_source_check_runs_status",
+        ),
+        CheckConstraint(
+            _source_check_mode_in_sql(),
+            name="ck_nf_source_check_runs_mode",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    source_registry_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_opportunity_sources.id", ondelete="RESTRICT"),
+        nullable=False,
+    )
+    check_mode: Mapped[str] = mapped_column(String(32), nullable=False)
+    check_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    checked_for_period_start: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    checked_for_period_end: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    opportunities_seen_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0
+    )
+    new_candidates_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0
+    )
+    accepted_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    duplicate_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    rejected_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    review_items_created_count: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0
+    )
+    error_code: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    operator_notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    result_summary_json: Mapped[dict | list | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    organization: Mapped[Organization] = relationship()
 
 
 class NfGrantSpark(Base):

@@ -67,6 +67,11 @@ def test_create_global_source_and_list(client_nf: TestClient) -> None:
     src = cr.json()
     assert src["organization_id"] is None
     assert src["source_type"] == OpportunitySourceType.philanthropic_network.value
+    assert src["consecutive_failure_count"] == 0
+    assert src["consecutive_empty_check_count"] == 0
+    assert src["check_interval_days"] is None
+    assert src["last_check_status"] is None
+    assert src["source_health_status"] is None
 
     lst = client_nf.get(f"{base}/discovery/sources", headers=_hdr(oid))
     assert lst.status_code == 200

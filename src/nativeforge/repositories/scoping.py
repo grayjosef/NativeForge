@@ -21,6 +21,7 @@ from nativeforge.db.models import (
     NfPursuitCalendarEvent,
     NfPursuitTask,
     NfReviewArtifact,
+    NfSourceCheckRun,
     NfSparkRequirement,
     NfSparkScore,
     NfTribalProfile,
@@ -114,6 +115,61 @@ def select_opportunity_sources_for_org(
         select(NfOpportunitySource)
         .where(*scope)
         .order_by(NfOpportunitySource.source_name.asc())
+    )
+
+
+def nf_source_check_run_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfSourceCheckRun.organization_id == org_id,
+        NfSourceCheckRun.is_demo.is_(is_demo),
+    )
+
+
+def select_source_check_runs_for_org(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_source_check_run_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfSourceCheckRun)
+        .where(*scope)
+        .order_by(NfSourceCheckRun.started_at.desc())
+    )
+
+
+def select_source_check_runs_for_source(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    source_registry_id: uuid.UUID,
+) -> Select:
+    scope = nf_source_check_run_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfSourceCheckRun)
+        .where(
+            NfSourceCheckRun.source_registry_id == source_registry_id,
+            *scope,
+        )
+        .order_by(NfSourceCheckRun.started_at.desc())
+    )
+
+
+def select_source_check_run_scoped(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    check_run_id: uuid.UUID,
+) -> Select:
+    scope = nf_source_check_run_scope(org_id=org_id, org_type=org_type)
+    return select(NfSourceCheckRun).where(
+        NfSourceCheckRun.id == check_run_id,
+        *scope,
     )
 
 

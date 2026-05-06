@@ -99,6 +99,17 @@ def opportunity_source_to_dict(row: NfOpportunitySource) -> dict[str, Any]:
         "check_method": row.check_method,
         "expected_opportunity_frequency": row.expected_opportunity_frequency,
         "priority_level": row.priority_level,
+        "check_interval_days": row.check_interval_days,
+        "next_check_due_at": _d(row.next_check_due_at),
+        "last_check_status": row.last_check_status,
+        "last_check_run_id": str(row.last_check_run_id)
+        if row.last_check_run_id
+        else None,
+        "last_check_summary_json": row.last_check_summary_json,
+        "consecutive_failure_count": row.consecutive_failure_count,
+        "consecutive_empty_check_count": row.consecutive_empty_check_count,
+        "source_health_status": row.source_health_status,
+        "freshness_checked_at": _d(row.freshness_checked_at),
         "created_at": _d(row.created_at),
         "updated_at": _d(row.updated_at),
     }
