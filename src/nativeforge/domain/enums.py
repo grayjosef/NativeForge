@@ -343,6 +343,49 @@ class SourceCheckMode(StrEnum):
     freshness_probe = "freshness_probe"
 
 
+class CoverageGapSeverity(StrEnum):
+    """Relative urgency for an actionable registry coverage gap."""
+
+    low = "low"
+    medium = "medium"
+    high = "high"
+    critical = "critical"
+
+
+class CoverageGapType(StrEnum):
+    """Structured gap classification for discovery coverage intelligence."""
+
+    missing_source_type = "missing_source_type"
+    undercovered_domain = "undercovered_domain"
+    undercovered_applicant_type = "undercovered_applicant_type"
+    undercovered_state = "undercovered_state"
+    undercovered_region = "undercovered_region"
+    undercovered_tribal_group = "undercovered_tribal_group"
+    stale_priority_source = "stale_priority_source"
+    failing_priority_source = "failing_priority_source"
+    low_reliability_source = "low_reliability_source"
+    unverified_priority_source = "unverified_priority_source"
+    low_yield_source = "low_yield_source"
+    high_review_burden_source = "high_review_burden_source"
+    degraded_priority_source = "degraded_priority_source"
+    attention_needed_priority_source = "attention_needed_priority_source"
+    repeated_failed_checks = "repeated_failed_checks"
+    repeated_empty_checks = "repeated_empty_checks"
+
+
+class CoverageRecommendationAction(StrEnum):
+    """Suggested operator response for a coverage gap."""
+
+    add_source = "add_source"
+    verify_source = "verify_source"
+    increase_check_frequency = "increase_check_frequency"
+    review_source_quality = "review_source_quality"
+    replace_source = "replace_source"
+    expand_domain_coverage = "expand_domain_coverage"
+    expand_geographic_coverage = "expand_geographic_coverage"
+    monitor_only = "monitor_only"
+
+
 # --- Discovery intake (Sprint 12) ---
 
 

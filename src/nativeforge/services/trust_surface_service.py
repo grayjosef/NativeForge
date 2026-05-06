@@ -29,6 +29,7 @@ from nativeforge.repositories import pursuits as pursuit_repo
 from nativeforge.repositories import review_artifacts as ra_repo
 from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.repositories import spark_scores as score_repo
+from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import discovery_review_service as dr_svc
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import pursuit_service as psvc
@@ -252,6 +253,13 @@ def export_org_data_snapshot(
         opp_sources,
         now=datetime.now(UTC),
     )
+    gap_intel_full = dcg_svc.build_coverage_gap_intelligence(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        now=datetime.now(UTC),
+    )
+    coverage_gap_compact = dcg_svc.coverage_gap_intel_summary_compact(gap_intel_full)
     check_run_rows = scr_repo.list_source_check_runs_for_org(
         session,
         org_id=org_id,
@@ -303,6 +311,9 @@ def export_org_data_snapshot(
             dr_svc.review_item_to_dict(r) for r in rev_rows[:50]
         ],
         "source_freshness_summary": source_freshness_summary,
+        "coverage_gap_intelligence": coverage_gap_compact,
+        "coverage_gap_sample": gap_intel_full["coverage_gaps"][:50],
+        "source_recommendations_sample": gap_intel_full["source_recommendations"][:50],
         "source_check_runs_sample": [
             sfs.check_run_to_dict(r) for r in check_run_rows[:50]
         ],
@@ -315,6 +326,8 @@ def export_org_data_snapshot(
             "review_artifacts": len(review_arts),
             "discovery_review_items": len(rev_rows),
             "source_check_runs": len(check_run_rows),
+            "coverage_gap_rows": len(gap_intel_full["coverage_gaps"]),
+            "source_recommendations": len(gap_intel_full["source_recommendations"]),
         },
         "audit_events_sample": [audit_repo.audit_event_to_dict(e) for e in audit_tail],
     }

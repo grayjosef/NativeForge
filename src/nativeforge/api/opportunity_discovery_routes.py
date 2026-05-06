@@ -41,6 +41,7 @@ from nativeforge.repositories import discovery_intake_runs as intake_repo
 from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.repositories import organizations as org_repo
 from nativeforge.repositories import source_check_runs as scr_repo
+from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import discovery_intake_service as d_intake
 from nativeforge.services import discovery_review_service as d_review
 from nativeforge.services import grant_spark_service as gss
@@ -59,6 +60,41 @@ def _same_org(path_org: uuid.UUID, ctx: OrgContext) -> None:
             status_code=status.HTTP_403_FORBIDDEN,
             detail="path org_id does not match authenticated org",
         )
+
+
+def _maybe_filter_coverage_intel(
+    db: Session,
+    ctx: OrgContext,
+    full: dict[str, Any],
+    *,
+    severity: str | None,
+    gap_type: str | None,
+    domain: str | None,
+    source_type: str | None,
+    priority_level: str | None,
+    limit: int | None,
+) -> dict[str, Any]:
+    rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
+    by_id = {str(r.id): r for r in rows}
+    if (
+        severity is None
+        and gap_type is None
+        and domain is None
+        and source_type is None
+        and priority_level is None
+        and limit is None
+    ):
+        return full
+    return dcg_svc.filter_coverage_gap_payload(
+        full,
+        rows_by_id=by_id,
+        severity=severity,
+        gap_type=gap_type,
+        domain=domain,
+        source_type=source_type,
+        priority_level=priority_level,
+        limit=limit,
+    )
 
 
 class OpportunitySourceCreateBody(BaseModel):
@@ -348,6 +384,116 @@ def demo_discovery_sources_freshness_summary(
     _same_org(org_id, ctx)
     rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
     return sfs.build_freshness_summary_payload(rows, now=datetime.now(UTC))
+
+
+@demo_discovery_router.get("/{org_id}/discovery/coverage-gap-intelligence")
+def demo_discovery_coverage_gap_intelligence(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    severity: str | None = Query(None),
+    gap_type: str | None = Query(None),
+    domain: str | None = Query(None),
+    source_type: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    limit: int | None = Query(None, ge=1, le=200),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    full = dcg_svc.build_coverage_gap_intelligence(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+    )
+    return _maybe_filter_coverage_intel(
+        db,
+        ctx,
+        full,
+        severity=severity,
+        gap_type=gap_type,
+        domain=domain,
+        source_type=source_type,
+        priority_level=priority_level,
+        limit=limit,
+    )
+
+
+@demo_discovery_router.get("/{org_id}/discovery/coverage-gaps")
+def demo_discovery_coverage_gaps(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    severity: str | None = Query(None),
+    gap_type: str | None = Query(None),
+    domain: str | None = Query(None),
+    source_type: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    full = dcg_svc.build_coverage_gap_intelligence(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+    )
+    filtered = _maybe_filter_coverage_intel(
+        db,
+        ctx,
+        full,
+        severity=severity,
+        gap_type=gap_type,
+        domain=domain,
+        source_type=source_type,
+        priority_level=priority_level,
+        limit=limit,
+    )
+    return {
+        "schema_version": filtered["schema_version"],
+        "organization_id": filtered["organization_id"],
+        "is_demo": filtered["is_demo"],
+        "generated_at": filtered["generated_at"],
+        "coverage_gaps": filtered["coverage_gaps"],
+    }
+
+
+@demo_discovery_router.get("/{org_id}/discovery/source-recommendations")
+def demo_discovery_source_recommendations(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    severity: str | None = Query(None),
+    gap_type: str | None = Query(None),
+    domain: str | None = Query(None),
+    source_type: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    full = dcg_svc.build_coverage_gap_intelligence(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+    )
+    filtered = _maybe_filter_coverage_intel(
+        db,
+        ctx,
+        full,
+        severity=severity,
+        gap_type=gap_type,
+        domain=domain,
+        source_type=source_type,
+        priority_level=priority_level,
+        limit=limit,
+    )
+    return {
+        "schema_version": filtered["schema_version"],
+        "organization_id": filtered["organization_id"],
+        "is_demo": filtered["is_demo"],
+        "generated_at": filtered["generated_at"],
+        "source_recommendations": filtered["source_recommendations"],
+    }
 
 
 @demo_discovery_router.get("/{org_id}/discovery/sources")
@@ -729,6 +875,116 @@ def real_discovery_sources_freshness_summary(
     _same_org(org_id, ctx)
     rows = ods.list_sources(db, org_id=ctx.org_id, org_type=ctx.org_type)
     return sfs.build_freshness_summary_payload(rows, now=datetime.now(UTC))
+
+
+@real_discovery_router.get("/{org_id}/discovery/coverage-gap-intelligence")
+def real_discovery_coverage_gap_intelligence(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    severity: str | None = Query(None),
+    gap_type: str | None = Query(None),
+    domain: str | None = Query(None),
+    source_type: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    limit: int | None = Query(None, ge=1, le=200),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    full = dcg_svc.build_coverage_gap_intelligence(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+    )
+    return _maybe_filter_coverage_intel(
+        db,
+        ctx,
+        full,
+        severity=severity,
+        gap_type=gap_type,
+        domain=domain,
+        source_type=source_type,
+        priority_level=priority_level,
+        limit=limit,
+    )
+
+
+@real_discovery_router.get("/{org_id}/discovery/coverage-gaps")
+def real_discovery_coverage_gaps(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    severity: str | None = Query(None),
+    gap_type: str | None = Query(None),
+    domain: str | None = Query(None),
+    source_type: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    full = dcg_svc.build_coverage_gap_intelligence(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+    )
+    filtered = _maybe_filter_coverage_intel(
+        db,
+        ctx,
+        full,
+        severity=severity,
+        gap_type=gap_type,
+        domain=domain,
+        source_type=source_type,
+        priority_level=priority_level,
+        limit=limit,
+    )
+    return {
+        "schema_version": filtered["schema_version"],
+        "organization_id": filtered["organization_id"],
+        "is_demo": filtered["is_demo"],
+        "generated_at": filtered["generated_at"],
+        "coverage_gaps": filtered["coverage_gaps"],
+    }
+
+
+@real_discovery_router.get("/{org_id}/discovery/source-recommendations")
+def real_discovery_source_recommendations(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    severity: str | None = Query(None),
+    gap_type: str | None = Query(None),
+    domain: str | None = Query(None),
+    source_type: str | None = Query(None),
+    priority_level: str | None = Query(None),
+    limit: int = Query(50, ge=1, le=200),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    full = dcg_svc.build_coverage_gap_intelligence(
+        db,
+        org_id=ctx.org_id,
+        org_type=ctx.org_type,
+        now=datetime.now(UTC),
+    )
+    filtered = _maybe_filter_coverage_intel(
+        db,
+        ctx,
+        full,
+        severity=severity,
+        gap_type=gap_type,
+        domain=domain,
+        source_type=source_type,
+        priority_level=priority_level,
+        limit=limit,
+    )
+    return {
+        "schema_version": filtered["schema_version"],
+        "organization_id": filtered["organization_id"],
+        "is_demo": filtered["is_demo"],
+        "generated_at": filtered["generated_at"],
+        "source_recommendations": filtered["source_recommendations"],
+    }
 
 
 @real_discovery_router.get("/{org_id}/discovery/sources")
