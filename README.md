@@ -1,8 +1,65 @@
 # NativeForge Research Repo
 
-Pre-build research, discovery, and execution-planning package for **NativeForge** — a sovereignty-first tribal grant pursuit and compliance platform built from the existing **ContractForge** engine.
+Pre-build research, discovery, and execution-planning package for **NativeForge** — a sovereignty-first tribal grant pursuit and compliance platform. **ContractForge (`contract-iq`) is read-only reference architecture only** — NativeForge application code lives **here** under `src/nativeforge/` (separate product codebase per `nativeforge-separate-repo-architecture-decision.md`).
 
-This repo is **not the build**. It is the package that informs the build. Cursor (or any agent) consumes this repo and produces an audit, an architecture decision, and the M0 implementation plan in that order. The actual code lives in the ContractForge repo (or a derived repo, depending on the architecture-boundary decision in `execution/02-architecture-boundary.md`).
+## Application code (NF-000 scaffold)
+
+The backend is a **FastAPI** app with **SQLAlchemy**, **Alembic**, **psycopg**, and **pydantic-settings**. ContractForge is **not** modified and **not** a runtime dependency.
+
+### Prerequisites
+
+- Python **3.11+**
+- **PostgreSQL** (optional for `GET /health` only; required for Alembic against a real DB when you add migrations with DDL)
+
+### Local backend setup
+
+```bash
+cd /path/to/NativeForge
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+cp .env.example .env        # edit DATABASE_URL if needed
+uvicorn nativeforge.main:app --reload
+```
+
+- Health check: `GET http://127.0.0.1:8000/health`
+
+### Backend validation
+
+```bash
+ruff check src tests && ruff format --check src tests
+pytest -q
+python scripts/check_nf_sql_grep.py
+```
+
+**Demo isolation (NF-001):** configuration (`NF_DEMO_ORG_IDS`, `NF_DEV_ORG_HEADERS`), helpers, and `/v1/isolation/*` smoke routes are documented in [`docs/demo-isolation.md`](docs/demo-isolation.md). Quick subset:
+
+```bash
+bash scripts/validate_demo_isolation.sh
+```
+
+### Frontend (placeholder shell)
+
+```bash
+cd frontend
+npm ci
+npm run dev                 # http://127.0.0.1:5173
+npm run build
+```
+
+### Alembic
+
+```bash
+pip install -e ".[dev]"
+alembic upgrade head        # applies empty initial revision when metadata has no tables
+alembic history
+```
+
+---
+
+## Research & execution docs (original purpose)
+
+This repository **also** holds research and execution documents that inform the build. Cursor (or any agent) consumes these before and during implementation.
 
 ## Who this is for
 
