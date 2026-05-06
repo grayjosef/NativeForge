@@ -655,6 +655,78 @@ class NfFormPackage(Base):
     review_artifact: Mapped[NfReviewArtifact] = relationship()
 
 
+def _pursuit_brief_status_in_sql() -> str:
+    return "status IN ('pending_review', 'finalized', 'superseded')"
+
+
+class NfPursuitBrief(Base):
+    """Deterministic pursuit brief — consolidated Grant Spark intelligence."""
+
+    __tablename__ = "nf_pursuit_briefs"
+    __table_args__ = (
+        CheckConstraint(
+            _pursuit_brief_status_in_sql(),
+            name="ck_nf_pursuit_briefs_status",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    grant_spark_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_sparks.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    pursuit_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_grant_pursuits.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    review_artifact_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("nf_review_artifacts.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    brief_schema_version: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default="pending_review",
+    )
+    input_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    readiness_summary_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    opportunity_summary_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    eligibility_fit_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    requirement_summary_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    score_summary_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    risks_and_gaps_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    required_documents_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    timeline_summary_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    recommended_next_actions_json: Mapped[dict] = mapped_column(JSON, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    organization: Mapped[Organization] = relationship()
+
+
 class NfAuditEvent(Base):
     """Append-only audit trail for review transitions and artifact creation."""
 

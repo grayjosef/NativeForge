@@ -20,6 +20,7 @@ class ReviewArtifactType(StrEnum):
     form_preview = "form_preview"
     form_package = "form_package"
     nofo_extraction = "nofo_extraction"
+    pursuit_brief = "pursuit_brief"
 
 
 class ReviewStatus(StrEnum):
@@ -57,6 +58,7 @@ class AuditAction(StrEnum):
     form_package_created = "form_package_created"
     sf424_preview_regenerated = "sf424_preview_regenerated"
     org_data_snapshot_exported = "org_data_snapshot_exported"
+    pursuit_brief_generated = "pursuit_brief_generated"
 
 
 class TribalEntityType(StrEnum):

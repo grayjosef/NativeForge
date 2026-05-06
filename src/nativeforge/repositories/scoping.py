@@ -13,6 +13,7 @@ from nativeforge.db.models import (
     NfGrantPursuit,
     NfGrantSpark,
     NfNofoExtractionRun,
+    NfPursuitBrief,
     NfPursuitCalendarEvent,
     NfPursuitTask,
     NfReviewArtifact,
@@ -296,6 +297,50 @@ def nf_form_package_scope(
     return (
         NfFormPackage.organization_id == org_id,
         NfFormPackage.is_demo.is_(is_demo),
+    )
+
+
+def nf_pursuit_brief_scope(
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> tuple:
+    is_demo = org_type == "demo"
+    return (
+        NfPursuitBrief.organization_id == org_id,
+        NfPursuitBrief.is_demo.is_(is_demo),
+    )
+
+
+def select_latest_pursuit_brief_for_spark(
+    *,
+    spark_id: uuid.UUID,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_pursuit_brief_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfPursuitBrief)
+        .where(NfPursuitBrief.grant_spark_id == spark_id)
+        .where(*scope)
+        .order_by(NfPursuitBrief.created_at.desc())
+        .limit(1)
+    )
+
+
+def select_latest_pursuit_brief_for_pursuit(
+    *,
+    pursuit_id: uuid.UUID,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+) -> Select:
+    scope = nf_pursuit_brief_scope(org_id=org_id, org_type=org_type)
+    return (
+        select(NfPursuitBrief)
+        .where(NfPursuitBrief.pursuit_id == pursuit_id)
+        .where(*scope)
+        .order_by(NfPursuitBrief.created_at.desc())
+        .limit(1)
     )
 
 
