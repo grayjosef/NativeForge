@@ -40,6 +40,8 @@ from nativeforge.services.discovery_operator_workbench_pure import (
     severity_from_coverage as _severity_from_coverage,
 )
 
+_MAX_ESC_REC_PER_SOURCE = 32
+
 DECISION_PACK_SCHEMA_VERSION = "nf_discovery_operator_decision_pack_v1"
 WORKBENCH_CONNECTOR_INTEL_SCHEMA_VERSION = "nf_workbench_connector_intelligence_v1"
 
@@ -79,6 +81,32 @@ def _dt_iso(v: Any) -> str | None:
     if isinstance(v, datetime):
         return v.isoformat()
     return str(v)
+
+
+def _verified_intake_run_id_for_intel(
+    session: Session,
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    source_registry_id: uuid.UUID,
+    raw: Any,
+) -> str | None:
+    """Drop forged or cross-org intake_run_id values from connector summaries."""
+    if raw is None:
+        return None
+    try:
+        iid = uuid.UUID(str(raw).strip())
+    except (ValueError, AttributeError):
+        return None
+    row = intake_repo.get_discovery_intake_run_scoped(
+        session=session,
+        run_id=iid,
+        org_id=org_id,
+        org_type=org_type,
+    )
+    if row is None or row.source_registry_id != source_registry_id:
+        return None
+    return str(iid)
 
 
 def _registry_health_rollups(source_rows: list[NfOpportunitySource]) -> dict[str, int]:
@@ -209,6 +237,9 @@ def build_workbench_connector_intelligence(
             continue
         latest[sid] = (run, rs)
 
+    registry_ids = frozenset(src_meta.keys())
+    latest = {sid: v for sid, v in latest.items() if sid in registry_ids}
+
     warning_counter: dict[str, int] = {}
     ch_counts: dict[str, int] = dict.fromkeys(_CONNECTOR_HEALTH_BUCKETS, 0)
     empty_connector_signals = 0
@@ -265,17 +296,24 @@ def build_workbench_connector_intelligence(
         )
 
         esc_raw = rs.get("operator_escalation_recommendations")
-        esc_list = esc_raw if isinstance(esc_raw, list) else []
-
-        for e in esc_list:
-            if isinstance(e, dict):
-                row_e = dict(e)
-                row_e.setdefault("source_registry_id", str(sid))
-                row_e.setdefault("source_check_run_id", str(run.id))
-                flat_escalations.append(row_e)
+        esc_list: list[dict[str, Any]] = []
+        if isinstance(esc_raw, list):
+            for e in esc_raw[:_MAX_ESC_REC_PER_SOURCE]:
+                if isinstance(e, dict):
+                    row_e = dict(e)
+                    row_e["source_registry_id"] = str(sid)
+                    row_e["source_check_run_id"] = str(run.id)
+                    esc_list.append(row_e)
+                    flat_escalations.append(row_e)
 
         intake_raw = rs.get("intake_run_id")
-        intake_s = str(intake_raw) if intake_raw else None
+        intake_s = _verified_intake_run_id_for_intel(
+            session,
+            org_id=org_id,
+            org_type=org_type,
+            source_registry_id=sid,
+            raw=intake_raw,
+        )
 
         diag = str(rs.get("operator_diagnostic_message") or "").strip()
         mcounts = _manifest_counts_from_rs(rs)

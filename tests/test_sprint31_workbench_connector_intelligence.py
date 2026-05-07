@@ -8,9 +8,15 @@ from datetime import UTC, datetime
 import pytest
 from fastapi.testclient import TestClient
 
-from nativeforge.db.models import NfOpportunitySource, NfSourceCheckRun, Organization
+from nativeforge.db.models import (
+    NfDiscoveryIntakeRun,
+    NfOpportunitySource,
+    NfSourceCheckRun,
+    Organization,
+)
 from nativeforge.db.session import SessionLocal
 from nativeforge.domain.enums import (
+    DiscoveryIntakeMode,
     OpportunitySourceType,
     SourceCheckMode,
     SourceCheckRunStatus,
@@ -104,6 +110,15 @@ def test_connector_intelligence_surfaces_stored_source_check_summary(
         rsrc = s.get(NfOpportunitySource, sid)
         assert rsrc is not None
         rsrc.source_health_status = SourceHealthStatus.degraded.value
+        s.add(
+            NfDiscoveryIntakeRun(
+                id=intake_uid,
+                organization_id=oid,
+                is_demo=True,
+                source_registry_id=sid,
+                intake_mode=DiscoveryIntakeMode.structured_batch.value,
+            )
+        )
         run = NfSourceCheckRun(
             organization_id=oid,
             is_demo=True,
@@ -138,3 +153,4 @@ def test_connector_intelligence_surfaces_stored_source_check_summary(
     flat = ci["operator_escalation_recommendations_flat"]
     assert len(flat) >= 1
     assert flat[0]["operator_title"] == "Inspect connector batch"
+    assert flat[0]["source_registry_id"] == str(sid)
