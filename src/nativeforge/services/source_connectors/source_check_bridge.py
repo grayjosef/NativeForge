@@ -21,6 +21,11 @@ from nativeforge.services.source_connectors.base import (
     ConnectorRunContext,
     ConnectorSourceConfig,
 )
+from nativeforge.services.source_connectors.connector_diagnostics import (
+    connector_shape_label,
+    source_labels_from_fixture_rows,
+    warning_codes_from_connector_normalization_errors,
+)
 from nativeforge.services.source_connectors.connector_health import (
     ConnectorHealthLabel,
     intake_bridge_outcome_health,
@@ -91,6 +96,13 @@ def run_source_check_backed_connector_dry_run(
             connector_provenance_extras=provenance_extras,
         )
     except IntakeBridgeFixtureError as ex:
+        src_hint = {
+            "connector_shape": connector_shape_label(
+                grants_gov_shaped_dry_run=False,
+                provenance={},
+            ),
+        }
+        src_hint.update(source_labels_from_fixture_rows(fixture_rows))
         manifest = build_connector_run_manifest_v1(
             source_registry_id=source_registry_id,
             intake_run_id=None,
@@ -98,7 +110,19 @@ def run_source_check_backed_connector_dry_run(
             connector_run_id=ctx.run_id,
             fixture_row_count=len(fixture_rows),
             normalized_candidate_count=0,
+            intake_candidate_count=0,
+            accepted=0,
+            duplicate=0,
+            rejected=0,
+            error=0,
+            review_required=0,
+            normalization_errors=len(ex.errors),
             source_check_run_id=check_run.id,
+            connector_id=connector_config.connector_id,
+            connector_schema_version=ctx.normalization_schema_version,
+            health_status="failed",
+            warning_codes=warning_codes_from_connector_normalization_errors(ex.errors),
+            source_identifiers=src_hint,
         )
         err_msgs = [str(e.get("message", "")) for e in ex.errors]
         summary_blob = {
@@ -189,13 +213,15 @@ def run_source_check_backed_connector_dry_run(
         },
     )
 
-    health = intake_bridge_outcome_health(
-        normalization_errors=0,
-        accepted_count=accepted,
-        rejected_count=rejected,
-        duplicate_count=duplicate,
-        error_count=err_cnt,
-    )
+    health = intake_out.get("connector_health")
+    if health is None:
+        health = intake_bridge_outcome_health(
+            normalization_errors=0,
+            accepted_count=accepted,
+            rejected_count=rejected,
+            duplicate_count=duplicate,
+            error_count=err_cnt,
+        )
 
     return {
         "source_check_run": sfs.check_run_to_dict(check_run),
