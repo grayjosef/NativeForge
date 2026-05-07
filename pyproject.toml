@@ -40,7 +40,9 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/discovery_evidence_pack_service.py" = ["E501"]
 "src/nativeforge/repositories/evidence_pack.py" = ["E501"]
 "src/nativeforge/services/source_coverage_plan_service.py" = ["E501"]
+"src/nativeforge/services/source_candidate_registry_service.py" = ["E501"]
 "tests/test_sprint19_evidence_pack.py" = ["E501"]
+"tests/test_sprint37_source_candidate_registry.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"

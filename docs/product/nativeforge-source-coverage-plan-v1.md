@@ -35,3 +35,7 @@ Coverage plan steps mirror operator vocabulary (`expand_native_priority_coverage
 ## Workbench
 
 The operator decision pack **`source_quality`** object includes **`source_coverage_plan`** as a sibling field. No separate route or table is introduced.
+
+## Source candidate registry (Sprint 37)
+
+The same **`source_quality`** payload may include **`source_candidate_registry`** (`nf_source_candidate_registry_v1`)—deterministic, review-only candidate source targets derived from this plan. See [nativeforge-source-candidate-registry-v1.md](./nativeforge-source-candidate-registry-v1.md).
