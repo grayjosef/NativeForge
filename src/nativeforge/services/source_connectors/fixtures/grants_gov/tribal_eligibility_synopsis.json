@@ -1,0 +1,14 @@
+{
+  "comment": "Synopsis-only tribal eligibility phrase for structured inference.",
+  "payload": {
+    "Title": "Illustrative Capacity Building NOFO",
+    "agencyName": "Illustrative Federal Agency",
+    "OpportunityNumber": "S26-GG-TRIBAL-TXT-001",
+    "OpportunityURL": "https://example.test/s26/grants-gov/tribal-text-001",
+    "FundingInstrumentType": "Grant",
+    "Synopsis": "Eligible applicants include federally recognized tribes and tribal organizations.",
+    "PostedDate": "2026-01-01",
+    "CloseDate": "2099-12-31T23:59:59Z",
+    "CFDA": "93.123"
+  }
+}

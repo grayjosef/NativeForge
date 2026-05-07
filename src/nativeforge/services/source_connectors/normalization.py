@@ -123,6 +123,17 @@ def build_normalized_fields(
     }
     if raw.get("application_deadline") is not None:
         fields["application_deadline"] = raw.get("application_deadline")
+    cfda = _str_nonempty(raw, "cfda_assistance_listing")
+    if cfda is not None:
+        fields["cfda_assistance_listing"] = cfda
+    if raw.get("posted_date") is not None:
+        fields["posted_date"] = raw.get("posted_date")
+    if raw.get("award_ceiling") is not None:
+        fields["award_ceiling"] = raw.get("award_ceiling")
+    if raw.get("award_floor") is not None:
+        fields["award_floor"] = raw.get("award_floor")
+    if _str_nonempty(raw, "program_category") is not None:
+        fields["program_category"] = _str_nonempty(raw, "program_category")
     return fields
 
 

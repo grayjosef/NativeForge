@@ -1,0 +1,12 @@
+{
+  "comment": "State-administered block grant; tribal applicability unclear from synopsis.",
+  "payload": {
+    "Title": "Community Services Block Grant — Formula to States",
+    "agencyName": "Illustrative HHS",
+    "OpportunityNumber": "S26-GG-AMB-001",
+    "OpportunityURL": "https://example.test/s26/grants-gov/amb-001",
+    "FundingInstrumentType": "Formula",
+    "Synopsis": "Funds are allocated to states under statutory formulas; consult state plans.",
+    "CloseDate": "2099-09-01T23:59:59Z"
+  }
+}

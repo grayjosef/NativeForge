@@ -7,6 +7,12 @@ from nativeforge.services.source_connectors.base import (
     NormalizedOpportunityCandidate,
     RawOpportunityPayload,
 )
+from nativeforge.services.source_connectors.grants_gov_shaped import (
+    GRANTS_GOV_SHAPED_CONNECTOR_KEY,
+    dry_run_grants_gov_shaped_rows,
+    grants_gov_like_to_fixture_row,
+    normalize_grants_gov_payload,
+)
 from nativeforge.services.source_connectors.intake_bridge import (
     IntakeBridgeFixtureError,
     static_fixture_connector_intake_dry_run,
@@ -34,6 +40,10 @@ __all__ = [
     "assess_native_relevance",
     "build_native_relevance_input",
     "dry_run_fixture_rows",
+    "dry_run_grants_gov_shaped_rows",
+    "grants_gov_like_to_fixture_row",
+    "normalize_grants_gov_payload",
+    "GRANTS_GOV_SHAPED_CONNECTOR_KEY",
     "IntakeBridgeFixtureError",
     "normalize_raw_dict",
     "static_fixture_connector_intake_dry_run",

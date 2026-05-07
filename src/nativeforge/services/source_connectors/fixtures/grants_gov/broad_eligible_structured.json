@@ -1,0 +1,16 @@
+{
+  "comment": "Broad federal program; tribal eligibility via structured flag only (no Native keyword in title).",
+  "payload": {
+    "Title": "Regional Infrastructure Formula Suballocation",
+    "agencyName": "Illustrative DOT",
+    "OpportunityNumber": "S26-GG-BROAD-001",
+    "OpportunityURL": "https://example.test/s26/grants-gov/broad-001",
+    "FundingInstrumentType": "Grant",
+    "tribal_eligible": true,
+    "applicant_types_include_tribal": true,
+    "Synopsis": "Eligible entities include states and metropolitan planning organizations.",
+    "CloseDate": "2099-11-01T23:59:59Z",
+    "AwardCeiling": "$2,500,000",
+    "AwardFloor": "100000"
+  }
+}

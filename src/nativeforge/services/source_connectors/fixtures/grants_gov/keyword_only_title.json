@@ -1,0 +1,12 @@
+{
+  "comment": "Title mentions tribal context; synopsis restricts eligibility to universities (keyword-only hypothesis).",
+  "payload": {
+    "Title": "Hydrology modeling — tribal watersheds cited in references only",
+    "agencyName": "Illustrative NSF",
+    "OpportunityNumber": "S26-GG-KW-001",
+    "OpportunityURL": "https://example.test/s26/grants-gov/kw-001",
+    "FundingInstrumentType": "Grant",
+    "Synopsis": "Doctoral researchers at accredited universities. No tribal set-aside.",
+    "CloseDate": "2099-10-15T23:59:59Z"
+  }
+}
