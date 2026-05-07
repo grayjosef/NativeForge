@@ -80,6 +80,11 @@ def _assert_decision_pack_shape(body: dict) -> None:
     assert isinstance(body["intake_runs_flagged"], list)
     assert isinstance(body["decision_items"], list)
     assert isinstance(body["priority_next_actions"], list)
+    ci = body["connector_intelligence"]
+    assert isinstance(ci, dict)
+    assert ci.get("schema_version")
+    assert isinstance(ci.get("rollup"), dict)
+    assert isinstance(ci.get("per_source_latest_connector_run"), list)
     lc = body["ledger_context"]
     assert isinstance(lc, dict)
     assert isinstance(lc.get("open_operator_actions"), int)

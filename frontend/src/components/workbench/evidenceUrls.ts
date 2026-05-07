@@ -12,7 +12,9 @@ export type EvidenceKind =
   | "review-items"
   | "operator-actions"
   | "grant-sparks"
-  | "intake-candidates";
+  | "intake-candidates"
+  | "source-check-runs"
+  | "intake-runs";
 
 export function buildEvidencePackPath(
   plane: Plane,

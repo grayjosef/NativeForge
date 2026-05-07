@@ -9,6 +9,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from nativeforge.db.models import NfOpportunitySource
 from nativeforge.domain.enums import (
     CoverageGapType,
     DiscoveryReviewItemType,
@@ -20,6 +21,7 @@ from nativeforge.domain.enums import (
 )
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories import discovery_intake_runs as intake_repo
+from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import discovery_intake_service as d_intake
 from nativeforge.services import discovery_review_service as d_review
@@ -39,6 +41,309 @@ from nativeforge.services.discovery_operator_workbench_pure import (
 )
 
 DECISION_PACK_SCHEMA_VERSION = "nf_discovery_operator_decision_pack_v1"
+WORKBENCH_CONNECTOR_INTEL_SCHEMA_VERSION = "nf_workbench_connector_intelligence_v1"
+
+_CONNECTOR_HEALTH_BUCKETS: tuple[str, ...] = (
+    "healthy",
+    "empty",
+    "degraded",
+    "failed",
+    "stale",
+    "unknown",
+)
+
+
+def _is_connector_result_summary(rs: Any) -> bool:
+    if not isinstance(rs, dict):
+        return False
+    if rs.get("connector_result_summary_schema_version"):
+        return True
+    return rs.get("manifest") is not None and rs.get("health_status") is not None
+
+
+def _manifest_counts_from_rs(rs: dict[str, Any]) -> dict[str, Any]:
+    mc = rs.get("manifest_counts")
+    if isinstance(mc, dict):
+        return mc
+    man = rs.get("manifest")
+    if isinstance(man, dict):
+        c = man.get("counts")
+        if isinstance(c, dict):
+            return c
+    return {}
+
+
+def _dt_iso(v: Any) -> str | None:
+    if v is None:
+        return None
+    if isinstance(v, datetime):
+        return v.isoformat()
+    return str(v)
+
+
+def _registry_health_rollups(source_rows: list[NfOpportunitySource]) -> dict[str, int]:
+    keys = (
+        SourceHealthStatus.healthy.value,
+        SourceHealthStatus.degraded.value,
+        SourceHealthStatus.failing.value,
+        SourceHealthStatus.stale.value,
+        SourceHealthStatus.attention_needed.value,
+        SourceHealthStatus.unknown.value,
+    )
+    out: dict[str, int] = dict.fromkeys(keys, 0)
+    out["other"] = 0
+    for r in source_rows:
+        if not r.is_active:
+            continue
+        raw = r.source_health_status
+        h = (str(raw).strip() if raw else "") or SourceHealthStatus.unknown.value
+        if h in out:
+            out[h] += 1
+        else:
+            out["other"] += 1
+    if out["other"] == 0:
+        out.pop("other")
+    return out
+
+
+def _pressure_tags(
+    rs: dict[str, Any],
+    registry_health: str | None,
+    *,
+    duplicate_heavy: bool,
+    review_heavy: bool,
+) -> list[str]:
+    tags: set[str] = set()
+    hc = str(rs.get("health_status") or "").strip().lower()
+    rh = (registry_health or "").strip().lower()
+    codes = [str(c).lower() for c in (rs.get("warning_codes") or [])]
+
+    if hc == "stale" or rh == SourceHealthStatus.stale.value:
+        tags.add("source_freshness")
+    if rh == SourceHealthStatus.attention_needed.value:
+        tags.add("source_freshness")
+    if any("overdue" in c for c in codes):
+        tags.add("source_freshness")
+
+    if hc in {"failed", "degraded", "empty"}:
+        tags.add("connector_quality")
+    if any("fixture_normalization" in c or "normalization" in c for c in codes):
+        tags.add("connector_quality")
+    if any("connector_run_empty" in c for c in codes):
+        tags.add("connector_quality")
+
+    cnt = rs.get("counts") if isinstance(rs.get("counts"), dict) else {}
+    acc = int(cnt.get("accepted_count") or 0)
+    dup = int(cnt.get("duplicate_count") or 0)
+    rej = int(cnt.get("rejected_count") or 0)
+    err = int(cnt.get("error_count") or 0)
+    rr = int(cnt.get("review_required_count") or 0)
+    tot = acc + dup + rej + err
+    if duplicate_heavy:
+        tags.add("duplicate_saturation")
+    if review_heavy:
+        tags.add("native_relevance_precision")
+    elif tot >= 4 and rr >= max(2, int(0.28 * tot)):
+        tags.add("native_relevance_precision")
+
+    return sorted(tags)
+
+
+def _attention_line(
+    rs: dict[str, Any],
+    registry_health: str | None,
+    diag: str,
+    esc_list: list[Any],
+) -> str:
+    parts: list[str] = []
+    rh = (registry_health or "").strip()
+    if rh and rh != SourceHealthStatus.healthy.value:
+        parts.append(f"Registry health is {rh}.")
+    hc = str(rs.get("health_status") or "").strip()
+    if hc and hc != "healthy":
+        parts.append(f"Latest connector check classified as {hc}.")
+    if diag:
+        parts.append(diag)
+    if esc_list and isinstance(esc_list[0], dict):
+        t = str(esc_list[0].get("operator_title") or "").strip()
+        if t:
+            parts.append(f"Recommended follow-up: {t}.")
+    return " ".join(parts).strip() or (
+        "Latest stored connector summary looks nominal for this source."
+    )
+
+
+def build_workbench_connector_intelligence(
+    session: Session,
+    *,
+    org_id: uuid.UUID,
+    org_type: OrgType,
+    source_rows: list[NfOpportunitySource],
+    now: datetime,
+    check_run_limit: int = 4000,
+) -> dict[str, Any]:
+    """Roll up connector/source-check intelligence from persisted summaries."""
+    lim = max(1, min(int(check_run_limit), 8000))
+    src_meta: dict[uuid.UUID, dict[str, Any]] = {}
+    for r in source_rows:
+        src_meta[r.id] = {
+            "source_name": r.source_name,
+            "registry_health_status": r.source_health_status,
+        }
+
+    runs = scr_repo.list_source_check_runs_for_org(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        limit=lim,
+    )
+
+    latest: dict[uuid.UUID, tuple[Any, dict[str, Any]]] = {}
+    for run in runs:
+        rs_raw = run.result_summary_json
+        if not _is_connector_result_summary(rs_raw):
+            continue
+        rs = rs_raw if isinstance(rs_raw, dict) else {}
+        sid = run.source_registry_id
+        if sid in latest:
+            continue
+        latest[sid] = (run, rs)
+
+    warning_counter: dict[str, int] = {}
+    ch_counts: dict[str, int] = dict.fromkeys(_CONNECTOR_HEALTH_BUCKETS, 0)
+    empty_connector_signals = 0
+    dup_heavy = 0
+    rr_heavy = 0
+    flat_escalations: list[dict[str, Any]] = []
+
+    rows_out: list[dict[str, Any]] = []
+
+    for sid, (run, rs) in latest.items():
+        meta = src_meta.get(sid, {})
+        name = meta.get("source_name")
+        reg_h_raw = meta.get("registry_health_status")
+        reg_h = (
+            str(reg_h_raw).strip()
+            if reg_h_raw is not None and str(reg_h_raw).strip()
+            else None
+        )
+
+        hc_raw = str(rs.get("health_status") or "").strip() or "unknown"
+        hc = hc_raw if hc_raw in ch_counts else "unknown"
+        ch_counts[hc] += 1
+
+        wc_list = (
+            rs.get("warning_codes") if isinstance(rs.get("warning_codes"), list) else []
+        )
+        wc_norm = [str(x) for x in wc_list]
+        wc_set = set(wc_norm)
+        if hc_raw == "empty" or "connector_run_empty" in wc_set:
+            empty_connector_signals += 1
+
+        for w in wc_norm:
+            warning_counter[w] = warning_counter.get(w, 0) + 1
+
+        cnt = rs.get("counts") if isinstance(rs.get("counts"), dict) else {}
+        acc = int(cnt.get("accepted_count") or 0)
+        dup = int(cnt.get("duplicate_count") or 0)
+        rej = int(cnt.get("rejected_count") or 0)
+        err = int(cnt.get("error_count") or 0)
+        rr = int(cnt.get("review_required_count") or 0)
+        tot = acc + dup + rej + err
+        is_dup_heavy = tot >= 4 and dup >= max(3, int(0.35 * tot))
+        is_rr_heavy = rr >= 4 or (tot >= 4 and rr >= max(2, int(0.28 * tot)))
+        if is_dup_heavy:
+            dup_heavy += 1
+        if is_rr_heavy:
+            rr_heavy += 1
+
+        tags = _pressure_tags(
+            rs,
+            reg_h,
+            duplicate_heavy=is_dup_heavy,
+            review_heavy=is_rr_heavy,
+        )
+
+        esc_raw = rs.get("operator_escalation_recommendations")
+        esc_list = esc_raw if isinstance(esc_raw, list) else []
+
+        for e in esc_list:
+            if isinstance(e, dict):
+                row_e = dict(e)
+                row_e.setdefault("source_registry_id", str(sid))
+                row_e.setdefault("source_check_run_id", str(run.id))
+                flat_escalations.append(row_e)
+
+        intake_raw = rs.get("intake_run_id")
+        intake_s = str(intake_raw) if intake_raw else None
+
+        diag = str(rs.get("operator_diagnostic_message") or "").strip()
+        mcounts = _manifest_counts_from_rs(rs)
+
+        rows_out.append(
+            {
+                "source_registry_id": str(sid),
+                "source_name": name,
+                "registry_health_status": reg_h,
+                "connector_health_status": hc_raw,
+                "source_check_run_id": str(run.id),
+                "check_status": run.check_status,
+                "run_completed_at": _dt_iso(run.completed_at),
+                "run_started_at": _dt_iso(run.started_at),
+                "intake_run_id": intake_s,
+                "warning_codes": wc_norm,
+                "manifest_counts": mcounts,
+                "intake_counts": cnt,
+                "operator_diagnostic_message": diag or None,
+                "operator_escalation_recommendations": esc_list,
+                "pressure_category_tags": tags,
+                "attention_summary": _attention_line(rs, reg_h, diag, esc_list),
+            }
+        )
+
+    warning_ranked = [
+        {"warning_code": k, "occurrences": v}
+        for k, v in sorted(warning_counter.items(), key=lambda kv: (-kv[1], kv[0]))
+    ][:48]
+
+    rank_order = {
+        "failed": 0,
+        "empty": 1,
+        "degraded": 2,
+        "stale": 3,
+        "healthy": 5,
+        "unknown": 4,
+    }
+
+    rows_out.sort(
+        key=lambda row: (
+            rank_order.get(str(row.get("connector_health_status") or ""), 9),
+            str(row.get("source_name") or ""),
+        )
+    )
+
+    reg = _registry_health_rollups(source_rows)
+
+    return {
+        "schema_version": WORKBENCH_CONNECTOR_INTEL_SCHEMA_VERSION,
+        "generated_at": now.isoformat(),
+        "rollup": {
+            "registry_health_counts": reg,
+            "connector_health_counts": ch_counts,
+            "sources_with_connector_summaries": len(latest),
+            "empty_connector_runs": empty_connector_signals,
+            "duplicate_heavy_sources": dup_heavy,
+            "review_required_heavy_sources": rr_heavy,
+            "operator_escalation_rows_total": len(flat_escalations),
+            "warning_codes_ranked": warning_ranked,
+            "registry_sources_degraded": reg.get(SourceHealthStatus.degraded.value, 0),
+            "registry_sources_failing": reg.get(SourceHealthStatus.failing.value, 0),
+            "registry_sources_stale": reg.get(SourceHealthStatus.stale.value, 0),
+        },
+        "operator_escalation_recommendations_flat": flat_escalations[:80],
+        "per_source_latest_connector_run": rows_out,
+    }
+
 
 _SEVERITY_RANK: dict[str, int] = {
     OperatorDecisionSeverity.critical.value: 5,
@@ -618,6 +923,14 @@ def build_operator_decision_pack(
         }
     )
 
+    connector_intel = build_workbench_connector_intelligence(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        source_rows=rows,
+        now=ref_now,
+    )
+
     pack = {
         "schema_version": DECISION_PACK_SCHEMA_VERSION,
         "organization_id": str(org_id),
@@ -625,6 +938,7 @@ def build_operator_decision_pack(
         "generated_at": ref_now.isoformat(),
         "decision_score": decision_score,
         "summary": summary,
+        "connector_intelligence": connector_intel,
         "freshness_summary": freshness_summary,
         "coverage_gap_summary": gap_compact,
         "open_review_items": open_reviews,

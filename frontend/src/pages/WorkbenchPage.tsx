@@ -12,6 +12,7 @@ import {
   listOperatorLedgerActions,
   listSourcesOverdue,
 } from "../discoveryApiClient";
+import { ConnectorIntelligenceCard } from "../components/workbench/ConnectorIntelligenceCard";
 import { CoverageGapsCard } from "../components/workbench/CoverageGapsCard";
 import { EvidenceLinksCard } from "../components/workbench/EvidenceLinksCard";
 import { collectEvidenceLinkRows } from "../components/workbench/evidenceUrls";
@@ -265,6 +266,16 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
           orgId={o}
           overdue={overdue}
           freshness={freshness}
+        />
+        <ConnectorIntelligenceCard
+          baseUrl={base}
+          plane={plane}
+          orgId={o}
+          block={{
+            loading: pack.loading,
+            error: pack.error,
+            data: pack.data,
+          }}
         />
         <CoverageGapsCard intel={intel} recs={recs} />
         <EvidenceLinksCard
