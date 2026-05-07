@@ -365,25 +365,51 @@ function SourceQualityBody({
       {actions.length ? (
         <ul className="nf-wb-action-list" aria-label="Recommended operator actions">
           {actions.map((a, i) => {
-            const act = str(a.action);
-            const title = act ? humanizeKey(act) : `Action ${i + 1}`;
+            const actionType = str(a.action_type ?? a.action);
+            const titleText =
+              str(a.title).trim() || (actionType ? humanizeKey(actionType) : `Action ${i + 1}`);
             const rat = str(a.rationale);
+            const pri = str(a.priority).trim();
             const focus = Array.isArray(a.focus_lanes)
               ? (a.focus_lanes as unknown[]).map((x) => humanizeKey(str(x)))
               : [];
-            const count =
-              typeof a.count === "number" && Number.isFinite(a.count)
-                ? a.count
+            const affected =
+              typeof a.affected_source_count === "number" && Number.isFinite(a.affected_source_count)
+                ? a.affected_source_count
                 : null;
+            const createLedger = a.should_create_action === true;
+            const legacyCount =
+              typeof a.count === "number" && Number.isFinite(a.count) ? a.count : null;
+            const evidence = Array.isArray(a.evidence_refs)
+              ? (a.evidence_refs as unknown[]).map((x) => str(x)).filter(Boolean)
+              : [];
             return (
-              <li key={`${act}-${i}`} className="nf-wb-action-item">
+              <li key={`${actionType}-${i}`} className="nf-wb-action-item">
                 <p className="nf-wb-action-head">
                   <span className="nf-wb-rank">Step {i + 1}</span>
+                  {pri ? (
+                    <span className="nf-wb-meta nf-muted nf-wb-inline-meta">
+                      · Priority {humanizeKey(pri)}
+                    </span>
+                  ) : null}
                 </p>
-                <p className="nf-wb-action-title">{title}</p>
-                {count != null ? (
-                  <p className="nf-wb-meta nf-muted">Count: {num(count)}</p>
+                {actionType ? (
+                  <p className="nf-muted nf-wb-inline-meta">
+                    <code className="nf-code-inline">{actionType}</code>
+                  </p>
                 ) : null}
+                <p className="nf-wb-action-title">{titleText}</p>
+                {legacyCount != null ? (
+                  <p className="nf-wb-meta nf-muted">Count: {num(legacyCount)}</p>
+                ) : null}
+                {affected != null ? (
+                  <p className="nf-wb-meta nf-muted">Affected sources: {num(affected)}</p>
+                ) : null}
+                <p className="nf-wb-meta nf-muted">
+                  {createLedger
+                    ? "Eligible to create a ledger operator action (explicit opt-in)."
+                    : "Recommendations only — not written to the operator ledger by default."}
+                </p>
                 {focus.length ? (
                   <p className="nf-wb-meta">
                     Focus lanes:{" "}
@@ -393,6 +419,18 @@ function SourceQualityBody({
                         <code className="nf-code-inline">{f}</code>
                       </span>
                     ))}
+                  </p>
+                ) : null}
+                {evidence.length ? (
+                  <p className="nf-wb-meta">
+                    Evidence refs:{" "}
+                    {evidence.slice(0, 8).map((ev, idx) => (
+                      <span key={`${ev}-${idx}`}>
+                        {idx > 0 ? ", " : null}
+                        <code className="nf-code-inline">{ev}</code>
+                      </span>
+                    ))}
+                    {evidence.length > 8 ? <span className="nf-muted"> …</span> : null}
                   </p>
                 ) : null}
                 {rat ? <p className="nf-wb-rationale">{rat}</p> : null}

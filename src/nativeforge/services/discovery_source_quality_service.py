@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from nativeforge.db.models import NfOpportunitySource
 from nativeforge.domain.enums import (
+    OperatorDecisionSeverity,
     OpportunitySourceType,
     SourceHealthStatus,
     SourcePriorityLevel,
@@ -57,6 +58,279 @@ _BAD_HEALTH: frozenset[str] = frozenset(
         SourceHealthStatus.attention_needed.value,
     }
 )
+
+# Philanthropy / CSR doctrine lanes (paired diversification signals).
+_PHILANTHROPY_LANES: tuple[str, ...] = (
+    "foundation_native_serving",
+    "corporate_philanthropy",
+)
+
+_STRONG_POSTURE_PRIORITY_CAP = OperatorDecisionSeverity.medium.value
+
+_PRIORITY_ORDER: tuple[str, ...] = (
+    OperatorDecisionSeverity.info.value,
+    OperatorDecisionSeverity.low.value,
+    OperatorDecisionSeverity.medium.value,
+    OperatorDecisionSeverity.high.value,
+    OperatorDecisionSeverity.critical.value,
+)
+
+
+def _cap_priority_for_strong_posture(priority: str, *, posture: str) -> str:
+    """Strong posture must not surface urgent (high/critical) recommendations."""
+    if posture != "strong":
+        return priority
+    if priority not in _PRIORITY_ORDER:
+        return _STRONG_POSTURE_PRIORITY_CAP
+    cap_i = _PRIORITY_ORDER.index(_STRONG_POSTURE_PRIORITY_CAP)
+    p_i = _PRIORITY_ORDER.index(priority)
+    return _PRIORITY_ORDER[min(p_i, cap_i)]
+
+
+def _health_pressure_count(health_counts: dict[str, int]) -> int:
+    keys = (
+        "failing",
+        "empty",
+        "stale",
+        "degraded",
+        "attention_needed",
+    )
+    return sum(int(health_counts.get(k, 0)) for k in keys)
+
+
+def _evidence_refs_for_actions(
+    attention: list[dict[str, Any]],
+    gaps: list[dict[str, Any]],
+    *,
+    max_sources: int = 5,
+    max_gaps: int = 4,
+) -> list[str]:
+    refs: list[str] = []
+    for row in attention[:max_sources]:
+        sid = row.get("source_registry_id")
+        if sid:
+            refs.append(f"source_registry:{sid}")
+    for g in gaps[:max_gaps]:
+        gid = g.get("gap_id")
+        if gid:
+            refs.append(f"coverage_gap:{gid}")
+    return refs
+
+
+def _make_operator_action(
+    *,
+    action_type: str,
+    priority: str,
+    title: str,
+    rationale: str,
+    focus_lanes: list[str],
+    affected_source_count: int,
+    evidence_refs: list[str],
+    posture: str,
+    should_create_action: bool = False,
+) -> dict[str, Any]:
+    pri = _cap_priority_for_strong_posture(priority, posture=posture)
+    row: dict[str, Any] = {
+        "action_type": action_type,
+        "priority": pri,
+        "title": title,
+        "rationale": rationale,
+        "focus_lanes": sorted(set(focus_lanes)),
+        "affected_source_count": int(max(0, affected_source_count)),
+        "evidence_refs": evidence_refs,
+        "should_create_action": bool(should_create_action),
+    }
+    if evidence_refs:
+        row["context_ids"] = list(evidence_refs)
+    return row
+
+
+def _build_recommended_operator_actions(
+    *,
+    posture: str,
+    active_n: int,
+    missing_lanes: list[str],
+    overrepresented_lanes: list[str],
+    health_counts: dict[str, int],
+    freshness_counts: dict[str, int],
+    top_attention_sources: list[dict[str, Any]],
+    top_coverage_gaps: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Build deterministic JSON-serializable recommended operator actions."""
+    evidence = _evidence_refs_for_actions(top_attention_sources, top_coverage_gaps)
+    actions: list[dict[str, Any]] = []
+
+    if active_n == 0:
+        actions.append(
+            _make_operator_action(
+                action_type="expand_native_priority_coverage",
+                priority=OperatorDecisionSeverity.critical.value,
+                title="Establish Native priority lane registry coverage",
+                rationale=(
+                    "No active registry sources; activate or add sources mapped to "
+                    "doctrine Native priority lanes before discovery can be "
+                    "trustworthy."
+                ),
+                focus_lanes=list(missing_lanes),
+                affected_source_count=0,
+                evidence_refs=[r for r in evidence if r.startswith("coverage_gap:")],
+                posture=posture,
+            )
+        )
+        return [_json_safe(a) for a in actions]
+
+    phil_missing = [ln for ln in _PHILANTHROPY_LANES if ln in set(missing_lanes)]
+    if phil_missing:
+        actions.append(
+            _make_operator_action(
+                action_type="diversify_source_mix",
+                priority=OperatorDecisionSeverity.medium.value,
+                title="Add foundation and corporate philanthropy lane depth",
+                rationale=(
+                    "Philanthropy doctrine lanes are missing; add foundation / "
+                    "CSR-class sources to balance federal-heavy portfolios."
+                ),
+                focus_lanes=phil_missing,
+                affected_source_count=active_n,
+                evidence_refs=evidence,
+                posture=posture,
+            )
+        )
+
+    if "federal_native_specific" in missing_lanes:
+        actions.append(
+            _make_operator_action(
+                action_type="target_lane_coverage",
+                priority=OperatorDecisionSeverity.high.value,
+                title="Cover federal Native-specific programs lane",
+                rationale=(
+                    "Federal Native-specific doctrine lane is absent; add federal "
+                    "sources with tribally targeted program signals "
+                    "(language/culture, BIA/IHS, tribal eligibility domains)."
+                ),
+                focus_lanes=["federal_native_specific"],
+                affected_source_count=active_n,
+                evidence_refs=evidence,
+                posture=posture,
+            )
+        )
+
+    if overrepresented_lanes:
+        actions.append(
+            _make_operator_action(
+                action_type="diversify_source_mix",
+                priority=OperatorDecisionSeverity.medium.value,
+                title="Reduce doctrine lane concentration risk",
+                rationale=(
+                    "One or more Native priority lanes dominate the active portfolio; "
+                    "add sources in underrepresented lanes to reduce single-lane "
+                    "dependency."
+                ),
+                focus_lanes=list(overrepresented_lanes),
+                affected_source_count=active_n,
+                evidence_refs=evidence,
+                posture=posture,
+            )
+        )
+
+    hp = _health_pressure_count(health_counts)
+    if hp > 0:
+        actions.append(
+            _make_operator_action(
+                action_type="maintain_source_health",
+                priority=(
+                    OperatorDecisionSeverity.high.value
+                    if (
+                        health_counts.get("failing", 0) > 0
+                        or health_counts.get("empty", 0) > 0
+                    )
+                    else OperatorDecisionSeverity.medium.value
+                ),
+                title="Remediate stale, degraded, or failing registry sources",
+                rationale=(
+                    "Registry health pressure from failing runs, empty streaks, "
+                    "staleness, or degraded/attention states; verify connectors "
+                    "and checks."
+                ),
+                focus_lanes=[],
+                affected_source_count=hp,
+                evidence_refs=evidence,
+                posture=posture,
+            )
+        )
+
+    overdue_n = int(freshness_counts.get("overdue_for_check") or 0)
+    if overdue_n > 0:
+        actions.append(
+            _make_operator_action(
+                action_type="clear_overdue_source_checks",
+                priority=OperatorDecisionSeverity.medium.value,
+                title="Clear overdue discovery source checks",
+                rationale=(
+                    "Active sources are overdue for scheduled checks; run checks or "
+                    "adjust cadence so freshness bookkeeping stays current."
+                ),
+                focus_lanes=[],
+                affected_source_count=overdue_n,
+                evidence_refs=evidence,
+                posture=posture,
+            )
+        )
+
+    # Broad lane gaps — philanthropy diversification is separate from lane enumeration.
+    if len(missing_lanes) >= 5:
+        actions.append(
+            _make_operator_action(
+                action_type="expand_native_priority_coverage",
+                priority=OperatorDecisionSeverity.high.value,
+                title="Expand underrepresented Native priority lanes",
+                rationale=(
+                    "Several doctrine lanes remain uncovered; prioritize registry "
+                    "expansion mapped to the listed Native priority lanes."
+                ),
+                focus_lanes=missing_lanes[:8],
+                affected_source_count=active_n,
+                evidence_refs=evidence,
+                posture=posture,
+            )
+        )
+    elif missing_lanes and len(missing_lanes) < 5:
+        needs_residual_expand = len(missing_lanes) > 1 or (
+            len(missing_lanes) == 1 and missing_lanes[0] != "federal_native_specific"
+        )
+        if needs_residual_expand and not any(
+            a.get("action_type") == "expand_native_priority_coverage" for a in actions
+        ):
+            actions.append(
+                _make_operator_action(
+                    action_type="expand_native_priority_coverage",
+                    priority=OperatorDecisionSeverity.medium.value,
+                    title="Fill remaining Native priority lane gaps",
+                    rationale=(
+                        "Add or activate sources that map to missing doctrine lanes to "
+                        "complete Native-relevant coverage."
+                    ),
+                    focus_lanes=missing_lanes[:8],
+                    affected_source_count=active_n,
+                    evidence_refs=evidence,
+                    posture=posture,
+                )
+            )
+
+    # De-duplicate identical action_types with identical focus lanes (deterministic).
+    seen: set[tuple[str, tuple[str, ...]]] = set()
+    deduped: list[dict[str, Any]] = []
+    for a in actions:
+        key = (
+            str(a.get("action_type") or ""),
+            tuple(str(x) for x in (a.get("focus_lanes") or [])),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(a)
+
+    return [_json_safe(x) for x in deduped]
 
 
 def _json_safe(x: Any) -> Any:
@@ -465,7 +739,38 @@ def build_discovery_source_quality(
     raw_score = base - burden_penalty - missing_lane_penalty - weak_lane_penalty
     data_quality_score = int(max(0, min(100, round(raw_score))))
 
+    score_breakdown = _json_safe(
+        {
+            "intel_components": {
+                "coverage_score": cov_s,
+                "freshness_score": fresh_s,
+                "reliability_score": rel_s,
+                "yield_score": yield_s,
+                "review_burden_score": burden_s,
+            },
+            "base_average_of_intel": round(base, 4),
+            "penalties": {
+                "review_burden": round(burden_penalty, 4),
+                "missing_priority_lanes": round(missing_lane_penalty, 4),
+                "weak_priority_lanes": round(weak_lane_penalty, 4),
+            },
+            "computed_before_clip": round(raw_score, 4),
+            "final_data_quality_score": data_quality_score,
+        }
+    )
+
     reason_codes: list[str] = []
+    reason_codes.append(f"score_base_intel_average:{round(base, 4)}")
+    reason_codes.append(f"penalty_review_burden:{round(burden_penalty, 4)}")
+    reason_codes.append(
+        f"penalty_missing_priority_lanes:{len(missing_lanes)}:"
+        f"{round(missing_lane_penalty, 4)}",
+    )
+    reason_codes.append(
+        f"penalty_weak_priority_lanes:{len(weak_lanes)}:{round(weak_lane_penalty, 4)}",
+    )
+    reason_codes.append(f"final_data_quality_score:{data_quality_score}")
+
     if active_n == 0:
         reason_codes.append("no_active_sources")
     if missing_lanes:
@@ -485,41 +790,21 @@ def build_discovery_source_quality(
         posture = "critical"
     elif data_quality_score < 38 or len(missing_lanes) >= 10:
         posture = "weak"
-    elif data_quality_score < 68 or len(missing_lanes) >= 5:
+    elif data_quality_score < 62 or len(missing_lanes) >= 5:
         posture = "adequate"
     else:
         posture = "strong"
 
-    recommended_operator_actions: list[dict[str, Any]] = []
-    if missing_lanes[:5]:
-        recommended_operator_actions.append(
-            {
-                "action": "expand_registry",
-                "focus_lanes": missing_lanes[:5],
-                "rationale": (
-                    "Add or activate sources mapped to missing Native priority lanes."
-                ),
-            }
-        )
-    if health_counts["failing"] or health_counts["empty"]:
-        recommended_operator_actions.append(
-            {
-                "action": "remediate_source_health",
-                "rationale": (
-                    "Investigate failing sources and repeated empty check streaks."
-                ),
-            }
-        )
-    if freshness_counts["overdue_for_check"]:
-        recommended_operator_actions.append(
-            {
-                "action": "run_overdue_source_checks",
-                "count": freshness_counts["overdue_for_check"],
-                "rationale": (
-                    "Clear overdue discovery source checks to refresh bookkeeping."
-                ),
-            }
-        )
+    recommended_operator_actions = _build_recommended_operator_actions(
+        posture=posture,
+        active_n=active_n,
+        missing_lanes=missing_lanes,
+        overrepresented_lanes=overrepresented_lanes,
+        health_counts=health_counts,
+        freshness_counts=freshness_counts,
+        top_attention_sources=attention_payload,
+        top_coverage_gaps=top_coverage_gaps,
+    )
 
     is_demo = org_type == "demo"
     out: dict[str, Any] = {
@@ -549,6 +834,7 @@ def build_discovery_source_quality(
         "data_quality_score": data_quality_score,
         "posture": posture,
         "reason_codes": reason_codes,
+        "score_breakdown": score_breakdown,
         "recommended_operator_actions": recommended_operator_actions,
         "scores_from_coverage_intel": {
             "coverage_score": cov_s,

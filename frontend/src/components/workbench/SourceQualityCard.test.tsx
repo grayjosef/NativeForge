@@ -52,9 +52,14 @@ describe("SourceQualityCard", () => {
           reason_codes: ["no_active_sources"],
           recommended_operator_actions: [
             {
-              action: "expand_registry",
+              action_type: "expand_native_priority_coverage",
+              priority: "critical",
+              title: "Establish Native priority lane registry coverage",
+              rationale: "No active registry sources; activate doctrine lanes.",
               focus_lanes: ["tribal_government"],
-              rationale: "Add sources for missing lanes.",
+              affected_source_count: 0,
+              evidence_refs: [],
+              should_create_action: false,
             },
           ],
         })}
@@ -65,8 +70,9 @@ describe("SourceQualityCard", () => {
     expect(screen.getByText("Critical")).toBeInTheDocument();
     expect(screen.getAllByText(/Tribal Government/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Native Nonprofit/i)).toBeInTheDocument();
-    expect(screen.getByText(/Expand Registry/i)).toBeInTheDocument();
-    expect(screen.getByText(/Add sources for missing lanes/i)).toBeInTheDocument();
+    expect(screen.getByText(/Establish Native priority lane registry coverage/i)).toBeInTheDocument();
+    expect(screen.getByText(/expand_native_priority_coverage/i)).toBeInTheDocument();
+    expect(screen.getByText(/Recommendations only/i)).toBeInTheDocument();
   });
 
   it("renders strong and adequate posture without crashing", () => {

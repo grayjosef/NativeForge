@@ -25,16 +25,58 @@ Twelve fixed lanes align with NativeForge doctrine. Each **active** registry row
 | `university_research` | University research portfolios. |
 | `general_broad_with_native_eligibility` | Broad eligibility / catch-all Native relevance. |
 
-## Scoring and posture
+## Scoring calibration
 
-- **data_quality_score** (0–100): blends coverage-gap subscores from existing intelligence (`coverage_score`, `freshness_score`, `reliability_score`, `yield_score`), penalizes review burden, **missing priority lanes**, and **weak lanes** (lanes supported by a single actor or mostly unhealthy supporters).
-- **posture**:
-  - **critical**: no active sources.
-  - **weak**: low composite score or **≥10** missing doctrine lanes.
-  - **adequate**: moderate composite score or **≥5** missing lanes (but not caught by weak).
-  - **strong**: healthier composite and fewer structural lane gaps.
+- **data_quality_score** (0–100) is **deterministic** from persisted registry + offline intelligence only:
+  - **Base**: arithmetic mean of `coverage_score`, `freshness_score`, `reliability_score`, and `yield_score` from existing coverage-gap intelligence (same inputs as Sprint 16).
+  - **Penalties** (each capped so one factor cannot dominate unrealistically):
+    - **Review burden**: `min(28, review_burden_score × 0.22)` — heavy operator review load lowers trust in automated throughput.
+    - **Missing doctrine lanes**: `min(42, 4 × count(missing_lanes))` — structural gaps in Native priority lane representation.
+    - **Weak lanes**: `min(18, 3 × count(weak_lanes))` — lanes that exist but are thin or mostly unhealthy among supporters.
+  - **Clipping**: the composite is rounded and clipped to **0–100**.
+- **`score_breakdown`** echoes numeric inputs and penalties for audits (additive field; safe for exports).
+- **`reason_codes`** lists human- and machine-readable signals, including:
+  - `score_base_intel_average:<float>` — mean of the four intel subscores before penalties.
+  - `penalty_review_burden:<float>`, `penalty_missing_priority_lanes:<n>:<float>`, `penalty_weak_priority_lanes:<n>:<float>` — penalty magnitudes tied to the formula above.
+  - `final_data_quality_score:<int>` — post-penalty score.
+  - Semantic tags retained from v1: `no_active_sources`, `missing_priority_lanes:N`, `failing_sources:N`, `missing_recent_checks:N`, `low_coverage_score`, `low_freshness_score`, etc.
 
-Lane rows include `healthy_fraction` among sources that claim each lane.
+### Posture bands
+
+- **critical**: no active registry sources.
+- **weak**: composite score **< 38** **or** **≥ 10** missing doctrine lanes.
+- **adequate**: composite score **< 62** **or** **≥ 5** missing lanes (and not weak).
+- **strong**: composite score **≥ 62**, **< 5** missing lanes, and not weak/critical.
+
+Lane rows still include `healthy_fraction` among sources that claim each lane.
+
+### Recommended action vocabulary
+
+Each row in **`recommended_operator_actions`** is JSON-serializable and uses a stable vocabulary (not raw blobs):
+
+| Field | Purpose |
+|-------|---------|
+| `action_type` | Machine verb: `expand_native_priority_coverage`, `target_lane_coverage`, `diversify_source_mix`, `maintain_source_health`, `clear_overdue_source_checks`. |
+| `priority` | `info` \| `low` \| `medium` \| `high` \| `critical` — aligned with operator decision severity vocabulary. |
+| `title` | Short operator-facing headline. |
+| `rationale` | Deterministic explanation tied to registry posture. |
+| `focus_lanes` | Subset of doctrine lanes this action emphasizes (may be empty). |
+| `affected_source_count` | Integer signal (e.g. health pressure count or overdue count). |
+| `evidence_refs` | Deterministic string refs such as `source_registry:<uuid>` and `coverage_gap:<id>` when attention/gap rows exist. |
+| `context_ids` | Duplicates `evidence_refs` when non-empty (interop convenience). |
+| `should_create_action` | **Default `false`** — recommendations do **not** imply ledger writes. |
+
+**Strong posture** caps recommendation urgency so operators do not see **high**/**critical** priorities in this layer (monitoring-style posture only).
+
+### Action persistence boundary
+
+- **Default**: recommendations are **read-only suggestions** in the decision pack / Workbench payload.
+- **Optional**: `nativeforge.services.source_quality_operator_actions.persist_source_quality_recommendations` may create **`nf_operator_actions`** rows **only** when called with **`create_operator_actions=True`**. Even then, rows are created **only** for recommendations where **`should_create_action`** is explicitly true (defaults remain false in the generator).
+- Duplicate suppression uses deterministic **`decision_id`** values (`nf_srcq:…`) and the existing operator-action repository “active by decision id” check — **no parallel ledger** and **no implicit spam**.
+
+## Current default (Sprint 35)
+
+Product default is **recommendations only**: `recommended_operator_actions` ships with every row’s `should_create_action: false`, and nothing is written to `nf_operator_actions` unless a caller explicitly enables persistence and opts a row in.
 
 ## Operator use
 
