@@ -35,6 +35,9 @@ from nativeforge.repositories import discovery_review_items as rev_repo
 from nativeforge.services.discovery_operator_workbench_service import (
     DECISION_PACK_SCHEMA_VERSION,
 )
+from nativeforge.services.discovery_source_quality_service import (
+    SCHEMA_VERSION as SQ_SCHEMA,
+)
 
 
 def _severity_rank(label: str) -> int:
@@ -90,6 +93,10 @@ def _assert_decision_pack_shape(body: dict) -> None:
     assert isinstance(lc.get("open_operator_actions"), int)
     assert isinstance(lc.get("active_decision_ids"), list)
     assert isinstance(lc.get("resolved_recently_count"), int)
+    sq = body["source_quality"]
+    assert isinstance(sq, dict)
+    assert sq["schema_version"] == SQ_SCHEMA
+    assert sq["posture"] in {"strong", "adequate", "weak", "critical"}
     if body["decision_items"]:
         di0 = body["decision_items"][0]
         assert "has_active_operator_action" in di0

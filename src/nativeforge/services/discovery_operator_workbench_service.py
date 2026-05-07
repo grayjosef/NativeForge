@@ -25,6 +25,7 @@ from nativeforge.repositories import source_check_runs as scr_repo
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import discovery_intake_service as d_intake
 from nativeforge.services import discovery_review_service as d_review
+from nativeforge.services import discovery_source_quality_service as dsq_svc
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import source_freshness_service as sfs
 from nativeforge.services.discovery_operator_workbench_pure import (
@@ -549,7 +550,8 @@ def decision_pack_summary_compact(payload: dict[str, Any]) -> dict[str, Any]:
         s = str(it.get("severity") or "")
         if s:
             counts_by_severity[s] = counts_by_severity.get(s, 0) + 1
-    return {
+    sq = payload.get("source_quality_summary")
+    out = {
         "decision_pack_schema_version": payload.get("schema_version"),
         "generated_at": payload.get("generated_at"),
         "organization_id": payload.get("organization_id"),
@@ -561,6 +563,9 @@ def decision_pack_summary_compact(payload: dict[str, Any]) -> dict[str, Any]:
         "priority_next_actions": payload.get("priority_next_actions"),
         "freshness_summary": payload.get("freshness_summary"),
     }
+    if sq is not None:
+        out["source_quality_summary"] = sq
+    return out
 
 
 def export_priority_actions_sample(
@@ -948,6 +953,13 @@ def build_operator_decision_pack(
         },
     }
 
+    source_quality = dsq_svc.build_discovery_source_quality(
+        session,
+        org_id=org_id,
+        org_type=org_type,
+        now=ref_now,
+    )
+
     compact_export = decision_pack_summary_compact(
         {
             "schema_version": DECISION_PACK_SCHEMA_VERSION,
@@ -958,6 +970,7 @@ def build_operator_decision_pack(
             "decision_items": trimmed,
             "priority_next_actions": priority_next,
             "freshness_summary": freshness_summary,
+            "source_quality_summary": dsq_svc.source_quality_compact(source_quality),
         }
     )
 
@@ -976,6 +989,7 @@ def build_operator_decision_pack(
         "generated_at": ref_now.isoformat(),
         "decision_score": decision_score,
         "summary": summary,
+        "source_quality": source_quality,
         "connector_intelligence": connector_intel,
         "freshness_summary": freshness_summary,
         "coverage_gap_summary": gap_compact,
