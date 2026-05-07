@@ -20,6 +20,9 @@ from nativeforge.domain.enums import (
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import opportunity_discovery_service as ods
+from nativeforge.services import (
+    source_activation_readiness_contract_service as sarc_svc,
+)
 from nativeforge.services import source_candidate_registry_service as scr_svc
 from nativeforge.services import source_coverage_plan_service as scp_svc
 from nativeforge.services import source_freshness_service as sfs
@@ -853,6 +856,9 @@ def build_discovery_source_quality(
     out["source_candidate_registry"] = scr_svc.build_source_candidate_registry(out)
     out["source_onboarding_decision_pack"] = (
         sodp_svc.build_source_onboarding_decision_pack(out)
+    )
+    out["source_activation_readiness_contract"] = (
+        sarc_svc.build_source_activation_readiness_contract(out)
     )
     return _json_safe(out)
 

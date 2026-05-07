@@ -6,7 +6,7 @@ The onboarding decision pack (`schema_version: nf_source_onboarding_decision_pac
 
 Implementation: `nativeforge.services.source_onboarding_decision_pack_service.build_source_onboarding_decision_pack`.
 
-Integration: `build_discovery_source_quality` attaches **`source_onboarding_decision_pack`** alongside **`source_coverage_plan`** and **`source_candidate_registry`** on **`nf_discovery_source_quality_v1`** (and therefore on operator decision pack **`source_quality`**).
+Integration: `build_discovery_source_quality` attaches **`source_onboarding_decision_pack`** alongside **`source_coverage_plan`** and **`source_candidate_registry`** on **`nf_discovery_source_quality_v1`** (and therefore on operator decision pack **`source_quality`**). Sprint 39 adds **`source_activation_readiness_contract`** (`nf_source_activation_readiness_contract_v1`) as the next planning-only gate—see [nativeforge-source-activation-readiness-contract-v1.md](./nativeforge-source-activation-readiness-contract-v1.md).
 
 ## Schema (summary)
 
@@ -67,5 +67,6 @@ Future sprints may approve a vetted candidate through governance steps (metadata
 
 ## Related documents
 
+- Activation readiness contract (Sprint 39): [nativeforge-source-activation-readiness-contract-v1.md](./nativeforge-source-activation-readiness-contract-v1.md)
 - Coverage plan: [nativeforge-source-coverage-plan-v1.md](./nativeforge-source-coverage-plan-v1.md)
 - Candidate registry: [nativeforge-source-candidate-registry-v1.md](./nativeforge-source-candidate-registry-v1.md)
