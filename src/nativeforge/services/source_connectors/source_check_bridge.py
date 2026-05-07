@@ -34,6 +34,11 @@ from nativeforge.services.source_connectors.connector_health import (
     connector_outcome_warning_codes,
     intake_bridge_outcome_health,
 )
+from nativeforge.services.source_connectors.connector_operator_escalation import (
+    build_connector_operator_escalation_recommendations,
+    enrich_connector_result_summary_with_escalations,
+    persist_connector_escalations_as_operator_actions,
+)
 from nativeforge.services.source_connectors.connector_run_manifest import (
     build_connector_run_manifest_v1,
 )
@@ -51,6 +56,45 @@ def _connector_shape_from_manifest(manifest: dict[str, Any]) -> str | None:
     return None
 
 
+def _embed_connector_escalations(
+    summary_blob: dict[str, Any],
+    *,
+    source_registry_id: uuid.UUID,
+    check_run_id: uuid.UUID,
+    intake_run_id: str | None,
+    connector_id: str | None,
+    health: str,
+    manifest: dict[str, Any],
+    accepted: int,
+    rejected: int,
+    duplicate: int,
+    err_cnt: int,
+    review_req: int,
+    normalization_errors: int,
+    op_msg: str,
+    source_check_run_status: str | None,
+) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    esc = build_connector_operator_escalation_recommendations(
+        source_registry_id=str(source_registry_id),
+        source_check_run_id=str(check_run_id),
+        intake_run_id=intake_run_id,
+        connector_id=connector_id,
+        health_status=str(health),
+        warning_codes=list(manifest.get("warning_codes") or []),
+        normalization_errors=normalization_errors,
+        accepted_count=accepted,
+        rejected_count=rejected,
+        duplicate_count=duplicate,
+        error_count=err_cnt,
+        review_required_count=review_req,
+        operator_diagnostic_message=op_msg,
+        source_check_run_status=source_check_run_status,
+        manifest=manifest,
+    )
+    enriched = enrich_connector_result_summary_with_escalations(summary_blob, esc)
+    return enriched, esc
+
+
 def run_source_check_backed_connector_dry_run(
     session: Session,
     *,
@@ -64,6 +108,7 @@ def run_source_check_backed_connector_dry_run(
     intake_mode: DiscoveryIntakeMode = DiscoveryIntakeMode.structured_batch,
     operator_note: str | None = None,
     grants_gov_shaped_dry_run: bool = False,
+    create_operator_actions: bool = False,
 ) -> dict[str, Any]:
     """
     Create a running source-check row, run static fixture intake, finalize the check.
@@ -190,6 +235,23 @@ def run_source_check_backed_connector_dry_run(
         )
         summary_blob["fixture_normalization_failed"] = True
         summary_blob["fixture_errors"] = list(ex.errors)
+        summary_blob, esc_list = _embed_connector_escalations(
+            summary_blob,
+            source_registry_id=source_registry_id,
+            check_run_id=check_run.id,
+            intake_run_id=None,
+            connector_id=connector_config.connector_id,
+            health="failed",
+            manifest=manifest,
+            accepted=0,
+            rejected=0,
+            duplicate=0,
+            err_cnt=0,
+            review_req=0,
+            normalization_errors=len(ex.errors),
+            op_msg=op_msg,
+            source_check_run_status=SourceCheckRunStatus.failed.value,
+        )
         sfs.finalize_completed_source_check(
             session,
             org=org,
@@ -219,11 +281,21 @@ def run_source_check_backed_connector_dry_run(
             duplicate_count=0,
             error_count=0,
         )
-        return {
+        actions_created: list[dict[str, Any]] = []
+        if create_operator_actions:
+            actions_created = persist_connector_escalations_as_operator_actions(
+                session,
+                org=org,
+                org_type=org_type,
+                recommendations=esc_list,
+                create_operator_actions=True,
+            )
+        out_norm: dict[str, Any] = {
             "source_check_run": sfs.check_run_to_dict(check_run),
             "intake_run": None,
             "connector_manifest": manifest,
             "connector_health": health,
+            "connector_operator_escalations": esc_list,
             "candidate_counts": {
                 "normalization_errors": len(ex.errors),
                 "accepted_count": 0,
@@ -233,6 +305,9 @@ def run_source_check_backed_connector_dry_run(
                 "candidate_count": 0,
             },
         }
+        if create_operator_actions:
+            out_norm["operator_actions_created"] = actions_created
+        return out_norm
 
     counts_map = intake_out["summary"]["counts"]
     accepted = int(counts_map["accepted_count"])
@@ -295,6 +370,23 @@ def run_source_check_backed_connector_dry_run(
         source_rows=counts_body.get("source_rows"),
         operator_diagnostic_message=op_msg,
     )
+    summary_blob, esc_list = _embed_connector_escalations(
+        summary_blob,
+        source_registry_id=source_registry_id,
+        check_run_id=check_run.id,
+        intake_run_id=str(intake_run_dict["id"]),
+        connector_id=connector_config.connector_id,
+        health=str(health),
+        manifest=manifest,
+        accepted=accepted,
+        rejected=rejected,
+        duplicate=duplicate,
+        err_cnt=err_cnt,
+        review_req=review_req,
+        normalization_errors=0,
+        op_msg=op_msg,
+        source_check_run_status=check_complete_status,
+    )
 
     sfs.finalize_completed_source_check(
         session,
@@ -315,11 +407,21 @@ def run_source_check_backed_connector_dry_run(
         now=ref_now,
     )
 
-    return {
+    actions_created_ok: list[dict[str, Any]] = []
+    if create_operator_actions:
+        actions_created_ok = persist_connector_escalations_as_operator_actions(
+            session,
+            org=org,
+            org_type=org_type,
+            recommendations=esc_list,
+            create_operator_actions=True,
+        )
+    out_ok: dict[str, Any] = {
         "source_check_run": sfs.check_run_to_dict(check_run),
         "intake_run": intake_run_dict,
         "connector_manifest": manifest,
         "connector_health": health,
+        "connector_operator_escalations": esc_list,
         "candidate_counts": {
             "normalization_errors": 0,
             "accepted_count": accepted,
@@ -329,3 +431,6 @@ def run_source_check_backed_connector_dry_run(
             "candidate_count": cand_total,
         },
     }
+    if create_operator_actions:
+        out_ok["operator_actions_created"] = actions_created_ok
+    return out_ok

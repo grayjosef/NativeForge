@@ -276,6 +276,7 @@ def create_operator_action_manual(
     source_registry_id: uuid.UUID | None = None,
     review_item_id: uuid.UUID | None = None,
     intake_run_id: uuid.UUID | None = None,
+    source_check_run_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
     did = decision_id.strip()
     if not did:
@@ -315,6 +316,7 @@ def create_operator_action_manual(
         source_registry_id=source_registry_id,
         review_item_id=review_item_id,
         intake_run_id=intake_run_id,
+        source_check_run_id=source_check_run_id,
         created_from=OperatorActionCreatedFrom.manual.value,
     )
     oa_repo.create_operator_action(session, row)
