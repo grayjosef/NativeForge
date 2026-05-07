@@ -89,6 +89,10 @@ Product default is **recommendations only**: `recommended_operator_actions` ship
 
 `build_operator_decision_pack` adds a top-level **`source_quality`** field (full payload). `decision_summary_export` / `operator_brief` include a compact **`source_quality_summary`** (`schema_version`, `posture`, `data_quality_score`, `missing_lane_count`, `active_source_count`). Existing consumers remain compatible.
 
+### Source coverage plan (Sprint 36)
+
+The full **`source_quality`** payload also includes **`source_coverage_plan`** (`nf_source_coverage_plan_v1`): a deterministic, lane-level coverage plan and sequenced operator steps derived from the same calibrated inputs. See **`docs/product/nativeforge-source-coverage-plan-v1.md`**. Plan steps default **`should_create_action: false`** and do not write to the operator ledger.
+
 ## No-network boundary
 
 All inputs are **database-backed** registry and intelligence artifacts from prior runs. This layer does not initiate scraping, HTTP client calls, or external APIs.
