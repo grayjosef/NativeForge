@@ -13,6 +13,7 @@ import {
   listSourcesOverdue,
 } from "../discoveryApiClient";
 import { ConnectorIntelligenceCard } from "../components/workbench/ConnectorIntelligenceCard";
+import { SourceQualityCard } from "../components/workbench/SourceQualityCard";
 import { CoverageGapsCard } from "../components/workbench/CoverageGapsCard";
 import { EvidenceLinksCard } from "../components/workbench/EvidenceLinksCard";
 import { collectEvidenceLinkRows } from "../components/workbench/evidenceUrls";
@@ -268,6 +269,16 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
           freshness={freshness}
         />
         <ConnectorIntelligenceCard
+          baseUrl={base}
+          plane={plane}
+          orgId={o}
+          block={{
+            loading: pack.loading,
+            error: pack.error,
+            data: pack.data,
+          }}
+        />
+        <SourceQualityCard
           baseUrl={base}
           plane={plane}
           orgId={o}
