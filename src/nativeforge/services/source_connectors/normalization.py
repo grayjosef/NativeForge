@@ -163,6 +163,10 @@ def normalize_raw_dict(
         prov["connector_run_id"] = ctx.run_id
     if extra_provenance:
         prov.update(extra_provenance)
+    for meta_key in ("fixture_category", "fixture_key", "corpus_schema_version"):
+        mv = raw.get(meta_key)
+        if mv is not None:
+            prov[str(meta_key)] = mv
 
     return NormalizedOpportunityCandidate(
         local_key=local_key,

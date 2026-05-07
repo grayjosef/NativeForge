@@ -1,0 +1,20 @@
+{
+  "fixture_category": "doe_indian_energy",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "DOE Office of Indian Energy Policy and Programs.",
+  "rows": [
+    {
+      "opportunity_title": "Tribal Energy Deployment — Technical Assistance",
+      "agency": "U.S. Department of Energy — Office of Indian Energy Policy and Programs",
+      "award_type": "grant",
+      "opportunity_source_type": "federal",
+      "opportunity_number": "CORPUS-DOE-IE-001",
+      "source_url": "https://example.test/corpus/doe-indian-energy/001",
+      "tribal_eligible": true,
+      "tribal_priority_points": true,
+      "eligibility_tags": ["federally_recognized_tribe", "alaska_native"],
+      "application_deadline": "2099-08-20T23:59:59Z",
+      "raw_nofo_text": "Competitive assistance for tribal nations implementing grid resilience and clean energy projects."
+    }
+  ]
+}

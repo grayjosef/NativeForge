@@ -1,0 +1,20 @@
+{
+  "fixture_category": "ihs_tribal_health",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "Indian Health Service opportunity serving tribal health infrastructure.",
+  "rows": [
+    {
+      "opportunity_title": "Sanitation Facilities Construction — Tribal Priority",
+      "agency": "Indian Health Service",
+      "award_type": "grant",
+      "opportunity_source_type": "federal",
+      "opportunity_number": "CORPUS-IHS-001",
+      "source_url": "https://example.test/corpus/ihs-tribal-health/001",
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": true,
+      "eligibility_tags": ["ihs_service_population", "tribal_government"],
+      "application_deadline": "2099-10-01T23:59:59Z",
+      "raw_nofo_text": "Open to tribal governments and tribal organizations operating health programs for American Indian and Alaska Native populations."
+    }
+  ]
+}

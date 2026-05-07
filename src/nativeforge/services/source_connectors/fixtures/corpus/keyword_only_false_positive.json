@@ -1,0 +1,18 @@
+{
+  "fixture_category": "keyword_only_false_positive",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "Title mentions tribal context but no structured tribal eligibility signals.",
+  "rows": [
+    {
+      "opportunity_title": "Coastal Erosion Study — Tribal Lands Mentioned in Appendix Only",
+      "agency": "Illustrative National Ocean Council",
+      "award_type": "grant",
+      "opportunity_source_type": "federal",
+      "opportunity_number": "CORPUS-KWFP-001",
+      "source_url": "https://example.test/corpus/keyword-only-false-positive/001",
+      "tribal_eligible": false,
+      "application_deadline": "2099-02-14T23:59:59Z",
+      "raw_nofo_text": "Universities and state agencies. Appendix D references prior studies near tribal areas; eligibility is not tribal-specific."
+    }
+  ]
+}

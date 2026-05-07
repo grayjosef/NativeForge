@@ -1,0 +1,21 @@
+{
+  "fixture_category": "foundation_native_serving",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "Philanthropic foundation explicitly serving Native communities.",
+  "rows": [
+    {
+      "opportunity_title": "Community Stewardship Fund — Operating Support",
+      "publisher_name": "Illustrative Native-Serving Foundation",
+      "agency": "Illustrative Native-Serving Foundation",
+      "award_type": "grant",
+      "opportunity_source_type": "foundation",
+      "opportunity_number": "CORPUS-FDN-NS-001",
+      "source_url": "https://example.test/corpus/foundation-native-serving/001",
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": true,
+      "eligibility_tags": ["native_serving_nonprofit"],
+      "application_deadline": "2099-05-01T23:59:59Z",
+      "raw_nofo_text": "General operating support for 501(c)(3) organizations whose primary mission serves Native American communities."
+    }
+  ]
+}

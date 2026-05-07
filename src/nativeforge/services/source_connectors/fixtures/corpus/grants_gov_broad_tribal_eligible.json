@@ -1,0 +1,18 @@
+{
+  "fixture_category": "grants_gov_broad_tribal_eligible",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "fixture_format": "grants_gov_like",
+  "description": "Federal NOFO with tribal eligibility in structured fields only (no Native keyword in title).",
+  "rows": [
+    {
+      "title": "Surface Transportation Block Grant — Suballocation Planning",
+      "agencyName": "Illustrative Federal Highway Administration",
+      "OpportunityNumber": "CORPUS-GG-BTE-001",
+      "OpportunityURL": "https://example.test/corpus/grants-gov-broad-tribal-eligible/001",
+      "FundingInstrumentType": "Grant",
+      "tribal_eligible": true,
+      "application_deadline": "2099-12-31T23:59:59Z",
+      "synopsis": "Eligible entities include metropolitan planning organizations; federally recognized tribes may apply as subrecipients where applicable."
+    }
+  ]
+}

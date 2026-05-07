@@ -1,0 +1,20 @@
+{
+  "fixture_category": "ana_language_culture",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "Administration for Native Americans language and culture preservation.",
+  "rows": [
+    {
+      "opportunity_title": "Native Language Preservation — Community Projects",
+      "agency": "Administration for Native Americans",
+      "award_type": "grant",
+      "opportunity_source_type": "federal",
+      "opportunity_number": "CORPUS-ANA-001",
+      "source_url": "https://example.test/corpus/ana-language-culture/001",
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": true,
+      "eligibility_tags": ["language_preservation", "culture", "federally_recognized_tribe"],
+      "application_deadline": "2099-09-30T23:59:59Z",
+      "raw_nofo_text": "Supports tribal governments and native organizations in documenting and revitalizing heritage languages."
+    }
+  ]
+}

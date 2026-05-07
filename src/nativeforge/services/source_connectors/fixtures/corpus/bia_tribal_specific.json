@@ -1,0 +1,19 @@
+{
+  "fixture_category": "bia_tribal_specific",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "Bureau of Indian Affairs program with tribal set-aside (native-specific band).",
+  "rows": [
+    {
+      "opportunity_title": "Road Maintenance on Indian Reservations — Tribal Set-Aside",
+      "agency": "Bureau of Indian Affairs",
+      "award_type": "grant",
+      "opportunity_source_type": "federal",
+      "opportunity_number": "CORPUS-BIA-001",
+      "source_url": "https://example.test/corpus/bia-tribal-specific/001",
+      "tribal_set_aside": true,
+      "tribal_eligible": true,
+      "application_deadline": "2099-11-15T23:59:59Z",
+      "raw_nofo_text": "Funds are reserved for federally recognized tribes for transportation maintenance on trust lands."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "fixture_category": "broad_rural_broadband_tribes_eligible",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "Broad rural broadband program where tribes are eligible applicants (no Native keyword in title).",
+  "rows": [
+    {
+      "opportunity_title": "Rural Broadband Infrastructure — Last-Mile Deployment",
+      "agency": "Illustrative Rural Utilities Service",
+      "award_type": "grant",
+      "opportunity_source_type": "federal",
+      "opportunity_number": "CORPUS-RBB-001",
+      "source_url": "https://example.test/corpus/broad-rural-broadband-tribes-eligible/001",
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": true,
+      "application_deadline": "2099-04-10T23:59:59Z",
+      "raw_nofo_text": "Eligible lead applicants include rural counties, electric cooperatives, and sovereign nations located in eligible rural census tracts under program definitions."
+    }
+  ]
+}

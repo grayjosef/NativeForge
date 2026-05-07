@@ -1,0 +1,19 @@
+{
+  "fixture_category": "irrelevant_broad_opportunity",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "Generic STEM fellowship with no tribal pathway (low relevance).",
+  "rows": [
+    {
+      "opportunity_title": "Graduate Research Fellowship — Quantum Materials",
+      "agency": "Illustrative National Science Foundation",
+      "award_type": "grant",
+      "opportunity_source_type": "federal",
+      "opportunity_number": "CORPUS-IRR-001",
+      "source_url": "https://example.test/corpus/irrelevant-broad-opportunity/001",
+      "tribal_eligible": false,
+      "applicant_types_include_tribal": false,
+      "application_deadline": "2099-03-01T23:59:59Z",
+      "raw_nofo_text": "Doctoral students at accredited U.S. institutions in condensed matter physics. No set-aside or tribal eligibility."
+    }
+  ]
+}

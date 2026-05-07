@@ -1,0 +1,20 @@
+{
+  "fixture_category": "epa_tribal_environment",
+  "corpus_schema_version": "nf_fixture_corpus_v1",
+  "description": "EPA tribal environmental program cooperative agreements.",
+  "rows": [
+    {
+      "opportunity_title": "Tribal General Assistance Program — Environmental Capacity Building",
+      "agency": "U.S. Environmental Protection Agency — Office of Regional and Tribal Affairs",
+      "award_type": "cooperative_agreement",
+      "opportunity_source_type": "federal",
+      "opportunity_number": "CORPUS-EPA-TG-001",
+      "source_url": "https://example.test/corpus/epa-tribal-environment/001",
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": true,
+      "eligibility_tags": ["climate_resilience", "tribal_government"],
+      "application_deadline": "2099-06-15T23:59:59Z",
+      "raw_nofo_text": "Supports tribes in developing environmental protection programs consistent with federal statutes."
+    }
+  ]
+}
