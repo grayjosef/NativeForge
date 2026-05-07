@@ -27,6 +27,7 @@ from nativeforge.services.source_connectors.connector_diagnostics import (
     source_labels_from_fixture_rows,
 )
 from nativeforge.services.source_connectors.connector_health import (
+    connector_outcome_warning_codes,
     intake_bridge_outcome_health,
 )
 from nativeforge.services.source_connectors.connector_run_manifest import (
@@ -66,6 +67,7 @@ def static_fixture_connector_intake_dry_run(
     connector_provenance_extras: dict[str, Any] | None = None,
     evidence_pack_subject_hints: dict[str, Any] | None = None,
     grants_gov_shaped_dry_run: bool = False,
+    source_overdue_for_check: bool = False,
 ) -> dict[str, Any]:
     """
     Run the Sprint 22 static fixture connector, then the existing intake pipeline.
@@ -137,6 +139,17 @@ def static_fixture_connector_intake_dry_run(
         rejected_count=rejected,
         duplicate_count=duplicate,
         error_count=err_cnt,
+        review_required_count=review_req,
+        source_overdue_for_check=source_overdue_for_check,
+    )
+    warning_codes = connector_outcome_warning_codes(
+        health=health,
+        accepted_count=accepted,
+        rejected_count=rejected,
+        duplicate_count=duplicate,
+        error_count=err_cnt,
+        review_required_count=review_req,
+        normalization_errors=0,
     )
 
     row_n = len(fixture_rows)
@@ -164,6 +177,7 @@ def static_fixture_connector_intake_dry_run(
         connector_id=connector_config.connector_id,
         connector_schema_version=ctx.normalization_schema_version,
         health_status=health,
+        warning_codes=warning_codes,
         source_identifiers=src_ids,
         **rows_kwargs,
     )

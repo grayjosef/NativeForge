@@ -5,6 +5,8 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import Any
 
+RESULT_SUMMARY_SCHEMA_VERSION = "nf_connector_source_check_result_summary_v1"
+
 
 # Intake candidate models / row dicts with raw_candidate_json
 def count_review_required_from_intake_candidates(
@@ -112,6 +114,58 @@ def manifest_counts_intake_consistent(
         and r == rejected
         and e == error
     )
+
+
+def build_connector_source_check_result_summary_v1(
+    *,
+    connector_id: str | None,
+    connector_shape: str | None,
+    health_status: str,
+    warning_codes: list[str],
+    manifest: dict[str, Any],
+    intake_run_id: str | None,
+    source_check_run_id: str,
+    accepted_count: int,
+    duplicate_count: int,
+    rejected_count: int,
+    error_count: int,
+    review_required_count: int,
+    fixture_rows: int | None,
+    source_rows: int | None,
+    operator_diagnostic_message: str,
+    connector_dry_run: bool = True,
+) -> dict[str, Any]:
+    """
+    Operator-usable blob stored on source-check ``result_summary_json`` for
+    connector-backed dry runs (deterministic; mirrors manifest counters).
+    """
+    counts_out: dict[str, Any] = {
+        "accepted_count": int(accepted_count),
+        "duplicate_count": int(duplicate_count),
+        "rejected_count": int(rejected_count),
+        "error_count": int(error_count),
+        "review_required_count": int(review_required_count),
+    }
+    if fixture_rows is not None:
+        counts_out["fixture_rows"] = int(fixture_rows)
+    if source_rows is not None:
+        counts_out["source_rows"] = int(source_rows)
+
+    body: dict[str, Any] = {
+        "connector_result_summary_schema_version": RESULT_SUMMARY_SCHEMA_VERSION,
+        "connector_dry_run": connector_dry_run,
+        "connector_id": connector_id,
+        "connector_shape": connector_shape,
+        "health_status": health_status,
+        "warning_codes": list(warning_codes),
+        "manifest": manifest,
+        "manifest_counts": manifest.get("counts") if isinstance(manifest, dict) else {},
+        "intake_run_id": intake_run_id,
+        "source_check_run_id": source_check_run_id,
+        "counts": counts_out,
+        "operator_diagnostic_message": operator_diagnostic_message,
+    }
+    return body
 
 
 def flatten_manifest_for_json(obj: Any) -> Any:
