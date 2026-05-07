@@ -6,7 +6,7 @@ The candidate registry layer (`schema_version: nf_source_candidate_registry_v1`)
 
 Implementation: `nativeforge.services.source_candidate_registry_service.build_source_candidate_registry`.
 
-Integration: `build_discovery_source_quality` attaches **`source_candidate_registry`** next to **`source_coverage_plan`** on the **`nf_discovery_source_quality_v1`** payload (and therefore on operator decision pack **`source_quality`**).
+Integration: `build_discovery_source_quality` attaches **`source_candidate_registry`** next to **`source_coverage_plan`** on the **`nf_discovery_source_quality_v1`** payload (and therefore on operator decision pack **`source_quality`**). The same build also attaches **`source_onboarding_decision_pack`** (`nf_source_onboarding_decision_pack_v1`) as the downstream onboarding review gate—see [nativeforge-source-onboarding-decision-pack-v1.md](./nativeforge-source-onboarding-decision-pack-v1.md).
 
 ## Schema
 
@@ -73,3 +73,4 @@ Coverage spans federal, tribal, philanthropic, corporate, university, and broad 
 ## Related
 
 - Coverage plan: [nativeforge-source-coverage-plan-v1.md](./nativeforge-source-coverage-plan-v1.md).
+- Onboarding decision pack: [nativeforge-source-onboarding-decision-pack-v1.md](./nativeforge-source-onboarding-decision-pack-v1.md).

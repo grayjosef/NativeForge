@@ -23,6 +23,7 @@ from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import source_candidate_registry_service as scr_svc
 from nativeforge.services import source_coverage_plan_service as scp_svc
 from nativeforge.services import source_freshness_service as sfs
+from nativeforge.services import source_onboarding_decision_pack_service as sodp_svc
 from nativeforge.services.discovery_coverage_gap_ids import (
     severity_rank as _gap_severity_rank,
 )
@@ -850,6 +851,9 @@ def build_discovery_source_quality(
     out = _json_safe(out)
     out["source_coverage_plan"] = scp_svc.build_source_coverage_plan(out)
     out["source_candidate_registry"] = scr_svc.build_source_candidate_registry(out)
+    out["source_onboarding_decision_pack"] = (
+        sodp_svc.build_source_onboarding_decision_pack(out)
+    )
     return _json_safe(out)
 
 
