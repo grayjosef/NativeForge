@@ -8,6 +8,8 @@ Implementation: `nativeforge.services.source_activation_command_dry_run_service.
 
 Integration: `build_discovery_source_quality` attaches **`source_activation_command_dry_run`** immediately after **`source_human_approval_artifact`** on **`nf_discovery_source_quality_v1`** (and therefore on operator **`source_quality`** payloads).
 
+Next governed layer: Sprint 43 attaches **`active_source_schema_rollback_contract`** (`nf_active_source_schema_rollback_contract_v1`) after this dry-run. It consumes these command rows as schema previews and defines future active source fields, indexes, constraints, rollback mechanics, and migration safety gates without creating a migration, writing database rows, activating sources, persisting approvals, starting ingestion, scraping, calling external APIs, or creating ledger actions.
+
 ## Schema (summary)
 
 | Section | Description |
@@ -100,6 +102,7 @@ After separate governed signatures, evidence closure, and a permitted activation
 ## Related documents
 
 - Human approval artifact: [nativeforge-source-human-approval-artifact-v1.md](./nativeforge-source-human-approval-artifact-v1.md)
+- Active source schema + rollback contract: [nativeforge-active-source-schema-rollback-contract-v1.md](./nativeforge-active-source-schema-rollback-contract-v1.md)
 - Activation preview: [nativeforge-source-activation-preview-v1.md](./nativeforge-source-activation-preview-v1.md)
 - Activation readiness contract: [nativeforge-source-activation-readiness-contract-v1.md](./nativeforge-source-activation-readiness-contract-v1.md)
 - Onboarding decision pack: [nativeforge-source-onboarding-decision-pack-v1.md](./nativeforge-source-onboarding-decision-pack-v1.md)

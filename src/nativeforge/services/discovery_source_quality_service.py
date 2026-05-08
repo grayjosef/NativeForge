@@ -18,6 +18,9 @@ from nativeforge.domain.enums import (
     SourcePriorityLevel,
 )
 from nativeforge.lib.demo_isolation import OrgType
+from nativeforge.services import (
+    active_source_schema_rollback_contract_service as assrc_svc,
+)
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import (
@@ -875,6 +878,9 @@ def build_discovery_source_quality(
     )
     out["source_activation_command_dry_run"] = (
         sacdr_svc.build_source_activation_command_dry_run(out)
+    )
+    out["active_source_schema_rollback_contract"] = (
+        assrc_svc.build_active_source_schema_rollback_contract(out)
     )
     return _json_safe(out)
 
