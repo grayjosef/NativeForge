@@ -12,6 +12,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     String,
@@ -19,6 +20,7 @@ from sqlalchemy import (
     UniqueConstraint,
     Uuid,
     func,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -165,6 +167,12 @@ def _source_last_check_status_optional_sql() -> str:
 def _source_health_status_optional_sql() -> str:
     vals = ", ".join(f"'{h.value}'" for h in SourceHealthStatus)
     return f"(source_health_status IS NULL OR source_health_status IN ({vals}))"
+
+
+def _nf_active_opportunity_sources_source_health_status_sql() -> str:
+    """Matches ``ck_nf_active_opportunity_sources_source_health_status`` (revision 0019)."""
+    vals = ", ".join(f"'{h.value}'" for h in SourceHealthStatus)
+    return f"source_health_status IN ({vals})"
 
 
 def _source_check_run_status_in_sql() -> str:
@@ -490,6 +498,169 @@ class NfOpportunitySource(Base):
     )
 
     organization: Mapped[Organization | None] = relationship()
+
+
+class NfActiveOpportunitySource(Base):
+    """Runtime active opportunity source row (table from Alembic revision 0019)."""
+
+    __tablename__ = "nf_active_opportunity_sources"
+    __table_args__ = (
+        CheckConstraint(
+            _nf_active_opportunity_sources_source_health_status_sql(),
+            name="ck_nf_active_opportunity_sources_source_health_status",
+        ),
+        UniqueConstraint(
+            "organization_id",
+            "source_name",
+            "source_type",
+            "source_lane",
+            name="uq_nf_active_opportunity_sources_org_name_type_lane",
+        ),
+        Index(
+            "ix_nf_active_opportunity_sources_organization_id",
+            "organization_id",
+        ),
+        Index(
+            "ix_nf_active_opportunity_sources_source_status",
+            "source_status",
+        ),
+        Index(
+            "ix_nf_active_opportunity_sources_source_health_status",
+            "source_health_status",
+        ),
+        Index("ix_nf_active_opportunity_sources_source_lane", "source_lane"),
+        Index("ix_nf_active_opportunity_sources_source_type", "source_type"),
+        Index(
+            "ix_nf_active_opportunity_sources_last_checked_at",
+            "last_checked_at",
+        ),
+        Index(
+            "ix_nf_active_opportunity_sources_last_success_at",
+            "last_success_at",
+        ),
+        Index(
+            "ix_nf_active_opportunity_sources_rollback_contract_id",
+            "rollback_contract_id",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+    )
+    source_name: Mapped[str] = mapped_column(String(512), nullable=False)
+    source_type: Mapped[str] = mapped_column(String(128), nullable=False)
+    source_lane: Mapped[str] = mapped_column(String(128), nullable=False)
+    source_url_or_search_target: Mapped[str | None] = mapped_column(
+        Text(), nullable=True
+    )
+    collection_method: Mapped[str] = mapped_column(
+        String(128),
+        nullable=False,
+        server_default=text("'manual_review_only'"),
+    )
+    update_frequency: Mapped[str] = mapped_column(
+        String(128),
+        nullable=False,
+        server_default=text("'unknown'"),
+    )
+    freshness_cadence_days: Mapped[int] = mapped_column(
+        Integer(),
+        nullable=False,
+        server_default=text("30"),
+    )
+    stale_threshold_days: Mapped[int] = mapped_column(
+        Integer(),
+        nullable=False,
+        server_default=text("30"),
+    )
+    last_checked_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_success_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_failure_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    consecutive_failure_count: Mapped[int] = mapped_column(
+        Integer(),
+        nullable=False,
+        server_default=text("0"),
+    )
+    source_health_status: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+        server_default=text(f"'{SourceHealthStatus.unknown.value}'"),
+    )
+    source_status: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+        server_default=text("'activation_pending'"),
+    )
+    dedupe_key_strategy: Mapped[str] = mapped_column(
+        String(256),
+        nullable=False,
+        server_default=text("'pending_operator_assignment'"),
+    )
+    provenance_capture_plan: Mapped[list | dict] = mapped_column(
+        JSON(),
+        nullable=False,
+        server_default=text("'[]'"),
+    )
+    native_relevance_basis: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    broad_eligibility_human_review_required: Mapped[bool] = mapped_column(
+        Boolean(),
+        nullable=False,
+        server_default=text("true"),
+    )
+    keyword_only_not_confirmed_eligible: Mapped[bool] = mapped_column(
+        Boolean(),
+        nullable=False,
+        server_default=text("true"),
+    )
+    legal_tos_review_required: Mapped[bool] = mapped_column(
+        Boolean(),
+        nullable=False,
+        server_default=text("true"),
+    )
+    public_access_basis: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    activation_approval_artifact_id: Mapped[str | None] = mapped_column(
+        String(512), nullable=True
+    )
+    activation_command_id: Mapped[str | None] = mapped_column(
+        String(512), nullable=True
+    )
+    activation_approved_by: Mapped[str | None] = mapped_column(
+        String(512), nullable=True
+    )
+    activation_approved_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    activation_notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    rollback_contract_id: Mapped[str | None] = mapped_column(
+        String(512), nullable=True
+    )
+    disabled_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    disabled_by: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    disabled_reason: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+    organization: Mapped[Organization] = relationship()
 
 
 class NfSourceCheckRun(Base):
