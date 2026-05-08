@@ -34,6 +34,9 @@ from nativeforge.services import (
     active_source_runtime_migration_apply_plan_service as asrmap_svc,
 )
 from nativeforge.services import (
+    active_source_runtime_migration_approval_intake_service as asrmais_svc,
+)
+from nativeforge.services import (
     alembic_migration_generation_gate_service as amgg_svc,
 )
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
@@ -914,6 +917,9 @@ def build_discovery_source_quality(
             out,
             repo_root=asmdfr_svc._repo_root(),
         )
+    )
+    out["active_source_runtime_migration_approval_intake"] = (
+        asrmais_svc.build_active_source_runtime_migration_approval_intake(None)
     )
     return _json_safe(out)
 
