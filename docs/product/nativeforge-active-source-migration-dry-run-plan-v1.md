@@ -8,6 +8,8 @@ Implementation: `nativeforge.services.active_source_migration_dry_run_plan_servi
 
 Integration: `build_discovery_source_quality` attaches `active_source_migration_dry_run_plan` after `active_source_schema_rollback_contract`, so operator Workbench `source_quality` payloads inherit the dry-run plan.
 
+Sprint 45 attaches **`alembic_migration_generation_gate`** (`nf_alembic_migration_generation_gate_v1`) after the dry-run plan—see [nativeforge-alembic-migration-generation-gate-v1.md](./nativeforge-alembic-migration-generation-gate-v1.md).
+
 ## Schema overview
 
 Top-level groups:

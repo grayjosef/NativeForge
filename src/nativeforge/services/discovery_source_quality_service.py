@@ -24,6 +24,9 @@ from nativeforge.services import (
 from nativeforge.services import (
     active_source_schema_rollback_contract_service as assrc_svc,
 )
+from nativeforge.services import (
+    alembic_migration_generation_gate_service as amgg_svc,
+)
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import (
@@ -887,6 +890,9 @@ def build_discovery_source_quality(
     )
     out["active_source_migration_dry_run_plan"] = (
         asmdrp_svc.build_active_source_migration_dry_run_plan(out)
+    )
+    out["alembic_migration_generation_gate"] = (
+        amgg_svc.build_alembic_migration_generation_gate(out)
     )
     return _json_safe(out)
 
