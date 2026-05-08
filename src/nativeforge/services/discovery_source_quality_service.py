@@ -43,6 +43,9 @@ from nativeforge.services import (
     active_source_runtime_migration_dry_run_command_package_service as asrmdrcp_svc,
 )
 from nativeforge.services import (
+    active_source_runtime_migration_post_apply_verification_service as asrmrpav_svc,
+)
+from nativeforge.services import (
     active_source_runtime_migration_readiness_gate_service as asrmrg_svc,
 )
 from nativeforge.services import (
@@ -938,6 +941,9 @@ def build_discovery_source_quality(
     )
     out["active_source_runtime_migration_apply_execution_read_only"] = (
         asrmrae_svc.build_discovery_read_only_apply_execution_status_attachment()
+    )
+    out["active_source_runtime_migration_post_apply_verification_read_only"] = (
+        asrmrpav_svc.build_discovery_read_only_post_apply_verification_status_attachment()
     )
     return _json_safe(out)
 
