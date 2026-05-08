@@ -6,7 +6,7 @@ The active source schema + rollback contract (`schema_version: nf_active_source_
 
 Implementation: `nativeforge.services.active_source_schema_rollback_contract_service.build_active_source_schema_rollback_contract`.
 
-Integration: `build_discovery_source_quality` attaches `active_source_schema_rollback_contract` after `source_activation_command_dry_run`, so operator Workbench `source_quality` payloads inherit the contract.
+Integration: `build_discovery_source_quality` attaches `active_source_schema_rollback_contract` after `source_activation_command_dry_run`, so operator Workbench `source_quality` payloads inherit the contract. Sprint 44 then attaches **`active_source_migration_dry_run_plan`** (`nf_active_source_migration_dry_run_plan_v1`) after this contract—see [nativeforge-active-source-migration-dry-run-plan-v1.md](./nativeforge-active-source-migration-dry-run-plan-v1.md).
 
 ## Relationship to upstream artifacts
 
@@ -133,12 +133,13 @@ NativeForge is Native-first, not Native-only. Federal Native-specific rows may l
 
 ## Future Pathway To Migration Dry-Run
 
-A future sprint may use this contract to produce a migration dry-run. That future sprint must pass schema review, rollback contract review, status lifecycle review, source health review, provenance review, freshness review, dedupe review, legal/TOS review, Native relevance review, and no-live-ingestion checks before any migration is generated or applied.
+Sprint 44 implements the migration dry-run plan layer on top of this contract: [nativeforge-active-source-migration-dry-run-plan-v1.md](./nativeforge-active-source-migration-dry-run-plan-v1.md). That payload must pass schema review, rollback contract review, status lifecycle review, source health review, provenance review, freshness review, dedupe review, legal/TOS review, Native relevance review, and no-live-ingestion checks before any **future** sprint is allowed to generate or apply a real Alembic migration.
 
 Only after a future migration, signed approval artifacts, activation execution review, and rollback testing may a later sprint consider active source creation.
 
 ## Related Documents
 
+- Migration dry-run plan (Sprint 44): [nativeforge-active-source-migration-dry-run-plan-v1.md](./nativeforge-active-source-migration-dry-run-plan-v1.md)
 - Activation command dry-run: [nativeforge-source-activation-command-dry-run-v1.md](./nativeforge-source-activation-command-dry-run-v1.md)
 - Human approval artifact: [nativeforge-source-human-approval-artifact-v1.md](./nativeforge-source-human-approval-artifact-v1.md)
 - Activation preview: [nativeforge-source-activation-preview-v1.md](./nativeforge-source-activation-preview-v1.md)

@@ -19,6 +19,9 @@ from nativeforge.domain.enums import (
 )
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.services import (
+    active_source_migration_dry_run_plan_service as asmdrp_svc,
+)
+from nativeforge.services import (
     active_source_schema_rollback_contract_service as assrc_svc,
 )
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
@@ -881,6 +884,9 @@ def build_discovery_source_quality(
     )
     out["active_source_schema_rollback_contract"] = (
         assrc_svc.build_active_source_schema_rollback_contract(out)
+    )
+    out["active_source_migration_dry_run_plan"] = (
+        asmdrp_svc.build_active_source_migration_dry_run_plan(out)
     )
     return _json_safe(out)
 
