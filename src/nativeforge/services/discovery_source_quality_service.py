@@ -31,6 +31,9 @@ from nativeforge.services import (
     active_source_local_migration_verification_service as aslmv_svc,
 )
 from nativeforge.services import (
+    active_source_runtime_migration_apply_plan_service as asrmap_svc,
+)
+from nativeforge.services import (
     alembic_migration_generation_gate_service as amgg_svc,
 )
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
@@ -905,6 +908,12 @@ def build_discovery_source_quality(
     )
     out["active_source_local_migration_verification"] = (
         aslmv_svc.build_active_source_local_migration_verification(out)
+    )
+    out["active_source_runtime_migration_apply_plan"] = (
+        asrmap_svc.build_active_source_runtime_migration_apply_plan(
+            out,
+            repo_root=asmdfr_svc._repo_root(),
+        )
     )
     return _json_safe(out)
 
