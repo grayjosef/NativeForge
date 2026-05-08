@@ -446,18 +446,23 @@ def _build_gate_checks(
             )
         )
 
-    rev_clean = len(matching_revision_paths) == 0
+    rev_count = len(matching_revision_paths)
+    revision_scan_ok = rev_count <= 1
     checks.append(
         _gate_check(
             "no_alembic_revision_file_created",
-            "passed" if rev_clean else "blocked",
+            "passed" if revision_scan_ok else "blocked",
             evidence=(
-                "No matching files under alembic/versions for active-source "
-                "migration patterns"
-                if rev_clean
-                else "Forbidden migration filename patterns found under alembic/versions"
+                "At most one matching file under alembic/versions for active-source "
+                "migration filename patterns (zero before Sprint 46; exactly one after "
+                "the revision file exists)"
+                if revision_scan_ok
+                else (
+                    "Multiple matching migration files found under alembic/versions; "
+                    "resolve duplicates before review"
+                )
             ),
-            blocker="" if rev_clean else "unexpected_revision_files_present",
+            blocker="" if revision_scan_ok else "unexpected_revision_files_present",
             required_before_generation=True,
         )
     )
@@ -635,6 +640,12 @@ def build_alembic_migration_generation_gate(
 
     repo_root = _repo_root()
     matching_revision_paths = _scan_matching_revision_paths(repo_root)
+    nf_revision_authored = (
+        len(
+            [p for p in matching_revision_paths if "nf_active_opportunity_sources" in p]
+        )
+        == 1
+    )
 
     gate_checks = _build_gate_checks(
         plan=plan,
@@ -686,13 +697,14 @@ def build_alembic_migration_generation_gate(
         )
 
     notes = (
-        "Sprint 45 Alembic migration generation gate: deterministic readiness metadata "
-        "only. This sprint does not add an Alembic revision under alembic/versions, "
-        "does not generate migration source files, does not apply migrations, does not "
-        "write database rows, does not activate sources, does not persist approvals, "
-        "does not scrape, ingest, call external APIs, or create operator ledger "
-        "actions. A future operator-authorized migration generation sprint may emit a "
-        "revision after reviews recorded outside this payload."
+        "Alembic migration generation gate: deterministic readiness metadata only. "
+        "This service never applies migrations, never writes database rows, never "
+        "activates sources, never persists approvals, never scrapes or ingests, never "
+        "calls external APIs, and never creates operator ledger actions. Sprint 46 may "
+        "author exactly one revision file for nf_active_opportunity_sources under "
+        "alembic/versions; that file must remain singular until review. Operator "
+        "authorization and future migration review sprints remain prerequisites before "
+        "any upgrade head moves."
     )
 
     out: dict[str, Any] = {
@@ -724,7 +736,11 @@ def build_alembic_migration_generation_gate(
             "proposed_migration_name": "create_nf_active_opportunity_sources",
             "proposed_table_name": "nf_active_opportunity_sources",
             "proposed_revision_slug": "create_nf_active_opportunity_sources",
-            "proposed_revision_status": "generation_gate_only_not_created",
+            "proposed_revision_status": (
+                "revision_file_authored_not_applied"
+                if nf_revision_authored
+                else "generation_gate_only_not_created"
+            ),
             "proposed_dependency_revision": str(
                 pm.get("proposed_dependency_revision")
                 or "current_existing_head_or_unknown",
@@ -737,7 +753,7 @@ def build_alembic_migration_generation_gate(
             "downgrade_step_count": len(downgrade_steps),
             "generation_boundary": {
                 "generation_gate_only": True,
-                "alembic_revision_created_now": False,
+                "alembic_revision_created_now": nf_revision_authored,
                 "may_generate_revision_now": False,
                 "may_apply_migration_now": False,
                 "may_write_database_rows_now": False,
@@ -788,14 +804,18 @@ def build_alembic_migration_generation_gate(
             "should_create_action": False,
         },
         "migration_file_absence_proof": {
-            "proof_status": "no_revision_file_created",
+            "proof_status": (
+                "revision_file_present_not_applied"
+                if nf_revision_authored
+                else "no_revision_file_matching_patterns"
+            ),
             "checked_paths": ["alembic/versions"],
             "forbidden_filename_patterns": [
                 "*nf_active_opportunity_sources*",
                 "*active_source_migration*",
                 "*create_nf_active_opportunity_sources*",
             ],
-            "alembic_revision_created_now": False,
+            "alembic_revision_created_now": nf_revision_authored,
             "matching_revision_files_found": matching_revision_paths,
             "dry_run_only": True,
         },
@@ -805,7 +825,7 @@ def build_alembic_migration_generation_gate(
             "actual_migration_count": 0,
             "actual_database_write_count": 0,
             "actual_activation_count": 0,
-            "alembic_revision_created_now": False,
+            "alembic_revision_created_now": nf_revision_authored,
             "may_generate_revision_now": False,
             "may_apply_migration_now": False,
             "may_write_database_rows_now": False,

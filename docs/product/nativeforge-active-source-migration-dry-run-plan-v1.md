@@ -33,9 +33,9 @@ See: [nativeforge-active-source-schema-rollback-contract-v1.md](./nativeforge-ac
 
 `global_migration_boundary.migration_dry_run_only` is always `true`. `actual_migration_count`, `actual_database_write_count`, and `actual_activation_count` are always `0`. Every upgrade and downgrade step uses `dry_run_only: true` and `may_execute_now: false`.
 
-## No Alembic revision / no database write / no activation
+## No Alembic revision from Sprint 44 service / no database write / no activation
 
-This sprint does **not** add an Alembic revision file for `nf_active_opportunity_sources`. `alembic_revision_created_now` is `false`. `may_generate_migration_now` and `may_apply_migration_now` are `false`. No database rows are written and no sources are activated by this layer.
+The Sprint 44 **service** does not emit an Alembic revision module, does not apply migrations, and does not write rows. `alembic_revision_created_now` on the dry-run payload remains `false`. `may_generate_migration_now` and `may_apply_migration_now` stay `false`. Sprint 46 separately authors the revision file under `alembic/versions` while still forbidding apply from this planning layer—see [nativeforge-active-source-migration-file-generation-v1.md](./nativeforge-active-source-migration-file-generation-v1.md).
 
 ## Proposed migration shape
 

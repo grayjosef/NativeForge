@@ -286,13 +286,15 @@ def test_global_migration_boundary_denies_execution(client_nf: TestClient) -> No
     assert g["should_create_action"] is False
 
 
-def test_no_dedicated_alembic_migration_file_for_active_source_table() -> None:
+def test_nf_active_opportunity_sources_revision_file_singleton() -> None:
     root = Path(__file__).resolve().parents[1]
     versions = root / "alembic" / "versions"
-    suspicious = list(versions.glob("*nf_active_opportunity_sources*")) + list(
-        versions.glob("*active_source_migration*"),
+    nf_files = list(versions.glob("*nf_active_opportunity_sources*"))
+    assert len(nf_files) == 1
+    stray = list(versions.glob("*active_source_migration*")) + list(
+        versions.glob("*create_nf_active_opportunity_sources*"),
     )
-    assert suspicious == []
+    assert stray == []
 
 
 def test_all_maps_dry_run_only_and_not_applicable_now(

@@ -154,7 +154,7 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
         text=True,
         check=True,
     )
-    assert result.stdout.strip() == "0018 (head)"
+    assert result.stdout.strip() == "0019 (head)"
 
     sprint_discovery_files = [
         "0010_nf_opportunity_sources_discovery.py",

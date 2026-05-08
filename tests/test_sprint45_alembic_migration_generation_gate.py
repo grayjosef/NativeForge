@@ -244,13 +244,17 @@ def test_manual_authorization_not_authorized(client_nf: TestClient) -> None:
     assert ma["should_create_action"] is False
 
 
-def test_migration_file_absence_proof_empty_matches(client_nf: TestClient) -> None:
+def test_migration_file_repository_proof_lists_nf_revision(
+    client_nf: TestClient,
+) -> None:
     oid = _new_org()
     gate = _build_gate(oid)
     proof = gate["migration_file_absence_proof"]
 
-    assert proof["matching_revision_files_found"] == []
-    assert proof["alembic_revision_created_now"] is False
+    found = proof["matching_revision_files_found"]
+    assert any("nf_active_opportunity_sources" in p for p in found)
+    assert len(found) >= 1
+    assert proof["alembic_revision_created_now"] is True
 
 
 def test_global_generation_boundary_denials(client_nf: TestClient) -> None:
@@ -263,7 +267,7 @@ def test_global_generation_boundary_denials(client_nf: TestClient) -> None:
     assert g["actual_migration_count"] == 0
     assert g["actual_database_write_count"] == 0
     assert g["actual_activation_count"] == 0
-    assert g["alembic_revision_created_now"] is False
+    assert g["alembic_revision_created_now"] is True
     assert g["may_generate_revision_now"] is False
     assert g["may_apply_migration_now"] is False
     assert g["may_write_database_rows_now"] is False
@@ -275,13 +279,15 @@ def test_global_generation_boundary_denials(client_nf: TestClient) -> None:
     assert g["should_create_action"] is False
 
 
-def test_no_dedicated_alembic_migration_file_for_active_source_table() -> None:
+def test_nf_active_opportunity_sources_revision_file_singleton() -> None:
     root = Path(__file__).resolve().parents[1]
     versions = root / "alembic" / "versions"
-    suspicious = list(versions.glob("*nf_active_opportunity_sources*")) + list(
-        versions.glob("*active_source_migration*"),
+    nf_files = list(versions.glob("*nf_active_opportunity_sources*"))
+    assert len(nf_files) == 1
+    stray = list(versions.glob("*active_source_migration*")) + list(
+        versions.glob("*create_nf_active_opportunity_sources*"),
     )
-    assert suspicious == []
+    assert stray == []
 
 
 def test_all_manifest_rows_deny_generation_and_apply(client_nf: TestClient) -> None:

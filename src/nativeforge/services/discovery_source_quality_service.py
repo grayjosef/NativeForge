@@ -22,6 +22,9 @@ from nativeforge.services import (
     active_source_migration_dry_run_plan_service as asmdrp_svc,
 )
 from nativeforge.services import (
+    active_source_migration_file_review_service as asmdfr_svc,
+)
+from nativeforge.services import (
     active_source_schema_rollback_contract_service as assrc_svc,
 )
 from nativeforge.services import (
@@ -893,6 +896,9 @@ def build_discovery_source_quality(
     )
     out["alembic_migration_generation_gate"] = (
         amgg_svc.build_alembic_migration_generation_gate(out)
+    )
+    out["active_source_migration_file_review"] = (
+        asmdfr_svc.build_active_source_migration_file_review(out)
     )
     return _json_safe(out)
 

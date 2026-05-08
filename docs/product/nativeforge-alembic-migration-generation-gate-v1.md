@@ -2,11 +2,11 @@
 
 ## Purpose
 
-The Alembic migration generation gate (`schema_version: nf_alembic_migration_generation_gate_v1`) is a deterministic, JSON-serializable **final planning checkpoint** before any future sprint is allowed to author a real Alembic revision for `nf_active_opportunity_sources`. It consumes Sprint 44 `nf_active_source_migration_dry_run_plan_v1` (and indirectly `nf_discovery_source_quality_v1` / Sprint 43 rollback contract material), then emits field, constraint, index, upgrade, and downgrade **generation manifests**, gate checks, manual authorization requirements, migration file absence proof, and explicit global boundaries—without creating an Alembic revision, applying a migration, writing database rows, activating sources, persisting approvals, scraping, ingesting, calling external APIs, or creating operator ledger actions.
+The Alembic migration generation gate (`schema_version: nf_alembic_migration_generation_gate_v1`) is a deterministic, JSON-serializable **planning checkpoint** aligned with Sprint 44 `nf_active_source_migration_dry_run_plan_v1` (and indirectly `nf_discovery_source_quality_v1` / Sprint 43 rollback contract material). The gate service itself **never** applies migrations, writes database rows, activates sources, persists approvals, scrapes, ingests, calls external APIs, or creates operator ledger actions. Sprint 46 may add a revision **file** on disk; the gate then records that artifact while counters for applied migrations stay at zero.
 
 Implementation: `nativeforge.services.alembic_migration_generation_gate_service.build_alembic_migration_generation_gate`.
 
-Integration: `build_discovery_source_quality` attaches `alembic_migration_generation_gate` immediately after `active_source_migration_dry_run_plan`, so operator Workbench `source_quality` payloads inherit the gate alongside Sprint 44.
+Integration: `build_discovery_source_quality` attaches `alembic_migration_generation_gate` immediately after `active_source_migration_dry_run_plan`, then attaches **`active_source_migration_file_review`** (`nf_active_source_migration_file_review_v1`) after the gate, so operator Workbench `source_quality` payloads inherit the gate, Sprint 46 file review, and Sprint 44 context together.
 
 ## Schema
 
@@ -14,32 +14,32 @@ Top-level groups:
 
 - `organization_scope`: org identity and generation timestamp aligned with upstream payloads.
 - `generation_gate_posture`: posture, counts, gate check tallies, and **always-zero** actual Alembic revision, migration, database write, and activation counters.
-- `migration_generation_candidate`: proposed migration identity (`create_nf_active_opportunity_sources`), table name, revision slug, dependency revision hint, counts, and generation boundary flags (`generation_gate_only_not_created`, no revision generation now).
+- `migration_generation_candidate`: proposed migration identity (`create_nf_active_opportunity_sources`), table name, revision slug, dependency revision hint, counts, and generation boundary flags (`generation_gate_only`, `may_generate_revision_now: false`).
 - `field_generation_manifest`, `constraint_generation_manifest`, `index_generation_manifest`: rows transcribed from Sprint 44 maps with `generation_status: planned_not_generated`, `dry_run_only: true`, and **never** `may_generate_now` / `may_apply_now` true.
 - `upgrade_generation_plan` / `downgrade_generation_plan`: ordered planned operations with proposed Alembic call sketches and boundaries denying execution in Sprint 45.
 - `gate_checks`: deterministic checks with `passed`, `blocked`, or `manual_required` status.
 - `manual_authorization_requirements`: future operator, schema owner, rollback owner, Alembic head, downgrade path, and no-live-ingestion requirements with `authorization_status: not_authorized` and `should_create_action: false`.
-- `migration_file_absence_proof`: repository scan under `alembic/versions` for forbidden filename patterns; Sprint 45 expects `matching_revision_files_found` to remain empty.
+- `migration_file_absence_proof`: repository scan under `alembic/versions` for filename patterns tied to `nf_active_opportunity_sources`. Before Sprint 46, `matching_revision_files_found` is expected empty. After Sprint 46, **exactly one** matching revision file may appear while `actual_migration_count` remains `0` until a future authorized apply sprint. See [nativeforge-active-source-migration-file-generation-v1.md](./nativeforge-active-source-migration-file-generation-v1.md).
 - `global_generation_boundary`: product-wide denial surface for revision creation, migration apply, database writes, activation, ingestion, scraping, external APIs, and ledger actions.
 - `risk_flags`, `summary`, `recommended_review_interval_days`.
 
 ## Relationship to Sprint 44 migration dry-run plan
 
-Sprint 44 produces `field_migration_map`, `constraint_migration_map`, `index_migration_map`, and ordered upgrade/downgrade steps. Sprint 45 **does not reinterpret** those maps; it reformats them into generation-oriented manifests, adds Alembic-oriented operation labels, runs deterministic gate checks, and records that **no revision file exists yet**.
+Sprint 44 produces `field_migration_map`, `constraint_migration_map`, `index_migration_map`, and ordered upgrade/downgrade steps. Sprint 45 **does not reinterpret** those maps; it reformats them into generation-oriented manifests, adds Alembic-oriented operation labels, and runs deterministic gate checks. Sprint 46 authors the on-disk revision module; see [nativeforge-active-source-migration-file-generation-v1.md](./nativeforge-active-source-migration-file-generation-v1.md).
 
 See: [nativeforge-active-source-migration-dry-run-plan-v1.md](./nativeforge-active-source-migration-dry-run-plan-v1.md).
 
 ## Generation gate only boundary
 
-`global_generation_boundary.generation_gate_only` is always `true`. `actual_alembic_revision_count`, `actual_migration_count`, `actual_database_write_count`, and `actual_activation_count` are always `0`. `alembic_revision_created_now` is always `false`. Every manifest row keeps `dry_run_only: true` and denies generation/application now.
+`global_generation_boundary.generation_gate_only` is always `true`. `actual_alembic_revision_count`, `actual_migration_count`, `actual_database_write_count`, and `actual_activation_count` are always `0`. `global_generation_boundary.alembic_revision_created_now` mirrors whether a Sprint 46 revision **file** exists on disk, while `may_generate_revision_now` stays `false`. Every manifest row keeps `dry_run_only: true` and denies apply now.
 
 ## No Alembic revision / no database write / no activation
 
-This sprint **does not** add a file under `alembic/versions`. It **does not** run Alembic upgrade/downgrade. It **does not** create tables or rows. It **does not** activate sources or persist approvals. Those obligations move to **future** operator-authorized migration generation, review, and local verification sprints.
+The gate service does **not** add or edit revision files itself and does **not** run Alembic upgrade/downgrade. It does **not** create tables or rows through this JSON path. It does **not** activate sources or persist approvals. Sprint 46 adds the revision module under `alembic/versions` in a separate authoring step; apply, verification, and activation remain future operator-authorized sprints. See [nativeforge-active-source-migration-file-generation-v1.md](./nativeforge-active-source-migration-file-generation-v1.md).
 
 ## Migration generation candidate
 
-`proposed_migration_name` and `proposed_revision_slug` are `create_nf_active_opportunity_sources`. `proposed_table_name` is `nf_active_opportunity_sources`. `proposed_revision_status` is `generation_gate_only_not_created`. `proposed_generation_mode` is `future_operator_authorized_only`. `proposed_dependency_revision` mirrors Sprint 44 (`current_existing_head_or_unknown` until resolved against the live head).
+`proposed_migration_name` and `proposed_revision_slug` are `create_nf_active_opportunity_sources`. `proposed_table_name` is `nf_active_opportunity_sources`. `proposed_revision_status` is `revision_file_authored_not_applied` when exactly one matching revision file exists, otherwise `generation_gate_only_not_created`. `proposed_generation_mode` is `future_operator_authorized_only`. `proposed_dependency_revision` mirrors Sprint 44 (`current_existing_head_or_unknown` until resolved against the live head).
 
 ## Field generation manifest
 
@@ -59,7 +59,7 @@ Future work requires explicit operator generation authorization, schema owner re
 
 ## Migration file absence proof
 
-The service records forbidden glob patterns for filenames under `alembic/versions`. An empty `matching_revision_files_found` list is the expected healthy state before any future migration generation sprint.
+The service records filename patterns under `alembic/versions`. Before Sprint 46, an empty `matching_revision_files_found` list is the expected healthy state. After Sprint 46, a single matching revision file for `nf_active_opportunity_sources` may be listed while migrations remain unapplied until a future verification sprint. See [nativeforge-active-source-migration-file-generation-v1.md](./nativeforge-active-source-migration-file-generation-v1.md).
 
 ## Global generation boundary
 
