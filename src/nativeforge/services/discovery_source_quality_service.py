@@ -21,6 +21,9 @@ from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import (
+    source_activation_preview_service as sap_svc,
+)
+from nativeforge.services import (
     source_activation_readiness_contract_service as sarc_svc,
 )
 from nativeforge.services import source_candidate_registry_service as scr_svc
@@ -860,6 +863,7 @@ def build_discovery_source_quality(
     out["source_activation_readiness_contract"] = (
         sarc_svc.build_source_activation_readiness_contract(out)
     )
+    out["source_activation_preview"] = sap_svc.build_source_activation_preview(out)
     return _json_safe(out)
 
 

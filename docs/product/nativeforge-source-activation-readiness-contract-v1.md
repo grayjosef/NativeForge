@@ -8,7 +8,7 @@ This sprint **does not** activate sources, write registry rows, scrape, call API
 
 Implementation: `nativeforge.services.source_activation_readiness_contract_service.build_source_activation_readiness_contract`.
 
-Integration: `build_discovery_source_quality` attaches **`source_activation_readiness_contract`** next to **`source_onboarding_decision_pack`**, **`source_candidate_registry`**, and **`source_coverage_plan`** on **`nf_discovery_source_quality_v1`** (and therefore on operator **`source_quality`** payloads).
+Integration: `build_discovery_source_quality` attaches **`source_activation_readiness_contract`** next to **`source_onboarding_decision_pack`**, **`source_candidate_registry`**, and **`source_coverage_plan`** on **`nf_discovery_source_quality_v1`** (and therefore on operator **`source_quality`** payloads). Sprint 40 adds **`source_activation_preview`** (`nf_source_activation_preview_v1`) as the next **dry-run-only** gate—see [nativeforge-source-activation-preview-v1.md](./nativeforge-source-activation-preview-v1.md).
 
 ## Schema (summary)
 
@@ -72,6 +72,7 @@ A future sprint may execute governed activation: ledger-approved operator action
 
 ## Related documents
 
+- Activation preview (Sprint 40, dry-run): [nativeforge-source-activation-preview-v1.md](./nativeforge-source-activation-preview-v1.md)
 - Onboarding decision pack: [nativeforge-source-onboarding-decision-pack-v1.md](./nativeforge-source-onboarding-decision-pack-v1.md)
 - Candidate registry: [nativeforge-source-candidate-registry-v1.md](./nativeforge-source-candidate-registry-v1.md)
 - Coverage plan: [nativeforge-source-coverage-plan-v1.md](./nativeforge-source-coverage-plan-v1.md)
