@@ -29,6 +29,9 @@ from nativeforge.services import (
 from nativeforge.services import source_candidate_registry_service as scr_svc
 from nativeforge.services import source_coverage_plan_service as scp_svc
 from nativeforge.services import source_freshness_service as sfs
+from nativeforge.services import (
+    source_human_approval_artifact_service as sha_svc,
+)
 from nativeforge.services import source_onboarding_decision_pack_service as sodp_svc
 from nativeforge.services.discovery_coverage_gap_ids import (
     severity_rank as _gap_severity_rank,
@@ -864,6 +867,9 @@ def build_discovery_source_quality(
         sarc_svc.build_source_activation_readiness_contract(out)
     )
     out["source_activation_preview"] = sap_svc.build_source_activation_preview(out)
+    out["source_human_approval_artifact"] = (
+        sha_svc.build_source_human_approval_artifact(out)
+    )
     return _json_safe(out)
 
 

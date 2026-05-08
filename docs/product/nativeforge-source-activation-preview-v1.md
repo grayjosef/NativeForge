@@ -6,7 +6,7 @@ The human-approved source activation preview (`schema_version: nf_source_activat
 
 Implementation: `nativeforge.services.source_activation_preview_service.build_source_activation_preview`.
 
-Integration: `build_discovery_source_quality` attaches **`source_activation_preview`** alongside **`source_activation_readiness_contract`**, **`source_onboarding_decision_pack`**, **`source_candidate_registry`**, and **`source_coverage_plan`** on **`nf_discovery_source_quality_v1`** (and therefore on operator **`source_quality`** payloads).
+Integration: `build_discovery_source_quality` attaches **`source_activation_preview`** alongside **`source_activation_readiness_contract`**, **`source_onboarding_decision_pack`**, **`source_candidate_registry`**, **`source_coverage_plan`**, and Sprint 41 **`source_human_approval_artifact`** (`nf_source_human_approval_artifact_v1`) on **`nf_discovery_source_quality_v1`** (and therefore on operator **`source_quality`** payloads).
 
 ## Schema (summary)
 
@@ -75,6 +75,7 @@ After operator approvals and evidence gates are satisfied in future sprints, a g
 
 ## Related documents
 
+- Human approval artifact (Sprint 41): [nativeforge-source-human-approval-artifact-v1.md](./nativeforge-source-human-approval-artifact-v1.md)
 - Activation readiness contract: [nativeforge-source-activation-readiness-contract-v1.md](./nativeforge-source-activation-readiness-contract-v1.md)
 - Onboarding decision pack: [nativeforge-source-onboarding-decision-pack-v1.md](./nativeforge-source-onboarding-decision-pack-v1.md)
 - Candidate registry: [nativeforge-source-candidate-registry-v1.md](./nativeforge-source-candidate-registry-v1.md)
