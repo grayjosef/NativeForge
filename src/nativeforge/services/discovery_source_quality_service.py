@@ -37,6 +37,9 @@ from nativeforge.services import (
     active_source_runtime_migration_approval_intake_service as asrmais_svc,
 )
 from nativeforge.services import (
+    active_source_runtime_migration_dry_run_command_package_service as asrmdrcp_svc,
+)
+from nativeforge.services import (
     active_source_runtime_migration_readiness_gate_service as asrmrg_svc,
 )
 from nativeforge.services import (
@@ -926,6 +929,9 @@ def build_discovery_source_quality(
     )
     out["active_source_runtime_migration_readiness_gate"] = (
         asrmrg_svc.build_active_source_runtime_migration_readiness_gate(None)
+    )
+    out["active_source_runtime_migration_dry_run_command_package"] = (
+        asrmdrcp_svc.build_active_source_runtime_migration_dry_run_command_package(None)
     )
     return _json_safe(out)
 
