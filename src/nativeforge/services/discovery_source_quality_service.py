@@ -21,6 +21,9 @@ from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.services import discovery_coverage_gap_service as dcg_svc
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services import (
+    source_activation_command_dry_run_service as sacdr_svc,
+)
+from nativeforge.services import (
     source_activation_preview_service as sap_svc,
 )
 from nativeforge.services import (
@@ -869,6 +872,9 @@ def build_discovery_source_quality(
     out["source_activation_preview"] = sap_svc.build_source_activation_preview(out)
     out["source_human_approval_artifact"] = (
         sha_svc.build_source_human_approval_artifact(out)
+    )
+    out["source_activation_command_dry_run"] = (
+        sacdr_svc.build_source_activation_command_dry_run(out)
     )
     return _json_safe(out)
 

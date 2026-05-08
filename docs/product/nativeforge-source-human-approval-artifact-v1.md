@@ -2,11 +2,11 @@
 
 ## Purpose
 
-The human approval artifact (`schema_version: nf_source_human_approval_artifact_v1`) is a **deterministic, JSON-serializable, unsigned paperwork layer** that consumes **`nf_discovery_source_quality_v1`** and Sprint 40 **`nf_source_activation_preview_v1`**. It produces a **formal approval packet** for operator review **before** any future activation command dry-run or activation sprint—without approving candidates, activating sources, writing database rows, scraping, ingesting, calling external APIs, calling LLMs, or creating operator ledger actions.
+The human approval artifact (`schema_version: nf_source_human_approval_artifact_v1`) is a **deterministic, JSON-serializable, unsigned paperwork layer** that consumes **`nf_discovery_source_quality_v1`** and Sprint 40 **`nf_source_activation_preview_v1`**. It produces a **formal approval packet** for operator review **before** Sprint 42 **`nf_source_activation_command_dry_run_v1`** and any future activation sprint—without approving candidates, activating sources, writing database rows, scraping, ingesting, calling external APIs, calling LLMs, or creating operator ledger actions.
 
 Implementation: `nativeforge.services.source_human_approval_artifact_service.build_source_human_approval_artifact`.
 
-Integration: `build_discovery_source_quality` attaches **`source_human_approval_artifact`** after **`source_activation_preview`** on **`nf_discovery_source_quality_v1`** (and on operator **`source_quality`** payloads).
+Integration: `build_discovery_source_quality` attaches **`source_human_approval_artifact`** after **`source_activation_preview`**, before **`source_activation_command_dry_run`** (Sprint 42), on **`nf_discovery_source_quality_v1`** (and on operator **`source_quality`** payloads).
 
 ## Schema (summary)
 
@@ -82,10 +82,11 @@ Coverage spans federal, tribal, philanthropic, corporate, university, and broad 
 
 ## Future pathway to activation command dry-run
 
-After separate governed signatures and evidence closure, the next permitted automation class is **`nf_source_activation_command_dry_run_v1`**, followed by a future activation sprint. **Sprint 41 stops at unsigned approval artifacts.**
+**Sprint 42 implements `nf_source_activation_command_dry_run_v1`** as an unsigned, non-executing command model that consumes this artifact. After separate governed signatures and evidence closure in **later** sprints, a future activation execution sprint may apply. **Sprint 41 stops at unsigned approval artifacts; Sprint 42 stops at command dry-run modeling only.**
 
 ## Related documents
 
+- Activation command dry-run: [nativeforge-source-activation-command-dry-run-v1.md](./nativeforge-source-activation-command-dry-run-v1.md)
 - Activation preview: [nativeforge-source-activation-preview-v1.md](./nativeforge-source-activation-preview-v1.md)
 - Activation readiness contract: [nativeforge-source-activation-readiness-contract-v1.md](./nativeforge-source-activation-readiness-contract-v1.md)
 - Onboarding decision pack: [nativeforge-source-onboarding-decision-pack-v1.md](./nativeforge-source-onboarding-decision-pack-v1.md)
