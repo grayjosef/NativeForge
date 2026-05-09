@@ -20,6 +20,9 @@ from nativeforge.services.active_source_post_runtime_verification_service import
 from nativeforge.services.active_source_post_runtime_verification_service import (
     validate_runtime_evidence_struct,
 )
+from nativeforge.services.active_source_activation_review_packet_service import (
+    validate_activation_review_packet_artifact_for_gate,
+)
 
 ARTIFACT_TYPE = "nf_active_source_activation_readiness_gate_v1"
 
@@ -69,6 +72,9 @@ _SPRINT64_FALSE_MAY: dict[str, bool] = {
     "may_write_database_now": False,
     "may_open_database_session_now": False,
     "may_execute_activation_now": False,
+    "may_execute_fetch_now": False,
+    "may_execute_scrape_now": False,
+    "may_execute_ingest_now": False,
 }
 
 _FORBIDDEN_ACTION_BOUNDARIES: tuple[str, ...] = (
@@ -156,8 +162,14 @@ def build_active_source_activation_readiness_gate(
     post_runtime_verification_artifact: dict[str, Any] | None = None,
     runtime_evidence_artifact: dict[str, Any] | None = None,
     activation_review_placeholders: dict[str, Any] | None = None,
+    activation_review_packet_artifact: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Build the Sprint 64 activation readiness gate artifact (deterministic, no side effects)."""
+    """Build the Sprint 64 activation readiness gate artifact (deterministic, no side effects).
+
+    Optional ``activation_review_packet_artifact`` (Sprint 65) is validated in-process; when
+    valid, the gate may advance to ``ready_for_future_activation_review_packet`` without live
+    activation or database writes.
+    """
 
     proof = {
         "sprint_64_activation_gate_is_stateless": True,
@@ -391,6 +403,10 @@ def build_active_source_activation_readiness_gate(
     else:
         ph_missing = list(_REQUIRED_FUTURE_ARTIFACT_KEYS)
 
+    packet_ok, packet_reasons = validate_activation_review_packet_artifact_for_gate(
+        activation_review_packet_artifact
+    )
+
     if placeholders_ok:
         proof["explicit_activation_review_placeholders_supplied"] = True
         base_out.update(
@@ -415,11 +431,46 @@ def build_active_source_activation_readiness_gate(
         )
         return _json_safe(base_out)
 
+    if packet_ok:
+        proof["explicit_activation_review_placeholders_supplied"] = False
+        proof["sprint_65_activation_review_packet_supplied_valid"] = True
+        base_out.update(
+            {
+                "activation_gate_status": "activation_gate_ready_for_future_review_packet",
+                "readiness_decision": READINESS_READY_FUTURE_ACTIVATION_REVIEW_PACKET,
+                "activation_blockers": [],
+                "blockers": [],
+                "warnings": [
+                    "sprint_65_activation_review_packet_valid_ready_for_future_activation_command_package_preview_not_live_activation",
+                    "ready_for_future_activation_review_packet_requires_subsequent_operator_execution_sprint",
+                ],
+                "next_allowed_step": "author_future_activation_command_package_preview_sprint_not_live_activation",
+                "activation_required_future_artifacts": {
+                    k: {
+                        "status": "sprint_65_activation_review_packet_satisfies_placeholder_intent",
+                        "required_before_live_activation": True,
+                        "note": (
+                            "Sprint 65 activation review packet supplied; operator must still "
+                            "execute future activation command package sprint."
+                        ),
+                    }
+                    for k in _REQUIRED_FUTURE_ARTIFACT_KEYS
+                },
+            }
+        )
+        return _json_safe(base_out)
+
     proof["explicit_activation_review_placeholders_supplied"] = False
+    proof["sprint_65_activation_review_packet_supplied_valid"] = False
     blockers = [
         "activation_review_artifacts_not_present",
         *[f"missing_future_activation_artifact:{k}" for k in ph_missing],
     ]
+    if activation_review_packet_artifact is not None and isinstance(
+        activation_review_packet_artifact, dict
+    ) and not packet_ok:
+        blockers.append("activation_review_packet_artifact_supplied_but_invalid_for_gate")
+        blockers.extend([f"sprint_65_packet_validation:{r}" for r in packet_reasons])
     base_out.update(
         {
             "activation_gate_status": "activation_gate_blocked",
