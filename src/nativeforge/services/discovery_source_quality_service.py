@@ -49,6 +49,9 @@ from nativeforge.services import (
     active_source_creation_execution_dry_run_service as asceddrs_svc,
 )
 from nativeforge.services import (
+    active_source_creation_execution_command_package_service as ascecpecp_svc,
+)
+from nativeforge.services import (
     active_source_creation_execution_readiness_gate_service as asccerg_svc,
 )
 from nativeforge.services import (
@@ -981,6 +984,9 @@ def build_discovery_source_quality(
     )
     out["active_source_creation_execution_readiness_gate"] = (
         asccerg_svc.build_discovery_read_only_active_source_creation_execution_readiness_gate_attachment()
+    )
+    out["active_source_creation_execution_command_package"] = (
+        ascecpecp_svc.build_discovery_read_only_active_source_creation_execution_command_package_attachment()
     )
     return _json_safe(out)
 
