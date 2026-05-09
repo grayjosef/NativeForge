@@ -43,6 +43,9 @@ from nativeforge.services import (
     active_source_runtime_migration_dry_run_command_package_service as asrmdrcp_svc,
 )
 from nativeforge.services import (
+    active_source_creation_request_service as ascrcreq_svc,
+)
+from nativeforge.services import (
     active_source_empty_state_read_model_service as asesrm_svc,
 )
 from nativeforge.services import (
@@ -957,6 +960,9 @@ def build_discovery_source_quality(
             observed_active_source_count=n_active_opportunity_sources,
             organization_id=org_id,
         )
+    )
+    out["active_source_creation_request"] = (
+        ascrcreq_svc.build_discovery_read_only_active_source_creation_request_attachment()
     )
     return _json_safe(out)
 
