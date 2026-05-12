@@ -47,6 +47,8 @@ select = ["E", "F", "I", "UP", "B"]
 "scripts/nativeforge_execute_runtime_active_source_creation.py" = ["E501"]
 "tests/test_sprint19_evidence_pack.py" = ["E501"]
 "tests/test_sprint62_runtime_active_source_creation_execution_evidence.py" = ["E501"]
+"src/nativeforge/services/active_source_activation_preview_execution_plan_draft_packet_service.py" = ["E501"]
+"tests/test_sprint75_active_source_activation_preview_execution_plan_draft_packet.py" = ["E501"]
 "tests/test_sprint37_source_candidate_registry.py" = ["E501"]
 "tests/test_sprint38_source_onboarding_decision_pack.py" = ["E501"]
 
