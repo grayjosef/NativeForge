@@ -1,0 +1,472 @@
+"""Sprint 89: source activation readiness review packet (readiness review only; no execution).
+
+Consumes the Sprint 88 `nf_active_source_activation_source_activation_readiness_packet_v1` artifact and emits a
+deterministic readiness review packet for a later source activation readiness decision gate only. Does not execute
+plans, activate sources, grant source activation readiness, create active source rows, author runnable commands, emit
+command previews, open database sessions, scrape, ingest, call external URLs or LLMs, write runtime state, or mutate
+ledgers.
+"""
+
+from __future__ import annotations
+
+import json
+from typing import Any
+
+from nativeforge.services.active_source_activation_future_execution_plan_finalization_review_packet_service import (
+    _extra_mechanical_directive_issues,
+)
+from nativeforge.services.active_source_activation_preview_execution_plan_draft_review_packet_service import (
+    _forbidden_language,
+    _iter_string_values,
+    _runnable_command_indicators,
+    _url_and_shell_operator_issues,
+)
+from nativeforge.services.active_source_activation_source_activation_readiness_packet_service import (
+    ARTIFACT_TYPE as SPRINT88_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_source_activation_readiness_packet_service import (
+    ARTIFACT_VERSION as SPRINT88_ARTIFACT_VERSION,
+)
+from nativeforge.services.active_source_activation_source_activation_readiness_packet_service import (
+    EXPLICIT_SPRINT88_OUTPUT_GUARD_KEY as SPRINT88_EXPLICIT_GUARD_FIELD,
+)
+from nativeforge.services.active_source_activation_source_activation_readiness_packet_service import (
+    NEXT_GATE_SOURCE_ACTIVATION_READINESS_REVIEW_PACKET as SPRINT88_EXPECTED_NEXT_GATE_REQUIRED,
+)
+from nativeforge.services.active_source_activation_source_activation_readiness_packet_service import (
+    SOURCE_ACTIVATION_READINESS_BLOCKED_STATUS as SPRINT88_READINESS_BLOCKED_STATUS,
+)
+from nativeforge.services.active_source_activation_source_activation_readiness_packet_service import (
+    SOURCE_ACTIVATION_READINESS_READY_STATUS as SPRINT88_READINESS_READY_STATUS,
+)
+
+ARTIFACT_TYPE = "nf_active_source_activation_source_activation_readiness_review_packet_v1"
+ARTIFACT_VERSION = 1
+PACKET_VERSION = "v1"
+DETERMINISTIC_GENERATED_AT = "1970-01-01T00:00:00Z"
+
+SPRINT88_PROOF_KEY = "sprint_88_source_activation_readiness_packet_proof"
+
+SOURCE_ACTIVATION_READINESS_REVIEW_READY_STATUS = (
+    "ready_for_source_activation_readiness_decision_packet"
+)
+SOURCE_ACTIVATION_READINESS_REVIEW_BLOCKED_STATUS = "blocked_source_activation_readiness_review_packet"
+
+NEXT_GATE_SOURCE_ACTIVATION_READINESS_DECISION_PACKET = "source_activation_readiness_decision_packet"
+NEXT_GATE_BLOCKED_UNTIL_SOURCE_ACTIVATION_READINESS_REVIEW_BLOCKERS_RESOLVED = (
+    "blocked_until_source_activation_readiness_review_blockers_resolved"
+)
+
+EXPLICIT_SPRINT89_OUTPUT_GUARD_KEY = (
+    "explicit_preview_only_no_execution_no_activation_no_runnable_plan_"
+    "source_activation_readiness_review_only_guardrail"
+)
+
+_SPRINT89_GUARD_NOTE = (
+    "sprint_89_active_source_activation_source_activation_readiness_review_packet_preview_only_"
+    "no_execution_no_activation_no_runnable_plan_source_activation_readiness_review_only_"
+    "source_activation_readiness_decision_required_source_activation_readiness_granted_false_"
+    "source_activation_authorized_false_no_execution_performed_no_activation_performed_"
+    "no_runnable_command_created_documentation_only_not_live_execution_not_source_activation_"
+    "not_command_authoring_no_cli_no_sql_no_urls_no_scheduler_payloads_stateless_side_effect_free_"
+    "source_activation_readiness_decision_packet_gate_required_before_any_readiness_grant_"
+    "not_source_activation_readiness_granted_not_live_execution_authorized"
+)
+
+_READINESS_REVIEW_DISCLAIMER = (
+    "This narrative is descriptive documentation only. It is non-runnable, not mechanically actionable, "
+    "and anticipates a separate source activation readiness decision packet without prescribing operational steps."
+)
+
+_READINESS_REVIEW_SCOPE_SUMMARY = (
+    "Source activation readiness review scope may restate the reviewed source identity as documentation categories, "
+    "readiness review boundaries as audit topics, evidence bundle references as citation placeholders only, "
+    "provenance and audit expectations as narrative requirements, monitoring considerations conceptually, rollback "
+    "considerations conceptually, and later readiness decision requirements for a separate decision gate. "
+    + _READINESS_REVIEW_DISCLAIMER
+)
+
+_READINESS_REVIEW_BOUNDARY_SUMMARY = (
+    "Readiness review boundaries remain limited to documentation judgment: prior readiness assessment posture fit, "
+    "control posture described narratively, provenance expectations, escalation criteria as review questions, and "
+    "explicit stop posture without mechanical triggers, host-oriented instruction, or copy-paste operational steps. "
+    + _READINESS_REVIEW_DISCLAIMER
+)
+
+_READINESS_REVIEW_EVIDENCE_SUMMARY = (
+    "Evidence review expectations are described as categories and citation placeholders for bundle references, "
+    "provenance completeness, audit trail sufficiency, monitoring context, and rollback review context. This section "
+    "does not prescribe retrieval mechanics, tooling, or repeatable host actions. "
+    + _READINESS_REVIEW_DISCLAIMER
+)
+
+_READINESS_REVIEW_AUTHORIZATION_SUMMARY = (
+    "Sprint 88 produced a descriptive source activation readiness assessment packet only. This Sprint 89 readiness "
+    "review packet does not authorize live execution, does not authorize source activation, does not grant source "
+    "activation readiness, and does not claim a source is ready to be activated. "
+    + _READINESS_REVIEW_DISCLAIMER
+)
+
+_READINESS_DECISION_REQUIREMENTS_SUMMARY = (
+    "A later source activation readiness decision packet must evaluate descriptive readiness review quality, boundary "
+    "fit, evidence posture, provenance and audit requirements, monitoring considerations, rollback considerations, "
+    "and whether a future separate final activation gate may be considered. "
+    + _READINESS_REVIEW_DISCLAIMER
+)
+
+_PROHIBITED_RUNTIME_ACTIONS_SUMMARY_FALLBACK = (
+    "This artifact forbids live activation postures, mechanically repeatable instruction sets oriented toward hosts "
+    "or shells, data-plane changes, job-style dispatch narratives, outbound retrieval mechanics, and ledger or "
+    "database mutations. It remains preview-only source activation readiness review documentation. "
+    + _READINESS_REVIEW_DISCLAIMER
+)
+
+_SPRINT88_NARRATIVE_KEYS_EXCLUDED_FROM_INPUT_LANGUAGE_SCAN: frozenset[str] = frozenset(
+    {
+        "readiness_scope_summary",
+        "readiness_boundary_summary",
+        "readiness_evidence_summary",
+        "readiness_authorization_summary",
+        "readiness_review_requirements_summary",
+        "prohibited_runtime_actions_summary",
+        SPRINT88_EXPLICIT_GUARD_FIELD,
+    }
+)
+
+
+def _sprint88_input_for_nested_language_scan(pkt: dict[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in pkt.items() if k not in _SPRINT88_NARRATIVE_KEYS_EXCLUDED_FROM_INPUT_LANGUAGE_SCAN}
+
+
+_SPRINT89_ZERO_COUNTS: dict[str, int] = {
+    "actual_source_row_create_count": 0,
+    "actual_source_row_insert_count": 0,
+    "actual_source_row_update_count": 0,
+    "actual_source_row_delete_count": 0,
+    "actual_activation_count": 0,
+    "actual_scrape_count": 0,
+    "actual_ingest_count": 0,
+    "actual_external_api_call_count": 0,
+    "actual_llm_call_count": 0,
+    "actual_operator_ledger_action_count": 0,
+    "actual_schema_change_count_in_sprint_89": 0,
+    "actual_alembic_revision_create_count": 0,
+    "actual_database_write_count": 0,
+    "actual_database_session_open_count": 0,
+    "actual_command_execution_count": 0,
+    "actual_execution_plan_authoring_count": 0,
+    "actual_runnable_execution_plan_create_count": 0,
+    "actual_source_activation_readiness_grant_count": 0,
+}
+
+_SPRINT89_FALSE_MAY: dict[str, bool] = {
+    "may_create_source_rows_now": False,
+    "may_insert_source_rows_now": False,
+    "may_update_source_rows_now": False,
+    "may_delete_source_rows_now": False,
+    "may_activate_source_now": False,
+    "may_scrape_now": False,
+    "may_ingest_now": False,
+    "may_call_external_api_now": False,
+    "may_call_llm_now": False,
+    "may_create_operator_ledger_actions_now": False,
+    "may_modify_schema_now": False,
+    "may_create_alembic_revision_now": False,
+    "may_write_database_now": False,
+    "may_open_database_session_now": False,
+    "may_execute_activation_now": False,
+    "may_execute_fetch_now": False,
+    "may_execute_scrape_now": False,
+    "may_execute_ingest_now": False,
+    "may_author_execution_plan_now": False,
+    "may_author_runnable_execution_plan_now": False,
+    "may_grant_source_activation_readiness_now": False,
+    "may_authorize_source_activation_now": False,
+}
+
+
+def _json_safe(x: Any) -> Any:
+    json.dumps(x)
+    return x
+
+
+def _source_sprint_88_reference(pkt: dict[str, Any] | None) -> dict[str, Any]:
+    if pkt is None or not isinstance(pkt, dict):
+        return {
+            "artifact_type": None,
+            "version": None,
+            "artifact_version": None,
+            "generated_at": None,
+            "source_activation_readiness_status": None,
+            "source_activation_readiness_ready": None,
+            "source_activation_readiness_assessment_only": None,
+            "source_activation_readiness_review_required": None,
+            "next_gate_required": None,
+        }
+    return {
+        "artifact_type": pkt.get("artifact_type"),
+        "version": pkt.get("version"),
+        "artifact_version": pkt.get("artifact_version"),
+        "generated_at": pkt.get("generated_at"),
+        "source_activation_readiness_status": pkt.get("source_activation_readiness_status"),
+        "source_activation_readiness_ready": pkt.get("source_activation_readiness_ready"),
+        "source_activation_readiness_assessment_only": pkt.get("source_activation_readiness_assessment_only"),
+        "source_activation_readiness_review_required": pkt.get("source_activation_readiness_review_required"),
+        "next_gate_required": pkt.get("next_gate_required"),
+    }
+
+
+def _source_activation_readiness_summary(pkt: dict[str, Any] | None) -> dict[str, Any]:
+    if pkt is None or not isinstance(pkt, dict):
+        return {
+            "source_activation_readiness_status": None,
+            "source_activation_readiness_ready": None,
+            "source_activation_readiness_assessment_only": None,
+            "source_activation_readiness_review_required": None,
+            "source_activation_readiness_granted": None,
+            "source_activation_authorized": None,
+            "next_gate_required": None,
+        }
+    return {
+        "source_activation_readiness_status": pkt.get("source_activation_readiness_status"),
+        "source_activation_readiness_ready": pkt.get("source_activation_readiness_ready"),
+        "source_activation_readiness_assessment_only": pkt.get("source_activation_readiness_assessment_only"),
+        "source_activation_readiness_review_required": pkt.get("source_activation_readiness_review_required"),
+        "source_activation_readiness_granted": pkt.get("source_activation_readiness_granted"),
+        "source_activation_authorized": pkt.get("source_activation_authorized"),
+        "next_gate_required": pkt.get("next_gate_required"),
+    }
+
+
+def _actual_may_guardrails_ok(obj: dict[str, Any]) -> tuple[bool, list[str]]:
+    reasons: list[str] = []
+    for k, v in sorted(obj.items(), key=lambda kv: kv[0]):
+        if k.startswith("actual_") and isinstance(v, int) and v != 0:
+            reasons.append(f"non_zero_{k}")
+        if k.startswith("may_") and v is True:
+            reasons.append(f"may_flag_true_{k}")
+    return (len(reasons) == 0, reasons)
+
+
+def _sprint88_explicit_guard_for_sprint89_input_ok(eg: Any) -> tuple[bool, list[str]]:
+    reasons: list[str] = []
+    if not isinstance(eg, str) or not eg.strip():
+        reasons.append("sprint_88_explicit_guardrail_missing_or_invalid")
+        return (False, reasons)
+    egl = eg.lower()
+    if "preview_only" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_preview_only_assertion")
+    if "no_execution" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_no_execution_assertion")
+    if "no_activation" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_no_activation_assertion")
+    if "no_runnable_plan" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_no_runnable_plan_assertion")
+    if "source_activation_readiness_assessment_only" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_source_activation_readiness_assessment_only_assertion")
+    if "source_activation_readiness_review_required" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_source_activation_readiness_review_required_assertion")
+    if "source_activation_readiness_granted_false" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_source_activation_readiness_granted_false_assertion")
+    if "source_activation_authorized_false" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_source_activation_authorized_false_assertion")
+    if "no_execution_performed" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_no_execution_performed_assertion")
+    if "no_activation_performed" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_no_activation_performed_assertion")
+    if "no_runnable_command_created" not in egl:
+        reasons.append("sprint_88_explicit_guardrail_missing_no_runnable_command_created_assertion")
+    return (len(reasons) == 0, sorted(set(reasons)))
+
+
+def _non_empty_str_field_ok(pkt: dict[str, Any], key: str, failure_prefix: str) -> tuple[bool, list[str]]:
+    v = pkt.get(key)
+    if not isinstance(v, str) or not v.strip():
+        return (False, [f"{failure_prefix}_{key}_missing_or_empty"])
+    return (True, [])
+
+
+def _nested_string_language_blockers(root: Any) -> list[str]:
+    strings: list[str] = []
+    _iter_string_values(root, strings)
+    found: list[str] = []
+    found.extend(_forbidden_language(root if isinstance(root, dict) else {"_v": root}))
+    if isinstance(root, dict):
+        found.extend(_runnable_command_indicators(root))
+        found.extend(_url_and_shell_operator_issues(strings))
+    else:
+        found.extend(_runnable_command_indicators({"_v": root}))
+        found.extend(_url_and_shell_operator_issues(strings))
+    found.extend(_extra_mechanical_directive_issues(strings))
+    return sorted(set(found))
+
+
+def _prohibited_runtime_actions_from_sprint88(pkt: dict[str, Any] | None) -> str:
+    if pkt is None or not isinstance(pkt, dict):
+        return _PROHIBITED_RUNTIME_ACTIONS_SUMMARY_FALLBACK
+    pr = pkt.get("prohibited_runtime_actions_summary")
+    if isinstance(pr, str) and pr.strip():
+        return pr
+    return _PROHIBITED_RUNTIME_ACTIONS_SUMMARY_FALLBACK
+
+
+def _sprint88_readiness_failures_for_sprint89(pkt: dict[str, Any] | None) -> list[str]:
+    failures: list[str] = []
+    if pkt is None or not isinstance(pkt, dict):
+        failures.append("sprint_88_source_activation_readiness_packet_missing_or_not_a_dict")
+        return sorted(set(failures))
+
+    if pkt.get("artifact_type") != SPRINT88_ARTIFACT_TYPE:
+        failures.append("sprint_88_source_activation_readiness_packet_artifact_type_mismatch")
+
+    if pkt.get("artifact_version") != SPRINT88_ARTIFACT_VERSION:
+        failures.append("sprint_88_source_activation_readiness_packet_artifact_version_invalid")
+
+    if pkt.get("preview_only") is not True:
+        failures.append("sprint_88_preview_only_guardrail_missing_or_false")
+
+    if pkt.get("no_execution") is not True:
+        failures.append("sprint_88_no_execution_guardrail_missing_or_false")
+
+    if pkt.get("no_activation") is not True:
+        failures.append("sprint_88_no_activation_guardrail_missing_or_false")
+
+    if pkt.get("no_runnable_plan") is not True:
+        failures.append("sprint_88_no_runnable_plan_guardrail_missing_or_false")
+
+    if pkt.get("source_activation_readiness_assessment_only") is not True:
+        failures.append("sprint_88_source_activation_readiness_assessment_only_guardrail_missing_or_false")
+
+    if pkt.get("source_activation_readiness_review_required") is not True:
+        failures.append("sprint_88_source_activation_readiness_review_required_guardrail_missing_or_false")
+
+    if pkt.get("source_activation_readiness_granted") is not False:
+        failures.append("sprint_88_source_activation_readiness_granted_not_false")
+
+    if pkt.get("source_activation_authorized") is not False:
+        failures.append("sprint_88_source_activation_authorized_not_false")
+
+    rs = pkt.get("source_activation_readiness_status")
+    if rs == SPRINT88_READINESS_BLOCKED_STATUS:
+        failures.append("sprint_88_source_activation_readiness_packet_blocked")
+    elif rs != SPRINT88_READINESS_READY_STATUS:
+        if isinstance(rs, str):
+            failures.append(f"sprint_88_source_activation_readiness_status_not_ready_for_review:{rs}")
+        else:
+            failures.append("sprint_88_source_activation_readiness_status_not_ready_for_review")
+
+    if pkt.get("source_activation_readiness_ready") is not True:
+        failures.append("sprint_88_source_activation_readiness_ready_not_true")
+
+    if pkt.get("future_activation_execution_plan_execution_allowed") is not False:
+        failures.append("sprint_88_future_activation_execution_plan_execution_allowed_not_false")
+
+    if pkt.get("future_source_activation_allowed") is not False:
+        failures.append("sprint_88_future_source_activation_allowed_not_false")
+
+    next_gate = pkt.get("next_gate_required")
+    if next_gate != SPRINT88_EXPECTED_NEXT_GATE_REQUIRED:
+        if isinstance(next_gate, str):
+            failures.append(f"sprint_88_next_gate_required_mismatch:{next_gate}")
+        else:
+            failures.append("sprint_88_next_gate_required_mismatch")
+
+    for key in (
+        "readiness_scope_summary",
+        "readiness_boundary_summary",
+        "readiness_evidence_summary",
+        "readiness_authorization_summary",
+        "readiness_review_requirements_summary",
+        "prohibited_runtime_actions_summary",
+    ):
+        ok_f, f_reasons = _non_empty_str_field_ok(pkt, key, "sprint_88")
+        if not ok_f:
+            failures.extend(f_reasons)
+
+    if not isinstance(pkt.get(SPRINT88_PROOF_KEY), dict):
+        failures.append("sprint_88_source_activation_readiness_packet_proof_missing_or_invalid")
+
+    if not isinstance(pkt.get("source_execution_preparation_decision_summary"), dict):
+        failures.append("sprint_88_source_execution_preparation_decision_summary_missing_or_invalid")
+
+    eg = pkt.get(SPRINT88_EXPLICIT_GUARD_FIELD)
+    ok_eg, eg_reasons = _sprint88_explicit_guard_for_sprint89_input_ok(eg)
+    if not ok_eg:
+        failures.extend(eg_reasons)
+
+    ok_am, am_reasons = _actual_may_guardrails_ok(pkt)
+    if not ok_am:
+        failures.extend(am_reasons)
+
+    failures.extend(_nested_string_language_blockers(_sprint88_input_for_nested_language_scan(pkt)))
+    return sorted(set(failures))
+
+
+def build_active_source_activation_source_activation_readiness_review_packet(
+    *,
+    source_activation_readiness_packet_artifact: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    pkt = (
+        source_activation_readiness_packet_artifact
+        if isinstance(source_activation_readiness_packet_artifact, dict)
+        else None
+    )
+
+    review_blockers = list(_sprint88_readiness_failures_for_sprint89(pkt))
+    review_ready = len(review_blockers) == 0
+
+    if review_ready:
+        review_status = SOURCE_ACTIVATION_READINESS_REVIEW_READY_STATUS
+        next_gate = NEXT_GATE_SOURCE_ACTIVATION_READINESS_DECISION_PACKET
+        blockers_out: list[str] = []
+    else:
+        review_status = SOURCE_ACTIVATION_READINESS_REVIEW_BLOCKED_STATUS
+        next_gate = NEXT_GATE_BLOCKED_UNTIL_SOURCE_ACTIVATION_READINESS_REVIEW_BLOCKERS_RESOLVED
+        blockers_out = list(sorted(set(review_blockers)))
+
+    proof = {
+        "sprint_89_source_activation_readiness_review_packet_is_stateless": True,
+        "sprint_89_source_activation_readiness_review_packet_is_side_effect_free": True,
+        "sprint_89_source_activation_readiness_review_packet_does_not_execute_plans": True,
+        "sprint_89_source_activation_readiness_review_packet_does_not_activate_sources": True,
+        "sprint_89_source_activation_readiness_review_packet_does_not_create_active_source_rows": True,
+        "sprint_89_source_activation_readiness_review_packet_does_not_open_database_sessions": True,
+        "sprint_89_source_activation_readiness_review_packet_does_not_grant_source_activation_readiness": True,
+        "sprint_89_source_activation_readiness_review_packet_does_not_authorize_source_activation": True,
+        "sprint_89_consumes_sprint_88_source_activation_readiness_packet_only": True,
+    }
+
+    out: dict[str, Any] = {
+        "artifact_type": ARTIFACT_TYPE,
+        "artifact_version": ARTIFACT_VERSION,
+        "version": PACKET_VERSION,
+        "generated_at": DETERMINISTIC_GENERATED_AT,
+        "source_sprint_88_source_activation_readiness_packet_reference": _source_sprint_88_reference(pkt),
+        "source_activation_readiness_review_status": review_status,
+        "source_activation_readiness_review_ready": review_ready,
+        "source_activation_readiness_review_only": True,
+        "source_activation_readiness_decision_required": True,
+        "source_activation_readiness_granted": False,
+        "source_activation_authorized": False,
+        "future_activation_execution_plan_execution_allowed": False,
+        "future_source_activation_allowed": False,
+        "preview_only": True,
+        "no_execution": True,
+        "no_activation": True,
+        "no_runnable_plan": True,
+        EXPLICIT_SPRINT89_OUTPUT_GUARD_KEY: _SPRINT89_GUARD_NOTE,
+        "source_activation_readiness_review_blockers": blockers_out,
+        "readiness_review_scope_summary": _READINESS_REVIEW_SCOPE_SUMMARY,
+        "readiness_review_boundary_summary": _READINESS_REVIEW_BOUNDARY_SUMMARY,
+        "readiness_review_evidence_summary": _READINESS_REVIEW_EVIDENCE_SUMMARY,
+        "readiness_review_authorization_summary": _READINESS_REVIEW_AUTHORIZATION_SUMMARY,
+        "readiness_decision_requirements_summary": _READINESS_DECISION_REQUIREMENTS_SUMMARY,
+        "prohibited_runtime_actions_summary": _prohibited_runtime_actions_from_sprint88(pkt),
+        "sprint_89_source_activation_readiness_review_packet_proof": proof,
+        "source_activation_readiness_summary": _source_activation_readiness_summary(pkt),
+        "next_gate_required": next_gate,
+    }
+    out.update(_SPRINT89_ZERO_COUNTS)
+    out.update(_SPRINT89_FALSE_MAY)
+
+    return _json_safe(out)
