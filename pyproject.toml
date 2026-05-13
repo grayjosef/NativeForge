@@ -123,6 +123,10 @@ select = ["E", "F", "I", "UP", "B"]
     "E501",
 ]
 "tests/test_sprint95_active_source_activation_separate_runtime_implementation_decision_packet.py" = ["E501"]
+"src/nativeforge/services/active_source_activation_separate_runtime_implementation_preparation_packet_service.py" = [
+    "E501",
+]
+"tests/test_sprint96_active_source_activation_separate_runtime_implementation_preparation_packet.py" = ["E501"]
 "tests/test_sprint37_source_candidate_registry.py" = ["E501"]
 "tests/test_sprint38_source_onboarding_decision_pack.py" = ["E501"]
 
