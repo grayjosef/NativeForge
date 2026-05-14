@@ -233,6 +233,12 @@ select = ["E", "F", "I", "UP", "B"]
 "tests/test_sprint123_active_source_activation_m0_pursuit_pipeline_kanban_deadline_tracking_planning_packet.py" = [
     "E501",
 ]
+"src/nativeforge/services/active_source_activation_m0_sf424_autofill_preview_planning_packet_service.py" = [
+    "E501",
+]
+"tests/test_sprint124_active_source_activation_m0_sf424_autofill_preview_planning_packet.py" = [
+    "E501",
+]
 "tests/test_sprint37_source_candidate_registry.py" = ["E501"]
 "tests/test_sprint38_source_onboarding_decision_pack.py" = ["E501"]
 
