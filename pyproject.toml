@@ -209,6 +209,12 @@ select = ["E", "F", "I", "UP", "B"]
 "tests/test_sprint119_active_source_activation_m0_grants_gov_seeded_opportunity_ingestion_interface_planning_packet.py" = [
     "E501",
 ]
+"src/nativeforge/services/active_source_activation_m0_tribal_eligibility_mission_fit_scoring_preview_planning_packet_service.py" = [
+    "E501",
+]
+"tests/test_sprint120_active_source_activation_m0_tribal_eligibility_mission_fit_scoring_preview_planning_packet.py" = [
+    "E501",
+]
 "tests/test_sprint37_source_candidate_registry.py" = ["E501"]
 "tests/test_sprint38_source_onboarding_decision_pack.py" = ["E501"]
 
