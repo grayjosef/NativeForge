@@ -1,0 +1,271 @@
+"""Sprint 138: M1 audit export and sovereignty controlled build readiness packet (stateless, no DB, no network)."""
+
+from __future__ import annotations
+
+import ast
+import importlib
+import json
+from pathlib import Path
+
+_SPRINT138_MOD = (
+    "nativeforge.services."
+    "active_source_activation_m1_audit_export_sovereignty_controlled_build_readiness_packet_service"
+)
+sprint138_pkt = importlib.import_module(_SPRINT138_MOD)
+build_pkt = (
+    sprint138_pkt.build_active_source_activation_m1_audit_export_sovereignty_controlled_build_readiness_packet
+)
+render_md = (
+    sprint138_pkt.render_active_source_activation_m1_audit_export_sovereignty_controlled_build_readiness_packet_markdown
+)
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+SERVICE_PATH = (
+    REPO_ROOT
+    / "src"
+    / "nativeforge"
+    / "services"
+    / "active_source_activation_m1_audit_export_sovereignty_controlled_build_readiness_packet_service.py"
+)
+
+REQUIRED_SECTION_HEADERS = (
+    "## 1. Purpose",
+    "## 2. Why This Comes After Human Review Workflow Readiness",
+    "## 3. M1 Audit Export and Sovereignty Readiness Objective",
+    "## 4. Preview-Only Audit Export and Sovereignty Rules",
+    "## 5. Required Audit/Sovereignty Readiness Field Groups",
+    "## 6. Audit/Sovereignty Readiness Status Definitions",
+    "## 7. Field-Level Acceptance Criteria",
+    "## 8. Audit Export Readiness by Product Area",
+    "## 9. Sovereignty Control Prerequisite Rules",
+    "## 10. Access, Retention, and Export Rules",
+    "## 11. Sovereignty and Trust Requirements",
+    "## 12. What Sprint 138 Does Not Build",
+    "## 13. M1 Audit Export and Sovereignty Readiness Exit Criteria",
+    "## 14. Risks and Mitigations",
+    "## 15. Sprint 139 Recommended Next Step",
+)
+
+EXPECTED_FIELD_GROUP_NAMES = (
+    "Audit sovereignty readiness item identity",
+    "Product area",
+    "Audit event type",
+    "Export package area",
+    "Data owner statement",
+    "Data retention expectation",
+    "Access control prerequisite",
+    "Export format expectation",
+    "Source provenance requirement",
+    "AI usage disclosure requirement",
+    "No-training consent requirement",
+    "Human review prerequisite",
+    "Security prerequisite",
+    "Sovereignty blocker status",
+    "Acceptance criteria",
+    "Risk note",
+    "Non-production disclaimer",
+    "Next sprint recommendation",
+)
+
+EXPECTED_AUDIT_SOVEREIGNTY_READINESS_STATUSES = (
+    "Not assessed",
+    "Ready for controlled build planning",
+    "Needs ownership review",
+    "Needs retention review",
+    "Needs access review",
+    "Needs sovereignty review",
+    "Blocked before audit/export build",
+    "Deferred beyond M1",
+)
+
+
+def _source_imports_subprocess(src: str) -> bool:
+    tree = ast.parse(src)
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                if alias.name == "subprocess":
+                    return True
+        if isinstance(node, ast.ImportFrom) and node.module == "subprocess":
+            return True
+    return False
+
+
+def test_service_has_no_subprocess_import() -> None:
+    src = SERVICE_PATH.read_text(encoding="utf-8")
+    assert not _source_imports_subprocess(src)
+
+
+def test_packet_sprint_and_flags() -> None:
+    pkt = build_pkt()
+    assert pkt["sprint_number"] == 138
+    assert pkt["packet_name"] == "NativeForge M1 Audit Export and Sovereignty Controlled Build Readiness Packet"
+    assert pkt["packet_version"] == "v1"
+    assert pkt["preview_only"] is True
+    assert pkt["no_execution"] is True
+    assert pkt["no_activation"] is True
+    assert pkt["no_runnable_plan"] is True
+    assert pkt["may_generate_operator_packet"] is True
+    assert pkt["may_define_audit_export_readiness"] is True
+    assert pkt["may_define_sovereignty_control_prerequisites"] is True
+    assert pkt["may_define_access_and_retention_requirements"] is True
+    assert pkt["may_define_acceptance_criteria"] is True
+    assert pkt["may_define_guardrails"] is True
+
+
+def test_packet_actual_counts_zero() -> None:
+    pkt = build_pkt()
+    for key, value in pkt.items():
+        if key.startswith("actual_"):
+            assert value == 0, key
+    assert pkt["actual_exports_created"] == 0
+    assert pkt["actual_audit_records_created"] == 0
+    assert pkt["actual_retention_policies_changed"] == 0
+
+
+def test_twelve_m1_audit_export_sovereignty_readiness_foundations() -> None:
+    pkt = build_pkt()
+    rows = pkt["m1_audit_export_sovereignty_controlled_build_readiness_foundations"]
+    assert len(rows) == 12
+    titles = {r["foundation_area"] for r in rows}
+    assert "Audit event scope readiness" in titles
+    assert "Sovereignty trust proof readiness" in titles
+
+
+def test_eleven_audit_export_readiness_by_product_area() -> None:
+    pkt = build_pkt()
+    areas = pkt["audit_export_readiness_by_product_area"]
+    assert len(areas) == 11
+    keys = {a["product_area"] for a in areas}
+    assert "source ingestion events" in keys
+    assert "export package events" in keys
+
+
+def test_eighteen_audit_sovereignty_readiness_field_groups_present() -> None:
+    pkt = build_pkt()
+    groups = pkt["audit_sovereignty_readiness_field_groups"]
+    assert len(groups) == 18
+    names = [g["name"] for g in groups]
+    for expected in EXPECTED_FIELD_GROUP_NAMES:
+        assert expected in names
+
+
+def test_eight_audit_sovereignty_readiness_statuses_present_with_disclaimers() -> None:
+    pkt = build_pkt()
+    rows = pkt["audit_sovereignty_readiness_statuses"]
+    assert len(rows) == 8
+    statuses = [r["status"] for r in rows]
+    for expected in EXPECTED_AUDIT_SOVEREIGNTY_READINESS_STATUSES:
+        assert expected in statuses
+    disclaimer_phrases = (
+        "not export execution",
+        "not audit record creation",
+        "not retention policy change",
+    )
+    for r in rows:
+        d = (r.get("definition") or "").lower()
+        for needle in disclaimer_phrases:
+            assert needle in d
+
+
+def test_universal_disclaimer_present() -> None:
+    pkt = build_pkt()
+    u = (pkt.get("audit_sovereignty_readiness_status_universal_disclaimer") or "").lower()
+    assert "not export execution" in u
+    assert "not audit record creation" in u
+    assert "not retention policy change" in u
+
+
+def test_each_field_group_has_at_least_two_acceptance_criteria() -> None:
+    pkt = build_pkt()
+    for g in pkt["audit_sovereignty_readiness_field_groups"]:
+        crit = g["acceptance_criteria"]
+        assert isinstance(crit, list)
+        assert len(crit) >= 2
+
+
+def test_at_least_eight_risks_documented() -> None:
+    pkt = build_pkt()
+    assert len(pkt["risks_and_mitigations"]) >= 8
+
+
+def test_markdown_required_section_headers() -> None:
+    md = render_md()
+    assert md.startswith(
+        "# NativeForge M1 Audit Export and Sovereignty Controlled Build Readiness Packet v1\n"
+    )
+    for h in REQUIRED_SECTION_HEADERS:
+        assert h in md
+
+
+def test_markdown_preview_only_audit_export_and_sovereignty_rules() -> None:
+    md = render_md()
+    lower = md.lower()
+    assert "## 4. preview-only audit export and sovereignty rules" in lower
+    assert "demo-safe" in lower or "demo safe" in lower
+    assert "no real customer data" in lower
+    assert "no external calls" in lower
+
+
+def test_markdown_audit_export_readiness_by_product_area() -> None:
+    md = render_md()
+    lower = md.lower()
+    assert "## 8. audit export readiness by product area" in lower
+    assert "source ingestion events" in lower
+    assert "export package events" in lower
+
+
+def test_markdown_sovereignty_control_prerequisite_rules() -> None:
+    md = render_md()
+    lower = md.lower()
+    assert "## 9. sovereignty control prerequisite rules" in lower
+    assert "customer data ownership" in lower
+    assert "no-training" in lower
+
+
+def test_markdown_access_retention_and_export_rules() -> None:
+    md = render_md()
+    lower = md.lower()
+    assert "## 10. access, retention, and export rules" in lower
+    assert "export readiness must not imply export creation" in lower
+    assert "retention readiness must not imply retention policy change" in lower
+
+
+def test_markdown_sovereignty_and_trust_requirements() -> None:
+    md = render_md()
+    lower = md.lower()
+    assert "## 11. sovereignty and trust requirements" in lower
+    assert "customer owns its data" in lower
+    assert "no model training on customer data without explicit written consent" in lower
+
+
+def test_markdown_explicit_does_not_build_phrases() -> None:
+    md = render_md()
+    lower = md.lower()
+    assert "no export creation" in lower
+    assert "no audit record creation" in lower
+    assert "no retention policy change" in lower
+    assert "no customer data access" in lower
+    assert "no database migration" in lower
+
+
+def test_markdown_recommends_sprint139_pilot_operations_packet() -> None:
+    md = render_md()
+    lower = md.lower()
+    assert "sprint 139" in lower
+    assert "m1 pilot operations and support controlled build readiness packet" in lower
+
+
+def test_deterministic_packet_and_markdown() -> None:
+    a = build_pkt()
+    b = build_pkt()
+    assert json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
+    md_a = render_md(a)
+    md_b = render_md(b)
+    assert md_a == md_b
+
+
+def test_render_without_argument_matches_explicit_packet() -> None:
+    pkt = build_pkt()
+    assert render_md() == render_md(pkt)
