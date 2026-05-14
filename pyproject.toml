@@ -257,6 +257,12 @@ select = ["E", "F", "I", "UP", "B"]
 "tests/test_sprint127_active_source_activation_m0_human_review_gates_demo_closeout_planning_packet.py" = [
     "E501",
 ]
+"src/nativeforge/services/active_source_activation_m0_demo_narrative_buyer_walkthrough_packet_service.py" = [
+    "E501",
+]
+"tests/test_sprint128_active_source_activation_m0_demo_narrative_buyer_walkthrough_packet.py" = [
+    "E501",
+]
 "tests/test_sprint37_source_candidate_registry.py" = ["E501"]
 "tests/test_sprint38_source_onboarding_decision_pack.py" = ["E501"]
 
