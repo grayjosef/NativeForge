@@ -427,6 +427,12 @@ select = ["E", "F", "I", "UP", "B"]
 "tests/test_sprint156_active_source_activation_m1_runtime_authorization_decision_record_audit_evidence_packet.py" = [
     "E501",
 ]
+"src/nativeforge/services/active_source_activation_m1_final_runtime_authorization_packet_index_readiness_rollup_service.py" = [
+    "E501",
+]
+"tests/test_sprint157_active_source_activation_m1_final_runtime_authorization_packet_index_readiness_rollup.py" = [
+    "E501",
+]
 "tests/test_sprint37_source_candidate_registry.py" = ["E501"]
 "tests/test_sprint38_source_onboarding_decision_pack.py" = ["E501"]
 
