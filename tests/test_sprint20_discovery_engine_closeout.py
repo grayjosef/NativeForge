@@ -10,7 +10,6 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
-from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
 from nativeforge.db.models import Organization
@@ -86,11 +85,8 @@ def client_nf(monkeypatch: pytest.MonkeyPatch) -> TestClient:
 
 
 def _discovery_route_paths(app) -> list[str]:
-    out: list[str] = []
-    for r in app.routes:
-        if isinstance(r, APIRoute):
-            out.append(r.path)
-    return out
+    """Registered API paths via OpenAPI (nested _IncludedRouter-safe)."""
+    return list(app.openapi()["paths"].keys())
 
 
 def test_discovery_route_families_registered_demo_and_real() -> None:

@@ -295,7 +295,7 @@ _M0_EXIT_CRITERIA: tuple[str, ...] = (
 _RISK_MITIGATIONS: tuple[tuple[str, str], ...] = (
     (
         "Policy preview is mistaken for legal advice",
-        "Banner preview-only language, defer to counsel, and separate planning artifacts from contracts.",
+        "Banner preview-only language, defer to counsel, and separate planning artifacts from binding agreements.",
     ),
     (
         "Export preview is mistaken for actual export",

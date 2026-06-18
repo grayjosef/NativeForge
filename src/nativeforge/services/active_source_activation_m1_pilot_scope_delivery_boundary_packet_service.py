@@ -391,7 +391,7 @@ _RISK_MITIGATIONS: tuple[tuple[str, str], ...] = (
     ),
     (
         "Buyer assumes delivery commitment",
-        "Repeat that this packet is preview-only, label planning artifacts separately from contracts, and "
+        "Repeat that this packet is preview-only, label planning artifacts separately from legal agreements, and "
         "use statuses that disclaim delivery commitments.",
     ),
     (

@@ -392,7 +392,7 @@ _M0_EXIT_CRITERIA: tuple[str, ...] = (
 _RISK_MITIGATIONS: tuple[tuple[str, str], ...] = (
     (
         "buyer interest is mistaken for signed pilot commitment",
-        "Label interest separately from contracts and repeat non-commitment disclaimers in statuses and "
+        "Label interest separately from legal agreements and repeat non-commitment disclaimers in statuses and "
         "notes.",
     ),
     (
