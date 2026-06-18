@@ -451,6 +451,15 @@ select = ["E", "F", "I", "UP", "B"]
 "tests/test_sprint163_discovery_operator_continuity_rollup.py" = [
     "E501",
 ]
+"src/nativeforge/services/discovery_intake_dedupe_fingerprint_service.py" = [
+    "E501",
+]
+"src/nativeforge/services/discovery_intake_service.py" = [
+    "E501",
+]
+"tests/test_sprint164_discovery_intake_dedupe_fingerprint.py" = [
+    "E501",
+]
 "tests/test_sprint37_source_candidate_registry.py" = ["E501"]
 "tests/test_sprint38_source_onboarding_decision_pack.py" = ["E501"]
 

@@ -33,6 +33,9 @@ from nativeforge.repositories import audit_events as audit_repo
 from nativeforge.repositories import discovery_intake_runs as intake_repo
 from nativeforge.repositories import grant_sparks as gs_repo
 from nativeforge.repositories import opportunity_sources as os_repo
+from nativeforge.services import (
+    discovery_intake_dedupe_fingerprint_service as dedupe_fp_svc,
+)
 from nativeforge.services import discovery_review_service as d_rev
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import opportunity_discovery_service as ods
@@ -464,6 +467,7 @@ def process_structured_candidates(
     session.flush()
 
     now = datetime.now(UTC)
+    dedupe_report = dedupe_fp_svc.build_intake_batch_dedupe_fingerprint_report(candidates)
     accepted = dup = rejected = err_cnt = 0
     error_entries: list[dict[str, Any]] = []
 
@@ -693,6 +697,10 @@ def process_structured_candidates(
         },
         "completed_at": run.completed_at.isoformat(),
     }
+    summary_body = dedupe_fp_svc.attach_dedupe_fingerprint_report_to_intake_summary(
+        summary_body,
+        dedupe_report,
+    )
     run.run_summary_json = summary_body
     run.error_summary_json = {"errors": error_entries} if error_entries else None
 
