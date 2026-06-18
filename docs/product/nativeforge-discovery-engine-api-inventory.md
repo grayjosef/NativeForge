@@ -1,4 +1,7 @@
-# NativeForge discovery engine — API inventory (Sprint 20)
+# NativeForge discovery engine — API inventory (Sprint 20, verified Sprint 165)
+
+Programmatic verification: `nativeforge.services.discovery_api_inventory_verification_service`
+emits `nf_discovery_api_inventory_manifest_v1` from FastAPI OpenAPI paths (demo/real parity).
 
 All discovery routes live in `src/nativeforge/api/opportunity_discovery_routes.py` on two parallel routers:
 
