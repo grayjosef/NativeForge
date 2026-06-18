@@ -40,6 +40,8 @@ QUEUE_DUPLICATE_RISK_SCORE_AT_OR_ABOVE = 48
 INTAKE_HIGH_DUP_RISK = 40
 INTAKE_LOW_NATIVE_SCORE = 36
 
+REVIEW_ITEM_SCHEMA_VERSION = "nf_discovery_review_item_v1"
+
 _TERMINAL_STATUSES = frozenset(
     {
         DiscoveryReviewQueueStatus.approved.value,
@@ -59,6 +61,7 @@ def review_item_to_dict(row: NfDiscoveryReviewItem) -> dict[str, Any]:
         return str(v)
 
     return {
+        "schema_version": REVIEW_ITEM_SCHEMA_VERSION,
         "id": str(row.id),
         "organization_id": str(row.organization_id),
         "is_demo": row.is_demo,

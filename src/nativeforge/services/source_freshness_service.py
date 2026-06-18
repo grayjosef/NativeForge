@@ -25,6 +25,7 @@ from nativeforge.repositories import audit_events as audit_repo
 
 FRESHNESS_DETAIL_SCHEMA_VERSION = "nf_source_freshness_detail_v1"
 SUMMARY_SCHEMA_VERSION = "nf_source_freshness_summary_v1"
+CHECK_RUN_SCHEMA_VERSION = "nf_source_check_run_v1"
 
 _PRIORITY_DEFAULT_INTERVAL_DAYS: dict[str, int] = {
     SourcePriorityLevel.critical.value: 1,
@@ -45,6 +46,7 @@ def check_run_to_dict(row: NfSourceCheckRun) -> dict[str, Any]:
         return str(v)
 
     return {
+        "schema_version": CHECK_RUN_SCHEMA_VERSION,
         "id": str(row.id),
         "organization_id": str(row.organization_id),
         "is_demo": row.is_demo,
