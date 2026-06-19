@@ -12,6 +12,9 @@ import {
   listOperatorLedgerActions,
   listSourcesOverdue,
 } from "../discoveryApiClient";
+import { getWorkbenchAdvisoryBundle } from "../workbenchApiClient";
+import { readWorkbenchFlag } from "../workbenchFeatureFlag";
+import { WorkbenchStage11 } from "./WorkbenchStage11";
 import { ConnectorIntelligenceCard } from "../components/workbench/ConnectorIntelligenceCard";
 import { SourceQualityCard } from "../components/workbench/SourceQualityCard";
 import { CoverageGapsCard } from "../components/workbench/CoverageGapsCard";
@@ -64,6 +67,8 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
   const [freshness, setFreshness] = useState<RecordBlock>(emptyRecord);
   const [intel, setIntel] = useState<RecordBlock>(emptyRecord);
   const [recs, setRecs] = useState<RecordBlock>(emptyRecord);
+  const [advisoryBundle, setAdvisoryBundle] = useState<RecordBlock>(emptyRecord);
+  const stage11 = readWorkbenchFlag();
 
   useEffect(() => {
     if (!orgOk) {
@@ -75,6 +80,7 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
       setFreshness(emptyRecord());
       setIntel(emptyRecord());
       setRecs(emptyRecord());
+      setAdvisoryBundle(emptyRecord());
       return;
     }
 
@@ -86,6 +92,7 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
     setFreshness({ loading: true, error: null, data: null });
     setIntel({ loading: true, error: null, data: null });
     setRecs({ loading: true, error: null, data: null });
+    setAdvisoryBundle({ loading: true, error: null, data: null });
 
     let alive = true;
 
@@ -201,10 +208,29 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
       }
     })();
 
+    if (stage11) {
+      void (async () => {
+        try {
+          const d = await getWorkbenchAdvisoryBundle(base, plane, o);
+          if (alive) {
+            setAdvisoryBundle({ loading: false, error: null, data: d });
+          }
+        } catch (e) {
+          if (alive) {
+            setAdvisoryBundle({
+              loading: false,
+              error: friendlyError(e),
+              data: null,
+            });
+          }
+        }
+      })();
+    }
+
     return () => {
       alive = false;
     };
-  }, [base, plane, o, orgOk]);
+  }, [base, plane, o, orgOk, stage11]);
 
   const evidenceRows = useMemo(
     () =>
@@ -231,12 +257,25 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
       <header className="nf-workbench-intro">
         <h2 className="nf-workbench-title">Operator workbench</h2>
         <p className="nf-workbench-blurb">
-          Read-mostly view of discovery engine outputs for this organization.
-          Cards load independently — a failure in one section does not block the
-          others.
+          {stage11
+            ? "Stage 11 advisory workbench — synthetic fixtures and local DB only. Presentation wiring; human gates preserved."
+            : "Read-mostly view of discovery engine outputs for this organization. Add ?nf_workbench=1 for Stage 11 tabs."}
         </p>
       </header>
 
+      {stage11 ? (
+        <WorkbenchStage11
+          plane={plane}
+          orgId={o}
+          orgOk={orgOk}
+          baseUrl={base}
+          advisoryBundle={advisoryBundle}
+          reviewItems={reviewItems}
+          pack={pack}
+          ledgerSummary={ledgerSummary}
+          ledgerOpen={ledgerOpen}
+        />
+      ) : (
       <div className="nf-workbench-grid">
         <PriorityActionsCard
           baseUrl={base}
@@ -296,6 +335,7 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
           rows={evidenceRows}
         />
       </div>
+      )}
     </div>
   );
 }
