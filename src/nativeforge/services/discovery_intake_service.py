@@ -41,6 +41,9 @@ from nativeforge.services import (
     funding_opportunity_intake_discovery_bridge_service as foi_bridge_svc,
 )
 from nativeforge.services import grant_spark_service as gss
+from nativeforge.services import (
+    native_relevance_classification_discovery_bridge_service as nrc_bridge_svc,
+)
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services.opportunity_discovery_service import (
     DiscoverySparkSeedPayload,
@@ -705,6 +708,10 @@ def process_structured_candidates(
         dedupe_report,
     )
     summary_body = foi_bridge_svc.attach_hardened_preview_to_intake_summary(
+        summary_body,
+        candidates,
+    )
+    summary_body = nrc_bridge_svc.attach_classification_preview_to_intake_summary(
         summary_body,
         candidates,
     )
