@@ -36,6 +36,10 @@ from nativeforge.api.operator_workbench_advisory_routes import (
     demo_workbench_advisory_router,
     real_workbench_advisory_router,
 )
+from nativeforge.api.stage12_guided_demo_routes import (
+    demo_stage12_router,
+    real_stage12_router,
+)
 from nativeforge.lib.settings import get_settings
 
 
@@ -66,6 +70,8 @@ def create_app() -> FastAPI:
     app.include_router(real_trust_router)
     app.include_router(demo_workbench_advisory_router)
     app.include_router(real_workbench_advisory_router)
+    app.include_router(demo_stage12_router)
+    app.include_router(real_stage12_router)
     return app
 
 
