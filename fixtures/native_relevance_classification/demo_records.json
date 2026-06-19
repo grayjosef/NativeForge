@@ -1,0 +1,69 @@
+[
+  {
+    "fixture_key": "nrc_demo_native_specific",
+    "opportunity_title": "Tribal set-aside language preservation",
+    "tribal_set_aside": true,
+    "tribal_eligible": true,
+    "explicit_source_evidence": ["tribal_set_aside_in_source", "tribal_eligible_in_source"],
+    "eligibility_tags": ["tribal_eligible", "language_preservation"]
+  },
+  {
+    "fixture_key": "nrc_demo_tribal_government",
+    "opportunity_title": "Tribal government infrastructure planning",
+    "tribal_eligible": false,
+    "applicant_types_include_tribal": true,
+    "explicit_source_evidence": ["applicant_types_tribal_in_source"],
+    "eligibility_tags": ["tribal_government"]
+  },
+  {
+    "fixture_key": "nrc_demo_indigenous_community",
+    "opportunity_title": "Indigenous community health outreach",
+    "eligibility_tags": ["native_serving_nonprofit", "ihs_service_population"],
+    "explicit_source_evidence": ["eligibility_tag_structural_in_source"]
+  },
+  {
+    "fixture_key": "nrc_demo_native_entity_broad",
+    "opportunity_title": "Broad tribal eligible community development",
+    "tribal_eligible": true,
+    "explicit_source_evidence": ["tribal_eligible_in_source"],
+    "eligibility_tags": ["tribal_eligible"]
+  },
+  {
+    "fixture_key": "nrc_demo_broadly_eligible",
+    "opportunity_title": "Economic development grant open to diverse applicants",
+    "tribal_eligible": false,
+    "tribal_priority_points": true,
+    "applicant_types_include_tribal": false,
+    "eligibility_tags": [],
+    "explicit_source_evidence": []
+  },
+  {
+    "fixture_key": "nrc_demo_weak_keyword",
+    "opportunity_title": "Native arts festival support grant",
+    "tribal_eligible": false,
+    "explicit_source_evidence": [],
+    "eligibility_tags": []
+  },
+  {
+    "fixture_key": "nrc_demo_uncertain",
+    "opportunity_title": "Community services grant",
+    "tribal_eligible": false,
+    "applicant_types_include_tribal": null,
+    "explicit_source_evidence": []
+  },
+  {
+    "fixture_key": "nrc_demo_irrelevant",
+    "opportunity_title": "Urban highway maintenance contract",
+    "tribal_eligible": false,
+    "applicant_types_include_tribal": false,
+    "explicit_source_evidence": []
+  },
+  {
+    "fixture_key": "nrc_demo_overclaim_attempt",
+    "opportunity_title": "Tribal set-aside language grant",
+    "tribal_set_aside": true,
+    "tribal_eligible": false,
+    "explicit_source_evidence": [],
+    "eligibility_tags": []
+  }
+]
