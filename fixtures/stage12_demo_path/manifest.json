@@ -1,0 +1,18 @@
+{
+  "schema_version": "nf_stage12_demo_dataset_manifest_v1",
+  "demo_namespace": "nf_stage12",
+  "fictional_only": true,
+  "isolated_from_production": true,
+  "description": "Stage 12 future-state demo path — clearly fictional namespaced fixtures only.",
+  "source_count": 2,
+  "opportunity_count": 4,
+  "profile_count": 1,
+  "opportunity_archetypes": [
+    "native_specific_tribal_government",
+    "broadly_eligible_potentially_relevant",
+    "weak_uncertain",
+    "stale_expired"
+  ],
+  "no_live_ingestion": true,
+  "preview_only": true
+}

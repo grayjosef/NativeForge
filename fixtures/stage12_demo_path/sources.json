@@ -1,0 +1,24 @@
+[
+  {
+    "fixture_key": "nf_stage12_src_red_cedar_portal",
+    "demo_namespace": "nf_stage12",
+    "fictional_only": true,
+    "source_name": "Red Cedar Illustrative Tribal Programs Portal (Fictional Demo)",
+    "source_type": "federal",
+    "source_lane": "federal_native_specific",
+    "quality_posture": "adequate",
+    "coverage_notes": "Synthetic demo source for Stage 12 guided path only.",
+    "is_demo": true
+  },
+  {
+    "fixture_key": "nf_stage12_src_riverbend_foundation_feed",
+    "demo_namespace": "nf_stage12",
+    "fictional_only": true,
+    "source_name": "Riverbend Native-Serving Foundations Feed (Fictional Demo)",
+    "source_type": "foundation",
+    "source_lane": "philanthropic_native_serving",
+    "quality_posture": "weak",
+    "coverage_notes": "Illustrative weak-quality source for operator review training.",
+    "is_demo": true
+  }
+]
