@@ -1,4 +1,4 @@
-# NativeForge Handoff — Block NF-4: Matching + Readiness v1 (Sprints 212–226)
+# NativeForge Handoff — Block NF-5: Operator Workbench UX v1 (Sprints 227–241)
 
 **Date:** 2026-05-19  
 **Branch:** `main` (ahead of `origin/main`)  
@@ -7,83 +7,96 @@
 
 ## Run summary
 
-Completed the approved 15-sprint Stages 8–10 matching + readiness block with green baseline first (`4989` passed). Consumes Stage 5 opportunity intake, Stage 6 native relevance, and Stage 7 org/applicant profile via the **canonical** `eligibility_fit_assessment_*` layer — extended, not duplicated.
+Completed the approved 15-sprint Stage 11 operator workbench block with green baseline first (`5032` passed). Presentational + wiring only: Vite/React workbench screens consume read-only FastAPI advisory bundles and existing discovery/local-DB endpoints. No scoring, relevance, matching logic, hard invariants, or human gates were changed.
 
 | Sprint | Commit | Summary |
 |--------|--------|---------|
-| 212 | `a711875` | Canonical match dimensions (re-exports fit dimensions + rollup dimensions) |
-| 213 | `e164287` | Match labels (8 labels) |
-| 214 | `abec4d8` | Application readiness labels (7 labels) |
-| 215 | `c1e5a97` | Next-action guidance templates |
-| 216 | `f8b510d` | Applicant recommendation human-confirmation guard |
-| 217 | `9d09461` | No profile mutation for match fit guard |
-| 218 | `6ef56f9` | No final eligibility without review guard |
-| 219 | `69efb9a` | Fail-closed missing profile/eligibility/deadline guard |
-| 220 | `987ad66` | Synthetic demo pairs (`fixtures/matching_readiness/demo_pairs.json`) |
-| 221 | `6774ed8` | Matching evaluator (`assess_eligibility_fit` via record builder) |
-| 222 | `42adb2c` | Application readiness evaluator |
-| 223 | `5a07dc8` | Matching + readiness record assembler (Stages 5/6/7 inputs) |
-| 224 | `525f6c6` | Rollup + operator review queue |
-| 225 | `66fcec9` | Stages 8–10 gate verification |
-| 226 | `df2c297` | Stages 8–10 matching + readiness closeout packet |
+| 227 | `4be8e16` | `nf_workbench` feature flag (`?nf_workbench=1` / localStorage) |
+| 228 | `b95a7f4` | Operator workbench advisory service (synthetic fixture corpus) |
+| 229 | `c551403` | Advisory routes + `main.py` router wiring (`nf_workbench` query required) |
+| 230 | `c8f125e` | `workbenchApiClient` HTTP client |
+| 231 | `67101b6` | `WorkbenchStateBadges` + Stage 11 tab types |
+| 232 | `09fe91f` | Source review queue screen (local DB review items) |
+| 233 | `81040b6` | Discovery / intake review screen (Stage 5 advisory preview) |
+| 234 | `45ed602` | Native relevance review screen (8 labels + confidence + evidence) |
+| 235 | `b792a76` | Org / applicant profile screen (UNKNOWN surfaced) |
+| 236 | `0335fd6` | Matching + readiness screen (fit dimensions, blockers, next-action) |
+| 237 | `7e59898` | Operator ledger + decision pack screen |
+| 238 | `7c7599a` | `WorkbenchStage11` tabbed shell |
+| 239 | `7bf055d` | `WorkbenchPage` wiring (flag on → Stage 11; off → legacy grid) |
+| 240 | `fac3ce8` | Stage 11 CSS (tabs, badges, preview cards) |
+| 241 | `a8a14f5` | Frontend smoke tests + Stage 11 closeout packet |
 
 **Iterations used:** 15 product sprints (within leash)
 
 ## Build / test state
 
-- **Baseline at block start:** `4989 passed`, `11 skipped`, `0 failed`
-- **Full pytest (final):** `5032 passed`, `11 skipped`, `0 failed` (+43 tests)
-- **Ruff:** Green on matching_readiness Python files (per-file `E501` ignores)
+- **Baseline at block start:** `5032 passed`, `11 skipped`, `0 failed`
+- **Full pytest (final):** `5041 passed`, `11 skipped`, `0 failed` (+9 tests)
+- **Ruff:** Green on new backend files
+- **Frontend:** `npm run typecheck`, `npm test` (23 passed), `npm run build` — all green
 - **Alembic head:** `0019` (no new migrations)
 - **Stash:** Untouched
 - **uv.lock:** Not staged or committed
 
-## Reconciliation with `eligibility_fit_assessment_*`
+## Stage 11 smoke verification (Sprint 241)
 
-| Concern | Canonical source | Matching layer role |
-|---------|------------------|---------------------|
-| Fit dimension evaluators | `eligibility_fit_assessment_dimension_evaluator_service` | Consumed via `build_eligibility_fit_assessment_record` |
-| Deadline risk, docs, blockers, confidence | `eligibility_fit_assessment_*` services | Surfaced as match rollup dimensions (Sprint 212) |
-| Match labels / readiness labels | **New** `matching_readiness_*` | Stages 8–10 advisory outputs only |
-| Operator next-check | Both exist | **Cleanup candidate** — consolidate `eligibility_fit_assessment_operator_next_check_service` with `matching_readiness_next_action_guidance_service` |
-| Application readiness string | `eligibility_fit_assessment` uses `application_readiness` incomplete/complete | **Cleanup candidate** — canonicalize on `matching_readiness` readiness labels |
+**run_id:** `smoke-1781879593654` (vitest `workbenchStage11Smoke.test.tsx`)
 
-No duplicate dimension evaluators were added. `matching_readiness_matching_evaluator_service` calls `build_eligibility_fit_assessment_record` exclusively.
+| Screen | Result |
+|--------|--------|
+| source-review-queue | PASS |
+| discovery-intake-review | PASS |
+| native-relevance-review | PASS |
+| org-applicant-profile | PASS |
+| matching-readiness | PASS |
+| workbench-stage11-shell | PASS |
 
-## Match labels
+Closeout packet: `build_operator_workbench_stage11_closeout_packet` reports `smoke_verification_passed: true` when all six canonical screens pass.
 
-`strong_fit`, `possible_fit`, `uncertain_fit`, `weak_fit`, `not_fit`, `blocked`, `needs_more_profile_data`, `needs_operator_review`
+## Architecture
 
-## Readiness labels
+### Feature flag
 
-`application_ready`, `ready_with_review`, `not_ready_missing_documents`, `not_ready_deadline_risk`, `not_ready_eligibility_uncertain`, `not_ready_capacity_gap`, `blocked`
+- **Frontend:** `readWorkbenchFlag()` — `?nf_workbench=1` or `localStorage` key `nf-workbench-enabled`
+- **API:** `nf_workbench=true` query param required on `/discovery/operator-workbench-advisory/*` (403 without flag)
 
-## Hard invariants (all tested)
+### Advisory layers wired (read-only)
 
-1. **Applicant-specific recommendations** → `needs_operator_review` until `human_confirmation_present`
-2. **Never mutate profile to improve match** — mutation guard blocks without `operator_approved`
-3. **No final eligibility without review** — requires `operator_review_completed` + human confirmation
-4. **Fail-closed on missing data** — missing profile/eligibility/deadline forces `needs_more_profile_data` or `blocked`
+| Screen | Data source |
+|--------|-------------|
+| Source review queue | Local DB via existing discovery review-items API |
+| Discovery / intake | `funding_opportunity_intake_*` synthetic previews |
+| Native relevance | `native_relevance_classification_*` previews |
+| Org / applicant profile | `org_applicant_profile_*` previews |
+| Matching + readiness | `matching_readiness_*` (canonical fit via `eligibility_fit_assessment_*`) |
+| Ledger / decisions | Existing `operator-decision-pack`, ledger summary, open actions |
+
+### Hard invariants preserved (UI surfaces honestly)
+
+- `needs_operator_review`, `UNKNOWN`, `overclaim_blocked` badges visible
+- No path to verified/approved without explicit operator action
+- `synthetic_fixtures_only` / `preview_only` / `no_live_ingestion` on advisory payloads
 
 ## Key decisions
 
 1. **Green baseline first** before any feature commit.
-2. **Canonical fit layer preserved** — `matching_readiness_*` adds labels, readiness, and guards only.
-3. **Stage consumption in record assembler** — Stage 5 hardened opportunity, Stage 6 native relevance preview (via fit record), Stage 7 org profile hardened record.
-4. **Six demo pairs** exercise strong fit, incomplete profile, missing deadline, unconfirmed recommendation, mutation attempt, geography mismatch.
-5. **NativeForge language only** — no Spark/ContractForge branding.
+2. **Behind `nf_workbench`** — legacy workbench grid unchanged when flag off.
+3. **Advisory service composes existing Stage 5–10 services** — no duplicate evaluators.
+4. **Local dev only** — no live ingestion, scraping, LLM runtime, source activation, or new migrations.
+5. **NativeForge language only** — no ContractForge/Spark branding in Stage 11 UX.
 
 ## Risks / needs human
 
 - **Not pushed** — review required before `git push`.
-- **Reconciliation cleanup** — operator guidance and readiness terminology overlap documented in gate verification; consolidate in a future sprint.
-- **Live matching** out of scope until separate human authorization.
+- **Operator ledger screen** reuses existing `PriorityActionsCard` / `OperatorLedgerCard` — full ledger tab UX may need polish in a follow-on sprint.
+- **Production wiring** out of scope until separate human authorization.
 
 ## Proposed next safe action
 
-1. Push and review the 16 commits on `main`.
-2. Consolidate operator guidance overlap between `eligibility_fit_assessment_*` and `matching_readiness_*`.
-3. Wire matching readiness preview into discovery intake summaries (advisory only).
+1. Push and review the 15 commits (+ handoff) on `main`.
+2. Manual QA: start API + frontend with `?nf_workbench=1` against local demo org.
+3. Consolidate operator guidance overlap (`eligibility_fit_assessment_*` vs `matching_readiness_*`) before enabling flag by default.
 
 ## Verification commands
 
@@ -91,7 +104,8 @@ No duplicate dimension evaluators were added. `matching_readiness_matching_evalu
 cd /home/josefgray/projects/nativeforge
 source .venv/bin/activate
 pytest -q
+cd frontend && npm run typecheck && npm test && npm run build
 git log --oneline -16
 git stash list
-pytest tests/test_sprint226_matching_readiness_stages8_10_closeout_packet.py -q
+pytest tests/test_sprint241_operator_workbench_stage11_closeout_packet.py -q
 ```
