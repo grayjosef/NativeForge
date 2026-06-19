@@ -1692,3 +1692,74 @@ code,
   max-width: var(--nf-max);
   margin: 0 auto;
 }
+
+/* Stage 12 guided demo path */
+.nf-stage12-guided {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.nf-stage12-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.nf-stage12-title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.nf-stage12-stepper-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nf-stage12-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius-sm);
+  background: var(--nf-card);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.nf-stage12-step--active {
+  border-color: var(--nf-accent);
+  background: var(--nf-accent-soft);
+}
+
+.nf-stage12-step-num {
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+.nf-stage12-list {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.nf-stage12-dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 0.75rem;
+  margin: 0.5rem 0;
+}
+
+.nf-badge--warn {
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--nf-radius-sm);
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.75rem;
+}
