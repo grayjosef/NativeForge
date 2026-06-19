@@ -1,99 +1,114 @@
-# NativeForge Handoff — Block NF-2: Native Relevance Classification v1 (Sprints 182–196)
+# NativeForge Handoff — Block NF-3: Eligibility / Fit Assessment v1 (Sprints 197–211)
 
 **Date:** 2026-05-19  
 **Branch:** `main` (ahead of `origin/main` by 16 commits)  
 **Push:** Not performed (per governance)  
 **Stash:** Preserved — `stash@{0}: wip-sprint8-ui-redesign-do-not-commit`
 
+## Preflight verification
+
+| Check | Result |
+|-------|--------|
+| `pwd` | `/home/josefgray/projects/nativeforge` |
+| Branch | `main` |
+| `origin/main` aligned with HEAD | Yes (`7ef1937` at block start; now `f11bc1e` + handoff pending) |
+| HEAD at block start | `7ef1937` (met) |
+| Working tree | Clean (no staged `uv.lock`) |
+| Stash preserved | `stash@{0}: wip-sprint8-ui-redesign-do-not-commit` |
+| ContractForge/Spark language in new work | None found |
+
 ## Run summary
 
-Completed the approved 15-sprint Stage 6 native relevance classification block with green baseline first. All work is preview-only, synthetic fixtures, advisory — no live ingestion, scraping, external URLs, LLM runtime, or source activation.
+Completed the approved 15-sprint Stage 7 eligibility / fit assessment block with green baseline first (`4905` passed). All work is offline, deterministic, synthetic-fixture-only, advisory — no live ingestion, scraping, external URLs, LLM runtime, source activation, or runtime DB mutation.
 
 | Sprint | Commit | Summary |
 |--------|--------|---------|
-| 182 | `a5f1903` | Eight evidence-based classification labels + discoverable-label set |
-| 183 | `8744b5e` | Per-label explanation templates (trigger language, entity types, gaps, operator next-check) |
-| 184 | `cf3ef68` | Classification confidence vocabulary |
-| 185 | `eb19db8` | Human-review trigger vocabulary |
-| 186 | `1974526` | **Overclaim guard** — never `native_specific` without explicit source evidence |
-| 187 | `a2debc2` | **Over-filter guard** — broad-relevant labels stay discoverable |
-| 188 | `6f22453` | Synthetic demo fixture corpus (`fixtures/native_relevance_classification/demo_records.json`) |
-| 189 | `2062bb8` | Deterministic classification evaluator (both invariants applied) |
-| 190 | `dd10e76` | Per-classification explanation builder |
-| 191 | `7717ca3` | Hardened classification record assembler |
-| 192 | `fdcf531` | Discovery intake bridge — `native_relevance_classification_preview` on summaries |
-| 193 | `31881f1` | Classification batch rollup |
-| 194 | `39d09f2` | Operator review queue metadata |
-| 195 | `3c70846` | Stage 6 gate verification on demo corpus |
-| 196 | `38c045d` | Stage 6 native relevance classification closeout packet |
+| 197 | `bb294a4` | Fit dimension vocabulary (eligibility, relevance, geography, program, capacity) |
+| 198 | `e465855` | Deadline risk + documentation readiness assessment |
+| 199 | `4fa901d` | Blockers + missing data contracts |
+| 200 | `1ae3cb7` | Fit confidence + human-review status vocabulary |
+| 201 | `b2c3a79` | Operator next-check guidance templates |
+| 202 | `268bdec` | **No eligibility claim without evidence guard** (hard invariant 1) |
+| 203 | `6658ed8` | **Incomplete data discoverability guard** (hard invariant 2) |
+| 204 | `1bae77a` | Synthetic demo fixtures (opportunity + applicant profile records) |
+| 205 | `9d4a5d4` | Fit dimension evaluators |
+| 206 | `f7c3d69` | Eligibility fit assessment evaluator (orchestrator + both guards) |
+| 207 | `9aeaad8` | Operator next-check builder |
+| 208 | `cfb7301` | Eligibility fit assessment record assembler |
+| 209 | `e6badad` | Fit assessment rollup |
+| 210 | `0a8a541` | Operator review queue + Stage 7 gate verification |
+| 211 | `f11bc1e` | Stage 7 eligibility fit assessment closeout packet |
 
 **Iterations used:** 15 product sprints (within leash)
 
 ## Build / test state
 
-- **Full pytest:** `4905 passed`, `11 skipped`, `0 failed` (last run)
+- **Baseline at block start:** `4905 passed`, `11 skipped`, `0 failed`
+- **Full pytest (final):** `4947 passed`, `11 skipped`, `0 failed`
 - **Ruff:** Green on sprint-touched Python files
 - **Alembic head:** `0019` (no new migrations in this block)
 - **Stash:** Untouched
 - **uv.lock:** Not staged or committed
 
-## Stage 6 architecture (offline advisory chain)
+## Stage 7 architecture (offline advisory chain)
 
-### Eight classification labels
+Consumes funding opportunity fixtures, applicant/organization profile fixtures, and Native relevance classification previews.
 
-1. `native_specific`
-2. `tribal_government_specific`
-3. `indigenous_community_relevant`
-4. `native_entity_eligible_broad`
-5. `broadly_eligible_potentially_relevant`
-6. `weak_native_relevance`
-7. `uncertain_relevance`
-8. `irrelevant`
+### Fit outputs
+
+- Five fit dimensions: eligibility, relevance, geography, program, capacity
+- Deadline risk, documentation readiness
+- Blockers, missing data flags
+- Confidence, human-review status
+- Operator next-check guidance
+- Application readiness, discoverable flag, final eligibility claim (guarded)
 
 ### Service chain
 
-1. **Label vocabulary** (`native_relevance_classification_label_vocabulary_service.py`)
-2. **Label explanations** (`native_relevance_classification_label_explanation_service.py`)
-3. **Confidence** (`native_relevance_classification_confidence_service.py`)
-4. **Human-review triggers** (`native_relevance_classification_human_review_trigger_service.py`)
-5. **Overclaim guard** (`native_relevance_classification_overclaim_guard_service.py`)
-6. **Over-filter guard** (`native_relevance_classification_over_filter_guard_service.py`)
-7. **Demo fixtures** (`native_relevance_classification_demo_fixture_service.py`)
-8. **Evaluator** (`native_relevance_classification_evaluator_service.py`) — applies both guards
-9. **Explanation builder** (`native_relevance_classification_explanation_builder_service.py`)
-10. **Record assembler** (`native_relevance_classification_record_service.py`)
-11. **Discovery bridge** (`native_relevance_classification_discovery_bridge_service.py`) via `discovery_intake_service.py`
-12. **Rollup** (`native_relevance_classification_rollup_service.py`)
-13. **Operator review queue** (`native_relevance_classification_operator_review_queue_service.py`)
-14. **Gate verification** (`native_relevance_classification_stage6_gate_verification_service.py`)
-15. **Closeout packet** (`native_relevance_classification_stage6_closeout_packet_service.py`)
+1. **Dimension vocabulary** (`eligibility_fit_assessment_dimension_vocabulary_service.py`)
+2. **Deadline risk** (`eligibility_fit_assessment_deadline_risk_service.py`)
+3. **Documentation readiness** (`eligibility_fit_assessment_documentation_readiness_service.py`)
+4. **Blockers** (`eligibility_fit_assessment_blockers_service.py`)
+5. **Missing data** (`eligibility_fit_assessment_missing_data_service.py`)
+6. **Confidence + human-review status** (`eligibility_fit_assessment_confidence_service.py`)
+7. **Operator guidance** (`eligibility_fit_assessment_operator_guidance_service.py`)
+8. **No-claim-without-evidence guard** (`eligibility_fit_assessment_no_claim_without_evidence_guard_service.py`)
+9. **Incomplete discoverability guard** (`eligibility_fit_assessment_incomplete_discoverability_guard_service.py`)
+10. **Demo fixtures** (`eligibility_fit_assessment_demo_fixture_service.py`)
+11. **Dimension evaluators** (`eligibility_fit_assessment_dimension_evaluator_service.py`)
+12. **Evaluator** (`eligibility_fit_assessment_evaluator_service.py`)
+13. **Operator next-check builder** (`eligibility_fit_assessment_operator_next_check_service.py`)
+14. **Record assembler** (`eligibility_fit_assessment_record_service.py`)
+15. **Rollup** (`eligibility_fit_assessment_rollup_service.py`)
+16. **Gate verification + review queue** (`eligibility_fit_assessment_stage7_gate_verification_service.py`)
+17. **Closeout packet** (`eligibility_fit_assessment_stage7_closeout_packet_service.py`)
 
-Key artifact types: `nf_native_relevance_classification_record_v1`, `nf_native_relevance_classification_stage6_gate_verification_v1`, `nf_native_relevance_classification_stage6_closeout_packet_v1`.
+Key artifact types: `nf_eligibility_fit_assessment_record_v1`, `nf_eligibility_fit_assessment_stage7_gate_verification_v1`, `nf_eligibility_fit_assessment_stage7_closeout_packet_v1`.
 
 ## Hard invariants (both tested)
 
-1. **Overclaim guard:** `native_specific` requires explicit source evidence codes (`tribal_set_aside_in_source`, `tribal_eligible_in_source`, etc.). Without evidence, label is downgraded and `overclaim_blocked` triggers human review.
-2. **Over-filter guard:** Labels in `DISCOVERABLE_LABELS` (all except `irrelevant`) cannot be marked non-discoverable; `final_discoverable` is forced true.
+1. **No final eligibility claim without explicit applicant/profile evidence** — `apply_no_claim_without_evidence_guard` suppresses `final_eligibility_claim` when profile evidence codes are absent; sets `claim_blocked` and human review.
+2. **Incomplete applicant data stays discoverable** — `apply_incomplete_discoverability_guard` forces `discoverable: true`, `human_review_required: true`, and `application_readiness: incomplete` when profile fields are missing; blocks over-filtering.
 
 ## Key decisions
 
-1. **Green baseline first:** Full suite green (`4861` passed) before any Stage 6 feature commit.
-2. **Synthetic-only corpus:** Nine demo fixtures cover all eight labels plus an overclaim-attempt case.
-3. **Discovery integration is preview-only:** Intake summaries gain `native_relevance_classification_preview`; no persistence or execution side effects.
-4. **Evaluator fail-closed:** Classification applies overclaim and over-filter guards on every record before rollup/queue/verification.
-5. **Terminology:** Funding-opportunity / native-relevance language only; no ContractForge/Spark branding in Stage 6 additions.
+1. **Green baseline first:** Full suite green before any Stage 7 feature commit.
+2. **Synthetic-only corpus:** Five opportunity fixtures paired with five applicant profile fixtures under `fixtures/eligibility_fit_assessment/`.
+3. **Native relevance consumption:** Record assembler builds Native relevance classification preview per opportunity and feeds relevance fit evaluation.
+4. **Fail-closed guards on every assessment:** Evaluator applies both hard invariants before rollup, queue, and gate verification.
+5. **NativeForge language only:** No Spark, ContractForge, bid, or solicitation branding in Stage 7 additions.
 
 ## Risks / needs human
 
-- **Not pushed** — Mayhem review required before `git push`.
-- **AIRTABLE_TOKEN** not set in agent environment — `log_run.sh` calls skipped; operator should run locally.
-- **Live classification** explicitly out of scope; Stage 6 is advisory preview until separate human authorization.
+- **Not pushed** — Review required before `git push`.
+- **AIRTABLE_TOKEN** not set in agent environment — all `log_run.sh` calls skipped; operator should run locally if logging is needed.
+- **Live fit assessment** explicitly out of scope; Stage 7 is advisory preview until separate human authorization.
 
-## Proposed next run
+## Proposed next safe action
 
-1. Push and review the 16 commits on `main` (15 feature + prior handoff baseline).
-2. Operator walkthrough of Stage 6 gate verification + demo fixture corpus.
-3. Choose next lane: discovery UI surfacing of classification preview, connector planning, or documentation closeout.
+1. Push and review the 16 commits on `main` (15 feature + handoff).
+2. Operator walkthrough of Stage 7 gate verification rollup and demo fixture corpus.
+3. Choose next lane: discovery UI surfacing of fit assessment preview, applicant profile completion workflow, or documentation closeout.
 
 ## Verification commands
 
@@ -103,5 +118,5 @@ source .venv/bin/activate
 pytest -q
 git log --oneline -16
 git stash list   # confirm stash@{0} still present
-pytest tests/test_sprint196_native_relevance_classification_stage6_closeout_packet.py -q
+pytest tests/test_sprint211_eligibility_fit_assessment_stage7_closeout_packet.py -q
 ```
