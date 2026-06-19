@@ -13,4 +13,5 @@ def test_gate_verification_passes() -> None:
     assert result["schema_version"] == SCHEMA_VERSION
     assert result["verification_passed"] is True
     assert result["checks"]["canonical_eligibility_fit_layer_used"] is True
-    assert len(result["reconciliation_cleanup_candidates"]) >= 1
+    assert result["reconciliation_cleanup_candidates"] == []
+    assert result["reconciliation_status"]["operator_next_check"]

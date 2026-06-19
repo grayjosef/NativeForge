@@ -11,6 +11,10 @@ from nativeforge.services.org_applicant_profile_evaluator_service import (
 from nativeforge.services.org_applicant_profile_review_status_service import (
     STATUS_INCOMPLETE,
 )
+from nativeforge.services.readiness_terminology_reconciliation_service import (
+    build_readiness_terminology_reconciliation,
+    canonical_readiness_label,
+)
 
 SCHEMA_VERSION = "nf_org_applicant_profile_hardened_record_v1"
 
@@ -29,6 +33,16 @@ def build_hardened_org_applicant_profile_record(
     merged = dict(raw)
     merged["fixture_key"] = fk
     evaluation = evaluate_org_applicant_profile(merged)
+    application_readiness = (
+        "incomplete"
+        if evaluation["review_status"] == STATUS_INCOMPLETE
+        else "needs_operator_review"
+        if evaluation["human_review_required"]
+        else "ready_for_review"
+    )
+    readiness_reconciliation = build_readiness_terminology_reconciliation(
+        application_readiness=application_readiness,
+    )
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -38,13 +52,9 @@ def build_hardened_org_applicant_profile_record(
             "review_status": evaluation["review_status"],
             "human_review_required": evaluation["human_review_required"],
             "discoverable": evaluation["discoverable"],
-            "application_readiness": (
-                "incomplete"
-                if evaluation["review_status"] == STATUS_INCOMPLETE
-                else "needs_operator_review"
-                if evaluation["human_review_required"]
-                else "ready_for_review"
-            ),
+            "application_readiness": application_readiness,
+            "readiness_label": canonical_readiness_label(application_readiness),
+            "readiness_terminology_reconciliation": readiness_reconciliation,
             "preview_only": True,
             "no_live_ingestion": True,
             "synthetic_fixture": True,

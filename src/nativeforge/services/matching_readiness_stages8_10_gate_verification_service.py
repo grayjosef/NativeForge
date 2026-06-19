@@ -41,12 +41,13 @@ def verify_stages8_10_gates_on_demo_corpus() -> dict[str, Any]:
             "checks": checks,
             "rollup": rollup,
             "operator_review_queue": queue,
-            "reconciliation_cleanup_candidates": [
-                "eligibility_fit_assessment_operator_next_check_service overlaps "
-                "matching_readiness_next_action_guidance_service — consolidate in future sprint",
-                "eligibility_fit_assessment application_readiness vs "
-                "matching_readiness readiness_label — canonicalize on readiness_label",
-            ],
+            "reconciliation_cleanup_candidates": [],
+            "reconciliation_status": {
+                "operator_next_check": "canonicalized via "
+                "canonical_operator_guidance_reconciliation_service",
+                "application_readiness": "canonicalized on readiness_label via "
+                "readiness_terminology_reconciliation_service",
+            },
             "synthetic_fixtures_only": True,
             "preview_only": True,
         }
