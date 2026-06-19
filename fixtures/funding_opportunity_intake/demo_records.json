@@ -1,0 +1,28 @@
+[
+  {
+    "fixture_key": "foi_demo_complete",
+    "opportunity_title": "Tribal language preservation grant",
+    "opportunity_number": "FOI-DEMO-001",
+    "publisher_name": "Illustrative Federal Agency",
+    "agency": "Illustrative Federal Agency",
+    "application_deadline": "2027-06-30T00:00:00Z",
+    "source_registry_id": "00000000-0000-0000-0000-000000000010",
+    "opportunity_source_type": "federal"
+  },
+  {
+    "fixture_key": "foi_demo_missing_deadline",
+    "opportunity_title": "Incomplete fixture record",
+    "publisher_name": "Illustrative Agency",
+    "agency": "Illustrative Agency",
+    "source_registry_id": "00000000-0000-0000-0000-000000000011",
+    "opportunity_source_type": "federal"
+  },
+  {
+    "fixture_key": "foi_demo_duplicate_a",
+    "opportunity_title": "Shared duplicate candidate",
+    "publisher_name": "Agency",
+    "opportunity_number": "FOI-DUP-001",
+    "opportunity_source_type": "federal",
+    "source_registry_id": "00000000-0000-0000-0000-000000000012"
+  }
+]
