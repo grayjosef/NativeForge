@@ -37,6 +37,9 @@ from nativeforge.services import (
     discovery_intake_dedupe_fingerprint_service as dedupe_fp_svc,
 )
 from nativeforge.services import discovery_review_service as d_rev
+from nativeforge.services import (
+    funding_opportunity_intake_discovery_bridge_service as foi_bridge_svc,
+)
 from nativeforge.services import grant_spark_service as gss
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services.opportunity_discovery_service import (
@@ -700,6 +703,10 @@ def process_structured_candidates(
     summary_body = dedupe_fp_svc.attach_dedupe_fingerprint_report_to_intake_summary(
         summary_body,
         dedupe_report,
+    )
+    summary_body = foi_bridge_svc.attach_hardened_preview_to_intake_summary(
+        summary_body,
+        candidates,
     )
     run.run_summary_json = summary_body
     run.error_summary_json = {"errors": error_entries} if error_entries else None
