@@ -1,0 +1,51 @@
+[
+  {
+    "fixture_key": "mr_demo_strong_fit",
+    "opportunity_fixture_key": "efa_demo_strong_fit",
+    "profile_fixture_key": "efa_profile_complete_tribe",
+    "human_confirmation_present": true,
+    "operator_review_completed": true,
+    "profile_mutation_requested": false
+  },
+  {
+    "fixture_key": "mr_demo_incomplete_profile",
+    "opportunity_fixture_key": "efa_demo_incomplete_profile",
+    "profile_fixture_key": "efa_profile_incomplete",
+    "human_confirmation_present": false,
+    "operator_review_completed": false,
+    "profile_mutation_requested": false
+  },
+  {
+    "fixture_key": "mr_demo_missing_deadline",
+    "opportunity_fixture_key": "efa_demo_missing_deadline",
+    "profile_fixture_key": "efa_profile_partial_nonprofit",
+    "human_confirmation_present": false,
+    "operator_review_completed": false,
+    "profile_mutation_requested": false
+  },
+  {
+    "fixture_key": "mr_demo_strong_unconfirmed",
+    "opportunity_fixture_key": "efa_demo_strong_fit",
+    "profile_fixture_key": "efa_profile_complete_tribe",
+    "human_confirmation_present": false,
+    "operator_review_completed": false,
+    "profile_mutation_requested": false
+  },
+  {
+    "fixture_key": "mr_demo_mutation_attempt",
+    "opportunity_fixture_key": "efa_demo_claim_without_evidence",
+    "profile_fixture_key": "efa_profile_no_evidence_codes",
+    "human_confirmation_present": false,
+    "operator_review_completed": false,
+    "profile_mutation_requested": true,
+    "operator_approved": false
+  },
+  {
+    "fixture_key": "mr_demo_geography_blocked",
+    "opportunity_fixture_key": "efa_demo_geography_mismatch",
+    "profile_fixture_key": "efa_profile_northwest_tribe",
+    "human_confirmation_present": false,
+    "operator_review_completed": false,
+    "profile_mutation_requested": false
+  }
+]
