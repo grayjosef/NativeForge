@@ -1,0 +1,11 @@
+---
+description: Governed build loop for NativeForge - plan-gated autonomy, iteration leash
+alwaysApply: true
+---
+# NativeForge Governed Build Loop (Cursor)
+Read CLAUDE.md in repo root (canonical). Rules:
+1. PLAN GATE: output a PLAN and STOP for approval before any code.
+2. Autonomous: per sprint -> implement -> ruff + pytest -> commit to main ONLY if green -> log.
+3. Iteration leash 25 (safety cap); plan sets sprint range; then STOP + Clear Briefing. Never push.
+4. Auto-stop: red unfixable tests, guardrail break, scope drift, blocker, or secrets/production/dependency-sensitive systems.
+Guardrails: PRESERVE STASHES (never drop git stash); no auto-submit grants; Native-relevant scope; dry-run-first Alembic via generation gate; never commit secrets/red builds.
