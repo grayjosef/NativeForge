@@ -1,93 +1,99 @@
-# NativeForge Handoff — Block NF-1: Funding Opportunity Intake Hardening (Sprints 167–181)
+# NativeForge Handoff — Block NF-2: Native Relevance Classification v1 (Sprints 182–196)
 
 **Date:** 2026-05-19  
-**Branch:** `main` (ahead of `origin/main` by 15 commits)  
+**Branch:** `main` (ahead of `origin/main` by 16 commits)  
 **Push:** Not performed (per governance)  
 **Stash:** Preserved — `stash@{0}: wip-sprint8-ui-redesign-do-not-commit`
 
 ## Run summary
 
-Completed the approved 15-sprint Stage 5 funding opportunity intake hardening block with green baseline first. All work is preview-only, synthetic fixtures, fail-closed advisory — no live ingestion, scraping, external URLs, LLM runtime, or source activation.
+Completed the approved 15-sprint Stage 6 native relevance classification block with green baseline first. All work is preview-only, synthetic fixtures, advisory — no live ingestion, scraping, external URLs, LLM runtime, or source activation.
 
 | Sprint | Commit | Summary |
 |--------|--------|---------|
-| 167 | `63bfdb9` | Per-field confidence vocabulary (`confirmed` / `high` / `medium` / `low` / `unknown` / `conflicting`) |
-| 168 | `03d7dba` | Field-level provenance contract |
-| 169 | `646c700` | Provenance-first opportunity record builder |
-| 170 | `fa34abb` | Missing-data flags contract |
-| 171 | `d681950` | Intake status model |
-| 172 | `c7f8948` | Fail-closed gate evaluator (deadline, source, provenance, stale, duplicate) |
-| 173 | `d18cf39` | Operator-approved duplicate detection |
-| 174 | `86a5818` | Synthetic demo fixture corpus (`fixtures/funding_opportunity_intake/demo_records.json`) |
-| 175 | `6c93490` | Hardened opportunity record assembly |
-| 176 | `0d6cced` | Discovery intake bridge — hardened preview on intake run summaries |
-| 177 | `780e7ba` | Per-field confidence rollup |
-| 178 | `4c840f0` | Operator review queue metadata |
-| 179 | `4890288` | Stage 5 gate verification on demo corpus |
-| 180 | `54c48ce` | Stage 5 verification rollup |
-| 181 | `cdd4405` | Stage 5 funding opportunity intake closeout packet |
+| 182 | `a5f1903` | Eight evidence-based classification labels + discoverable-label set |
+| 183 | `8744b5e` | Per-label explanation templates (trigger language, entity types, gaps, operator next-check) |
+| 184 | `cf3ef68` | Classification confidence vocabulary |
+| 185 | `eb19db8` | Human-review trigger vocabulary |
+| 186 | `1974526` | **Overclaim guard** — never `native_specific` without explicit source evidence |
+| 187 | `a2debc2` | **Over-filter guard** — broad-relevant labels stay discoverable |
+| 188 | `6f22453` | Synthetic demo fixture corpus (`fixtures/native_relevance_classification/demo_records.json`) |
+| 189 | `2062bb8` | Deterministic classification evaluator (both invariants applied) |
+| 190 | `dd10e76` | Per-classification explanation builder |
+| 191 | `7717ca3` | Hardened classification record assembler |
+| 192 | `fdcf531` | Discovery intake bridge — `native_relevance_classification_preview` on summaries |
+| 193 | `31881f1` | Classification batch rollup |
+| 194 | `39d09f2` | Operator review queue metadata |
+| 195 | `3c70846` | Stage 6 gate verification on demo corpus |
+| 196 | `38c045d` | Stage 6 native relevance classification closeout packet |
 
 **Iterations used:** 15 product sprints (within leash)
 
 ## Build / test state
 
-- **Full pytest:** `4861 passed`, `11 skipped`, `0 failed` (last run)
-- **Ruff:** Green on sprint-touched Python files; JSON fixtures excluded from ruff scope
+- **Full pytest:** `4905 passed`, `11 skipped`, `0 failed` (last run)
+- **Ruff:** Green on sprint-touched Python files
 - **Alembic head:** `0019` (no new migrations in this block)
 - **Stash:** Untouched
 - **uv.lock:** Not staged or committed
 
-## Stage 5 architecture (offline advisory chain)
+## Stage 6 architecture (offline advisory chain)
 
-Services layer in dependency order:
+### Eight classification labels
 
-1. **Field confidence** (`funding_opportunity_intake_field_confidence_service.py`) — vocabulary + validation
-2. **Field provenance** (`funding_opportunity_intake_field_provenance_service.py`) — per-field source lineage
-3. **Opportunity record** (`funding_opportunity_intake_opportunity_record_service.py`) — provenance-first record shape
-4. **Missing-data flags** (`funding_opportunity_intake_missing_data_flags_service.py`)
-5. **Intake status** (`funding_opportunity_intake_status_service.py`)
-6. **Fail-closed gates** (`funding_opportunity_intake_fail_closed_gates_service.py`) — blocks on missing deadline/source/provenance, stale deadline, unresolved duplicate without operator approval
-7. **Operator duplicate detection** (`funding_opportunity_intake_operator_duplicate_detection_service.py`) — requires explicit operator approval
-8. **Demo fixtures** (`funding_opportunity_intake_demo_fixture_service.py`) — repo-root `fixtures/funding_opportunity_intake/demo_records.json`
-9. **Hardened record** (`funding_opportunity_intake_hardened_record_service.py`) — assembles full hardened preview
-10. **Discovery bridge** (`funding_opportunity_intake_discovery_bridge_service.py`) — attaches `funding_opportunity_intake_hardening_preview` to discovery intake summaries via `discovery_intake_service.py`
-11. **Confidence rollup** (`funding_opportunity_intake_confidence_rollup_service.py`)
-12. **Operator review queue** (`funding_opportunity_intake_operator_review_queue_service.py`)
-13. **Gate verification** (`funding_opportunity_intake_stage5_gate_verification_service.py`)
-14. **Verification rollup** (`funding_opportunity_intake_stage5_verification_rollup_service.py`)
-15. **Closeout packet** (`funding_opportunity_intake_stage5_closeout_packet_service.py`)
+1. `native_specific`
+2. `tribal_government_specific`
+3. `indigenous_community_relevant`
+4. `native_entity_eligible_broad`
+5. `broadly_eligible_potentially_relevant`
+6. `weak_native_relevance`
+7. `uncertain_relevance`
+8. `irrelevant`
 
-Key artifact types: `nf_funding_opportunity_field_confidence_v1`, `nf_funding_opportunity_record_v1`, `nf_funding_opportunity_hardened_record_v1`, `nf_funding_opportunity_stage5_verification_rollup_v1`, `nf_funding_opportunity_intake_stage5_closeout_packet_v1`.
+### Service chain
+
+1. **Label vocabulary** (`native_relevance_classification_label_vocabulary_service.py`)
+2. **Label explanations** (`native_relevance_classification_label_explanation_service.py`)
+3. **Confidence** (`native_relevance_classification_confidence_service.py`)
+4. **Human-review triggers** (`native_relevance_classification_human_review_trigger_service.py`)
+5. **Overclaim guard** (`native_relevance_classification_overclaim_guard_service.py`)
+6. **Over-filter guard** (`native_relevance_classification_over_filter_guard_service.py`)
+7. **Demo fixtures** (`native_relevance_classification_demo_fixture_service.py`)
+8. **Evaluator** (`native_relevance_classification_evaluator_service.py`) — applies both guards
+9. **Explanation builder** (`native_relevance_classification_explanation_builder_service.py`)
+10. **Record assembler** (`native_relevance_classification_record_service.py`)
+11. **Discovery bridge** (`native_relevance_classification_discovery_bridge_service.py`) via `discovery_intake_service.py`
+12. **Rollup** (`native_relevance_classification_rollup_service.py`)
+13. **Operator review queue** (`native_relevance_classification_operator_review_queue_service.py`)
+14. **Gate verification** (`native_relevance_classification_stage6_gate_verification_service.py`)
+15. **Closeout packet** (`native_relevance_classification_stage6_closeout_packet_service.py`)
+
+Key artifact types: `nf_native_relevance_classification_record_v1`, `nf_native_relevance_classification_stage6_gate_verification_v1`, `nf_native_relevance_classification_stage6_closeout_packet_v1`.
+
+## Hard invariants (both tested)
+
+1. **Overclaim guard:** `native_specific` requires explicit source evidence codes (`tribal_set_aside_in_source`, `tribal_eligible_in_source`, etc.). Without evidence, label is downgraded and `overclaim_blocked` triggers human review.
+2. **Over-filter guard:** Labels in `DISCOVERABLE_LABELS` (all except `irrelevant`) cannot be marked non-discoverable; `final_discoverable` is forced true.
 
 ## Key decisions
 
-1. **Green baseline first:** Full suite green (`4834+` passed) before any Stage 5 feature commit.
-2. **Fail-closed by default:** Gates block intake progression when deadline, source, provenance, staleness, or unresolved duplicate conditions are unmet; operator approval is the only path past duplicate holds.
-3. **Synthetic-only corpus:** Demo records are static JSON fixtures — no network, no scraping, no source activation.
-4. **Discovery integration is preview-only:** Intake summaries gain a hardened preview attachment; no persistence or execution side effects.
-5. **Fixture path fix (Sprint 174):** `_FIXTURE_PATH` uses `parents[3]` from service module to resolve repo-root `fixtures/`.
-6. **Terminology:** New code uses funding-opportunity language; no ContractForge/Spark branding in Stage 5 additions.
-
-## Files changed (by theme)
-
-- **Confidence / provenance / record (167–169):** 3 services + 3 tests
-- **Flags / status / gates / duplicates (170–173):** 4 services + 4 tests
-- **Fixtures / hardened record (174–175):** fixture JSON, 2 services + 2 tests
-- **Bridge / rollup / queue (176–178):** 3 services, `discovery_intake_service.py` wiring, 3 tests
-- **Verification / closeout (179–181):** 3 services + 3 tests
+1. **Green baseline first:** Full suite green (`4861` passed) before any Stage 6 feature commit.
+2. **Synthetic-only corpus:** Nine demo fixtures cover all eight labels plus an overclaim-attempt case.
+3. **Discovery integration is preview-only:** Intake summaries gain `native_relevance_classification_preview`; no persistence or execution side effects.
+4. **Evaluator fail-closed:** Classification applies overclaim and over-filter guards on every record before rollup/queue/verification.
+5. **Terminology:** Funding-opportunity / native-relevance language only; no ContractForge/Spark branding in Stage 6 additions.
 
 ## Risks / needs human
 
 - **Not pushed** — Mayhem review required before `git push`.
-- **CLAUDE.md / AGENTS.md / uv.lock** remain untracked or unstaged locally.
-- **Live ingestion** explicitly out of scope; Stage 5 is advisory preview until separate human authorization.
-- **Operator duplicate workflow** requires explicit approval flag — no automatic merge/dedupe.
+- **AIRTABLE_TOKEN** not set in agent environment — `log_run.sh` calls skipped; operator should run locally.
+- **Live classification** explicitly out of scope; Stage 6 is advisory preview until separate human authorization.
 
 ## Proposed next run
 
-1. Push and review the 15 commits on `main`.
-2. Operator walkthrough of Stage 5 verification rollup + demo fixture corpus.
-3. Choose next lane: discovery UI surfacing of hardened preview, connector live-readiness planning, or documentation closeout.
+1. Push and review the 16 commits on `main` (15 feature + prior handoff baseline).
+2. Operator walkthrough of Stage 6 gate verification + demo fixture corpus.
+3. Choose next lane: discovery UI surfacing of classification preview, connector planning, or documentation closeout.
 
 ## Verification commands
 
@@ -95,7 +101,7 @@ Key artifact types: `nf_funding_opportunity_field_confidence_v1`, `nf_funding_op
 cd /home/josefgray/projects/nativeforge
 source .venv/bin/activate
 pytest -q
-git log --oneline -15
+git log --oneline -16
 git stash list   # confirm stash@{0} still present
-pytest tests/test_sprint181_funding_opportunity_intake_stage5_closeout_packet.py -q
+pytest tests/test_sprint196_native_relevance_classification_stage6_closeout_packet.py -q
 ```
