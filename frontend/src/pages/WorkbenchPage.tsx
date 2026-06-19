@@ -14,6 +14,9 @@ import {
 } from "../discoveryApiClient";
 import { getWorkbenchAdvisoryBundle } from "../workbenchApiClient";
 import { readWorkbenchFlag } from "../workbenchFeatureFlag";
+import { getStage12GuidedDemoPath, getStage12DemoReset } from "../stage12DemoApiClient";
+import { readStage12DemoFlag } from "../stage12DemoFeatureFlag";
+import { Stage12GuidedDemo } from "../components/stage12/Stage12GuidedDemo";
 import { WorkbenchStage11 } from "./WorkbenchStage11";
 import { ConnectorIntelligenceCard } from "../components/workbench/ConnectorIntelligenceCard";
 import { SourceQualityCard } from "../components/workbench/SourceQualityCard";
@@ -68,7 +71,9 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
   const [intel, setIntel] = useState<RecordBlock>(emptyRecord);
   const [recs, setRecs] = useState<RecordBlock>(emptyRecord);
   const [advisoryBundle, setAdvisoryBundle] = useState<RecordBlock>(emptyRecord);
+  const [guidedPath, setGuidedPath] = useState<RecordBlock>(emptyRecord);
   const stage11 = readWorkbenchFlag();
+  const stage12 = readStage12DemoFlag();
 
   useEffect(() => {
     if (!orgOk) {
@@ -81,6 +86,7 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
       setIntel(emptyRecord());
       setRecs(emptyRecord());
       setAdvisoryBundle(emptyRecord());
+      setGuidedPath(emptyRecord());
       return;
     }
 
@@ -93,6 +99,7 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
     setIntel({ loading: true, error: null, data: null });
     setRecs({ loading: true, error: null, data: null });
     setAdvisoryBundle({ loading: true, error: null, data: null });
+    setGuidedPath({ loading: true, error: null, data: null });
 
     let alive = true;
 
@@ -208,6 +215,27 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
       }
     })();
 
+    if (stage11 && stage12) {
+      void (async () => {
+        try {
+          const d = await getStage12GuidedDemoPath(base, plane, o);
+          if (alive) {
+            setGuidedPath({ loading: false, error: null, data: d });
+          }
+        } catch (e) {
+          if (alive) {
+            setGuidedPath({
+              loading: false,
+              error: friendlyError(e),
+              data: null,
+            });
+          }
+        }
+      })();
+    } else {
+      setGuidedPath(emptyRecord());
+    }
+
     if (stage11) {
       void (async () => {
         try {
@@ -230,7 +258,18 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
     return () => {
       alive = false;
     };
-  }, [base, plane, o, orgOk, stage11]);
+  }, [base, plane, o, orgOk, stage11, stage12]);
+
+  const handleStage12Reset = () => {
+    try {
+      localStorage.removeItem("nf-stage12-guided-step");
+      localStorage.removeItem("nf-stage12-guided-completed");
+    } catch {
+      /* ignore */
+    }
+    void getStage12DemoReset(base, plane, o).catch(() => undefined);
+    window.location.reload();
+  };
 
   const evidenceRows = useMemo(
     () =>
@@ -257,13 +296,20 @@ export function WorkbenchPage({ plane, orgId, orgOk }: WorkbenchPageProps) {
       <header className="nf-workbench-intro">
         <h2 className="nf-workbench-title">Operator workbench</h2>
         <p className="nf-workbench-blurb">
-          {stage11
+          {stage12 && stage11
+            ? "Stage 12 guided demo path — isolated fictional dataset, preview only."
+            : stage11
             ? "Stage 11 advisory workbench — synthetic fixtures and local DB only. Presentation wiring; human gates preserved."
             : "Read-mostly view of discovery engine outputs for this organization. Add ?nf_workbench=1 for Stage 11 tabs."}
         </p>
       </header>
 
-      {stage11 ? (
+      {stage12 && stage11 ? (
+        <Stage12GuidedDemo
+          guidedPath={guidedPath}
+          onReset={handleStage12Reset}
+        />
+      ) : stage11 ? (
         <WorkbenchStage11
           plane={plane}
           orgId={o}
