@@ -5,10 +5,13 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.canonical_operator_guidance_reconciliation_service import (
+    reconcile_operator_next_checks,
+)
 from nativeforge.services.eligibility_fit_assessment_evaluator_service import (
     assess_eligibility_fit,
 )
-from nativeforge.services.eligibility_fit_assessment_operator_next_check_service import (
+from nativeforge.services.eligibility_fit_assessment_operator_next_check_service import (  # noqa: E501
     build_operator_next_check_guidance,
 )
 from nativeforge.services.native_relevance_classification_record_service import (
@@ -47,6 +50,7 @@ def build_eligibility_fit_assessment_record(
         assessment=assessment,
         native_relevance_preview=native_preview,
     )
+    canonical_next_actions = reconcile_operator_next_checks(operator_guidance)
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -55,6 +59,7 @@ def build_eligibility_fit_assessment_record(
             "native_relevance_preview": native_preview,
             "assessment": assessment,
             "operator_next_check": operator_guidance,
+            "canonical_next_actions": canonical_next_actions,
             "discoverable": assessment["discoverable"],
             "human_review_required": assessment["human_review_required"],
             "final_eligibility_claim": assessment["final_eligibility_claim"],
