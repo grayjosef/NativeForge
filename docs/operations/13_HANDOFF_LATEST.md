@@ -1,111 +1,89 @@
-# NativeForge Handoff — Block NF-3: Org/Applicant Profile Foundation (Sprints 197–211)
+# NativeForge Handoff — Block NF-4: Matching + Readiness v1 (Sprints 212–226)
 
 **Date:** 2026-05-19  
 **Branch:** `main` (ahead of `origin/main`)  
 **Push:** Not performed (per governance)  
 **Stash:** Preserved — `stash@{0}: wip-sprint8-ui-redesign-do-not-commit`
 
-## Preflight verification
-
-| Check | Result |
-|-------|--------|
-| `pwd` | `/home/josefgray/projects/nativeforge` |
-| Branch | `main` |
-| HEAD at block start | `61d3e4d` (met ≥ `7ef1937`) |
-| Working tree | Clean (no staged `uv.lock`) |
-| Stash preserved | `stash@{0}: wip-sprint8-ui-redesign-do-not-commit` |
-| ContractForge/Spark language in org profile work | None found |
-
 ## Run summary
 
-Completed the approved 15-sprint Stage 7 org/applicant profile foundation block with green baseline first (`4947` passed). All work is offline, deterministic, synthetic-fixture-only, advisory — no live ingestion, scraping, external URLs, LLM runtime, source activation, runtime DB mutation, or Alembic migrations.
+Completed the approved 15-sprint Stages 8–10 matching + readiness block with green baseline first (`4989` passed). Consumes Stage 5 opportunity intake, Stage 6 native relevance, and Stage 7 org/applicant profile via the **canonical** `eligibility_fit_assessment_*` layer — extended, not duplicated.
 
 | Sprint | Commit | Summary |
 |--------|--------|---------|
-| 197 | `8352606` | Profile schema vocabulary (20 fields) |
-| 198 | `b393324` | Field-level provenance |
-| 199 | `97f1cc7` | Sensitive-field flags |
-| 200 | `b375a6a` | Review status model (draft → verified_by_user, stale, incomplete, archived) |
-| 201 | `0f6f44a` | Unknown value policy (`UNKNOWN` sentinel; never invent) |
-| 202 | `4cb26a3` | **No-invention guard** — protected fields cannot be fabricated |
-| 203 | `1a387f6` | **Verified-by-user guard** — requires explicit human/customer confirmation |
-| 204 | `b9f8eb6` | **No-mutation-without-approval guard** |
-| 205 | `7d3de15` | Synthetic demo fixture corpus (`fixtures/org_applicant_profile/demo_records.json`) |
-| 206 | `170ac6f` | Provenance-first profile record builder |
-| 207 | `44e2f02` | Profile evaluator (all three hard invariants applied) |
-| 208 | `74066b3` | Hardened profile record assembler |
-| 209 | `89a4f34` | Profile rollup |
-| 210 | `dc2ff50` | Operator review queue + Stage 7 gate verification |
-| 211 | `f482ee6` | Stage 7 org/applicant profile closeout packet |
+| 212 | `a711875` | Canonical match dimensions (re-exports fit dimensions + rollup dimensions) |
+| 213 | `e164287` | Match labels (8 labels) |
+| 214 | `abec4d8` | Application readiness labels (7 labels) |
+| 215 | `c1e5a97` | Next-action guidance templates |
+| 216 | `f8b510d` | Applicant recommendation human-confirmation guard |
+| 217 | `9d09461` | No profile mutation for match fit guard |
+| 218 | `6ef56f9` | No final eligibility without review guard |
+| 219 | `69efb9a` | Fail-closed missing profile/eligibility/deadline guard |
+| 220 | `987ad66` | Synthetic demo pairs (`fixtures/matching_readiness/demo_pairs.json`) |
+| 221 | `6774ed8` | Matching evaluator (`assess_eligibility_fit` via record builder) |
+| 222 | `42adb2c` | Application readiness evaluator |
+| 223 | `5a07dc8` | Matching + readiness record assembler (Stages 5/6/7 inputs) |
+| 224 | `525f6c6` | Rollup + operator review queue |
+| 225 | `66fcec9` | Stages 8–10 gate verification |
+| 226 | `df2c297` | Stages 8–10 matching + readiness closeout packet |
 
 **Iterations used:** 15 product sprints (within leash)
 
 ## Build / test state
 
-- **Baseline at block start:** `4947 passed`, `11 skipped`, `0 failed`
-- **Full pytest (final):** `4989 passed`, `11 skipped`, `0 failed` (+42 org profile tests)
-- **Ruff:** Green on org profile Python files (per-file `E501` ignores in `pyproject.toml`)
-- **Alembic head:** `0019` (no new migrations in this block)
+- **Baseline at block start:** `4989 passed`, `11 skipped`, `0 failed`
+- **Full pytest (final):** `5032 passed`, `11 skipped`, `0 failed` (+43 tests)
+- **Ruff:** Green on matching_readiness Python files (per-file `E501` ignores)
+- **Alembic head:** `0019` (no new migrations)
 - **Stash:** Untouched
 - **uv.lock:** Not staged or committed
 
-## Profile schema (20 fields)
+## Reconciliation with `eligibility_fit_assessment_*`
 
-`legal_name`, `entity_type`, `tribal_government_status`, `federally_recognized_status`, `native_serving_nonprofit_status`, `alaska_native_status`, `native_hawaiian_status`, `tribal_college_status`, `geography`, `service_area`, `population_served`, `program_areas`, `funding_interests`, `eligibility_markers`, `past_awards`, `grant_capacity`, `staff_capacity`, `match_capacity`, `required_documents_on_file`, `contacts`
+| Concern | Canonical source | Matching layer role |
+|---------|------------------|---------------------|
+| Fit dimension evaluators | `eligibility_fit_assessment_dimension_evaluator_service` | Consumed via `build_eligibility_fit_assessment_record` |
+| Deadline risk, docs, blockers, confidence | `eligibility_fit_assessment_*` services | Surfaced as match rollup dimensions (Sprint 212) |
+| Match labels / readiness labels | **New** `matching_readiness_*` | Stages 8–10 advisory outputs only |
+| Operator next-check | Both exist | **Cleanup candidate** — consolidate `eligibility_fit_assessment_operator_next_check_service` with `matching_readiness_next_action_guidance_service` |
+| Application readiness string | `eligibility_fit_assessment` uses `application_readiness` incomplete/complete | **Cleanup candidate** — canonicalize on `matching_readiness` readiness labels |
 
-## Review statuses
+No duplicate dimension evaluators were added. `matching_readiness_matching_evaluator_service` calls `build_eligibility_fit_assessment_record` exclusively.
 
-`draft`, `needs_review`, `reviewed`, `verified_by_user`, `stale`, `incomplete`, `archived`
+## Match labels
 
-## Service chain
+`strong_fit`, `possible_fit`, `uncertain_fit`, `weak_fit`, `not_fit`, `blocked`, `needs_more_profile_data`, `needs_operator_review`
 
-1. **Schema** (`org_applicant_profile_schema_service.py`)
-2. **Field provenance** (`org_applicant_profile_field_provenance_service.py`)
-3. **Sensitive fields** (`org_applicant_profile_sensitive_field_service.py`)
-4. **Review status** (`org_applicant_profile_review_status_service.py`)
-5. **Unknown value policy** (`org_applicant_profile_unknown_value_policy_service.py`)
-6. **No-invention guard** (`org_applicant_profile_no_invention_guard_service.py`)
-7. **Verified-by-user guard** (`org_applicant_profile_verified_by_user_guard_service.py`)
-8. **No-mutation guard** (`org_applicant_profile_no_mutation_without_approval_guard_service.py`)
-9. **Demo fixtures** (`org_applicant_profile_demo_fixture_service.py`)
-10. **Record builder** (`org_applicant_profile_record_builder_service.py`)
-11. **Evaluator** (`org_applicant_profile_evaluator_service.py`)
-12. **Hardened record** (`org_applicant_profile_hardened_record_service.py`)
-13. **Rollup** (`org_applicant_profile_rollup_service.py`)
-14. **Gate verification + review queue** (`org_applicant_profile_stage7_gate_verification_service.py`)
-15. **Closeout packet** (`org_applicant_profile_stage7_closeout_packet_service.py`)
+## Readiness labels
 
-Key artifact types: `nf_org_applicant_profile_hardened_record_v1`, `nf_org_applicant_profile_stage7_gate_verification_v1`, `nf_org_applicant_profile_stage7_closeout_packet_v1`.
+`application_ready`, `ready_with_review`, `not_ready_missing_documents`, `not_ready_deadline_risk`, `not_ready_eligibility_uncertain`, `not_ready_capacity_gap`, `blocked`
 
 ## Hard invariants (all tested)
 
-1. **No invention** — tribal affiliation, federally-recognized status, Native-serving status, certifications, geography, past awards, UEI, authorized representative, documents, and eligibility markers cannot be fabricated; unknown inputs remain `UNKNOWN`.
-2. **No verified_by_user without confirmation** — `verified_by_user` downgrades to `needs_review` unless `human_confirmation_present` or `customer_confirmation_present` is true.
-3. **No mutation without approval** — profile mutations blocked unless `operator_approved` is true; no runtime DB mutation in this layer.
-
-## Coexisting Stage 7 layers
-
-This block adds org/applicant profile foundation alongside the prior eligibility fit assessment layer (also sprints 197–211, committed earlier in the same block series). Both are preview-only advisory services with separate `org_applicant_profile_*` and `eligibility_fit_assessment_*` namespaces.
+1. **Applicant-specific recommendations** → `needs_operator_review` until `human_confirmation_present`
+2. **Never mutate profile to improve match** — mutation guard blocks without `operator_approved`
+3. **No final eligibility without review** — requires `operator_review_completed` + human confirmation
+4. **Fail-closed on missing data** — missing profile/eligibility/deadline forces `needs_more_profile_data` or `blocked`
 
 ## Key decisions
 
-1. **Green baseline first** before any org profile feature commit.
-2. **Provenance-first record builder** applies no-invention guard per schema field before assembly.
-3. **Six demo fixtures** cover tribal government, incomplete profile, native nonprofit, verified attempt (blocked), verified confirmed, and mutation request (blocked).
-4. **Discoverability preserved** — incomplete profiles remain `discoverable: true` with forced human review.
-5. **NativeForge language only** — no Spark, ContractForge, bid, or solicitation branding.
+1. **Green baseline first** before any feature commit.
+2. **Canonical fit layer preserved** — `matching_readiness_*` adds labels, readiness, and guards only.
+3. **Stage consumption in record assembler** — Stage 5 hardened opportunity, Stage 6 native relevance preview (via fit record), Stage 7 org profile hardened record.
+4. **Six demo pairs** exercise strong fit, incomplete profile, missing deadline, unconfirmed recommendation, mutation attempt, geography mismatch.
+5. **NativeForge language only** — no Spark/ContractForge branding.
 
 ## Risks / needs human
 
-- **Not pushed** — Review required before `git push`.
-- **AIRTABLE_TOKEN** not set in agent environment — all `log_run.sh` calls skipped.
-- **Live profile ingestion** explicitly out of scope until separate human authorization.
+- **Not pushed** — review required before `git push`.
+- **Reconciliation cleanup** — operator guidance and readiness terminology overlap documented in gate verification; consolidate in a future sprint.
+- **Live matching** out of scope until separate human authorization.
 
 ## Proposed next safe action
 
-1. Push and review the 16 org-profile commits on `main`.
-2. Operator walkthrough of Stage 7 gate verification + demo fixture corpus.
-3. Wire org profile previews into discovery intake summaries (advisory only) or continue eligibility fit integration.
+1. Push and review the 16 commits on `main`.
+2. Consolidate operator guidance overlap between `eligibility_fit_assessment_*` and `matching_readiness_*`.
+3. Wire matching readiness preview into discovery intake summaries (advisory only).
 
 ## Verification commands
 
@@ -114,6 +92,6 @@ cd /home/josefgray/projects/nativeforge
 source .venv/bin/activate
 pytest -q
 git log --oneline -16
-git stash list   # confirm stash@{0} still present
-pytest tests/test_sprint211_org_applicant_profile_stage7_closeout_packet.py -q
+git stash list
+pytest tests/test_sprint226_matching_readiness_stages8_10_closeout_packet.py -q
 ```
