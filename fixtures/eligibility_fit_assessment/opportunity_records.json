@@ -1,0 +1,46 @@
+[
+  {
+    "fixture_key": "efa_demo_strong_fit",
+    "opportunity_title": "Tribal language preservation grant",
+    "application_deadline": "2027-06-30T00:00:00Z",
+    "program_area": "language_preservation",
+    "required_geography": "northwest",
+    "tribal_eligible": true,
+    "profile_fixture_key": "efa_profile_complete_tribe"
+  },
+  {
+    "fixture_key": "efa_demo_incomplete_profile",
+    "opportunity_title": "Community development block grant",
+    "application_deadline": "2027-03-15T00:00:00Z",
+    "program_area": "community_development",
+    "required_geography": "national",
+    "tribal_eligible": true,
+    "profile_fixture_key": "efa_profile_incomplete"
+  },
+  {
+    "fixture_key": "efa_demo_missing_deadline",
+    "opportunity_title": "Capacity building opportunity",
+    "program_area": "capacity_building",
+    "required_geography": "southwest",
+    "tribal_eligible": false,
+    "profile_fixture_key": "efa_profile_partial_nonprofit"
+  },
+  {
+    "fixture_key": "efa_demo_claim_without_evidence",
+    "opportunity_title": "Tribal government infrastructure",
+    "application_deadline": "2027-09-01T00:00:00Z",
+    "program_area": "infrastructure",
+    "required_geography": "northwest",
+    "tribal_eligible": true,
+    "profile_fixture_key": "efa_profile_no_evidence_codes"
+  },
+  {
+    "fixture_key": "efa_demo_geography_mismatch",
+    "opportunity_title": "Southwest drought resilience",
+    "application_deadline": "2027-11-01T00:00:00Z",
+    "program_area": "climate_resilience",
+    "required_geography": "southwest",
+    "tribal_eligible": true,
+    "profile_fixture_key": "efa_profile_northwest_tribe"
+  }
+]

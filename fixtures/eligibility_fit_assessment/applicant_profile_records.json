@@ -1,0 +1,79 @@
+[
+  {
+    "fixture_key": "efa_profile_complete_tribe",
+    "organization_name": "Illustrative Northwest Tribe",
+    "applicant_type": "tribal_government",
+    "service_geography": "northwest",
+    "grant_management_capacity": "strong",
+    "program_areas": ["language_preservation", "community_development"],
+    "profile_evidence_codes": [
+      "applicant_type_confirmed_in_profile",
+      "tribal_eligibility_confirmed_in_profile",
+      "geography_confirmed_in_profile",
+      "capacity_confirmed_in_profile",
+      "documentation_inventory_confirmed_in_profile"
+    ],
+    "documentation_inventory": {
+      "organizational_profile_complete": true,
+      "tribal_resolution_on_file": true,
+      "financial_statements_on_file": true,
+      "authorized_signer_confirmed": true
+    }
+  },
+  {
+    "fixture_key": "efa_profile_incomplete",
+    "organization_name": "",
+    "applicant_type": null,
+    "service_geography": null,
+    "profile_evidence_codes": []
+  },
+  {
+    "fixture_key": "efa_profile_partial_nonprofit",
+    "organization_name": "Illustrative Native Nonprofit",
+    "applicant_type": "native_serving_nonprofit",
+    "service_geography": "southwest",
+    "grant_management_capacity": "moderate",
+    "program_areas": ["capacity_building"],
+    "profile_evidence_codes": ["applicant_type_confirmed_in_profile"],
+    "documentation_inventory": {
+      "organizational_profile_complete": true,
+      "tribal_resolution_on_file": false,
+      "financial_statements_on_file": false,
+      "authorized_signer_confirmed": true
+    }
+  },
+  {
+    "fixture_key": "efa_profile_no_evidence_codes",
+    "organization_name": "Unverified Applicant Entity",
+    "applicant_type": "tribal_government",
+    "service_geography": "northwest",
+    "grant_management_capacity": "strong",
+    "program_areas": ["infrastructure", "community_development"],
+    "profile_evidence_codes": [],
+    "documentation_inventory": {
+      "organizational_profile_complete": true,
+      "tribal_resolution_on_file": true,
+      "financial_statements_on_file": true,
+      "authorized_signer_confirmed": true
+    }
+  },
+  {
+    "fixture_key": "efa_profile_northwest_tribe",
+    "organization_name": "Northwest Tribe",
+    "applicant_type": "tribal_government",
+    "service_geography": "northwest",
+    "grant_management_capacity": "strong",
+    "program_areas": ["climate_resilience"],
+    "profile_evidence_codes": [
+      "applicant_type_confirmed_in_profile",
+      "geography_confirmed_in_profile",
+      "capacity_confirmed_in_profile"
+    ],
+    "documentation_inventory": {
+      "organizational_profile_complete": true,
+      "tribal_resolution_on_file": true,
+      "financial_statements_on_file": true,
+      "authorized_signer_confirmed": true
+    }
+  }
+]
