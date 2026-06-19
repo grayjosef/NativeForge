@@ -1,4 +1,4 @@
-# NativeForge Handoff — Block NF-5: Operator Workbench UX v1 (Sprints 227–241)
+# NativeForge Handoff — Block NF-6: Future-state Demo Path + Beta Hardening (Sprints 242–256)
 
 **Date:** 2026-05-19  
 **Branch:** `main` (ahead of `origin/main`)  
@@ -7,96 +7,115 @@
 
 ## Run summary
 
-Completed the approved 15-sprint Stage 11 operator workbench block with green baseline first (`5032` passed). Presentational + wiring only: Vite/React workbench screens consume read-only FastAPI advisory bundles and existing discovery/local-DB endpoints. No scoring, relevance, matching logic, hard invariants, or human gates were changed.
+Completed the approved 15-sprint Stage 12 block with green baseline first (`5041` passed). Reconciled NF-4 cleanup candidates first, then built an isolated fictional demo dataset (`nf_stage12` namespace) and a guided first-use flow through the operator workbench. Presentational + wiring only; all hard invariants and human gates preserved.
 
 | Sprint | Commit | Summary |
 |--------|--------|---------|
-| 227 | `4be8e16` | `nf_workbench` feature flag (`?nf_workbench=1` / localStorage) |
-| 228 | `b95a7f4` | Operator workbench advisory service (synthetic fixture corpus) |
-| 229 | `c551403` | Advisory routes + `main.py` router wiring (`nf_workbench` query required) |
-| 230 | `c8f125e` | `workbenchApiClient` HTTP client |
-| 231 | `67101b6` | `WorkbenchStateBadges` + Stage 11 tab types |
-| 232 | `09fe91f` | Source review queue screen (local DB review items) |
-| 233 | `81040b6` | Discovery / intake review screen (Stage 5 advisory preview) |
-| 234 | `45ed602` | Native relevance review screen (8 labels + confidence + evidence) |
-| 235 | `b792a76` | Org / applicant profile screen (UNKNOWN surfaced) |
-| 236 | `0335fd6` | Matching + readiness screen (fit dimensions, blockers, next-action) |
-| 237 | `7e59898` | Operator ledger + decision pack screen |
-| 238 | `7c7599a` | `WorkbenchStage11` tabbed shell |
-| 239 | `7bf055d` | `WorkbenchPage` wiring (flag on → Stage 11; off → legacy grid) |
-| 240 | `fac3ce8` | Stage 11 CSS (tabs, badges, preview cards) |
-| 241 | `a8a14f5` | Frontend smoke tests + Stage 11 closeout packet |
+| 242 | `d491714` | Reconcile `operator_next_check` → canonical `next_actions` |
+| 243 | `e471069` | Canonicalize `application_readiness` on `readiness_label` |
+| 244 | `247ab13` | Isolated Stage 12 demo fixtures (sources, 4 opps, profile) |
+| 245 | `309ccad` | Demo dataset loader + namespace isolation guards |
+| 246 | `39bdde9` | Safe demo reset descriptor (no DB writes) |
+| 247 | `9193c8b` | Guided flow step vocabulary (8 steps) |
+| 248 | `e7b850f` | Guided demo path advisory service |
+| 249 | `2a34cfd` | Stage 12 API routes (`nf_stage12_demo` flag required) |
+| 250 | `ff3c255` | Frontend feature flag + API client |
+| 251 | `d457372` | Guided flow types + stepper |
+| 252 | `f9f64a7` | Review screens (discovery, quality, intake, relevance, match) |
+| 253 | `6db16ba` | Activation readiness preview step (no execution) |
+| 254 | `479f377` | Operator decision + evidence steps; WorkbenchPage wiring |
+| 255 | `de88717` | Beta hardening gate verification + CSS |
+| 256 | `f3a5e57` | Full-flow smoke tests + closeout packet |
 
 **Iterations used:** 15 product sprints (within leash)
 
+## NF-4 reconciliation (completed first)
+
+| Cleanup candidate | Resolution |
+|-------------------|------------|
+| `operator_next_check` overlap | `canonical_operator_guidance_reconciliation_service` maps fit topics → `matching_readiness` `next_actions`; exposed as `canonical_next_actions` on fit records |
+| `application_readiness` vs `readiness_label` | `readiness_terminology_reconciliation_service` canonicalizes on `readiness_label`; org profile records include both legacy + canonical fields |
+
+Gate verification (`matching_readiness_stages8_10_gate_verification`) updated: `reconciliation_cleanup_candidates` now empty.
+
 ## Build / test state
 
-- **Baseline at block start:** `5032 passed`, `11 skipped`, `0 failed`
-- **Full pytest (final):** `5041 passed`, `11 skipped`, `0 failed` (+9 tests)
+- **Baseline at block start:** `5041 passed`, `11 skipped`, `0 failed`
+- **Full pytest (final):** `5065 passed`, `11 skipped`, `0 failed` (+24 tests)
 - **Ruff:** Green on new backend files
-- **Frontend:** `npm run typecheck`, `npm test` (23 passed), `npm run build` — all green
+- **Frontend:** `npm run typecheck`, `npm test` (33 passed), `npm run build` — all green
 - **Alembic head:** `0019` (no new migrations)
 - **Stash:** Untouched
 - **uv.lock:** Not staged or committed
 
-## Stage 11 smoke verification (Sprint 241)
+## Isolated demo dataset (`nf_stage12`)
 
-**run_id:** `smoke-1781879593654` (vitest `workbenchStage11Smoke.test.tsx`)
+| Asset | Count | Notes |
+|-------|-------|-------|
+| Sources | 2 | Fictional namespaced (`nf_stage12_src_*`) |
+| Opportunities | 4 | native_specific, broadly_eligible, weak/uncertain, stale/expired |
+| Profile | 1 | Red Cedar Nation (fictional tribal government demo) |
 
-| Screen | Result |
-|--------|--------|
-| source-review-queue | PASS |
-| discovery-intake-review | PASS |
+All fixtures under `fixtures/stage12_demo_path/` with `demo_namespace: nf_stage12`, `fictional_only: true`. Loader enforces namespace + explicit demo context.
+
+## Guided flow (8 steps)
+
+1. Source discovery  
+2. Source quality review  
+3. Activation readiness (**preview only**, `may_activate_now: false`)  
+4. Opportunity intake (stale shown honestly)  
+5. Native relevance review (evidence + broad-vs-specific labels)  
+6. Profile match + readiness (`needs_operator_review`, no final eligibility)  
+7. Operator decision (no verified/approved without operator action)  
+8. Evidence / audit trail (synthetic audit preview)
+
+**Flags:** `?nf_workbench=1&nf_stage12_demo=1` on frontend; API requires `nf_stage12_demo=true`.
+
+## Sprint 256 smoke verification (real vitest run)
+
+**run_id:** `stage12-smoke-1781882733211`
+
+| Step | Result |
+|------|--------|
+| source-discovery | PASS |
+| source-quality-review | PASS |
+| activation-readiness-preview | PASS |
+| opportunity-intake | PASS |
 | native-relevance-review | PASS |
-| org-applicant-profile | PASS |
-| matching-readiness | PASS |
-| workbench-stage11-shell | PASS |
+| profile-match-readiness | PASS |
+| operator-decision | PASS |
+| evidence-audit-trail | PASS |
+| guided-demo-shell | PASS |
 
-Closeout packet: `build_operator_workbench_stage11_closeout_packet` reports `smoke_verification_passed: true` when all six canonical screens pass.
+Closeout packet: `build_stage12_guided_demo_closeout_packet` reports `smoke_verification_passed: true` when all eight canonical steps pass.
 
-## Architecture
+## Hard invariants preserved
 
-### Feature flag
-
-- **Frontend:** `readWorkbenchFlag()` — `?nf_workbench=1` or `localStorage` key `nf-workbench-enabled`
-- **API:** `nf_workbench=true` query param required on `/discovery/operator-workbench-advisory/*` (403 without flag)
-
-### Advisory layers wired (read-only)
-
-| Screen | Data source |
-|--------|-------------|
-| Source review queue | Local DB via existing discovery review-items API |
-| Discovery / intake | `funding_opportunity_intake_*` synthetic previews |
-| Native relevance | `native_relevance_classification_*` previews |
-| Org / applicant profile | `org_applicant_profile_*` previews |
-| Matching + readiness | `matching_readiness_*` (canonical fit via `eligibility_fit_assessment_*`) |
-| Ledger / decisions | Existing `operator-decision-pack`, ledger summary, open actions |
-
-### Hard invariants preserved (UI surfaces honestly)
-
-- `needs_operator_review`, `UNKNOWN`, `overclaim_blocked` badges visible
-- No path to verified/approved without explicit operator action
-- `synthetic_fixtures_only` / `preview_only` / `no_live_ingestion` on advisory payloads
+- No source activation execution
+- No live ingestion, scraping, LLM runtime, or new migrations
+- `needs_operator_review`, `UNKNOWN`, `overclaim_blocked`, stale/expired surfaced honestly
+- Nothing reaches verified/approved/active without explicit operator action
+- Demo data fully isolated from production/other namespaces
 
 ## Key decisions
 
-1. **Green baseline first** before any feature commit.
-2. **Behind `nf_workbench`** — legacy workbench grid unchanged when flag off.
-3. **Advisory service composes existing Stage 5–10 services** — no duplicate evaluators.
-4. **Local dev only** — no live ingestion, scraping, LLM runtime, source activation, or new migrations.
-5. **NativeForge language only** — no ContractForge/Spark branding in Stage 11 UX.
+1. **Reconcile NF-4 terminology first** before demo wiring.
+2. **`nf_stage12` namespace** on all fictional fixtures — contamination guard in loader.
+3. **Stage 12 overlays Stage 11** when both `nf_workbench` and `nf_stage12_demo` flags on.
+4. **Demo reset** is descriptor-only (clears guided-flow localStorage keys; no DB writes).
+5. **NativeForge language only** — no ContractForge/Spark branding.
 
 ## Risks / needs human
 
 - **Not pushed** — review required before `git push`.
-- **Operator ledger screen** reuses existing `PriorityActionsCard` / `OperatorLedgerCard` — full ledger tab UX may need polish in a follow-on sprint.
-- **Production wiring** out of scope until separate human authorization.
+- **Manual QA** recommended: `?view=workbench&nf_workbench=1&nf_stage12_demo=1` against local API.
+- **Production demo path** out of scope until separate human authorization.
 
 ## Proposed next safe action
 
-1. Push and review the 15 commits (+ handoff) on `main`.
-2. Manual QA: start API + frontend with `?nf_workbench=1` against local demo org.
-3. Consolidate operator guidance overlap (`eligibility_fit_assessment_*` vs `matching_readiness_*`) before enabling flag by default.
+1. Push and review the 16 commits (+ handoff) on `main`.
+2. Manual walkthrough of full guided path with local demo org.
+3. Consider persisting guided-step progress in localStorage (currently stepper state is session-only).
 
 ## Verification commands
 
@@ -105,7 +124,8 @@ cd /home/josefgray/projects/nativeforge
 source .venv/bin/activate
 pytest -q
 cd frontend && npm run typecheck && npm test && npm run build
-git log --oneline -16
+git log --oneline -17
 git stash list
-pytest tests/test_sprint241_operator_workbench_stage11_closeout_packet.py -q
+pytest tests/test_sprint256_stage12_closeout_packet.py -q
+pytest tests/test_sprint255_stage12_beta_hardening_gate.py -q
 ```
