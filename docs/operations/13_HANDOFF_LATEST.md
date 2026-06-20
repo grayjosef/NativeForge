@@ -1,4 +1,4 @@
-# NativeForge Handoff — Block NF-7: Live Source Ingestion (real seed) (Sprints 257–271)
+# NativeForge Handoff — Block NF-8: Staging Activation Dry-Run (Sprints 272–286)
 
 **Date:** 2026-05-19  
 **Branch:** `main` (ahead of `origin/main`)  
@@ -7,121 +7,119 @@
 
 ## Run summary
 
-Completed the approved 15-sprint live source ingestion block with green baseline first (`5065` passed). Ingested the real 177-row seed CSV into discovery as inactive candidates, added URL quality + access posture verification, tier-1/2/3 adapter scaffolding, plan-gated API routes, gate verification, and closeout packet. Hard gates preserved: human activation before scrape, public-only automation, members/login blocked, no credentials, rate-limited, idempotent upserts. Synthetic fixtures only in tests — no live HTTP in the test suite.
+Completed the approved 15-sprint staging activation dry-run block with green baseline first (`5086` passed). Added staging-only guards, triple plan gate, full 177-candidate seed preview report, single tier-1 dry fetch with idempotent upsert verification, activation-ready recommendations, and plan-gated API routes. **Stopped before any source activation** — no `is_active=True` anywhere.
 
 | Sprint | Commit | Summary |
 |--------|--------|---------|
-| 257 | `3bcd0d3` | `NF_SOURCE_SEED_2026.csv` (177 rows) + seed schema contract + generator |
-| 258 | `4f838c4` | Seed CSV loader → discovery candidates (`is_active=False`) |
-| 259 | `4f47a06` | URL resolve + access posture (`public` / `members` / `login`) |
-| 260 | `d15c08e` | Plan gate (`NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED`) |
-| 261 | `b318c71` | Tier-1 federal adapter (Grants.gov / Simpler / GrantSolutions) |
-| 262 | `78161cb` | Tier-1 idempotent upsert on canonical opportunity id (tests) |
-| 263 | — | *(covered by sprint 262 commit — tier-1 test file)* |
-| 264 | `5ef33c6` | Tier-2 state portal adapter registry + tests |
-| 265 | — | *(covered by sprint 264 commit — tier-2 tests bundled)* |
-| 266 | `91ccd00` | Tier-3 foundation/directory discovery + dedupe + freshness refresh |
-| 267 | — | *(covered by sprint 266 commit — tier-3 tests bundled)* |
-| 268 | `9fd4d95` | Orchestrator: seed → quality → tier routing preview + registry persist |
-| 269 | `0453b8e` | Plan-gated API routes (`nf_live_source_ingestion=true`) + main wiring |
-| 270 | `1304bb3` | Gate verification service |
-| 271 | `05f52e8` | Closeout packet |
+| 272 | `1262f5f` | Staging environment guard (`NF_APP_ENV=staging`; production fail-closed) |
+| 273 | `a1e972e` | Staging activation dry-run plan gate (staging + live ingestion flags) |
+| 274 | `480d1c3` | Full seed preview report with URL quality + posture per candidate |
+| 275 | `b28cbf7` | Seed preview report tests |
+| 276 | `f5a2d23` | Tier-1 single-source rate-limited dry fetch service |
+| 277 | `f987281` | Tier-1 idempotent upsert path tests (second run = 0 new) |
+| 278 | `c82586d` | Activation-ready report (green vs BLOCKED; no activation) |
+| 279 | `4781012` | Staging activation dry-run orchestrator |
+| 280 | `5f41d1b` | Plan-gated API routes + production block tests |
+| 281 | `8992c32` | Gate verification service |
+| 282 | `0087610` | Closeout packet |
+| 283–285 | *(folded into 280/273 hardening)* | Production env 403 on routes; non-staging gate rejection |
+| 286 | *(this handoff)* | Block closeout |
 
-**Iterations used:** 12 product commits covering 15 sprints (within leash; 263/265/267 folded into adjacent commits)
+**Iterations used:** 11 product commits + hardening + handoff (within leash)
 
-## Seed dataset (`NF_SOURCE_SEED_2026.csv`)
+## Staging plan gate (triple gate)
+
+All dry-run paths require **all** of:
+
+| Gate | Value |
+|------|-------|
+| `NF_APP_ENV` | `staging` (production/local fail-closed) |
+| Env | `NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED=true` |
+| Query | `nf_live_source_ingestion=true` |
+| Query | `nf_staging_activation_dry_run=true` |
+
+## Seed preview report (177 candidates)
+
+Deterministic dry-run against seed CSV (synthetic URL resolver in CI):
 
 | Metric | Count |
 |--------|-------|
-| Total sources | 177 |
-| Tier 1 (federal) | 61 |
-| Tier 2 (state portals) | 52 |
-| Tier 3 (foundation/org) | 64 |
-| Access posture: public | 156 |
-| Access posture: login | 18 |
-| Access posture: members | 3 |
+| Total candidates | 177 |
+| URL resolved | 177 |
+| Dead URLs | 0 |
+| Public posture | 156 |
+| Login posture | 18 |
+| Members posture | 3 |
+| BLOCKED/referral (members + login) | 21 |
 
-**Path:** `fixtures/source_ingestion/NF_SOURCE_SEED_2026.csv`  
-**Generator:** `scripts/generate_nf_source_seed_2026.py`
+Each candidate row includes: `url_status` (`resolved`/`dead`), `access_posture`, `access_posture_blocked`, `referral_required`, `is_active: false`.
 
-## Architecture (services)
+## Tier-1 dry fetch (single source)
 
-| Service | Role |
-|---------|------|
-| `source_ingestion_seed_schema_service` | CSV column contract + row count guard |
-| `source_ingestion_seed_loader_service` | Parse CSV → inactive discovery candidates |
-| `source_ingestion_url_quality_service` | URL resolve + posture; members/login → `access_posture_blocked` |
-| `source_ingestion_plan_gate_service` | Env + query flag double gate |
-| `source_ingestion_tier1_federal_adapter_service` | Federal parser; canonical opp id; idempotent upsert |
-| `source_ingestion_tier2_state_adapter_service` | State portal registry; public listings only |
-| `source_ingestion_tier3_foundation_adapter_service` | Directory self-extension (NAP, AIHEC, Native Ways); dedupe + freshness |
-| `source_ingestion_orchestrator_service` | End-to-end preview; `persist_seed_candidates_to_registry()` |
-| `source_ingestion_gate_verification_service` | Block gate checks |
-| `source_ingestion_closeout_packet_service` | Deterministic closeout artifact |
+- **Source:** first tier-1 federal adapter candidate (`nf-seed-2026-fed-001`)
+- **Rate limit:** 1 request / second minimum interval
+- **Upsert path:** first run inserts 1 canonical opp id; second run inserts 0 (idempotent verified)
+- **No bulk crawl**
 
-## API (plan-gated)
+## Activation-ready report (STOP — no activation)
 
-Requires **both**:
-- Query: `nf_live_source_ingestion=true`
-- Env: `NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED=true`
+| Tier-1 status | Count |
+|---------------|-------|
+| GREEN (public + resolved) | 61 |
+| BLOCKED (members/login) | 0 |
+| NOT_READY (dead URL) | 0 |
+
+**Recommended first human activation candidate:** `nf-seed-2026-fed-001`  
+**Blocked tier-3 examples:** Native Ways Federation Members, NIHB, NCAI (members posture)
+
+No source was activated. All candidates remain `is_active=False`.
+
+## API endpoints (staging dry-run)
 
 | Method | Path | Purpose |
 |--------|------|---------|
-| GET | `/api/v1/orgs/{org_id}/discovery/source-ingestion/seed-preview` | Preview seed → quality → tier routing |
-| POST | `/api/v1/orgs/{org_id}/discovery/source-ingestion/load-seed-candidates` | Persist inactive candidates to registry |
+| GET | `/v1/nf/{demo\|real}/orgs/{org_id}/discovery/source-ingestion/staging-seed-preview-report` | 177-candidate quality report |
+| GET | `/v1/nf/{demo\|real}/orgs/{org_id}/discovery/source-ingestion/staging-activation-dry-run` | Full dry-run (preview + tier-1 + activation-ready) |
 
 ## Build / test state
 
-- **Baseline at block start:** `5065 passed`, `11 skipped`, `0 failed`
-- **Full pytest (final):** `5086 passed`, `11 skipped`, `0 failed` (+21 tests)
-- **Ruff:** Green on all NF-7 source ingestion files + seed generator
-- **Frontend:** No changes in this block
+- **Baseline at block start:** `5086 passed`, `11 skipped`, `0 failed`
+- **Full pytest (final):** `5103 passed`, `11 skipped`, `0 failed` (+17 tests)
+- **Ruff:** Green on all NF-8 staging files
+- **Frontend:** No changes
 - **Alembic head:** `0019` (no new migrations)
 - **Stash:** Untouched
 - **uv.lock:** Not staged or committed
 
 ## Hard invariants preserved
 
-- Candidates load with `is_active=False`, `verification_status=unverified`, `human_activation_required=True`
-- No opportunity scrape without explicit human activation per source
-- `members` / `login` postures → `access_posture_blocked=True`; referral only, never bypassed
-- No credentials stored or used
-- Rate-limited adapter design; idempotent upsert on canonical opportunity id
-- Tests use synthetic URL resolver — no live network in CI
-- NativeForge language only — no ContractForge/Spark branding
-
-## Gate verification (sprint 270)
-
-`verify_source_ingestion_gates()` checks:
-
-- Seed row count = 177
-- All candidates inactive; human activation required
-- No scrape without activation
-- Quality batch covers all rows; blocked postures present
-- Tier-1 idempotent upsert
-
-Closeout packet reports `gate_verification_passed: true` when all checks pass.
+- Staging only — production environment returns 403 on dry-run routes
+- Human activation gate untouched — dry-run stops before activation
+- No `is_active=True` set anywhere
+- members/login → BLOCKED/referral; never bypassed
+- No credentials; rate-limited tier-1 fetch; idempotent upsert
+- Synthetic resolver in CI — no live HTTP in test suite
+- NativeForge language only
 
 ## Key decisions
 
-1. **Real seed CSV** generated in-repo (177 rows) because upstream file was absent.
-2. **Double plan gate** (env + query flag) for any live-ingestion API surface.
-3. **Tier adapters are scaffolding** — synthetic fixtures in tests; production crawl requires per-source human activation.
-4. **Tier-3 directory discovery** self-extends from NAP/AIHEC/Native Ways member lists with canonical-id dedupe.
-5. **Sprint numbering gaps** (263, 265, 267) — work landed in adjacent commits to avoid empty commits.
+1. **Triple gate** — staging env + NF-7 plan gate + dry-run query flag.
+2. **Route-level staging check** — `is_staging_activation_dry_run_approved()` requires `NF_APP_ENV=staging`.
+3. **Activation-ready report is advisory only** — lists top-10 GREEN tier-1 candidates; operator must activate manually.
+4. **Tier-1 dry fetch uses synthetic payload in CI** — production staging can inject live fetcher when authorized.
 
 ## Risks / needs human
 
 - **Not pushed** — review required before `git push`.
-- **Live URL verification** not exercised in CI; operator should run seed-preview against staging with real resolver when authorized.
-- **Tier-2/3 scrapers** are light per-portal stubs — production hardening is follow-on work per portal.
-- **21 login/members sources** will remain blocked until manual referral workflow is defined.
+- **Staging deployment** must set `NF_APP_ENV=staging` and plan gate env vars before calling dry-run endpoints.
+- **Live URL resolver** on staging still requires separate authorization (CI uses synthetic resolver).
+- **Activation is the next human gate** — dry-run explicitly does not activate sources.
 
 ## Proposed next safe action
 
-1. Review the 12 NF-7 commits (+ handoff) on `main`.
-2. Set `NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED=true` in staging; call seed-preview for one org.
-3. Operator review: load seed candidates, inspect URL quality report, activate sources one-by-one before enabling tier adapters.
+1. Deploy to staging with `NF_APP_ENV=staging` + `NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED=true`.
+2. Call `staging-activation-dry-run` for one org; review activation-ready report.
+3. Human operator activates **one** tier-1 GREEN source when authorized — never bulk activate.
 
 ## Verification commands
 
@@ -129,12 +127,10 @@ Closeout packet reports `gate_verification_passed: true` when all checks pass.
 cd /home/josefgray/projects/nativeforge
 source .venv/bin/activate
 pytest -q
-ruff check src/nativeforge/services/source_ingestion*.py \
-  src/nativeforge/api/source_ingestion_routes.py \
-  scripts/generate_nf_source_seed_2026.py
-pytest tests/test_sprint25*_source_ingestion*.py \
-  tests/test_sprint26*_source_ingestion*.py \
-  tests/test_sprint27*_source_ingestion*.py -q
-git log --oneline f4cfd41..HEAD
+ruff check src/nativeforge/services/staging*.py src/nativeforge/api/source_ingestion_routes.py
+pytest tests/test_sprint27*_staging*.py tests/test_sprint28*_staging*.py -q
+NF_APP_ENV=staging NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED=true \
+  python -c "from nativeforge.services.staging_activation_dry_run_orchestrator_service import run_staging_activation_dry_run; print(run_staging_activation_dry_run()['activation_ready_report']['green_count'])"
+git log --oneline db7d9a1..HEAD
 git stash list
 ```
