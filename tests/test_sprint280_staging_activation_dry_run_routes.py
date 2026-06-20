@@ -42,6 +42,36 @@ def test_staging_dry_run_requires_flags(client_staging: TestClient) -> None:
     assert r.status_code == 403
 
 
+def test_staging_seed_preview_report_route(client_staging: TestClient) -> None:
+    r = client_staging.get(
+        f"/v1/nf/demo/orgs/{_DEMO_ORG}/discovery/source-ingestion/"
+        "staging-seed-preview-report",
+        params={
+            "nf_live_source_ingestion": True,
+            "nf_staging_activation_dry_run": True,
+        },
+        headers=_hdr(_DEMO_ORG),
+    )
+    assert r.status_code == 200
+    assert r.json()["seed_row_count"] == 177
+
+
+def test_production_env_blocked(client_staging: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("NF_APP_ENV", "production")
+    get_settings.cache_clear()
+    r = client_staging.get(
+        f"/v1/nf/demo/orgs/{_DEMO_ORG}/discovery/source-ingestion/"
+        "staging-activation-dry-run",
+        params={
+            "nf_live_source_ingestion": True,
+            "nf_staging_activation_dry_run": True,
+        },
+        headers=_hdr(_DEMO_ORG),
+    )
+    assert r.status_code == 403
+    get_settings.cache_clear()
+
+
 def test_staging_dry_run_with_flags(client_staging: TestClient) -> None:
     r = client_staging.get(
         f"/v1/nf/demo/orgs/{_DEMO_ORG}/discovery/source-ingestion/"

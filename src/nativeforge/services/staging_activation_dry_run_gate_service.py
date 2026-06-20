@@ -12,6 +12,7 @@ from nativeforge.services.source_ingestion_plan_gate_service import (
 )
 from nativeforge.services.staging_environment_guard_service import (
     build_staging_environment_contract,
+    is_staging_environment,
     require_staging_not_production,
 )
 
@@ -29,7 +30,8 @@ def is_staging_activation_dry_run_approved(
     nf_staging_activation_dry_run: bool,
 ) -> bool:
     return (
-        nf_live_source_ingestion
+        is_staging_environment()
+        and nf_live_source_ingestion
         and nf_staging_activation_dry_run
         and is_live_source_ingestion_plan_approved()
     )
