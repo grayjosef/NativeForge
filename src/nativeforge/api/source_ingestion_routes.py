@@ -16,6 +16,15 @@ from nativeforge.api.deps_db import (
 from nativeforge.api.org_context import OrgContext
 from nativeforge.repositories import organizations as org_repo
 from nativeforge.services import source_ingestion_orchestrator_service as orch
+from nativeforge.services.real_resolver_seed_preview_report_service import (
+    build_real_resolver_seed_preview_report,
+)
+from nativeforge.services.real_resolver_validation_gate_service import (
+    is_real_resolver_validation_approved,
+)
+from nativeforge.services.real_resolver_validation_orchestrator_service import (
+    run_real_resolver_validation_block,
+)
 from nativeforge.services.source_ingestion_plan_gate_service import (
     is_live_source_ingestion_plan_approved,
 )
@@ -75,6 +84,118 @@ def _require_staging_dry_run_query(
                 "NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED"
             ),
         )
+
+
+def _require_real_resolver_validation_query(
+    nf_live_source_ingestion: bool,
+    nf_real_resolver_validation: bool,
+) -> None:
+    if not is_real_resolver_validation_approved(
+        nf_live_source_ingestion=nf_live_source_ingestion,
+        nf_real_resolver_validation=nf_real_resolver_validation,
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail=(
+                "real resolver validation requires NF_APP_ENV=staging, "
+                "nf_live_source_ingestion=true, "
+                "nf_real_resolver_validation=true, "
+                "NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED, and "
+                "NF_REAL_RESOLVER_VALIDATION_PLAN_APPROVED"
+            ),
+        )
+
+
+@demo_source_ingestion_router.get(
+    "/{org_id}/discovery/source-ingestion/real-resolver-seed-preview"
+)
+def demo_real_resolver_seed_preview(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return build_real_resolver_seed_preview_report()
+
+
+@real_source_ingestion_router.get(
+    "/{org_id}/discovery/source-ingestion/real-resolver-seed-preview"
+)
+def real_real_resolver_seed_preview(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return build_real_resolver_seed_preview_report()
+
+
+@demo_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/real-resolver-validation"
+)
+def demo_real_resolver_validation(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: dict[str, Any],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    result = run_real_resolver_validation_block(
+        db,
+        org=org,
+        org_id=org_id,
+        operator_confirmation=body,
+    )
+    db.commit()
+    return result
+
+
+@real_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/real-resolver-validation"
+)
+def real_real_resolver_validation(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: dict[str, Any],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    result = run_real_resolver_validation_block(
+        db,
+        org=org,
+        org_id=org_id,
+        operator_confirmation=body,
+    )
+    db.commit()
+    return result
 
 
 @demo_source_ingestion_router.get(
