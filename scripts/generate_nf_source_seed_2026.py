@@ -45,13 +45,23 @@ FEDERAL_PROGRAMS: tuple[tuple[str, str, str], ...] = (
 
 STATE_PORTALS: tuple[tuple[str, str, str, str], ...] = (
     ("CA", "California Grants Portal", "grants.ca.gov", "state_portal_ca"),
-    ("CA", "California Tribal Affairs Funding", "tribalaffairs.ca.gov", "state_portal_ca"),
+    (
+        "CA",
+        "California Tribal Affairs Funding",
+        "tribalaffairs.ca.gov",
+        "state_portal_ca",
+    ),
     ("CA", "California Energy Commission Tribal", "energy.ca.gov", "state_portal_ca"),
     ("HI", "OHA Native Hawaiian Programs", "oha.org", "state_portal_hi_oha"),
     ("HI", "DHHL Native Hawaiian Housing", "dhhl.hawaii.gov", "state_portal_hi_dhhl"),
     ("HI", "Hawaii DOH Native Health", "health.hawaii.gov", "state_portal_hi"),
     ("MN", "Minnesota Tribal State Relations Grants", "mn.gov", "state_portal_mn"),
-    ("MN", "Minnesota Department of Health Tribal", "health.state.mn.us", "state_portal_mn"),
+    (
+        "MN",
+        "Minnesota Department of Health Tribal",
+        "health.state.mn.us",
+        "state_portal_mn",
+    ),
     ("MN", "Minnesota Housing Tribal", "mhfa.state.mn.us", "state_portal_mn"),
     ("NM", "New Mexico Indian Affairs", "indianaffairs.state.nm.us", "state_portal_nm"),
     ("NM", "New Mexico Finance Authority Tribal", "nmfa.net", "state_portal_nm"),
@@ -83,14 +93,44 @@ STATE_PORTALS: tuple[tuple[str, str, str, str], ...] = (
 FOUNDATION_ORGS: tuple[tuple[str, str, str, str], ...] = (
     ("NAP Member Directory", "nativephilanthropy.org", "foundation_org_page", "public"),
     ("AIHEC Member Colleges", "aihec.org", "foundation_org_page", "public"),
-    ("Native Ways Federation Members", "nativewaysfederation.org", "foundation_org_page", "members"),
-    ("First Nations Development Institute", "firstnations.org", "foundation_org_page", "public"),
-    ("American Indian College Fund", "collegefund.org", "foundation_org_page", "public"),
-    ("Native American Agriculture Fund", "nativeamericanagriculturefund.org", "foundation_org_page", "public"),
+    (
+        "Native Ways Federation Members",
+        "nativewaysfederation.org",
+        "foundation_org_page",
+        "members",
+    ),
+    (
+        "First Nations Development Institute",
+        "firstnations.org",
+        "foundation_org_page",
+        "public",
+    ),
+    (
+        "American Indian College Fund",
+        "collegefund.org",
+        "foundation_org_page",
+        "public",
+    ),
+    (
+        "Native American Agriculture Fund",
+        "nativeamericanagriculturefund.org",
+        "foundation_org_page",
+        "public",
+    ),
     ("Native American Rights Fund", "narf.org", "foundation_org_page", "public"),
     ("National Indian Health Board", "nihb.org", "foundation_org_page", "members"),
-    ("National Congress of American Indians", "ncai.org", "foundation_org_page", "members"),
-    ("Partnership With Native Americans", "nativepartnership.org", "foundation_org_page", "public"),
+    (
+        "National Congress of American Indians",
+        "ncai.org",
+        "foundation_org_page",
+        "members",
+    ),
+    (
+        "Partnership With Native Americans",
+        "nativepartnership.org",
+        "foundation_org_page",
+        "public",
+    ),
 )
 
 
@@ -114,7 +154,9 @@ def _expand_federal() -> list[dict[str, str]]:
                     "state_code": "",
                     "access_posture_hint": "public",
                     "program_family": "federal_native_relevant",
-                    "native_relevance_notes": "Federal program with tribal eligibility pathway",
+                    "native_relevance_notes": (
+                        "Federal program with tribal eligibility pathway"
+                    ),
                 }
             )
             if len(rows) >= 61:
@@ -139,7 +181,9 @@ def _expand_state() -> list[dict[str, str]]:
                 "state_code": st,
                 "access_posture_hint": "public",
                 "program_family": "state_direct_grant",
-                "native_relevance_notes": "State portal with tribal or Native-serving programs",
+                "native_relevance_notes": (
+                    "State portal with tribal or Native-serving programs"
+                ),
             }
         )
     # pad to 52 state-tier rows
@@ -181,7 +225,9 @@ def _expand_tier3(start_idx: int) -> list[dict[str, str]]:
                 "state_code": "",
                 "access_posture_hint": posture,
                 "program_family": "foundation_org_page",
-                "native_relevance_notes": "Native-serving foundation or directory org page",
+                "native_relevance_notes": (
+                    "Native-serving foundation or directory org page"
+                ),
             }
         )
     while len(rows) < 64:
@@ -199,7 +245,9 @@ def _expand_tier3(start_idx: int) -> list[dict[str, str]]:
                 "state_code": "",
                 "access_posture_hint": "public" if n % 3 else "login",
                 "program_family": "foundation_org_page",
-                "native_relevance_notes": "Foundation grants page for Native-serving organizations",
+                "native_relevance_notes": (
+                    "Foundation grants page for Native-serving organizations"
+                ),
             }
         )
     return rows[:64]
