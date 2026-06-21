@@ -12,6 +12,21 @@ from nativeforge.services.source_ingestion_seed_schema_service import (
     SCHEMA_VERSION,
     seed_csv_path,
 )
+from nativeforge.services.source_seed_real_url_guard_service import (
+    assert_real_seed_urls,
+)
+
+MINIMAL_SEED_COLUMNS: frozenset[str] = frozenset(
+    {
+        "seed_id",
+        "canonical_source_id",
+        "source_name",
+        "source_url",
+        "tier",
+        "adapter_key",
+        "access_posture_hint",
+    }
+)
 
 ACCESS_PUBLIC = "public"
 ACCESS_MEMBERS = "members"
@@ -23,7 +38,31 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
+def _normalize_seed_row(row: dict[str, str]) -> dict[str, str]:
+    """Fill derived columns for real seed CSV (minimal 7-column format)."""
+    out = dict(row)
+    tier = str(out.get("tier") or "1")
+    name = str(out.get("source_name") or "")
+    publisher = name.split(" — ")[0].strip() if " — " in name else name[:120]
+    tier_defaults = {
+        "1": ("federal", "federal_native_relevant"),
+        "2": ("state", "state_direct_grant"),
+        "3": ("foundation", "foundation_org_page"),
+    }
+    source_type, program_family = tier_defaults.get(tier, ("other", "other"))
+    out.setdefault("source_type", source_type)
+    out.setdefault("publisher_name", publisher)
+    out.setdefault("state_code", "")
+    out.setdefault("program_family", program_family)
+    out.setdefault("native_relevance_notes", f"Real seed source: {name}")
+    return out
+
+
 def _validate_row(row: dict[str, str]) -> None:
+    if not MINIMAL_SEED_COLUMNS.issubset(row.keys()):
+        missing = MINIMAL_SEED_COLUMNS - set(row.keys())
+        raise ValueError(f"seed row missing minimal columns: {sorted(missing)}")
+    row.update(_normalize_seed_row(row))
     for col in REQUIRED_COLUMNS:
         if col not in row:
             raise ValueError(f"seed row missing column {col!r}")
@@ -48,6 +87,7 @@ def load_source_seed_rows(*, limit: int | None = None) -> list[dict[str, str]]:
         _validate_row(row)
     if len(rows) != EXPECTED_ROW_COUNT:
         raise ValueError(f"expected {EXPECTED_ROW_COUNT} seed rows, got {len(rows)}")
+    assert_real_seed_urls(rows)
     if limit is not None:
         return rows[:limit]
     return rows
