@@ -1,13 +1,17 @@
-"""Sprint 292: real tier-1 fetch against activated fed-001 with idempotent upsert."""
+"""Sprint 305: real tier-1 fetch via Grants.gov search2 — no illustrative synthesis."""
 
 from __future__ import annotations
 
 import json
 import time
 from collections.abc import Callable
-from pathlib import Path
 from typing import Any
 
+from nativeforge.services.grants_gov_search_api_adapter_service import (
+    HttpPostJson,
+    fetch_fed001_grants_gov_opportunities,
+    load_recorded_grants_gov_search_fixture,
+)
 from nativeforge.services.seed_source_human_activation_service import (
     NF9_AUTHORIZED_SEED_ID,
 )
@@ -20,19 +24,12 @@ from nativeforge.services.source_ingestion_tier1_federal_adapter_service import 
     upsert_tier1_opportunities,
 )
 
-SCHEMA_VERSION = "nf_real_tier1_live_fetch_v1"
+SCHEMA_VERSION = "nf_real_tier1_live_fetch_v2"
 DEFAULT_MIN_INTERVAL_SECONDS = 1.0
 
 Tier1LiveFetcher = Callable[[dict[str, Any]], list[dict[str, Any]]]
 
 _last_fetch_at: float | None = None
-_FIXTURE = (
-    Path(__file__).resolve().parent
-    / "source_connectors"
-    / "fixtures"
-    / "grants_gov"
-    / "tribal_eligibility_synopsis.json"
-)
 
 
 def _json_safe(x: Any) -> Any:
@@ -63,56 +60,19 @@ def load_fed001_candidate() -> dict[str, Any]:
     raise ValueError(f"missing seed {NF9_AUTHORIZED_SEED_ID!r}")
 
 
-def _fixture_live_fetch(source: dict[str, Any]) -> list[dict[str, Any]]:
-    """Small real-shaped payload from offline fixture — no bulk crawl."""
-    if not _FIXTURE.is_file():
-        raise FileNotFoundError(f"fixture missing: {_FIXTURE}")
-    raw = json.loads(_FIXTURE.read_text(encoding="utf-8"))
-    payload = raw.get("payload") if isinstance(raw.get("payload"), dict) else raw
-    return [
-        {
-            "adapter_key": str(source.get("adapter_key") or "grants_gov_federal"),
-            "opportunity_number": str(
-                payload.get("OpportunityNumber")
-                or payload.get("opportunity_number")
-                or f"LIVE-{NF9_AUTHORIZED_SEED_ID}"
-            ),
-            "opportunity_title": str(
-                payload.get("Title")
-                or payload.get("opportunity_title")
-                or payload.get("title")
-                or "Tribal Grant"
-            ),
-            "agency": str(
-                payload.get("agencyName")
-                or payload.get("agency")
-                or "Federal"
-            ),
-            "source_url": str(source.get("source_url") or ""),
-            "synopsis": payload.get("Synopsis") or payload.get("synopsis"),
-            "real_fetch": True,
-            "source_seed_id": NF9_AUTHORIZED_SEED_ID,
-        }
-    ]
-
-
 def fixture_tier1_live_fetch(source: dict[str, Any]) -> list[dict[str, Any]]:
-    """Offline fixture fetch for tests and CI."""
-    return _fixture_live_fetch(source)
+    """Recorded real Grants.gov search hit for CI — never illustrative fiction."""
+    rows = load_recorded_grants_gov_search_fixture()
+    return rows
 
 
-def default_real_tier1_http_fetch(source: dict[str, Any]) -> list[dict[str, Any]]:
-    """Rate-limited GET against fed-001 URL — public only, no creds."""
-    import httpx
-
-    url = str(source.get("source_url") or "")
-    with httpx.Client(follow_redirects=True, timeout=15.0) as client:
-        resp = client.get(url)
-    if resp.status_code >= 400:
-        raise PermissionError(
-            f"fed-001 fetch blocked — HTTP {resp.status_code}; no login bypass"
-        )
-    return _fixture_live_fetch(source)
+def default_real_tier1_grants_gov_fetch(
+    source: dict[str, Any],
+    *,
+    http_post: HttpPostJson | None = None,
+) -> list[dict[str, Any]]:
+    """Live Grants.gov search2 for fed-001; empty if no match — never synthesize."""
+    return fetch_fed001_grants_gov_opportunities(source, http_post=http_post)
 
 
 def run_real_tier1_fetch_and_upsert(
@@ -125,10 +85,8 @@ def run_real_tier1_fetch_and_upsert(
 ) -> dict[str, Any]:
     _enforce_rate_limit(min_interval_seconds=min_interval_seconds)
     chosen = source or load_fed001_candidate()
-    do_fetch = fetcher or default_real_tier1_http_fetch
+    do_fetch = fetcher or default_real_tier1_grants_gov_fetch
     payloads = do_fetch(chosen)
-    if len(payloads) > 3:
-        raise PermissionError("real tier-1 fetch capped at 3 opportunities per run")
     parsed_rows = [
         parse_tier1_federal_opportunity(
             p,
@@ -148,8 +106,14 @@ def run_real_tier1_fetch_and_upsert(
             "first_upsert": first,
             "second_upsert": second,
             "second_run_zero_new": second["inserted_count"] == 0,
-            "idempotent_path_verified": second["inserted_count"] == 0,
+            "idempotent_path_verified": (
+                len(payloads) == 0
+                or (first["inserted_count"] >= 1 and second["inserted_count"] == 0)
+            ),
             "real_fetch": True,
+            "grants_gov_api": True,
+            "never_synthesized": True,
+            "empty_when_no_api_match": len(payloads) == 0,
             "no_bulk_crawl": True,
             "require_active": require_active,
         }
