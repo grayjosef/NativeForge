@@ -43,6 +43,9 @@ from nativeforge.services.staging_activation_dry_run_orchestrator_service import
 from nativeforge.services.staging_seed_preview_report_service import (
     build_staging_seed_preview_report,
 )
+from nativeforge.services.tier1_batch_live_pull_orchestrator_service import (
+    run_tier1_batch_live_pull_block,
+)
 
 demo_source_ingestion_router = APIRouter(
     prefix="/v1/nf/demo/orgs",
@@ -250,6 +253,64 @@ def real_live_grants_gov_honest(
     if org is None:
         raise HTTPException(status_code=404, detail="organization not found")
     result = run_live_grants_gov_honest_block(
+        db,
+        org=org,
+        org_id=org_id,
+        operator_confirmation=body,
+    )
+    db.commit()
+    return result
+
+
+@demo_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/tier1-batch-live-pull"
+)
+def demo_tier1_batch_live_pull(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: dict[str, Any],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    result = run_tier1_batch_live_pull_block(
+        db,
+        org=org,
+        org_id=org_id,
+        operator_confirmation=body,
+    )
+    db.commit()
+    return result
+
+
+@real_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/tier1-batch-live-pull"
+)
+def real_tier1_batch_live_pull(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: dict[str, Any],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    result = run_tier1_batch_live_pull_block(
         db,
         org=org,
         org_id=org_id,

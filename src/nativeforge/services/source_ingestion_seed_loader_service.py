@@ -15,6 +15,9 @@ from nativeforge.services.source_ingestion_seed_schema_service import (
 from nativeforge.services.source_seed_real_url_guard_service import (
     assert_real_seed_urls,
 )
+from nativeforge.services.source_seed_url_correction_service import (
+    apply_seed_url_corrections,
+)
 
 MINIMAL_SEED_COLUMNS: frozenset[str] = frozenset(
     {
@@ -85,6 +88,7 @@ def load_source_seed_rows(*, limit: int | None = None) -> list[dict[str, str]]:
         rows = [dict(r) for r in reader]
     for row in rows:
         _validate_row(row)
+    rows = [apply_seed_url_corrections(row) for row in rows]
     if len(rows) != EXPECTED_ROW_COUNT:
         raise ValueError(f"expected {EXPECTED_ROW_COUNT} seed rows, got {len(rows)}")
     assert_real_seed_urls(rows)

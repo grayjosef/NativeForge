@@ -11,6 +11,9 @@ from typing import Any, Literal
 from nativeforge.services.grants_gov_eligibility_parser_service import (
     parse_grants_gov_synopsis_eligibility,
 )
+from nativeforge.services.real_fetch_honest_labeling_guard_service import (
+    assert_real_fetch_honest_labeling,
+)
 
 SCHEMA_VERSION = "nf_grants_gov_search_api_adapter_v2"
 SEARCH2_URL = "https://api.grants.gov/v1/api/search2"
@@ -94,7 +97,7 @@ def _parse_detail_to_payload(
     live_success = (
         fetch_mode == FETCH_MODE_LIVE and search_live and detail_live and bool(data)
     )
-    return {
+    payload = {
         "adapter_key": "grants_gov_federal",
         "opportunity_number": str(
             data.get("opportunityNumber") or hit.get("number") or ""
@@ -129,6 +132,8 @@ def _parse_detail_to_payload(
         "source_seed_id": source.get("seed_id"),
         "never_synthesized": True,
     }
+    assert_real_fetch_honest_labeling(payload)
+    return payload
 
 
 def search_grants_gov_opportunities(

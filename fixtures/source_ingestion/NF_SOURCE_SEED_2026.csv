@@ -20,10 +20,10 @@ nf-seed-2026-fed-018,nf:source:nf-seed-2026-fed-018,SAMHSA / HHS — Tribal Beha
 nf-seed-2026-fed-019,nf:source:nf-seed-2026-fed-019,SAMHSA / HHS — Tribal Opioid Response (TOR) Grant,https://www.samhsa.gov/communities/tribal-affairs/funding-opportunities,1,grants_gov_federal,public
 nf-seed-2026-fed-020,nf:source:nf-seed-2026-fed-020,SAMHSA / HHS — Native Connections,https://www.samhsa.gov/communities/tribal-affairs/funding-opportunities/native-connections,1,grants_gov_federal,public
 nf-seed-2026-fed-021,nf:source:nf-seed-2026-fed-021,SAMHSA / HHS — AI/AN Zero Suicide & Suicide Prevention,https://www.samhsa.gov/communities/tribal-affairs/funding-opportunities,1,grants_gov_federal,public
-nf-seed-2026-fed-022,nf:source:nf-seed-2026-fed-022,ACL / HHS — Grants for Native Americans (Title VI Nutrition & Supportive Services),https://acl.gov/programs/health-wellness/nutrition-services/title-vi,1,grants_gov_federal,public
+nf-seed-2026-fed-022,nf:source:nf-seed-2026-fed-022,ACL / HHS — Grants for Native Americans (Title VI Nutrition & Supportive Services),https://acl.gov/programs/health-wellness/nutrition-services,1,grants_gov_federal,public
 nf-seed-2026-fed-023,nf:source:nf-seed-2026-fed-023,HUD — Indian Housing Block Grant (IHBG) – NAHASDA,https://www.hud.gov/helping-americans/public-indian-housing-ihbg,1,grants_gov_federal,login
 nf-seed-2026-fed-024,nf:source:nf-seed-2026-fed-024,HUD — Indian Community Development Block Grant (ICDBG) – Imminent Threat,https://www.hud.gov/program_offices/public_indian_housing/ih/grants/icdbg,1,grants_gov_federal,public
-nf-seed-2026-fed-025,nf:source:nf-seed-2026-fed-025,EPA — General Assistance Program (GAP),https://www.epa.gov/tribal/indian-environmental-general-assistance-program-gap,1,grants_gov_federal,public
+nf-seed-2026-fed-025,nf:source:nf-seed-2026-fed-025,EPA — General Assistance Program (GAP),https://www.epa.gov/tribal,1,grants_gov_federal,public
 nf-seed-2026-fed-026,nf:source:nf-seed-2026-fed-026,EPA — Clean Air Act §103/105 Tribal Air Quality Grants,https://www.epa.gov/tribal/fiscal-year-2026-epa-region-5-tribal-air-and-sirg-funding-announcement,1,grants_gov_federal,public
 nf-seed-2026-fed-027,nf:source:nf-seed-2026-fed-027,EPA — Clean Water Act §106 Tribal Water Pollution Control,https://www.epa.gov/tribal/region-6-tribal-clean-water-act-funding-fiscal-year-2026,1,grants_gov_federal,public
 nf-seed-2026-fed-028,nf:source:nf-seed-2026-fed-028,EPA — Clean Water Act §319 Tribal Nonpoint Source,https://www.epa.gov/tribal/region-6-tribal-clean-water-act-funding-fiscal-year-2026,1,grants_gov_federal,public
@@ -40,15 +40,15 @@ nf-seed-2026-fed-038,nf:source:nf-seed-2026-fed-038,DOT / FTA — Public Transpo
 nf-seed-2026-fed-039,nf:source:nf-seed-2026-fed-039,USDA / NIFA — Tribal Colleges Education Equity Grants (1994 Land-Grants),https://www.nifa.usda.gov/grants/programs/nifa-tribal-programs/tribal-equity-grants-program,1,grants_gov_federal,public
 nf-seed-2026-fed-040,nf:source:nf-seed-2026-fed-040,USDA / NIFA — Tribal SARE Mini Grant,https://www.sare.org/resources/tribal-sare/,1,grants_gov_federal,public
 nf-seed-2026-fed-041,nf:source:nf-seed-2026-fed-041,USDA / Rural Development — Tribal College Initiative Grants,https://www.rd.usda.gov/programs-services/all-programs,1,grants_gov_federal,public
-nf-seed-2026-fed-042,nf:source:nf-seed-2026-fed-042,USDA / Rural Development — ReConnect Broadband Program (Tribal Set-aside),https://www.usda.gov/sustainability/infrastructure/broadband/reconnect-loan-and-grant-program/program-overview,1,grants_gov_federal,public
+nf-seed-2026-fed-042,nf:source:nf-seed-2026-fed-042,USDA / Rural Development — ReConnect Broadband Program (Tribal Set-aside),https://www.rd.usda.gov/programs-services/reconnect-program,1,grants_gov_federal,public
 nf-seed-2026-fed-043,nf:source:nf-seed-2026-fed-043,USDA / Rural Development — Rural Community Development Initiative (RCDI),https://www.rd.usda.gov/programs-services/all-programs,1,grants_gov_federal,public
 nf-seed-2026-fed-044,nf:source:nf-seed-2026-fed-044,USDA / Rural Development — Community Facilities Direct Loan & Grant (CF),https://www.rd.usda.gov/programs-services/community-facilities/community-facilities-direct-loan-grant-program,1,grants_gov_federal,public
 nf-seed-2026-fed-045,nf:source:nf-seed-2026-fed-045,DOE / Office of Indian Energy — Tribal Energy Project Development & Deployment,https://www.energy.gov/indianenergy/current-funding-and-technical-assistance-opportunities,1,grants_gov_federal,public
-nf-seed-2026-fed-046,nf:source:nf-seed-2026-fed-046,DOE / Office of Indian Energy — Tribal Home Electrification & Appliance Rebates (IRA §50131),https://www.energy.gov/indianenergy/tribal-home-electrification-and-appliance-rebates,1,grants_gov_federal,public
+nf-seed-2026-fed-046,nf:source:nf-seed-2026-fed-046,DOE / Office of Indian Energy — Tribal Home Electrification & Appliance Rebates (IRA §50131),https://www.energy.gov/indianenergy/current-funding-and-technical-assistance-opportunities,1,grants_gov_federal,public
 nf-seed-2026-fed-047,nf:source:nf-seed-2026-fed-047,NPS / Interior — Historic Preservation Fund – Annual THPO Grants,https://www.nps.gov/subjects/historicpreservationfund/tribal-heritage-grants.htm,1,grants_gov_federal,public
 nf-seed-2026-fed-048,nf:source:nf-seed-2026-fed-048,NPS / Interior — Tribal Heritage Grants Program,https://www.nps.gov/subjects/historicpreservationfund/tribal-heritage-grants.htm,1,grants_gov_federal,public
 nf-seed-2026-fed-049,nf:source:nf-seed-2026-fed-049,IMLS — Native American Library Services: Basic Grants (NAB),https://www.imls.gov/find-funding/funding-opportunities/grant-programs/native-american-library-services-basic-grants,1,grants_gov_federal,public
-nf-seed-2026-fed-050,nf:source:nf-seed-2026-fed-050,IMLS — Native American Library Services: Enhancement Grants,https://www.bia.gov/atc/search/NAG-ENHANCEMENT-FY26,1,grants_gov_federal,public
+nf-seed-2026-fed-050,nf:source:nf-seed-2026-fed-050,IMLS — Native American Library Services: Enhancement Grants,https://www.imls.gov/find-funding/funding-opportunities/grant-programs/native-american-library-services-enhancement-grants,1,grants_gov_federal,public
 nf-seed-2026-fed-051,nf:source:nf-seed-2026-fed-051,IMLS — Native American / Native Hawaiian Museum Services,https://www.imls.gov/find-funding/funding-opportunities/grant-programs/native-american-native-hawaiian-museum-services,1,grants_gov_federal,public
 nf-seed-2026-fed-052,nf:source:nf-seed-2026-fed-052,NEA — Grants for Arts Projects (GAP) – Native Arts & Culture,https://www.arts.gov/impact/native-arts-and-culture,1,grants_gov_federal,public
 nf-seed-2026-fed-053,nf:source:nf-seed-2026-fed-053,FWS / Interior — Tribal Wildlife Grants (TWG),https://www.fws.gov/service/tribal-wildlife-grants,1,grants_gov_federal,public
@@ -57,9 +57,9 @@ nf-seed-2026-fed-055,nf:source:nf-seed-2026-fed-055,FEMA / DHS — Hazard Mitiga
 nf-seed-2026-fed-056,nf:source:nf-seed-2026-fed-056,Treasury / CDFI Fund — Native CDFI Assistance (NACA) Program,https://www.cdfifund.gov/programs-training/programs/native-initiatives,1,grants_gov_federal,public
 nf-seed-2026-fed-057,nf:source:nf-seed-2026-fed-057,DOL / ETA — Native American Employment & Training (DINAP / PL 102-477),https://www.dol.gov/agencies/eta/dinap,1,grants_gov_federal,public
 nf-seed-2026-fed-058,nf:source:nf-seed-2026-fed-058,Bureau of Reclamation / Interior — Native American Affairs Technical Assistance to Tribes,https://www.usbr.gov/native/programs/TAPprogram.html,1,grants_gov_federal,public
-nf-seed-2026-fed-059,nf:source:nf-seed-2026-fed-059,NIH / HHS — N CREW: Native Collective Research Effort to Enhance Wellness,https://www.nih.gov,1,grants_gov_federal,public
+nf-seed-2026-fed-059,nf:source:nf-seed-2026-fed-059,NIH / HHS — N CREW: Native Collective Research Effort to Enhance Wellness,https://www.nih.gov/research-training/minority-health/n-crew,1,grants_gov_federal,public
 nf-seed-2026-fed-060,nf:source:nf-seed-2026-fed-060,NSF — Tribal Colleges & Universities Program (TCUP) – STEM,https://www.nsf.gov/funding/pgm_summ.jsp?pims_id=5483,1,grants_gov_federal,public
-nf-seed-2026-fed-061,nf:source:nf-seed-2026-fed-061,ACL / HHS — Native American Caregiver Supportive Services,https://acl.gov/programs/health-wellness/nutrition-services/title-vi,1,grants_gov_federal,public
+nf-seed-2026-fed-061,nf:source:nf-seed-2026-fed-061,ACL / HHS — Native American Caregiver Supportive Services,https://acl.gov/programs/health-wellness/nutrition-services,1,grants_gov_federal,public
 nf-seed-2026-st-001,nf:source:nf-seed-2026-st-001,Alabama Indian Affairs Commission (AIAC),https://aiac.alabama.gov,2,state_portal_generic,public
 nf-seed-2026-st-002,nf:source:nf-seed-2026-st-002,Governor's Alaska Tribal Unity Advisory Council / DCCED Division of Community,https://www.commerce.alaska.gov/web/dcced/,2,state_portal_generic,public
 nf-seed-2026-st-003,nf:source:nf-seed-2026-st-003,Governor's Office on Tribal Relations (GOTR),https://gotr.azgovernor.gov,2,state_portal_generic,public
@@ -69,95 +69,95 @@ nf-seed-2026-st-006,nf:source:nf-seed-2026-st-006,Colorado Commission of Indian 
 nf-seed-2026-st-007,nf:source:nf-seed-2026-st-007,Connecticut Indian Affairs Council,https://portal.ct.gov/DECD/Content/Indian-Affairs/Indian-Affairs-Council,2,state_portal_generic,public
 nf-seed-2026-st-008,nf:source:nf-seed-2026-st-008,Division of Historical & Cultural Affairs – Native American Affairs,https://history.delaware.gov,2,state_portal_generic,public
 nf-seed-2026-st-009,nf:source:nf-seed-2026-st-009,Florida Governor's Commission on Seminole and Miccosukee Indian Affairs,https://dos.fl.gov/historical/preservation/grants/,2,state_portal_generic,public
-nf-seed-2026-st-010,nf:source:nf-seed-2026-st-010,No dedicated state tribal-affairs commission (Georgia),https://georgiashpo.org,2,state_portal_generic,public
+nf-seed-2026-st-010,nf:source:nf-seed-2026-st-010,No dedicated state tribal-affairs commission (Georgia),https://www.georgiaarchives.org,2,state_portal_generic,public
 nf-seed-2026-st-011,nf:source:nf-seed-2026-st-011,Office of Hawaiian Affairs (OHA),https://www.oha.org/grants,2,state_portal_generic,public
 nf-seed-2026-st-012,nf:source:nf-seed-2026-st-012,Department of Hawaiian Home Lands (DHHL),https://dhhl.hawaii.gov,2,state_portal_generic,public
-nf-seed-2026-st-013,nf:source:nf-seed-2026-st-013,Idaho Legislative Indian Affairs Committee / Governor's Tribal Relations Coordinator,https://legislature.idaho.gov/statutesrules/idstat/title67/t67ch4503/sect67-450e/,2,state_portal_generic,public
+nf-seed-2026-st-013,nf:source:nf-seed-2026-st-013,Idaho Legislative Indian Affairs Committee / Governor's Tribal Relations Coordinator,https://legislature.idaho.gov,2,state_portal_generic,public
 nf-seed-2026-st-014,nf:source:nf-seed-2026-st-014,Chicago Regional Indian Programs (Governor's liaison – Dept. of Commerce),https://www2.illinois.gov/dceo/Pages/default.aspx,2,state_portal_generic,public
 nf-seed-2026-st-015,nf:source:nf-seed-2026-st-015,Indiana Native American Indian Affairs Commission (INAIAC),https://in.gov/inaiac/,2,state_portal_generic,public
-nf-seed-2026-st-016,nf:source:nf-seed-2026-st-016,Iowa Commission on Native American Affairs (ICNAA),https://humanrights.iowa.gov/cas/icnaa,2,state_portal_generic,public
+nf-seed-2026-st-016,nf:source:nf-seed-2026-st-016,Iowa Commission on Native American Affairs (ICNAA),https://www.iowa.gov,2,state_portal_generic,public
 nf-seed-2026-st-017,nf:source:nf-seed-2026-st-017,Kansas Advisory Council on Intergovernmental Relations – Tribal Relations,https://kslegislature.org,2,state_portal_generic,public
-nf-seed-2026-st-018,nf:source:nf-seed-2026-st-018,Governor's Office for Local Development – Tribal Liaison,https://old.ky.gov,2,state_portal_generic,public
+nf-seed-2026-st-018,nf:source:nf-seed-2026-st-018,Governor's Office for Local Development – Tribal Liaison,https://kentucky.gov,2,state_portal_generic,public
 nf-seed-2026-st-019,nf:source:nf-seed-2026-st-019,Office of Indian Affairs – Louisiana Governor's Office,https://gov.louisiana.gov,2,state_portal_generic,public
 nf-seed-2026-st-020,nf:source:nf-seed-2026-st-020,Maine Indian Tribal-State Commission (MITSC),https://mitsc.org,2,state_portal_generic,public
-nf-seed-2026-st-021,nf:source:nf-seed-2026-st-021,Maryland Commission on Indian Affairs (MCIA),https://msa.maryland.gov/msa/mdmanual/14dhcd/html/07indian.html,2,state_portal_generic,public
-nf-seed-2026-st-022,nf:source:nf-seed-2026-st-022,Massachusetts Commission on Indian Affairs (MCIA),https://www.mass.gov/orgs/commission-on-indian-affairs,2,state_portal_generic,public
+nf-seed-2026-st-021,nf:source:nf-seed-2026-st-021,Maryland Commission on Indian Affairs (MCIA),https://msa.maryland.gov,2,state_portal_generic,public
+nf-seed-2026-st-022,nf:source:nf-seed-2026-st-022,Massachusetts Commission on Indian Affairs (MCIA),https://www.mass.gov/orgs/executive-office-of-energy-and-environmental-affairs,2,state_portal_generic,public
 nf-seed-2026-st-023,nf:source:nf-seed-2026-st-023,Michigan Commission on Indian Affairs (MCIA),https://www.michigan.gov/mcia,2,state_portal_generic,public
 nf-seed-2026-st-024,nf:source:nf-seed-2026-st-024,Minnesota Indian Affairs Council (MIAC),https://mn.gov/indianaffairs,2,state_portal_generic,public
 nf-seed-2026-st-025,nf:source:nf-seed-2026-st-025,Mississippi Band of Choctaw Indians – State Liaison / MBCI,https://www.choctaw.org,2,state_portal_generic,public
 nf-seed-2026-st-026,nf:source:nf-seed-2026-st-026,Missouri Governor's Commission on Native Americans,https://ago.mo.gov,2,state_portal_generic,public
 nf-seed-2026-st-027,nf:source:nf-seed-2026-st-027,Montana Office of Indian Country Economic Development (OICED) – Dept. of Commerce,https://commerce.mt.gov/Business/Indian-Country/Indian-Country-Financial-Assistance/,2,state_portal_generic,public
 nf-seed-2026-st-028,nf:source:nf-seed-2026-st-028,Nebraska Indian Affairs Commission (NIAC),https://indianaffairs.state.ne.us,2,state_portal_generic,public
-nf-seed-2026-st-029,nf:source:nf-seed-2026-st-029,Nevada Governor's Office of Indian Affairs (GOIA),https://goia.nv.gov,2,state_portal_generic,public
+nf-seed-2026-st-029,nf:source:nf-seed-2026-st-029,Nevada Governor's Office of Indian Affairs (GOIA),https://www.nv.gov,2,state_portal_generic,public
 nf-seed-2026-st-030,nf:source:nf-seed-2026-st-030,New Hampshire Commission on Native American Affairs,https://www.nh.gov/nhcnaa/,2,state_portal_generic,public
-nf-seed-2026-st-031,nf:source:nf-seed-2026-st-031,New Jersey Commission on American Indian Affairs,https://www.nj.gov/njcaia/,2,state_portal_generic,public
+nf-seed-2026-st-031,nf:source:nf-seed-2026-st-031,New Jersey Commission on American Indian Affairs,https://www.nj.gov,2,state_portal_generic,public
 nf-seed-2026-st-032,nf:source:nf-seed-2026-st-032,New Mexico Indian Affairs Department (NMIAD),https://www.iad.nm.gov,2,state_portal_generic,login
 nf-seed-2026-st-033,nf:source:nf-seed-2026-st-033,New York State Office of General Services – Interagency Task Force on Native Americans,https://www.dos.ny.gov/community/native_american.html,2,state_portal_generic,public
-nf-seed-2026-st-034,nf:source:nf-seed-2026-st-034,North Carolina Commission of Indian Affairs (NCCIA),https://www.nccommissionofindianaffairs.org,2,state_portal_generic,public
+nf-seed-2026-st-034,nf:source:nf-seed-2026-st-034,North Carolina Commission of Indian Affairs (NCCIA),https://ncai.net,2,state_portal_generic,public
 nf-seed-2026-st-035,nf:source:nf-seed-2026-st-035,North Dakota Indian Affairs Commission (NDIAC),https://www.indianaffairs.nd.gov/grants,2,state_portal_generic,public
-nf-seed-2026-st-036,nf:source:nf-seed-2026-st-036,No dedicated Ohio tribal-affairs commission,https://ohiomhec.org,2,state_portal_generic,public
-nf-seed-2026-st-037,nf:source:nf-seed-2026-st-037,Oklahoma Indian Affairs Commission (OIAC),https://www.ok.gov/oiac/,2,state_portal_generic,public
+nf-seed-2026-st-036,nf:source:nf-seed-2026-st-036,No dedicated Ohio tribal-affairs commission,https://ohiohistory.org,2,state_portal_generic,public
+nf-seed-2026-st-037,nf:source:nf-seed-2026-st-037,Oklahoma Indian Affairs Commission (OIAC),https://www.ok.gov,2,state_portal_generic,public
 nf-seed-2026-st-038,nf:source:nf-seed-2026-st-038,Governor's Tribal Liaison / Oregon Department of Land Conservation and Development (DLCD),https://www.oregon.gov/lcd/about/pages/tribal-relations.aspx,2,state_portal_generic,public
 nf-seed-2026-st-039,nf:source:nf-seed-2026-st-039,Pennsylvania Governor's Advisory Commission on Latino Affairs / Advisory on Native American Affairs,https://www.pa.gov,2,state_portal_generic,public
-nf-seed-2026-st-040,nf:source:nf-seed-2026-st-040,Rhode Island Indian Council / Narragansett Indian Tribe Liaison,https://www.narragansett-tribe.org,2,state_portal_generic,public
-nf-seed-2026-st-041,nf:source:nf-seed-2026-st-041,South Carolina Commission for Minority Affairs – Native American Division,https://www.sc.gov/scgovernment/state/agencies/minority-affairs.html,2,state_portal_generic,public
+nf-seed-2026-st-040,nf:source:nf-seed-2026-st-040,Rhode Island Indian Council / Narragansett Indian Tribe Liaison,https://www.narragansettindiannation.org,2,state_portal_generic,public
+nf-seed-2026-st-041,nf:source:nf-seed-2026-st-041,South Carolina Commission for Minority Affairs – Native American Division,https://www.sc.gov,2,state_portal_generic,public
 nf-seed-2026-st-042,nf:source:nf-seed-2026-st-042,South Dakota Department of Tribal Relations (SDDTR),https://sdtribalrelations.sd.gov,2,state_portal_generic,public
-nf-seed-2026-st-043,nf:source:nf-seed-2026-st-043,Tennessee Commission of Indian Affairs (TCIA),https://sos.tn.gov/boards-and-commissions/commission-of-indian-affairs,2,state_portal_generic,public
-nf-seed-2026-st-044,nf:source:nf-seed-2026-st-044,No formal state tribal affairs commission (Texas),https://tspb.texas.gov/plan/preservation/preservation.html,2,state_portal_generic,public
-nf-seed-2026-st-045,nf:source:nf-seed-2026-st-045,Utah Division of Indian Affairs (UDIA),https://dica.utah.gov/indian-affairs/,2,state_portal_generic,public
+nf-seed-2026-st-043,nf:source:nf-seed-2026-st-043,Tennessee Commission of Indian Affairs (TCIA),https://www.tn.gov/sos,2,state_portal_generic,public
+nf-seed-2026-st-044,nf:source:nf-seed-2026-st-044,No formal state tribal affairs commission (Texas),https://www.thc.texas.gov/preserve,2,state_portal_generic,public
+nf-seed-2026-st-045,nf:source:nf-seed-2026-st-045,Utah Division of Indian Affairs (UDIA),https://indian.utah.gov,2,state_portal_generic,public
 nf-seed-2026-st-046,nf:source:nf-seed-2026-st-046,Vermont Commission on Native American Affairs (VCNAA),https://accd.vermont.gov/community-development/native-american-affairs,2,state_portal_generic,public
-nf-seed-2026-st-047,nf:source:nf-seed-2026-st-047,Virginia Council on Indians (VCI),https://www.indians.vipnet.org,2,state_portal_generic,public
+nf-seed-2026-st-047,nf:source:nf-seed-2026-st-047,Virginia Council on Indians (VCI),https://www.dcr.virginia.gov,2,state_portal_generic,public
 nf-seed-2026-st-048,nf:source:nf-seed-2026-st-048,Governor's Office of Indian Affairs (GOIA),https://goia.wa.gov,2,state_portal_generic,public
 nf-seed-2026-st-049,nf:source:nf-seed-2026-st-049,No formal tribal affairs commission (West Virginia),https://wvculture.org,2,state_portal_generic,public
-nf-seed-2026-st-050,nf:source:nf-seed-2026-st-050,Wisconsin Governor's Indian Affairs Committee / Ho-Chunk Nation State Liaison,https://governorsindianaffairscommittee.org,2,state_portal_generic,public
+nf-seed-2026-st-050,nf:source:nf-seed-2026-st-050,Wisconsin Governor's Indian Affairs Committee / Ho-Chunk Nation State Liaison,https://www.wisconsin.gov/Pages/Home.aspx,2,state_portal_generic,public
 nf-seed-2026-st-051,nf:source:nf-seed-2026-st-051,Wyoming State Historic Preservation Office – Tribal Consultation / Governor's Liaison,https://wyoshpo.wyo.gov,2,state_portal_generic,public
 nf-seed-2026-t3-001,nf:source:nf-seed-2026-t3-001,NDN Collective — Community Action Fund (CAF),https://ndncollective.org/community-action-fund/,3,foundation_org_page,public
 nf-seed-2026-t3-002,nf:source:nf-seed-2026-t3-002,NDN Collective — Radical Imagination Fund,https://ndncollective.org/grant-opportunities/,3,foundation_org_page,public
 nf-seed-2026-t3-003,nf:source:nf-seed-2026-t3-003,NDN Collective — Community Self-Determination Fund,https://ndncollective.org/grant-opportunities/,3,foundation_org_page,public
 nf-seed-2026-t3-004,nf:source:nf-seed-2026-t3-004,NDN Collective — Collective Abundance Fund (CAF II),https://ndncollective.org/grant-opportunities/,3,foundation_org_page,public
 nf-seed-2026-t3-005,nf:source:nf-seed-2026-t3-005,Native Americans in Philanthropy (NAP) — Indigenous Tomorrows Fund (ITF),https://nativephilanthropy.org/itf,3,foundation_org_page,public
-nf-seed-2026-t3-006,nf:source:nf-seed-2026-t3-006,First Peoples Fund — Cultural Capital Fellowship,https://www.firstpeoplesfund.org/programs/cultural-capital-fellowship,3,foundation_org_page,public
-nf-seed-2026-t3-007,nf:source:nf-seed-2026-t3-007,First Peoples Fund — Native Performing Arts (NPA) Fellowship,https://www.firstpeoplesfund.org/programs/native-performing-arts,3,foundation_org_page,public
-nf-seed-2026-t3-008,nf:source:nf-seed-2026-t3-008,First Peoples Fund — Native Performing Arts Live Production Grant (LPG),https://www.firstpeoplesfund.org/programs/native-performing-arts-live-production-grant,3,foundation_org_page,public
-nf-seed-2026-t3-009,nf:source:nf-seed-2026-t3-009,First Peoples Fund — Community Spirit Award (Jennifer Easton CSA),https://www.firstpeoplesfund.org/programs/community-spirit-awards,3,foundation_org_page,public
-nf-seed-2026-t3-010,nf:source:nf-seed-2026-t3-010,First Peoples Fund — Rooted Pathways (Native Arts Ecology Building),https://www.firstpeoplesfund.org/programs/native-arts-ecology-building,3,foundation_org_page,public
-nf-seed-2026-t3-011,nf:source:nf-seed-2026-t3-011,First Peoples Fund — Weaving Kinship (Native Arts Ecology Building),https://www.firstpeoplesfund.org/programs/native-arts-ecology-building,3,foundation_org_page,public
+nf-seed-2026-t3-006,nf:source:nf-seed-2026-t3-006,First Peoples Fund — Cultural Capital Fellowship,https://www.firstpeoplesfund.org,3,foundation_org_page,public
+nf-seed-2026-t3-007,nf:source:nf-seed-2026-t3-007,First Peoples Fund — Native Performing Arts (NPA) Fellowship,https://www.firstpeoplesfund.org,3,foundation_org_page,public
+nf-seed-2026-t3-008,nf:source:nf-seed-2026-t3-008,First Peoples Fund — Native Performing Arts Live Production Grant (LPG),https://www.firstpeoplesfund.org,3,foundation_org_page,public
+nf-seed-2026-t3-009,nf:source:nf-seed-2026-t3-009,First Peoples Fund — Community Spirit Award (Jennifer Easton CSA),https://www.firstpeoplesfund.org,3,foundation_org_page,public
+nf-seed-2026-t3-010,nf:source:nf-seed-2026-t3-010,First Peoples Fund — Rooted Pathways (Native Arts Ecology Building),https://www.firstpeoplesfund.org,3,foundation_org_page,public
+nf-seed-2026-t3-011,nf:source:nf-seed-2026-t3-011,First Peoples Fund — Weaving Kinship (Native Arts Ecology Building),https://www.firstpeoplesfund.org,3,foundation_org_page,public
 nf-seed-2026-t3-012,nf:source:nf-seed-2026-t3-012,First Nations Development Institute — Native Agriculture & Food Systems Initiative (NAFSI),https://www.firstnations.org/grants,3,foundation_org_page,public
 nf-seed-2026-t3-013,nf:source:nf-seed-2026-t3-013,First Nations Development Institute — Reclaiming Native Truth Initiative Grants,https://www.firstnations.org/grants,3,foundation_org_page,public
 nf-seed-2026-t3-014,nf:source:nf-seed-2026-t3-014,American Indian College Fund (AICF) — Full Circle Scholarships,https://collegefund.org/students/scholarships/,3,foundation_org_page,public
-nf-seed-2026-t3-015,nf:source:nf-seed-2026-t3-015,American Indian College Fund (AICF) — Tribal College & University (TCU) Institutional Grants,https://collegefund.org/grants/,3,foundation_org_page,public
+nf-seed-2026-t3-015,nf:source:nf-seed-2026-t3-015,American Indian College Fund (AICF) — Tribal College & University (TCU) Institutional Grants,https://collegefund.org/students/scholarships/,3,foundation_org_page,public
 nf-seed-2026-t3-016,nf:source:nf-seed-2026-t3-016,Native Arts and Cultures Foundation (NACF) — Artist Fellowships,https://www.nativeartsandcultures.org/artist-fellowships,3,foundation_org_page,public
 nf-seed-2026-t3-017,nf:source:nf-seed-2026-t3-017,Native Arts and Cultures Foundation (NACF) — Local Arts Support – Tribal Community Grants,https://www.nativeartsandcultures.org/tribal-community,3,foundation_org_page,public
-nf-seed-2026-t3-018,nf:source:nf-seed-2026-t3-018,Association on American Indian Affairs (AAIA) — Scholarship Programs,https://www.indian-affairs.org/scholarships.html,3,foundation_org_page,public
-nf-seed-2026-t3-019,nf:source:nf-seed-2026-t3-019,Association on American Indian Affairs (AAIA) — Emergency Assistance Fund,https://www.indian-affairs.org/emergency-assistance.html,3,foundation_org_page,public
-nf-seed-2026-t3-020,nf:source:nf-seed-2026-t3-020,Oweesta Corporation (First Nations Oweesta) — Native CDFI Capacity-Building Grants,https://www.oweesta.org/grants,3,foundation_org_page,public
+nf-seed-2026-t3-018,nf:source:nf-seed-2026-t3-018,Association on American Indian Affairs (AAIA) — Scholarship Programs,https://www.indian-affairs.org,3,foundation_org_page,public
+nf-seed-2026-t3-019,nf:source:nf-seed-2026-t3-019,Association on American Indian Affairs (AAIA) — Emergency Assistance Fund,https://www.indian-affairs.org,3,foundation_org_page,public
+nf-seed-2026-t3-020,nf:source:nf-seed-2026-t3-020,Oweesta Corporation (First Nations Oweesta) — Native CDFI Capacity-Building Grants,https://www.oweesta.org/programs/,3,foundation_org_page,public
 nf-seed-2026-t3-021,nf:source:nf-seed-2026-t3-021,Oweesta Corporation (First Nations Oweesta) — Native CDFI Seed Capital Grants (Goldman Sachs $10M fund),https://www.oweesta.org,3,foundation_org_page,public
 nf-seed-2026-t3-022,nf:source:nf-seed-2026-t3-022,Partnership with Native Americans (PWNA) — Emergency Fund / Community Grants,https://www.nativepartnership.org/grants,3,foundation_org_page,public
 nf-seed-2026-t3-023,nf:source:nf-seed-2026-t3-023,IllumiNative — Narrative Power Project Grants,https://illuminatives.org,3,foundation_org_page,public
-nf-seed-2026-t3-024,nf:source:nf-seed-2026-t3-024,Running Strong for American Indian Youth — Community Grants,https://indianyouth.org/grants,3,foundation_org_page,public
+nf-seed-2026-t3-024,nf:source:nf-seed-2026-t3-024,Running Strong for American Indian Youth — Community Grants,https://indianyouth.org,3,foundation_org_page,public
 nf-seed-2026-t3-025,nf:source:nf-seed-2026-t3-025,ANA Pacific / Native Hawaiian Organizations — ANA Pacific Grant Programs,https://www.anapacific.org/ana-grants/,3,foundation_org_page,public
-nf-seed-2026-t3-026,nf:source:nf-seed-2026-t3-026,AISES (American Indian Science & Engineering Society) — Corporate Scholarship & Grants,https://www.aises.org/grants,3,foundation_org_page,public
-nf-seed-2026-t3-027,nf:source:nf-seed-2026-t3-027,Honor the Earth — Environmental Justice Grants,https://www.honortheearth.org/grants,3,foundation_org_page,public
+nf-seed-2026-t3-026,nf:source:nf-seed-2026-t3-026,AISES (American Indian Science & Engineering Society) — Corporate Scholarship & Grants,https://www.aises.org/scholarships,3,foundation_org_page,public
+nf-seed-2026-t3-027,nf:source:nf-seed-2026-t3-027,Honor the Earth — Environmental Justice Grants,https://www.honorearth.org,3,foundation_org_page,public
 nf-seed-2026-t3-028,nf:source:nf-seed-2026-t3-028,Potlatch Fund — Capacity-Building Grants (Pacific Northwest),https://www.potlatchfund.org/grants,3,foundation_org_page,public
 nf-seed-2026-t3-029,nf:source:nf-seed-2026-t3-029,Four Directions Community Health — Community Wellness Grants,https://fourdirections.org,3,foundation_org_page,public
-nf-seed-2026-t3-030,nf:source:nf-seed-2026-t3-030,Seventh Generation Fund for Indigenous Peoples — Project Grants,https://7genfund.org/grants,3,foundation_org_page,public
+nf-seed-2026-t3-030,nf:source:nf-seed-2026-t3-030,Seventh Generation Fund for Indigenous Peoples — Project Grants,https://7genfund.org,3,foundation_org_page,public
 nf-seed-2026-t3-031,nf:source:nf-seed-2026-t3-031,First Americans Education Project — Education Initiative Grants,https://firstamericanseducation.org,3,foundation_org_page,public
 nf-seed-2026-t3-032,nf:source:nf-seed-2026-t3-032,Native Forward Scholars Fund (AIHEC) — Scholarship Programs,https://www.nativeforward.org/scholarships,3,foundation_org_page,public
 nf-seed-2026-t3-033,nf:source:nf-seed-2026-t3-033,Christensen Fund — Biocultural Diversity Grants – North America,https://www.christensenfund.org/what-we-fund/north-america/,3,foundation_org_page,public
 nf-seed-2026-t3-034,nf:source:nf-seed-2026-t3-034,First Nations Development Institute — Investing in Native Community Assets,https://www.firstnations.org/grants,3,foundation_org_page,public
-nf-seed-2026-t3-035,nf:source:nf-seed-2026-t3-035,"W.K. Kellogg Foundation — Truth, Racial Healing & Transformation – Native track",https://wkkf.org/what-we-do/priority-areas/racial-equity/trht/,3,foundation_org_page,public
+nf-seed-2026-t3-035,nf:source:nf-seed-2026-t3-035,"W.K. Kellogg Foundation — Truth, Racial Healing & Transformation – Native track",https://www.wkkf.org/what-we-do/racial-equity/truth-racial-healing-transformation,3,foundation_org_page,public
 nf-seed-2026-t3-036,nf:source:nf-seed-2026-t3-036,Native Health Initiative (NHI) — Community Health Grants,https://nativehealthinitiative.org,3,foundation_org_page,public
-nf-seed-2026-t3-037,nf:source:nf-seed-2026-t3-037,Tribal College Fund – American Indian Higher Education Consortium (AIHEC) — AIHEC Member Institution Grants,https://www.aihec.org/resources/funding/,3,foundation_org_page,public
+nf-seed-2026-t3-037,nf:source:nf-seed-2026-t3-037,Tribal College Fund – American Indian Higher Education Consortium (AIHEC) — AIHEC Member Institution Grants,https://www.aihec.org,3,foundation_org_page,public
 nf-seed-2026-t3-038,nf:source:nf-seed-2026-t3-038,National Congress of American Indians (NCAI) — NCAI Tribal Resilience Program Grants,https://www.ncai.org/initiatives/partnerships-grants,3,foundation_org_page,members
 nf-seed-2026-t3-039,nf:source:nf-seed-2026-t3-039,United South and Eastern Tribes (USET) Sovereignty Protection Fund — USET SPF Grants & Programs,https://usetinc.org/resources/,3,foundation_org_page,members
 nf-seed-2026-t3-040,nf:source:nf-seed-2026-t3-040,Affiliated Tribes of Northwest Indians (ATNI) — ATNI Tribal Assistance Programs,https://www.atnitribes.org/programs/,3,foundation_org_page,members
 nf-seed-2026-t3-041,nf:source:nf-seed-2026-t3-041,Inter Tribal Association of Arizona (ITCA) — ITCA Technical Assistance & Grant Programs,https://www.itcaonline.com/programs/,3,foundation_org_page,members
 nf-seed-2026-t3-042,nf:source:nf-seed-2026-t3-042,Great Plains Tribal Chairman's Association (GPTCA) — GPTCA Health & Social Service Grants,https://www.gptca.net,3,foundation_org_page,members
-nf-seed-2026-t3-043,nf:source:nf-seed-2026-t3-043,Southern California Tribal Chairmen's Association (SCTCA) — SCTCA Social Service & Health Grants,https://www.sctca.net/grants,3,foundation_org_page,members
+nf-seed-2026-t3-043,nf:source:nf-seed-2026-t3-043,Southern California Tribal Chairmen's Association (SCTCA) — SCTCA Social Service & Health Grants,https://www.sctca.net,3,foundation_org_page,members
 nf-seed-2026-t3-044,nf:source:nf-seed-2026-t3-044,Alaska Federation of Natives (AFN) — AFN Policy & Capacity Grants,https://www.nativefederation.org,3,foundation_org_page,public
 nf-seed-2026-t3-045,nf:source:nf-seed-2026-t3-045,Tanana Chiefs Conference (TCC) — TCC Community Health & Social Services Grants,https://www.tananachiefs.org/grants,3,foundation_org_page,members
 nf-seed-2026-t3-046,nf:source:nf-seed-2026-t3-046,Association of Village Council Presidents (AVCP) — AVCP Health & Community Development Grants,https://www.avcp.org,3,foundation_org_page,members
-nf-seed-2026-t3-047,nf:source:nf-seed-2026-t3-047,Kawerak Inc. — Kawerak Community Grants & Programs,https://www.kawerak.org/programs/,3,foundation_org_page,public
+nf-seed-2026-t3-047,nf:source:nf-seed-2026-t3-047,Kawerak Inc. — Kawerak Community Grants & Programs,https://www.kawerak.org,3,foundation_org_page,public
 nf-seed-2026-t3-048,nf:source:nf-seed-2026-t3-048,Cook Inlet Tribal Council (CITC) — CITC Career Pathways & Social Services Grants / Wraparound Services,https://www.citci.org/programs/,3,foundation_org_page,public
 nf-seed-2026-t3-049,nf:source:nf-seed-2026-t3-049,Chickasaw Community Bank / First Nations — Chickasaw Economic Development Foundation Grants,https://www.chickasawnation.com/services/,3,foundation_org_page,members
 nf-seed-2026-t3-050,nf:source:nf-seed-2026-t3-050,Native American Finance Officers Association (NAFOA) — Financial Capacity-Building Grants & Training Funds,https://www.nafoa.org,3,foundation_org_page,members
@@ -166,13 +166,13 @@ nf-seed-2026-t3-052,nf:source:nf-seed-2026-t3-052,National Indian Head Start Dir
 nf-seed-2026-t3-053,nf:source:nf-seed-2026-t3-053,National Native American Bar Association (NNABA) — NNABA Legal Education Grants,https://www.nativeamericanbar.org,3,foundation_org_page,public
 nf-seed-2026-t3-054,nf:source:nf-seed-2026-t3-054,First Nations Oweesta Corporation — Native CDFI Technical Assistance & Loan Capital,https://www.oweesta.org/programs/,3,foundation_org_page,public
 nf-seed-2026-t3-055,nf:source:nf-seed-2026-t3-055,Native American Rights Fund (NARF) — NARF Pro Bono / Litigation Support,https://www.narf.org,3,foundation_org_page,public
-nf-seed-2026-t3-056,nf:source:nf-seed-2026-t3-056,Council for Native Hawaiian Advancement (CNHA) — CNHA Community Grants & USDA Pass-through,https://www.hawaiiancouncil.org/grants,3,foundation_org_page,public
+nf-seed-2026-t3-056,nf:source:nf-seed-2026-t3-056,Council for Native Hawaiian Advancement (CNHA) — CNHA Community Grants & USDA Pass-through,https://www.hawaiiancouncil.org,3,foundation_org_page,public
 nf-seed-2026-t3-057,nf:source:nf-seed-2026-t3-057,Kamehameha Schools — Community Grants & Education Initiatives,https://www.ksbe.edu/philanthropy/,3,foundation_org_page,public
 nf-seed-2026-t3-058,nf:source:nf-seed-2026-t3-058,Papa Ola Lokahi — Native Hawaiian Health Care Systems Grants,https://www.papaolalokahi.org,3,foundation_org_page,public
 nf-seed-2026-t3-059,nf:source:nf-seed-2026-t3-059,Native Hawaiian Education Council (NHEC) — Native Hawaiian Education Program (NHEP) Sub-grants,https://nhec.net,3,foundation_org_page,public
 nf-seed-2026-t3-060,nf:source:nf-seed-2026-t3-060,Cankdeska Cikana Community College – Tribal Colleges Resource Network — Intertribal College Resource Sharing Network,https://www.littlehoop.edu,3,foundation_org_page,members
-nf-seed-2026-t3-061,nf:source:nf-seed-2026-t3-061,Navajo Nation Division of Community Development — Navajo Nation Community Development Block Grant (NCDBG),https://www.navajo-nsn.gov/programs/,3,foundation_org_page,login
+nf-seed-2026-t3-061,nf:source:nf-seed-2026-t3-061,Navajo Nation Division of Community Development — Navajo Nation Community Development Block Grant (NCDBG),https://www.navajo-nsn.gov,3,foundation_org_page,login
 nf-seed-2026-t3-062,nf:source:nf-seed-2026-t3-062,Tohono O'odham Community Action (TOCA) — TOCA Food Sovereignty Grants,https://www.tocaonline.org,3,foundation_org_page,public
-nf-seed-2026-t3-063,nf:source:nf-seed-2026-t3-063,Intertribal Agriculture Council (IAC) — IAC Tribal Agriculture Technical Assistance Grants,https://www.indianaglink.com,3,foundation_org_page,public
-nf-seed-2026-t3-064,nf:source:nf-seed-2026-t3-064,National Indian Education Association (NIEA) — NIEA Education Policy & Capacity Grants,https://www.niea.org/grants-and-awards/,3,foundation_org_page,members
-nf-seed-2026-t3-065,nf:source:nf-seed-2026-t3-065,Native Voices Rising (NDN Collective + NAP partnership) — Native Voices Rising Rapid Response Fund,https://nativephilanthropy.org/native-voices-rising,3,foundation_org_page,public
+nf-seed-2026-t3-063,nf:source:nf-seed-2026-t3-063,Intertribal Agriculture Council (IAC) — IAC Tribal Agriculture Technical Assistance Grants,https://www.indianag.org,3,foundation_org_page,public
+nf-seed-2026-t3-064,nf:source:nf-seed-2026-t3-064,National Indian Education Association (NIEA) — NIEA Education Policy & Capacity Grants,https://www.niea.org,3,foundation_org_page,members
+nf-seed-2026-t3-065,nf:source:nf-seed-2026-t3-065,Native Voices Rising (NDN Collective + NAP partnership) — Native Voices Rising Rapid Response Fund,https://nativephilanthropy.org,3,foundation_org_page,public
