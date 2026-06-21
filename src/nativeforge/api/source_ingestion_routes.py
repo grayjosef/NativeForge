@@ -16,6 +16,9 @@ from nativeforge.api.deps_db import (
 from nativeforge.api.org_context import OrgContext
 from nativeforge.repositories import organizations as org_repo
 from nativeforge.services import source_ingestion_orchestrator_service as orch
+from nativeforge.services.live_grants_gov_honest_orchestrator_service import (
+    run_live_grants_gov_honest_block,
+)
 from nativeforge.services.real_resolver_seed_preview_report_service import (
     build_real_resolver_seed_preview_report,
 )
@@ -189,6 +192,64 @@ def real_real_resolver_validation(
     if org is None:
         raise HTTPException(status_code=404, detail="organization not found")
     result = run_real_resolver_validation_block(
+        db,
+        org=org,
+        org_id=org_id,
+        operator_confirmation=body,
+    )
+    db.commit()
+    return result
+
+
+@demo_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/live-grants-gov-honest"
+)
+def demo_live_grants_gov_honest(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: dict[str, Any],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    result = run_live_grants_gov_honest_block(
+        db,
+        org=org,
+        org_id=org_id,
+        operator_confirmation=body,
+    )
+    db.commit()
+    return result
+
+
+@real_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/live-grants-gov-honest"
+)
+def real_live_grants_gov_honest(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    db: Annotated[Session, Depends(get_db_session)],
+    body: dict[str, Any],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    org = org_repo.get_organization(db, org_id)
+    if org is None:
+        raise HTTPException(status_code=404, detail="organization not found")
+    result = run_live_grants_gov_honest_block(
         db,
         org=org,
         org_id=org_id,

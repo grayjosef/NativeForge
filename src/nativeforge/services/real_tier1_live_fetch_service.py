@@ -1,4 +1,4 @@
-"""Sprint 305: real tier-1 fetch via Grants.gov search2 — no illustrative synthesis."""
+"""Sprint 305 / NF-11: tier-1 fetch with honest live vs fixture labeling."""
 
 from __future__ import annotations
 
@@ -7,24 +7,25 @@ import time
 from collections.abc import Callable
 from typing import Any
 
+from nativeforge.services.fed_program_activation_binding_service import (
+    NF11_FALLBACK_SEED_ID,
+    NF11_PRIMARY_SEED_ID,
+    load_seed_candidate,
+)
 from nativeforge.services.grants_gov_search_api_adapter_service import (
+    FETCH_MODE_FIXTURE,
+    FETCH_MODE_LIVE,
+    FetchMode,
     HttpPostJson,
-    fetch_fed001_grants_gov_opportunities,
+    fetch_grants_gov_opportunities_for_source,
     load_recorded_grants_gov_search_fixture,
-)
-from nativeforge.services.seed_source_human_activation_service import (
-    NF9_AUTHORIZED_SEED_ID,
-)
-from nativeforge.services.source_ingestion_seed_loader_service import (
-    load_source_seed_rows,
-    seed_row_to_discovery_candidate,
 )
 from nativeforge.services.source_ingestion_tier1_federal_adapter_service import (
     parse_tier1_federal_opportunity,
     upsert_tier1_opportunities,
 )
 
-SCHEMA_VERSION = "nf_real_tier1_live_fetch_v2"
+SCHEMA_VERSION = "nf_real_tier1_live_fetch_v3"
 DEFAULT_MIN_INTERVAL_SECONDS = 1.0
 
 Tier1LiveFetcher = Callable[[dict[str, Any]], list[dict[str, Any]]]
@@ -54,16 +55,17 @@ def _enforce_rate_limit(*, min_interval_seconds: float) -> None:
 
 
 def load_fed001_candidate() -> dict[str, Any]:
-    for row in load_source_seed_rows():
-        if row["seed_id"] == NF9_AUTHORIZED_SEED_ID:
-            return seed_row_to_discovery_candidate(row)
-    raise ValueError(f"missing seed {NF9_AUTHORIZED_SEED_ID!r}")
+    return load_seed_candidate(NF11_PRIMARY_SEED_ID)
+
+
+def load_fed006_candidate() -> dict[str, Any]:
+    return load_seed_candidate(NF11_FALLBACK_SEED_ID)
 
 
 def fixture_tier1_live_fetch(source: dict[str, Any]) -> list[dict[str, Any]]:
-    """Recorded real Grants.gov search hit for CI — never illustrative fiction."""
-    rows = load_recorded_grants_gov_search_fixture()
-    return rows
+    """Recorded Grants.gov TEDC fixture for CI — labeled fixture, not real_fetch."""
+    _ = source
+    return load_recorded_grants_gov_search_fixture()
 
 
 def default_real_tier1_grants_gov_fetch(
@@ -71,8 +73,35 @@ def default_real_tier1_grants_gov_fetch(
     *,
     http_post: HttpPostJson | None = None,
 ) -> list[dict[str, Any]]:
-    """Live Grants.gov search2 for fed-001; empty if no match — never synthesize."""
-    return fetch_fed001_grants_gov_opportunities(source, http_post=http_post)
+    """Live search2 + fetchOpportunity for source ALN; empty if no match."""
+    result = fetch_grants_gov_opportunities_for_source(
+        source,
+        http_post=http_post,
+        fetch_mode=FETCH_MODE_LIVE,
+    )
+    return list(result.get("payloads") or [])
+
+
+def _summarize_fetch_labels(payloads: list[dict[str, Any]]) -> dict[str, Any]:
+    if not payloads:
+        return {
+            "fetch_mode": FETCH_MODE_LIVE,
+            "fixture": False,
+            "real_fetch": False,
+            "search_live": False,
+            "detail_live": False,
+        }
+    modes = {str(p.get("fetch_mode") or FETCH_MODE_LIVE) for p in payloads}
+    fetch_mode: FetchMode = (
+        FETCH_MODE_FIXTURE if FETCH_MODE_FIXTURE in modes else FETCH_MODE_LIVE
+    )
+    return {
+        "fetch_mode": fetch_mode,
+        "fixture": fetch_mode == FETCH_MODE_FIXTURE,
+        "real_fetch": all(p.get("real_fetch") is True for p in payloads),
+        "search_live": all(p.get("search_live") is True for p in payloads),
+        "detail_live": all(p.get("detail_live") is True for p in payloads),
+    }
 
 
 def run_real_tier1_fetch_and_upsert(
@@ -82,11 +111,15 @@ def run_real_tier1_fetch_and_upsert(
     existing_ids: set[str] | None = None,
     min_interval_seconds: float = DEFAULT_MIN_INTERVAL_SECONDS,
     require_active: bool = True,
+    http_post: HttpPostJson | None = None,
 ) -> dict[str, Any]:
     _enforce_rate_limit(min_interval_seconds=min_interval_seconds)
     chosen = source or load_fed001_candidate()
-    do_fetch = fetcher or default_real_tier1_grants_gov_fetch
-    payloads = do_fetch(chosen)
+    if fetcher is not None:
+        payloads = fetcher(chosen)
+    else:
+        payloads = default_real_tier1_grants_gov_fetch(chosen, http_post=http_post)
+    labels = _summarize_fetch_labels(payloads)
     parsed_rows = [
         parse_tier1_federal_opportunity(
             p,
@@ -110,7 +143,11 @@ def run_real_tier1_fetch_and_upsert(
                 len(payloads) == 0
                 or (first["inserted_count"] >= 1 and second["inserted_count"] == 0)
             ),
-            "real_fetch": True,
+            "fetch_mode": labels["fetch_mode"],
+            "fixture": labels["fixture"],
+            "real_fetch": labels["real_fetch"],
+            "search_live": labels["search_live"],
+            "detail_live": labels["detail_live"],
             "grants_gov_api": True,
             "never_synthesized": True,
             "empty_when_no_api_match": len(payloads) == 0,

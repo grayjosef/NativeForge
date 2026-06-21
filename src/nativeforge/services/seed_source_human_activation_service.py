@@ -8,6 +8,10 @@ from typing import Any
 
 from nativeforge.domain.enums import OpportunityVerificationStatus
 from nativeforge.services import opportunity_discovery_service as ods
+from nativeforge.services.fed_program_activation_binding_service import (
+    NF11_ALLOWED_ACTIVATION_SEEDS,
+    assert_seed_aln_binding,
+)
 from nativeforge.services.source_ingestion_orchestrator_service import (
     _candidate_to_source_payload,
     persist_seed_candidates_to_registry,
@@ -17,7 +21,7 @@ from nativeforge.services.source_ingestion_seed_loader_service import (
     seed_row_to_discovery_candidate,
 )
 
-SCHEMA_VERSION = "nf_seed_source_human_activation_v1"
+SCHEMA_VERSION = "nf_seed_source_human_activation_v2"
 NF9_AUTHORIZED_SEED_ID = "nf-seed-2026-fed-001"
 
 REQUIRED_CONFIRMATION_KEYS: frozenset[str] = frozenset(
@@ -60,14 +64,18 @@ def activate_single_seed_source_human_gate(
     org: Any,
     seed_id: str,
     operator_confirmation: dict[str, Any],
+    authorized_seeds: frozenset[str] | None = None,
 ) -> dict[str, Any]:
     """Activate exactly one authorized seed — is_active=True for that source only."""
-    if seed_id != NF9_AUTHORIZED_SEED_ID:
+    allowed = authorized_seeds or frozenset({NF9_AUTHORIZED_SEED_ID})
+    if seed_id not in allowed:
         raise PermissionError(
-            f"NF-9 block authorizes activation of {NF9_AUTHORIZED_SEED_ID!r} only"
+            f"activation not authorized for seed {seed_id!r}; allowed={sorted(allowed)}"
         )
     _validate_confirmation(operator_confirmation)
     candidate = _load_seed_candidate(seed_id)
+    if seed_id in NF11_ALLOWED_ACTIVATION_SEEDS:
+        assert_seed_aln_binding(seed_id, str(candidate["source_name"]))
     if candidate.get("access_posture_hint") != "public":
         raise PermissionError("only public posture sources may be activated")
     persist_seed_candidates_to_registry(

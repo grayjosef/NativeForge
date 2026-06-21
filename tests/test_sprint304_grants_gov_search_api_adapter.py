@@ -53,6 +53,17 @@ def test_recorded_fixture_not_illustrative() -> None:
     assert len(rows) == 1
     assert rows[0]["opportunity_number"] == "BIA-TEDC-2026"
     assert "Illustrative" not in rows[0]["opportunity_title"]
+    assert rows[0]["fixture"] is True
+    assert rows[0]["real_fetch"] is False
+    assert rows[0]["fetch_mode"] == "fixture"
+    assert rows[0]["tribal_eligible"] is True
+    assert "Indian Tribes" in rows[0]["eligibility_text"]
+
+
+def test_fed001_live_mock_returns_empty_for_tedc_only_hits() -> None:
+    source = load_fed001_candidate()
+    rows = fetch_fed001_grants_gov_opportunities(source, http_post=_mock_post)
+    assert rows == []
 
 
 def test_fetch_empty_when_aln_filter_excludes_hits() -> None:

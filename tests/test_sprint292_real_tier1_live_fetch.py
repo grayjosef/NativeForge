@@ -16,4 +16,6 @@ def test_real_tier1_idempotent() -> None:
         min_interval_seconds=0,
     )
     assert result["second_run_zero_new"] is True
-    assert result["real_fetch"] is True
+    assert result["real_fetch"] is False
+    assert result["fixture"] is True
+    assert result["fetch_mode"] == "fixture"
