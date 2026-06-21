@@ -160,7 +160,7 @@ def resolve_url_real(
                     "error": str(exc),
                 }
             )
-    resolved = 200 <= status < 400
+    resolved = status > 0 and status not in {404, 410}
     detected = detect_access_posture_from_signals(
         http_status=status,
         body_snippet=snippet,
