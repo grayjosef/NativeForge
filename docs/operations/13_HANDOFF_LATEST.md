@@ -1,4 +1,4 @@
-# NativeForge Handoff — Block NF-9: Real-Resolver Validation + First Tier-1 Activation (Sprints 287–301)
+# NativeForge Handoff — Block NF-10: Real Seed + Real Grants.gov Fetch (Sprints 302–316)
 
 **Date:** 2026-05-19  
 **Branch:** `main` (ahead of `origin/main`)  
@@ -7,99 +7,78 @@
 
 ## Run summary
 
-Completed the approved 15-sprint block with green baseline first (`5103` passed). Swapped the synthetic URL resolver for a rate-limited real HEAD/GET resolver with posture detection, ran real seed-preview reporting with baseline comparison, activated exactly **one** source (`nf-seed-2026-fed-001`) through the human gate, and verified real tier-1 fetch with canonical-id idempotent upsert. **Stopped after fed-001** — no other sources activated.
+Completed NF-10 with green baseline (`5116` passed). Real seed CSV (177 rows, real URLs) loads via normalized 7-column format with fail-closed placeholder guard. Grants.gov `search2` + `fetchOpportunity` adapter replaces illustrative tier-1 fixtures. Re-runs real-resolver validation with corrected URL posture logic and recorded Grants.gov NOFO for CI.
 
 | Sprint | Commit | Summary |
 |--------|--------|---------|
-| 287 | `465f108` | Real URL resolver (HEAD/GET, rate-limited, posture detection) |
-| 288 | `a8fd137` | Real URL quality verification with detected posture |
-| 289 | `1525f0b` | Synthetic vs real baseline comparison (156/18/3 baseline) |
-| 290 | `f559f4e` | Real-resolver seed preview report (177 candidates) |
-| 291 | `07901be` | Human-gated activation for `nf-seed-2026-fed-001` only |
-| 292 | `d6d175e` | Real tier-1 live fetch + idempotent upsert |
-| 293 | `a94d3fe` | Real-resolver validation plan gate |
-| 294 | `6cb7919` | Full validation orchestrator (preview → activate → fetch) |
-| 295 | `a84bf2f` | Gate verification service |
-| 296 | `36b463d` | Closeout packet |
-| 297 | `f900fe8` | Plan-gated API routes |
-| 298–301 | *(handoff)* | Block closeout |
+| 302 | `47d073c` | Real seed URL guard + loader normalization for minimal CSV |
+| 303 | `788c8f8` | URL resolver: dead vs login (403/404 no longer all dead) |
+| 304 | `666e948` | Grants.gov search2 API adapter + recorded BIA-TEDC fixtures |
+| 305 | `6c9357d` | Tier-1 live fetch via Grants.gov — empty if no match, never synthesize |
+| 306 | `c5456b0` | NF-10 gate verification + closeout |
+| 307 | `7d75040` | Tier-2 test aligned to real seed (51 state portals) |
+| 308–316 | *(handoff)* | Block closeout |
 
-## Plan gate (quadruple gate)
+## Real seed (`NF_SOURCE_SEED_2026.csv`)
 
-| Gate | Value |
-|------|-------|
-| `NF_APP_ENV` | `staging` |
-| Env | `NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED=true` |
-| Env | `NF_REAL_RESOLVER_VALIDATION_PLAN_APPROVED=true` |
-| Query | `nf_live_source_ingestion=true` |
-| Query | `nf_real_resolver_validation=true` |
+| Metric | Value |
+|--------|-------|
+| Total rows | 177 |
+| Tier 1 (federal) | 61 |
+| Tier 2 (state) | 51 |
+| Tier 3 (foundation/org) | 65 |
+| Synthetic placeholder URLs | **0** (fail-closed guard) |
 
-## Synthetic baseline (NF-8 hint-based)
+**fed-001:** `BIA / Interior — Aid to Tribal Governments (15.020)` → `https://www.bia.gov/topic/grants`
 
-| Posture | Count |
-|---------|-------|
-| public | 156 |
-| login | 18 |
-| members | 3 |
-| dead | 0 |
+Loader accepts minimal 7-column real CSV and derives `source_type`, `publisher_name`, `program_family`, etc.
 
-Real-resolver run produces `baseline_comparison` with `real_counts`, `deltas`, and corrected `posture_counts` per candidate. CI uses injectable mock fetcher; staging deployment uses live HTTP.
+## Grants.gov adapter
 
-## fed-001 activation (human gate)
+- **search2:** `POST https://api.grants.gov/v1/api/search2` (no auth)
+- **fetchOpportunity:** detail for matched hit
+- **fed-001 search:** ALN `15.020` + `DOI-BIA` agency filter from source name
+- **If no ALN-matched hit:** returns **empty list** — never synthesizes
+- **CI fixture:** recorded `BIA-TEDC-2026` search hit (real API response shape)
 
-- **Authorized seed:** `nf-seed-2026-fed-001` only
-- **Path:** `activate_single_seed_source_human_gate()` with operator confirmation payload
-- **Result:** exactly one registry row with `is_active=True`; all others remain inactive
-- **Confirmation keys required:** `operator_handle`, `human_activation_acknowledged`, `public_only_acknowledged`, `single_source_only_acknowledged`
+## Real-resolver validation (re-run)
 
-## Tier-1 live fetch (fed-001)
+Same quadruple gate as NF-9. Corrected posture table replaces inflated dead counts (login/403 URLs no longer classified as dead). Baseline comparison vs synthetic hints (156/18/3) included in report.
 
-- Rate-limited (1 req/s default)
-- Max 3 opportunities per run (no bulk crawl)
-- Canonical opportunity id upsert: second run inserts 0
-- Public only — HTTP 4xx blocks fetch; no CAPTCHA/login bypass; no credentials
+## fed-001 activation + tier-1 fetch
 
-## API endpoints
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/v1/nf/{demo\|real}/orgs/{org_id}/discovery/source-ingestion/real-resolver-seed-preview` | Real-resolver 177-candidate report + baseline comparison |
-| POST | `/v1/nf/{demo\|real}/orgs/{org_id}/discovery/source-ingestion/real-resolver-validation` | Full block: preview + fed-001 activation + tier-1 fetch |
-
-POST body = operator confirmation dict (see above).
+- Exactly **one** source activated (`is_active=True`)
+- Tier-1 fetch uses Grants.gov API in staging; recorded fixture in CI
+- Idempotent canonical-id upsert: second run inserts 0
+- **STOP** after fed-001 — no other activations
 
 ## Build / test state
 
-- **Baseline at block start:** `5103 passed`, `11 skipped`, `0 failed`
-- **Full pytest (final):** `5116 passed`, `11 skipped`, `0 failed` (+13 tests)
-- **Ruff:** Green on all NF-9 files
-- **Frontend:** No changes
-- **Alembic head:** `0019` (no new migrations)
+- **Baseline at block start:** `5116 passed`, `11 skipped`
+- **Full pytest (final):** `5124 passed`, `11 skipped` (+8 tests)
+- **Ruff:** Green on NF-10 files
 - **Stash:** Untouched
 
 ## Hard invariants preserved
 
-- Staging only; production fail-closed
-- Exactly one source activated (`nf-seed-2026-fed-001`)
-- members/login → BLOCKED; never bypassed
-- No credentials; no CAPTCHA/login bypass
-- Rate-limited resolver and tier-1 fetch
-- Idempotent upsert on canonical opportunity id
-- CI uses mock HTTP — no live network in test suite
+- Staging only; same plan gates as NF-9
+- No illustrative/synthetic NOFO fabrication
+- No CAPTCHA/login bypass; no credentials
+- Public-only activation path
+- Exactly one active source (fed-001)
 
 ## Proposed next safe action
 
-1. Deploy to staging with all plan-gate env vars set.
-2. POST `real-resolver-validation` with operator confirmation; review corrected posture table vs baseline.
-3. Monitor fed-001 as the sole active source; do not activate additional sources without separate authorization.
+1. Deploy to staging; POST `real-resolver-validation` to get live posture counts vs 156/18/3 baseline.
+2. Review Grants.gov empty result for ALN 15.020 if no posted NOFO — expected when program has no active listing.
+3. Do not activate additional sources without separate authorization.
 
 ## Verification commands
 
 ```bash
 cd /home/josefgray/projects/nativeforge
-source .venv/bin/activate
 pytest -q
-pytest tests/test_sprint28*_real*.py tests/test_sprint29*_*.py -q
-git log --oneline 0a8b48c..HEAD
+pytest tests/test_sprint302_real_seed_url_guard.py tests/test_sprint304_grants_gov_search_api_adapter.py tests/test_sprint306_real_seed_grants_gov_closeout.py -q
+python -c "from nativeforge.services.source_ingestion_seed_loader_service import load_source_seed_rows; from nativeforge.services.source_seed_real_url_guard_service import assert_real_seed_urls; assert_real_seed_urls(load_source_seed_rows()); print('real seed OK')"
 git stash list
 ```
