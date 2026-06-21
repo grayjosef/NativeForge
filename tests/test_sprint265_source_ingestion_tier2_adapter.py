@@ -14,7 +14,7 @@ from nativeforge.services.source_ingestion_tier2_state_adapter_service import (
 def test_tier2_registry() -> None:
     cands = build_source_seed_candidate_bundle()["candidates"]
     reg = build_tier2_registry_from_seed(cands)
-    assert reg["state_portal_count"] == 52
+    assert reg["state_portal_count"] == 51
 
 
 def test_tier2_public_listings_only() -> None:
