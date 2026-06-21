@@ -1,0 +1,21 @@
+{
+  "errorcode": 0,
+  "msg": "Webservice Succeeds",
+  "data": {
+    "hitCount": 1,
+    "oppHits": [
+      {
+        "id": "362648",
+        "number": "BIA-TEDC-2026",
+        "title": "Tribal Energy Development Capacity (TEDC) Grant FY 2026",
+        "agencyCode": "DOI-BIA",
+        "agency": "Bureau of Indian Affairs",
+        "openDate": "06/02/2026",
+        "closeDate": "07/16/2026",
+        "oppStatus": "posted",
+        "docType": "synopsis",
+        "cfdaList": ["15.148"]
+      }
+    ]
+  }
+}
