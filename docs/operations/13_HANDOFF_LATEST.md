@@ -1,4 +1,4 @@
-# NativeForge Handoff — Block NF-10: Real Seed + Real Grants.gov Fetch (Sprints 302–316)
+# NativeForge Handoff — Block NF-11: True Live Grants.gov + Honest Labeling (Sprints 308–316)
 
 **Date:** 2026-05-19  
 **Branch:** `main` (ahead of `origin/main`)  
@@ -7,78 +7,77 @@
 
 ## Run summary
 
-Completed NF-10 with green baseline (`5116` passed). Real seed CSV (177 rows, real URLs) loads via normalized 7-column format with fail-closed placeholder guard. Grants.gov `search2` + `fetchOpportunity` adapter replaces illustrative tier-1 fixtures. Re-runs real-resolver validation with corrected URL posture logic and recorded Grants.gov NOFO for CI.
+Completed NF-11 with green baseline (`5129` passed, `11` skipped). Active federal source path now executes `search2` + `fetchOpportunity` live in staging; `real_fetch: true` is set only when both HTTP calls succeed in live mode. Fixtures/replays are labeled `fetch_mode: "fixture"`, `fixture: true`, `real_fetch: false`. fed-001 binds strictly to ALN **15.020** (empty when no posted NOFO); resolver falls back to TEDC fed-006 (**15.148**) for live activation. Eligibility parser maps `applicantTypes` + `applicantEligibilityDesc` → `tribal_eligible` + populated `eligibility_text`.
 
-| Sprint | Commit | Summary |
-|--------|--------|---------|
-| 302 | `47d073c` | Real seed URL guard + loader normalization for minimal CSV |
-| 303 | `788c8f8` | URL resolver: dead vs login (403/404 no longer all dead) |
-| 304 | `666e948` | Grants.gov search2 API adapter + recorded BIA-TEDC fixtures |
-| 305 | `6c9357d` | Tier-1 live fetch via Grants.gov — empty if no match, never synthesize |
-| 306 | `c5456b0` | NF-10 gate verification + closeout |
-| 307 | `7d75040` | Tier-2 test aligned to real seed (51 state portals) |
-| 308–316 | *(handoff)* | Block closeout |
+| Sprint | Summary |
+|--------|---------|
+| 308 | Grants.gov eligibility parser (`applicantTypes` + `applicantEligibilityDesc`) |
+| 309 | Fed program activation binding (15.020 primary → 15.148 TEDC fallback) |
+| 310 | Honest `fetch_mode` / `real_fetch` labeling in search2 + fetchOpportunity adapter |
+| 311 | Live Grants.gov honest orchestrator + gate verification |
+| 312 | NF-11 closeout packet, routes, tests |
+| 313–316 | Block closeout |
 
-## Real seed (`NF_SOURCE_SEED_2026.csv`)
+## Honest labeling
 
-| Metric | Value |
-|--------|-------|
-| Total rows | 177 |
-| Tier 1 (federal) | 61 |
-| Tier 2 (state) | 51 |
-| Tier 3 (foundation/org) | 65 |
-| Synthetic placeholder URLs | **0** (fail-closed guard) |
+| Path | `fetch_mode` | `fixture` | `real_fetch` |
+|------|--------------|-----------|--------------|
+| Staging live HTTP (search2 + fetchOpportunity both succeed) | `live` | `false` | `true` |
+| Recorded TEDC fixture (CI) | `fixture` | `true` | `false` |
+| Empty ALN match (fed-001 / 15.020) | `live` | `false` | `false` |
 
-**fed-001:** `BIA / Interior — Aid to Tribal Governments (15.020)` → `https://www.bia.gov/topic/grants`
+## Program binding
 
-Loader accepts minimal 7-column real CSV and derives `source_type`, `publisher_name`, `program_family`, etc.
+| Seed | Program | Behavior |
+|------|---------|----------|
+| `nf-seed-2026-fed-001` | ALN **15.020** Aid to Tribal Governments | Primary; live search returns empty today (correct) |
+| `nf-seed-2026-fed-006` | ALN **15.148** TEDC | Fallback when 15.020 has no live NOFO; activated in CI/staging resolver |
 
-## Grants.gov adapter
+Exactly **one** source activated per block run. TEDC fixture (`BIA-TEDC-2026`, opp id 362648) bound to fed-006 — no longer served as fed-001 fixture.
 
-- **search2:** `POST https://api.grants.gov/v1/api/search2` (no auth)
-- **fetchOpportunity:** detail for matched hit
-- **fed-001 search:** ALN `15.020` + `DOI-BIA` agency filter from source name
-- **If no ALN-matched hit:** returns **empty list** — never synthesizes
-- **CI fixture:** recorded `BIA-TEDC-2026` search hit (real API response shape)
+## Eligibility parser
 
-## Real-resolver validation (re-run)
+From real `fetchOpportunity` synopsis:
 
-Same quadruple gate as NF-9. Corrected posture table replaces inflated dead counts (login/403 URLs no longer classified as dead). Baseline comparison vs synthetic hints (156/18/3) included in report.
+- Combines applicant type descriptions + `applicantEligibilityDesc` (HTML stripped)
+- Sets `tribal_eligible: true` when tribal applicant type ids (07, 11) or narrative cues match
+- TEDC fixture: `tribal_eligible=true`, eligibility text includes "Indian Tribes and Tribal Energy Development Organizations"
 
-## fed-001 activation + tier-1 fetch
+## API
 
-- Exactly **one** source activated (`is_active=True`)
-- Tier-1 fetch uses Grants.gov API in staging; recorded fixture in CI
-- Idempotent canonical-id upsert: second run inserts 0
-- **STOP** after fed-001 — no other activations
+New staging-gated route (same quadruple gate as NF-9/NF-10):
+
+```
+POST /v1/nf/{demo|real}/orgs/{org_id}/discovery/source-ingestion/live-grants-gov-honest
+  ?nf_live_source_ingestion=true&nf_real_resolver_validation=true
+```
+
+Body: operator confirmation (`operator_handle`, `human_activation_acknowledged`, `public_only_acknowledged`, `single_source_only_acknowledged`).
 
 ## Build / test state
 
-- **Baseline at block start:** `5116 passed`, `11 skipped`
-- **Full pytest (final):** `5124 passed`, `11 skipped` (+8 tests)
-- **Ruff:** Green on NF-10 files
+- **Baseline at block start:** `5124 passed`, `11 skipped`
+- **Full pytest (final):** `5129 passed`, `11 skipped` (+5 tests)
 - **Stash:** Untouched
 
 ## Hard invariants preserved
 
-- Staging only; same plan gates as NF-9
+- Staging only; plan gates unchanged
 - No illustrative/synthetic NOFO fabrication
-- No CAPTCHA/login bypass; no credentials
 - Public-only activation path
-- Exactly one active source (fed-001)
+- Exactly one active source per activation
+- **WAIT** — no push
 
 ## Proposed next safe action
 
-1. Deploy to staging; POST `real-resolver-validation` to get live posture counts vs 156/18/3 baseline.
-2. Review Grants.gov empty result for ALN 15.020 if no posted NOFO — expected when program has no active listing.
-3. Do not activate additional sources without separate authorization.
+1. Deploy to staging; POST `live-grants-gov-honest` for real HTTP against Grants.gov (expect fed-006 TEDC activation while 15.020 empty).
+2. Confirm `real_fetch: true` on staging response when both API calls succeed.
+3. Do not push without Mayhem review.
 
 ## Verification commands
 
 ```bash
 cd /home/josefgray/projects/nativeforge
 pytest -q
-pytest tests/test_sprint302_real_seed_url_guard.py tests/test_sprint304_grants_gov_search_api_adapter.py tests/test_sprint306_real_seed_grants_gov_closeout.py -q
-python -c "from nativeforge.services.source_ingestion_seed_loader_service import load_source_seed_rows; from nativeforge.services.source_seed_real_url_guard_service import assert_real_seed_urls; assert_real_seed_urls(load_source_seed_rows()); print('real seed OK')"
-git stash list
+pytest tests/test_sprint308_grants_gov_eligibility_parser.py tests/test_sprint309_fed_program_activation_binding.py tests/test_sprint312_live_grants_gov_honest_closeout.py -q
 ```
