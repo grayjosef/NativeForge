@@ -1,0 +1,30 @@
+{
+  "schema_version": "nf13_test_tribal_profile_v1",
+  "fixture_key": "nf13_red_cedar_nation",
+  "organization_name": "Red Cedar Nation (synthetic fixture)",
+  "applicant_type": "tribal_government",
+  "service_geography": "northwest",
+  "grant_management_capacity": "strong",
+  "program_areas": [
+    "language_preservation",
+    "community_development",
+    "energy",
+    "health"
+  ],
+  "profile_evidence_codes": [
+    "applicant_type_confirmed_in_profile",
+    "tribal_eligibility_confirmed_in_profile",
+    "geography_confirmed_in_profile",
+    "capacity_confirmed_in_profile",
+    "documentation_inventory_confirmed_in_profile"
+  ],
+  "documentation_inventory": {
+    "organizational_profile_complete": true,
+    "tribal_resolution_on_file": true,
+    "financial_statements_on_file": true,
+    "authorized_signer_confirmed": true
+  },
+  "swappable_for_real_tribe": true,
+  "no_real_customer_data": true,
+  "capture_method": "synthetic_fixture"
+}

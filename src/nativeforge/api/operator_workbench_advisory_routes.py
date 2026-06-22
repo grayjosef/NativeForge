@@ -116,3 +116,57 @@ def real_matching_readiness_advisory(
     _same_org(org_id, ctx)
     _require_workbench_flag(nf_workbench)
     return wb_adv.build_matching_readiness_advisory_preview()
+
+
+@demo_workbench_advisory_router.get(
+    "/{org_id}/discovery/operator-workbench-advisory/real-grant-queues"
+)
+def demo_real_grant_queues_advisory(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    nf_workbench: bool = Query(False),
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_workbench_flag(nf_workbench)
+    from nativeforge.services.real_resolver_validation_gate_service import (
+        is_real_resolver_validation_approved,
+    )
+
+    if not is_real_resolver_validation_approved(
+        nf_live_source_ingestion=nf_live_source_ingestion,
+        nf_real_resolver_validation=nf_real_resolver_validation,
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="real resolver validation gates required",
+        )
+    return wb_adv.build_real_grant_workbench_advisory_preview()
+
+
+@real_workbench_advisory_router.get(
+    "/{org_id}/discovery/operator-workbench-advisory/real-grant-queues"
+)
+def real_real_grant_queues_advisory(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    nf_workbench: bool = Query(False),
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_workbench_flag(nf_workbench)
+    from nativeforge.services.real_resolver_validation_gate_service import (
+        is_real_resolver_validation_approved,
+    )
+
+    if not is_real_resolver_validation_approved(
+        nf_live_source_ingestion=nf_live_source_ingestion,
+        nf_real_resolver_validation=nf_real_resolver_validation,
+    ):
+        raise HTTPException(
+            status_code=403,
+            detail="real resolver validation gates required",
+        )
+    return wb_adv.build_real_grant_workbench_advisory_preview()

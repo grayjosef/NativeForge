@@ -534,6 +534,12 @@ select = ["E", "F", "I", "UP", "B"]
 "tests/test_sprint224_matching_readiness_rollup.py" = ["E501"]
 "tests/test_sprint225_matching_readiness_stages8_10_gate_verification.py" = ["E501"]
 "tests/test_sprint226_matching_readiness_stages8_10_closeout_packet.py" = ["E501"]
+"src/nativeforge/services/classification_evidence_honest_labeling_guard_service.py" = ["E501"]
+"src/nativeforge/services/real_grant_classification_input_adapter_service.py" = ["E501"]
+"src/nativeforge/services/real_grant_classify_match_service.py" = ["E501"]
+"src/nativeforge/services/real_grant_classify_match_gate_verification_service.py" = ["E501"]
+"src/nativeforge/services/real_grant_classify_match_closeout_packet_service.py" = ["E501"]
+"src/nativeforge/services/real_grant_native_relevance_record_service.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"

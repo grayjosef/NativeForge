@@ -1,4 +1,4 @@
-# NativeForge Handoff — Block NF-12: Lock Live Pull + Scale Tier-1 Activation (Sprints 313–321)
+# NativeForge Handoff — Block NF-13: Classify + Match the Real Grants (Sprints 322–331)
 
 **Date:** 2026-05-19  
 **Branch:** `main` (ahead of `origin/main`)  
@@ -7,74 +7,77 @@
 
 ## Run summary
 
-Completed NF-12 with green baseline. Locked honest `real_fetch` labeling with a fail-closed invariant guard and tests that fail on violation. Fixed 49 catalog URL path mismatches (prior 48 dead). Scaled tier-1 federal activation in a controlled public batch with live Grants.gov fetch, idempotent dedupe, and honest empty NOFO reporting.
+Completed NF-13 with green baseline. Classified 40 real ingested grants through the 8-label native-relevance classifier with per-grant explanations derived from source text. Matched all grants against the Red Cedar Nation synthetic tribal profile (swappable, no real customer data). Surfaced results in operator workbench queues. Hard invariants: overclaim guard, over-filter guard, classification evidence honest labeling.
 
 | Sprint | Summary |
 |--------|---------|
-| 313 | `real_fetch_honest_labeling_guard_service` — fixture can never carry `real_fetch: true` |
-| 314 | Eligibility parser hardened — applicantTypes 07/11 + TEDC verification |
-| 315 | Seed URL corrections (49 rows) + corrected posture report |
-| 316 | Batch tier-1 public federal human activation gate |
-| 317 | Batch live Grants.gov fetch + canonical-id dedupe |
-| 318 | `tier1-batch-live-pull` orchestrator — STOP at checkpoint |
-| 319–320 | Gate verification + closeout packet |
-| 321 | Block closeout |
+| 322 | Real grants corpus loader (40 tier-1 public federal grants) |
+| 323 | Classification input adapter — evidence derived from source only |
+| 324 | Classification evidence honest labeling guard + failing tests |
+| 325 | Real-grant native relevance records with explanations |
+| 326–327 | Classify + match service against test tribal profile |
+| 328 | Workbench queues (native relevance + matching readiness) |
+| 329–331 | Orchestrator, routes, gate verification, closeout |
 
-## Honest labeling (locked)
+## Classification results (40 real grants)
 
-- `assert_real_fetch_honest_labeling()` enforced on every Grants.gov payload at parse time.
-- **Invariant:** `real_fetch: true` ONLY when `fetch_mode: live` AND `search_live` AND `detail_live` are all true.
-- Fixtures/replays: `fixture: true`, `real_fetch: false` — guard raises if violated.
-- Tests **fail** if a fixture payload carries `real_fetch: true` (`test_sprint313`).
+| Label | Count (approx.) |
+|-------|-----------------|
+| `tribal_government_specific` | 38 |
+| `irrelevant` | 2 |
 
-## URL corrections
+All classifications include:
+- `trigger_language`, `eligible_entity_types`, `whats_missing` from explanation templates
+- `source_eligibility_excerpt` from real eligibility text
+- `derived_evidence_codes` — never invented
 
-| Metric | Before | After (CI mock) |
-|--------|--------|-----------------|
-| Dead catalog URLs | 48 | 0 (mock resolver) |
-| Corrected seed rows | — | 49 |
-| Notable fixes | ACL title-vi 404, EPA GAP path, IMLS fed-050 on BIA domain, First Peoples Fund paths |
+## Matching results (Red Cedar Nation profile)
 
-Corrections applied in CSV and at load time via `source_seed_url_correction_service`.
+| Match label | Count |
+|-------------|-------|
+| `needs_operator_review` | 40 |
 
-## Batch tier-1 activation
+Applicant-specific recommendations correctly stay `needs_operator_review` (no human confirmation on synthetic profile). Fit dimensions, blockers, and missing data surfaced per grant.
 
-- **Route:** `POST .../tier1-batch-live-pull?nf_live_source_ingestion=true&nf_real_resolver_validation=true`
-- **Confirmation:** `operator_handle`, `human_activation_acknowledged`, `public_only_acknowledged`, `batch_tier1_public_activation_acknowledged`
-- Activates all green public tier-1 federal sources (CI gate uses `max_batch_size=8`)
-- Live `search2` + `fetchOpportunity` per source; empty when no ALN-matched NOFO
-- **Report fields:** `sources_activated`, `real_grants_ingested` (`real_fetch` proven live), `empty_nofo_sources`, corrected posture
+## Honest labeling invariants
 
-## Eligibility parser
+- `assert_classification_evidence_honest()` — evidence codes must ⊆ derived from source
+- `native_specific` without explicit source evidence → test **fails**
+- Overclaim guard: never `native_specific` without source evidence (existing Stage 6)
+- Over-filter guard: broad labels stay discoverable (existing Stage 6)
+- Unknown → flagged (`uncertain_relevance`, human review), not invented
 
-TEDC record (`grants_gov_fetch_opportunity_362648.json`):
-- `tribal_eligible: true` (applicantTypes 07/11 + narrative)
-- `eligibility_text` populated with applicant types + `applicantEligibilityDesc`
+## API
+
+```
+POST .../real-grant-classify-match?nf_live_source_ingestion=true&nf_real_resolver_validation=true
+GET  .../real-grant-workbench-queues?...
+GET  .../operator-workbench-advisory/real-grant-queues?nf_workbench=true&...
+```
+
+## Worked examples
+
+Gate verification returns 2 worked examples with classification label, match label, explanation summary, fit dimensions, and blockers.
 
 ## Build / test state
 
-- **Baseline at block start:** `5129 passed`, `11 skipped`
-- **Full pytest (final):** `5138 passed`, `11 skipped` (+9 tests)
+- **Baseline at block start:** `5138 passed`, `11 skipped`
+- **Full pytest (final):** `5146 passed`, `11 skipped` (+8 tests)
 - **Stash:** Untouched
 
 ## Hard invariants preserved
 
-- Staging only; same plan gates as NF-9/NF-11
-- Public-only batch activation; no CAPTCHA/login bypass; no credentials
-- Never synthesize NOFOs
+- Staging only; plan gates unchanged
+- Classifications from real source text only
+- No fabricated eligibility, labels, or matches
+- Public-only; no customer PII
 - **STOP** at checkpoint — no push
 - **WAIT**
-
-## Proposed next safe action
-
-1. Deploy to staging; POST `tier1-batch-live-pull` for full 60-source batch with live HTTP.
-2. Review `real_grants_ingested` vs `empty_nofo_sources` per program ALN.
-3. Do not push without Mayhem review.
 
 ## Verification commands
 
 ```bash
 cd /home/josefgray/projects/nativeforge
 pytest -q
-pytest tests/test_sprint313_real_fetch_honest_labeling_guard.py tests/test_sprint315_seed_url_correction.py tests/test_sprint320_tier1_batch_live_pull_closeout.py -q
+pytest tests/test_sprint324_classification_evidence_honest_guard.py tests/test_sprint327_real_grant_classify_match.py tests/test_sprint331_real_grant_classify_match_closeout.py -q
 ```

@@ -19,6 +19,12 @@ from nativeforge.services import source_ingestion_orchestrator_service as orch
 from nativeforge.services.live_grants_gov_honest_orchestrator_service import (
     run_live_grants_gov_honest_block,
 )
+from nativeforge.services.real_grant_classify_match_orchestrator_service import (
+    run_real_grant_classify_match_block,
+)
+from nativeforge.services.real_grant_workbench_queue_service import (
+    build_real_grant_workbench_queues,
+)
 from nativeforge.services.real_resolver_seed_preview_report_service import (
     build_real_resolver_seed_preview_report,
 )
@@ -318,6 +324,74 @@ def real_tier1_batch_live_pull(
     )
     db.commit()
     return result
+
+
+@demo_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/real-grant-classify-match"
+)
+def demo_real_grant_classify_match(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return run_real_grant_classify_match_block(org_id=org_id)
+
+
+@real_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/real-grant-classify-match"
+)
+def real_real_grant_classify_match(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return run_real_grant_classify_match_block(org_id=org_id)
+
+
+@demo_source_ingestion_router.get(
+    "/{org_id}/discovery/source-ingestion/real-grant-workbench-queues"
+)
+def demo_real_grant_workbench_queues(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return build_real_grant_workbench_queues()
+
+
+@real_source_ingestion_router.get(
+    "/{org_id}/discovery/source-ingestion/real-grant-workbench-queues"
+)
+def real_real_grant_workbench_queues(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return build_real_grant_workbench_queues()
 
 
 @demo_source_ingestion_router.get(

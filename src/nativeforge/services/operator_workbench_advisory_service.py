@@ -91,6 +91,24 @@ def build_matching_readiness_advisory_preview(limit: int = 6) -> dict[str, Any]:
     )
 
 
+def build_real_grant_workbench_advisory_preview() -> dict[str, Any]:
+    from nativeforge.services.real_grant_workbench_queue_service import (
+        build_real_grant_workbench_queues,
+    )
+
+    queues = build_real_grant_workbench_queues()
+    return _json_safe(
+        {
+            "schema_version": "nf_operator_workbench_real_grant_queues_preview_v1",
+            "queues": queues,
+            "from_real_source_text": True,
+            "honest_labeling": True,
+            "synthetic_fixtures_only": False,
+            "workbench_reviewable": True,
+        }
+    )
+
+
 def build_intake_advisory_preview(limit: int = 4) -> dict[str, Any]:
     from nativeforge.services.funding_opportunity_intake_hardened_record_service import (  # noqa: E501
         build_hardened_opportunity_record,
