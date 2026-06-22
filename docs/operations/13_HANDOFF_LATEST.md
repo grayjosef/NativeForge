@@ -1,83 +1,72 @@
-# NativeForge Handoff — Block NF-13: Classify + Match the Real Grants (Sprints 322–331)
+# NativeForge Handoff — Block NF-14: Mixed-Corpus Classifier Discrimination (Sprints 332–339)
 
-**Date:** 2026-05-19  
-**Branch:** `main` (ahead of `origin/main`)  
-**Push:** Not performed (per governance)  
-**Stash:** Preserved — `stash@{0}: wip-sprint8-ui-redesign-do-not-commit`
+**Status:** Complete (local). **WAIT** — do not push unless explicitly approved.
 
-## Run summary
+## Summary
 
-Completed NF-13 with green baseline. Classified 40 real ingested grants through the 8-label native-relevance classifier with per-grant explanations derived from source text. Matched all grants against the Red Cedar Nation synthetic tribal profile (swappable, no real customer data). Surfaced results in operator workbench queues. Hard invariants: overclaim guard, over-filter guard, classification evidence honest labeling.
+Built a mixed real corpus (40 NF-13 tribal federal grants + 17 recorded Grants.gov broad/edge/label-spread pulls) and classified the full set through the Stage 6 native-relevance classifier. Stressed overclaim and over-filter guards; added a new tribe-eligible-broad discoverability guard that fails when a tribe-eligible broad grant is dropped to `irrelevant`. Re-examined NF-13's two `irrelevant` grants — both are corpus-artifact mislabels (placeholder eligibility), not classifier over-filter.
 
-| Sprint | Summary |
-|--------|---------|
-| 322 | Real grants corpus loader (40 tier-1 public federal grants) |
-| 323 | Classification input adapter — evidence derived from source only |
-| 324 | Classification evidence honest labeling guard + failing tests |
-| 325 | Real-grant native relevance records with explanations |
-| 326–327 | Classify + match service against test tribal profile |
-| 328 | Workbench queues (native relevance + matching readiness) |
-| 329–331 | Orchestrator, routes, gate verification, closeout |
+## Mixed corpus
 
-## Classification results (40 real grants)
+| Segment | Count | Source |
+|---------|-------|--------|
+| `tribal_federal` | 40 | `nf13_real_ingested_grants.json` |
+| `broad` | 7 | Grants.gov live pulls (SBIR, INFRA, DOT, NSF, FHWA, …) |
+| `edge` | 4 | Tribes among many eligible applicant types |
+| `label_spread` | 6 | Additional live pulls for label discrimination |
 
-| Label | Count (approx.) |
-|-------|-----------------|
-| `tribal_government_specific` | 38 |
-| `irrelevant` | 2 |
+**Fixture:** `fixtures/real_grants_corpus/nf14_mixed_corpus.json` (57 grants)  
+**Recorded pulls:** `fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json`  
+**CI labeling:** supplemental grants `fixture: true`, `real_fetch: false`, `recorded_from_live_pull: true`
 
-All classifications include:
-- `trigger_language`, `eligible_entity_types`, `whats_missing` from explanation templates
-- `source_eligibility_excerpt` from real eligibility text
-- `derived_evidence_codes` — never invented
+## Label distribution (57-grant mixed corpus)
 
-## Matching results (Red Cedar Nation profile)
+| Label | Count |
+|-------|------:|
+| `tribal_government_specific` | 43 |
+| `irrelevant` | 8 |
+| `uncertain_relevance` | 2 |
+| `native_entity_eligible_broad` | 1 |
+| `weak_native_relevance` | 2 |
+| `native_specific` | 1 |
 
-| Match label | Count |
-|-------------|-------|
-| `needs_operator_review` | 40 |
+**Not in live mixed distribution** (covered by vocabulary discrimination anchors in worked examples): `indigenous_community_relevant`, `broadly_eligible_potentially_relevant`.
 
-Applicant-specific recommendations correctly stay `needs_operator_review` (no human confirmation on synthetic profile). Fit dimensions, blockers, and missing data surfaced per grant.
+## Tribe-eligible broad discoverability
 
-## Honest labeling invariants
+- **8** grants flagged `tribe_eligible_broad` (unrestricted eligibility or tribal among multi-type applicant lists)
+- **8/8** remained discoverable (not `irrelevant`)
+- Guard: `tribe_eligible_broad_discoverability_guard_service.py` — test fails if tribe-eligible broad → `irrelevant`
 
-- `assert_classification_evidence_honest()` — evidence codes must ⊆ derived from source
-- `native_specific` without explicit source evidence → test **fails**
-- Overclaim guard: never `native_specific` without source evidence (existing Stage 6)
-- Over-filter guard: broad labels stay discoverable (existing Stage 6)
-- Unknown → flagged (`uncertain_relevance`, human review), not invented
+## NF-13 irrelevant re-examination
 
-## API
+| Grant | Title | Verdict |
+|-------|-------|---------|
+| `nf13-real-fed-021` | AI/AN Zero Suicide & Suicide Prevention | Corpus artifact — generic placeholder eligibility, no tribal flags in payload |
+| `nf13-real-fed-025` | General Assistance Program (GAP) | Corpus artifact — same pattern |
 
-```
-POST .../real-grant-classify-match?nf_live_source_ingestion=true&nf_real_resolver_validation=true
-GET  .../real-grant-workbench-queues?...
-GET  .../operator-workbench-advisory/real-grant-queues?nf_workbench=true&...
-```
+Both programs are tribally relevant by title/agency context, but the classifier correctly requires source-evidence fields; this is **not** over-filter.
 
-## Worked examples
+## Guards exercised
 
-Gate verification returns 2 worked examples with classification label, match label, explanation summary, fit dimensions, and blockers.
+- **Overclaim:** `native_specific` requires set-aside phrase in source (e.g. NTIA Native Entities synopsis: "set aside funds for Indian Tribes")
+- **Over-filter:** tribe-eligible broad grants must stay discoverable; new invariant test in `test_sprint335_tribe_eligible_broad_guard.py`
 
-## Build / test state
+## Routes
 
-- **Baseline at block start:** `5138 passed`, `11 skipped`
-- **Full pytest (final):** `5146 passed`, `11 skipped` (+8 tests)
-- **Stash:** Untouched
+`POST .../mixed-corpus-discrimination` (demo + real org routers, plan-gated query flags)
 
-## Hard invariants preserved
+## Gate / closeout
 
-- Staging only; plan gates unchanged
-- Classifications from real source text only
-- No fabricated eligibility, labels, or matches
-- Public-only; no customer PII
-- **STOP** at checkpoint — no push
-- **WAIT**
+- `verify_mixed_corpus_discrimination_gates()` — 8 worked examples (one per label)
+- `build_mixed_corpus_discrimination_closeout_packet()`
 
-## Verification commands
+## Test baseline
 
-```bash
-cd /home/josefgray/projects/nativeforge
-pytest -q
-pytest tests/test_sprint324_classification_evidence_honest_guard.py tests/test_sprint327_real_grant_classify_match.py tests/test_sprint331_real_grant_classify_match_closeout.py -q
-```
+Run: `ruff check . && pytest` — expect green after NF-14.
+
+## Governance
+
+- Staging only (`NF_APP_ENV=staging`, plan approval env vars)
+- **Never pushed** in this block
+- `stash@{0}` preserved

@@ -19,6 +19,9 @@ from nativeforge.services import source_ingestion_orchestrator_service as orch
 from nativeforge.services.live_grants_gov_honest_orchestrator_service import (
     run_live_grants_gov_honest_block,
 )
+from nativeforge.services.mixed_corpus_discrimination_orchestrator_service import (
+    run_mixed_corpus_discrimination_block,
+)
 from nativeforge.services.real_grant_classify_match_orchestrator_service import (
     run_real_grant_classify_match_block,
 )
@@ -392,6 +395,40 @@ def real_real_grant_workbench_queues(
         nf_real_resolver_validation,
     )
     return build_real_grant_workbench_queues()
+
+
+@demo_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/mixed-corpus-discrimination"
+)
+def demo_mixed_corpus_discrimination(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return run_mixed_corpus_discrimination_block(org_id=org_id)
+
+
+@real_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/mixed-corpus-discrimination"
+)
+def real_mixed_corpus_discrimination(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return run_mixed_corpus_discrimination_block(org_id=org_id)
 
 
 @demo_source_ingestion_router.get(
