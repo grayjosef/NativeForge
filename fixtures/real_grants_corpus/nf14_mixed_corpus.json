@@ -15,7 +15,7 @@
       "agency": "BIA / Interior",
       "eligibility_text": "Applicant types: Native American tribal governments (Federally recognized)",
       "synopsis": "Federal grant program: BIA / Interior \u2014 Aid to Tribal Governments (Categorical Grants \u2013 15.020)",
-      "tribal_eligible": false,
+      "tribal_eligible": true,
       "applicant_types_include_tribal": true,
       "tribal_set_aside": false,
       "tribal_priority_points": false,
@@ -27,8 +27,10 @@
       "detail_live": true,
       "never_synthesized": true,
       "corpus_segment": "tribal_federal",
-      "eligibility_tags": [],
-      "tribe_eligible_broad": false
+      "eligibility_tags": [
+        "tribal_government"
+      ],
+      "tribe_eligible_broad": true
     },
     {
       "grant_id": "nf13-real-fed-002",
@@ -470,13 +472,13 @@
     {
       "grant_id": "nf13-real-fed-021",
       "source_seed_id": "nf-seed-2026-fed-021",
-      "opportunity_number": "FED-021",
-      "opportunity_title": "AI/AN Zero Suicide & Suicide Prevention",
+      "opportunity_number": "SM-26-024",
+      "opportunity_title": "Tribal Behavioral Health: Suicide Prevention",
       "agency": "SAMHSA / HHS",
-      "eligibility_text": "Open to eligible applicants per program guidelines.",
-      "synopsis": "Federal grant program: SAMHSA / HHS \u2014 AI/AN Zero Suicide & Suicide Prevention",
-      "tribal_eligible": false,
-      "applicant_types_include_tribal": false,
+      "eligibility_text": "Applicant types: Native American tribal organizations (other than Federally recognized tribal governments); Others (see text field entitled \"Additional Information on Eligibility\" for clarification); Native American tribal governments (Federally recognized)\n\nEligibility is limited to federally recognized American Indian/Alaska Native (AI/AN) tribes, tribal organizations, Urban Indian Organizations, or consortia of tribes or tribal organizations.",
+      "synopsis": "<p>The purpose of this program is for the prevention of suicide, suicide attempts, and deaths by suicide among American Indian/Alaska Native youth and young adults through age 24 in Tribal communities.</p>",
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": true,
       "tribal_set_aside": false,
       "tribal_priority_points": false,
       "application_deadline": "2026-12-31",
@@ -486,9 +488,15 @@
       "search_live": true,
       "detail_live": true,
       "never_synthesized": true,
-      "corpus_segment": "tribal_federal",
-      "eligibility_tags": [],
-      "tribe_eligible_broad": false
+      "grants_gov_opportunity_id": "361976",
+      "eligibility_reingest": true,
+      "eligibility_reingest_diagnosis": "refined_hit_matched",
+      "prior_eligibility_was_placeholder": false,
+      "eligibility_tags": [
+        "alaska_native"
+      ],
+      "tribe_eligible_broad": true,
+      "corpus_segment": "tribal_federal"
     },
     {
       "grant_id": "nf13-real-fed-022",
@@ -539,11 +547,11 @@
     {
       "grant_id": "nf13-real-fed-025",
       "source_seed_id": "nf-seed-2026-fed-025",
-      "opportunity_number": "FED-025",
-      "opportunity_title": "General Assistance Program (GAP)",
+      "opportunity_number": "EPA-OW-OWM-26-01",
+      "opportunity_title": "Technical Assistance and Training for Rural, Small and Tribal Municipalities and Wastewater Treatment Systems",
       "agency": "EPA",
-      "eligibility_text": "Open to eligible applicants per program guidelines.",
-      "synopsis": "Federal grant program: EPA \u2014 General Assistance Program (GAP)",
+      "eligibility_text": "Applicant types: Others (see text field entitled \"Additional Information on Eligibility\" for clarification)\n\nSee Section 2 of the Notice of Funding Opportunity for eligibility information.\n\nThe U.S. Environmental Protection Agency (EPA) is soliciting applications under the authority of the Clean Water Act (CWA) section 104(b)(8) to provide Technical Assistance and Training for Rural, Small and Tribal Municipalities and Wastewater Treatment Systems. The program supports small, rural, and Tribal communities\u2019 efforts to identify water challenges, develop plans, build technical, financial, and managerial capacity, comply with CWA requirements, and access water infrastructure funding.     Through this Notice of Funding Opportunity under the Clean Water Act, EPA will achieve greater protection of public health and the environment through an increase in trained water sector personnel, access to funding and financing for wastewater treatment facilities, and Clean Water Act compliance. This action advances the Administration\u2019s priorities, including to Make America Healthy Again, by improving water quality and reducing exposure risks, and enabling responsible economic growth for small, rural, and tribal communities through improved wastewater infrastructure. In partnership with States, Tribes, and local governments and grounded in sound science and the law, EPA will deliver cleaner water, stronger infrastructure, and long-term environmental stewardship for all Americans.     The proposed activities support the Agency\u2019s Powering the Great American Comeback Initiative\u2019s Pillar 1: Clean Air, Land, and Water for Every American. Priority Areas identified in this opportunity are:  (1) Technical assistance and training for rural, small, and Tribal municipalities for planning, developing and acquisition of financing/funding for eligible projects and activities.  \u2022 Technical assistance and training for rural, small, and Tribal publicly owned treatment works and decentralized wastewater systems to help improve water quality and to achieve and maintain compliance.  (2) Technical assistance and training focused specifically on Tribes for planning, developing and acquisition of financing/funding, to help improve water quality and achieve and maintain compliance, and/or to support emerging contaminants project development.  (3) Information dissemination, technical assistance and training focused specifically on decentralized wastewater treatment systems to support planning, development and acquisition of financing.     Eligible entities for this grant program include nonprofit organizations and institutions of higher education that can provide technical assistance and training to rural, small, and Tribal municipalities, publicly owned wastewater treatment works, and decentralized wastewater treatment systems. Assisting systems with their technical, managerial, and financial capacity to achieve long-term compliance is a key priority for the Agency. Infrastructure construction projects such as repairing water or sewer lines, adding new equipment, or upgrading, retrofitting, or rehabilitating existing equipment are not eligible for funding under this announcement.",
+      "synopsis": "<p>The U.S. Environmental Protection Agency (EPA) is soliciting applications under the authority of the Clean Water Act (CWA) section 104(b)(8) to provide Technical Assistance and Training for Rural, Small and Tribal Municipalities and Wastewater Treatment Systems. The program supports small, rural, and Tribal communities\u2019 efforts to identify water challenges, develop plans, build technical, financial, and managerial capacity, comply with CWA requirements, and access water infrastructure funding.</p><p><br></p><p>Through this Notice of Funding Opportunity under the Clean Water Act, EPA will achieve greater protection of public health and the environment through an increase in trained water sector personnel, access to funding and financing for wastewater treatment facilities, and Clean Water Act compliance. This action advances the Administration\u2019s priorities, including to Make America Healthy Again, by improving water quality and reducing exposure risks, and enabling responsible economic growth for small, rural, and tribal communities through improved wastewater infrastructure. In partnership with States, Tribes, and local governments and grounded in sound science and the law, EPA will deliver cleaner water, stronger infrastructure, and long-term environmental stewardship for all Americans.</p><p><br></p><p>The proposed activities support the Agency\u2019s Powering the Great American Comeback Initiative\u2019s Pillar 1: Clean Air, Land, and Water for Every American. Priority Areas identified in this opportunity are:</p><p>(1) Technical assistance and training for rural, small, and Tribal municipalities for planning, developing and acquisition of financing/funding for eligible projects and activities.</p><p>\u2022 Technical assistance and training for rural, small, and Tribal publicly owned treatment works and decentralized wastewater systems to help improve water quality and to achieve and maintain compliance.</p><p>(2) Technical assistance and training focused specifically on Tribes for planning, developing and acquisition of financing/funding, to help improve water quality and achieve and maintain compliance, and/or to support emerging contaminants project development.</p><p>(3) Information dissemination, technical assistance and training focused specifically on decentralized wastewater treatment systems to support planning, development and acquisition of financing.</p><p><br></p><p>Eligible entities for this grant program include nonprofit organizations and institutions of higher education that can provide technical assistance and training to rural, small, and Tribal municipalities, publicly owned wastewater treatment works, and decentralized wastewater treatment systems. Assisting systems with their technical, managerial, and financial capacity to achieve long-term compliance is a key priority for the Agency. Infrastructure construction projects such as repairing water or sewer lines, adding new equipment, or upgrading, retrofitting, or rehabilitating existing equipment are not eligible for funding under this announcement.</p>",
       "tribal_eligible": false,
       "applicant_types_include_tribal": false,
       "tribal_set_aside": false,
@@ -553,11 +561,17 @@
       "fetch_mode": "live",
       "fixture": false,
       "search_live": true,
-      "detail_live": true,
+      "detail_live": false,
       "never_synthesized": true,
-      "corpus_segment": "tribal_federal",
+      "grants_gov_opportunity_id": 362798,
+      "eligibility_reingest": true,
+      "eligibility_reingest_diagnosis": "iegap_nofo_absent_epa_tribal_environmental_fallback",
+      "prior_eligibility_was_placeholder": false,
+      "reingest_program_proxy": true,
+      "intended_program": "EPA Indian Environmental General Assistance Program (GAP)",
       "eligibility_tags": [],
-      "tribe_eligible_broad": false
+      "tribe_eligible_broad": false,
+      "corpus_segment": "tribal_federal"
     },
     {
       "grant_id": "nf13-real-fed-026",
@@ -636,7 +650,7 @@
       "agency": "DOJ / OVW",
       "eligibility_text": "Applicant types: Native American tribal governments (Federally recognized)",
       "synopsis": "Federal grant program: DOJ / OVW \u2014 Grants to Indian Tribal Governments Program (VAWA)",
-      "tribal_eligible": false,
+      "tribal_eligible": true,
       "applicant_types_include_tribal": true,
       "tribal_set_aside": false,
       "tribal_priority_points": false,
@@ -648,8 +662,10 @@
       "detail_live": true,
       "never_synthesized": true,
       "corpus_segment": "tribal_federal",
-      "eligibility_tags": [],
-      "tribe_eligible_broad": false
+      "eligibility_tags": [
+        "tribal_government"
+      ],
+      "tribe_eligible_broad": true
     },
     {
       "grant_id": "nf13-real-fed-030",
@@ -1253,7 +1269,7 @@
       "agency": "Kevin Wilson\nIT Specialist",
       "eligibility_text": "Applicant types: Others (see text field entitled \"Additional Information on Eligibility\" for clarification)\n\nSee Section II of the Assistance Agreement Program Guidance for eligibility information.",
       "synopsis": "<p><span style=\"color: rgb(27, 27, 27);\">The&nbsp;</span><strong style=\"color: rgb(27, 27, 27);\">Alaska Native Claims Settlement Act (ANCSA)</strong><span style=\"color: rgb(27, 27, 27);\">&nbsp;of 1971 included the transfer of 44 million acres to Alaska Native regional and village corporations. Some of these lands became contaminated prior to conveyance (transfer) from a variety of past activities such as fuel storage, power generation, waste handling practices, mining, and other activities. These contaminants can pose health concerns to Alaska Native communities, impact subsistence resources, and impair economic activity.</span></p>\n<p><br></p>\n<p>Congress appropriated funding starting in fiscal year 2023 for EPA to establish and implement a grant program to assist Tribal entities in Alaska with addressing contamination on ANCSA lands that were contaminated prior to the time of conveyance.<span style=\"color: rgb(1, 1, 1);\"> Grants may be used for site assessment and remediation, as well as related community outreach and involvement.</span></p>\n<p><br></p>\n<p>Eligible entities include <span style=\"color: rgb(1, 1, 1);\">Alaska Native regional and village corporations, federally recognized Tribes in Alaska, Alaska Native nonprofit associations, and inter-tribal consortia comprised of Alaskan tribal entities.</span></p>\n<p><br></p>\n<p><span style=\"color: rgb(1, 1, 1);\">Proposals will be accepted on a rolling basis. As long as funds remain available, </span>EPA expects to extend the closing date for this funding opportunity.</p>\n<p><span style=\"color: rgb(1, 1, 1);\">&nbsp;</span></p>\n<p><span style=\"color: rgb(1, 1, 1);\">Before submitting a proposal, please contact Contaminated ANCSA Assistance Program project managers to indicate interest. Details on how to apply are provided in the Contaminated ANCSA Lands Assistance Program Guidance.</span></p>",
-      "tribal_eligible": false,
+      "tribal_eligible": true,
       "applicant_types_include_tribal": false,
       "tribal_set_aside": false,
       "tribal_priority_points": false,
@@ -1268,8 +1284,11 @@
       "grants_gov_opportunity_id": 351547,
       "recorded_from_live_pull": true,
       "recorded_pull_date": "2026-05-19",
-      "eligibility_tags": [],
-      "tribe_eligible_broad": false
+      "eligibility_tags": [
+        "federally_recognized_tribe",
+        "alaska_native"
+      ],
+      "tribe_eligible_broad": true
     },
     {
       "grant_id": "nf14-mixed-label_spread-14",
@@ -1279,8 +1298,8 @@
       "agency": "Department of Housing and Urban Development",
       "eligibility_text": "Applicant types: Others (see text field entitled \"Additional Information on Eligibility\" for clarification)\n\nOnly National Organizations that are 501(c)(3) nonprofits, other than institutions of higher education, may apply for RCB funding.For the purpose of the RCB program, a National Organization must be a single non-profit organization that has ongoing experience conducting RCB eligible capacity building activities in rural areas with rural housing organizations, local governments, and Indian tribes as evidenced by work within the last ten years in at least eight of HUD&quot;s Federal regions. Having relevant experience working in one state in a HUD region is sufficient for counting that region towards the eight-region minimum. HUD&quot;s Federal regions are described on HUD&quot;s website at: http://portal.hud.gov/hudportal/HUD?src=/localoffices/regions    Individuals, foreign entities, and sole proprietorship organizations are not eligible to compete for, or receive, awards made under this announcement.",
       "synopsis": "Purpose: The Rural Capacity Building program enhances the capacity and ability of rural housing development organizations, Community Development Corporations (CDCs), Community Housing Development Organizations (CHDOs), rural local governments, and Indian tribes (eligible beneficiaries) to carry out affordable housing and community development activities in rural areas for the benefit of low- and moderate-income families and persons. The Rural Capacity Building program achieves this by funding National Organizations with expertise in rural housing and rural community development who work directly to build the capacity of eligible beneficiaries.Eligible Program Activities. RCB program funds are limited to activities that strengthen the organizational infrastructure, management, and governance capabilities of eligible beneficiaries serving rural areas to effectively increase the capacity of the eligible beneficiaries to carry out community development and affordable housing activities that benefit low-income or low- and moderate-income families and persons in rural areas.Training, education, and support. This may include, but is not limited to, building the capacity of eligible beneficiaries to:Conduct organizational assessments;Engage in strategic planning and Board development;Access and implement technological improvements;Engage with rural community stakeholders;Evaluate performance of current and planned rural community efforts;Plan for the use of available rural resources in a comprehensive and holistic manner;Participate in HUD planning efforts to ensure rural participation and the assessment of rural area needs; andFoster regional planning efforts by connecting local, rural community plans with neighboring communities.Financial assistance.Such other activities as may be determined by the grantees in consultation with the Secretary or his or her designee.",
-      "tribal_eligible": false,
-      "applicant_types_include_tribal": true,
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": false,
       "tribal_set_aside": false,
       "tribal_priority_points": false,
       "application_deadline": "",
@@ -1305,8 +1324,8 @@
       "agency": "Misty L Roosa\nGrantor",
       "eligibility_text": "Applicant types: Others (see text field entitled \"Additional Information on Eligibility\" for clarification)\n\nThe following entities are eligible to receive grants under the Native Entities Grant Program: 1. An Indian Tribe, an Alaska Native entity, or a Native Hawaiian organization (&ldquo;Native Entity&rdquo;); or 2. A partnership between Eligible Entities (&ldquo;Consortium&rdquo;). See Section III of this NOFO for additional information concerning the eligibility requirements for this program.",
       "synopsis": "<p>NTIA is soliciting applications for the Native Entities Grant Program (\u201cProgram\u201d), authorized by the Infrastructure Investment and Jobs Act of 2021, Division F, Title III, Public Law 117-58, 135 Stat. 429, 1209 (November 15, 2021) (codified at 47 U.S.C. \u00a71701, 1721, et seq.) (the \u201cDigital Equity Act of 2021\u201d or \u201cAct\u201d). The Act authorizes two programs that set aside funds for Indian Tribes, Alaska Native entities, and Native Hawaiian organizations (collectively \u201cNative Entities\u201d): the \u201cState Digital Equity Capacity Grant Program\u201d and the \u201cDigital Equity Competitive Grant Program.\u201d To reduce administrative burden and cost, NTIA is releasing the funds for both programs through a single application process.</p>",
-      "tribal_eligible": false,
-      "applicant_types_include_tribal": true,
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": false,
       "tribal_set_aside": true,
       "tribal_priority_points": false,
       "application_deadline": "",
@@ -1320,7 +1339,10 @@
       "grants_gov_opportunity_id": 362842,
       "recorded_from_live_pull": true,
       "recorded_pull_date": "2026-05-19",
-      "eligibility_tags": [],
+      "eligibility_tags": [
+        "alaska_native",
+        "native_hawaiian"
+      ],
       "tribe_eligible_broad": true
     },
     {

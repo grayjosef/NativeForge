@@ -37,6 +37,9 @@ from nativeforge.services.native_relevance_classification_overclaim_guard_servic
     apply_overclaim_guard,
     has_explicit_source_evidence,
 )
+from nativeforge.services.no_evidence_irrelevant_guard_service import (
+    apply_no_evidence_irrelevant_guard,
+)
 
 SCHEMA_VERSION = "nf_native_relevance_classification_evaluator_v1"
 
@@ -106,9 +109,15 @@ def _propose_label(raw: dict[str, Any]) -> str:
 
     if not keyword and not structured:
         if raw.get("applicant_types_include_tribal") is None and not raw.get("tribal_eligible"):
-            if str(raw.get("opportunity_title") or "").strip():
+            if str(raw.get("opportunity_title") or raw.get("title") or "").strip():
                 return LABEL_UNCERTAIN_RELEVANCE
-        return LABEL_IRRELEVANT
+        from nativeforge.services.eligibility_evidence_quality_service import (
+            has_positive_irrelevant_evidence,
+        )
+
+        if has_positive_irrelevant_evidence(raw):
+            return LABEL_IRRELEVANT
+        return LABEL_UNCERTAIN_RELEVANCE
 
     if raw.get("tribal_set_aside"):
         return LABEL_NATIVE_SPECIFIC
@@ -156,8 +165,10 @@ def _collect_review_triggers(
     *,
     overclaim_blocked: bool,
     confidence: str,
+    no_evidence_guard: dict[str, Any] | None = None,
 ) -> list[str]:
     triggers: list[str] = []
+    neg = no_evidence_guard or {}
     if overclaim_blocked:
         triggers.append("overclaim_blocked")
     keyword = _keyword_hit(raw)
@@ -170,6 +181,10 @@ def _collect_review_triggers(
         triggers.append(TRIGGER_AMBIGUOUS_ELIGIBILITY)
     if label == LABEL_UNCERTAIN_RELEVANCE:
         triggers.append(TRIGGER_UNCERTAIN_LABEL)
+    if neg.get("no_evidence_blocked"):
+        triggers.append("insufficient_eligibility_evidence")
+    if neg.get("tribal_agency_safety_net", {}).get("safety_net_triggered"):
+        triggers.append("tribal_agency_safety_net")
     if confidence in {CONFIDENCE_LOW, CONFIDENCE_UNKNOWN}:
         triggers.append(TRIGGER_LOW_CONFIDENCE)
     return triggers
@@ -197,9 +212,19 @@ def classify_native_relevance(raw: dict[str, Any]) -> dict[str, Any]:
         final_label = guard["final_label"]
         overclaim_blocked = guard["overclaim_blocked"]
 
+    no_evidence_guard = apply_no_evidence_irrelevant_guard(
+        proposed_label=final_label,
+        grant=raw,
+    )
+    final_label = no_evidence_guard["final_label"]
+
     confidence = _confidence_for_label(final_label, raw, overclaim_blocked=overclaim_blocked)
     review_triggers = _collect_review_triggers(
-        final_label, raw, overclaim_blocked=overclaim_blocked, confidence=confidence
+        final_label,
+        raw,
+        overclaim_blocked=overclaim_blocked,
+        confidence=confidence,
+        no_evidence_guard=no_evidence_guard,
     )
     review = evaluate_human_review_required(trigger_codes=review_triggers)
 
@@ -221,6 +246,10 @@ def classify_native_relevance(raw: dict[str, Any]) -> dict[str, Any]:
             "discoverable": filter_guard["final_discoverable"],
             "overclaim_guard": guard,
             "over_filter_guard": filter_guard,
+            "no_evidence_guard": no_evidence_guard,
+            "eligibility_evidence_status": no_evidence_guard.get(
+                "eligibility_evidence_status"
+            ),
             "evidence_codes": evidence,
             "preview_only": True,
         }

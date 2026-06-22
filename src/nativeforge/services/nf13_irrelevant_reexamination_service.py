@@ -44,6 +44,7 @@ def reexamine_nf13_irrelevant_grants() -> dict[str, Any]:
         generic_eligibility = str(grant.get("eligibility_text") or "").startswith(
             "Open to eligible applicants"
         )
+        reingested = grant.get("eligibility_reingest") is True
         tribal_flags_absent = not any(
             [
                 grant.get("tribal_eligible"),
@@ -52,7 +53,13 @@ def reexamine_nf13_irrelevant_grants() -> dict[str, Any]:
             ]
         )
         verdict = "corpus_artifact_missing_source_signals"
-        if generic_eligibility and tribal_flags_absent:
+        if reingested or grant.get("prior_eligibility_was_placeholder"):
+            explanation = (
+                "NF-14 irrelevant label was caused by placeholder eligibility from "
+                "weak Grants.gov keyword search; NF-15 re-ingest restored real "
+                "eligibility text. Not over-filter."
+            )
+        elif generic_eligibility and tribal_flags_absent:
             explanation = (
                 "Classifier received placeholder eligibility without tribal applicant "
                 "types or set-aside signals; program titles imply tribal relevance but "
@@ -92,7 +99,11 @@ def reexamine_nf13_irrelevant_grants() -> dict[str, Any]:
             "irrelevant_grant_count": len(reviews),
             "reviews": reviews,
             "all_corpus_artifact_not_over_filter": all(
-                r["verdict"] == "corpus_artifact_missing_source_signals" for r in reviews
+                r["verdict"] == "corpus_artifact_missing_source_signals"
+                for r in reviews
+            ),
+            "post_nf15_reingest": any(
+                (by_id.get(gid) or {}).get("eligibility_reingest") for gid in NF13_IRRELEVANT_GRANT_IDS
             ),
             "honest_labeling": True,
         }

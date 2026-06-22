@@ -54,6 +54,7 @@
   {
     "fixture_key": "nrc_demo_irrelevant",
     "opportunity_title": "Urban highway maintenance contract",
+    "eligibility_text": "Eligible applicants: state departments of transportation only. Tribal governments are not eligible.",
     "tribal_eligible": false,
     "applicant_types_include_tribal": false,
     "explicit_source_evidence": []

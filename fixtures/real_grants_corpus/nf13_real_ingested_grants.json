@@ -405,13 +405,13 @@
     {
       "grant_id": "nf13-real-fed-021",
       "source_seed_id": "nf-seed-2026-fed-021",
-      "opportunity_number": "FED-021",
-      "opportunity_title": "AI/AN Zero Suicide & Suicide Prevention",
+      "opportunity_number": "SM-26-024",
+      "opportunity_title": "Tribal Behavioral Health: Suicide Prevention",
       "agency": "SAMHSA / HHS",
-      "eligibility_text": "Open to eligible applicants per program guidelines.",
-      "synopsis": "Federal grant program: SAMHSA / HHS \u2014 AI/AN Zero Suicide & Suicide Prevention",
-      "tribal_eligible": false,
-      "applicant_types_include_tribal": false,
+      "eligibility_text": "Applicant types: Native American tribal organizations (other than Federally recognized tribal governments); Others (see text field entitled \"Additional Information on Eligibility\" for clarification); Native American tribal governments (Federally recognized)\n\nEligibility is limited to federally recognized American Indian/Alaska Native (AI/AN) tribes, tribal organizations, Urban Indian Organizations, or consortia of tribes or tribal organizations.",
+      "synopsis": "<p>The purpose of this program is for the prevention of suicide, suicide attempts, and deaths by suicide among American Indian/Alaska Native youth and young adults through age 24 in Tribal communities.</p>",
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": true,
       "tribal_set_aside": false,
       "tribal_priority_points": false,
       "application_deadline": "2026-12-31",
@@ -420,7 +420,15 @@
       "fixture": false,
       "search_live": true,
       "detail_live": true,
-      "never_synthesized": true
+      "never_synthesized": true,
+      "grants_gov_opportunity_id": "361976",
+      "eligibility_reingest": true,
+      "eligibility_reingest_diagnosis": "refined_hit_matched",
+      "prior_eligibility_was_placeholder": false,
+      "eligibility_tags": [
+        "alaska_native"
+      ],
+      "tribe_eligible_broad": true
     },
     {
       "grant_id": "nf13-real-fed-022",
@@ -465,11 +473,11 @@
     {
       "grant_id": "nf13-real-fed-025",
       "source_seed_id": "nf-seed-2026-fed-025",
-      "opportunity_number": "FED-025",
-      "opportunity_title": "General Assistance Program (GAP)",
+      "opportunity_number": "EPA-OW-OWM-26-01",
+      "opportunity_title": "Technical Assistance and Training for Rural, Small and Tribal Municipalities and Wastewater Treatment Systems",
       "agency": "EPA",
-      "eligibility_text": "Open to eligible applicants per program guidelines.",
-      "synopsis": "Federal grant program: EPA \u2014 General Assistance Program (GAP)",
+      "eligibility_text": "Applicant types: Others (see text field entitled \"Additional Information on Eligibility\" for clarification)\n\nSee Section 2 of the Notice of Funding Opportunity for eligibility information.\n\nThe U.S. Environmental Protection Agency (EPA) is soliciting applications under the authority of the Clean Water Act (CWA) section 104(b)(8) to provide Technical Assistance and Training for Rural, Small and Tribal Municipalities and Wastewater Treatment Systems. The program supports small, rural, and Tribal communities\u2019 efforts to identify water challenges, develop plans, build technical, financial, and managerial capacity, comply with CWA requirements, and access water infrastructure funding.     Through this Notice of Funding Opportunity under the Clean Water Act, EPA will achieve greater protection of public health and the environment through an increase in trained water sector personnel, access to funding and financing for wastewater treatment facilities, and Clean Water Act compliance. This action advances the Administration\u2019s priorities, including to Make America Healthy Again, by improving water quality and reducing exposure risks, and enabling responsible economic growth for small, rural, and tribal communities through improved wastewater infrastructure. In partnership with States, Tribes, and local governments and grounded in sound science and the law, EPA will deliver cleaner water, stronger infrastructure, and long-term environmental stewardship for all Americans.     The proposed activities support the Agency\u2019s Powering the Great American Comeback Initiative\u2019s Pillar 1: Clean Air, Land, and Water for Every American. Priority Areas identified in this opportunity are:  (1) Technical assistance and training for rural, small, and Tribal municipalities for planning, developing and acquisition of financing/funding for eligible projects and activities.  \u2022 Technical assistance and training for rural, small, and Tribal publicly owned treatment works and decentralized wastewater systems to help improve water quality and to achieve and maintain compliance.  (2) Technical assistance and training focused specifically on Tribes for planning, developing and acquisition of financing/funding, to help improve water quality and achieve and maintain compliance, and/or to support emerging contaminants project development.  (3) Information dissemination, technical assistance and training focused specifically on decentralized wastewater treatment systems to support planning, development and acquisition of financing.     Eligible entities for this grant program include nonprofit organizations and institutions of higher education that can provide technical assistance and training to rural, small, and Tribal municipalities, publicly owned wastewater treatment works, and decentralized wastewater treatment systems. Assisting systems with their technical, managerial, and financial capacity to achieve long-term compliance is a key priority for the Agency. Infrastructure construction projects such as repairing water or sewer lines, adding new equipment, or upgrading, retrofitting, or rehabilitating existing equipment are not eligible for funding under this announcement.",
+      "synopsis": "<p>The U.S. Environmental Protection Agency (EPA) is soliciting applications under the authority of the Clean Water Act (CWA) section 104(b)(8) to provide Technical Assistance and Training for Rural, Small and Tribal Municipalities and Wastewater Treatment Systems. The program supports small, rural, and Tribal communities\u2019 efforts to identify water challenges, develop plans, build technical, financial, and managerial capacity, comply with CWA requirements, and access water infrastructure funding.</p><p><br></p><p>Through this Notice of Funding Opportunity under the Clean Water Act, EPA will achieve greater protection of public health and the environment through an increase in trained water sector personnel, access to funding and financing for wastewater treatment facilities, and Clean Water Act compliance. This action advances the Administration\u2019s priorities, including to Make America Healthy Again, by improving water quality and reducing exposure risks, and enabling responsible economic growth for small, rural, and tribal communities through improved wastewater infrastructure. In partnership with States, Tribes, and local governments and grounded in sound science and the law, EPA will deliver cleaner water, stronger infrastructure, and long-term environmental stewardship for all Americans.</p><p><br></p><p>The proposed activities support the Agency\u2019s Powering the Great American Comeback Initiative\u2019s Pillar 1: Clean Air, Land, and Water for Every American. Priority Areas identified in this opportunity are:</p><p>(1) Technical assistance and training for rural, small, and Tribal municipalities for planning, developing and acquisition of financing/funding for eligible projects and activities.</p><p>\u2022 Technical assistance and training for rural, small, and Tribal publicly owned treatment works and decentralized wastewater systems to help improve water quality and to achieve and maintain compliance.</p><p>(2) Technical assistance and training focused specifically on Tribes for planning, developing and acquisition of financing/funding, to help improve water quality and achieve and maintain compliance, and/or to support emerging contaminants project development.</p><p>(3) Information dissemination, technical assistance and training focused specifically on decentralized wastewater treatment systems to support planning, development and acquisition of financing.</p><p><br></p><p>Eligible entities for this grant program include nonprofit organizations and institutions of higher education that can provide technical assistance and training to rural, small, and Tribal municipalities, publicly owned wastewater treatment works, and decentralized wastewater treatment systems. Assisting systems with their technical, managerial, and financial capacity to achieve long-term compliance is a key priority for the Agency. Infrastructure construction projects such as repairing water or sewer lines, adding new equipment, or upgrading, retrofitting, or rehabilitating existing equipment are not eligible for funding under this announcement.</p>",
       "tribal_eligible": false,
       "applicant_types_include_tribal": false,
       "tribal_set_aside": false,
@@ -479,8 +487,16 @@
       "fetch_mode": "live",
       "fixture": false,
       "search_live": true,
-      "detail_live": true,
-      "never_synthesized": true
+      "detail_live": false,
+      "never_synthesized": true,
+      "grants_gov_opportunity_id": 362798,
+      "eligibility_reingest": true,
+      "eligibility_reingest_diagnosis": "iegap_nofo_absent_epa_tribal_environmental_fallback",
+      "prior_eligibility_was_placeholder": false,
+      "reingest_program_proxy": true,
+      "intended_program": "EPA Indian Environmental General Assistance Program (GAP)",
+      "eligibility_tags": [],
+      "tribe_eligible_broad": false
     },
     {
       "grant_id": "nf13-real-fed-026",

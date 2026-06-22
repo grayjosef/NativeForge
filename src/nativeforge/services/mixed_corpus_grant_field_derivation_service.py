@@ -9,6 +9,9 @@ from typing import Any
 from nativeforge.services.grants_gov_eligibility_parser_service import (
     parse_grants_gov_synopsis_eligibility,
 )
+from nativeforge.services.real_grant_classification_input_adapter_service import (
+    _TRIBAL_TYPE_RE,
+)
 
 SCHEMA_VERSION = "nf_mixed_corpus_grant_field_derivation_v1"
 
@@ -108,7 +111,10 @@ def derive_mixed_corpus_grant_fields(
         out["applicant_types_include_tribal"] = False
 
     if out.get("tribal_eligible") and not tribal_type_present:
-        out["applicant_types_include_tribal"] = False
+        if _TRIBAL_TYPE_RE.search(str(out.get("eligibility_text") or "")):
+            out["applicant_types_include_tribal"] = True
+        else:
+            out["applicant_types_include_tribal"] = False
 
     out["tribe_eligible_broad"] = derive_tribe_eligible_broad(
         out,
