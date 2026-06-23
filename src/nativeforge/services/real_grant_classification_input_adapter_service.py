@@ -66,6 +66,9 @@ def adapt_grant_to_classification_input(grant: dict[str, Any]) -> dict[str, Any]
             "eligibility_text": str(grant.get("eligibility_text") or ""),
             "agency": str(grant.get("agency") or ""),
             "source_seed_id": grant.get("source_seed_id"),
+            "source_url": grant.get("source_url"),
+            "no_live_nofo": grant.get("no_live_nofo"),
+            "source_ingestion_state": grant.get("source_ingestion_state"),
             "real_fetch": grant.get("real_fetch"),
             "from_real_source_text": True,
         }

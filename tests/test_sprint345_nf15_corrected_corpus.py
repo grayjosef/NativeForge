@@ -15,14 +15,15 @@ from nativeforge.services.tribal_grant_eligibility_reingest_service import (
 
 def test_reingest_fixes_placeholder_grants() -> None:
     report = reingest_nf13_placeholder_grants()
-    assert report["reingested_success_count"] >= 2
     fed021 = next(r for r in report["results"] if r["grant_id"] == "nf13-real-fed-021")
     fed025 = next(r for r in report["results"] if r["grant_id"] == "nf13-real-fed-025")
     assert fed021["reingested"] is True
-    assert fed025["reingested"] is True
+    assert fed025["no_live_nofo"] is True
+    assert report["proxy_substitution_count"] == 0
     assert not is_placeholder_eligibility(
         str(fed021["updated_grant"]["eligibility_text"])
     )
+    assert fed025["updated_grant"]["source_ingestion_state"] == "no_live_nofo"
 
 
 def test_corrected_corpus_no_tribal_federal_irrelevant() -> None:

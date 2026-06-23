@@ -19,7 +19,9 @@ from nativeforge.services.real_grants_corpus_loader_service import (
 def test_corpus_has_40_real_grants() -> None:
     grants = load_nf13_real_ingested_grants()
     assert len(grants) == EXPECTED_GRANT_COUNT
-    assert all(g.get("real_fetch") is True for g in grants)
+    assert all(
+        g.get("real_fetch") is True or g.get("no_live_nofo") is True for g in grants
+    )
 
 
 def test_classify_match_all_grants() -> None:

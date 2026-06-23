@@ -25,6 +25,9 @@ from nativeforge.services.mixed_corpus_discrimination_orchestrator_service impor
 from nativeforge.services.nf15_no_evidence_honesty_orchestrator_service import (
     run_nf15_no_evidence_honesty_block,
 )
+from nativeforge.services.nf16_no_proxy_honesty_orchestrator_service import (
+    run_nf16_no_proxy_honesty_block,
+)
 from nativeforge.services.real_grant_classify_match_orchestrator_service import (
     run_real_grant_classify_match_block,
 )
@@ -466,6 +469,40 @@ def real_no_evidence_honesty_reingest(
         nf_real_resolver_validation,
     )
     return run_nf15_no_evidence_honesty_block(org_id=org_id)
+
+
+@demo_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/no-proxy-honesty"
+)
+def demo_no_proxy_honesty(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return run_nf16_no_proxy_honesty_block(org_id=org_id)
+
+
+@real_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/no-proxy-honesty"
+)
+def real_no_proxy_honesty(
+    org_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    nf_live_source_ingestion: bool = Query(False),
+    nf_real_resolver_validation: bool = Query(False),
+) -> dict[str, Any]:
+    _same_org(org_id, ctx)
+    _require_real_resolver_validation_query(
+        nf_live_source_ingestion,
+        nf_real_resolver_validation,
+    )
+    return run_nf16_no_proxy_honesty_block(org_id=org_id)
 
 
 @demo_source_ingestion_router.get(

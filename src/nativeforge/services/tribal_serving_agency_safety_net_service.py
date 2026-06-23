@@ -40,10 +40,18 @@ def is_tribal_serving_agency(
     agency: str | None = None,
     opportunity_title: str | None = None,
     source_seed_id: str | None = None,
+    source_url: str | None = None,
 ) -> bool:
     blob = " ".join(
-        str(x or "") for x in (agency, opportunity_title, source_seed_id)
+        str(x or "") for x in (agency, opportunity_title, source_seed_id, source_url)
     )
+    low = blob.lower()
+    if "epa.gov/tribal" in low:
+        return True
+    if "epa" in low and "gap" in low and "general assistance" in low:
+        return True
+    if "epa" in low and "general assistance program" in low:
+        return True
     return any(p.search(blob) for p in _AGENCY_PATTERNS)
 
 
@@ -58,6 +66,7 @@ def apply_tribal_agency_safety_net(
         agency=str(grant.get("agency") or ""),
         opportunity_title=str(grant.get("opportunity_title") or ""),
         source_seed_id=str(grant.get("source_seed_id") or ""),
+        source_url=str(grant.get("source_url") or ""),
     )
     triggered = (
         tribal_agency
