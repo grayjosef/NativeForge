@@ -1763,3 +1763,132 @@ code,
   color: #92400e;
   font-size: 0.75rem;
 }
+
+/* M8 — Operator Activation console */
+.nf-activation-page {
+  max-width: var(--nf-max);
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.nf-activation-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.nf-activation-title {
+  margin: 0 0 0.35rem;
+}
+
+.nf-activation-role label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--nf-muted);
+  margin-bottom: 0.25rem;
+}
+
+.nf-kill-switch-panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: var(--nf-radius);
+  border: 2px solid var(--nf-border-strong);
+  background: var(--nf-card);
+}
+
+.nf-kill-switch-panel.is-engaged {
+  border-color: var(--nf-error);
+  background: rgba(180, 35, 44, 0.08);
+}
+
+.nf-kill-switch-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 12rem;
+}
+
+.nf-kill-engage {
+  background: var(--nf-error);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+}
+
+.nf-kill-engage:disabled {
+  opacity: 0.5;
+}
+
+.nf-activation-flag-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--nf-border);
+}
+
+.nf-activation-flag-row:last-child {
+  border-bottom: none;
+}
+
+.nf-activation-toggle.is-on {
+  background: var(--nf-primary);
+  color: var(--nf-primary-fg);
+}
+
+.nf-activation-meta {
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.nf-activation-audit-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+}
+
+.nf-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+
+.nf-activation-modal {
+  max-width: 28rem;
+  width: 100%;
+}
+
+.nf-activation-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.nf-textarea {
+  width: 100%;
+  font: inherit;
+  padding: 0.5rem;
+  border-radius: var(--nf-radius-sm);
+  border: 1px solid var(--nf-border);
+  background: var(--nf-card);
+  color: var(--nf-text);
+}
+
+.nf-error-banner {
+  color: var(--nf-error);
+  margin: 0;
+}

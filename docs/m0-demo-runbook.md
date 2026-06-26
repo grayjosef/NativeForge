@@ -127,6 +127,31 @@ Same steps with prefix **`/v1/nf/demo/orgs/{ORG}/...`** for every call. The orga
 
 Full validation before merge: `bash scripts/nativeforge_full_validation.sh` ([`HITP_COMMIT_GATE.md`](HITP_COMMIT_GATE.md)).
 
+## Operator Activation console (M8)
+
+Flip live-publish, live-attribution, and auto-publish flags from the **Activation** view in the UI (`?view=activation` in the header toggle), or via API:
+
+```http
+GET /v1/nf/demo/orgs/{ORG}/operator/activation
+X-NF-Org-Id: {ORG}
+```
+
+Governed mutations (operator/admin only; agents denied):
+
+```http
+POST /v1/nf/demo/orgs/{ORG}/operator/activation/governed-action?actor_id={ACTOR}
+X-NF-Org-Id: {ORG}
+X-NF-Actor-Role: operator
+Content-Type: application/json
+
+{"governed_action":"activation:toggle","toggle":"kill_switch","value":true}
+```
+
+- **Kill switch** — engage is one click (no confirm dialog); release via `activation:toggle` with `value: false`.
+- **Live publish / auto-publish enable** — require `reason` in the JSON body (mirrors score override pattern); audited.
+- **Auto-publish enable** — use `governed_action: "policy:change"`; appends a versioned `nf_auto_publish_config` row (M7).
+- All flags default **OFF**; state is durable per workspace in `nf_activation_state`.
+
 ## Buyer-safe language (M0 commitments)
 
 Use these points in live demos:

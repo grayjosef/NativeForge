@@ -11,9 +11,9 @@ export interface WorkspaceHeaderProps {
   trustVersion: string | null;
   trustErr: boolean;
   onRefreshConnectivity: () => void;
-  /** When set, shows Workspace / Workbench toggle (Sprint 21). */
-  surface?: "workspace" | "workbench";
-  onSurfaceChange?: (s: "workspace" | "workbench") => void;
+  /** When set, shows Workspace / Workbench / Activation toggle (Sprint 21+ / M8). */
+  surface?: "workspace" | "workbench" | "activation";
+  onSurfaceChange?: (s: "workspace" | "workbench" | "activation") => void;
 }
 
 export function WorkspaceHeader({
@@ -64,6 +64,13 @@ export function WorkspaceHeader({
                 onClick={() => onSurfaceChange("workbench")}
               >
                 Workbench
+              </button>
+              <button
+                type="button"
+                className={`nf-segment-btn ${(surface ?? "workspace") === "activation" ? "is-active" : ""}`}
+                onClick={() => onSurfaceChange("activation")}
+              >
+                Activation
               </button>
             </div>
           ) : null}

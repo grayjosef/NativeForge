@@ -37,6 +37,8 @@ def _truncate_nf_tables() -> None:
     from nativeforge.db.session import SessionLocal
 
     with SessionLocal() as s:
+        s.execute(text("DELETE FROM nf_auto_publish_config"))
+        s.execute(text("DELETE FROM nf_activation_state"))
         s.execute(text("DELETE FROM nf_audit_events"))
         s.execute(text("DELETE FROM nf_form_packages"))
         s.execute(text("DELETE FROM nf_pursuit_briefs"))

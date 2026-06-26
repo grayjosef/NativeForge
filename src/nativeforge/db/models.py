@@ -1732,5 +1732,97 @@ class NfAuditEvent(Base):
     extraction_run: Mapped[NfNofoExtractionRun | None] = relationship()
 
 
+class NfActivationState(Base):
+    """M7: per-workspace durable activation flags (default OFF)."""
+
+    __tablename__ = "nf_activation_state"
+    __table_args__ = (
+        UniqueConstraint("organization_id", name="uq_nf_activation_state_org"),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    live_publish_enabled: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    live_attribution_enabled: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    auto_publish_enabled: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    kill_switch_engaged: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    current_auto_publish_config_version: Mapped[int | None] = mapped_column(
+        Integer, nullable=True
+    )
+    state_version: Mapped[int] = mapped_column(
+        Integer, nullable=False, server_default=text("1")
+    )
+    updated_by_actor_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True), nullable=True
+    )
+    updated_by_actor_role: Mapped[str | None] = mapped_column(
+        String(32), nullable=True
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    organization: Mapped[Organization] = relationship()
+
+
+class NfAutoPublishConfig(Base):
+    """M7: append-only auto-publish policy versions per workspace."""
+
+    __tablename__ = "nf_auto_publish_config"
+    __table_args__ = (
+        UniqueConstraint(
+            "organization_id",
+            "version",
+            name="uq_nf_auto_publish_config_org_version",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    organization_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True),
+        ForeignKey("organizations.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    is_demo: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    version: Mapped[int] = mapped_column(Integer, nullable=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    config_payload: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    created_by_actor_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True), nullable=True
+    )
+    created_by_actor_role: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    organization: Mapped[Organization] = relationship()
+
+
 def is_demo_for_org_type(org_type: str) -> bool:
     return org_type == OrganizationOrgType.demo.value

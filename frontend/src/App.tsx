@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { WorkbenchPage } from "./pages/WorkbenchPage";
+import { ActivationPage } from "./pages/ActivationPage";
 import type { Plane } from "./m0Flow";
 import {
   apiFetchBase,
@@ -137,6 +138,8 @@ export default function App() {
       const u = new URL(window.location.href);
       if (s === "workbench") {
         u.searchParams.set("view", "workbench");
+      } else if (s === "activation") {
+        u.searchParams.set("view", "activation");
       } else {
         u.searchParams.delete("view");
       }
@@ -915,8 +918,15 @@ export default function App() {
           />
         </aside>
       </div>
-      ) : (
+      ) : surface === "workbench" ? (
         <WorkbenchPage plane={plane} orgId={orgId.trim()} orgOk={orgOk} />
+      ) : (
+        <ActivationPage
+          plane={plane}
+          orgId={orgId.trim()}
+          orgOk={orgOk}
+          actorId={actorId}
+        />
       )}
 
       <OperatorTools

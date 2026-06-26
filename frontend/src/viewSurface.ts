@@ -1,11 +1,13 @@
-/** URL/query helpers for switching Workspace vs Operator Workbench (Sprint 21+). */
+/** URL/query helpers for Workspace vs Workbench vs Activation (M8). */
 
-export type AppSurface = "workspace" | "workbench";
+export type AppSurface = "workspace" | "workbench" | "activation";
 
 export function readSurface(): AppSurface {
   try {
     const q = new URLSearchParams(window.location.search).get("view");
-    return q === "workbench" ? "workbench" : "workspace";
+    if (q === "workbench") return "workbench";
+    if (q === "activation") return "activation";
+    return "workspace";
   } catch {
     return "workspace";
   }

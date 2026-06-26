@@ -600,3 +600,27 @@ class EvidencePackWarningSeverity(StrEnum):
     medium = "medium"
     high = "high"
     critical = "critical"
+
+
+class WorkspaceActorRole(StrEnum):
+    """M8: operator console principal role (header-gated in dev)."""
+
+    operator = "operator"
+    admin = "admin"
+    agent = "agent"
+
+
+class GovernedActionKind(StrEnum):
+    """M8: governed dispatcher action namespace."""
+
+    activation_toggle = "activation:toggle"
+    policy_change = "policy:change"
+
+
+class ActivationToggleKey(StrEnum):
+    """M8: durable activation flags controlled from the console."""
+
+    kill_switch = "kill_switch"
+    live_publish = "live_publish"
+    live_attribution = "live_attribution"
+    auto_publish = "auto_publish"

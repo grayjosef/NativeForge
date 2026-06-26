@@ -1,64 +1,55 @@
-# NativeForge Handoff — Block NF-16: No-Proxy Honesty (Sprints 349–355)
+# NativeForge Handoff — Block M8: Operator Activation Console
 
-**Status:** Complete (local). **WAIT** — do not push unless explicitly approved.
+**Status:** Closed locally at `328b48d`. Push: `git push origin main` (when GitHub reachable).
+
+## Close-gate evidence (staging smoke)
+
+- `NF_DEV_ORG_HEADERS=false` + `X-NF-Actor-Role: operator` → **503** (governed mutation denied; header not honored)
+- Kill switch engaged → `verify-live` halts live publish + auto-publish queue (`kill_switch_engaged`)
+- Agent governed actions → **403**
+- Live publish without reason → **400**; with reason → **200** + audit row
+- `policy:change` auto-publish enable → append-only config version + audit
+
+Run: `bash scripts/m8_close_gate_staging_smoke.sh`
 
 ## Summary
 
-Killed proxy substitution. Ingested opportunities must belong to the source's own program/agency — no cross-program backfill. Introduced **`no_live_nofo`** as a first-class honest state: empty eligibility, true catalog identity preserved (like `fed-001` empty-but-honest pattern). Reverted `nf13-real-fed-025` EPA proxy (362798); it is now honestly `no_live_nofo` / `uncertain_relevance` / `insufficient_data`, not `irrelevant` and not EPA CWA data under the GAP id.
+Operators control per-workspace activation from a dedicated **Activation** console view. Durable M7 state (`nf_activation_state`, append-only `nf_auto_publish_config`) backs the UI and API. Governed dispatcher enforces `activation:toggle` and `policy:change`; agents are hard-denied; high-risk enables require confirm + reason; kill switch is one-click engage with no dialog.
 
-NF-15 guards preserved: no-evidence → `uncertain_relevance`, tribal-agency safety net.
+## Sprint deliverables
 
-## New services
+| # | Deliverable | Status |
+|---|-------------|--------|
+| 1 | Activation read API + state view | `GET .../operator/activation` + Activation UI |
+| 2 | Kill-switch control | `activation:toggle` engage/release, audited, halts M5 publish gate |
+| 3 | Flag controls | live-publish / live-attribution / auto-publish (policy:change for enable) |
+| 4 | Safety UX | Confirm+reason modal for live publish & auto-publish enable; prominent kill switch |
+| 5 | Handoff + runbook | This doc + `docs/m0-demo-runbook.md` Activation section |
 
-| Service | Role |
-|---------|------|
-| `no_live_nofo_state_service` | `build_no_live_nofo_grant()`, `assert_no_live_nofo_honest()` |
-| `source_program_ownership_guard_service` | `assert_source_program_ownership()`, `CrossProgramProxyError` |
-| `nf16_no_proxy_corpus_classification_service` | Corpus re-classify vs NF-15 baseline |
-| `nf16_no_proxy_honesty_orchestrator_service` | Block orchestrator |
-| `nf16_no_proxy_honesty_gate_verification_service` | Gate checks |
-| `nf16_no_proxy_honesty_closeout_packet_service` | Closeout artifact |
+## Durable state (M7)
 
-## Removed patterns
+| Table | Purpose |
+|-------|---------|
+| `nf_activation_state` | Per-org flags (default OFF), `state_version`, last actor |
+| `nf_auto_publish_config` | Append-only auto-publish policy versions |
 
-- `reingest_program_proxy`
-- `SEED_FALLBACK_OPPORTUNITY_IDS` / EPA tribal environmental fallback (`iegap_nofo_absent_epa_tribal_environmental_fallback`)
-- Grants.gov opportunity 362798 under GAP source
+## API routes
 
-## fed-025 honest state
+| Route | Method | Notes |
+|-------|--------|-------|
+| `/{org}/operator/activation` | GET | Read state + publish gate + recent audit |
+| `/{org}/operator/activation/governed-action` | POST | `X-NF-Actor-Role`: operator \| admin \| agent |
 
-| Field | Value |
-|-------|-------|
-| `opportunity_number` | `FED-025` |
-| `opportunity_title` | General Assistance Program (GAP) |
-| `agency` | EPA |
-| `eligibility_text` | *(empty)* |
-| `source_ingestion_state` | `no_live_nofo` |
-| `no_live_nofo` | `true` |
-| `reingest_program_proxy` | `false` |
-| Classification | `uncertain_relevance` / `insufficient_data` |
+**Governed actions:** `activation:toggle`, `policy:change` (auto-publish enable only).
 
-## Corrected corpus label distribution vs NF-15
+## UI
 
-| Label | NF-15 | NF-16 | Δ |
-|-------|------:|------:|--:|
-| `tribal_government_specific` | 43 | 43 | 0 |
-| `irrelevant` | 4 | 4 | 0 |
-| `uncertain_relevance` | 4 | 5 | +1 |
-| `weak_native_relevance` | 2 | 1 | −1 |
-| `native_entity_eligible_broad` | 3 | 3 | 0 |
-| `native_specific` | 1 | 1 | 0 |
-
-**Invariants (tested):** zero proxy substitutions; `no_live_nofo` never `irrelevant`; no tribal-federal grant in `irrelevant`.
-
-## Routes
-
-`POST .../no-proxy-honesty` (demo + real, plan-gated)
+Header toggle: **Activation** (`?view=activation`). Role selector (dev): operator / admin / agent (read-only).
 
 ## Test baseline
 
-`pytest` — **5173 passed**, 11 skipped (after NF-16). NF-16/15 gate + ownership + no_live_nofo tests green.
+`pytest tests/test_m8_operator_activation_console.py` — defaults, kill switch, agent denied, reason gates, policy versioning, publish halt.
 
 ## Governance
 
-- Staging only, **never pushed**, `stash@{0}` preserved (`wip-sprint8-ui-redesign-do-not-commit`)
+Staging/dev: `X-NF-Actor-Role` honored **only** when `NF_DEV_ORG_HEADERS=true`. Production-shaped config denies governed mutations (503); future auth replaces header parsing.
