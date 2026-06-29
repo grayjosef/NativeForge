@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from nativeforge.db.models import Organization
+from nativeforge.repositories import activation_state as activation_repo
 from nativeforge.services.grants_gov_eligibility_parser_service import (
     parse_grants_gov_synopsis_eligibility,
 )
@@ -25,6 +26,9 @@ from nativeforge.services.real_url_resolver_service import (
 )
 from nativeforge.services.source_seed_url_correction_service import (
     SEED_URL_CORRECTIONS,
+)
+from nativeforge.services.tier1_batch_live_fetch_service import (
+    reset_tier1_batch_fetch_rate_limits,
 )
 from nativeforge.services.tier1_batch_live_pull_orchestrator_service import (
     run_tier1_batch_live_pull_block,
@@ -81,6 +85,7 @@ def verify_tier1_batch_live_pull_gates(
 ) -> dict[str, Any]:
     reset_real_url_resolver_rate_limit()
     reset_real_tier1_fetch_rate_limit()
+    reset_tier1_batch_fetch_rate_limits()
     fixture_rows = load_recorded_grants_gov_search_fixture()
     for row in fixture_rows:
         assert_real_fetch_honest_labeling(row)
@@ -93,6 +98,14 @@ def verify_tier1_batch_live_pull_gates(
     raw = json.loads(detail_fixture.read_text(encoding="utf-8"))
     syn = (raw.get("data") or {}).get("synopsis") or {}
     elig = parse_grants_gov_synopsis_eligibility(syn)
+    activation_row = activation_repo.get_or_create_activation_state(
+        session,
+        organization_id=org.id,
+        is_demo=True,
+    )
+    activation_row.live_publish_enabled = True
+    activation_row.kill_switch_engaged = False
+    session.flush()
     result = run_tier1_batch_live_pull_block(
         session,
         org=org,

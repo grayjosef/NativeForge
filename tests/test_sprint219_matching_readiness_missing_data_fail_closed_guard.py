@@ -5,6 +5,7 @@ from __future__ import annotations
 from nativeforge.services.matching_readiness_match_label_vocabulary_service import (
     LABEL_BLOCKED,
     LABEL_NEEDS_MORE_PROFILE_DATA,
+    LABEL_NEEDS_OPERATOR_REVIEW,
 )
 from nativeforge.services.matching_readiness_missing_data_fail_closed_guard_service import (
     SCHEMA_VERSION,
@@ -24,14 +25,14 @@ def test_missing_profile_forces_needs_more_profile_data() -> None:
     assert result["final_match_label"] == LABEL_NEEDS_MORE_PROFILE_DATA
 
 
-def test_missing_deadline_forces_blocked() -> None:
+def test_missing_deadline_forces_operator_review() -> None:
     result = apply_missing_data_fail_closed_guard(
         profile_present=True,
         eligibility_data_present=True,
         deadline_present=False,
         proposed_match_label="possible_fit",
     )
-    assert result["final_match_label"] == LABEL_BLOCKED
+    assert result["final_match_label"] == LABEL_NEEDS_OPERATOR_REVIEW
 
 
 def test_all_data_present_passes_through() -> None:

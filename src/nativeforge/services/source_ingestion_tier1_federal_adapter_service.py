@@ -27,7 +27,10 @@ def _json_safe(x: Any) -> Any:
 
 
 def build_canonical_opportunity_id(raw: dict[str, Any]) -> str:
-    """Stable id for idempotent upsert."""
+    """Stable id for idempotent upsert (Grants.gov id preferred when present)."""
+    gg_id = raw.get("grants_gov_opportunity_id")
+    if gg_id is not None and str(gg_id).strip():
+        return f"grants_gov:{gg_id}"
     explicit = raw.get("canonical_opportunity_id") or raw.get("opportunity_number")
     if explicit:
         return str(explicit).strip()

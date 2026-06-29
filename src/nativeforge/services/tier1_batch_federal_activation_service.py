@@ -6,6 +6,8 @@ import json
 import uuid
 from typing import Any
 
+from pydantic import BaseModel, Field, model_validator
+
 from nativeforge.domain.enums import OpportunityVerificationStatus
 from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services.fed_program_activation_binding_service import (
@@ -34,27 +36,47 @@ BATCH_CONFIRMATION_KEYS: frozenset[str] = frozenset(
 )
 
 
+class Tier1BatchConfirmationBody(BaseModel):
+    """Operator confirmation for tier-1 public federal batch activation."""
+
+    operator_handle: str = Field(min_length=1)
+    human_activation_acknowledged: bool
+    public_only_acknowledged: bool
+    batch_tier1_public_activation_acknowledged: bool
+
+    @model_validator(mode="after")
+    def require_truthy_acknowledgements(self) -> Tier1BatchConfirmationBody:
+        if not self.human_activation_acknowledged:
+            raise ValueError("human_activation_acknowledged must be true")
+        if not self.public_only_acknowledged:
+            raise ValueError("public_only_acknowledged must be true")
+        if not self.batch_tier1_public_activation_acknowledged:
+            raise ValueError("batch_tier1_public_activation_acknowledged must be true")
+        return self
+
+
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
+def parse_batch_confirmation(
+    confirmation: dict[str, Any] | Tier1BatchConfirmationBody,
+) -> Tier1BatchConfirmationBody:
+    if isinstance(confirmation, Tier1BatchConfirmationBody):
+        return confirmation
+    return Tier1BatchConfirmationBody.model_validate(confirmation)
+
+
 def _validate_batch_confirmation(confirmation: dict[str, Any]) -> None:
-    missing = BATCH_CONFIRMATION_KEYS - set(confirmation.keys())
-    if missing:
-        raise ValueError(f"missing batch confirmation keys: {sorted(missing)}")
-    if not confirmation.get("human_activation_acknowledged"):
-        raise PermissionError("human_activation_acknowledged required")
-    if not confirmation.get("public_only_acknowledged"):
-        raise PermissionError("public_only_acknowledged required")
-    if not confirmation.get("batch_tier1_public_activation_acknowledged"):
-        raise PermissionError("batch_tier1_public_activation_acknowledged required")
+    parse_batch_confirmation(confirmation)
 
 
 def select_tier1_public_batch_seed_ids(
     posture_candidates: list[dict[str, Any]],
     *,
     max_batch_size: int | None = None,
+    batch_offset: int = 0,
 ) -> list[str]:
     """Green public tier-1 federal seeds eligible for controlled batch activation."""
     eligible: list[str] = []
@@ -71,6 +93,8 @@ def select_tier1_public_batch_seed_ids(
             continue
         eligible.append(str(row["seed_id"]))
     eligible.sort()
+    if batch_offset > 0:
+        eligible = eligible[batch_offset:]
     if max_batch_size is not None:
         eligible = eligible[:max_batch_size]
     return eligible

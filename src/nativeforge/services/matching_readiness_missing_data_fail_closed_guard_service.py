@@ -8,6 +8,7 @@ from typing import Any
 from nativeforge.services.matching_readiness_match_label_vocabulary_service import (
     LABEL_BLOCKED,
     LABEL_NEEDS_MORE_PROFILE_DATA,
+    LABEL_NEEDS_OPERATOR_REVIEW,
 )
 
 SCHEMA_VERSION = "nf_matching_readiness_missing_data_fail_closed_guard_v1"
@@ -46,6 +47,8 @@ def apply_missing_data_fail_closed_guard(
 
     if not profile_present:
         final = LABEL_NEEDS_MORE_PROFILE_DATA
+    elif set(missing).issubset({"eligibility", "deadline"}):
+        final = LABEL_NEEDS_OPERATOR_REVIEW
     else:
         final = LABEL_BLOCKED
 

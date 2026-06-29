@@ -100,20 +100,22 @@ def persist_seed_candidates_to_registry(
     from nativeforge.repositories import opportunity_sources as os_repo
 
     rows_in = candidates or build_source_seed_candidate_bundle()["candidates"]
+    existing_rows = os_repo.list_opportunity_sources_for_org(
+        session=session,
+        org_id=org.id,
+        org_type=org.org_type,
+    )
+    known_urls = {r.source_url for r in existing_rows if r.source_url}
     inserted = 0
     skipped = 0
     for cand in rows_in:
         payload = _candidate_to_source_payload(cand)
-        existing = os_repo.list_opportunity_sources_for_org(
-            session=session,
-            org_id=org.id,
-            org_type=org.org_type,
-        )
         url = payload.source_url
-        if any(r.source_url == url for r in existing):
+        if url in known_urls:
             skipped += 1
             continue
         ods.create_opportunity_source(session, org=org, body=payload)
+        known_urls.add(url)
         inserted += 1
     return {
         "inserted": inserted,

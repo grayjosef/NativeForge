@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from nativeforge.api.deps_db import (
@@ -16,6 +16,9 @@ from nativeforge.api.deps_db import (
 from nativeforge.api.org_context import OrgContext
 from nativeforge.repositories import organizations as org_repo
 from nativeforge.services import source_ingestion_orchestrator_service as orch
+from nativeforge.services.activation_publish_gate_service import (
+    ActivationPublishHaltedError,
+)
 from nativeforge.services.live_grants_gov_honest_orchestrator_service import (
     run_live_grants_gov_honest_block,
 )
@@ -58,6 +61,9 @@ from nativeforge.services.staging_activation_dry_run_orchestrator_service import
 from nativeforge.services.staging_seed_preview_report_service import (
     build_staging_seed_preview_report,
 )
+from nativeforge.services.tier1_batch_federal_activation_service import (
+    Tier1BatchConfirmationBody,
+)
 from nativeforge.services.tier1_batch_live_pull_orchestrator_service import (
     run_tier1_batch_live_pull_block,
 )
@@ -75,6 +81,36 @@ real_source_ingestion_router = APIRouter(
 def _same_org(org_id: uuid.UUID, ctx: OrgContext) -> None:
     if org_id != ctx.org_id:
         raise HTTPException(status_code=404, detail="organization not found")
+
+
+def _run_tier1_batch_live_pull(
+    db: Session,
+    *,
+    org: Any,
+    org_id: uuid.UUID,
+    body: Tier1BatchConfirmationBody,
+    batch_offset: int,
+    max_batch_size: int | None,
+) -> dict[str, Any]:
+    try:
+        return run_tier1_batch_live_pull_block(
+            db,
+            org=org,
+            org_id=org_id,
+            operator_confirmation=body,
+            batch_offset=batch_offset,
+            max_batch_size=max_batch_size,
+        )
+    except ActivationPublishHaltedError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=str(exc),
+        ) from exc
+    except (ValueError, PermissionError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        ) from exc
 
 
 def _require_plan_gate_query(nf_live_source_ingestion: bool) -> None:
@@ -284,9 +320,11 @@ def demo_tier1_batch_live_pull(
     org_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
     db: Annotated[Session, Depends(get_db_session)],
-    body: dict[str, Any],
+    body: Tier1BatchConfirmationBody,
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
+    batch_offset: int = Query(0, ge=0),
+    max_batch_size: int | None = Query(None, ge=1, le=60),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
     _require_real_resolver_validation_query(
@@ -296,11 +334,13 @@ def demo_tier1_batch_live_pull(
     org = org_repo.get_organization(db, org_id)
     if org is None:
         raise HTTPException(status_code=404, detail="organization not found")
-    result = run_tier1_batch_live_pull_block(
+    result = _run_tier1_batch_live_pull(
         db,
         org=org,
         org_id=org_id,
-        operator_confirmation=body,
+        body=body,
+        batch_offset=batch_offset,
+        max_batch_size=max_batch_size,
     )
     db.commit()
     return result
@@ -313,9 +353,11 @@ def real_tier1_batch_live_pull(
     org_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_real_org_db)],
     db: Annotated[Session, Depends(get_db_session)],
-    body: dict[str, Any],
+    body: Tier1BatchConfirmationBody,
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
+    batch_offset: int = Query(0, ge=0),
+    max_batch_size: int | None = Query(None, ge=1, le=60),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
     _require_real_resolver_validation_query(
@@ -325,11 +367,13 @@ def real_tier1_batch_live_pull(
     org = org_repo.get_organization(db, org_id)
     if org is None:
         raise HTTPException(status_code=404, detail="organization not found")
-    result = run_tier1_batch_live_pull_block(
+    result = _run_tier1_batch_live_pull(
         db,
         org=org,
         org_id=org_id,
-        operator_confirmation=body,
+        body=body,
+        batch_offset=batch_offset,
+        max_batch_size=max_batch_size,
     )
     db.commit()
     return result
