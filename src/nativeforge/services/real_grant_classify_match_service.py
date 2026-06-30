@@ -15,10 +15,16 @@ from nativeforge.services.matching_readiness_readiness_evaluator_service import 
 from nativeforge.services.real_grant_native_relevance_record_service import (
     build_real_grant_native_relevance_record,
 )
+from nativeforge.services.matching_profile_selector_service import (
+    PROFILE_SYNTHETIC_RED_CEDAR,
+    resolve_matching_profile,
+)
+from nativeforge.services.real_grant_opportunity_metadata_service import (
+    grant_to_matching_opportunity,
+)
 from nativeforge.services.real_grants_corpus_loader_service import (
     EXPECTED_GRANT_COUNT,
     load_nf13_real_ingested_grants,
-    load_nf13_test_tribal_profile,
 )
 
 SCHEMA_VERSION = "nf_real_grant_classify_match_v1"
@@ -30,26 +36,19 @@ def _json_safe(x: Any) -> Any:
 
 
 def _grant_to_opportunity(grant: dict[str, Any]) -> dict[str, Any]:
-    return {
-        "fixture_key": grant.get("grant_id"),
-        "opportunity_title": grant.get("opportunity_title"),
-        "opportunity_number": grant.get("opportunity_number"),
-        "agency": grant.get("agency"),
-        "eligibility_text": grant.get("eligibility_text"),
-        "application_deadline": grant.get("application_deadline"),
-        "tribal_eligible": grant.get("tribal_eligible"),
-        "applicant_types_include_tribal": grant.get("applicant_types_include_tribal"),
-        "from_real_source_text": True,
-    }
+    return grant_to_matching_opportunity(grant)
 
 
 def classify_and_match_real_grants(
     *,
     grants: list[dict[str, Any]] | None = None,
     profile: dict[str, Any] | None = None,
+    profile_fixture_key: str | None = None,
 ) -> dict[str, Any]:
     corpus = grants if grants is not None else load_nf13_real_ingested_grants()
-    tribal_profile = profile or load_nf13_test_tribal_profile()
+    tribal_profile = profile or resolve_matching_profile(
+        profile_fixture_key=profile_fixture_key or PROFILE_SYNTHETIC_RED_CEDAR,
+    )
     classifications: list[dict[str, Any]] = []
     matches: list[dict[str, Any]] = []
     for grant in corpus:

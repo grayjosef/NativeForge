@@ -6,6 +6,11 @@ import json
 import uuid
 from typing import Any
 
+from nativeforge.services.matching_profile_selector_service import (
+    PROFILE_SYNTHETIC_RED_CEDAR,
+    build_matching_profile_selector_contract,
+    resolve_matching_profile,
+)
 from nativeforge.services.real_grant_classify_match_service import (
     classify_and_match_real_grants,
 )
@@ -30,12 +35,19 @@ def run_real_grant_classify_match_block(
     org_id: uuid.UUID | None = None,
     nf_live_source_ingestion: bool = True,
     nf_real_resolver_validation: bool = True,
+    profile_fixture_key: str | None = None,
 ) -> dict[str, Any]:
     require_real_resolver_validation_gate(
         nf_live_source_ingestion=nf_live_source_ingestion,
         nf_real_resolver_validation=nf_real_resolver_validation,
     )
-    classify_match = classify_and_match_real_grants()
+    profile = resolve_matching_profile(
+        profile_fixture_key=profile_fixture_key or PROFILE_SYNTHETIC_RED_CEDAR,
+    )
+    classify_match = classify_and_match_real_grants(
+        profile=profile,
+        profile_fixture_key=profile_fixture_key,
+    )
     queues = build_real_grant_workbench_queues(classify_match_result=classify_match)
     return _json_safe(
         {
@@ -48,6 +60,8 @@ def run_real_grant_classify_match_block(
             "classify_match": classify_match,
             "workbench_queues": queues,
             "grant_count": classify_match["grant_count"],
+            "profile_selector": build_matching_profile_selector_contract(),
+            "selected_profile_fixture_key": profile.get("fixture_key"),
             "label_distribution": classify_match["label_distribution"],
             "matched_grant_count": classify_match["matched_grant_count"],
             "worked_examples": classify_match["worked_examples"],

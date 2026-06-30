@@ -11,8 +11,10 @@ from nativeforge.services.real_grant_classify_match_service import (
 from nativeforge.services.real_grant_workbench_queue_service import (
     build_real_grant_workbench_queues,
 )
-from nativeforge.services.real_grants_corpus_loader_service import (
-    load_nf13_test_tribal_profile,
+from nativeforge.services.matching_profile_selector_service import (
+    PROFILE_SYNTHETIC_RED_CEDAR,
+    build_matching_profile_selector_contract,
+    resolve_matching_profile,
 )
 from nativeforge.services.real_resolver_validation_gate_service import (
     build_real_resolver_validation_gate_contract,
@@ -35,14 +37,21 @@ def run_la_scaled_classify_match_block(
     org_id: Any = None,
     nf_live_source_ingestion: bool = True,
     nf_real_resolver_validation: bool = True,
+    profile_fixture_key: str | None = None,
 ) -> dict[str, Any]:
     require_real_resolver_validation_gate(
         nf_live_source_ingestion=nf_live_source_ingestion,
         nf_real_resolver_validation=nf_real_resolver_validation,
     )
     grants = load_scaled_federal_corpus()
-    profile = load_nf13_test_tribal_profile()
-    classify_match = classify_and_match_real_grants(grants=grants, profile=profile)
+    profile = resolve_matching_profile(
+        profile_fixture_key=profile_fixture_key or PROFILE_SYNTHETIC_RED_CEDAR,
+    )
+    classify_match = classify_and_match_real_grants(
+        grants=grants,
+        profile=profile,
+        profile_fixture_key=profile_fixture_key,
+    )
     queues = build_real_grant_workbench_queues(classify_match_result=classify_match)
     all_need_review = all(
         m["match_label"] == "needs_operator_review" for m in classify_match["matches"]
@@ -58,6 +67,8 @@ def run_la_scaled_classify_match_block(
             "classify_match": classify_match,
             "workbench_queues": queues,
             "grant_count": classify_match["grant_count"],
+            "profile_selector": build_matching_profile_selector_contract(),
+            "selected_profile_fixture_key": profile.get("fixture_key"),
             "all_needs_operator_review": all_need_review,
             "honest_labeling": True,
         }
