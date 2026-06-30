@@ -110,6 +110,8 @@ def opportunity_source_to_dict(row: NfOpportunitySource) -> dict[str, Any]:
         "consecutive_empty_check_count": row.consecutive_empty_check_count,
         "source_health_status": row.source_health_status,
         "freshness_checked_at": _d(row.freshness_checked_at),
+        "seed_id": row.seed_id,
+        "canonical_source_id": row.canonical_source_id,
         "created_at": _d(row.created_at),
         "updated_at": _d(row.updated_at),
     }
@@ -142,6 +144,9 @@ class OpportunitySourcePayload:
         ExpectedOpportunityFrequency.unknown
     )
     priority_level: SourcePriorityLevel = SourcePriorityLevel.medium
+    seed_id: str | None = None
+    canonical_source_id: str | None = None
+    source_health_status: str | None = None
 
 
 def create_opportunity_source(
@@ -176,6 +181,9 @@ def create_opportunity_source(
         check_method=body.check_method.value,
         expected_opportunity_frequency=body.expected_opportunity_frequency.value,
         priority_level=body.priority_level.value,
+        seed_id=body.seed_id,
+        canonical_source_id=body.canonical_source_id,
+        source_health_status=body.source_health_status,
     )
     session.add(row)
     session.flush()

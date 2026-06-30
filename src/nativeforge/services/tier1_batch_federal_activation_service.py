@@ -13,6 +13,7 @@ from nativeforge.services import opportunity_discovery_service as ods
 from nativeforge.services.fed_program_activation_binding_service import (
     assert_seed_aln_binding,
 )
+from nativeforge.services.seed_catalog_health_service import is_seed_activatable
 from nativeforge.services.seed_source_human_activation_service import (
     _load_seed_candidate,
 )
@@ -91,6 +92,8 @@ def select_tier1_public_batch_seed_ids(
             continue
         if row.get("access_posture_blocked"):
             continue
+        if not is_seed_activatable(row):
+            continue
         eligible.append(str(row["seed_id"]))
     eligible.sort()
     if batch_offset > 0:
@@ -130,19 +133,19 @@ def activate_tier1_public_batch_human_gate(
         org_id=org.id,
         org_type=org.org_type,
     )
+    by_seed_id = {r.seed_id: r for r in rows if r.seed_id}
     activated: list[dict[str, str]] = []
     for candidate in candidates:
-        target_url = str(candidate["source_url"])
+        target_seed_id = str(candidate["seed_id"])
         activated_id: uuid.UUID | None = None
-        for row in rows:
-            if row.source_url == target_url:
-                row.is_active = True
-                row.verification_status = (
-                    OpportunityVerificationStatus.operator_reviewed.value
-                )
-                activated_id = row.id
-                break
-        if activated_id is None:
+        row = by_seed_id.get(target_seed_id)
+        if row is not None:
+            row.is_active = True
+            row.verification_status = (
+                OpportunityVerificationStatus.operator_reviewed.value
+            )
+            activated_id = row.id
+        else:
             payload = _candidate_to_source_payload(candidate)
             payload.is_active = True
             payload.verification_status = (
@@ -150,6 +153,7 @@ def activate_tier1_public_batch_human_gate(
             )
             created = ods.create_opportunity_source(session, org=org, body=payload)
             activated_id = created.id
+            by_seed_id[target_seed_id] = created
         activated.append(
             {
                 "seed_id": str(candidate["seed_id"]),

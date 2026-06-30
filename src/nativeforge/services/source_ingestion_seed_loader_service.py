@@ -31,6 +31,15 @@ MINIMAL_SEED_COLUMNS: frozenset[str] = frozenset(
     }
 )
 
+OPTIONAL_HEALTH_COLUMNS: frozenset[str] = frozenset(
+    {
+        "source_health_status",
+        "resolver_url_status",
+        "health_evidence",
+        "catalog_accounting_bucket",
+    }
+)
+
 ACCESS_PUBLIC = "public"
 ACCESS_MEMBERS = "members"
 ACCESS_LOGIN = "login"
@@ -58,6 +67,8 @@ def _normalize_seed_row(row: dict[str, str]) -> dict[str, str]:
     out.setdefault("state_code", "")
     out.setdefault("program_family", program_family)
     out.setdefault("native_relevance_notes", f"Real seed source: {name}")
+    for col in OPTIONAL_HEALTH_COLUMNS:
+        out.setdefault(col, "")
     return out
 
 
@@ -118,6 +129,10 @@ def seed_row_to_discovery_candidate(row: dict[str, str]) -> dict[str, Any]:
             "candidate_not_active": True,
             "human_activation_required": True,
             "verification_status": "unverified",
+            "source_health_status": row.get("source_health_status"),
+            "resolver_url_status": row.get("resolver_url_status"),
+            "health_evidence": row.get("health_evidence"),
+            "catalog_accounting_bucket": row.get("catalog_accounting_bucket"),
         }
     )
 

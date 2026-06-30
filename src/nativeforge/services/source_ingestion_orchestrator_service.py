@@ -56,6 +56,9 @@ def _candidate_to_source_payload(
         is_active=False,
         check_method=SourceCheckMethod.web_page,
         priority_level=SourcePriorityLevel.medium,
+        seed_id=str(candidate.get("seed_id") or "") or None,
+        canonical_source_id=str(candidate.get("canonical_source_id") or "") or None,
+        source_health_status=str(candidate.get("source_health_status") or "") or None,
     )
 
 
@@ -96,7 +99,7 @@ def persist_seed_candidates_to_registry(
     org: Any,
     candidates: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    """Upsert inactive registry rows from seed candidates (idempotent by url)."""
+    """Upsert inactive registry rows from seed candidates (idempotent by seed_id)."""
     from nativeforge.repositories import opportunity_sources as os_repo
 
     rows_in = candidates or build_source_seed_candidate_bundle()["candidates"]
@@ -105,20 +108,23 @@ def persist_seed_candidates_to_registry(
         org_id=org.id,
         org_type=org.org_type,
     )
-    known_urls = {r.source_url for r in existing_rows if r.source_url}
+    known_seed_ids = {r.seed_id for r in existing_rows if r.seed_id}
     inserted = 0
     skipped = 0
     for cand in rows_in:
-        payload = _candidate_to_source_payload(cand)
-        url = payload.source_url
-        if url in known_urls:
+        seed_id = str(cand.get("seed_id") or "")
+        if not seed_id:
+            raise ValueError("seed candidate missing seed_id")
+        if seed_id in known_seed_ids:
             skipped += 1
             continue
+        payload = _candidate_to_source_payload(cand)
         ods.create_opportunity_source(session, org=org, body=payload)
-        known_urls.add(url)
+        known_seed_ids.add(seed_id)
         inserted += 1
     return {
         "inserted": inserted,
         "skipped": skipped,
         "all_inactive": True,
+        "identity_key": "seed_id",
     }

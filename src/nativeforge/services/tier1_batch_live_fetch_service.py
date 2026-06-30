@@ -70,14 +70,12 @@ def update_source_freshness_after_batch(
         org_id=org.id,
         org_type=org.org_type,
     )
-    by_url = {str(r.source_url): r for r in rows if r.source_url}
+    by_seed_id = {r.seed_id: r for r in rows if r.seed_id}
     now = datetime.now(tz=UTC)
     updated = 0
     for item in per_source:
         seed_id = str(item.get("seed_id") or "")
-        source = load_seed_candidate(seed_id)
-        url = str(source.get("source_url") or "")
-        row = by_url.get(url)
+        row = by_seed_id.get(seed_id)
         if row is None:
             continue
         row.last_checked_at = now

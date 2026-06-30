@@ -1,0 +1,30 @@
+{
+  "apply_summary": {
+    "seed_path": "/home/josefgray/projects/nativeforge/fixtures/source_ingestion/NF_SOURCE_SEED_2026.csv",
+    "row_count": 177,
+    "access_posture_corrections": 34,
+    "write": true
+  },
+  "reconciliation": {
+    "schema_version": "nf_seed_catalog_health_v1",
+    "catalog_row_count": 177,
+    "accounted_row_count": 177,
+    "nothing_silently_dropped": true,
+    "bucket_counts": {
+      "login_gated": 3,
+      "blocked_login_portal": 34,
+      "dead_url": 5,
+      "activatable": 122,
+      "members_gated": 13
+    },
+    "headline": {
+      "catalog_programs": 177,
+      "activatable_now": 122,
+      "blocked_login_portal": 34,
+      "dead_url": 5,
+      "login_gated": 3,
+      "members_gated": 13
+    },
+    "reconciliation_equation": "177 = 122 activatable + 34 blocked_login_portal + 5 dead + 3 login + 13 members_gated"
+  }
+}

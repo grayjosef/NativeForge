@@ -90,11 +90,11 @@ def activate_single_seed_source_human_gate(
         org_id=org.id,
         org_type=org.org_type,
     )
-    target_url = str(candidate["source_url"])
+    target_seed_id = str(candidate["seed_id"])
     activated_id: uuid.UUID | None = None
     other_active: list[str] = []
     for row in rows:
-        if row.source_url == target_url:
+        if row.seed_id == target_seed_id:
             row.is_active = True
             row.verification_status = OpportunityVerificationStatus.operator_reviewed.value
             activated_id = row.id

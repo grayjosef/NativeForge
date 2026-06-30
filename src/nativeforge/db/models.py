@@ -487,6 +487,10 @@ class NfOpportunitySource(Base):
     freshness_checked_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    seed_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    canonical_source_id: Mapped[str | None] = mapped_column(
+        String(256), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
