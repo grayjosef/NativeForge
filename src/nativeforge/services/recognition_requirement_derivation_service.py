@@ -9,6 +9,7 @@ from typing import Any
 from nativeforge.services.sc_pilot_fixture_loader_service import (
     RECOGNITION_REQUIREMENTS,
     load_sc_eligibility_rules,
+    match_sc_rule_category,
 )
 
 SCHEMA_VERSION = "nf_recognition_requirement_derivation_v1"
@@ -29,6 +30,11 @@ _OPEN_NONPROFIT_RE = re.compile(
 )
 _FEDERAL_AGENCY_RE = re.compile(r"\bBIA\b|Bureau of Indian Affairs|\bIHS\b|Indian Health Service", re.I)
 _FEDERAL_PROGRAM_RE = re.compile(r"\b638\b|\bIHBG\b|NAHASDA|Self-Governance\s+Compact", re.I)
+_DUAL_PATHWAY_FEDERAL_RE = re.compile(
+    r"10\.766|community\s+facilities|11\.3|economic\s+development\s+administration|\bEDA\b|"
+    r"USDA\s+CF",
+    re.I,
+)
 
 
 def _json_safe(x: Any) -> Any:
@@ -53,18 +59,9 @@ def _match_category_rules(
     grant: dict[str, Any],
     rules: dict[str, Any],
 ) -> str | None:
-    hay = _haystack(grant)
-    agency = str(grant.get("agency") or "")
-    title = str(grant.get("opportunity_title") or "")
-    for cat in rules.get("categories") or []:
-        agency_pats = cat.get("agency_patterns") or []
-        title_pats = cat.get("title_patterns") or []
-        text_pats = cat.get("text_patterns") or []
-        agency_hit = any(p.lower() in agency.lower() for p in agency_pats)
-        title_hit = any(p.lower() in title.lower() for p in title_pats)
-        text_hit = any(re.search(p, hay, re.I) for p in text_pats)
-        if agency_hit or title_hit or text_hit:
-            return str(cat["recognition_requirement"])
+    cat = match_sc_rule_category(grant, rules)
+    if cat:
+        return str(cat["recognition_requirement"])
     return None
 
 
@@ -72,6 +69,12 @@ def _derive_from_text(grant: dict[str, Any]) -> str | None:
     hay = _haystack(grant)
     title = str(grant.get("opportunity_title") or "")
     agency = str(grant.get("agency") or "")
+
+    # Dual-pathway federal tribal programs (USDA CF 10.766, EDA 11.3xx).
+    if _DUAL_PATHWAY_FEDERAL_RE.search(hay) and (
+        re.search(r"nonprofit|501\s*\(\s*c", hay, re.I) or grant.get("dual_pathway")
+    ):
+        return "federal_required_for_tribal_pathway"
 
     # Unambiguous federal-only when explicit and no broader Native-org carve-out.
     if _FEDERAL_ONLY_RE.search(hay) and not _STATE_OK_RE.search(hay):

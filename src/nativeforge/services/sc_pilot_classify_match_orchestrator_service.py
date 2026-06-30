@@ -7,7 +7,6 @@ from typing import Any
 
 from nativeforge.services.eligibility_fit_assessment_blockers_service import (
     BLOCKER_ELIGIBILITY_EVIDENCE_GAP,
-    BLOCKER_RECOGNITION_TIER_MISMATCH,
 )
 from nativeforge.services.matching_readiness_match_label_vocabulary_service import (
     LABEL_NEEDS_OPERATOR_REVIEW,
@@ -25,13 +24,14 @@ from nativeforge.services.real_resolver_validation_gate_service import (
     build_real_resolver_validation_gate_contract,
     require_real_resolver_validation_gate,
 )
-from nativeforge.services.recognition_requirement_derivation_service import (
-    enrich_grant_with_recognition_requirement,
+from nativeforge.services.grant_eligibility_conditions_service import (
+    enrich_grant_with_eligibility_metadata,
 )
 from nativeforge.services.recognition_tier_eligibility_gate_service import (
     apply_recognition_tier_eligibility_gate,
 )
 from nativeforge.services.sc_pilot_fixture_loader_service import (
+    build_sc_pilot_rule_reference_grants,
     load_sc_eligibility_rules,
     load_sc_tribal_profiles,
     require_sc_pilot_fixtures,
@@ -51,10 +51,22 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def _load_corpus(grants: list[dict[str, Any]] | None) -> list[dict[str, Any]]:
+def _load_corpus(
+    grants: list[dict[str, Any]] | None,
+    *,
+    rules: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     if grants is not None:
-        return grants
-    return load_mixed_tier13_corpus()
+        base = grants
+    else:
+        base = load_mixed_tier13_corpus()
+    rule_refs = build_sc_pilot_rule_reference_grants(rules)
+    seen_ids = {str(g.get("grant_id")) for g in base}
+    merged = list(base)
+    for ref in rule_refs:
+        if str(ref.get("grant_id")) not in seen_ids:
+            merged.append(ref)
+    return merged
 
 
 def run_sc_pilot_classify_match_block(
@@ -72,8 +84,8 @@ def run_sc_pilot_classify_match_block(
     profiles_raw = load_sc_tribal_profiles(require_files=require_fixtures)
     keys = profile_fixture_keys or [str(p["fixture_key"]) for p in profiles_raw]
     corpus = [
-        enrich_grant_with_recognition_requirement(g, rules=rules)
-        for g in _load_corpus(grants)
+        enrich_grant_with_eligibility_metadata(g, rules=rules)
+        for g in _load_corpus(grants, rules=rules)
     ]
 
     all_matches: list[dict[str, Any]] = []
@@ -83,6 +95,8 @@ def run_sc_pilot_classify_match_block(
         profile = resolve_sc_pilot_profile(fk, require_files=require_fixtures)
         profile_matches: list[dict[str, Any]] = []
         tier_mismatch_count = 0
+        condition_mismatch_count = 0
+        member_level_count = 0
         evidence_gap_count = 0
         included_count = 0
         excluded_count = 0
@@ -101,10 +115,15 @@ def run_sc_pilot_classify_match_block(
             assessment = match["eligibility_fit_assessment"]
             blockers = list(assessment["blockers"]["blocker_codes"])
 
-            has_tier_mismatch = BLOCKER_RECOGNITION_TIER_MISMATCH in blockers
+            has_tier_mismatch = tier_gate.get("recognition_tier_mismatch") is True
+            has_condition_mismatch = tier_gate.get("condition_mismatch") is True
             has_evidence_gap = BLOCKER_ELIGIBILITY_EVIDENCE_GAP in blockers
             if has_tier_mismatch:
                 tier_mismatch_count += 1
+            if has_condition_mismatch:
+                condition_mismatch_count += 1
+            if tier_gate.get("member_level_only"):
+                member_level_count += 1
             if has_evidence_gap:
                 evidence_gap_count += 1
 
@@ -124,6 +143,8 @@ def run_sc_pilot_classify_match_block(
                     "match_label": LABEL_NEEDS_OPERATOR_REVIEW,
                     "recognition_tier_gate": tier_gate,
                     "recognition_tier_mismatch": has_tier_mismatch,
+                    "condition_mismatch": has_condition_mismatch,
+                    "member_level_only": tier_gate.get("member_level_only"),
                     "eligibility_evidence_gap": has_evidence_gap,
                     "excluded_from_match_set": excluded,
                     "blocker_codes": blockers,
@@ -141,6 +162,8 @@ def run_sc_pilot_classify_match_block(
                 "included_in_match_set": included_count,
                 "excluded_from_match_set": excluded_count,
                 "recognition_tier_mismatch_count": tier_mismatch_count,
+                "condition_mismatch_count": condition_mismatch_count,
+                "member_level_only_count": member_level_count,
                 "eligibility_evidence_gap_count": evidence_gap_count,
             }
         )

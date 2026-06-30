@@ -127,8 +127,13 @@ def assess_eligibility_fit(
         blockers.append(BLOCKER_MISSING_DOCUMENTATION)
     if not has_explicit_profile_evidence(list(profile.get("profile_evidence_codes") or [])):
         blockers.append(BLOCKER_ELIGIBILITY_EVIDENCE_GAP)
-    if recognition_tier_gate and recognition_tier_gate.get("blocker_code"):
-        blockers.append(BLOCKER_RECOGNITION_TIER_MISMATCH)
+    if recognition_tier_gate:
+        gate_blockers = list(recognition_tier_gate.get("blocker_codes") or [])
+        if not gate_blockers and recognition_tier_gate.get("blocker_code"):
+            gate_blockers = [recognition_tier_gate["blocker_code"]]
+        for code in gate_blockers:
+            if code not in blockers:
+                blockers.append(code)
     if any(d["dimension"] == "geography_fit" and d["fit_status"] == FIT_STATUS_BLOCKED for d in dimension_results):
         blockers.append(BLOCKER_GEOGRAPHY_MISMATCH)
     if any(d["dimension"] == "capacity_fit" and d["fit_status"] == FIT_STATUS_BLOCKED for d in dimension_results):

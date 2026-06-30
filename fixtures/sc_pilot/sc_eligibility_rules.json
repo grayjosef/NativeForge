@@ -1,0 +1,307 @@
+{
+  "metadata": {
+    "generated": "2026-06-30",
+    "analyst_note": "All eligibility based on cited primary sources. UNKNOWN where unverifiable. Research output only, not legal advice. Verify current NOFOs before applying.",
+    "sc_recognition_authority": {
+      "statute": "SC Code of Laws §1-31-40(A)(10); SC Code of Regulations Chapter 139",
+      "administering_agency": "SC Commission for Community Advancement and Engagement (formerly Commission for Minority Affairs)",
+      "url": "https://advance.sc.gov/community-engagement/native-american-affairs"
+    }
+  },
+  "part_1_sc_state_recognized_tribes": {
+    "source_primary": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+    "source_secondary": "https://usclancaster.libguides.com/Archives/sc",
+    "tribes": [
+      {
+        "name": "Waccamaw Indian People",
+        "recognition_status": "state_recognized",
+        "recognition_year": "2005-02-17",
+        "recognition_source": "SC Commission for Minority Affairs — first state-recognized tribe in SC",
+        "recognition_url": "https://en.wikipedia.org/wiki/Waccamaw_Indian_People",
+        "nonprofit_501c3": "CONFIRMED",
+        "ein": "57-0970329",
+        "nonprofit_source": "https://www.charitynavigator.org/ein/570970329"
+      },
+      {
+        "name": "Edisto Natchez-Kusso Tribe of South Carolina",
+        "recognition_status": "state_recognized",
+        "recognition_year": "circa 2005",
+        "recognition_url": "https://www.scstatehouse.gov/query.php?search=DOC&searchtext=Edisto+Natchez+Kusso",
+        "nonprofit_501c3": "PROBABLE — tribe website states two 501(c) nonprofit arms; EIN not publicly confirmed",
+        "nonprofit_source": "https://www.natchezkussotribeofscedisto.website",
+        "action_required": "Verify EIN at https://apps.irs.gov/app/eos/"
+      },
+      {
+        "name": "Pee Dee Indian Nation of Upper South Carolina",
+        "recognition_status": "state_recognized",
+        "recognition_year": "circa 2005",
+        "recognition_url": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+        "nonprofit_501c3": "UNKNOWN",
+        "action_required": "Verify at https://apps.irs.gov/app/eos/"
+      },
+      {
+        "name": "Pee Dee Indian Tribe",
+        "recognition_status": "state_recognized",
+        "recognition_year": "circa 2005",
+        "recognition_url": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+        "nonprofit_501c3": "UNKNOWN",
+        "action_required": "Verify at https://apps.irs.gov/app/eos/"
+      },
+      {
+        "name": "Piedmont American Indian Association (PAIA)",
+        "recognition_status": "state_recognized",
+        "recognition_year": "circa 2005",
+        "recognition_url": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+        "nonprofit_501c3": "UNKNOWN"
+      },
+      {
+        "name": "Santee Indian Organization",
+        "recognition_status": "state_recognized",
+        "recognition_year": "circa 2005",
+        "recognition_url": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+        "nonprofit_501c3": "UNKNOWN"
+      },
+      {
+        "name": "Sumter Tribe of Cheraw Indians",
+        "recognition_status": "state_recognized",
+        "recognition_year": "circa 2005",
+        "recognition_url": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+        "nonprofit_501c3": "UNKNOWN"
+      },
+      {
+        "name": "Beaver Creek Indians",
+        "recognition_status": "state_recognized",
+        "recognition_year": "circa 2005",
+        "recognition_url": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+        "nonprofit_501c3": "UNKNOWN"
+      },
+      {
+        "name": "Wassamasaw Tribe of Varnertown Indians",
+        "recognition_status": "state_recognized",
+        "recognition_year": "circa 2005",
+        "recognition_url": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+        "nonprofit_501c3": "UNKNOWN"
+      }
+    ],
+    "state_recognized_groups_not_full_tribes": [
+      "Chaloklowa Chickasaw Indian People",
+      "Eastern Cherokee, Southern Iroquois and United Tribes of SC",
+      "Natchez Tribe of South Carolina",
+      "Pee Dee Indian Nation of Beaver Creek"
+    ],
+    "groups_eligibility_note": "These four hold state-recognized GROUP status (not full TRIBE status). Eligibility under provisions specifying state-recognized TRIBE vs. group is UNKNOWN — verify program-by-program.",
+    "fiscal_sponsor_note": "Any tribe without 501(c)(3) can use a 501(c)(3) fiscal sponsor to access open_nonprofit funding categories. Requires formal fiscal sponsorship agreement."
+  },
+  "part_2_funding_CAN_pursue": {
+    "federal_open_to_state_recognized_or_nonprofits": [
+      {
+        "program": "ANA Social and Economic Development Strategies (SEDS)",
+        "agency": "HHS / Administration for Native Americans",
+        "aln": "93.612",
+        "recognition_requirement": "state_ok",
+        "eligibility_basis": "42 U.S.C. §2991b; 45 CFR §1336.33",
+        "exact_eligibility_language": "Incorporated state-recognized Indian tribes; Incorporated non-federally recognized tribes; Consortia of Indian tribes; Incorporated non-profit multi-purpose community-based Indian organizations.",
+        "key_condition": "Must be incorporated. Unincorporated tribe must apply via incorporated nonprofit arm.",
+        "source_url": "https://simpler.grants.gov/opportunity/aba6f12b-0da3-49cb-9ae9-2ea798f914fd",
+        "source_date": "2025-06-19 active Grants.gov listing"
+      },
+      {
+        "program": "ANA Native American Language Preservation and Maintenance (P&M / Esther Martinez Immersion)",
+        "agency": "HHS / Administration for Native Americans",
+        "aln": "93.587",
+        "recognition_requirement": "state_ok",
+        "eligibility_basis": "42 U.S.C. §2991b-3; 45 CFR §1336.33",
+        "exact_eligibility_language": "Incorporated state-recognized Indian tribes; Incorporated non-federally recognized tribes; National or regional incorporated non-profit Native American organizations with Native American community-specific objectives.",
+        "key_condition": "Must be incorporated.",
+        "source_url": "https://simpler.grants.gov/opportunity/b48c26a9-fb16-46a8-9bdf-6bd55b1ddc31",
+        "source_date": "2026-04-01 active Grants.gov listing"
+      },
+      {
+        "program": "ANA Sustainable Employment and Economic Development Strategies (SEEDS)",
+        "agency": "HHS / Administration for Native Americans",
+        "aln": "93.612",
+        "recognition_requirement": "state_ok",
+        "eligibility_basis": "42 U.S.C. §2991b; 45 CFR §1336.33",
+        "exact_eligibility_language": "Same eligibility class as SEDS — incorporated state-recognized Indian tribes eligible under 42 U.S.C. §2991b",
+        "key_condition": "Must be incorporated.",
+        "source_url": "https://advance.sc.gov/grants-state-tribes"
+      },
+      {
+        "program": "NEA Grants for Arts Projects (GAP)",
+        "agency": "National Endowment for the Arts",
+        "aln": "45.024",
+        "recognition_requirement": "open_nonprofit",
+        "eligibility_basis": "NEA Grants FAQs for Tribes (2023)",
+        "exact_eligibility_language": "Non-federally recognized tribes ARE eligible to apply AS LONG AS the applicant is a nonprofit, tax-exempt 501(c)(3) organization with three years of arts programming at the time of application. Project participation CANNOT be restricted to only tribal members.",
+        "key_conditions": "501c3 required; 3-year arts programming history required; cannot restrict project to tribal members only",
+        "source_url": "https://www.arts.gov/sites/default/files/NEA-Grants-FAQs-for-Tribes-2023.pdf"
+      },
+      {
+        "program": "NEH General Program Grants (nonprofit pathway)",
+        "agency": "National Endowment for the Humanities",
+        "aln": "45.149",
+        "recognition_requirement": "open_nonprofit",
+        "eligibility_basis": "NEH General Terms and Conditions for Awards to Organizations",
+        "exact_eligibility_language": "NEH issues grants to private nonprofit organizations, institutions of higher education, and state, local, and federally recognized Indian tribal governments. Nonprofit tribal organizations with 501(c)(3) eligible via nonprofit pathway.",
+        "key_condition": "501c3 required. Some NEH programs have federal-recognition set-asides — verify program-by-program.",
+        "source_url": "https://www.neh.gov/general-terms-and-conditions-awards-organizations-grants-and-cooperative-agreements-issued-january-2022"
+      },
+      {
+        "program": "IHS Preparatory and Pre-Graduate Scholarships — INDIVIDUAL applicants only",
+        "agency": "Indian Health Service",
+        "aln": "93.972",
+        "recognition_requirement": "state_ok",
+        "eligibility_basis": "IHS Scholarship Eligibility page",
+        "exact_eligibility_language": "Recipients must be a member or descendant of a federally recognized, state-recognized OR terminated American Indian Tribe or Alaska Native village.",
+        "key_condition": "INDIVIDUAL tribal members apply — the tribe itself does not apply. IHS Health Professions Scholarship requires federally recognized membership ONLY.",
+        "source_url": "https://www.ihs.gov/scholarship/scholarships/eligibility/"
+      }
+    ],
+    "SC_state_programs": [
+      {
+        "program": "SC Commission Direct Tribal Appropriation",
+        "agency": "SC Commission for Community Advancement and Engagement",
+        "funding_type": "STATE appropriation",
+        "recognition_requirement": "state_ok",
+        "description": "Commission requested $500,000 recurring (FY2027) for state-recognized entities. Up to 10% admin; remainder to tribes/groups.",
+        "source_url": "https://advance.sc.gov/community-engagement/native-american-affairs",
+        "caveat": "Annual legislative appropriation — amount and rules vary year to year."
+      },
+      {
+        "program": "SC SHPO Historic Preservation State Grant Fund",
+        "agency": "SC Department of Archives and History",
+        "funding_type": "STATE grant",
+        "recognition_requirement": "state_ok",
+        "exact_eligibility_language": "Eligible applicants are nonprofit 501(c)(3) organizations, local governments, and federal or state recognized Native American tribes.",
+        "key_conditions": "NR-listed building required; 20% match; max $200,000",
+        "source_url": "https://scdah.sc.gov/historic-preservation/programs/grants",
+        "source_date": "FAQ updated 2024-07-03"
+      },
+      {
+        "program": "SC Commission Food Sovereignty Grants",
+        "agency": "SC Commission for Community Advancement and Engagement",
+        "funding_type": "STATE/capacity-building",
+        "recognition_requirement": "state_ok",
+        "source_url": "https://advance.sc.gov/food-sovereignty",
+        "caveat": "Confirm active round directly with Commission."
+      }
+    ],
+    "foundation_private_note": "Most private/foundation grants open to 501(c)(3) nonprofits regardless of recognition. Tribes without 501(c)(3) should use fiscal sponsor. Key open funders: First Nations Development Institute (https://www.firstnations.org/grants/), Seventh Generation Fund (https://www.7genfund.org/), Native Arts and Cultures Foundation (https://www.nativeartsandcultures.org/grants)."
+  },
+  "part_3_funding_CANNOT_pursue": [
+    {
+      "category": "BIA Self-Determination Contracts P.L. 93-638",
+      "aln": "15.124/15.130/15.144",
+      "recognition_requirement": "federal_required",
+      "eligibility_language": "25 U.S.C. §5304(e): Indian tribe = organized group recognized as eligible for special programs by the United States because of their status as Indians — requires BIA Federal Register listing.",
+      "source_url": "https://www.law.cornell.edu/definitions/uscode.php?width=840&height=800&iframe=true&def_id=25-USC-1010456730-1589416145"
+    },
+    {
+      "category": "IHS Self-Governance Compacts and Institutional Health Grants",
+      "aln": "93.210/93.228",
+      "recognition_requirement": "federal_required",
+      "eligibility_language": "42 CFR §136.21-136.25: provision of health services grew out of government-to-government relationship with federally recognized Tribes.",
+      "source_url": "https://www.ihs.gov/forpatients/faq/",
+      "note": "IHS individual scholarships ARE open to state-recognized tribe members — see Part 2."
+    },
+    {
+      "category": "HUD Indian Housing Block Grant (IHBG / NAHASDA)",
+      "aln": "14.867",
+      "recognition_requirement": "federal_required",
+      "eligibility_language": "NAHASDA 25 U.S.C. §4101: Indian tribe = entity on BIA Federal Register list.",
+      "source_url": "https://www.law.cornell.edu/cfr/text/24/1000.48"
+    },
+    {
+      "category": "HUD Indian Community Development Block Grant (ICDBG)",
+      "aln": "14.119",
+      "recognition_requirement": "federal_required",
+      "eligibility_language": "24 CFR Part 1003: eligible applicants are Indian tribe or Alaska native village on BIA Federally Recognized Tribes list.",
+      "source_url": "https://www.ruralcommunitytoolbox.org/funding/294"
+    },
+    {
+      "category": "EPA Indian Environmental General Assistance Program (GAP)",
+      "aln": "66.926",
+      "recognition_requirement": "federal_required",
+      "eligibility_language": "Eligible Applicants: Federally Recognized Tribes and Intertribal Consortium. 40 CFR §35.502.",
+      "source_url": "https://www.epa.gov/tribal-lands/indian-environmental-general-assistance-program-gap"
+    },
+    {
+      "category": "IMLS Native American Library Services",
+      "aln": "45.311",
+      "recognition_requirement": "federal_required",
+      "eligibility_language": "IMLS: Tribe must be Federally recognized per BIA Federal Register list.",
+      "source_url": "https://www.imls.gov/grants/available/native-american-library-services-basic-grants"
+    },
+    {
+      "category": "SAMHSA Tribal Behavioral Health Grants (TBH)",
+      "aln": "93.492",
+      "recognition_requirement": "federal_required",
+      "eligibility_language": "FY2026 SP-26-004: Eligibility limited to federally recognized AI/AN tribes, tribal organizations, UIOs, and consortia.",
+      "source_url": "https://www.samhsa.gov/grants/grant-announcements/sp-26-004"
+    },
+    {
+      "category": "All BIA formula grants ALN 15.xxx series",
+      "aln": "15.020/15.048/15.130/15.148+",
+      "recognition_requirement": "federal_required",
+      "eligibility_language": "25 U.S.C. §5304 requires BIA Federal Register listing.",
+      "source_url": "https://www.bia.gov/bia/ois/dwd/477Initiative/about477"
+    },
+    {
+      "category": "WIOA Section 166 — as GRANTEE",
+      "aln": "17.265",
+      "recognition_requirement": "federal_required_for_grantee",
+      "eligibility_language": "Grants to federally recognized tribal governments and designated NAGs. State-recognized tribe MEMBERS eligible as PARTICIPANTS (20 CFR §668.300); tribe cannot be grantee.",
+      "source_url": "https://simpler.grants.gov/opportunity/386090ca-c6fd-488a-9587-13cef29d0f29"
+    },
+    {
+      "category": "USDA Community Facilities — tribal government pathway",
+      "aln": "10.766",
+      "recognition_requirement": "federal_required_for_tribal_pathway",
+      "eligibility_language": "USDA CF Fact Sheet: Federally recognized Tribes listed as eligible. State-recognized tribes not listed as tribal governments.",
+      "source_url": "https://www.rd.usda.gov/media/file/download/508-rd-fs-rhs-cfdirect.pdf",
+      "dual_pathway_note": "501(c)(3) tribal nonprofit IS eligible via nonprofit pathway. Gate on 501c3 before blocking."
+    },
+    {
+      "category": "EDA Indigenous Communities — tribal pathway",
+      "aln": "11.300/11.307/11.308",
+      "recognition_requirement": "federal_required_for_tribal_pathway",
+      "eligibility_language": "EDA FAQ: State-recognized Tribes not eligible as Indian Tribes. Indian Tribe per 13 C.F.R. §300.3 = BIA Federal Register.",
+      "source_url": "https://www.eda.gov/funding/programs/american-rescue-plan/indigenous-communities/faq",
+      "dual_pathway_note": "EDA Public Works/Economic Adjustment open to nonprofits separately."
+    }
+  ],
+  "part_4_machine_usable_ruleset": {
+    "recognition_tiers": ["federal", "state_only"],
+    "matcher_logic": "state_only => eligible ONLY for recognition_requirement IN ['state_ok','open_nonprofit']. BLOCKED for 'federal_required'. For 'federal_required_for_tribal_pathway': check dual_pathway field — 501c3 nonprofit pathway may be separately open.",
+    "additional_condition_flags": {
+      "incorporated_required": "Must be legally incorporated. Unincorporated tribe must apply via nonprofit arm.",
+      "501c3_required": "Must hold IRS 501(c)(3) status.",
+      "501c3_or_fiscal_sponsor": "May use 501(c)(3) fiscal sponsor.",
+      "individual_only": "Award to individual tribal members, not tribal org.",
+      "dual_pathway_check": "Program has tribal pathway (federal_required) AND nonprofit pathway (open_nonprofit) — confirm which applies before gatekeeping."
+    },
+    "categories": [
+      {"id":"ANA_SEDS","aln":"93.612","label":"ANA SEDS","recognition_requirement":"state_ok","additional_conditions":["incorporated_required"],"source":"https://simpler.grants.gov/opportunity/aba6f12b-0da3-49cb-9ae9-2ea798f914fd"},
+      {"id":"ANA_LANGUAGE_587","aln":"93.587","label":"ANA Language Preservation P&M/EMI","recognition_requirement":"state_ok","additional_conditions":["incorporated_required"],"source":"https://simpler.grants.gov/opportunity/b48c26a9-fb16-46a8-9bdf-6bd55b1ddc31"},
+      {"id":"ANA_SEEDS","aln":"93.612","label":"ANA SEEDS","recognition_requirement":"state_ok","additional_conditions":["incorporated_required"],"source":"https://advance.sc.gov/grants-state-tribes"},
+      {"id":"NEA_GAP","aln":"45.024","label":"NEA Grants for Arts Projects","recognition_requirement":"open_nonprofit","additional_conditions":["501c3_required","3yr_arts_history","no_tribal_member_restriction"],"source":"https://www.arts.gov/sites/default/files/NEA-Grants-FAQs-for-Tribes-2023.pdf"},
+      {"id":"NEH_NONPROFIT","aln":"45.149","label":"NEH General Program Grants","recognition_requirement":"open_nonprofit","additional_conditions":["501c3_required"],"source":"https://www.neh.gov/general-terms-and-conditions-awards-organizations-grants-and-cooperative-agreements-issued-january-2022"},
+      {"id":"SC_SHPO_STATE","aln":"STATE_ONLY","label":"SC SHPO Historic Preservation State Grant Fund","recognition_requirement":"state_ok","additional_conditions":["NR_listed_building","20pct_match","max_200k"],"source":"https://scdah.sc.gov/historic-preservation/programs/grants"},
+      {"id":"SC_CMA_DIRECT","aln":"STATE_ONLY","label":"SC Commission Direct Tribal Appropriation","recognition_requirement":"state_ok","additional_conditions":["annual_legislative_approval"],"source":"https://advance.sc.gov/community-engagement/native-american-affairs"},
+      {"id":"SC_FOOD_SOVEREIGNTY","aln":"STATE_ONLY","label":"SC Commission Food Sovereignty Grants","recognition_requirement":"state_ok","additional_conditions":["confirm_active_round"],"source":"https://advance.sc.gov/food-sovereignty"},
+      {"id":"IHS_INDIVIDUAL_SCHOLARSHIPS","aln":"93.972","label":"IHS Preparatory/Pre-Grad Scholarships (INDIVIDUAL only)","recognition_requirement":"state_ok","additional_conditions":["individual_only","not_tribal_org"],"source":"https://www.ihs.gov/scholarship/scholarships/eligibility/"},
+      {"id":"FOUNDATION_NONPROFIT","aln":"N/A","label":"Private/Foundation Grants (nonprofit pathway)","recognition_requirement":"open_nonprofit","additional_conditions":["501c3_required_or_fiscal_sponsor"],"source":"Part 2c"},
+      {"id":"BIA_638","aln":"15.124/15.130/15.144","label":"BIA Self-Determination P.L. 93-638","recognition_requirement":"federal_required","source":"https://www.law.cornell.edu/definitions/uscode.php?width=840&height=800&iframe=true&def_id=25-USC-1010456730-1589416145"},
+      {"id":"IHS_COMPACTS","aln":"93.210/93.228","label":"IHS Self-Governance Compacts","recognition_requirement":"federal_required","source":"https://www.ihs.gov/forpatients/faq/"},
+      {"id":"HUD_IHBG","aln":"14.867","label":"HUD IHBG / NAHASDA","recognition_requirement":"federal_required","source":"https://www.law.cornell.edu/cfr/text/24/1000.48"},
+      {"id":"HUD_ICDBG","aln":"14.119","label":"HUD ICDBG","recognition_requirement":"federal_required","source":"https://www.ruralcommunitytoolbox.org/funding/294"},
+      {"id":"EPA_GAP","aln":"66.926","label":"EPA Indian Environmental GAP","recognition_requirement":"federal_required","source":"https://www.epa.gov/tribal-lands/indian-environmental-general-assistance-program-gap"},
+      {"id":"IMLS_NATIVE_LIB","aln":"45.311","label":"IMLS Native American Library Services","recognition_requirement":"federal_required","source":"https://www.imls.gov/grants/available/native-american-library-services-basic-grants"},
+      {"id":"SAMHSA_TBH","aln":"93.492","label":"SAMHSA Tribal Behavioral Health","recognition_requirement":"federal_required","source":"https://www.samhsa.gov/grants/grant-announcements/sp-26-004"},
+      {"id":"BIA_ALL_15XXX","aln":"15.xxx","label":"All BIA formula grants 15.xxx","recognition_requirement":"federal_required","source":"https://www.bia.gov/bia/ois/dwd/477Initiative/about477"},
+      {"id":"WIOA_166_GRANTEE","aln":"17.265","label":"WIOA Section 166 as GRANTEE","recognition_requirement":"federal_required","note":"State tribal MEMBERS eligible as PARTICIPANTS; tribe cannot be grantee.","source":"https://simpler.grants.gov/opportunity/386090ca-c6fd-488a-9587-13cef29d0f29"},
+      {"id":"USDA_CF_TRIBAL","aln":"10.766","label":"USDA Community Facilities tribal pathway","recognition_requirement":"federal_required_for_tribal_pathway","dual_pathway":"501c3_nonprofit_pathway_open","source":"https://www.rd.usda.gov/media/file/download/508-rd-fs-rhs-cfdirect.pdf"},
+      {"id":"EDA_INDIGENOUS_TRIBAL","aln":"11.300/11.307/11.308","label":"EDA Indigenous Communities tribal pathway","recognition_requirement":"federal_required_for_tribal_pathway","dual_pathway":"EDA_public_works_open_to_nonprofits","source":"https://www.eda.gov/funding/programs/american-rescue-plan/indigenous-communities/faq"}
+    ]
+  }
+}

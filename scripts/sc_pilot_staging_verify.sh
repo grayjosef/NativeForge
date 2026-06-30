@@ -14,13 +14,21 @@ test "$(git stash list | head -1 | grep -c 'stash@{0}')" -eq 1
 echo ""
 echo "=== Fixture gate ==="
 uv run python -c "
-from nativeforge.services.sc_pilot_fixture_loader_service import fixtures_present, build_sc_pilot_fixture_contract
+from nativeforge.services.sc_pilot_fixture_loader_service import (
+    build_sc_pilot_fixture_contract,
+    load_sc_tribal_profiles,
+    load_sc_eligibility_rules,
+)
 c = build_sc_pilot_fixture_contract()
 print('fixtures_present', c['fixtures_present'])
-if not c['ready']:
-    print('STOP: place sc_tribal_profiles.json and sc_eligibility_rules.json in fixtures/sc_pilot/')
-    print('Infrastructure ready; integration ACs require operator fixtures.')
-    raise SystemExit(2)
+print('profile_count', c['profile_count'])
+print('rule_category_count', c['rule_category_count'])
+assert c['ready'], 'fixtures not ready'
+assert c['profile_count'] == 10
+assert c['rule_category_count'] == 21
+load_sc_tribal_profiles()
+load_sc_eligibility_rules()
+print('SC-0 fixture schema OK')
 "
 
 echo ""
@@ -29,54 +37,92 @@ uv run python -c "
 from nativeforge.services.sc_pilot_profile_loader_service import list_sc_pilot_profiles, resolve_sc_pilot_profile
 profiles = list_sc_pilot_profiles(require_files=True)
 print('profile_count', len(profiles))
-for p in profiles[:3]:
-    print(p['fixture_key'], p['recognition_type'], p['capture_method'])
-p = resolve_sc_pilot_profile(profiles[0]['fixture_key'])
-assert p['profile_evidence_codes'] == []
-assert p['capture_method'] == 'public_inferred'
+federal = [p for p in profiles if p['recognition_type'] == 'federal']
+state = [p for p in profiles if p['recognition_type'] == 'state_only']
+print('federal', len(federal), 'state_only', len(state))
+assert len(profiles) == 10
+assert len(federal) == 1
+assert len(state) == 9
+for p in profiles:
+    prof = resolve_sc_pilot_profile(p['fixture_key'])
+    assert prof['profile_evidence_codes'] == []
+    assert prof['capture_method'] == 'public_inferred'
+    assert prof.get('recognition_type') in {'federal', 'state_only'}
 print('AC-1 OK')
 "
 
 echo ""
-echo "=== AC-2/AC-3/AC-4: recognition-tier gate (distinct from evidence gap) ==="
+echo "=== AC-2/AC-2b/AC-2c/AC-3/AC-4/AC-4b: recognition-tier + condition gate ==="
 uv run python << 'PY'
 from nativeforge.services.sc_pilot_classify_match_orchestrator_service import run_sc_pilot_classify_match_block
 
 block = run_sc_pilot_classify_match_block(require_fixtures=True)
-state = next(p for p in block["per_profile"] if p["recognition_type"] == "state_only")
+state_profiles = [p for p in block["per_profile"] if p["recognition_type"] == "state_only"]
 fed = next(p for p in block["per_profile"] if p["recognition_type"] == "federal")
-print("state_only_profile", state["profile_fixture_key"], "tier_mismatches", state["recognition_tier_mismatch_count"])
-print("federal_profile", fed["profile_fixture_key"], "tier_mismatches", fed["recognition_tier_mismatch_count"])
+print("grant_count", block["grant_count"], "profile_count", block["profile_count"])
 
+# AC-2: state-only tier-blocks federal_required
 state_blocks = [
     m for m in block["matches"]
-    if m.get("recognition_tier_mismatch") and m.get("recognition_requirement") == "federal_required"
+    if m.get("recognition_tier_mismatch")
+    and m.get("recognition_requirement") == "federal_required"
+    and any(m.get("profile_fixture_key") == sp["profile_fixture_key"] for sp in state_profiles)
 ]
-fed_blocks_on_federal_req = [
+print("AC-2 state tier_mismatch+federal_required rows", len(state_blocks))
+assert state_blocks, "state-only must tier-block federal_required"
+assert state_blocks[0]["blocker_codes"].count("recognition_tier_mismatch") >= 1
+assert "eligibility_evidence_gap" in state_blocks[0]["blocker_codes"]
+print("AC-2 blocker proof (distinct from evidence gap)", state_blocks[0]["blocker_codes"])
+
+# AC-3: Catawba no tier mismatch on federal_required
+fed_blocks = [
     m for m in block["matches"]
     if m.get("profile_fixture_key") == fed["profile_fixture_key"]
     and m.get("recognition_requirement") == "federal_required"
     and m.get("recognition_tier_mismatch")
 ]
-ana_shown = [
+assert not fed_blocks, "AC-3: Catawba must not tier-block federal_required"
+print("AC-3 OK")
+
+# AC-2b: dual pathway — tribal blocked, nonprofit eligible for 501c3 state tribes
+dual_eligible = [
     m for m in block["matches"]
-    if m.get("profile_fixture_key") == state["profile_fixture_key"]
-    and m.get("recognition_requirement") == "state_ok"
+    if m.get("recognition_requirement") == "federal_required_for_tribal_pathway"
+    and m.get("recognition_tier_mismatch")
     and not m.get("excluded_from_match_set")
+    and m.get("profile_fixture_key", "").startswith("sc_pilot_")
+    and m.get("profile_fixture_key") != fed["profile_fixture_key"]
 ]
-unknown_review = [
+print("AC-2b dual_pathway nonprofit-eligible rows", len(dual_eligible))
+assert dual_eligible, "AC-2b: expect dual-pathway nonprofit eligible for state 501c3 tribes"
+assert all(
+    m["recognition_tier_gate"]["tribal_pathway"]["outcome"] == "blocked"
+    for m in dual_eligible[:3]
+)
+
+# AC-2c: ANA incorporation — state_ok + requires_incorporation, all incorporated
+ana_ok = [
     m for m in block["matches"]
-    if m.get("recognition_requirement") == "unknown"
+    if m.get("recognition_requirement") == "state_ok"
+    and "SEDS" in (m.get("opportunity_title") or "")
+    and not m.get("excluded_from_match_set")
+    and m.get("profile_fixture_key", "").startswith("sc_pilot_")
+    and m.get("profile_fixture_key") != fed["profile_fixture_key"]
 ]
-print("AC-2 sample tier_mismatch+federal_required rows", len(state_blocks))
-assert state_blocks, "state-only must tier-block federal_required"
-assert state_blocks[0]["blocker_codes"].count("recognition_tier_mismatch") >= 1
-print("AC-2 blocker proof", state_blocks[0]["blocker_codes"])
-assert not fed_blocks_on_federal_req, "AC-3: Catawba must not tier-block federal_required"
-print("AC-3 OK — federal tribe tier_mismatch on federal_required = 0")
-if ana_shown:
-    print("AC-4 ANA/state_ok shown to state-only", len(ana_shown))
+print("AC-2c ANA SEDS non-excluded state rows", len(ana_ok))
+assert ana_ok, "AC-2c: incorporated state tribes should pass ANA SEDS gate"
+
+# AC-4: unknown requirement → review rows exist
+unknown_review = [m for m in block["matches"] if m.get("recognition_requirement") == "unknown"]
 print("AC-4 unknown grants in corpus", len(unknown_review))
+
+# AC-4b: individual_only excluded
+member_only = [m for m in block["matches"] if m.get("member_level_only")]
+print("AC-4b member_level_only rows", len(member_only))
+assert member_only, "AC-4b: IHS individual_only grants must appear as member-level"
+assert all(m.get("excluded_from_match_set") for m in member_only)
+
+assert block["all_needs_operator_review"] is True
 print("all_needs_operator_review", block["all_needs_operator_review"])
 PY
 

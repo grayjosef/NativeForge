@@ -1,0 +1,220 @@
+[
+  {
+    "name": {
+      "value": "Catawba Indian Nation",
+      "provenance": "public_fact",
+      "source": "https://www.federalregister.gov/documents/2023/01/12/2023-00504/entities-recognized-by-and-eligible-to-receive-services-from-the-united-states-bureau-of-indian-affairs"
+    },
+    "recognition_type": {
+      "value": "federal",
+      "provenance": "public_fact",
+      "source": "https://www.federalregister.gov/documents/2023/01/12/2023-00504/entities-recognized-by-and-eligible-to-receive-services-from-the-united-states-bureau-of-indian-affairs"
+    },
+    "recognition_source": {
+      "value": "Pub. L. 103-116, Catawba Indian Tribe of South Carolina Land Claims Settlement Act of 1993 (signed Oct. 27, 1993); listed as 'Catawba Indian Nation' on the BIA Federal Register list of recognized entities (e.g., 87 FR 4636, Jan. 12, 2023).",
+      "provenance": "public_fact",
+      "source": "https://www.govtrack.us/congress/bills/103/hr2399"
+    },
+    "applicant_type": {
+      "value": "tribal_government",
+      "provenance": "public_fact",
+      "source": "https://www.catawba.com/about-the-nation"
+    },
+    "incorporated": {
+      "value": false,
+      "provenance": "public_fact",
+      "source": "https://www.catawba.com/corporate-nation-board"
+    },
+    "has_501c3": {
+      "value": false,
+      "provenance": "public_fact",
+      "source": "https://catawbanation.org/sponsorship-opportunities"
+    },
+    "fiscal_sponsor_available": {
+      "value": "UNKNOWN",
+      "provenance": "unknown",
+      "source": null
+    },
+    "service_geography": {
+      "value": "Catawba Reservation / York County, South Carolina (Catawba River corridor; Rock Hill area)",
+      "provenance": "public_fact",
+      "source": "https://www.catawba.com/about-the-nation"
+    },
+    "program_areas": {
+      "value": [
+        {"area": "economic development", "confidence": "high", "provenance": "public_fact", "source": "https://www.catawba.com/about-the-nation"},
+        {"area": "education (scholarships, job placement and training)", "confidence": "high", "provenance": "public_fact", "source": "https://www.catawba.com/about-the-nation"},
+        {"area": "social services", "confidence": "high", "provenance": "public_fact", "source": "https://www.catawba.com/about-the-nation"},
+        {"area": "housing", "confidence": "high", "provenance": "public_fact", "source": "https://www.catawba.com/about-the-nation"},
+        {"area": "cultural preservation (Catawba Cultural Center, pottery tradition)", "confidence": "high", "provenance": "public_fact", "source": "https://www.catawba.com/about-the-nation"}
+      ],
+      "provenance": "public_fact",
+      "source": "https://www.catawba.com/about-the-nation"
+    }
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "The Waccamaw Indian People", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Listed as a State Recognized Tribe by the South Carolina Commission for Community Advancement and Engagement; state recognition framework: S.C. Code § 1-31-40(A)(10); S.C. Code Regs. Ch. 139. Tribe states Commission recognition on Feb. 17, 2005.", "provenance": "public_fact", "source": "https://waccamaw.org/learn/"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570970329"},
+    "has_501c3": {"value": true, "ein": "57-0970329", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570970329"},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Dog Bluff / Conway area, Horry County, South Carolina", "provenance": "public_fact", "source": "https://waccamaw.org/learn/"},
+    "program_areas": {
+      "value": [
+        {"area": "cultural programs and heritage preservation", "confidence": "high", "provenance": "public_fact", "source": "https://waccamaw.org/"},
+        {"area": "youth education", "confidence": "high", "provenance": "public_fact", "source": "https://waccamaw.org/"},
+        {"area": "community support services", "confidence": "high", "provenance": "public_fact", "source": "https://waccamaw.org/"},
+        {"area": "tribal facilities / tribal grounds maintenance", "confidence": "med", "provenance": "public_fact", "source": "https://waccamaw.org/"}
+      ],
+      "provenance": "public_fact",
+      "source": "https://waccamaw.org/"
+    }
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "Edisto Natchez-Kusso Tribe of South Carolina", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Listed as a State Recognized Tribe by the South Carolina Commission for Community Advancement and Engagement; state recognition framework: S.C. Code § 1-31-40(A)(10); S.C. Code Regs. Ch. 139.", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570570165"},
+    "has_501c3": {"value": true, "ein": "57-0570165", "legal_name": "Four Holes Indian Organization Edisto Tribal Inc", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570570165"},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Dorchester and Colleton counties along the Edisto River, South Carolina (headquarters Ridgeville)", "provenance": "public_fact", "source": "https://natchezkussotribeofscedisto.website/"},
+    "program_areas": {
+      "value": [
+        {"area": "annual pow wow / cultural events", "confidence": "med", "provenance": "public_fact", "source": "https://natchezkussotribeofscedisto.website/"},
+        {"area": "tribal volunteer work days and community events", "confidence": "med", "provenance": "public_fact", "source": "https://natchezkussotribeofscedisto.website/"}
+      ],
+      "provenance": "public_fact",
+      "source": "https://natchezkussotribeofscedisto.website/"
+    }
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "Pee Dee Indian Nation of Upper South Carolina", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Listed as a State Recognized Tribe by the South Carolina Commission for Community Advancement and Engagement; state recognition framework: S.C. Code § 1-31-40(A)(10); S.C. Code Regs. Ch. 139. Recognized February 2005 per SC reference documentation.", "provenance": "public_fact", "source": "https://www.sciway.net/hist/indians/peedee.html"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/113643078"},
+    "has_501c3": {"value": true, "ein": "11-3643078", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/113643078", "verify_note": "EIN prefix 11- is atypical for SC; verify this EIN maps to this tribe."},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Little Rock area, Dillon County, South Carolina (Upper Pee Dee region)", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "program_areas": {"value": "UNKNOWN", "provenance": "unknown", "source": null}
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "Pee Dee Indian Tribe", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Listed as a State Recognized Tribe by the South Carolina Commission for Community Advancement and Engagement; state recognition framework: S.C. Code § 1-31-40(A)(10); S.C. Code Regs. Ch. 139. Recognized January 27, 2006 per SC reference documentation.", "provenance": "public_fact", "source": "https://www.sciway.net/hist/indians/peedee.html"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570706888"},
+    "has_501c3": {"value": true, "ein": "57-0706888", "legal_name": "Pee Dee Indian Tribe Of South Carolina", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570706888"},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Pee Dee region, South Carolina (headquartered McColl, Marlboro County)", "provenance": "public_fact", "source": "https://www.sciway.net/hist/indians/peedee.html"},
+    "program_areas": {
+      "value": [
+        {"area": "cultural traditions practice", "confidence": "high", "provenance": "public_fact", "source": "https://peedeetribe.org/"},
+        {"area": "economic development through strategic partnerships", "confidence": "high", "provenance": "public_fact", "source": "https://peedeetribe.org/"},
+        {"area": "advocacy and public policy education on American Indian issues", "confidence": "high", "provenance": "public_fact", "source": "https://peedeetribe.org/"},
+        {"area": "youth and public education on Pee Dee history and culture", "confidence": "high", "provenance": "public_fact", "source": "https://peedeetribe.org/"}
+      ],
+      "provenance": "public_fact",
+      "source": "https://peedeetribe.org/"
+    }
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "Piedmont American Indian Association Lower Eastern Cherokee Nation of South Carolina", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Recognized as a tribe by the South Carolina Commission for Minority Affairs on June 19, 2015; listed on the Commission's official entity roster; framework: S.C. Code § 1-31-40(A)(10); S.C. Code Regs. Ch. 139.", "provenance": "public_fact", "source": "https://www.scstatehouse.gov/sess121_2015-2016/bills/4756.htm"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570791346"},
+    "has_501c3": {"value": true, "ein": "57-0791346", "legal_name": "Paia Lower Eastern Cherokee Nation", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570791346"},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Piedmont / Upstate South Carolina (tribal grounds Gray Court, Laurens County; members across multiple Upstate counties per tribe materials)", "provenance": "public_fact", "source": "https://www.lowereasterncherokeenation.org/state-recognition"},
+    "program_areas": {
+      "value": [
+        {"area": "heritage preservation and cultural enrichment", "confidence": "high", "provenance": "public_fact", "source": "https://www.lowereasterncherokeenation.org/"},
+        {"area": "community outreach", "confidence": "med", "provenance": "public_fact", "source": "https://www.lowereasterncherokeenation.org/"},
+        {"area": "educational resources (including Women of the Spirit initiative)", "confidence": "med", "provenance": "public_fact", "source": "https://www.lowereasterncherokeenation.org/"}
+      ],
+      "provenance": "public_fact",
+      "source": "https://www.lowereasterncherokeenation.org/"
+    }
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "The Santee Indian Organization", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Listed as a State Recognized Tribe by the South Carolina Commission for Community Advancement and Engagement; state recognition framework: S.C. Code § 1-31-40(A)(10); S.C. Code Regs. Ch. 139.", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570688583"},
+    "has_501c3": {"value": true, "ein": "57-0688583", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/570688583"},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Holly Hill area, Orangeburg County, South Carolina (Santee River region)", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "program_areas": {"value": "UNKNOWN", "provenance": "unknown", "source": null}
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "Sumter Tribe of Cheraw Indians", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Recognized as a tribe by the South Carolina Commission for Minority Affairs (congratulated by S.C. General Assembly Concurrent Resolution S.1240, 2013-2014 Session); framework: S.C. Code § 1-31-40(A)(10); S.C. Code Regs. Ch. 139.", "provenance": "public_fact", "source": "https://www.scstatehouse.gov/sess120_2013-2014/bills/1240.htm"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/813475516"},
+    "has_501c3": {"value": true, "ein": "81-3475516", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/813475516"},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Sumter, South Carolina", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "program_areas": {
+      "value": [
+        {"area": "annual public pow wow / cultural celebration", "confidence": "high", "provenance": "public_fact", "source": "https://sumtercherawindians.org/"},
+        {"area": "inter-tribal advocacy (Tribal Alliance of South Carolina Nations)", "confidence": "med", "provenance": "public_fact", "source": "https://sumtercherawindians.org/"}
+      ],
+      "provenance": "public_fact",
+      "source": "https://sumtercherawindians.org/"
+    }
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "Beaver Creek Indians", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Listed as a State Recognized Tribe by the South Carolina Commission for Community Advancement and Engagement; state recognition framework: S.C. Code § 1-31-40(A)(10); S.C. Code Regs. Ch. 139. Tribe states Commission recognition document presented Aug. 29, 2006.", "provenance": "public_fact", "source": "https://www.beavercreekindians.org/our-history"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/571063914"},
+    "has_501c3": {"value": true, "ein": "57-1063914", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/571063914"},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Beaver Creek / Edisto River area; Orangeburg, Aiken, and Lexington counties, South Carolina (tribal office Salley)", "provenance": "public_fact", "source": "https://www.beavercreekindians.org/our-history"},
+    "program_areas": {
+      "value": [
+        {"area": "heritage, culture, traditions preservation for tribal members", "confidence": "high", "provenance": "public_fact", "source": "https://www.beavercreekindians.org/our-history"},
+        {"area": "self-government and tribal governance", "confidence": "high", "provenance": "public_fact", "source": "https://www.beavercreekindians.org/our-history"},
+        {"area": "federal recognition pursuit (stated tribal goal)", "confidence": "high", "provenance": "public_fact", "source": "https://www.beavercreekindians.org/our-history"}
+      ],
+      "provenance": "public_fact",
+      "source": "https://www.beavercreekindians.org/our-history"
+    }
+  },
+  {
+    "capture_method": "public_inferred",
+    "name": {"value": "The Wassamasaw Tribe of Varnertown Indians", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_type": {"value": "state_only", "provenance": "public_fact", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "recognition_source": {"value": "Listed as a State Recognized Tribe by the South Carolina Commission for Community Advancement and Engagement; state recognition framework: S.C. Code § 1-31-40(A)(6)(10); S.C. Code Regs. Ch. 139, Art. 1 (per tribe official site).", "provenance": "public_fact", "source": "https://www.wassamasawtribe.com/"},
+    "applicant_type": {"value": "tribal_government", "provenance": "public_inferred", "source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities"},
+    "incorporated": {"value": true, "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/571121837"},
+    "has_501c3": {"value": true, "ein": "57-1121837", "provenance": "public_fact", "source": "https://projects.propublica.org/nonprofits/organizations/571121837"},
+    "fiscal_sponsor_available": {"value": "UNKNOWN", "provenance": "unknown", "source": null},
+    "service_geography": {"value": "Varnertown / Carnes Crossroads area; Berkeley, Dorchester, and Charleston counties, South Carolina", "provenance": "public_fact", "source": "https://www.wassamasawtribe.com/"},
+    "program_areas": {
+      "value": [
+        {"area": "economic enhancement of the Varnertown community", "confidence": "high", "provenance": "public_fact", "source": "https://www.wassamasawtribe.com/"},
+        {"area": "member education in history and culture", "confidence": "high", "provenance": "public_fact", "source": "https://www.wassamasawtribe.com/"},
+        {"area": "arts and culture sharing; preservation of ancestral traditions", "confidence": "high", "provenance": "public_fact", "source": "https://www.wassamasawtribe.com/"},
+        {"area": "tribal center capital campaign", "confidence": "high", "provenance": "public_fact", "source": "https://www.wassamasawtribe.com/"}
+      ],
+      "provenance": "public_fact",
+      "source": "https://www.wassamasawtribe.com/"
+    }
+  }
+]

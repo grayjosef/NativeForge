@@ -101,6 +101,11 @@ def grant_to_matching_opportunity(grant: dict[str, Any]) -> dict[str, Any]:
     program_area = derive_program_area_from_grant(grant)
     required_geography = derive_required_geography_from_grant(grant)
     recognition_requirement = derive_recognition_requirement_from_grant(grant)
+    from nativeforge.services.grant_eligibility_conditions_service import (
+        derive_grant_eligibility_conditions,
+    )
+
+    conditions = derive_grant_eligibility_conditions(grant)
     return _json_safe(
         {
             "fixture_key": grant.get("grant_id"),
@@ -114,6 +119,10 @@ def grant_to_matching_opportunity(grant: dict[str, Any]) -> dict[str, Any]:
             "program_area": program_area,
             "required_geography": required_geography,
             "recognition_requirement": recognition_requirement,
+            "requires_incorporation": conditions.get("requires_incorporation"),
+            "requires_501c3": conditions.get("requires_501c3"),
+            "individual_only": conditions.get("individual_only"),
+            "dual_pathway": conditions.get("dual_pathway"),
             "program_area_derived": program_area is not None,
             "required_geography_derived": required_geography is not None,
             "recognition_requirement_derived": grant.get("recognition_requirement") is None,

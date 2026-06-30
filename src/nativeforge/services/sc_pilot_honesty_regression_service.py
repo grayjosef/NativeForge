@@ -22,7 +22,7 @@ def run_sc_pilot_honesty_regression(
     *,
     grants: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    rt = run_rt_partial_honesty_regression(grants=grants or [])
+    rt = run_rt_partial_honesty_regression(grants=grants)
     present = fixtures_present()
     checks = {
         **rt["checks"],
