@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from nativeforge.services.grants_gov_eligibility_parser_service import (
-    parse_grants_gov_synopsis_eligibility,
+    parse_grants_gov_opportunity_eligibility,
 )
 from nativeforge.services.real_fetch_honest_labeling_guard_service import (
     assert_real_fetch_honest_labeling,
@@ -93,7 +93,7 @@ def _parse_detail_to_payload(
 ) -> dict[str, Any]:
     data = detail or {}
     synopsis = data.get("synopsis") or {}
-    elig = parse_grants_gov_synopsis_eligibility(synopsis)
+    elig = parse_grants_gov_opportunity_eligibility(data)
     live_success = (
         fetch_mode == FETCH_MODE_LIVE and search_live and detail_live and bool(data)
     )
@@ -106,7 +106,8 @@ def _parse_detail_to_payload(
             data.get("opportunityTitle") or hit.get("title") or ""
         ),
         "agency": str(
-            synopsis.get("agencyName")
+            elig.get("agency")
+            or synopsis.get("agencyName")
             or hit.get("agency")
             or hit.get("agencyCode")
             or ""
@@ -120,8 +121,12 @@ def _parse_detail_to_payload(
         "application_deadline": str(
             hit.get("closeDate") or synopsis.get("closeDate") or ""
         ),
-        "synopsis": str(synopsis.get("synopsisDesc") or ""),
+        "synopsis": str(elig.get("synopsis") or synopsis.get("synopsisDesc") or ""),
         "eligibility_text": elig["eligibility_text"],
+        "eligibility_text_source": elig.get("eligibility_text_source"),
+        "eligibility_provenance": elig.get("eligibility_provenance"),
+        "grants_gov_doc_type": elig.get("grants_gov_doc_type"),
+        "grants_gov_attachment_inventory": elig.get("grants_gov_attachment_inventory"),
         "tribal_eligible": elig["tribal_eligible"],
         "applicant_type_ids": elig.get("applicant_type_ids") or [],
         "applicant_types_json": elig.get("applicant_types_json") or [],

@@ -6,6 +6,9 @@ import json
 import re
 from typing import Any
 
+from nativeforge.services.grants_gov_eligibility_completeness_service import (
+    enrich_grant_with_grants_gov_completeness,
+)
 from nativeforge.services.recognition_requirement_derivation_service import (
     derive_recognition_requirement_bundle,
 )
@@ -111,14 +114,19 @@ def enrich_grant_with_eligibility_metadata(
     grant: dict[str, Any],
     *,
     rules: dict[str, Any] | None = None,
+    allow_live_completeness_fetch: bool = False,
 ) -> dict[str, Any]:
     rule_doc = rules if rules is not None else load_sc_eligibility_rules(require_files=False)
-    bundle = derive_recognition_requirement_bundle(grant, rules=rule_doc)
-    out = dict(grant)
+    completed = enrich_grant_with_grants_gov_completeness(
+        grant,
+        allow_live_fetch=allow_live_completeness_fetch,
+    )
+    bundle = derive_recognition_requirement_bundle(completed, rules=rule_doc)
+    out = dict(completed)
     out.update(bundle)
     out["recognition_requirement_derived"] = grant.get("recognition_requirement") is None
     conditions = derive_grant_eligibility_conditions(
-        grant, rules=rule_doc, recognition_bundle=bundle
+        completed, rules=rule_doc, recognition_bundle=bundle
     )
     out.update(conditions)
     return _json_safe(out)
@@ -138,6 +146,10 @@ def enrich_opportunity_with_eligibility_metadata(
         "recognition_requirement_conflict",
         "recognition_requirement_candidates",
         "recognition_requirement_derived",
+        "eligibility_text_source",
+        "eligibility_provenance",
+        "grants_gov_attachment_inventory",
+        "grants_gov_doc_type",
         "applicant_type_ids",
         "requires_incorporation",
         "requires_501c3",

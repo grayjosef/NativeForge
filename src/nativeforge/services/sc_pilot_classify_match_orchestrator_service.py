@@ -77,6 +77,7 @@ def run_sc_pilot_classify_match_block(
     grants: list[dict[str, Any]] | None = None,
     profile_fixture_keys: list[str] | None = None,
     require_fixtures: bool = True,
+    allow_live_completeness_fetch: bool = False,
 ) -> dict[str, Any]:
     if require_fixtures:
         require_sc_pilot_fixtures()
@@ -84,7 +85,11 @@ def run_sc_pilot_classify_match_block(
     profiles_raw = load_sc_tribal_profiles(require_files=require_fixtures)
     keys = profile_fixture_keys or [str(p["fixture_key"]) for p in profiles_raw]
     corpus = [
-        enrich_grant_with_eligibility_metadata(g, rules=rules)
+        enrich_grant_with_eligibility_metadata(
+            g,
+            rules=rules,
+            allow_live_completeness_fetch=allow_live_completeness_fetch,
+        )
         for g in _load_corpus(grants, rules=rules)
     ]
 

@@ -49,6 +49,13 @@ _ANA_ALN_RE = re.compile(r"\b93\.(587|612)\b")
 _RULE_CONFLICT_MIN_SCORE = 3
 
 
+def _attribute_derivation_source(base_source: str, grant: dict[str, Any]) -> str:
+    """Tag forecast-sourced eligibility when derivation used merged API text."""
+    if base_source in {"text", "applicant_types"} and grant.get("eligibility_text_source") == "forecast":
+        return "forecast"
+    return base_source
+
+
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -228,7 +235,9 @@ def derive_recognition_requirement_bundle(
     if from_applicant:
         out = {
             "recognition_requirement": from_applicant,
-            "recognition_requirement_source": "applicant_types",
+            "recognition_requirement_source": _attribute_derivation_source(
+                "applicant_types", grant
+            ),
             "recognition_requirement_conflict": False,
             "applicant_type_ids": applicant.get("applicant_type_ids"),
         }
@@ -257,7 +266,7 @@ def derive_recognition_requirement_bundle(
         return _json_safe(
             {
                 "recognition_requirement": from_text,
-                "recognition_requirement_source": "text",
+                "recognition_requirement_source": _attribute_derivation_source("text", grant),
                 "recognition_requirement_conflict": False,
             }
         )
