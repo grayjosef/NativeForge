@@ -7,14 +7,14 @@ import re
 from typing import Any
 
 from nativeforge.services.recognition_requirement_derivation_service import (
-    derive_recognition_requirement_from_grant,
+    derive_recognition_requirement_bundle,
 )
 from nativeforge.services.sc_pilot_fixture_loader_service import (
     load_sc_eligibility_rules,
     match_sc_rule_category,
 )
 
-SCHEMA_VERSION = "nf_grant_eligibility_conditions_v1"
+SCHEMA_VERSION = "nf_grant_eligibility_conditions_v2"
 
 _INDIVIDUAL_ONLY_RE = re.compile(
     r"\bindividuals?\s+only\b|scholarship\s+for\s+students?|student\s+scholarship",
@@ -24,7 +24,7 @@ _INCORPORATION_RE = re.compile(
     r"incorporated\s+organi|must\s+be\s+incorporated|legally\s+incorporated",
     re.IGNORECASE,
 )
-_501C3_RE = re.compile(r"501\s*\(\s*c\s*\s*3|501c3|tax-exempt\s+nonprofit", re.IGNORECASE)
+_501C3_RE = re.compile(r"501\s*\(\s*c\s*\)\s*3|501c3|tax-exempt\s+nonprofit", re.IGNORECASE)
 _DUAL_PATHWAY_RE = re.compile(
     r"nonprofit\s+alternative|501\s*\(\s*c\s*\)\s*3\s+organizations?\s+may\s+also|"
     r"or\s+nonprofit|tribal\s+organi[sz]ations?\s+or\s+nonprofit",
@@ -54,15 +54,24 @@ def derive_grant_eligibility_conditions(
     grant: dict[str, Any],
     *,
     rules: dict[str, Any] | None = None,
+    recognition_bundle: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Honest condition flags from explicit grant fields, then rules category, then text."""
     rule_doc = rules if rules is not None else load_sc_eligibility_rules(require_files=False)
     cat = _match_rule_category(grant, rule_doc)
     hay = _haystack(grant)
+    bundle = recognition_bundle or derive_recognition_requirement_bundle(grant, rules=rule_doc)
 
     dual_pathway = dict(grant.get("dual_pathway") or {})
+    if bundle.get("dual_pathway_from_applicant_types"):
+        dual_pathway = {
+            **dual_pathway,
+            **dict(bundle["dual_pathway_from_applicant_types"]),
+        }
     if cat and cat.get("dual_pathway"):
         dual_pathway = {**dict(cat.get("dual_pathway") or {}), **dual_pathway}
+
+    requires_501c3_from_types = bundle.get("requires_501c3_from_applicant_types")
 
     conditions: dict[str, Any] = {
         "requires_incorporation": bool(grant.get("requires_incorporation"))
@@ -72,6 +81,8 @@ def derive_grant_eligibility_conditions(
         else bool(_INCORPORATION_RE.search(hay)),
         "requires_501c3": bool(grant.get("requires_501c3"))
         if grant.get("requires_501c3") is not None
+        else bool(requires_501c3_from_types)
+        if requires_501c3_from_types is not None
         else bool(cat.get("requires_501c3"))
         if cat and cat.get("requires_501c3") is not None
         else bool(_501C3_RE.search(hay)),
@@ -102,12 +113,13 @@ def enrich_grant_with_eligibility_metadata(
     rules: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     rule_doc = rules if rules is not None else load_sc_eligibility_rules(require_files=False)
+    bundle = derive_recognition_requirement_bundle(grant, rules=rule_doc)
     out = dict(grant)
-    out["recognition_requirement"] = derive_recognition_requirement_from_grant(
-        grant, rules=rule_doc
-    )
+    out.update(bundle)
     out["recognition_requirement_derived"] = grant.get("recognition_requirement") is None
-    conditions = derive_grant_eligibility_conditions(grant, rules=rule_doc)
+    conditions = derive_grant_eligibility_conditions(
+        grant, rules=rule_doc, recognition_bundle=bundle
+    )
     out.update(conditions)
     return _json_safe(out)
 
@@ -122,7 +134,11 @@ def enrich_opportunity_with_eligibility_metadata(
     out = dict(opportunity)
     for key in (
         "recognition_requirement",
+        "recognition_requirement_source",
+        "recognition_requirement_conflict",
+        "recognition_requirement_candidates",
         "recognition_requirement_derived",
+        "applicant_type_ids",
         "requires_incorporation",
         "requires_501c3",
         "individual_only",

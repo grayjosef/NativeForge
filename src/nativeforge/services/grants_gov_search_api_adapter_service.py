@@ -123,6 +123,8 @@ def _parse_detail_to_payload(
         "synopsis": str(synopsis.get("synopsisDesc") or ""),
         "eligibility_text": elig["eligibility_text"],
         "tribal_eligible": elig["tribal_eligible"],
+        "applicant_type_ids": elig.get("applicant_type_ids") or [],
+        "applicant_types_json": elig.get("applicant_types_json") or [],
         "grants_gov_opportunity_id": hit.get("id"),
         "fetch_mode": fetch_mode,
         "fixture": fetch_mode == FETCH_MODE_FIXTURE,

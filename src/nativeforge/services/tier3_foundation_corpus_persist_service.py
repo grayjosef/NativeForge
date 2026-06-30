@@ -56,6 +56,8 @@ def payload_to_tier3_grant_record(
             "eligibility_text": payload.get("eligibility_text"),
             "synopsis": payload.get("synopsis"),
             "tribal_eligible": payload.get("tribal_eligible"),
+            "applicant_type_ids": payload.get("applicant_type_ids") or [],
+            "applicant_types_json": payload.get("applicant_types_json") or [],
             "applicant_types_include_tribal": payload.get("applicant_types_include_tribal"),
             "application_deadline": payload.get("application_deadline"),
             "real_fetch": payload.get("real_fetch") is True,

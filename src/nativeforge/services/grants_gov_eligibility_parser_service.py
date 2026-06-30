@@ -71,6 +71,12 @@ def parse_grants_gov_synopsis_eligibility(
         {
             "schema_version": SCHEMA_VERSION,
             "applicant_types_text": applicant_types_text,
+            "applicant_type_ids": [
+                str(x.get("id") or "").strip()
+                for x in applicant_types
+                if str(x.get("id") or "").strip()
+            ],
+            "applicant_types_json": applicant_types,
             "applicant_eligibility_desc": eligibility_desc,
             "synopsis_desc_included": thin_desc and bool(synopsis_desc),
             "eligibility_text": eligibility_text,

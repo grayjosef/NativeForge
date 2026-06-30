@@ -58,6 +58,8 @@ def payload_to_grant_record(
             "eligibility_text": payload.get("eligibility_text"),
             "synopsis": payload.get("synopsis"),
             "tribal_eligible": payload.get("tribal_eligible"),
+            "applicant_type_ids": payload.get("applicant_type_ids") or [],
+            "applicant_types_json": payload.get("applicant_types_json") or [],
             "applicant_types_include_tribal": payload.get("tribal_eligible"),
             "application_deadline": payload.get("application_deadline"),
             "grants_gov_opportunity_id": payload.get("grants_gov_opportunity_id"),
