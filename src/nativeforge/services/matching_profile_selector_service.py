@@ -8,6 +8,11 @@ from typing import Any
 from nativeforge.services.matching_profile_provenance_service import (
     build_matching_profile_with_provenance,
 )
+from nativeforge.services.ok_pilot_profile_loader_service import (
+    PROFILE_OK_PILOT_PREFIX,
+    list_ok_pilot_profiles,
+    resolve_ok_pilot_profile,
+)
 from nativeforge.services.real_grants_corpus_loader_service import (
     load_nf13_test_tribal_profile,
 )
@@ -44,6 +49,7 @@ def list_available_matching_profiles() -> list[dict[str, Any]]:
         },
     ]
     profiles.extend(list_sc_pilot_profiles(require_files=False))
+    profiles.extend(list_ok_pilot_profiles(require_files=False))
     return profiles
 
 
@@ -52,6 +58,8 @@ def resolve_matching_profile(
     profile_fixture_key: str | None = None,
 ) -> dict[str, Any]:
     key = profile_fixture_key or PROFILE_SYNTHETIC_RED_CEDAR
+    if key.startswith(PROFILE_OK_PILOT_PREFIX) or key.startswith("ok_pilot_"):
+        return resolve_ok_pilot_profile(key, require_files=True)
     if key.startswith(PROFILE_SC_PILOT_PREFIX) or key.startswith("sc_pilot_"):
         return resolve_sc_pilot_profile(key, require_files=True)
     if key == PROFILE_REAL_TRIBE_SLOT:

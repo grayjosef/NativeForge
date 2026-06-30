@@ -7,6 +7,10 @@ import re
 from pathlib import Path
 from typing import Any
 
+from nativeforge.services.pilot_program_areas_normalization_service import (
+    normalize_program_areas,
+)
+
 SCHEMA_VERSION = "nf_sc_pilot_fixture_loader_v1"
 PROFILES_SCHEMA = "sc_tribal_profiles_v1"
 RULES_SCHEMA = "sc_eligibility_rules_v1"
@@ -113,7 +117,8 @@ def _normalize_research_profile(row: dict[str, Any]) -> dict[str, Any]:
 
     app_type, _ = _unwrap_field(row, "applicant_type")
     geo, _ = _unwrap_field(row, "service_geography")
-    prog, _ = _unwrap_field(row, "program_areas")
+    prog_raw, _ = _unwrap_field(row, "program_areas")
+    prog_norm = normalize_program_areas(prog_raw)
 
     capture = str(row.get("capture_method") or "public_inferred")
     field_sources = {
@@ -131,7 +136,9 @@ def _normalize_research_profile(row: dict[str, Any]) -> dict[str, Any]:
         "has_501c3": has_501 if has_501 is not None else "unknown",
         "fiscal_sponsor_available": fiscal_val,
         "service_geography": geo,
-        "program_areas": prog,
+        "program_areas": prog_norm["program_areas"],
+        "program_areas_detail": prog_norm["program_areas_detail"],
+        "program_areas_unknown": prog_norm["program_areas_unknown"],
         "capture_method": capture,
         "provenance": {
             "format": RESEARCH_PROFILES_FORMAT,
