@@ -19,6 +19,7 @@ SCHEMA_VERSION = "nf_matching_profile_provenance_v1"
 MATCHING_PROFILE_FIELDS: tuple[str, ...] = (
     "organization_name",
     "applicant_type",
+    "recognition_type",
     "service_geography",
     "grant_management_capacity",
     "program_areas",

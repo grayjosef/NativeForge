@@ -6,6 +6,10 @@ import json
 import re
 from typing import Any
 
+from nativeforge.services.recognition_requirement_derivation_service import (
+    derive_recognition_requirement_from_grant,
+)
+
 SCHEMA_VERSION = "nf_real_grant_opportunity_metadata_v1"
 
 # Maps to Red Cedar / EFA fixture program_areas vocabulary.
@@ -96,6 +100,7 @@ def grant_to_matching_opportunity(grant: dict[str, Any]) -> dict[str, Any]:
     """Map real grant corpus row → opportunity dict for classify+match."""
     program_area = derive_program_area_from_grant(grant)
     required_geography = derive_required_geography_from_grant(grant)
+    recognition_requirement = derive_recognition_requirement_from_grant(grant)
     return _json_safe(
         {
             "fixture_key": grant.get("grant_id"),
@@ -108,8 +113,10 @@ def grant_to_matching_opportunity(grant: dict[str, Any]) -> dict[str, Any]:
             "applicant_types_include_tribal": grant.get("applicant_types_include_tribal"),
             "program_area": program_area,
             "required_geography": required_geography,
+            "recognition_requirement": recognition_requirement,
             "program_area_derived": program_area is not None,
             "required_geography_derived": required_geography is not None,
+            "recognition_requirement_derived": grant.get("recognition_requirement") is None,
             "from_real_source_text": True,
         }
     )

@@ -13,6 +13,7 @@ from nativeforge.services.eligibility_fit_assessment_blockers_service import (
     BLOCKER_MISSING_DEADLINE,
     BLOCKER_MISSING_DOCUMENTATION,
     BLOCKER_MISSING_PROFILE,
+    BLOCKER_RECOGNITION_TIER_MISMATCH,
     build_blockers_assessment,
 )
 from nativeforge.services.eligibility_fit_assessment_confidence_service import (
@@ -55,6 +56,9 @@ from nativeforge.services.eligibility_fit_assessment_no_claim_without_evidence_g
     apply_no_claim_without_evidence_guard,
     has_explicit_profile_evidence,
 )
+from nativeforge.services.recognition_tier_eligibility_gate_service import (
+    apply_recognition_tier_eligibility_gate,
+)
 
 SCHEMA_VERSION = "nf_eligibility_fit_assessment_evaluator_v1"
 
@@ -87,7 +91,15 @@ def assess_eligibility_fit(
         profile,
         native_relevance_preview=native_relevance_preview,
     )
-    dimension_results = dimensions["dimension_results"]
+    dimension_results = list(dimensions["dimension_results"])
+
+    recognition_tier_gate = None
+    if profile.get("recognition_type") or opportunity.get("recognition_requirement"):
+        recognition_tier_gate = apply_recognition_tier_eligibility_gate(
+            opportunity=opportunity,
+            profile=profile,
+        )
+        dimension_results.append(recognition_tier_gate["dimension_result"])
 
     deadline = assess_deadline_risk(opportunity)
     documentation = assess_documentation_readiness(profile)
@@ -115,6 +127,8 @@ def assess_eligibility_fit(
         blockers.append(BLOCKER_MISSING_DOCUMENTATION)
     if not has_explicit_profile_evidence(list(profile.get("profile_evidence_codes") or [])):
         blockers.append(BLOCKER_ELIGIBILITY_EVIDENCE_GAP)
+    if recognition_tier_gate and recognition_tier_gate.get("blocker_code"):
+        blockers.append(BLOCKER_RECOGNITION_TIER_MISMATCH)
     if any(d["dimension"] == "geography_fit" and d["fit_status"] == FIT_STATUS_BLOCKED for d in dimension_results):
         blockers.append(BLOCKER_GEOGRAPHY_MISMATCH)
     if any(d["dimension"] == "capacity_fit" and d["fit_status"] == FIT_STATUS_BLOCKED for d in dimension_results):
@@ -188,6 +202,7 @@ def assess_eligibility_fit(
             "discoverable": discover_guard["final_discoverable"],
             "claim_guard": claim_guard,
             "discoverability_guard": discover_guard,
+            "recognition_tier_gate": recognition_tier_gate,
             "preview_only": True,
         }
     )

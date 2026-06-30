@@ -11,6 +11,11 @@ from nativeforge.services.matching_profile_provenance_service import (
 from nativeforge.services.real_grants_corpus_loader_service import (
     load_nf13_test_tribal_profile,
 )
+from nativeforge.services.sc_pilot_profile_loader_service import (
+    PROFILE_SC_PILOT_PREFIX,
+    list_sc_pilot_profiles,
+    resolve_sc_pilot_profile,
+)
 
 SCHEMA_VERSION = "nf_matching_profile_selector_v1"
 
@@ -24,7 +29,7 @@ def _json_safe(x: Any) -> Any:
 
 
 def list_available_matching_profiles() -> list[dict[str, Any]]:
-    return [
+    profiles: list[dict[str, Any]] = [
         {
             "fixture_key": PROFILE_SYNTHETIC_RED_CEDAR,
             "capture_method": "synthetic_fixture",
@@ -38,6 +43,8 @@ def list_available_matching_profiles() -> list[dict[str, Any]]:
             "defer_reason": "operator must name tribe and choose consent path",
         },
     ]
+    profiles.extend(list_sc_pilot_profiles(require_files=False))
+    return profiles
 
 
 def resolve_matching_profile(
@@ -45,6 +52,8 @@ def resolve_matching_profile(
     profile_fixture_key: str | None = None,
 ) -> dict[str, Any]:
     key = profile_fixture_key or PROFILE_SYNTHETIC_RED_CEDAR
+    if key.startswith(PROFILE_SC_PILOT_PREFIX) or key.startswith("sc_pilot_"):
+        return resolve_sc_pilot_profile(key, require_files=True)
     if key == PROFILE_REAL_TRIBE_SLOT:
         raise ValueError(
             "real tribe profile not built — operator must name tribe and choose "
