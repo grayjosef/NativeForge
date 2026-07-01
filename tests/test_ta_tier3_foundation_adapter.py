@@ -27,7 +27,9 @@ from nativeforge.services.tier3_foundation_batch_live_fetch_service import (
 from nativeforge.services.tier3_foundation_corpus_persist_service import (
     persist_tier3_batch_to_corpus,
 )
-from nativeforge.services.tier3_org_cluster_config_service import TA3_COHORT_SEED_IDS
+from nativeforge.services.tier3_org_cluster_config_service import (
+    TA3_COHORT1_SEED_IDS,
+)
 from nativeforge.services.tier3_classify_match_orchestrator_service import (
     run_tier3_classify_match_block,
 )
@@ -59,13 +61,13 @@ def test_html_listing_extraction() -> None:
     assert "Cultural Capital" in titles
 
 
-def test_fixture_batch_fetch_covers_cohort() -> None:
+def test_fixture_batch_fetch_covers_cohort1() -> None:
     batch = run_tier3_foundation_batch_live_fetch(
-        list(TA3_COHORT_SEED_IDS),
+        list(TA3_COHORT1_SEED_IDS),
         fetch_mode=FETCH_MODE_FIXTURE,
         fixture_by_domain=_fixture_by_domain(),
     )
-    assert batch["source_count"] == 12
+    assert batch["source_count"] == len(TA3_COHORT1_SEED_IDS)
     assert batch["total_opportunity_count"] >= 8
     platforms = {r["platform_adapter_key"] for r in batch["per_source"]}
     assert PLATFORM_FOUNDATION_HTML_LISTING in platforms
@@ -89,7 +91,7 @@ def test_honest_labeling_on_fixture_payloads() -> None:
 
 def test_persist_and_seed_id_dedup(tmp_path: Path) -> None:
     batch = run_tier3_foundation_batch_live_fetch(
-        list(TA3_COHORT_SEED_IDS),
+        list(TA3_COHORT1_SEED_IDS),
         fetch_mode=FETCH_MODE_FIXTURE,
         fixture_by_domain=_fixture_by_domain(),
     )
@@ -158,7 +160,7 @@ def test_no_live_nofo_never_irrelevant() -> None:
 
 def test_ta_honesty_regression_fixture_corpus(tmp_path: Path) -> None:
     batch = run_tier3_foundation_batch_live_fetch(
-        list(TA3_COHORT_SEED_IDS),
+        list(TA3_COHORT1_SEED_IDS),
         fetch_mode=FETCH_MODE_FIXTURE,
         fixture_by_domain=_fixture_by_domain(),
     )

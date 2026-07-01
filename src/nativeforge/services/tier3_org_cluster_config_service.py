@@ -1,4 +1,4 @@
-"""TA-2: Tier-3 org-cluster configs for approved 12-seed cohort."""
+"""TA-2: Tier-3 org-cluster configs for foundation cohorts."""
 
 from __future__ import annotations
 
@@ -10,23 +10,29 @@ from nativeforge.services.platform_adapter_registry_service import (
     PLATFORM_FOUNDATION_FLUXX_EMBED,
     PLATFORM_FOUNDATION_HTML_LISTING,
 )
+from nativeforge.services.tier3_cohort_ranking_service import TA3_COHORT1_SEED_IDS
 
 SCHEMA_VERSION = "nf_tier3_org_cluster_config_v1"
 
-TA3_COHORT_SEED_IDS: tuple[str, ...] = (
-    "nf-seed-2026-t3-005",
-    "nf-seed-2026-t3-006",
-    "nf-seed-2026-t3-007",
-    "nf-seed-2026-t3-008",
-    "nf-seed-2026-t3-009",
-    "nf-seed-2026-t3-010",
-    "nf-seed-2026-t3-011",
-    "nf-seed-2026-t3-012",
-    "nf-seed-2026-t3-013",
-    "nf-seed-2026-t3-034",
-    "nf-seed-2026-t3-027",
-    "nf-seed-2026-t3-030",
+# Cohort-2: top 14 by native-relevance × cluster leverage (see ranking report).
+TA3_COHORT2_SEED_IDS: tuple[str, ...] = (
+    "nf-seed-2026-t3-020",
+    "nf-seed-2026-t3-021",
+    "nf-seed-2026-t3-054",
+    "nf-seed-2026-t3-014",
+    "nf-seed-2026-t3-015",
+    "nf-seed-2026-t3-018",
+    "nf-seed-2026-t3-019",
+    "nf-seed-2026-t3-022",
+    "nf-seed-2026-t3-024",
+    "nf-seed-2026-t3-055",
+    "nf-seed-2026-t3-063",
+    "nf-seed-2026-t3-036",
+    "nf-seed-2026-t3-044",
+    "nf-seed-2026-t3-026",
 )
+
+TA3_COHORT_SEED_IDS: tuple[str, ...] = TA3_COHORT1_SEED_IDS + TA3_COHORT2_SEED_IDS
 
 _ORG_CLUSTERS: dict[str, dict[str, Any]] = {
     "firstpeoplesfund.org": {
@@ -53,6 +59,64 @@ _ORG_CLUSTERS: dict[str, dict[str, Any]] = {
         "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
         "fetch_urls": ["https://nativephilanthropy.org/itf", "https://nativephilanthropy.org"],
         "listing_path_hints": ("/grant", "/fund", "/itf"),
+    },
+    "oweesta.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://www.oweesta.org/programs/", "https://www.oweesta.org"],
+        "listing_path_hints": ("/program", "/grant", "/fund", "/cdf", "/capital"),
+    },
+    "collegefund.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://collegefund.org/students/scholarships/",
+            "https://collegefund.org",
+        ],
+        "listing_path_hints": ("/scholarship", "/grant", "/fund", "/student"),
+    },
+    "indian-affairs.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://www.indian-affairs.org", "https://www.indian-affairs.org/programs/"],
+        "listing_path_hints": (
+            "/scholarship", "/grant", "/fund", "/program", "/assist"
+        ),
+    },
+    "nativepartnership.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://www.nativepartnership.org/grants",
+            "https://www.nativepartnership.org",
+        ],
+        "listing_path_hints": ("/grant", "/fund", "/emergency"),
+    },
+    "indianyouth.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://indianyouth.org", "https://indianyouth.org/programs/"],
+        "listing_path_hints": ("/grant", "/fund", "/program"),
+    },
+    "narf.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://www.narf.org", "https://www.narf.org/cases/"],
+        "listing_path_hints": ("/grant", "/fund", "/program", "/litigation"),
+    },
+    "indianag.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://www.indianag.org", "https://www.indianag.org/programs/"],
+        "listing_path_hints": ("/grant", "/fund", "/program", "/agriculture"),
+    },
+    "nativehealthinitiative.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://nativehealthinitiative.org", "https://nativehealthinitiative.org/programs/"],
+        "listing_path_hints": ("/grant", "/fund", "/health", "/program"),
+    },
+    "nativefederation.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://www.nativefederation.org", "https://www.nativefederation.org/programs/"],
+        "listing_path_hints": ("/grant", "/fund", "/program", "/policy"),
+    },
+    "aises.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://www.aises.org/scholarships", "https://www.aises.org"],
+        "listing_path_hints": ("/scholarship", "/grant", "/fund"),
     },
 }
 
@@ -90,7 +154,9 @@ def resolve_org_cluster_config(source: dict[str, Any]) -> dict[str, Any]:
                 "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
                 "fetch_urls": [str(source.get("source_url") or "")],
                 "listing_path_hints": ("/grant", "/fund", "/fellowship"),
-                "program_keywords": _program_keywords(str(source.get("source_name") or "")),
+                "program_keywords": _program_keywords(
+                    str(source.get("source_name") or "")
+                ),
             }
         )
     return _json_safe(
@@ -100,7 +166,9 @@ def resolve_org_cluster_config(source: dict[str, Any]) -> dict[str, Any]:
             "platform_adapter_key": base["platform_adapter_key"],
             "fetch_urls": list(base["fetch_urls"]),
             "listing_path_hints": tuple(base["listing_path_hints"]),
-            "program_keywords": _program_keywords(str(source.get("source_name") or "")),
+            "program_keywords": _program_keywords(
+                str(source.get("source_name") or "")
+            ),
         }
     )
 
@@ -117,6 +185,8 @@ def build_tier3_cohort_contract() -> dict[str, Any]:
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
+            "cohort1_seed_ids": list(TA3_COHORT1_SEED_IDS),
+            "cohort2_seed_ids": list(TA3_COHORT2_SEED_IDS),
             "cohort_seed_ids": list(TA3_COHORT_SEED_IDS),
             "cohort_size": len(TA3_COHORT_SEED_IDS),
             "org_clusters": sorted(_ORG_CLUSTERS.keys()),
