@@ -86,6 +86,7 @@ def run_tier2_state_batch_live_fetch(
                 "page_fetch_live": result.get("page_fetch_live"),
                 "robots_allowed": result.get("robots_allowed"),
                 "filter_audit": result.get("filter_audit"),
+                "excluded_listings_audit": excluded,
             }
         )
 

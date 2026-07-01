@@ -211,16 +211,22 @@ def fetch_state_tribal_affairs_for_source(
     included, excluded_audit = filter_state_portal_listings(
         all_raw, portal_config=portal_config
     )
-    payloads = [
-        _listing_to_payload(
-            lst,
-            source=source,
-            fetch_mode=fetch_mode,
-            page_fetch_live=page_fetch_live,
-            portal_config=portal_config,
+    payloads = []
+    seen_urls: set[str] = set()
+    for lst in included:
+        url = str(lst.get("listing_url") or "")
+        if url in seen_urls:
+            continue
+        seen_urls.add(url)
+        payloads.append(
+            _listing_to_payload(
+                lst,
+                source=source,
+                fetch_mode=fetch_mode,
+                page_fetch_live=page_fetch_live,
+                portal_config=portal_config,
+            )
         )
-        for lst in included
-    ]
     if payloads:
         assert_html_fetch_honest_labeling_batch(payloads)
 

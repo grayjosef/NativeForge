@@ -8,6 +8,13 @@ import re
 from typing import Any
 from urllib.parse import urljoin, urlparse
 
+from nativeforge.services.foundation_listing_noise_filter_service import (
+    filter_foundation_listings,
+)
+from nativeforge.services.html_card_listing_extractor_service import (
+    extract_card_dom_listings,
+    merge_anchor_and_card_listings,
+)
 from nativeforge.services.platform_adapter_registry_service import (
     PLATFORM_FOUNDATION_HTML_LISTING,
 )
@@ -84,9 +91,13 @@ def extract_html_listings(
                 "listing_title": title[:240],
                 "listing_url": full_url,
                 "excerpt": title[:500],
+                "extraction_method": "anchor",
             }
         )
-    return listings
+    card_rows = extract_card_dom_listings(
+        html, base_url=base_url, path_hints=path_hints
+    )
+    return merge_anchor_and_card_listings(listings, card_rows)
 
 
 def _listing_to_payload(
@@ -173,15 +184,21 @@ def fetch_foundation_html_listings_for_source(
                 ):
                     break
 
-    all_listings = extract_html_listings(
-        html,
-        base_url=base_url,
-        path_hints=tuple(config["listing_path_hints"]),
+    all_listings, _noise = filter_foundation_listings(
+        extract_html_listings(
+            html,
+            base_url=base_url,
+            path_hints=tuple(config["listing_path_hints"]),
+        )
     )
     matched = [
         lst
         for lst in all_listings
-        if listing_matches_seed(str(lst["listing_title"]), source)
+        if listing_matches_seed(
+            str(lst["listing_title"]),
+            source,
+            listing_url=str(lst.get("listing_url") or ""),
+        )
     ]
     payloads = [
         _listing_to_payload(

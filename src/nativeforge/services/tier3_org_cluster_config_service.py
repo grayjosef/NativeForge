@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 from urllib.parse import urlparse
 
@@ -13,6 +14,75 @@ from nativeforge.services.platform_adapter_registry_service import (
 from nativeforge.services.tier3_cohort_ranking_service import TA3_COHORT1_SEED_IDS
 
 SCHEMA_VERSION = "nf_tier3_org_cluster_config_v1"
+
+_KEYWORD_STOPWORDS: frozenset[str] = frozenset(
+    {
+        "fund",
+        "funds",
+        "grant",
+        "grants",
+        "program",
+        "programs",
+        "native",
+        "tribal",
+        "community",
+        "initiative",
+        "assistance",
+        "development",
+        "institute",
+        "foundation",
+        "corporation",
+        "association",
+        "american",
+        "indian",
+        "indigenous",
+    }
+)
+
+# URL/title hints for extraction-gap seeds (multi-seed domain disambiguation).
+_SEED_LISTING_MATCH_HINTS: dict[str, tuple[str, ...]] = {
+    "nf-seed-2026-t3-012": (
+        "native-agriculture",
+        "food-system",
+        "food-pantry",
+        "nourishing-native",
+        "setting-the-table",
+        "nafsi",
+    ),
+    "nf-seed-2026-t3-034": (
+        "community-asset",
+        "community-assets",
+        "community-capital",
+        "investing-in-native",
+        "ncap",
+    ),
+    "nf-seed-2026-t3-019": (
+        "emergency",
+        "assistance",
+        "scholarship",
+    ),
+    "nf-seed-2026-t3-036": (
+        "health",
+        "lovingservice",
+        "community-health",
+    ),
+    "nf-seed-2026-t3-053": (
+        "legal",
+        "nnaba",
+        "bar",
+        "scholarship",
+    ),
+    "nf-seed-2026-t3-063": (
+        "agriculture",
+        "iac",
+        "technical-assistance",
+    ),
+    "nf-seed-2026-t3-065": (
+        "native-voices",
+        "voices-rising",
+        "rapid-response",
+    ),
+}
 
 # Cohort-2: top 14 by native-relevance × cluster leverage (see ranking report).
 TA3_COHORT2_SEED_IDS: tuple[str, ...] = (
@@ -57,8 +127,11 @@ _ORG_CLUSTERS: dict[str, dict[str, Any]] = {
     },
     "firstnations.org": {
         "platform_adapter_key": PLATFORM_FOUNDATION_FLUXX_EMBED,
-        "fetch_urls": ["https://www.firstnations.org/grants"],
-        "listing_path_hints": ("/grant", "/funding", "/rfp", "fluxx"),
+        "fetch_urls": [
+            "https://www.firstnations.org/grants",
+            "https://www.firstnations.org/programs/",
+        ],
+        "listing_path_hints": ("/grant", "/funding", "/rfp", "/program", "/project", "fluxx"),
     },
     "7genfund.org": {
         "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
@@ -210,8 +283,27 @@ def _program_label(source_name: str) -> str:
 
 def _program_keywords(source_name: str) -> list[str]:
     label = _program_label(source_name)
-    words = [w for w in label.replace("(", " ").replace(")", " ").split() if len(w) > 3]
-    return words[:6] or [label[:24]]
+    words = [
+        w
+        for w in label.replace("(", " ").replace(")", " ").split()
+        if len(w) > 3 and w.lower() not in _KEYWORD_STOPWORDS
+    ]
+    for ac in re.findall(r"\(([^)]+)\)", label):
+        for part in ac.split():
+            if len(part) > 2 and part.lower() not in _KEYWORD_STOPWORDS:
+                words.append(part)
+    return words[:8] or [label[:24]]
+
+
+def _term_in_hay(term: str, hay: str) -> bool:
+    t = term.lower()
+    if t in hay:
+        return True
+    if t.endswith("s") and t[:-1] in hay:
+        return True
+    if f"{t}s" in hay:
+        return True
+    return False
 
 
 def cluster_domain_for_source(source: dict[str, Any]) -> str:
@@ -249,12 +341,24 @@ def resolve_org_cluster_config(source: dict[str, Any]) -> dict[str, Any]:
     )
 
 
-def listing_matches_seed(listing_title: str, source: dict[str, Any]) -> bool:
+def listing_matches_seed(
+    listing_title: str,
+    source: dict[str, Any],
+    *,
+    listing_url: str | None = None,
+) -> bool:
     """Match extracted listing to seed program when multiple seeds share a domain."""
+    seed_id = str(source.get("seed_id") or "")
     title_l = listing_title.lower()
+    url_l = str(listing_url or "").lower()
+    hay = f"{title_l} {url_l}"
+    hints = _SEED_LISTING_MATCH_HINTS.get(seed_id)
+    if hints and any(h in hay for h in hints):
+        return True
     keywords = _program_keywords(str(source.get("source_name") or ""))
-    hits = sum(1 for kw in keywords if kw.lower() in title_l)
-    return hits >= max(1, len(keywords) // 3)
+    hits = sum(1 for kw in keywords if _term_in_hay(kw, hay))
+    threshold = max(1, len(keywords) // 2)
+    return hits >= threshold
 
 
 def build_tier3_cohort_contract() -> dict[str, Any]:

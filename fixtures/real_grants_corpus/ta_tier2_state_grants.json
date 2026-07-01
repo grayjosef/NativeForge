@@ -1,6 +1,6 @@
 {
   "schema_version": "nf_tier2_state_corpus_persist_v1",
-  "grant_count": 23,
+  "grant_count": 26,
   "grants": [
     {
       "grant_id": "ta2-real-012-2-056a5f80d3",
@@ -580,6 +580,87 @@
       }
     },
     {
+      "grant_id": "ta2-real-035-5-18438965de",
+      "source_seed_id": "nf-seed-2026-st-035",
+      "opportunity_number": "T2-035-18438965de",
+      "opportunity_title": "Current Grant Opportunities 2026",
+      "agency": "North Dakota Indian Affairs Commission (NDIAC)",
+      "eligibility_text": "",
+      "synopsis": "Current Grant Opportunities 2026",
+      "tribal_eligible": null,
+      "applicant_types_include_tribal": null,
+      "application_deadline": null,
+      "real_fetch": true,
+      "fetch_mode": "live",
+      "fixture": false,
+      "never_synthesized": true,
+      "source_url": "https://ovc.ojp.gov/funding/current-funding-opportunities",
+      "state_code": "ND",
+      "tier": 2,
+      "requires_operator_review": true,
+      "ingested_at": "2026-07-01T10:22:18.128322+00:00",
+      "provenance": {
+        "batch_block": "tier2_state_pilot",
+        "source_seed_id": "nf-seed-2026-st-035",
+        "platform_adapter_key": "state_tribal_affairs_html",
+        "adapter_key": "state_portal_generic"
+      }
+    },
+    {
+      "grant_id": "ta2-real-035-5-328ca4c526",
+      "source_seed_id": "nf-seed-2026-st-035",
+      "opportunity_number": "T2-035-328ca4c526",
+      "opportunity_title": "Provides emergency drought relief funding for Tribes under the Inflation Reduction Act.",
+      "agency": "North Dakota Indian Affairs Commission (NDIAC)",
+      "eligibility_text": "Provides emergency drought relief funding for Tribes under the Inflation Reduction Act.",
+      "synopsis": "Provides emergency drought relief funding for Tribes under the Inflation Reduction Act.",
+      "tribal_eligible": true,
+      "applicant_types_include_tribal": true,
+      "application_deadline": null,
+      "real_fetch": true,
+      "fetch_mode": "live",
+      "fixture": false,
+      "never_synthesized": true,
+      "source_url": "https://www.usbr.gov/native/programs/tap/2024NOFO_IRA-EmergencyDroughtRelief_R24AS00051_revfinal508.pdf",
+      "state_code": "ND",
+      "tier": 2,
+      "requires_operator_review": true,
+      "ingested_at": "2026-07-01T10:22:18.128403+00:00",
+      "provenance": {
+        "batch_block": "tier2_state_pilot",
+        "source_seed_id": "nf-seed-2026-st-035",
+        "platform_adapter_key": "state_tribal_affairs_html",
+        "adapter_key": "state_portal_generic"
+      }
+    },
+    {
+      "grant_id": "ta2-real-035-5-fe65fc774b",
+      "source_seed_id": "nf-seed-2026-st-035",
+      "opportunity_number": "T2-035-fe65fc774b",
+      "opportunity_title": "Rural Development FY 2026 Health Center Program Service Area Competition (SAC)",
+      "agency": "North Dakota Indian Affairs Commission (NDIAC)",
+      "eligibility_text": "",
+      "synopsis": "Rural Development FY 2026 Health Center Program Service Area Competition (SAC)",
+      "tribal_eligible": null,
+      "applicant_types_include_tribal": null,
+      "application_deadline": null,
+      "real_fetch": true,
+      "fetch_mode": "live",
+      "fixture": false,
+      "never_synthesized": true,
+      "source_url": "https://www.grants.gov/search-results-detail/361137",
+      "state_code": "ND",
+      "tier": 2,
+      "requires_operator_review": true,
+      "ingested_at": "2026-07-01T10:22:18.128435+00:00",
+      "provenance": {
+        "batch_block": "tier2_state_pilot",
+        "source_seed_id": "nf-seed-2026-st-035",
+        "platform_adapter_key": "state_tribal_affairs_html",
+        "adapter_key": "state_portal_generic"
+      }
+    },
+    {
       "grant_id": "ta2-real-037",
       "source_seed_id": "nf-seed-2026-st-037",
       "opportunity_number": "T2-037",
@@ -654,5 +735,5 @@
       }
     }
   ],
-  "updated_at": "2026-07-01T02:38:42.662656+00:00"
+  "updated_at": "2026-07-01T10:22:49.693497+00:00"
 }

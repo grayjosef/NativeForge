@@ -12,6 +12,9 @@ from nativeforge.services.foundation_html_listing_adapter_service import (
     _listing_to_payload,
     extract_html_listings,
 )
+from nativeforge.services.foundation_listing_noise_filter_service import (
+    filter_foundation_listings,
+)
 from nativeforge.services.platform_adapter_registry_service import (
     PLATFORM_FOUNDATION_FLUXX_EMBED,
     PLATFORM_FOUNDATION_HTML_LISTING,
@@ -98,13 +101,19 @@ def fetch_foundation_fluxx_listings_for_source(
                 http_status = resp.get("status_code")
                 break
 
-    all_listings = extract_fluxx_listings(
-        html, base_url=base_url, path_hints=path_hints
+    all_listings, _noise = filter_foundation_listings(
+        extract_fluxx_listings(
+            html, base_url=base_url, path_hints=path_hints
+        )
     )
     matched = [
         lst
         for lst in all_listings
-        if listing_matches_seed(str(lst["listing_title"]), source)
+        if listing_matches_seed(
+            str(lst["listing_title"]),
+            source,
+            listing_url=str(lst.get("listing_url") or ""),
+        )
         or "fluxx" in str(lst["listing_url"]).lower()
     ]
     # Fluxx links are domain-shared — attach to seeds whose keywords appear in page

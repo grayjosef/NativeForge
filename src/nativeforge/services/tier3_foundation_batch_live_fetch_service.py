@@ -11,6 +11,9 @@ from nativeforge.services.foundation_html_listing_adapter_service import (
     _listing_to_payload,
     extract_html_listings,
 )
+from nativeforge.services.foundation_listing_noise_filter_service import (
+    filter_foundation_listings,
+)
 from nativeforge.services.foundation_fluxx_embed_adapter_service import (
     extract_fluxx_listings,
 )
@@ -122,21 +125,29 @@ def run_tier3_foundation_batch_live_fetch(
         path_hints = tuple(config["listing_path_hints"])
         platform = str(config["platform_adapter_key"])
         if platform == PLATFORM_FOUNDATION_FLUXX_EMBED:
-            listings = extract_fluxx_listings(
-                str(page["html"]),
-                base_url=str(page["base_url"]),
-                path_hints=path_hints,
+            listings, _noise = filter_foundation_listings(
+                extract_fluxx_listings(
+                    str(page["html"]),
+                    base_url=str(page["base_url"]),
+                    path_hints=path_hints,
+                )
             )
         else:
-            listings = extract_html_listings(
-                str(page["html"]),
-                base_url=str(page["base_url"]),
-                path_hints=path_hints,
+            listings, _noise = filter_foundation_listings(
+                extract_html_listings(
+                    str(page["html"]),
+                    base_url=str(page["base_url"]),
+                    path_hints=path_hints,
+                )
             )
         matched = [
             lst
             for lst in listings
-            if listing_matches_seed(str(lst["listing_title"]), source)
+            if listing_matches_seed(
+                str(lst["listing_title"]),
+                source,
+                listing_url=str(lst.get("listing_url") or ""),
+            )
         ]
         payloads = [
             _listing_to_payload(
