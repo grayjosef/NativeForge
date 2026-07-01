@@ -15,9 +15,7 @@ from nativeforge.services.tier3_org_cluster_config_service import (
 
 def test_cohort2_size_and_disjoint_from_cohort1() -> None:
     assert len(TA3_COHORT2_SEED_IDS) == 14
-    assert len(TA3_COHORT_SEED_IDS) == (
-        len(TA3_COHORT1_SEED_IDS) + len(TA3_COHORT2_SEED_IDS)
-    )
+    assert len(TA3_COHORT_SEED_IDS) == 35
     assert not set(TA3_COHORT1_SEED_IDS) & set(TA3_COHORT2_SEED_IDS)
 
 
@@ -29,15 +27,17 @@ def test_cohort2_includes_priority_clusters() -> None:
     assert "nf-seed-2026-t3-001" not in cohort2  # NDN blocked
 
 
-def test_ranking_shortlist_excludes_cohort1() -> None:
+def test_ranking_shortlist_excludes_active_cohorts() -> None:
     ranked = rank_remaining_activatable_tier3_seeds()
     ids = {r["seed_id"] for r in ranked}
-    assert not ids & set(TA3_COHORT1_SEED_IDS)
-    assert len(ranked) >= 14
+    assert not ids & set(TA3_COHORT_SEED_IDS)
+    assert len(ranked) == 0
 
 
 def test_ranking_report_contract() -> None:
     report = build_tier3_cohort_ranking_report()
     assert report["cohort1_size"] == 12
     assert len(report["cohort2_seed_ids"]) == 14
-    assert "oweesta.org" in report["cohort2_domain_clusters"]
+    assert report["cohort3_size"] == 9
+    assert report["activatable_exhausted"] is True
+    assert "nativeamericanbar.org" in report["cohort3_domain_clusters"]

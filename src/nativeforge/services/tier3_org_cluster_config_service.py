@@ -32,7 +32,22 @@ TA3_COHORT2_SEED_IDS: tuple[str, ...] = (
     "nf-seed-2026-t3-026",
 )
 
-TA3_COHORT_SEED_IDS: tuple[str, ...] = TA3_COHORT1_SEED_IDS + TA3_COHORT2_SEED_IDS
+# Cohort-3: remaining 9 activatable single-seed native funders.
+TA3_COHORT3_SEED_IDS: tuple[str, ...] = (
+    "nf-seed-2026-t3-053",
+    "nf-seed-2026-t3-056",
+    "nf-seed-2026-t3-037",
+    "nf-seed-2026-t3-059",
+    "nf-seed-2026-t3-025",
+    "nf-seed-2026-t3-035",
+    "nf-seed-2026-t3-047",
+    "nf-seed-2026-t3-065",
+    "nf-seed-2026-t3-062",
+)
+
+TA3_COHORT_SEED_IDS: tuple[str, ...] = (
+    TA3_COHORT1_SEED_IDS + TA3_COHORT2_SEED_IDS + TA3_COHORT3_SEED_IDS
+)
 
 _ORG_CLUSTERS: dict[str, dict[str, Any]] = {
     "firstpeoplesfund.org": {
@@ -118,6 +133,67 @@ _ORG_CLUSTERS: dict[str, dict[str, Any]] = {
         "fetch_urls": ["https://www.aises.org/scholarships", "https://www.aises.org"],
         "listing_path_hints": ("/scholarship", "/grant", "/fund"),
     },
+    "nativeamericanbar.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://www.nativeamericanbar.org",
+            "https://www.nativeamericanbar.org/programs/",
+        ],
+        "listing_path_hints": ("/grant", "/fund", "/program", "/scholarship", "/legal"),
+    },
+    "hawaiiancouncil.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://www.hawaiiancouncil.org/grants",
+            "https://www.hawaiiancouncil.org",
+        ],
+        "listing_path_hints": ("/grant", "/fund", "/program", "/community"),
+    },
+    "aihec.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://www.aihec.org/students/scholarships/",
+            "https://www.aihec.org",
+        ],
+        "listing_path_hints": ("/scholarship", "/grant", "/fund", "/student"),
+    },
+    "nhec.net": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": ["https://nhec.net", "https://nhec.net/programs/"],
+        "listing_path_hints": ("/grant", "/fund", "/program", "/education"),
+    },
+    "anapacific.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://www.anapacific.org/ana-grants/",
+            "https://www.anapacific.org",
+        ],
+        "listing_path_hints": ("/grant", "/fund", "/ana", "/program"),
+    },
+    "wkkf.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://www.wkkf.org/grants",
+            "https://www.wkkf.org/what-we-do/racial-equity/truth-racial-healing-transformation",
+        ],
+        "listing_path_hints": ("/grant", "/fund", "/racial", "/program"),
+    },
+    "kawerak.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://www.kawerak.org/programs/",
+            "https://www.kawerak.org",
+        ],
+        "listing_path_hints": ("/grant", "/fund", "/program", "/community"),
+    },
+    "tocaonline.org": {
+        "platform_adapter_key": PLATFORM_FOUNDATION_HTML_LISTING,
+        "fetch_urls": [
+            "https://www.tocaonline.org/programs/",
+            "https://www.tocaonline.org",
+        ],
+        "listing_path_hints": ("/grant", "/fund", "/program", "/food"),
+    },
 }
 
 
@@ -187,6 +263,7 @@ def build_tier3_cohort_contract() -> dict[str, Any]:
             "schema_version": SCHEMA_VERSION,
             "cohort1_seed_ids": list(TA3_COHORT1_SEED_IDS),
             "cohort2_seed_ids": list(TA3_COHORT2_SEED_IDS),
+            "cohort3_seed_ids": list(TA3_COHORT3_SEED_IDS),
             "cohort_seed_ids": list(TA3_COHORT_SEED_IDS),
             "cohort_size": len(TA3_COHORT_SEED_IDS),
             "org_clusters": sorted(_ORG_CLUSTERS.keys()),

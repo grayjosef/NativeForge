@@ -62,7 +62,22 @@ _CLUSTER_BONUS_DOMAINS: dict[str, int] = {
     "nativefederation.org": 4,
     "nativehealthinitiative.org": 4,
     "aises.org": 4,
+    "nativeamericanbar.org": 3,
+    "hawaiiancouncil.org": 5,
+    "aihec.org": 4,
+    "nhec.net": 4,
+    "anapacific.org": 4,
+    "kawerak.org": 3,
+    "tocaonline.org": 3,
 }
+
+
+def _active_cohort_seed_ids() -> frozenset[str]:
+    from nativeforge.services.tier3_org_cluster_config_service import (
+        TA3_COHORT_SEED_IDS,
+    )
+
+    return frozenset(TA3_COHORT_SEED_IDS)
 
 
 def _json_safe(x: Any) -> Any:
@@ -92,7 +107,7 @@ def score_tier3_seed_candidate(row: dict[str, Any]) -> dict[str, Any]:
     native_score = _native_relevance_score(source_name)
     cluster_bonus = _CLUSTER_BONUS_DOMAINS.get(dom, 0)
     activatable = is_seed_activatable(row)
-    already_active = seed_id in TA3_COHORT1_SEED_IDS
+    active = seed_id in _active_cohort_seed_ids()
     total = native_score + cluster_bonus
     return {
         "seed_id": seed_id,
@@ -102,7 +117,7 @@ def score_tier3_seed_candidate(row: dict[str, Any]) -> dict[str, Any]:
         "cluster_leverage_bonus": cluster_bonus,
         "total_score": total,
         "activatable": activatable,
-        "already_in_cohort1": already_active,
+        "already_in_active_cohort": active,
         "catalog_accounting_bucket": row.get("catalog_accounting_bucket"),
     }
 
@@ -110,7 +125,7 @@ def score_tier3_seed_candidate(row: dict[str, Any]) -> dict[str, Any]:
 def rank_remaining_activatable_tier3_seeds(
     posture_candidates: list[dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
-    """Rank tier-3 seeds not yet in cohort-1; activatable only."""
+    """Rank tier-3 seeds not yet in an active cohort; activatable only."""
     if posture_candidates is None:
         from nativeforge.services.source_ingestion_seed_loader_service import (
             load_source_seed_rows,
@@ -133,7 +148,7 @@ def rank_remaining_activatable_tier3_seeds(
         if not is_seed_activatable(row):
             continue
         scored = score_tier3_seed_candidate(row)
-        if scored["already_in_cohort1"]:
+        if scored["already_in_active_cohort"]:
             continue
         ranked.append(scored)
     ranked.sort(
@@ -152,35 +167,67 @@ def build_tier3_cohort2_seed_ids(
     return [r["seed_id"] for r in ranked[:max_size]]
 
 
+def build_tier3_cohort3_seed_ids(
+    *,
+    posture_candidates: list[dict[str, Any]] | None = None,
+) -> list[str]:
+    """All remaining activatable seeds after cohort-1+2."""
+    ranked = rank_remaining_activatable_tier3_seeds(posture_candidates)
+    return [r["seed_id"] for r in ranked]
+
+
+def _domain_clusters_for_seed_ids(
+    seed_ids: tuple[str, ...] | list[str],
+) -> dict[str, Any]:
+    from nativeforge.services.fed_program_activation_binding_service import (
+        load_seed_candidate,
+    )
+
+    by_domain: dict[str, list[str]] = {}
+    for sid in seed_ids:
+        src = load_seed_candidate(str(sid))
+        dom = _domain(str(src.get("source_url") or ""))
+        by_domain.setdefault(dom, []).append(str(sid))
+    return {
+        dom: {"seed_count": len(ids), "seed_ids": ids}
+        for dom, ids in sorted(by_domain.items())
+    }
+
+
 def build_tier3_cohort_ranking_report(
     *,
     cohort2_size: int = 14,
 ) -> dict[str, Any]:
     ranked = rank_remaining_activatable_tier3_seeds()
-    cohort2 = [r["seed_id"] for r in ranked[:cohort2_size]]
+    cohort2_ranked_top = [r["seed_id"] for r in ranked[:cohort2_size]]
     from nativeforge.services.tier3_org_cluster_config_service import (
         TA3_COHORT2_SEED_IDS,
+        TA3_COHORT3_SEED_IDS,
+        TA3_COHORT_SEED_IDS,
     )
 
-    by_domain: dict[str, list[str]] = {}
-    for sid in TA3_COHORT2_SEED_IDS:
-        row = next((r for r in ranked if r["seed_id"] == sid), None)
-        if row:
-            by_domain.setdefault(row["cluster_domain"], []).append(sid)
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
             "cohort1_size": len(TA3_COHORT1_SEED_IDS),
+            "active_cohort_total": len(TA3_COHORT_SEED_IDS),
             "remaining_activatable_count": len(ranked),
             "cohort2_recommended_size": cohort2_size,
             "cohort2_seed_ids": list(TA3_COHORT2_SEED_IDS),
-            "cohort2_ranked_top": cohort2,
-            "cohort2_matches_ranked_top": cohort2 == list(TA3_COHORT2_SEED_IDS),
-            "cohort2_domain_clusters": {
-                dom: {"seed_count": len(ids), "seed_ids": ids}
-                for dom, ids in sorted(by_domain.items())
-            },
+            "cohort2_ranked_top": cohort2_ranked_top,
+            "cohort2_matches_ranked_top": (
+                cohort2_ranked_top == list(TA3_COHORT2_SEED_IDS)
+            ),
+            "cohort3_seed_ids": list(TA3_COHORT3_SEED_IDS),
+            "cohort3_size": len(TA3_COHORT3_SEED_IDS),
+            "cohort3_domain_clusters": _domain_clusters_for_seed_ids(
+                TA3_COHORT3_SEED_IDS
+            ),
+            "cohort2_domain_clusters": _domain_clusters_for_seed_ids(
+                TA3_COHORT2_SEED_IDS
+            ),
             "ranked_shortlist": ranked[:25],
+            "activatable_exhausted": len(ranked) == 0,
             "excluded_deferred": {
                 "blocked_login_portal": [
                     "nf-seed-2026-t3-001",

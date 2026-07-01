@@ -191,16 +191,29 @@ def persist_tier3_batch_to_corpus(
     target.write_text(json.dumps(artifact, indent=2) + "\n", encoding="utf-8")
 
     mixed_target = mixed_path or MIXED_CORPUS_PATH
+    before_mixed = 0
+    if mixed_target.is_file():
+        raw_mixed = json.loads(mixed_target.read_text(encoding="utf-8"))
+        before_mixed = len(raw_mixed.get("grants") or [])
     federal = load_scaled_federal_corpus()
     if not federal and NF13_CORPUS_PATH.is_file():
         raw = json.loads(NF13_CORPUS_PATH.read_text(encoding="utf-8"))
         federal = list(raw.get("grants") or [])
-    mixed = federal + merged
+    try:
+        from nativeforge.services.tier2_state_corpus_persist_service import (
+            load_tier2_state_corpus,
+        )
+
+        tier2 = load_tier2_state_corpus()
+    except ImportError:
+        tier2 = []
+    mixed = federal + merged + tier2
     mixed_artifact = {
-        "schema_version": "nf_ta_mixed_tier13_corpus_v1",
+        "schema_version": "nf_ta_mixed_tier123_corpus_v1",
         "grant_count": len(mixed),
         "federal_grant_count": len(federal),
         "tier3_grant_count": len(merged),
+        "tier2_grant_count": len(tier2),
         "grants": mixed,
         "updated_at": datetime.now(tz=UTC).isoformat(),
     }
@@ -214,6 +227,10 @@ def persist_tier3_batch_to_corpus(
             "tier3_grant_count": len(merged),
             "mixed_grant_count": len(mixed),
             "federal_baseline_count": len(federal),
+            "tier2_baseline_count": len(tier2),
+            "before_mixed_count": before_mixed,
+            "after_mixed_count": len(mixed),
+            "delta_mixed_count": len(mixed) - before_mixed,
             "inserted_count": inserted,
             "skipped_duplicate_count": skipped,
             "no_live_nofo_count": no_live_nofo_count,
