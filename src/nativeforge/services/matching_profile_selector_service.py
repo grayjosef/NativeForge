@@ -13,6 +13,11 @@ from nativeforge.services.nm_pilot_profile_loader_service import (
     list_nm_pilot_profiles,
     resolve_nm_pilot_profile,
 )
+from nativeforge.services.wa_pilot_profile_loader_service import (
+    PROFILE_WA_PILOT_PREFIX,
+    list_wa_pilot_profiles,
+    resolve_wa_pilot_profile,
+)
 from nativeforge.services.ok_pilot_profile_loader_service import (
     PROFILE_OK_PILOT_PREFIX,
     list_ok_pilot_profiles,
@@ -56,6 +61,7 @@ def list_available_matching_profiles() -> list[dict[str, Any]]:
     profiles.extend(list_sc_pilot_profiles(require_files=False))
     profiles.extend(list_ok_pilot_profiles(require_files=False))
     profiles.extend(list_nm_pilot_profiles(require_files=False))
+    profiles.extend(list_wa_pilot_profiles(require_files=False))
     return profiles
 
 
@@ -64,6 +70,8 @@ def resolve_matching_profile(
     profile_fixture_key: str | None = None,
 ) -> dict[str, Any]:
     key = profile_fixture_key or PROFILE_SYNTHETIC_RED_CEDAR
+    if key.startswith(PROFILE_WA_PILOT_PREFIX) or key.startswith("wa_pilot_"):
+        return resolve_wa_pilot_profile(key, require_files=True)
     if key.startswith(PROFILE_NM_PILOT_PREFIX) or key.startswith("nm_pilot_"):
         return resolve_nm_pilot_profile(key, require_files=True)
     if key.startswith(PROFILE_OK_PILOT_PREFIX) or key.startswith("ok_pilot_"):
