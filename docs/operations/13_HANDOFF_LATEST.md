@@ -12,9 +12,9 @@
 | Path | /home/josefgray/projects/nativeforge |
 | Branch | main |
 | HEAD before block | c26d33a |
-| HEAD after block | f80f994 (tip may advance by this docs pin commit) |
+| HEAD after block | 6c69c5e |
 | origin/main | c26d33a |
-| Ahead / behind | ahead of origin (block commits not pushed) |
+| Ahead / behind | ahead 59, behind 0 vs origin/main |
 | Push | Not performed |
 | Working tree | clean at close (expected after handoff pin) |
 | Protected stash | stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit — preserved |
