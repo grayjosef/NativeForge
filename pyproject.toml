@@ -580,6 +580,7 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/nm_pilot_honesty_regression_service.py" = ["E501"]
 "src/nativeforge/services/wa_pilot_fixture_loader_service.py" = ["E501"]
 "src/nativeforge/services/wa_pilot_profile_loader_service.py" = ["E501"]
+"src/nativeforge/services/wa_pilot_classify_match_orchestrator_service.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
