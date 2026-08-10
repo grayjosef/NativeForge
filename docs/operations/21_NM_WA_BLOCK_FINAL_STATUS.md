@@ -3,9 +3,9 @@
 - Path: /home/josefgray/projects/nativeforge
 - Branch: main
 - HEAD before: c26d33a
-- HEAD after: a3d553b
+- HEAD after: f80f994 (plus follow-up docs pin if present)
 - origin/main: c26d33a
-- Ahead: 57
+- Ahead: 58+
 - Push: not performed
 - Protected stash: stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit (preserved)
 - uv.lock: present, untouched
