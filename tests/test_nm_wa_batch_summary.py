@@ -22,4 +22,8 @@ def test_batch_summary_covers_nm_and_wa() -> None:
     assert summary["all_needs_operator_review"] is True
     assert summary["per_state"]["NM"]["profile_count"] == 22
     assert summary["per_state"]["WA"]["profile_count"] == 29
-    assert summary["total_match_count"] == summary["total_profile_count"] * 1
+    nm = summary["per_state"]["NM"]
+    wa = summary["per_state"]["WA"]
+    assert nm["match_count"] == nm["profile_count"] * nm["grant_count"]
+    assert wa["match_count"] == wa["profile_count"] * wa["grant_count"]
+    assert summary["total_match_count"] == nm["match_count"] + wa["match_count"]
