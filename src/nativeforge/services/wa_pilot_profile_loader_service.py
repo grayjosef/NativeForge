@@ -9,12 +9,12 @@ from nativeforge.services.matching_profile_provenance_service import (
     CAPTURE_PUBLIC_INFERRED,
     build_matching_profile_with_provenance,
 )
+from nativeforge.services.org_applicant_profile_field_provenance_service import (
+    CAPTURE_PUBLIC_INFERRED as OAP_PUBLIC_INFERRED,
+)
 from nativeforge.services.wa_pilot_fixture_loader_service import (
     load_wa_tribal_profiles,
     require_wa_pilot_fixtures,
-)
-from nativeforge.services.org_applicant_profile_field_provenance_service import (
-    CAPTURE_PUBLIC_INFERRED as OAP_PUBLIC_INFERRED,
 )
 
 SCHEMA_VERSION = "nf_wa_pilot_profile_loader_v1"
