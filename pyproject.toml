@@ -586,6 +586,7 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/nm_wa_operator_review_service.py" = ["E501"]
 "src/nativeforge/services/nm_wa_classify_match_closeout_packet_service.py" = ["E501"]
 "src/nativeforge/services/nm_wa_validation_rollup_service.py" = ["E501"]
+"src/nativeforge/services/nm_wa_operator_surfacing_report_schema_service.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
