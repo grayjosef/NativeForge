@@ -12,7 +12,7 @@
 | Path | `/home/josefgray/projects/nativeforge` |
 | Branch | `main` |
 | HEAD before block | `c26d33a` |
-| HEAD after block | `2faa0e1` (will match tip after this handoff repair commit if amended by follow-up) |
+| HEAD after block |  |
 | `origin/main` | `c26d33a` |
 | Ahead / behind | ahead of origin (block commits not pushed) |
 | Push | **Not performed** |
