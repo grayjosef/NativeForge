@@ -80,7 +80,9 @@ def empty_operator_report_row(
             "confidence": CONFIDENCE_PUBLIC_INFERRED_LOW,
             "missing_data": [],
             "blockers": [],
-            "operator_next_check": [],
+            "operator_next_check": [
+                "human_review_classify_match_rows_before_any_claim"
+            ],
             "provenance_evidence_notes": [],
             "human_review_required": True,
             "final_eligibility_claim_allowed": False,
