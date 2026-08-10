@@ -13,11 +13,6 @@ from nativeforge.services.nm_pilot_profile_loader_service import (
     list_nm_pilot_profiles,
     resolve_nm_pilot_profile,
 )
-from nativeforge.services.wa_pilot_profile_loader_service import (
-    PROFILE_WA_PILOT_PREFIX,
-    list_wa_pilot_profiles,
-    resolve_wa_pilot_profile,
-)
 from nativeforge.services.ok_pilot_profile_loader_service import (
     PROFILE_OK_PILOT_PREFIX,
     list_ok_pilot_profiles,
@@ -30,6 +25,11 @@ from nativeforge.services.sc_pilot_profile_loader_service import (
     PROFILE_SC_PILOT_PREFIX,
     list_sc_pilot_profiles,
     resolve_sc_pilot_profile,
+)
+from nativeforge.services.wa_pilot_profile_loader_service import (
+    PROFILE_WA_PILOT_PREFIX,
+    list_wa_pilot_profiles,
+    resolve_wa_pilot_profile,
 )
 
 SCHEMA_VERSION = "nf_matching_profile_selector_v1"
