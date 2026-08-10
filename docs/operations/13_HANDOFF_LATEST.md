@@ -1,55 +1,64 @@
-# NativeForge Handoff — Block M8: Operator Activation Console
+# NativeForge Handoff — Current State (repair)
 
-**Status:** Closed locally at `328b48d`. Push: `git push origin main` (when GitHub reachable).
+**Repaired:** 2026-08-10
+**Purpose:** Replace stale Block M8 handoff text with verified repo truth. No feature work in this repair.
 
-## Close-gate evidence (staging smoke)
+## Current State
 
-- `NF_DEV_ORG_HEADERS=false` + `X-NF-Actor-Role: operator` → **503** (governed mutation denied; header not honored)
-- Kill switch engaged → `verify-live` halts live publish + auto-publish queue (`kill_switch_engaged`)
-- Agent governed actions → **403**
-- Live publish without reason → **400**; with reason → **200** + audit row
-- `policy:change` auto-publish enable → append-only config version + audit
+| Field | Verified value |
+|-------|----------------|
+| Project | NativeForge |
+| Path | `/home/josefgray/projects/nativeforge` |
+| Branch | `main` |
+| HEAD | `658659e` (`658659e9aeb862018689fe18b4c4b8a7dbf786b1`) — Add NM and WA pilot tribal profile fixtures for classify+match expansion |
+| `origin/main` | `d266475` (`d266475556a33389235a4c9e59976c96cd76def2`) — Fix static extraction gap with card-DOM parser and tuned seed matching |
+| Ahead / behind | Local `main` **ahead 1**, behind 0 vs `origin/main` |
+| Push | **Not performed** — do not push without Mayhem approval |
+| Working tree (at inspection / pre-repair) | Clean |
+| Remote | `origin` → `git@github.com:grayjosef/NativeForge.git` |
+| Protected stash | `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit` — **preserved; do not drop/pop/apply** |
+| Smoke `run_id` | **UNKNOWN** |
+| Full-suite test count | **UNKNOWN** (not re-run for this docs-only repair) |
+| Next token | **UNKNOWN** (no current proven token in ops handoffs for HEAD) |
 
-Run: `bash scripts/m8_close_gate_staging_smoke.sh`
+## Do Not Use — stale clone
 
-## Summary
+**Do not use** `/home/josefgray/projects/NativeForge` (capitalized path). That clone is **stale / do-not-use**. All NativeForge work must use **`/home/josefgray/projects/nativeforge`** only.
 
-Operators control per-workspace activation from a dedicated **Activation** console view. Durable M7 state (`nf_activation_state`, append-only `nf_auto_publish_config`) backs the UI and API. Governed dispatcher enforces `activation:toggle` and `policy:change`; agents are hard-denied; high-risk enables require confirm + reason; kill switch is one-click engage with no dialog.
+## Latest known work (from git history)
 
-## Sprint deliverables
+Current HEAD is fixture expansion on top of extraction and pilot work already on `origin/main` and recent ancestors:
 
-| # | Deliverable | Status |
-|---|-------------|--------|
-| 1 | Activation read API + state view | `GET .../operator/activation` + Activation UI |
-| 2 | Kill-switch control | `activation:toggle` engage/release, audited, halts M5 publish gate |
-| 3 | Flag controls | live-publish / live-attribution / auto-publish (policy:change for enable) |
-| 4 | Safety UX | Confirm+reason modal for live publish & auto-publish enable; prominent kill switch |
-| 5 | Handoff + runbook | This doc + `docs/m0-demo-runbook.md` Activation section |
+1. **`658659e`** — NM and WA pilot tribal profile fixtures (`fixtures/nm_pilot/`, `fixtures/wa_pilot/`) for classify+match expansion (**local only; not on origin yet**).
+2. **`d266475`** (`origin/main`) — Static extraction gap fix: card-DOM parser, noise filter, tuned seed matching; staging verify script + tests.
+3. **`cd01ced`** — Tier-3 foundation cohort-3 (9 seeds) activatable coverage exhaust.
+4. **`12e0ae3`** — Tier-2 state portal pilot (per-portal ingest, MT tribal filter, honest empty portals).
+5. **`fd2b44a`** — Tier-3 foundation cohort-2 (14 seeds) with native-relevance ranking.
+6. **`33f69db`** — OK pilot classify+match for 38 federal tribes with `grant_posture` advisory.
 
-## Durable state (M7)
+Older topical handoffs still exist under `docs/operations/14_HANDOFF_*` … `18_HANDOFF_*` (LA/SH/RT/TA/SC). They describe prior blocks and are **not** a substitute for this current-state file.
 
-| Table | Purpose |
-|-------|---------|
-| `nf_activation_state` | Per-org flags (default OFF), `state_version`, last actor |
-| `nf_auto_publish_config` | Append-only auto-publish policy versions |
+## What this repair does **not** claim
 
-## API routes
+- Does **not** invent sprint numbers, next tokens, smoke `run_id`, or test counts.
+- Does **not** restate Block M8 Activation Console as current HEAD work. Prior M8 content in the previous version of this file was **stale relative to HEAD** (cited hash `328b48d` was not current).
+- Does **not** authorize push, migrations, scraping, live ingestion, source activation, or stash changes.
 
-| Route | Method | Notes |
-|-------|--------|-------|
-| `/{org}/operator/activation` | GET | Read state + publish gate + recent audit |
-| `/{org}/operator/activation/governed-action` | POST | `X-NF-Actor-Role`: operator \| admin \| agent |
+## UNKNOWNs
 
-**Governed actions:** `activation:toggle`, `policy:change` (auto-publish enable only).
+- Smoke `run_id` for current HEAD
+- Current full-suite pytest / ruff green counts
+- Next sprint / handoff token
+- Whether NM/WA fixtures already have matching orchestrator/service wiring beyond fixtures (not verified in this repair)
+- Whether Mayhem intends to push `658659e` as-is or fold further pilot work first
 
-## UI
+## Guardrails (standing)
 
-Header toggle: **Activation** (`?view=activation`). Role selector (dev): operator / admin / agent (read-only).
+- Never push without Mayhem approval.
+- Preserve protected stash; never drop/clear stash.
+- No migrations, scrape, live ingest, external URL calls, source activation, or runtime data mutation in handoff-only work.
+- NativeForge terminology only; do not import ContractForge product language into NativeForge planning.
 
-## Test baseline
+## Recommended next safe action
 
-`pytest tests/test_m8_operator_activation_console.py` — defaults, kill switch, agent denied, reason gates, policy versioning, publish halt.
-
-## Governance
-
-Staging/dev: `X-NF-Actor-Role` honored **only** when `NF_DEV_ORG_HEADERS=true`. Production-shaped config denies governed mutations (503); future auth replaces header parsing.
+Mayhem: review local commit `658659e` (NM/WA fixtures) and decide push vs further pilot wiring; optionally refresh this handoff again after any verified pytest/ruff run or after a real next-token is assigned. Do not use the capitalized clone.
