@@ -4,15 +4,15 @@ from __future__ import annotations
 
 import pytest
 
+from nativeforge.services.pilot_grant_posture_advisory_service import (
+    build_grant_posture_advisory,
+)
 from nativeforge.services.wa_pilot_classify_match_orchestrator_service import (
     run_wa_pilot_classify_match_block,
 )
 from nativeforge.services.wa_pilot_fixture_loader_service import (
     EXPECTED_PROFILE_COUNT,
     fixtures_present,
-)
-from nativeforge.services.pilot_grant_posture_advisory_service import (
-    build_grant_posture_advisory,
 )
 
 _SYNTH_GRANTS = [
