@@ -1,4 +1,4 @@
-"""NM-10: hard invariants — no final eligibility without evidence; unknowns stay visible."""
+"""NM-10: hard invariants — no final eligibility without evidence."""
 
 from __future__ import annotations
 
@@ -30,7 +30,8 @@ def test_nm_no_final_eligibility_claim_without_operator_review() -> None:
     block = run_nm_pilot_classify_match_block(require_fixtures=True, grants=_SYNTH)
     assert block["all_needs_operator_review"] is True
     assert block["honest_labeling"] is True
-    assert all(m["match_label"] == LABEL_NEEDS_OPERATOR_REVIEW for m in block["matches"])
+    labels = [m["match_label"] for m in block["matches"]]
+    assert all(label == LABEL_NEEDS_OPERATOR_REVIEW for label in labels)
     # no hard posture filter masquerading as eligibility
     assert block["grant_posture_advisory_only"] is True
 
