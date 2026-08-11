@@ -9,7 +9,7 @@
 - path: `/home/josefgray/projects/nativeforge` (stale clone `/home/josefgray/projects/NativeForge` avoided)
 - branch: `main`
 - HEAD before: `5abd356`
-- HEAD after: `bcb884c` (plus handoff repair commit if present)
+- HEAD after: `21c3d51`
 - origin/main: `5abd356` (local ahead; **not pushed**)
 - working tree: clean at block stop
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
