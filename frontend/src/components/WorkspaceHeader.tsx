@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Plane } from "../m0Flow";
+import type { AppSurface } from "../viewSurface";
 
 export interface WorkspaceHeaderProps {
   plane: Plane;
@@ -11,9 +12,9 @@ export interface WorkspaceHeaderProps {
   trustVersion: string | null;
   trustErr: boolean;
   onRefreshConnectivity: () => void;
-  /** When set, shows Workspace / Workbench / Activation toggle (Sprint 21+ / M8). */
-  surface?: "workspace" | "workbench" | "activation";
-  onSurfaceChange?: (s: "workspace" | "workbench" | "activation") => void;
+  /** When set, shows Workspace / Workbench / Activation / NM-WA demo toggle. */
+  surface?: AppSurface;
+  onSurfaceChange?: (s: AppSurface) => void;
 }
 
 export function WorkspaceHeader({
@@ -71,6 +72,14 @@ export function WorkspaceHeader({
                 onClick={() => onSurfaceChange("activation")}
               >
                 Activation
+              </button>
+              <button
+                type="button"
+                className={`nf-segment-btn ${(surface ?? "workspace") === "nm_wa_operator_demo" ? "is-active" : ""}`}
+                onClick={() => onSurfaceChange("nm_wa_operator_demo")}
+                data-testid="nm-wa-demo-nav"
+              >
+                NM/WA Demo
               </button>
             </div>
           ) : null}
