@@ -1,0 +1,1386 @@
+{
+  "auth_required": false,
+  "combined_summary": {
+    "combined_missing_data_count": 4,
+    "combined_profile_count": 51,
+    "combined_review_needed_count": 51,
+    "confidence_distribution": {
+      "public_inferred_low": 51
+    }
+  },
+  "content_digest": "4f2eefc145c19ee78d660241b8b038627bc1721ff01b56ee518884297c705a7b",
+  "demo_dev_only": true,
+  "external_urls_used": false,
+  "final_eligibility_claim_allowed": false,
+  "live_ingestion": false,
+  "missing_data_summary": {
+    "combined_missing_data_count": 4,
+    "hidden_missing_data": false,
+    "nm_missing_evidence_categories": {
+      "program_areas": 2
+    },
+    "wa_missing_evidence_categories": {
+      "grant_posture": 2
+    }
+  },
+  "nm_summary": {
+    "classify_match_profiles": 22,
+    "expected": 22,
+    "operator_report_rows": 22,
+    "profile_count": 22
+  },
+  "offline_only": true,
+  "operator_next_check_summary": {
+    "combined_review_needed_count": 51,
+    "human_review_required_count": 51,
+    "rows_with_next_checks": 51
+  },
+  "prior_offline_smoke_run_id": "nf_os_smoke_20260811T004712Z_9dccb0db",
+  "provenance_evidence_summary": {
+    "combined_evidence_provenance_summary": {
+      "capture_method": 51,
+      "evidence_codes": 51,
+      "organization_name": 51
+    },
+    "notes_visible": true
+  },
+  "read_only_advisory": true,
+  "rows": [
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence",
+        "unknown_program_areas"
+      ],
+      "classification_label": "incomplete_profile_data",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "incomplete_profile_data",
+      "missing_data": [
+        "program_areas"
+      ],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim",
+        "confirm_program_areas_with_operator_evidence"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_santa_ana_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Santa Ana, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence",
+        "unknown_program_areas"
+      ],
+      "classification_label": "incomplete_profile_data",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "incomplete_profile_data",
+      "missing_data": [
+        "program_areas"
+      ],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim",
+        "confirm_program_areas_with_operator_evidence"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_zia_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Zia, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence",
+        "unknown_grant_posture"
+      ],
+      "classification_label": "incomplete_profile_data",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "incomplete_profile_data",
+      "missing_data": [
+        "grant_posture"
+      ],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim",
+        "confirm_grant_posture_with_operator_evidence"
+      ],
+      "profile_id": "wa_pilot_confederated_tribes_of_the_chehalis_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Confederated Tribes of the Chehalis Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence",
+        "unknown_grant_posture"
+      ],
+      "classification_label": "incomplete_profile_data",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "incomplete_profile_data",
+      "missing_data": [
+        "grant_posture"
+      ],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim",
+        "confirm_grant_posture_with_operator_evidence"
+      ],
+      "profile_id": "wa_pilot_hoh_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Hoh Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_jicarilla_apache_nation_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Jicarilla Apache Nation, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_mescalero_apache_tribe_of_the_mescalero_reservation_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Mescalero Apache Tribe of the Mescalero Reservation, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_navajo_nation_arizona_new_mexico_utah",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Navajo Nation, Arizona, New Mexico, & Utah"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_ohkay_owingeh_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Ohkay Owingeh, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_acoma_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Acoma, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_cochiti_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Cochiti, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_isleta_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Isleta, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_jemez_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Jemez, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_laguna_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Laguna, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_nambe_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Nambe, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_picuris_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Picuris, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_pojoaque_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Pojoaque, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_san_felipe_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of San Felipe, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_san_ildefonso_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of San Ildefonso, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_sandia_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Sandia, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_santa_clara_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Santa Clara, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_taos_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Taos, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_tesuque_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Tesuque, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_santo_domingo_pueblo",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Santo Domingo Pueblo"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_zuni_tribe_of_the_zuni_reservation_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Zuni Tribe of the Zuni Reservation, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_confederated_tribes_and_bands_of_the_yakama_nation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Confederated Tribes and Bands of the Yakama Nation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_confederated_tribes_of_the_colville_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Confederated Tribes of the Colville Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_cowlitz_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Cowlitz Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_jamestown_s_klallam_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Jamestown S'Klallam Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_kalispel_indian_community_of_the_kalispel_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Kalispel Indian Community of the Kalispel Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_lower_elwha_tribal_community",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Lower Elwha Tribal Community"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_lummi_tribe_of_the_lummi_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Lummi Tribe of the Lummi Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_makah_indian_tribe_of_the_makah_indian_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Makah Indian Tribe of the Makah Indian Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_muckleshoot_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Muckleshoot Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_nisqually_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Nisqually Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_nooksack_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Nooksack Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_port_gamble_s_klallam_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Port Gamble S'Klallam Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_puyallup_tribe_of_the_puyallup_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Puyallup Tribe of the Puyallup Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_quileute_tribe_of_the_quileute_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Quileute Tribe of the Quileute Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_quinault_indian_nation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Quinault Indian Nation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_samish_indian_nation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Samish Indian Nation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_sauk_suiattle_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Sauk-Suiattle Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_shoalwater_bay_indian_tribe_of_the_shoalwater_bay_indian_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Shoalwater Bay Indian Tribe of the Shoalwater Bay Indian Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_skokomish_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Skokomish Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_snoqualmie_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Snoqualmie Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_spokane_tribe_of_the_spokane_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Spokane Tribe of the Spokane Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_squaxin_island_tribe_of_the_squaxin_island_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Squaxin Island Tribe of the Squaxin Island Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_stillaguamish_tribe_of_indians_of_washington",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Stillaguamish Tribe of Indians of Washington"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_suquamish_indian_tribe_of_the_port_madison_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Suquamish Indian Tribe of the Port Madison Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_swinomish_indian_tribal_community",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Swinomish Indian Tribal Community"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_tulalip_tribes_of_washington",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Tulalip Tribes of Washington"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "wa_pilot_upper_skagit_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Upper Skagit Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    }
+  ],
+  "schema_version": "nf_nm_wa_browser_demo_bridge_v1",
+  "source_activation": false,
+  "title": "NM/WA Operator Surfacing Demo (read-only)",
+  "ui_flags": {
+    "advisory_banner": "Demo/dev only \u2014 advisory operator review surface. No final eligibility claims. No source activation.",
+    "show_activation_controls": false,
+    "show_submit_controls": false
+  },
+  "visibility_sample": [
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence",
+        "unknown_program_areas"
+      ],
+      "classification_label": "incomplete_profile_data",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "incomplete_profile_data",
+      "missing_data": [
+        "program_areas"
+      ],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim",
+        "confirm_program_areas_with_operator_evidence"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_santa_ana_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Santa Ana, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence",
+        "unknown_program_areas"
+      ],
+      "classification_label": "incomplete_profile_data",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "incomplete_profile_data",
+      "missing_data": [
+        "program_areas"
+      ],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim",
+        "confirm_program_areas_with_operator_evidence"
+      ],
+      "profile_id": "nm_pilot_pueblo_of_zia_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Pueblo of Zia, New Mexico"
+      ],
+      "state_cohort": "NM"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence",
+        "unknown_grant_posture"
+      ],
+      "classification_label": "incomplete_profile_data",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "incomplete_profile_data",
+      "missing_data": [
+        "grant_posture"
+      ],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim",
+        "confirm_grant_posture_with_operator_evidence"
+      ],
+      "profile_id": "wa_pilot_confederated_tribes_of_the_chehalis_reservation",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Confederated Tribes of the Chehalis Reservation"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence",
+        "unknown_grant_posture"
+      ],
+      "classification_label": "incomplete_profile_data",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "incomplete_profile_data",
+      "missing_data": [
+        "grant_posture"
+      ],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim",
+        "confirm_grant_posture_with_operator_evidence"
+      ],
+      "profile_id": "wa_pilot_hoh_indian_tribe",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Hoh Indian Tribe"
+      ],
+      "state_cohort": "WA"
+    },
+    {
+      "blockers": [
+        "public_inferred_profile_requires_review",
+        "no_final_eligibility_without_explicit_evidence"
+      ],
+      "classification_label": "needs_operator_review",
+      "confidence": "public_inferred_low",
+      "discoverability": "visible_in_operator_review",
+      "final_eligibility_claim_allowed": false,
+      "human_review_required": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "human_review_classify_match_rows_before_any_claim"
+      ],
+      "profile_id": "nm_pilot_jicarilla_apache_nation_new_mexico",
+      "provenance_evidence_notes": [
+        "capture_method:public_inferred",
+        "evidence_codes:empty_expected_for_public_inferred",
+        "organization_name:Jicarilla Apache Nation, New Mexico"
+      ],
+      "state_cohort": "NM"
+    }
+  ],
+  "wa_summary": {
+    "classify_match_profiles": 29,
+    "expected": 29,
+    "operator_report_rows": 29,
+    "profile_count": 29
+  }
+}
