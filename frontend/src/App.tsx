@@ -48,6 +48,7 @@ import {
   type NextActionId,
 } from "./workspaceProgress";
 import { readSurface, type AppSurface } from "./viewSurface";
+import { NmWaOperatorDemoPage } from "./pages/NmWaOperatorDemoPage";
 
 const LS_ORG = "nf-m0-org-id";
 const LS_PLANE = "nf-m0-plane";
@@ -140,6 +141,8 @@ export default function App() {
         u.searchParams.set("view", "workbench");
       } else if (s === "activation") {
         u.searchParams.set("view", "activation");
+      } else if (s === "nm_wa_operator_demo") {
+        u.searchParams.set("view", "nm_wa_operator_demo");
       } else {
         u.searchParams.delete("view");
       }
@@ -920,6 +923,8 @@ export default function App() {
       </div>
       ) : surface === "workbench" ? (
         <WorkbenchPage plane={plane} orgId={orgId.trim()} orgOk={orgOk} />
+      ) : surface === "nm_wa_operator_demo" ? (
+        <NmWaOperatorDemoPage />
       ) : (
         <ActivationPage
           plane={plane}
