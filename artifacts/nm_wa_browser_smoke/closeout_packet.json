@@ -72,7 +72,7 @@
     "no_scoring_match_auth_migration_changes",
     "ui_demo_read_only_advisory"
   ],
-  "head_after": "4861c19",
+  "head_after": "25938f1",
   "head_before": "0d50bf6",
   "log_run": "ok_per_sprint_AIRTABLE_TOKEN_available",
   "playwright_not_run_reason": "Playwright/browser e2e not installed in frontend; demo-runtime static/Vitest path is the supported unattended smoke mode",
