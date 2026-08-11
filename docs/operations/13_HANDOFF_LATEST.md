@@ -1,8 +1,8 @@
-# NativeForge Handoff — NM/WA Classify+Match Expansion (50-sprint block)
+# NativeForge Handoff — NF Operator Surfacing Block (NM/WA review visibility)
 
-**Repaired/closed:** 2026-08-10
-**Block:** NM/WA classify+match expansion (Sprints 1–50)
-**Status:** COMPLETE locally — WAIT for Mayhem review (**do not push**)
+**Closed:** 2026-08-10
+**Block:** NF Operator Surfacing Block — NM/WA classify+match review visibility
+**Status:** COMPLETE locally — WAIT for Mayhem review (do not push)
 
 ## Current State
 
@@ -11,16 +11,16 @@
 | Project | NativeForge |
 | Path | /home/josefgray/projects/nativeforge |
 | Branch | main |
-| HEAD before block | c26d33a |
-| HEAD after block | 9522b17 |
-| origin/main | c26d33a |
-| Ahead / behind | ahead 60, behind 0 vs origin/main (docs pin may +1) |
+| HEAD before block | 392da8f |
+| HEAD after block | PENDING_TIP |
+| origin/main | 392da8f |
+| Ahead / behind | ahead PENDING_AHEAD, behind 0 |
 | Push | Not performed |
-| Working tree | clean at close (expected after handoff pin) |
+| Working tree | clean at close |
 | Protected stash | stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit — preserved |
 | uv.lock | present, untouched |
-| Smoke run_id | UNKNOWN |
-| Full-suite test count | UNKNOWN (not run) |
+| Smoke/demo run_id | UNKNOWN / NOT_RUN |
+| Full-suite test count | NOT_RUN |
 | Next token | UNKNOWN |
 
 ## Do Not Use — stale clone
@@ -29,32 +29,40 @@ Do not use /home/josefgray/projects/NativeForge (capitalized). Use only /home/jo
 
 ## Feature state
 
-- NM wired: yes — fixture loader, profile loader, classify+match orchestrator, honesty, invariants, selector wiring (22 federal profiles)
-- WA wired: yes — same stack (29 federal profiles)
-- Operator-review / unknown-data: all matches labeled needs_operator_review; unknown/incomplete fields remain discoverable via missing-data reporting and operator review queue
-- Hard invariants: covered in NM/WA/rollup/closeout tests (no final claim without evidence; unknowns force review; partial matches discoverable; no live exec/activation)
+- NM operator surfacing built: yes (report builder + rollup over existing classify+match outputs)
+- WA operator surfacing built: yes (symmetric structure; 29 profiles)
+- Combined review queue/report built: yes (stable ordering, confidence/provenance summaries)
+- Operator-review / unknown-data behavior: unknowns remain discoverable; missing_data shown; human review + next-check required; no final eligibility claim
+- Hard invariant coverage: yes (schema validation, NM/WA/combined/closeout tests)
+- Scoring/match logic changed: no
+- Source activation / live ingestion touched: no
+- Repo-wide ruff backlog touched: no
 
 ## Validation
 
-- Scoped ruff/format on touched Python only (no repo-wide ruff mass-fix)
-- Scoped pytest for NM/WA/rollup/review/closeout tests
-- Offline staging: scripts/nm_wa_pilot_staging_verify.sh (OK)
-- Scoped test files: 39 (full suite not claimed)
-- Repo-wide ruff backlog: untouched by design
+- Scoped ruff/format on touched Python only
+- Operator surfacing scoped tests: 46 passed (sprint-047 run of test_os_sprint*.py)
+- Staging: scripts/nm_wa_operator_surfacing_staging_verify.sh OK
+- Prior NM/WA pilot staging: scripts/nm_wa_pilot_staging_verify.sh OK
+- Full suite: NOT_RUN
+- Repo-wide ruff: NOT_RUN (legacy backlog)
 
 ## Related docs
 
-- docs/operations/19_HANDOFF_NM_WA_CLASSIFY_MATCH_CHECKPOINT.md
-- docs/operations/20_HANDOFF_NM_WA_VALIDATION_ROLLUP.md
-- docs/operations/21_NM_WA_BLOCK_FINAL_STATUS.md
+- docs/operations/22_CHECKPOINT_OS_SPRINTS_001_010.md
+- docs/operations/23_CHECKPOINT_OS_SPRINTS_011_020.md
+- docs/operations/24_CHECKPOINT_OS_SPRINTS_021_030.md
+- docs/operations/25_CHECKPOINT_OS_SPRINTS_031_040.md
+- docs/operations/26_CHECKPOINT_OS_SPRINTS_041_050_PREP.md
+- docs/operations/27_OS_BLOCK_FINAL_STATUS.md
 
 ## UNKNOWNs
 
-- Smoke run_id
+- Smoke/demo run_id
 - Full-suite pytest / ruff green counts
 - Next sprint token after Mayhem review
 - Whether Mayhem will push this block as-is
 
 ## Recommended next safe action
 
-Mayhem review local ahead commits on /home/josefgray/projects/nativeforge; approve push manually if desired; do not use capitalized clone; optional full-suite run only if explicitly approved.
+Mayhem review local ahead commits on /home/josefgray/projects/nativeforge; approve push manually if desired; keep capitalized clone unused; optional UI surfacing only under a new approved PLAN.
