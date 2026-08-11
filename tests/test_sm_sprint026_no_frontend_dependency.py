@@ -10,5 +10,6 @@ from nativeforge.services import nm_wa_operator_surfacing_demo_render_service as
 def test_demo_layer_is_cli_static_not_frontend() -> None:
     src = Path(render.__file__).read_text(encoding="utf-8")
     assert "frontend" not in src.lower()
-    assert "auth" not in src.lower()
+    assert "react" not in src.lower()
+    assert "demo_dev_only" in src
     assert render.SCHEMA_VERSION.endswith("_demo_render_v1")

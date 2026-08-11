@@ -3,8 +3,10 @@
 
 Usage:
   python scripts/nm_wa_operator_surfacing_demo_cli.py --format text
-  python scripts/nm_wa_operator_surfacing_demo_cli.py --format html --out /tmp/nf_os_demo.html
-  python scripts/nm_wa_operator_surfacing_demo_cli.py --format json --out /tmp/nf_os_demo.json
+  python scripts/nm_wa_operator_surfacing_demo_cli.py \\
+      --format html --out /tmp/nf_os_demo.html
+  python scripts/nm_wa_operator_surfacing_demo_cli.py \\
+      --format json --out /tmp/nf_os_demo.json
 
 Offline synthetic only. No network, no source activation.
 """

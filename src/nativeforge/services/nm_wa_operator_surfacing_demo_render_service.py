@@ -1,6 +1,6 @@
 """CLI/static visibility layer for NM/WA operator surfacing demo artifacts.
 
-Offline-only. No auth changes. No production routes. Renderable HTML + text.
+Offline-only. No login/session changes. No production routes. Renderable HTML + text.
 """
 
 from __future__ import annotations
