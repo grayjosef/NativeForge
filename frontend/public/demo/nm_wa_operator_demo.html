@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>NM/WA Operator Surfacing Demo (offline)</title>
+<style>
+body { font-family: Georgia, serif; margin: 2rem; background: #f7f3ea; color: #1c1a17; }
+h1 { font-size: 1.6rem; }
+table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+th, td { border: 1px solid #b7a98a; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+th { background: #e8dfc8; }
+.meta { margin: 0.4rem 0; }
+.flag { color: #6b3b1f; font-weight: 600; }
+</style>
+</head>
+<body>
+<h1>NM/WA Operator Surfacing Demo (offline)</h1>
+<p class="meta flag">demo_dev_only / offline_synthetic — not a production surface</p>
+<p class="meta">NM=22 WA=29 combined=51</p>
+<p class="meta">review_needed=51 missing_data_rows=4</p>
+<p class="meta">final_eligibility_claim_allowed=False</p>
+<p class="meta">content_digest=4f2eefc145c19ee78d660241b8b038627bc1721ff01b56ee518884297c705a7b</p>
+<table>
+<thead><tr>
+<th>State</th><th>Profile</th><th>Readiness</th><th>Human review</th><th>Missing data</th><th>Next checks</th>
+</tr></thead>
+<tbody>
+<tr><td>NM</td><td>nm_pilot_pueblo_of_santa_ana_new_mexico</td><td>incomplete_profile_data</td><td>True</td><td>[&#x27;program_areas&#x27;]</td><td>[&#x27;human_review_classify_match_rows_before_any_claim&#x27;, &#x27;confirm_program_areas_with_operator_evidence&#x27;]</td></tr><tr><td>NM</td><td>nm_pilot_pueblo_of_zia_new_mexico</td><td>incomplete_profile_data</td><td>True</td><td>[&#x27;program_areas&#x27;]</td><td>[&#x27;human_review_classify_match_rows_before_any_claim&#x27;, &#x27;confirm_program_areas_with_operator_evidence&#x27;]</td></tr><tr><td>WA</td><td>wa_pilot_confederated_tribes_of_the_chehalis_reservation</td><td>incomplete_profile_data</td><td>True</td><td>[&#x27;grant_posture&#x27;]</td><td>[&#x27;human_review_classify_match_rows_before_any_claim&#x27;, &#x27;confirm_grant_posture_with_operator_evidence&#x27;]</td></tr><tr><td>WA</td><td>wa_pilot_hoh_indian_tribe</td><td>incomplete_profile_data</td><td>True</td><td>[&#x27;grant_posture&#x27;]</td><td>[&#x27;human_review_classify_match_rows_before_any_claim&#x27;, &#x27;confirm_grant_posture_with_operator_evidence&#x27;]</td></tr><tr><td>NM</td><td>nm_pilot_jicarilla_apache_nation_new_mexico</td><td>needs_operator_review</td><td>True</td><td>[]</td><td>[&#x27;human_review_classify_match_rows_before_any_claim&#x27;]</td></tr>
+</tbody>
+</table>
+</body>
+</html>
