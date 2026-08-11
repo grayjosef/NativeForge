@@ -1,0 +1,92 @@
+{
+  "auth_changed": false,
+  "bridge_content_digest": "4f2eefc145c19ee78d660241b8b038627bc1721ff01b56ee518884297c705a7b",
+  "external_urls_used": false,
+  "failures": [],
+  "live_ingestion": false,
+  "not_run_reason": null,
+  "offline_only": true,
+  "overall_status": "PASS",
+  "page_source_chars": 4995,
+  "playwright_not_run_reason": "Playwright/browser e2e not installed in frontend; demo-runtime static/Vitest path is the supported unattended smoke mode",
+  "playwright_status": "NOT_RUN",
+  "prior_offline_smoke_run_id": "nf_os_smoke_20260811T004712Z_9dccb0db",
+  "read_only_advisory": true,
+  "run_id": "nf_os_browser_20260811T094927Z_920a291f",
+  "schema_version": "nf_nm_wa_browser_smoke_runner_v1",
+  "screens": [
+    {
+      "detail": "nm_fixtures=22",
+      "screen": "nm_fixture_visibility",
+      "status": "PASS"
+    },
+    {
+      "detail": "wa_fixtures=29",
+      "screen": "wa_fixture_visibility",
+      "status": "PASS"
+    },
+    {
+      "detail": "nm_cm=22",
+      "screen": "nm_classify_match_outputs",
+      "status": "PASS"
+    },
+    {
+      "detail": "wa_cm=29",
+      "screen": "wa_classify_match_outputs",
+      "status": "PASS"
+    },
+    {
+      "detail": "nm_report=22",
+      "screen": "nm_operator_report",
+      "status": "PASS"
+    },
+    {
+      "detail": "wa_report=29",
+      "screen": "wa_operator_report",
+      "status": "PASS"
+    },
+    {
+      "detail": "combined=51",
+      "screen": "combined_review_queue_report",
+      "status": "PASS"
+    },
+    {
+      "detail": "missing_rows=4",
+      "screen": "missing_data_display",
+      "status": "PASS"
+    },
+    {
+      "detail": "human_review=51",
+      "screen": "human_review_display",
+      "status": "PASS"
+    },
+    {
+      "detail": "next_checks=51",
+      "screen": "operator_next_check_display",
+      "status": "PASS"
+    },
+    {
+      "detail": "provenance_visible",
+      "screen": "provenance_evidence_display",
+      "status": "PASS"
+    },
+    {
+      "detail": "confidence_keys=['public_inferred_low']",
+      "screen": "confidence_readiness_labels",
+      "status": "PASS"
+    },
+    {
+      "detail": "no_final_claim",
+      "screen": "no_final_eligibility_claim_behavior",
+      "status": "PASS"
+    },
+    {
+      "detail": "all_visible",
+      "screen": "broad_partial_relevance_discoverable_behavior",
+      "status": "PASS"
+    }
+  ],
+  "smoke_mode": "demo_runtime_static_vitest",
+  "source_activation": false,
+  "static_html_chars": 2428
+}
