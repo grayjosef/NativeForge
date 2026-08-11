@@ -282,14 +282,19 @@ def run_nm_wa_operator_surfacing_smoke(
     if art.get("source_activation") is True:
         hard_failures.append("live_ingestion_or_source_activation")
 
-    # Demo visibility layer must also be renderable
-    payload = build_demo_visibility_payload(art)
-    text = render_demo_text_report(payload)
-    html_doc = render_demo_html_report(payload)
-    if "NM=22" not in text or "WA=29" not in text:
-        hard_failures.append("demo_text_render_failed")
-    if "<!DOCTYPE html>" not in html_doc:
-        hard_failures.append("demo_html_render_failed")
+    # Demo visibility layer must also be renderable (malformed artifacts => FAIL)
+    text = ""
+    html_doc = ""
+    try:
+        payload = build_demo_visibility_payload(art)
+        text = render_demo_text_report(payload)
+        html_doc = render_demo_html_report(payload)
+        if "NM=22" not in text or "WA=29" not in text:
+            hard_failures.append("demo_text_render_failed")
+        if "<!DOCTYPE html>" not in html_doc:
+            hard_failures.append("demo_html_render_failed")
+    except Exception as exc:  # noqa: BLE001 — smoke must report FAIL, not crash
+        hard_failures.append(f"demo_visibility_render_error:{type(exc).__name__}")
 
     for name, status_detail in list(surface_map.items()):
         if (
