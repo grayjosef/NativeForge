@@ -602,6 +602,7 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/nm_wa_browser_demo_contract_service.py" = ["E501"]
 "src/nativeforge/services/nm_wa_browser_demo_manifest_service.py" = ["E501"]
 "src/nativeforge/services/nm_wa_browser_demo_bridge_service.py" = ["E501"]
+"src/nativeforge/services/nm_wa_browser_smoke_runner_service.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
