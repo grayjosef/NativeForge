@@ -2,32 +2,31 @@
 
 ## Block complete
 
-**NF Browser/UI Demo Surfacing Block — NM/WA operator review visibility in frontend/demo runtime**
+**NF Playwright E2E Enablement Block — real browser automation for NM/WA operator demo**
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone `/home/josefgray/projects/NativeForge` avoided)
 - branch: `main`
-- HEAD before: `0d50bf6`
-- HEAD after: `25938f1`
-- origin/main: `0d50bf6` at block start (local ahead; **not pushed**)
+- HEAD before: `a24650a`
+- HEAD after: `HEAD_AFTER_TIP`
+- origin/main: `a24650a` at block start (local ahead; **not pushed**)
 - working tree: clean at block stop
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched/unstaged
-- prior block: NF Smoke/Demo Validation Block — NM/WA operator surfacing end-to-end visibility
+- prior block: NF Browser/UI Demo Surfacing Block
 
-## Browser / demo state
+## Playwright / E2E state
 
-- prior offline smoke run_id: `nf_os_smoke_20260811T004712Z_9dccb0db` (PASS, 14 surfaces)
-- browser/demo executed: **yes** (demo-runtime static/Vitest)
-- browser/demo run_id: `nf_os_browser_20260811T094927Z_920a291f`
+- prior demo-runtime run_id: `nf_os_browser_20260811T094927Z_920a291f` (PASS)
+- Playwright executed: **yes**
+- Playwright run_id: `nf_os_playwright_20260811T112219Z_4c991fc1`
 - overall: **PASS**
-- smoke_mode: `demo_runtime_static_vitest`
-- Playwright e2e: **NOT_RUN** — Playwright/browser e2e not installed in frontend; demo-runtime path is the supported unattended mode
-- route: `?view=nm_wa_operator_demo`
-- static HTML: `frontend/public/demo/nm_wa_operator_demo.html`
-- bridge JSON: `frontend/src/demo/nm_wa_operator_demo.json`
-- artifact: `artifacts/nm_wa_browser_smoke/nf_os_browser_20260811T094927Z_920a291f.json`
+- mode: `playwright_e2e` / headless chromium
+- route tested: `/?view=nm_wa_operator_demo`
+- artifacts:
+  - `artifacts/nm_wa_playwright_smoke/nf_os_playwright_20260811T112219Z_4c991fc1.json`
+  - `artifacts/nm_wa_playwright_smoke/nf_os_playwright_20260811T112219Z_4c991fc1.log`
 - screens (all PASS):
   - nm_fixture_visibility: PASS
   - wa_fixture_visibility: PASS
@@ -44,23 +43,26 @@
   - no_final_eligibility_claim_behavior: PASS
   - broad_partial_relevance_discoverable_behavior: PASS
 - failures: none
+- NOT_RUN reason: n/a
 
 ## Validation
 
-- scoped `test_bu_sprint*.py`: 44+ passed at close
-- prior offline smoke artifact revalidated
+- scoped `test_pw_sprint*.py`: 44 passed
+- Playwright E2E smoke: PASS
+- prior demo-runtime artifact revalidated
 - `nm_wa_operator_surfacing_staging_verify`: OK
 - `nm_wa_pilot_staging_verify`: OK
-- frontend typecheck/build/Vitest demo tests: green when frontend touched
+- frontend typecheck green when tooling touched
 - full suite: **NOT_RUN**
 - repo-wide ruff: **NOT_RUN** / backlog untouched
 
 ## Feature state
 
-- frontend/demo surface built: yes (`NmWaOperatorDemoPage`)
-- demo data bridge built: yes
-- browser smoke runner built: yes (`scripts/nm_wa_browser_demo_smoke_verify.sh`)
-- browser/frontend touched: yes (read-only demo page + nav)
+- Playwright config added: yes (`frontend/playwright.config.ts`)
+- E2E smoke test added: yes (`frontend/e2e/nm_wa_operator_demo.smoke.spec.ts`)
+- smoke runner added: yes (`scripts/nm_wa_playwright_e2e_smoke_verify.sh`)
+- frontend/demo route changed: no (existing `?view=nm_wa_operator_demo` reused)
+- package/dependency changes: `@playwright/test@1.54.2` in frontend package.json/lock; chromium to local Playwright cache; **uv.lock untouched**
 - scoring/match logic changed: no
 - source activation / live ingestion: no
 - auth / human gates changed: no
@@ -71,16 +73,16 @@
 - stash preserved
 - no push
 - no migrations / alembic autogenerate
-- no scrape / live ingest / external URLs / source activation
+- no scrape / live ingest / production mutation
 - no fabricated PASS or run_id
 - uv.lock not staged
 
 ## UNKNOWNs remaining
 
 - Full pytest suite not run this block
-- True Playwright/browser e2e not available (honestly NOT_RUN)
-- Production/demo deploy readiness not assessed
+- Headed (non-headless) Playwright smoke not run
+- Firefox/WebKit projects not enabled (chromium-only by design)
 
 ## NEXT SAFE ACTION
 
-Mayhem review of local `main` ahead of `origin/main`, then manual push if approved. Optional later: add Playwright e2e only if product wants true browser automation beyond demo-runtime/Vitest.
+Mayhem review of local `main` ahead of `origin/main`, then manual push if approved.
