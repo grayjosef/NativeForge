@@ -1,0 +1,95 @@
+{
+  "artifact_paths": [
+    "artifacts/nm_wa_playwright_smoke/nf_os_playwright_20260811T112219Z_4c991fc1.log",
+    "artifacts/nm_wa_playwright_smoke/nf_os_playwright_20260811T112219Z_4c991fc1.json"
+  ],
+  "auth_changed": false,
+  "demo_route_path": "/?view=nm_wa_operator_demo",
+  "external_urls_used": false,
+  "failures": [],
+  "headless": true,
+  "live_ingestion": false,
+  "not_run_reason": null,
+  "offline_only": true,
+  "overall_status": "PASS",
+  "playwright_exit_code": 0,
+  "prior_demo_runtime_run_id": "nf_os_browser_20260811T094927Z_920a291f",
+  "read_only_advisory": true,
+  "run_id": "nf_os_playwright_20260811T112219Z_4c991fc1",
+  "schema_version": "nf_nm_wa_playwright_smoke_runner_v1",
+  "screens": [
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "nm_fixture_visibility",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "wa_fixture_visibility",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "nm_classify_match_outputs",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "wa_classify_match_outputs",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "nm_operator_report",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "wa_operator_report",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "combined_review_queue_report",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "missing_data_display",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "human_review_display",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "operator_next_check_display",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "provenance_evidence_display",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "confidence_readiness_labels",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "no_final_eligibility_claim_behavior",
+      "status": "PASS"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "screen": "broad_partial_relevance_discoverable_behavior",
+      "status": "PASS"
+    }
+  ],
+  "smoke_mode": "playwright_e2e",
+  "source_activation": false,
+  "spec": "e2e/nm_wa_operator_demo.smoke.spec.ts"
+}
