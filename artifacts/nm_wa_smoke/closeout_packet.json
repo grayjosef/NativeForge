@@ -56,6 +56,7 @@
   "expected_surface_count": 14,
   "failures": [],
   "full_suite": "NOT_RUN",
+  "handoff_note": "13_HANDOFF_LATEST repaired after shell backtick corruption in sprint-050 write",
   "hard_invariants_covered": [
     "no_final_eligibility_without_evidence",
     "unknowns_force_operator_review",
