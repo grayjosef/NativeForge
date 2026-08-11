@@ -25,3 +25,7 @@ frontend/dist/
 
 # Local databases
 *.db
+
+# Playwright local artifacts
+frontend/playwright-report/
+frontend/test-results/
