@@ -4,10 +4,14 @@ from __future__ import annotations
 
 from nativeforge.services.nm_pilot_fixture_loader_service import (
     EXPECTED_PROFILE_COUNT as NM_N,
+)
+from nativeforge.services.nm_pilot_fixture_loader_service import (
     load_nm_tribal_profiles,
 )
 from nativeforge.services.wa_pilot_fixture_loader_service import (
     EXPECTED_PROFILE_COUNT as WA_N,
+)
+from nativeforge.services.wa_pilot_fixture_loader_service import (
     load_wa_tribal_profiles,
 )
 

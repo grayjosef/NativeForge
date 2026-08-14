@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from nativeforge.services.nm_wa_smoke_manifest_service import build_smoke_manifest
-from nativeforge.services.nm_wa_smoke_validation_contract_service import EXPECTED_SURFACES
+from nativeforge.services.nm_wa_smoke_validation_contract_service import (
+    EXPECTED_SURFACES,
+)
 
 
 def test_smoke_manifest() -> None:

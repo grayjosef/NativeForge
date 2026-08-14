@@ -31,6 +31,9 @@ from nativeforge.services.recognition_tier_eligibility_gate_service import (
     OUTCOME_NEEDS_OPERATOR_REVIEW,
     apply_recognition_tier_eligibility_gate,
 )
+from nativeforge.services.sc_pilot_classify_match_orchestrator_service import (
+    run_sc_pilot_classify_match_block,
+)
 from nativeforge.services.sc_pilot_fixture_loader_service import (
     fixtures_present,
     load_sc_eligibility_rules,
@@ -39,9 +42,6 @@ from nativeforge.services.sc_pilot_fixture_loader_service import (
 )
 from nativeforge.services.sc_pilot_honesty_regression_service import (
     run_sc_pilot_honesty_regression,
-)
-from nativeforge.services.sc_pilot_classify_match_orchestrator_service import (
-    run_sc_pilot_classify_match_block,
 )
 
 _FIXTURES_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "sc_pilot"
@@ -139,7 +139,9 @@ def test_dual_pathway_ac2b_501c3_confirmed() -> None:
     """AC-2b: tribal path blocked; nonprofit path eligible when 501(c)(3) confirmed."""
     profile = _state_only_profile(has_501c3=True)
     opp = _dual_pathway_opp()
-    tier_gate = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=profile)
+    tier_gate = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=profile
+    )
     assert tier_gate["recognition_tier_mismatch"] is True
     assert tier_gate["tribal_pathway"]["outcome"] == OUTCOME_BLOCKED
     assert tier_gate["nonprofit_pathway"]["outcome"] == OUTCOME_ELIGIBLE
@@ -153,7 +155,9 @@ def test_dual_pathway_ac2b_501c3_unknown() -> None:
     """AC-2b: nonprofit pathway unknown → needs_operator_review, not silently eligible."""
     profile = _state_only_profile(has_501c3="unknown")
     opp = _dual_pathway_opp()
-    tier_gate = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=profile)
+    tier_gate = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=profile
+    )
     assert tier_gate["recognition_tier_mismatch"] is True
     assert tier_gate["outcome"] == OUTCOME_NEEDS_OPERATOR_REVIEW
     assert tier_gate["excluded_from_match_set"] is False
@@ -164,18 +168,24 @@ def test_incorporation_ac2c() -> None:
     """AC-2c: ANA requires incorporation — unknown → review, incorporated → eligible."""
     opp = _ana_incorporation_opp()
     incorporated = _state_only_profile(incorporated=True)
-    gate_ok = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=incorporated)
+    gate_ok = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=incorporated
+    )
     assert gate_ok["outcome"] == OUTCOME_ELIGIBLE
     assert gate_ok["excluded_from_match_set"] is False
 
     unknown_inc = _state_only_profile(incorporated="unknown")
-    gate_review = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=unknown_inc)
+    gate_review = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=unknown_inc
+    )
     assert gate_review["outcome"] == OUTCOME_NEEDS_OPERATOR_REVIEW
     assert gate_review["excluded_from_match_set"] is False
     assert gate_review["condition_mismatch"] is False
 
     not_inc = _state_only_profile(incorporated=False)
-    gate_blocked = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=not_inc)
+    gate_blocked = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=not_inc
+    )
     assert gate_blocked["outcome"] == OUTCOME_BLOCKED
     assert gate_blocked["condition_mismatch"] is True
     assert BLOCKER_ELIGIBILITY_CONDITION_MISMATCH in gate_blocked["blocker_codes"]
@@ -200,7 +210,9 @@ def test_gate_independent_of_evidence_gap_ac2() -> None:
     opp = _federal_required_opp()
     assert profile["profile_evidence_codes"] == []
 
-    tier_gate = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=profile)
+    tier_gate = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=profile
+    )
     assert tier_gate["recognition_tier_mismatch"] is True
     assert tier_gate["blocker_code"] == BLOCKER_RECOGNITION_TIER_MISMATCH
     assert tier_gate["excluded_from_match_set"] is True
@@ -217,27 +229,39 @@ def test_federal_tribe_no_tier_mismatch_ac3() -> None:
     """AC-3 unit proof: federal profile has no tier blocker on federal_required."""
     profile = _federal_profile()
     opp = _federal_required_opp()
-    tier_gate = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=profile)
+    tier_gate = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=profile
+    )
     assert tier_gate["recognition_tier_mismatch"] is False
     assert tier_gate["blocker_code"] is None
 
     assessment = assess_eligibility_fit(opp, profile)
-    assert BLOCKER_RECOGNITION_TIER_MISMATCH not in assessment["blockers"]["blocker_codes"]
+    assert (
+        BLOCKER_RECOGNITION_TIER_MISMATCH not in assessment["blockers"]["blocker_codes"]
+    )
 
 
 def test_ana_reaches_state_only_ac4() -> None:
     """AC-4: state_ok grant not tier-excluded for state-only tribe."""
     profile = _state_only_profile()
     opp = _ana_state_ok_opp()
-    tier_gate = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=profile)
+    tier_gate = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=profile
+    )
     assert tier_gate["excluded_from_match_set"] is False
     assert tier_gate["recognition_tier_mismatch"] is False
 
 
 def test_unknown_requirement_needs_review_ac4() -> None:
     profile = _state_only_profile()
-    opp = {"fixture_key": "x", "recognition_requirement": "unknown", "tribal_eligible": True}
-    tier_gate = apply_recognition_tier_eligibility_gate(opportunity=opp, profile=profile)
+    opp = {
+        "fixture_key": "x",
+        "recognition_requirement": "unknown",
+        "tribal_eligible": True,
+    }
+    tier_gate = apply_recognition_tier_eligibility_gate(
+        opportunity=opp, profile=profile
+    )
     assert tier_gate["outcome"] == "needs_operator_review"
     assert tier_gate["excluded_from_match_set"] is False
 

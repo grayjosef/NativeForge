@@ -7,6 +7,9 @@ from pathlib import Path
 
 import pytest
 
+from nativeforge.services.grant_eligibility_conditions_service import (
+    enrich_grant_with_eligibility_metadata,
+)
 from nativeforge.services.grants_gov_applicant_type_recognition_service import (
     TYPE_FED_TRIBAL_GOV,
     TYPE_NONFED_TRIBAL_ORG,
@@ -16,9 +19,6 @@ from nativeforge.services.grants_gov_applicant_type_recognition_service import (
     derive_recognition_from_grant_applicant_types,
     infer_applicant_type_ids_from_labels,
     resolve_grant_applicant_type_ids,
-)
-from nativeforge.services.grant_eligibility_conditions_service import (
-    enrich_grant_with_eligibility_metadata,
 )
 from nativeforge.services.matching_profile_provenance_service import (
     CAPTURE_PUBLIC_INFERRED,
@@ -33,8 +33,12 @@ from nativeforge.services.recognition_tier_eligibility_gate_service import (
     OUTCOME_ELIGIBLE,
     apply_recognition_tier_eligibility_gate,
 )
-from nativeforge.services.sc_pilot_fixture_loader_service import load_sc_eligibility_rules
-from nativeforge.services.tier3_foundation_corpus_persist_service import load_mixed_tier13_corpus
+from nativeforge.services.sc_pilot_fixture_loader_service import (
+    load_sc_eligibility_rules,
+)
+from nativeforge.services.tier3_foundation_corpus_persist_service import (
+    load_mixed_tier13_corpus,
+)
 
 _SNAPSHOT_PATH = (
     Path(__file__).resolve().parents[1]
@@ -123,7 +127,9 @@ def test_applicant_type_07_and_12_dual_pathway_ac2e() -> None:
     assert enriched["dual_pathway"]["nonprofit_alternative"] is True
 
     profile = _state_only_profile(has_501c3=True)
-    gate = apply_recognition_tier_eligibility_gate(opportunity=enriched, profile=profile)
+    gate = apply_recognition_tier_eligibility_gate(
+        opportunity=enriched, profile=profile
+    )
     assert gate["recognition_tier_mismatch"] is True
     assert gate["tribal_pathway"]["outcome"] == OUTCOME_BLOCKED
     assert gate["nonprofit_pathway"]["outcome"] == OUTCOME_ELIGIBLE
@@ -192,7 +198,10 @@ def test_conflict_gg_vs_rules_surfaces_unknown() -> None:
     assert bundle["recognition_requirement"] == "unknown"
     assert bundle["recognition_requirement_source"] == "conflict"
     assert bundle["recognition_requirement_conflict"] is True
-    assert bundle["recognition_requirement_candidates"]["applicant_types"] == "federal_required"
+    assert (
+        bundle["recognition_requirement_candidates"]["applicant_types"]
+        == "federal_required"
+    )
     assert (
         bundle["recognition_requirement_candidates"]["rules"]
         == "federal_required_for_tribal_pathway"
@@ -230,7 +239,14 @@ def test_corpus_derived_regression_snapshot() -> None:
         enriched = enrich_grant_with_eligibility_metadata(corpus[grant_id], rules=rules)
         actual = enriched["recognition_requirement"]
         if actual != expected:
-            mismatches.append((grant_id, expected, actual, enriched.get("recognition_requirement_source")))
+            mismatches.append(
+                (
+                    grant_id,
+                    expected,
+                    actual,
+                    enriched.get("recognition_requirement_source"),
+                )
+            )
     assert not mismatches, mismatches
 
 
@@ -239,4 +255,7 @@ def test_infer_labels_from_tedc_fixture_style() -> None:
         "Native American tribal governments (Federally recognized)",
         "Native American tribal organizations (other than Federally recognized tribal governments)",
     ]
-    assert infer_applicant_type_ids_from_labels(labels) == [TYPE_FED_TRIBAL_GOV, TYPE_NONFED_TRIBAL_ORG]
+    assert infer_applicant_type_ids_from_labels(labels) == [
+        TYPE_FED_TRIBAL_GOV,
+        TYPE_NONFED_TRIBAL_ORG,
+    ]
