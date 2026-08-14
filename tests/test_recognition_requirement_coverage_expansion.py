@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-
 from nativeforge.services.grant_eligibility_conditions_service import (
     enrich_grant_with_eligibility_metadata,
 )
