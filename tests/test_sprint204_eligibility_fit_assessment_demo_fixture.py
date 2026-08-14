@@ -19,7 +19,11 @@ def test_load_fixtures() -> None:
 
 
 def test_resolve_profile_for_opportunity() -> None:
-    opp = next(o for o in load_opportunity_fixtures() if o["fixture_key"] == "efa_demo_strong_fit")
+    opp = next(
+        o
+        for o in load_opportunity_fixtures()
+        if o["fixture_key"] == "efa_demo_strong_fit"
+    )
     profile = resolve_profile_for_opportunity(opp)
     assert profile["fixture_key"] == "efa_profile_complete_tribe"
 

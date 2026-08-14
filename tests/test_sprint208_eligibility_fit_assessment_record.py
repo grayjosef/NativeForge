@@ -13,7 +13,11 @@ from nativeforge.services.eligibility_fit_assessment_record_service import (
 
 
 def test_record_assembles_assessment_and_guidance() -> None:
-    opp = next(o for o in load_opportunity_fixtures() if o["fixture_key"] == "efa_demo_strong_fit")
+    opp = next(
+        o
+        for o in load_opportunity_fixtures()
+        if o["fixture_key"] == "efa_demo_strong_fit"
+    )
     profile = resolve_profile_for_opportunity(opp)
     record = build_eligibility_fit_assessment_record(opp, profile)
     assert record["schema_version"] == SCHEMA_VERSION

@@ -56,7 +56,9 @@ def test_staging_seed_preview_report_route(client_staging: TestClient) -> None:
     assert r.json()["seed_row_count"] == 177
 
 
-def test_production_env_blocked(client_staging: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_production_env_blocked(
+    client_staging: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.setenv("NF_APP_ENV", "production")
     get_settings.cache_clear()
     r = client_staging.get(
