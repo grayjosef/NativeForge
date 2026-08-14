@@ -1,0 +1,374 @@
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Initial empty revision (NF-000 scaffold — domain tables follow in later tickets).
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, Sprint 0: organizations, nf_review_artifacts, nf_audit_events, triggers, PG RLS.
+INFO  [alembic.runtime.migration] Running upgrade 0002 -> 0003, Sprint 1: nf_tribal_profiles + tribal_profile_id on nf_audit_events.
+INFO  [alembic.runtime.migration] Running upgrade 0003 -> 0004, Sprint 2: nf_grant_sparks (grant opportunity / discovery layer).
+INFO  [alembic.runtime.migration] Running upgrade 0004 -> 0005, Sprint 3: NOFO extraction runs, spark requirements, audit link.
+INFO  [alembic.runtime.migration] Running upgrade 0005 -> 0006, Sprint 4: deterministic Spark scores (nf_spark_scores).
+INFO  [alembic.runtime.migration] Running upgrade 0006 -> 0007, Sprint 5: grant pursuits, tasks, calendar events.
+INFO  [alembic.runtime.migration] Running upgrade 0007 -> 0008, Sprint 6: review-gated form packages + SF-424 preview snapshot.
+INFO  [alembic.runtime.migration] Running upgrade 0008 -> 0009, Sprint 9: nf_pursuit_briefs — deterministic pursuit intelligence artifact.
+INFO  [alembic.runtime.migration] Running upgrade 0009 -> 0010, Sprint 10: opportunity source registry + Grant Spark discovery metadata.
+INFO  [alembic.runtime.migration] Running upgrade 0010 -> 0011, Sprint 11: opportunity source coverage metadata on nf_opportunity_sources.
+INFO  [alembic.runtime.migration] Running upgrade 0011 -> 0012, Sprint 12: discovery intake runs + intake candidates (audit trail).
+INFO  [alembic.runtime.migration] Running upgrade 0012 -> 0013, Sprint 13: discovery review queue + QC hooks.
+INFO  [alembic.runtime.migration] Running upgrade 0013 -> 0014, Sprint 14: discovery review assigned_to as plain text (operator handle).
+INFO  [alembic.runtime.migration] Running upgrade 0014 -> 0015, Sprint 15: source check scheduling + freshness monitoring + check runs table.
+INFO  [alembic.runtime.migration] Running upgrade 0015 -> 0018, Sprint 18: operator action ledger + resolution workflow.
+INFO  [alembic.runtime.migration] Running upgrade 0018 -> 0019, Sprint 46: nf_active_opportunity_sources table (file generation only).
+INFO  [alembic.runtime.migration] Running upgrade 0019 -> 0020, M7/M8: nf_activation_state + nf_auto_publish_config (durable workspace flags).
+INFO  [alembic.runtime.migration] Running upgrade 0020 -> 0021, SH: nf_opportunity_sources seed_id identity (registry re-key off URL).
+........................................................................ [  1%]
+....................s................................................... [  2%]
+........................................................................ [  3%]
+.................................................F...................... [  5%]
+........................................................................ [  6%]
+........................................................................ [  7%]
+........................................................................ [  9%]
+........................................................................ [ 10%]
+........................................................................ [ 11%]
+........................................................................ [ 13%]
+........................................................................ [ 14%]
+........................................................................ [ 15%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 19%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 23%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 27%]
+........................................................................ [ 28%]
+........................................................................ [ 29%]
+........................................................................ [ 31%]
+........................................................................ [ 32%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 36%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 40%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+..F..................................................................... [ 44%]
+.............................F.......................................... [ 45%]
+.....F.................................................................. [ 46%]
+........................................................................ [ 48%]
+........................................................................ [ 49%]
+................................................................FFF....F [ 50%]
+Fs................s.........s............s.............s................ [ 52%]
+..s..............s...............s.................s.................... [ 53%]
+s..................s.......................F...FF....................... [ 54%]
+........................................................................ [ 56%]
+...............................F....F..............................F.... [ 57%]
+........................F.........................F..................... [ 58%]
+.........F....................................F......................... [ 59%]
+......F.......................F........FFFFF....F..F.......FFF.FF..FFF.. [ 61%]
+......FFFFFFF.F.F.............................F......................... [ 62%]
+........................................................................ [ 63%]
+........................................................................ [ 65%]
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+........................................................................ [ 75%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 88%]
+........................................................................ [ 89%]
+........................................................................ [ 91%]
+........................................................................ [ 92%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+........................................................................ [ 96%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+................................................s.                       [100%]
+=================================== FAILURES ===================================
+E   AssertionError: assert 80 <= 45
+     +  where 80 = len([{'agency': 'Indian Health Service', 'applicant_types_include_tribal': False, 'application_deadline': '', 'detail_live...'applicant_type_ids': ['01'], 'applicant_types_include_tribal': False, 'application_deadline': '07/22/2026', ...}, ...])
+/home/josefgray/projects/nativeforge/tests/test_recognition_requirement_coverage_expansion.py:218: AssertionError: assert 80 <= 45
+E   AssertionError: assert 6 == 5
+     +  where 6 = len(('eligibility_fit', 'recognition_tier_fit', 'relevance_fit', 'geography_fit', 'program_fit', 'capacity_fit'))
+/home/josefgray/projects/nativeforge/tests/test_sprint197_eligibility_fit_assessment_dimension_vocabulary.py:18: AssertionError: assert 6 == 5
+E   AssertionError: assert '0021 (head)' == '0019 (head)'
+      
+      - 0019 (head)
+      ?    -
+      + 0021 (head)
+      ?   +
+/home/josefgray/projects/nativeforge/tests/test_sprint20_discovery_engine_closeout.py:153: AssertionError: assert '0021 (head)' == '0019 (head)'
+E   AssertionError: assert 'not_ready_missing_documents' in {'blocked', 'not_ready_eligibility_uncertain'}
+/home/josefgray/projects/nativeforge/tests/test_sprint222_matching_readiness_readiness_evaluator.py:44: AssertionError: assert 'not_ready_missing_documents' in {'blocked', 'not_ready_eligibility_uncertain'}
+E   nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+/home/josefgray/projects/nativeforge/src/nativeforge/services/source_program_ownership_guard_service.py:89: nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+E   nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+/home/josefgray/projects/nativeforge/src/nativeforge/services/source_program_ownership_guard_service.py:89: nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+E   nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+/home/josefgray/projects/nativeforge/src/nativeforge/services/source_program_ownership_guard_service.py:89: nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+E   nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+/home/josefgray/projects/nativeforge/src/nativeforge/services/source_program_ownership_guard_service.py:89: nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+E   nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+/home/josefgray/projects/nativeforge/src/nativeforge/services/source_program_ownership_guard_service.py:89: nativeforge.services.source_program_ownership_guard_service.CrossProgramProxyError: grant 'nf13-real-fed-021' agency 'HHS-IHS' does not match source agency 'SAMHSA / HHS'
+E   assert False is True
+----------------------------- Captured stderr call -----------------------------
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Initial empty revision (NF-000 scaffold — domain tables follow in later tickets).
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, Sprint 0: organizations, nf_review_artifacts, nf_audit_events, triggers, PG RLS.
+INFO  [alembic.runtime.migration] Running upgrade 0002 -> 0003, Sprint 1: nf_tribal_profiles + tribal_profile_id on nf_audit_events.
+INFO  [alembic.runtime.migration] Running upgrade 0003 -> 0004, Sprint 2: nf_grant_sparks (grant opportunity / discovery layer).
+INFO  [alembic.runtime.migration] Running upgrade 0004 -> 0005, Sprint 3: NOFO extraction runs, spark requirements, audit link.
+INFO  [alembic.runtime.migration] Running upgrade 0005 -> 0006, Sprint 4: deterministic Spark scores (nf_spark_scores).
+INFO  [alembic.runtime.migration] Running upgrade 0006 -> 0007, Sprint 5: grant pursuits, tasks, calendar events.
+INFO  [alembic.runtime.migration] Running upgrade 0007 -> 0008, Sprint 6: review-gated form packages + SF-424 preview snapshot.
+INFO  [alembic.runtime.migration] Running upgrade 0008 -> 0009, Sprint 9: nf_pursuit_briefs — deterministic pursuit intelligence artifact.
+INFO  [alembic.runtime.migration] Running upgrade 0009 -> 0010, Sprint 10: opportunity source registry + Grant Spark discovery metadata.
+INFO  [alembic.runtime.migration] Running upgrade 0010 -> 0011, Sprint 11: opportunity source coverage metadata on nf_opportunity_sources.
+INFO  [alembic.runtime.migration] Running upgrade 0011 -> 0012, Sprint 12: discovery intake runs + intake candidates (audit trail).
+INFO  [alembic.runtime.migration] Running upgrade 0012 -> 0013, Sprint 13: discovery review queue + QC hooks.
+INFO  [alembic.runtime.migration] Running upgrade 0013 -> 0014, Sprint 14: discovery review assigned_to as plain text (operator handle).
+INFO  [alembic.runtime.migration] Running upgrade 0014 -> 0015, Sprint 15: source check scheduling + freshness monitoring + check runs table.
+INFO  [alembic.runtime.migration] Running upgrade 0015 -> 0018, Sprint 18: operator action ledger + resolution workflow.
+INFO  [alembic.runtime.migration] Running upgrade 0018 -> 0019, Sprint 46: nf_active_opportunity_sources table (file generation only).
+INFO  [alembic.runtime.migration] Running upgrade 0019 -> 0020, M7/M8: nf_activation_state + nf_auto_publish_config (durable workspace flags).
+INFO  [alembic.runtime.migration] Running upgrade 0020 -> 0021, SH: nf_opportunity_sources seed_id identity (registry re-key off URL).
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0021 -> 0020, SH: nf_opportunity_sources seed_id identity (registry re-key off URL).
+INFO  [alembic.runtime.migration] Running downgrade 0020 -> 0019, M7/M8: nf_activation_state + nf_auto_publish_config (durable workspace flags).
+INFO  [alembic.runtime.migration] Running downgrade 0019 -> 0018, Sprint 46: nf_active_opportunity_sources table (file generation only).
+/home/josefgray/projects/nativeforge/tests/test_sprint47_active_source_local_migration_verification.py:116: assert False is True
+E   AssertionError: assert 'blocked' == 'passed'
+      
+      - passed
+      + blocked
+----------------------------- Captured stderr call -----------------------------
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Initial empty revision (NF-000 scaffold — domain tables follow in later tickets).
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, Sprint 0: organizations, nf_review_artifacts, nf_audit_events, triggers, PG RLS.
+INFO  [alembic.runtime.migration] Running upgrade 0002 -> 0003, Sprint 1: nf_tribal_profiles + tribal_profile_id on nf_audit_events.
+INFO  [alembic.runtime.migration] Running upgrade 0003 -> 0004, Sprint 2: nf_grant_sparks (grant opportunity / discovery layer).
+INFO  [alembic.runtime.migration] Running upgrade 0004 -> 0005, Sprint 3: NOFO extraction runs, spark requirements, audit link.
+INFO  [alembic.runtime.migration] Running upgrade 0005 -> 0006, Sprint 4: deterministic Spark scores (nf_spark_scores).
+INFO  [alembic.runtime.migration] Running upgrade 0006 -> 0007, Sprint 5: grant pursuits, tasks, calendar events.
+INFO  [alembic.runtime.migration] Running upgrade 0007 -> 0008, Sprint 6: review-gated form packages + SF-424 preview snapshot.
+INFO  [alembic.runtime.migration] Running upgrade 0008 -> 0009, Sprint 9: nf_pursuit_briefs — deterministic pursuit intelligence artifact.
+INFO  [alembic.runtime.migration] Running upgrade 0009 -> 0010, Sprint 10: opportunity source registry + Grant Spark discovery metadata.
+INFO  [alembic.runtime.migration] Running upgrade 0010 -> 0011, Sprint 11: opportunity source coverage metadata on nf_opportunity_sources.
+INFO  [alembic.runtime.migration] Running upgrade 0011 -> 0012, Sprint 12: discovery intake runs + intake candidates (audit trail).
+INFO  [alembic.runtime.migration] Running upgrade 0012 -> 0013, Sprint 13: discovery review queue + QC hooks.
+INFO  [alembic.runtime.migration] Running upgrade 0013 -> 0014, Sprint 14: discovery review assigned_to as plain text (operator handle).
+INFO  [alembic.runtime.migration] Running upgrade 0014 -> 0015, Sprint 15: source check scheduling + freshness monitoring + check runs table.
+INFO  [alembic.runtime.migration] Running upgrade 0015 -> 0018, Sprint 18: operator action ledger + resolution workflow.
+INFO  [alembic.runtime.migration] Running upgrade 0018 -> 0019, Sprint 46: nf_active_opportunity_sources table (file generation only).
+INFO  [alembic.runtime.migration] Running upgrade 0019 -> 0020, M7/M8: nf_activation_state + nf_auto_publish_config (durable workspace flags).
+INFO  [alembic.runtime.migration] Running upgrade 0020 -> 0021, SH: nf_opportunity_sources seed_id identity (registry re-key off URL).
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0021 -> 0020, SH: nf_opportunity_sources seed_id identity (registry re-key off URL).
+INFO  [alembic.runtime.migration] Running downgrade 0020 -> 0019, M7/M8: nf_activation_state + nf_auto_publish_config (durable workspace flags).
+INFO  [alembic.runtime.migration] Running downgrade 0019 -> 0018, Sprint 46: nf_active_opportunity_sources table (file generation only).
+/home/josefgray/projects/nativeforge/tests/test_sprint47_active_source_local_migration_verification.py:165: AssertionError: assert 'blocked' == 'passed'
+E   AssertionError: assert ['nf_activati...blish_config'] == ['nf_active_o...nity_sources']
+      
+      At index 0 diff: 'nf_activation_state' != 'nf_active_opportunity_sources'
+      Left contains 2 more items, first extra item: 'nf_active_opportunity_sources'
+      Use -v to get more diff
+----------------------------- Captured stderr call -----------------------------
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0001, Initial empty revision (NF-000 scaffold — domain tables follow in later tickets).
+INFO  [alembic.runtime.migration] Running upgrade 0001 -> 0002, Sprint 0: organizations, nf_review_artifacts, nf_audit_events, triggers, PG RLS.
+INFO  [alembic.runtime.migration] Running upgrade 0002 -> 0003, Sprint 1: nf_tribal_profiles + tribal_profile_id on nf_audit_events.
+INFO  [alembic.runtime.migration] Running upgrade 0003 -> 0004, Sprint 2: nf_grant_sparks (grant opportunity / discovery layer).
+INFO  [alembic.runtime.migration] Running upgrade 0004 -> 0005, Sprint 3: NOFO extraction runs, spark requirements, audit link.
+INFO  [alembic.runtime.migration] Running upgrade 0005 -> 0006, Sprint 4: deterministic Spark scores (nf_spark_scores).
+INFO  [alembic.runtime.migration] Running upgrade 0006 -> 0007, Sprint 5: grant pursuits, tasks, calendar events.
+INFO  [alembic.runtime.migration] Running upgrade 0007 -> 0008, Sprint 6: review-gated form packages + SF-424 preview snapshot.
+INFO  [alembic.runtime.migration] Running upgrade 0008 -> 0009, Sprint 9: nf_pursuit_briefs — deterministic pursuit intelligence artifact.
+INFO  [alembic.runtime.migration] Running upgrade 0009 -> 0010, Sprint 10: opportunity source registry + Grant Spark discovery metadata.
+INFO  [alembic.runtime.migration] Running upgrade 0010 -> 0011, Sprint 11: opportunity source coverage metadata on nf_opportunity_sources.
+INFO  [alembic.runtime.migration] Running upgrade 0011 -> 0012, Sprint 12: discovery intake runs + intake candidates (audit trail).
+INFO  [alembic.runtime.migration] Running upgrade 0012 -> 0013, Sprint 13: discovery review queue + QC hooks.
+INFO  [alembic.runtime.migration] Running upgrade 0013 -> 0014, Sprint 14: discovery review assigned_to as plain text (operator handle).
+INFO  [alembic.runtime.migration] Running upgrade 0014 -> 0015, Sprint 15: source check scheduling + freshness monitoring + check runs table.
+INFO  [alembic.runtime.migration] Running upgrade 0015 -> 0018, Sprint 18: operator action ledger + resolution workflow.
+INFO  [alembic.runtime.migration] Running upgrade 0018 -> 0019, Sprint 46: nf_active_opportunity_sources table (file generation only).
+INFO  [alembic.runtime.migration] Running upgrade 0019 -> 0020, M7/M8: nf_activation_state + nf_auto_publish_config (durable workspace flags).
+INFO  [alembic.runtime.migration] Running upgrade 0020 -> 0021, SH: nf_opportunity_sources seed_id identity (registry re-key off URL).
+INFO  [alembic.runtime.migration] Context impl SQLiteImpl.
+INFO  [alembic.runtime.migration] Will assume non-transactional DDL.
+INFO  [alembic.runtime.migration] Running downgrade 0021 -> 0020, SH: nf_opportunity_sources seed_id identity (registry re-key off URL).
+INFO  [alembic.runtime.migration] Running downgrade 0020 -> 0019, M7/M8: nf_activation_state + nf_auto_publish_config (durable workspace flags).
+INFO  [alembic.runtime.migration] Running downgrade 0019 -> 0018, Sprint 46: nf_active_opportunity_sources table (file generation only).
+/home/josefgray/projects/nativeforge/tests/test_sprint47_active_source_local_migration_verification.py:173: AssertionError: assert ['nf_activati...blish_config'] == ['nf_active_o...nity_sources']
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_file_added_for_sprint_53_chain.<locals>.<genexpr> at 0x7d0062bcf2a0>)
+/home/josefgray/projects/nativeforge/tests/test_sprint53_active_source_runtime_migration_post_apply_verification.py:257: assert not True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d006966c5f0>)
+/home/josefgray/projects/nativeforge/tests/test_sprint54_active_source_empty_state_read_model.py:69: assert not True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d006373b9f0>)
+/home/josefgray/projects/nativeforge/tests/test_sprint55_active_source_creation_request.py:263: assert not True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d0063b960c0>)
+/home/josefgray/projects/nativeforge/tests/test_sprint56_active_source_human_approval_intake.py:346: assert not True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d0069a998a0>)
+/home/josefgray/projects/nativeforge/tests/test_sprint57_active_source_creation_execution_dry_run.py:372: assert not True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d006970f9f0>)
+/home/josefgray/projects/nativeforge/tests/test_sprint58_active_source_creation_execution_readiness_gate.py:497: assert not True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d0069845080>)
+/home/josefgray/projects/nativeforge/tests/test_sprint59_active_source_creation_execution_command_package.py:583: assert not True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d0063520860>)
+/home/josefgray/projects/nativeforge/tests/test_sprint60_active_source_creation_execution_plan.py:409: assert not True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d0063520860>)
+/home/josefgray/projects/nativeforge/tests/test_sprint61_active_source_creation_execution_evidence_packet.py:558: assert not True
+E   AssertionError: assert 'blocked_runt...sion_mismatch' == 'blocked_target_table_missing'
+      
+      - blocked_target_table_missing
+      + blocked_runtime_revision_mismatch
+/home/josefgray/projects/nativeforge/tests/test_sprint62_runtime_active_source_creation_execution_evidence.py:150: AssertionError: assert 'blocked_runt...sion_mismatch' == 'blocked_target_table_missing'
+E   AssertionError: assert 'blocked_runt...sion_mismatch' == 'executed_run...e_row_created'
+      
+      - executed_runtime_single_source_row_created
+      + blocked_runtime_revision_mismatch
+/home/josefgray/projects/nativeforge/tests/test_sprint62_runtime_active_source_creation_execution_evidence.py:165: AssertionError: assert 'blocked_runt...sion_mismatch' == 'executed_run...e_row_created'
+E   AssertionError: assert 'blocked_runt...sion_mismatch' == 'executed_run...e_row_created'
+      
+      - executed_runtime_single_source_row_created
+      + blocked_runtime_revision_mismatch
+/home/josefgray/projects/nativeforge/tests/test_sprint62_runtime_active_source_creation_execution_evidence.py:187: AssertionError: assert 'blocked_runt...sion_mismatch' == 'executed_run...e_row_created'
+E   assert 0 == 1
+/home/josefgray/projects/nativeforge/tests/test_sprint62_runtime_active_source_creation_execution_evidence.py:202: assert 0 == 1
+E   assert False is True
+/home/josefgray/projects/nativeforge/tests/test_sprint62_runtime_active_source_creation_execution_evidence.py:217: assert False is True
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d0069b22dc0>)
+/home/josefgray/projects/nativeforge/tests/test_sprint62_runtime_active_source_creation_execution_evidence.py:286: assert not True
+E   assert False
+     +  where False = isinstance(None, dict)
+/home/josefgray/projects/nativeforge/tests/test_sprint62_runtime_active_source_creation_execution_evidence.py:330: assert False
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d0063539630>)
+/home/josefgray/projects/nativeforge/tests/test_sprint64_active_source_activation_readiness_gate.py:297: assert not True
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   AssertionError: assert 'blocked_runt...sion_mismatch' == 'executed_run...e_row_created'
+      
+      - executed_runtime_single_source_row_created
+      + blocked_runtime_revision_mismatch
+/home/josefgray/projects/nativeforge/tests/test_sprint64_post_runtime_active_source_verification.py:258: AssertionError: assert 'blocked_runt...sion_mismatch' == 'executed_run...e_row_created'
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   ValueError: badly formed hexadecimal UUID string
+/usr/lib/python3.12/uuid.py:178: ValueError: badly formed hexadecimal UUID string
+E   assert not True
+     +  where True = any(<generator object test_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d006936c2b0>)
+/home/josefgray/projects/nativeforge/tests/test_sprint64_post_runtime_active_source_verification.py:435: assert not True
+E   assert not True
+     +  where True = any(<generator object test_28_no_new_alembic_revision_beyond_0019.<locals>.<genexpr> at 0x7d006970d970>)
+/home/josefgray/projects/nativeforge/tests/test_sprint65_active_source_activation_review_packet.py:402: assert not True
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /home/josefgray/projects/nativeforge/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+tests/test_isolation_routes.py::test_invalid_org_uuid_returns_422
+  /home/josefgray/projects/nativeforge/.venv/lib/python3.12/site-packages/fastapi/dependencies/utils.py:678: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    solved = await call(**solved_result.values)
+
+tests/test_sprint47_active_source_local_migration_verification.py: 16 warnings
+  /home/josefgray/projects/nativeforge/.venv/lib/python3.12/site-packages/alembic/config.py:612: DeprecationWarning: No path_separator found in configuration; falling back to legacy splitting on spaces, commas, and colons for prepend_sys_path.  Consider adding path_separator=os to Alembic config.
+    util.warn_deprecated(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_recognition_requirement_coverage_expansion.py::test_unknown_count_drops_ac1
+FAILED tests/test_sprint197_eligibility_fit_assessment_dimension_vocabulary.py::test_five_fit_dimensions
+FAILED tests/test_sprint20_discovery_engine_closeout.py::test_alembic_migrations_unique_revisions_and_expected_head
+FAILED tests/test_sprint222_matching_readiness_readiness_evaluator.py::test_incomplete_profile_blocked_readiness
+FAILED tests/test_sprint345_nf15_corrected_corpus.py::test_reingest_fixes_placeholder_grants
+FAILED tests/test_sprint345_nf15_corrected_corpus.py::test_corrected_corpus_no_tribal_federal_irrelevant
+FAILED tests/test_sprint348_nf15_closeout.py::test_nf15_gate_and_closeout - n...
+FAILED tests/test_sprint355_nf16_no_proxy_closeout.py::test_nf16_corpus_zero_proxy
+FAILED tests/test_sprint355_nf16_no_proxy_closeout.py::test_nf16_gate_and_closeout
+FAILED tests/test_sprint47_active_source_local_migration_verification.py::test_table_exists_after_upgrade_and_gone_after_downgrade
+FAILED tests/test_sprint47_active_source_local_migration_verification.py::test_full_artifact_with_isolated_proof_passes
+FAILED tests/test_sprint47_active_source_local_migration_verification.py::test_downgrade_does_not_drop_unrelated_tables
+FAILED tests/test_sprint53_active_source_runtime_migration_post_apply_verification.py::test_no_new_alembic_revision_file_added_for_sprint_53_chain
+FAILED tests/test_sprint54_active_source_empty_state_read_model.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint55_active_source_creation_request.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint56_active_source_human_approval_intake.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint57_active_source_creation_execution_dry_run.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint58_active_source_creation_execution_readiness_gate.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint59_active_source_creation_execution_command_package.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint60_active_source_creation_execution_plan.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint61_active_source_creation_execution_evidence_packet.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint62_runtime_active_source_creation_execution_evidence.py::test_missing_target_table_blocks_before_row_creation
+FAILED tests/test_sprint62_runtime_active_source_creation_execution_evidence.py::test_duplicate_source_blocks_before_sprint_61_execution
+FAILED tests/test_sprint62_runtime_active_source_creation_execution_evidence.py::test_valid_controlled_runtime_path_creates_exactly_one_row
+FAILED tests/test_sprint62_runtime_active_source_creation_execution_evidence.py::test_count_delta_equals_one_and_row_id_recorded
+FAILED tests/test_sprint62_runtime_active_source_creation_execution_evidence.py::test_created_row_reloads_matches_payload_has_rollback_activation_pending
+FAILED tests/test_sprint62_runtime_active_source_creation_execution_evidence.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint62_runtime_active_source_creation_execution_evidence.py::test_sprint_61_packet_embedded_on_success
+FAILED tests/test_sprint64_active_source_activation_readiness_gate.py::test_valid_post_runtime_yields_blocked_requires_activation_review_artifacts
+FAILED tests/test_sprint64_active_source_activation_readiness_gate.py::test_gate_includes_required_future_activation_review_artifacts
+FAILED tests/test_sprint64_active_source_activation_readiness_gate.py::test_gate_includes_review_requirement_sections
+FAILED tests/test_sprint64_active_source_activation_readiness_gate.py::test_gate_does_not_write_db
+FAILED tests/test_sprint64_active_source_activation_readiness_gate.py::test_gate_stateless_counts_remain_zero
+FAILED tests/test_sprint64_active_source_activation_readiness_gate.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint64_active_source_activation_readiness_gate.py::test_invalid_optional_runtime_evidence_blocks_not_ready
+FAILED tests/test_sprint64_active_source_activation_readiness_gate.py::test_placeholder_review_artifacts_can_yield_ready_for_future_packet
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_evidence_snapshot_field_mismatch_blocks
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_already_activated_row_blocks
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_valid_runtime_row_verifies_ready_for_activation_gate
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_runtime_row_snapshot_includes_required_fields
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_rollback_contract_present_and_activation_fields_null
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_pipeline_evidence_remains_false
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_all_actual_counts_zero_and_may_flags_false
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_service_does_not_write_db
+FAILED tests/test_sprint64_post_runtime_active_source_verification.py::test_no_new_alembic_revision_beyond_0019
+FAILED tests/test_sprint65_active_source_activation_review_packet.py::test_28_no_new_alembic_revision_beyond_0019
+46 failed, 5463 passed, 13 skipped, 18 warnings in 1409.01s (0:23:29)
