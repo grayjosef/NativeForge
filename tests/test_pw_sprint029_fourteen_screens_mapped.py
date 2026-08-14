@@ -26,7 +26,9 @@ MARKERS = {
 
 
 def test_all_screens_have_markers() -> None:
-    text = Path("frontend/e2e/nm_wa_operator_demo.smoke.spec.ts").read_text(encoding="utf-8")
+    text = Path("frontend/e2e/nm_wa_operator_demo.smoke.spec.ts").read_text(
+        encoding="utf-8"
+    )
     assert set(MARKERS) == set(EXPECTED_SCREENS)
     for screen, marker in MARKERS.items():
         assert marker in text, screen

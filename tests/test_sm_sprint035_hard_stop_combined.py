@@ -15,4 +15,7 @@ def test_hard_stop_missing_combined() -> None:
     a["combined_review_queue"] = {"rows": [], "combined_profile_count": 0}
     r = run_nm_wa_operator_surfacing_smoke(artifact=a)
     assert r["overall_status"] == "FAIL"
-    assert any(s["surface"] == "combined_review_queue_report" and s["status"] == "FAIL" for s in r["surfaces"])
+    assert any(
+        s["surface"] == "combined_review_queue_report" and s["status"] == "FAIL"
+        for s in r["surfaces"]
+    )

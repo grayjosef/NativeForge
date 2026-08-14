@@ -16,4 +16,7 @@ def test_not_run_requires_reason() -> None:
 def test_pass_requires_run_id() -> None:
     r = empty_playwright_smoke_result(status="PASS")
     r["overall_status"] = "PASS"
-    assert "missing_or_invalid_run_id_for_executed_smoke" in validate_playwright_smoke_result(r)
+    assert (
+        "missing_or_invalid_run_id_for_executed_smoke"
+        in validate_playwright_smoke_result(r)
+    )
