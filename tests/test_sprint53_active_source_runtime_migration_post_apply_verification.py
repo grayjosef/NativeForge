@@ -101,7 +101,10 @@ def test_artifact_type_and_metadata() -> None:
     assert ev["target_down_revision_id"] == TARGET_DOWN_REVISION_ID == "0018"
     assert ev["target_migration_file_path"] == TARGET_MIGRATION_FILE_PATH
     assert ev["target_table"] == TARGET_TABLE
-    assert ev["source_apply_execution_artifact_type"] == SOURCE_APPLY_EXECUTION_ARTIFACT_TYPE
+    assert (
+        ev["source_apply_execution_artifact_type"]
+        == SOURCE_APPLY_EXECUTION_ARTIFACT_TYPE
+    )
 
 
 def test_valid_observations_post_apply_verified() -> None:
@@ -284,4 +287,7 @@ def test_discovery_read_only_post_apply_attachment_embedded(
 def test_read_only_builder_matches_expected_keys() -> None:
     ro = build_discovery_read_only_post_apply_verification_status_attachment()
     assert ro["target_revision_id"] == TARGET_REVISION_ID
-    assert ro["source_apply_execution_artifact_type"] == SOURCE_APPLY_EXECUTION_ARTIFACT_TYPE
+    assert (
+        ro["source_apply_execution_artifact_type"]
+        == SOURCE_APPLY_EXECUTION_ARTIFACT_TYPE
+    )

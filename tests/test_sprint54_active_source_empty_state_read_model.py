@@ -39,7 +39,9 @@ SERVICE_PATH = (
     / "services"
     / "active_source_empty_state_read_model_service.py"
 )
-MIGRATION_PATH = REPO_ROOT / "alembic" / "versions" / "0019_nf_active_opportunity_sources.py"
+MIGRATION_PATH = (
+    REPO_ROOT / "alembic" / "versions" / "0019_nf_active_opportunity_sources.py"
+)
 
 
 def _source_imports_subprocess(src: str) -> bool:
@@ -71,7 +73,11 @@ def test_no_new_alembic_revision_beyond_0019() -> None:
 
 def test_read_model_artifact_type_and_targets() -> None:
     art = build_active_source_empty_state_read_model(observed_active_source_count=0)
-    assert art["artifact_type"] == ARTIFACT_TYPE == "nf_active_source_empty_state_read_model_v1"
+    assert (
+        art["artifact_type"]
+        == ARTIFACT_TYPE
+        == "nf_active_source_empty_state_read_model_v1"
+    )
     assert art["target_revision_id"] == TARGET_REVISION_ID == "0019"
     assert art["target_table"] == TARGET_TABLE == "nf_active_opportunity_sources"
     assert art["orm_model_present"] is True
@@ -218,4 +224,6 @@ def test_api_discovery_still_embeds_empty_state_after_registry_post(
     assert r.status_code == 201
     with SessionLocal() as s:
         dq = build_discovery_source_quality(s, org_id=oid, org_type="demo")
-    assert dq["active_source_empty_state_read_model"]["observed_active_source_count"] == 0
+    assert (
+        dq["active_source_empty_state_read_model"]["observed_active_source_count"] == 0
+    )

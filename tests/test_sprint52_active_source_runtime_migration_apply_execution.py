@@ -187,7 +187,9 @@ def test_rollback_path_not_preserved_blocks() -> None:
 
 
 def test_actual_runtime_migration_apply_count_one_only_when_applied() -> None:
-    applied = build_active_source_runtime_migration_apply_execution_evidence(**_base_ok())
+    applied = build_active_source_runtime_migration_apply_execution_evidence(
+        **_base_ok()
+    )
     assert applied["actual_runtime_migration_apply_count"] == 1
     assert applied["actual_database_schema_change_count"] == 1
     same = build_active_source_runtime_migration_apply_execution_evidence(
@@ -290,4 +292,7 @@ def test_discovery_read_only_attachment_embedded(
 def test_read_only_builder_matches_expected_keys() -> None:
     ro = build_discovery_read_only_apply_execution_status_attachment()
     assert ro["target_revision_id"] == TARGET_REVISION_ID
-    assert ro["source_dry_run_package_artifact_type"] == SOURCE_DRY_RUN_PACKAGE_ARTIFACT_TYPE
+    assert (
+        ro["source_dry_run_package_artifact_type"]
+        == SOURCE_DRY_RUN_PACKAGE_ARTIFACT_TYPE
+    )

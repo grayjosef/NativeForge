@@ -102,7 +102,11 @@ def _complete_payload() -> dict[str, object]:
 
 def test_artifact_type_and_metadata() -> None:
     g = build_active_source_runtime_migration_readiness_gate(None)
-    assert g["artifact_type"] == ARTIFACT_TYPE == "nf_active_source_runtime_migration_readiness_gate_v1"
+    assert (
+        g["artifact_type"]
+        == ARTIFACT_TYPE
+        == "nf_active_source_runtime_migration_readiness_gate_v1"
+    )
     assert g["target_revision_id"] == TARGET_REVISION_ID == "0019"
     assert g["target_down_revision_id"] == TARGET_DOWN_REVISION_ID == "0018"
     assert g["target_migration_file_path"] == TARGET_MIGRATION_FILE_PATH
@@ -266,7 +270,9 @@ def test_blocked_when_plan_status_invalid(monkeypatch: pytest.MonkeyPatch) -> No
         p["plan_status"] = "blocked_pending_prerequisites_or_human_review"
         return p
 
-    monkeypatch.setattr(rg.asrmap_svc, "build_active_source_runtime_migration_apply_plan", _bad)
+    monkeypatch.setattr(
+        rg.asrmap_svc, "build_active_source_runtime_migration_apply_plan", _bad
+    )
     g = build_active_source_runtime_migration_readiness_gate(_complete_payload())
     assert g["readiness_decision"] == "blocked_requires_human_review"
 
@@ -276,4 +282,3 @@ def test_execution_proof_false_flags() -> None:
     proof = g["sprint_50_execution_proof"]
     assert proof["alembic_cli_invoked_by_this_module"] is False
     assert proof["migration_applied_by_this_module"] is False
-
