@@ -6,7 +6,14 @@ from nativeforge.services.nm_wa_combined_operator_surfacing_service import (
     build_combined_operator_review_queue,
 )
 
-_G = [{"grant_id": "os-c-038", "opportunity_title": "Tribal Discretionary Grant", "program_area": "health", "recognition_requirement": "federal_required"}]
+_G = [
+    {
+        "grant_id": "os-c-038",
+        "opportunity_title": "Tribal Discretionary Grant",
+        "program_area": "health",
+        "recognition_requirement": "federal_required",
+    }
+]
 
 
 def test_no_match_logic_change_flag() -> None:

@@ -9,7 +9,14 @@ from nativeforge.services.nm_wa_operator_review_service import (
     REVIEW_REASON_NO_FINAL_ELIGIBILITY_WITHOUT_EVIDENCE,
 )
 
-_G = [{"grant_id": "os-c-036", "opportunity_title": "Tribal Discretionary Grant", "program_area": "health", "recognition_requirement": "federal_required"}]
+_G = [
+    {
+        "grant_id": "os-c-036",
+        "opportunity_title": "Tribal Discretionary Grant",
+        "program_area": "health",
+        "recognition_requirement": "federal_required",
+    }
+]
 
 
 def test_blockers_include_shared_vocab() -> None:

@@ -6,7 +6,14 @@ from nativeforge.services.nm_wa_combined_operator_surfacing_service import (
     build_combined_operator_review_queue,
 )
 
-_G = [{"grant_id": "os-c-040", "opportunity_title": "Tribal Discretionary Grant", "program_area": "health", "recognition_requirement": "federal_required"}]
+_G = [
+    {
+        "grant_id": "os-c-040",
+        "opportunity_title": "Tribal Discretionary Grant",
+        "program_area": "health",
+        "recognition_requirement": "federal_required",
+    }
+]
 
 
 def test_combined_checkpoint() -> None:
