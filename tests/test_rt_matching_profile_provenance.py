@@ -65,7 +65,10 @@ def test_ac1_provenance_vocabulary_and_inferred_guard() -> None:
         "capture_method": CAPTURE_PUBLIC_INFERRED,
         "field_provenance": [
             {"field_name": "applicant_type", "capture_method": CAPTURE_PUBLIC_INFERRED},
-            {"field_name": "service_geography", "capture_method": CAPTURE_PUBLIC_INFERRED},
+            {
+                "field_name": "service_geography",
+                "capture_method": CAPTURE_PUBLIC_INFERRED,
+            },
         ],
     }
     assert derive_profile_evidence_codes(inferred) == []
@@ -75,7 +78,9 @@ def test_ac1_provenance_vocabulary_and_inferred_guard() -> None:
         {"field_name": "applicant_type", "capture_method": CAPTURE_TRIBE_CONFIRMED},
         {"field_name": "service_geography", "capture_method": CAPTURE_TRIBE_CONFIRMED},
     ]
-    assert "applicant_type_confirmed_in_profile" in derive_profile_evidence_codes(confirmed)
+    assert "applicant_type_confirmed_in_profile" in derive_profile_evidence_codes(
+        confirmed
+    )
 
 
 def test_ac2_program_and_geography_fit_before_after() -> None:
@@ -88,7 +93,9 @@ def test_ac2_program_and_geography_fit_before_after() -> None:
             opp_legacy = {
                 "fixture_key": grant.get("grant_id"),
                 "tribal_eligible": grant.get("tribal_eligible"),
-                "applicant_types_include_tribal": grant.get("applicant_types_include_tribal"),
+                "applicant_types_include_tribal": grant.get(
+                    "applicant_types_include_tribal"
+                ),
             }
             opp_new = grant_to_matching_opportunity(grant)
             if dim == "program_fit":
@@ -107,17 +114,13 @@ def test_ac2_program_and_geography_fit_before_after() -> None:
     assert coverage["required_geography_known_count"] > 0
     assert coverage["program_area_unknown_count"] > 0
 
-    tedc = next(
-        g for g in grants if "TEDC" in str(g.get("opportunity_title"))
-    )
+    tedc = next(g for g in grants if "TEDC" in str(g.get("opportunity_title")))
     opp = grant_to_matching_opportunity(tedc)
     assert derive_program_area_from_grant(tedc) == "energy"
     assert evaluate_program_fit(opp, profile)["fit_status"] == "strong"
     assert evaluate_geography_fit(opp, profile)["fit_status"] == "strong"
 
-    vague = next(
-        g for g in grants if g.get("grant_id") == "nf13-real-fed-001"
-    )
+    vague = next(g for g in grants if g.get("grant_id") == "nf13-real-fed-001")
     vague_opp = grant_to_matching_opportunity(vague)
     assert derive_program_area_from_grant(vague) is None
     assert evaluate_program_fit(vague_opp, profile)["fit_status"] == "unknown"
@@ -126,7 +129,9 @@ def test_ac2_program_and_geography_fit_before_after() -> None:
 def test_ac3_red_cedar_synthetic_retained_and_selector() -> None:
     selector = build_matching_profile_selector_contract()
     profiles = list_available_matching_profiles()
-    red_cedar = next(p for p in profiles if p["fixture_key"] == PROFILE_SYNTHETIC_RED_CEDAR)
+    red_cedar = next(
+        p for p in profiles if p["fixture_key"] == PROFILE_SYNTHETIC_RED_CEDAR
+    )
     assert red_cedar["no_real_customer_data"] is True
     assert red_cedar["available"] is True
     assert selector["default_fixture_key"] == PROFILE_SYNTHETIC_RED_CEDAR

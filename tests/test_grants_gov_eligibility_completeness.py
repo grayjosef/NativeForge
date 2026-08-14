@@ -137,7 +137,12 @@ def test_attachment_inventory_metadata_only_from_tedc_fixture() -> None:
 def test_synopsis_parser_backward_compatible() -> None:
     result = parse_grants_gov_synopsis_eligibility(
         {
-            "applicantTypes": [{"id": "07", "description": "Native American tribal governments (Federally recognized)"}],
+            "applicantTypes": [
+                {
+                    "id": "07",
+                    "description": "Native American tribal governments (Federally recognized)",
+                }
+            ],
             "applicantEligibilityDesc": "Only federally recognized tribes.",
         }
     )
@@ -176,7 +181,11 @@ def test_foreign_yseali_stays_unknown_after_completeness() -> None:
             ),
             "eligibility_text_source": "synopsis",
         },
-        {"synopsis": {"applicantEligibilityDesc": "For-profit entities are not eligible."}},
+        {
+            "synopsis": {
+                "applicantEligibilityDesc": "For-profit entities are not eligible."
+            }
+        },
     )
     enriched = enrich_grant_with_eligibility_metadata(grant)
     assert enriched["recognition_requirement"] == "unknown"

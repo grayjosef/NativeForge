@@ -19,7 +19,11 @@ from nativeforge.services.native_relevance_classification_record_service import 
 
 
 def test_strong_fit_with_evidence_allows_claim() -> None:
-    opp = next(o for o in load_opportunity_fixtures() if o["fixture_key"] == "efa_demo_strong_fit")
+    opp = next(
+        o
+        for o in load_opportunity_fixtures()
+        if o["fixture_key"] == "efa_demo_strong_fit"
+    )
     profile = resolve_profile_for_opportunity(opp)
     preview = build_native_relevance_classification_record(opp)
     result = assess_eligibility_fit(opp, profile, native_relevance_preview=preview)
@@ -30,7 +34,9 @@ def test_strong_fit_with_evidence_allows_claim() -> None:
 
 def test_claim_blocked_without_profile_evidence() -> None:
     opp = next(
-        o for o in load_opportunity_fixtures() if o["fixture_key"] == "efa_demo_claim_without_evidence"
+        o
+        for o in load_opportunity_fixtures()
+        if o["fixture_key"] == "efa_demo_claim_without_evidence"
     )
     profile = resolve_profile_for_opportunity(opp)
     result = assess_eligibility_fit(opp, profile)
@@ -40,7 +46,9 @@ def test_claim_blocked_without_profile_evidence() -> None:
 
 def test_incomplete_profile_stays_discoverable() -> None:
     opp = next(
-        o for o in load_opportunity_fixtures() if o["fixture_key"] == "efa_demo_incomplete_profile"
+        o
+        for o in load_opportunity_fixtures()
+        if o["fixture_key"] == "efa_demo_incomplete_profile"
     )
     profile = resolve_profile_for_opportunity(opp)
     result = assess_eligibility_fit(opp, profile)

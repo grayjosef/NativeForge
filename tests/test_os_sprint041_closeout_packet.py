@@ -6,7 +6,14 @@ from nativeforge.services.nm_wa_operator_surfacing_closeout_packet_service impor
     build_operator_surfacing_closeout_packet,
 )
 
-_G = [{"grant_id": "os-c-041", "opportunity_title": "Tribal Discretionary Grant", "program_area": "health", "recognition_requirement": "federal_required"}]
+_G = [
+    {
+        "grant_id": "os-c-041",
+        "opportunity_title": "Tribal Discretionary Grant",
+        "program_area": "health",
+        "recognition_requirement": "federal_required",
+    }
+]
 
 
 def test_closeout_packet_flags() -> None:
