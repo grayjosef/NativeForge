@@ -1,17 +1,17 @@
 # Ruff Before/After Comparison
 
 Block: NF Full-Suite Health / Lint-Debt Containment  
-Sprint: 042
+Sprint: 042 (counts refreshed sprint 044)
 
 | Metric | Before | After | Delta |
 |--------|-------:|------:|------:|
-| Total ruff errors | 1285 | 702 | 583 |
+| Total ruff errors | 1285 | 700 | 585 |
 
 ## Rule-code movement (baseline → after)
 
 | Code | Before | After | Notes |
 |------|-------:|------:|-------|
-| E501 | 1198 | ~696 | Large safe wrap slice; remainder unfixable tokens |
+| E501 | 1198 | 696 | Large safe wrap slice; remainder unfixable tokens |
 | I001 | 62 | 0 | Cleared |
 | F401 | 19 | 0 | Cleared |
 | F841 | 3 | 3 | Deferred ownership |
