@@ -61,7 +61,7 @@ def test_html_listing_extraction() -> None:
         html, base_url="https://www.firstpeoplesfund.org/grants"
     )
     assert len(listings) >= 4
-    titles = " ".join(l["listing_title"] for l in listings)
+    titles = " ".join(listing["listing_title"] for listing in listings)
     assert "Cultural Capital" in titles
 
 
