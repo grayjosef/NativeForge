@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 
 from nativeforge.services.grant_eligibility_conditions_service import (
     enrich_grant_with_eligibility_metadata,
@@ -16,7 +15,6 @@ from nativeforge.services.grants_gov_applicant_type_recognition_service import (
     TYPE_NONPROFIT_501C3,
     TYPE_NONPROFIT_NO_501C3,
     derive_recognition_from_applicant_type_ids,
-    derive_recognition_from_grant_applicant_types,
     infer_applicant_type_ids_from_labels,
     resolve_grant_applicant_type_ids,
 )

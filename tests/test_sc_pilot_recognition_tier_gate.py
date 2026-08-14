@@ -18,9 +18,6 @@ from nativeforge.services.matching_profile_provenance_service import (
     CAPTURE_PUBLIC_INFERRED,
     build_matching_profile_with_provenance,
 )
-from nativeforge.services.matching_readiness_matching_evaluator_service import (
-    evaluate_match,
-)
 from nativeforge.services.recognition_requirement_derivation_service import (
     derive_recognition_requirement_from_grant,
 )

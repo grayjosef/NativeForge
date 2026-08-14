@@ -12,7 +12,6 @@ from nativeforge.services.matching_profile_provenance_service import (
     CAPTURE_PUBLIC_INFERRED,
     CAPTURE_TRIBE_CONFIRMED,
     assert_inferred_never_promoted_to_confirmed,
-    build_matching_profile_provenance_contract,
     build_matching_profile_with_provenance,
     derive_profile_evidence_codes,
 )
@@ -27,11 +26,9 @@ from nativeforge.services.org_applicant_profile_field_provenance_service import 
 )
 from nativeforge.services.real_grant_classify_match_service import (
     _grant_to_opportunity,
-    classify_and_match_real_grants,
 )
 from nativeforge.services.real_grant_opportunity_metadata_service import (
     derive_program_area_from_grant,
-    derive_required_geography_from_grant,
     grant_to_matching_opportunity,
     summarize_opportunity_metadata_coverage,
 )

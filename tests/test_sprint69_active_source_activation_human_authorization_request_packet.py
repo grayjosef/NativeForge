@@ -21,7 +21,6 @@ from nativeforge.services.active_source_activation_human_authorization_request_p
 )
 from nativeforge.services.active_source_activation_operator_decision_review_service import (
     OPERATOR_DECISION_BLOCKED,
-    OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW,
     build_active_source_activation_operator_decision_review,
 )
 from nativeforge.services.active_source_activation_review_packet_service import (

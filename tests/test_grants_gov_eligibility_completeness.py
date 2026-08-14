@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 from unittest.mock import patch
 
-import pytest
 
 from nativeforge.services.grant_eligibility_conditions_service import (
     enrich_grant_with_eligibility_metadata,

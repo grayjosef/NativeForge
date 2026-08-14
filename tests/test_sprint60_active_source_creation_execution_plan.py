@@ -46,12 +46,6 @@ from nativeforge.services.active_source_creation_execution_readiness_gate_servic
     ARTIFACT_TYPE as GATE_ARTIFACT_TYPE,
 )
 from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
-    READINESS_BLOCKED_HUMAN_REVIEW as GATE_BLOCKED,
-)
-from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
-    READINESS_READY_FUTURE_EXECUTION as GATE_READY_EXEC,
-)
-from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     build_active_source_creation_execution_readiness_gate,
 )
 from nativeforge.services.active_source_creation_request_service import (

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from nativeforge.services.matching_readiness_match_label_vocabulary_service import (
-    LABEL_BLOCKED,
     LABEL_NEEDS_MORE_PROFILE_DATA,
     LABEL_NEEDS_OPERATOR_REVIEW,
 )
