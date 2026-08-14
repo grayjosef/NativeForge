@@ -10,18 +10,6 @@ from pathlib import Path
 
 from nativeforge.db.models import NfActiveOpportunitySource, Organization
 from nativeforge.db.session import SessionLocal
-from nativeforge.services.active_source_creation_request_service import (
-    ARTIFACT_TYPE as REQUEST_ARTIFACT_TYPE,
-    READINESS_READY_REVIEW,
-    READINESS_NOT_READY as REQUEST_READINESS_NOT_READY,
-    build_active_source_creation_request,
-)
-from nativeforge.services.active_source_human_approval_intake_service import (
-    ARTIFACT_TYPE as APPROVAL_ARTIFACT_TYPE,
-    READINESS_READY_FUTURE as APPROVAL_READINESS_READY_FUTURE,
-    build_active_source_human_approval_intake,
-    build_discovery_read_only_active_source_human_approval_intake_attachment,
-)
 from nativeforge.services.active_source_creation_execution_dry_run_service import (
     ARTIFACT_TYPE,
     READINESS_BLOCKED_HUMAN,
@@ -31,6 +19,26 @@ from nativeforge.services.active_source_creation_execution_dry_run_service impor
     TARGET_TABLE,
     build_active_source_creation_execution_dry_run,
     build_discovery_read_only_active_source_creation_execution_dry_run_attachment,
+)
+from nativeforge.services.active_source_creation_request_service import (
+    ARTIFACT_TYPE as REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_request_service import (
+    READINESS_NOT_READY as REQUEST_READINESS_NOT_READY,
+)
+from nativeforge.services.active_source_creation_request_service import (
+    READINESS_READY_REVIEW,
+    build_active_source_creation_request,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
+    ARTIFACT_TYPE as APPROVAL_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
+    READINESS_READY_FUTURE as APPROVAL_READINESS_READY_FUTURE,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
+    build_active_source_human_approval_intake,
+    build_discovery_read_only_active_source_human_approval_intake_attachment,
 )
 from nativeforge.services.discovery_source_quality_service import (
     build_discovery_source_quality,
@@ -126,7 +134,11 @@ def _source_imports_subprocess(src: str) -> bool:
 
 def test_artifact_type_and_metadata() -> None:
     art = build_active_source_creation_execution_dry_run(None, None)
-    assert art["artifact_type"] == ARTIFACT_TYPE == "nf_active_source_creation_execution_dry_run_v1"
+    assert (
+        art["artifact_type"]
+        == ARTIFACT_TYPE
+        == "nf_active_source_creation_execution_dry_run_v1"
+    )
     assert art["target_revision_id"] == TARGET_REVISION_ID == "0019"
     assert art["target_table"] == TARGET_TABLE == "nf_active_opportunity_sources"
     assert art["source_creation_request_artifact_type"] == REQUEST_ARTIFACT_TYPE
@@ -173,7 +185,10 @@ def test_missing_human_approval_intake_returns_not_ready() -> None:
 def test_wrong_human_approval_artifact_type_not_ready() -> None:
     oid = uuid.uuid4()
     req = _valid_request_artifact(oid)
-    bad = {"artifact_type": "wrong", "readiness_decision": APPROVAL_READINESS_READY_FUTURE}
+    bad = {
+        "artifact_type": "wrong",
+        "readiness_decision": APPROVAL_READINESS_READY_FUTURE,
+    }
     art = build_active_source_creation_execution_dry_run(req, bad)
     assert art["readiness_decision"] == READINESS_NOT_READY
 
@@ -387,7 +402,9 @@ def test_discovery_integration_embeds_default_not_ready() -> None:
 
 
 def test_attachment_matches_standalone_empty_inputs() -> None:
-    att = build_discovery_read_only_active_source_creation_execution_dry_run_attachment()
+    att = (
+        build_discovery_read_only_active_source_creation_execution_dry_run_attachment()
+    )
     core = build_active_source_creation_execution_dry_run(None, None)
     assert att["readiness_decision"] == core["readiness_decision"]
     assert att["artifact_type"] == core["artifact_type"]

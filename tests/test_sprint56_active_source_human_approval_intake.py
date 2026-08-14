@@ -12,6 +12,8 @@ from nativeforge.db.models import Organization
 from nativeforge.db.session import SessionLocal
 from nativeforge.services.active_source_creation_request_service import (
     ARTIFACT_TYPE as REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_request_service import (
     READINESS_READY_REVIEW,
     build_active_source_creation_request,
 )
@@ -115,7 +117,11 @@ def _source_imports_subprocess(src: str) -> bool:
 
 def test_artifact_type_and_metadata() -> None:
     art = build_active_source_human_approval_intake(None, None)
-    assert art["artifact_type"] == ARTIFACT_TYPE == "nf_active_source_human_approval_intake_v1"
+    assert (
+        art["artifact_type"]
+        == ARTIFACT_TYPE
+        == "nf_active_source_human_approval_intake_v1"
+    )
     assert art["target_revision_id"] == TARGET_REVISION_ID == "0019"
     assert art["target_table"] == TARGET_TABLE == "nf_active_opportunity_sources"
     assert art["source_creation_request_artifact_type"] == REQUEST_ARTIFACT_TYPE
@@ -187,7 +193,9 @@ def test_acknowledgement_fields_must_be_true() -> None:
     ap["approves_future_source_creation_review_only"] = False
     art = build_active_source_human_approval_intake(_valid_request_artifact(oid), ap)
     assert art["readiness_decision"] == READINESS_NOT_READY
-    assert "approves_future_source_creation_review_only" in art["approval_fields_invalid"]
+    assert (
+        "approves_future_source_creation_review_only" in art["approval_fields_invalid"]
+    )
 
 
 def test_complete_valid_request_and_approval_ready_future_sprint() -> None:

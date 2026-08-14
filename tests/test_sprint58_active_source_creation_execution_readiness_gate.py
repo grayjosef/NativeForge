@@ -12,29 +12,45 @@ from nativeforge.db.models import Organization
 from nativeforge.db.session import SessionLocal
 from nativeforge.services.active_source_creation_execution_dry_run_service import (
     READINESS_BLOCKED_HUMAN,
-    READINESS_NOT_READY as DRY_RUN_NOT_READY,
-    READINESS_READY_FUTURE_EXEC as DRY_READY_FUTURE_EXEC,
     TARGET_REVISION_ID,
     TARGET_TABLE,
     build_active_source_creation_execution_dry_run,
 )
+from nativeforge.services.active_source_creation_execution_dry_run_service import (
+    READINESS_NOT_READY as DRY_RUN_NOT_READY,
+)
+from nativeforge.services.active_source_creation_execution_dry_run_service import (
+    READINESS_READY_FUTURE_EXEC as DRY_READY_FUTURE_EXEC,
+)
 from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     ARTIFACT_TYPE as GATE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     READINESS_BLOCKED_HUMAN_REVIEW,
-    READINESS_NOT_READY as GATE_READINESS_NOT_READY,
     READINESS_READY_FUTURE_EXECUTION,
     build_active_source_creation_execution_readiness_gate,
     build_discovery_read_only_active_source_creation_execution_readiness_gate_attachment,
 )
+from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
+    READINESS_NOT_READY as GATE_READINESS_NOT_READY,
+)
 from nativeforge.services.active_source_creation_request_service import (
     ARTIFACT_TYPE as REQUEST_ARTIFACT_TYPE,
-    READINESS_READY_REVIEW,
+)
+from nativeforge.services.active_source_creation_request_service import (
     READINESS_NOT_READY as REQUEST_READINESS_NOT_READY,
+)
+from nativeforge.services.active_source_creation_request_service import (
+    READINESS_READY_REVIEW,
     build_active_source_creation_request,
 )
 from nativeforge.services.active_source_human_approval_intake_service import (
     ARTIFACT_TYPE as APPROVAL_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
     READINESS_READY_FUTURE as APPROVAL_READINESS_READY,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
     build_active_source_human_approval_intake,
     build_discovery_read_only_active_source_human_approval_intake_attachment,
 )
@@ -174,19 +190,34 @@ def _assert_future_auth_preview_structure(obj: object) -> None:
     for leaf in obj.values():
         assert isinstance(leaf, dict)
         for pk in _PREVIEW_KEYS:
-            assert leaf[pk] is (True if pk in ("preview_only", "no_sql_generated", "no_database_session_opened", "requires_future_source_creation_execution_sprint") else False)
+            assert leaf[pk] is (
+                True
+                if pk
+                in (
+                    "preview_only",
+                    "no_sql_generated",
+                    "no_database_session_opened",
+                    "requires_future_source_creation_execution_sprint",
+                )
+                else False
+            )
 
 
 def test_artifact_type_and_metadata() -> None:
     art = build_active_source_creation_execution_readiness_gate()
-    assert art["artifact_type"] == GATE_ARTIFACT_TYPE == (
-        "nf_active_source_creation_execution_readiness_gate_v1"
+    assert (
+        art["artifact_type"]
+        == GATE_ARTIFACT_TYPE
+        == ("nf_active_source_creation_execution_readiness_gate_v1")
     )
     assert art["target_revision_id"] == TARGET_REVISION_ID == "0019"
     assert art["target_table"] == TARGET_TABLE == "nf_active_opportunity_sources"
     assert art["source_creation_request_artifact_type"] == REQUEST_ARTIFACT_TYPE
     assert art["human_approval_intake_artifact_type"] == APPROVAL_ARTIFACT_TYPE
-    assert art["execution_dry_run_artifact_type"] == "nf_active_source_creation_execution_dry_run_v1"
+    assert (
+        art["execution_dry_run_artifact_type"]
+        == "nf_active_source_creation_execution_dry_run_v1"
+    )
     assert art["governance_readiness_decision_values"] == (
         GATE_READINESS_NOT_READY,
         READINESS_BLOCKED_HUMAN_REVIEW,
@@ -199,9 +230,7 @@ def test_missing_source_creation_request_artifact_returns_not_ready() -> None:
     ha = _valid_human_approval(oid)
     dr = _valid_dry_run(oid)
     rt = _complete_runtime()
-    art = build_active_source_creation_execution_readiness_gate(
-        None, ha, dr, rt
-    )
+    art = build_active_source_creation_execution_readiness_gate(None, ha, dr, rt)
     assert art["readiness_decision"] == GATE_READINESS_NOT_READY
     assert art["gate_status"] == GATE_READINESS_NOT_READY
 
@@ -353,7 +382,11 @@ def test_duplicate_source_found_true_returns_blocked_human_review() -> None:
         _valid_dry_run(oid),
         _complete_runtime(duplicate_found=True),
     )
-    assert art["readiness_decision"] == READINESS_BLOCKED_HUMAN_REVIEW == READINESS_BLOCKED_HUMAN
+    assert (
+        art["readiness_decision"]
+        == READINESS_BLOCKED_HUMAN_REVIEW
+        == READINESS_BLOCKED_HUMAN
+    )
     assert art["gate_status"] == READINESS_BLOCKED_HUMAN_REVIEW
 
 
@@ -403,7 +436,9 @@ def test_future_execution_authorization_preview_exists_and_preview_only() -> Non
     _assert_future_auth_preview_structure(preview)
 
 
-def test_future_execution_authorization_preview_no_executable_fragments_in_blob() -> None:
+def test_future_execution_authorization_preview_no_executable_fragments_in_blob() -> (
+    None
+):
     oid = uuid.uuid4()
     art = build_active_source_creation_execution_readiness_gate(
         _valid_request_artifact(oid),

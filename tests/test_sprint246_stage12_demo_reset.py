@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import json
 
-from nativeforge.services.stage12_demo_reset_service import build_stage12_demo_reset_descriptor
+from nativeforge.services.stage12_demo_reset_service import (
+    build_stage12_demo_reset_descriptor,
+)
 
 
 def test_reset_descriptor_no_db_writes() -> None:
