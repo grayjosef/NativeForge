@@ -22,7 +22,9 @@ def test_nm_unknowns_remain_visible() -> None:
     assert len(report["rows"]) == 22
     # incomplete profiles must still appear in rows
     incomplete_rows = [
-        r for r in report["rows"] if r["classification_label"] == "incomplete_profile_data"
+        r
+        for r in report["rows"]
+        if r["classification_label"] == "incomplete_profile_data"
     ]
     for row in incomplete_rows:
         assert row["discoverability"] == "visible_in_operator_review"

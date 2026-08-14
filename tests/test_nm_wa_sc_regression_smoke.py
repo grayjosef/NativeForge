@@ -19,7 +19,9 @@ def test_sc_honesty_smoke_with_nm_wa_present() -> None:
     )
     # SC may skip if fixtures missing; require a structured result either way
     assert "verification_passed" in result or "checks" in result
-    assert isinstance(result.get("checks"), dict) or result.get("verification_passed") in (
+    assert isinstance(result.get("checks"), dict) or result.get(
+        "verification_passed"
+    ) in (
         True,
         False,
     )

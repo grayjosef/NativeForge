@@ -6,7 +6,14 @@ from nativeforge.services.wa_operator_surfacing_report_service import (
     build_wa_operator_surfacing_report,
 )
 
-_G = [{"grant_id": "os-wa-t029", "opportunity_title": "Tribal Discretionary Grant", "program_area": "health", "recognition_requirement": "federal_required"}]
+_G = [
+    {
+        "grant_id": "os-wa-t029",
+        "opportunity_title": "Tribal Discretionary Grant",
+        "program_area": "health",
+        "recognition_requirement": "federal_required",
+    }
+]
 
 
 def test_wa_advisory_flags() -> None:
