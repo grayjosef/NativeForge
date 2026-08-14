@@ -14,11 +14,17 @@ from typing import Any
 
 from nativeforge.services.active_source_activation_authorization_readiness_packet_service import (
     ARTIFACT_TYPE as AUTHORIZATION_READINESS_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_authorization_readiness_packet_service import (
     PACKET_VERSION as AUTHORIZATION_READINESS_PACKET_VERSION,
 )
 from nativeforge.services.active_source_activation_human_authorization_request_packet_service import (
     ARTIFACT_TYPE as HUMAN_AUTH_REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_human_authorization_request_packet_service import (
     HUMAN_AUTH_REQUEST_READY,
+)
+from nativeforge.services.active_source_activation_human_authorization_request_packet_service import (
     PACKET_VERSION as HUMAN_AUTH_REQUEST_PACKET_VERSION,
 )
 
@@ -29,8 +35,12 @@ DETERMINISTIC_GENERATED_AT = "1970-01-01T00:00:00Z"
 HUMAN_AUTH_DECISION_READY = "ready_for_future_activation_execution_plan_review"
 HUMAN_AUTH_DECISION_BLOCKED = "blocked_human_authorization_decision_packet_review"
 
-EXPLICIT_DECISION_RECORDED_INPUT_MARKER_KEY = "nf_sprint70_explicit_human_authorization_decision_recorded_marker_v1"
-EXPLICIT_DECISION_RECORDED_INPUT_MARKER_ALLOWED_VALUE = "explicitly_recorded_decision_marker_allowed_v1"
+EXPLICIT_DECISION_RECORDED_INPUT_MARKER_KEY = (
+    "nf_sprint70_explicit_human_authorization_decision_recorded_marker_v1"
+)
+EXPLICIT_DECISION_RECORDED_INPUT_MARKER_ALLOWED_VALUE = (
+    "explicitly_recorded_decision_marker_allowed_v1"
+)
 
 _GUARD_NOTE = (
     "sprint_70_active_source_activation_human_authorization_decision_packet_preview_only_no_execution_"
@@ -128,7 +138,9 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def _human_authorization_request_packet_reference(pkt: dict[str, Any] | None) -> dict[str, Any]:
+def _human_authorization_request_packet_reference(
+    pkt: dict[str, Any] | None,
+) -> dict[str, Any]:
     if pkt is None or not isinstance(pkt, dict):
         return {
             "artifact_type": None,
@@ -140,7 +152,9 @@ def _human_authorization_request_packet_reference(pkt: dict[str, Any] | None) ->
         "artifact_type": pkt.get("artifact_type"),
         "version": pkt.get("version"),
         "generated_at": pkt.get("generated_at"),
-        "human_authorization_request_status": pkt.get("human_authorization_request_status"),
+        "human_authorization_request_status": pkt.get(
+            "human_authorization_request_status"
+        ),
     }
 
 
@@ -181,7 +195,10 @@ def _forbidden_language(pkt: dict[str, Any]) -> list[str]:
 
 
 def _explicit_decision_recorded_from_input(pkt: dict[str, Any]) -> bool:
-    return pkt.get(EXPLICIT_DECISION_RECORDED_INPUT_MARKER_KEY) == EXPLICIT_DECISION_RECORDED_INPUT_MARKER_ALLOWED_VALUE
+    return (
+        pkt.get(EXPLICIT_DECISION_RECORDED_INPUT_MARKER_KEY)
+        == EXPLICIT_DECISION_RECORDED_INPUT_MARKER_ALLOWED_VALUE
+    )
 
 
 def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
@@ -197,16 +214,24 @@ def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
         failures.append("human_authorization_request_packet_version_mismatch")
 
     if pkt.get("preview_only") is not True:
-        failures.append("human_authorization_request_packet_preview_only_guardrail_missing_or_false")
+        failures.append(
+            "human_authorization_request_packet_preview_only_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_execution") is not True:
-        failures.append("human_authorization_request_packet_no_execution_guardrail_missing_or_false")
+        failures.append(
+            "human_authorization_request_packet_no_execution_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_authorization") is not True:
-        failures.append("human_authorization_request_packet_no_authorization_guardrail_missing_or_false")
+        failures.append(
+            "human_authorization_request_packet_no_authorization_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_activation") is not True:
-        failures.append("human_authorization_request_packet_no_activation_guardrail_missing_or_false")
+        failures.append(
+            "human_authorization_request_packet_no_activation_guardrail_missing_or_false"
+        )
 
     if pkt.get("future_explicit_human_authorization_required") is not True:
         failures.append(
@@ -216,22 +241,36 @@ def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
     hrs = pkt.get("human_authorization_request_status")
     if hrs != HUMAN_AUTH_REQUEST_READY:
         if isinstance(hrs, str):
-            failures.append(f"human_authorization_request_status_not_ready_for_future_explicit_review:{hrs}")
+            failures.append(
+                f"human_authorization_request_status_not_ready_for_future_explicit_review:{hrs}"
+            )
         else:
-            failures.append("human_authorization_request_status_not_ready_for_future_explicit_review")
+            failures.append(
+                "human_authorization_request_status_not_ready_for_future_explicit_review"
+            )
 
-    eg = pkt.get("explicit_preview_only_no_execution_no_authorization_no_activation_guardrail")
+    eg = pkt.get(
+        "explicit_preview_only_no_execution_no_authorization_no_activation_guardrail"
+    )
     if not isinstance(eg, str) or not eg.strip():
-        failures.append("human_authorization_request_packet_explicit_guardrail_missing_or_invalid")
+        failures.append(
+            "human_authorization_request_packet_explicit_guardrail_missing_or_invalid"
+        )
     elif "no_activation" not in eg.lower():
-        failures.append("human_authorization_request_packet_explicit_guardrail_missing_no_activation_assertion")
+        failures.append(
+            "human_authorization_request_packet_explicit_guardrail_missing_no_activation_assertion"
+        )
 
     ref = pkt.get("authorization_readiness_packet_reference")
     if not isinstance(ref, dict):
-        failures.append("human_authorization_request_packet_authorization_readiness_packet_reference_missing_or_invalid")
+        failures.append(
+            "human_authorization_request_packet_authorization_readiness_packet_reference_missing_or_invalid"
+        )
     else:
         if ref.get("artifact_type") != AUTHORIZATION_READINESS_ARTIFACT_TYPE:
-            failures.append("authorization_readiness_packet_reference_artifact_type_mismatch")
+            failures.append(
+                "authorization_readiness_packet_reference_artifact_type_mismatch"
+            )
         if ref.get("version") != AUTHORIZATION_READINESS_PACKET_VERSION:
             failures.append("authorization_readiness_packet_reference_version_mismatch")
 
@@ -276,11 +315,17 @@ def build_active_source_activation_human_authorization_decision_packet(
     *,
     human_authorization_request_packet_artifact: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    pkt = human_authorization_request_packet_artifact if isinstance(human_authorization_request_packet_artifact, dict) else None
+    pkt = (
+        human_authorization_request_packet_artifact
+        if isinstance(human_authorization_request_packet_artifact, dict)
+        else None
+    )
     failures = _collect_validation_failures(pkt)
     ready = len(failures) == 0
 
-    human_authorization_decision_status = HUMAN_AUTH_DECISION_READY if ready else HUMAN_AUTH_DECISION_BLOCKED
+    human_authorization_decision_status = (
+        HUMAN_AUTH_DECISION_READY if ready else HUMAN_AUTH_DECISION_BLOCKED
+    )
 
     if ready:
         decision_reasons = sorted(
@@ -305,7 +350,9 @@ def build_active_source_activation_human_authorization_decision_packet(
     if isinstance(pkt, dict):
         inherited = pkt.get("required_human_review_actions")
         if isinstance(inherited, list):
-            required_human_decision_actions.extend(f"inherit_request_handoff:{str(x)}" for x in inherited)
+            required_human_decision_actions.extend(
+                f"inherit_request_handoff:{str(x)}" for x in inherited
+            )
     required_human_decision_actions = sorted(set(required_human_decision_actions))
 
     required_human_acknowledgements: list[str] = sorted(
@@ -333,9 +380,15 @@ def build_active_source_activation_human_authorization_decision_packet(
                 "command_preview_entries_reviewed": command_preview_summary.get(
                     "command_preview_entries_reviewed"
                 ),
-                "all_entries_declare_preview_only": command_preview_summary.get("all_entries_declare_preview_only"),
-                "all_entries_declare_no_execution": command_preview_summary.get("all_entries_declare_no_execution"),
-                "notes": sorted(str(x) for x in notes) if isinstance(notes, list) else [],
+                "all_entries_declare_preview_only": command_preview_summary.get(
+                    "all_entries_declare_preview_only"
+                ),
+                "all_entries_declare_no_execution": command_preview_summary.get(
+                    "all_entries_declare_no_execution"
+                ),
+                "notes": sorted(str(x) for x in notes)
+                if isinstance(notes, list)
+                else [],
             }
         rr = pkt.get("risk_and_rollback_summary")
         if isinstance(rr, dict):
@@ -343,12 +396,22 @@ def build_active_source_activation_human_authorization_decision_packet(
             rb = rr.get("rollback_notes")
             extra = rr.get("notes")
             risk_and_rollback_summary = {
-                "risk_notes": sorted(str(x) for x in rn) if isinstance(rn, list) else [],
-                "rollback_notes": sorted(str(x) for x in rb) if isinstance(rb, list) else [],
-                "notes": sorted(str(x) for x in extra) if isinstance(extra, list) else [],
+                "risk_notes": sorted(str(x) for x in rn)
+                if isinstance(rn, list)
+                else [],
+                "rollback_notes": sorted(str(x) for x in rb)
+                if isinstance(rb, list)
+                else [],
+                "notes": sorted(str(x) for x in extra)
+                if isinstance(extra, list)
+                else [],
             }
         else:
-            risk_and_rollback_summary = {"risk_notes": [], "rollback_notes": [], "notes": []}
+            risk_and_rollback_summary = {
+                "risk_notes": [],
+                "rollback_notes": [],
+                "notes": [],
+            }
     else:
         command_preview_summary = {
             "command_preview_entries_reviewed": None,
@@ -356,18 +419,35 @@ def build_active_source_activation_human_authorization_decision_packet(
             "all_entries_declare_no_execution": None,
             "notes": [],
         }
-        risk_and_rollback_summary = {"risk_notes": [], "rollback_notes": [], "notes": []}
+        risk_and_rollback_summary = {
+            "risk_notes": [],
+            "rollback_notes": [],
+            "notes": [],
+        }
 
     guardrail_summary: dict[str, Any] = {
-        "input_request_preview_only": pkt.get("preview_only") if isinstance(pkt, dict) else None,
-        "input_request_no_execution": pkt.get("no_execution") if isinstance(pkt, dict) else None,
-        "input_request_no_authorization": pkt.get("no_authorization") if isinstance(pkt, dict) else None,
-        "input_request_no_activation": pkt.get("no_activation") if isinstance(pkt, dict) else None,
-        "input_request_future_explicit_human_authorization_required": pkt.get("future_explicit_human_authorization_required")
+        "input_request_preview_only": pkt.get("preview_only")
+        if isinstance(pkt, dict)
+        else None,
+        "input_request_no_execution": pkt.get("no_execution")
+        if isinstance(pkt, dict)
+        else None,
+        "input_request_no_authorization": pkt.get("no_authorization")
+        if isinstance(pkt, dict)
+        else None,
+        "input_request_no_activation": pkt.get("no_activation")
+        if isinstance(pkt, dict)
+        else None,
+        "input_request_future_explicit_human_authorization_required": pkt.get(
+            "future_explicit_human_authorization_required"
+        )
         if isinstance(pkt, dict)
         else None,
         "input_explicit_guardrail_present": isinstance(
-            pkt.get("explicit_preview_only_no_execution_no_authorization_no_activation_guardrail"), str
+            pkt.get(
+                "explicit_preview_only_no_execution_no_authorization_no_activation_guardrail"
+            ),
+            str,
         )
         if isinstance(pkt, dict)
         else False,
@@ -382,7 +462,9 @@ def build_active_source_activation_human_authorization_decision_packet(
         ),
     }
 
-    explicit_authorization_decision_recorded = bool(isinstance(pkt, dict) and _explicit_decision_recorded_from_input(pkt))
+    explicit_authorization_decision_recorded = bool(
+        isinstance(pkt, dict) and _explicit_decision_recorded_from_input(pkt)
+    )
     future_activation_execution_plan_review_required = ready is True
 
     proof = {
@@ -397,7 +479,9 @@ def build_active_source_activation_human_authorization_decision_packet(
         "artifact_type": ARTIFACT_TYPE,
         "version": PACKET_VERSION,
         "generated_at": DETERMINISTIC_GENERATED_AT,
-        "human_authorization_request_packet_reference": _human_authorization_request_packet_reference(pkt),
+        "human_authorization_request_packet_reference": _human_authorization_request_packet_reference(
+            pkt
+        ),
         "human_authorization_decision_status": human_authorization_decision_status,
         "decision_reasons": decision_reasons,
         "decision_blockers": decision_blockers,

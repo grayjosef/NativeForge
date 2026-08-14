@@ -13,19 +13,29 @@ from typing import Any
 from nativeforge.db.models import NfActiveOpportunitySource
 from nativeforge.services.active_source_creation_execution_dry_run_service import (
     ARTIFACT_TYPE as EXECUTION_DRY_RUN_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_dry_run_service import (
     READINESS_READY_FUTURE_EXEC as DRY_RUN_READINESS_READY_FUTURE_EXEC,
 )
 from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     ARTIFACT_TYPE as EXECUTION_READINESS_GATE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     READINESS_BLOCKED_HUMAN_REVIEW as GATE_READINESS_BLOCKED_HUMAN_REVIEW,
+)
+from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     READINESS_READY_FUTURE_EXECUTION as GATE_READINESS_READY_FUTURE_EXECUTION,
 )
 from nativeforge.services.active_source_creation_request_service import (
     ARTIFACT_TYPE as SOURCE_CREATION_REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_request_service import (
     READINESS_READY_REVIEW as SOURCE_REQUEST_READINESS_READY_FOR_HUMAN_REVIEW,
 )
 from nativeforge.services.active_source_human_approval_intake_service import (
     ARTIFACT_TYPE as HUMAN_APPROVAL_INTAKE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
     READINESS_READY_FUTURE as APPROVAL_READINESS_READY_FUTURE_SPRINT,
 )
 
@@ -202,7 +212,9 @@ def _dry_run_may_violations(dr: dict[str, Any]) -> list[str]:
             bad.append(f"execution_dry_run.{k}_must_be_false")
     ins = dr.get("dry_run_insert_preview")
     if isinstance(ins, dict) and ins.get("may_execute_now") is True:
-        bad.append("execution_dry_run.dry_run_insert_preview.may_execute_now_must_be_false")
+        bad.append(
+            "execution_dry_run.dry_run_insert_preview.may_execute_now_must_be_false"
+        )
     return bad
 
 
@@ -239,7 +251,9 @@ def _validate_execution_dry_run(dr: dict[str, Any]) -> tuple[bool, list[str]]:
     return ok, reasons
 
 
-def _validate_execution_readiness_gate_ready(rg: dict[str, Any]) -> tuple[bool, list[str]]:
+def _validate_execution_readiness_gate_ready(
+    rg: dict[str, Any],
+) -> tuple[bool, list[str]]:
     """Validate readiness gate artifact for the fully-ready (future execution) branch."""
     reasons: list[str] = []
     ok = True
@@ -276,7 +290,9 @@ def _coerce_request_echo(req: dict[str, Any] | None) -> dict[str, Any]:
     return dict(pe) if isinstance(pe, dict) else {}
 
 
-def _future_source_row_field_payload(*, req_echo: dict[str, Any], valid_upstream: bool) -> dict[str, Any]:
+def _future_source_row_field_payload(
+    *, req_echo: dict[str, Any], valid_upstream: bool
+) -> dict[str, Any]:
     """Maps Sprint 55 request echoes to migration-backed ORM field names (preview-only)."""
     cols = {c.name for c in NfActiveOpportunitySource.__table__.columns}
     out: dict[str, Any] = {}
@@ -355,7 +371,9 @@ def _future_execution_command_package(*, package_id_suffix: str) -> dict[str, An
         "target_table": _preview_leaf(value=TARGET_TABLE),
         "target_revision_id": _preview_leaf(value=TARGET_REVISION_ID),
         "future_execution_type": _preview_leaf(value="active_source_row_creation"),
-        "future_execution_mode": _preview_leaf(value="human_approved_single_row_create"),
+        "future_execution_mode": _preview_leaf(
+            value="human_approved_single_row_create"
+        ),
         "required_operator_confirmation": _preview_leaf(
             notes="Future sprint must capture explicit operator confirmation outside Sprint 59.",
         ),
@@ -443,8 +461,7 @@ def build_active_source_creation_execution_command_package(
         and ha.get("artifact_type") == HUMAN_APPROVAL_INTAKE_ARTIFACT_TYPE
     )
     dr_type_ok = (
-        dr is not None
-        and dr.get("artifact_type") == EXECUTION_DRY_RUN_ARTIFACT_TYPE
+        dr is not None and dr.get("artifact_type") == EXECUTION_DRY_RUN_ARTIFACT_TYPE
     )
     rg_type_ok = (
         rg is not None
@@ -581,32 +598,36 @@ def build_active_source_creation_execution_command_package(
             "future_active_source_creation_execution_plan_or_execution_evidence_packet"
         )
     else:
-        next_allowed_step = "complete_upstream_governance_chain_then_re_run_command_package_builder"
+        next_allowed_step = (
+            "complete_upstream_governance_chain_then_re_run_command_package_builder"
+        )
         if not rq_received or not rq_type_ok or not rq_ok:
             next_allowed_step = (
                 "supply_nf_active_source_creation_request_v1_ready_for_human_review"
             )
         elif not ha_received or not ha_type_ok or not ha_ok:
-            next_allowed_step = (
-                "supply_nf_active_source_human_approval_intake_v1_ready_for_future_creation"
-            )
+            next_allowed_step = "supply_nf_active_source_human_approval_intake_v1_ready_for_future_creation"
         elif not dr_received or not dr_type_ok or not dr_ok:
-            next_allowed_step = (
-                "supply_nf_active_source_creation_execution_dry_run_v1_ready_for_execution_sprint"
+            next_allowed_step = "supply_nf_active_source_creation_execution_dry_run_v1_ready_for_execution_sprint"
+        elif (
+            not rg_received
+            or not rg_type_ok
+            or (
+                rg is not None
+                and rg_type_ok
+                and rg.get("readiness_decision") != READINESS_BLOCKED_HUMAN_REVIEW
+                and rg.get("readiness_decision")
+                != GATE_READINESS_READY_FUTURE_EXECUTION
             )
-        elif not rg_received or not rg_type_ok or (
-            rg is not None
-            and rg_type_ok
-            and rg.get("readiness_decision") != READINESS_BLOCKED_HUMAN_REVIEW
-            and rg.get("readiness_decision") != GATE_READINESS_READY_FUTURE_EXECUTION
         ):
-            next_allowed_step = (
-                "supply_nf_active_source_creation_execution_readiness_gate_v1_ready_future_execution"
-            )
-        elif rg_received and rg_type_ok and rg.get("readiness_decision") == GATE_READINESS_READY_FUTURE_EXECUTION and not rg_ready_ok:
-            next_allowed_step = (
-                "resolve_readiness_gate_structure_gaps_then_re_run_command_package_builder"
-            )
+            next_allowed_step = "supply_nf_active_source_creation_execution_readiness_gate_v1_ready_future_execution"
+        elif (
+            rg_received
+            and rg_type_ok
+            and rg.get("readiness_decision") == GATE_READINESS_READY_FUTURE_EXECUTION
+            and not rg_ready_ok
+        ):
+            next_allowed_step = "resolve_readiness_gate_structure_gaps_then_re_run_command_package_builder"
 
     req_echo = _coerce_request_echo(req)
     fully_ready = readiness_decision == READINESS_READY_COMMAND_REVIEW

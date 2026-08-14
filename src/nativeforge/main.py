@@ -2,6 +2,10 @@
 
 from fastapi import FastAPI
 
+from nativeforge.api.activation_routes import (
+    demo_activation_router,
+    real_activation_router,
+)
 from nativeforge.api.form_package_routes import (
     demo_form_pkg_router,
     real_form_pkg_router,
@@ -13,6 +17,10 @@ from nativeforge.api.grant_spark_routes import (
 from nativeforge.api.health import router as health_router
 from nativeforge.api.isolation_routes import router as isolation_router
 from nativeforge.api.nofo_extraction_routes import demo_nofo_router, real_nofo_router
+from nativeforge.api.operator_workbench_advisory_routes import (
+    demo_workbench_advisory_router,
+    real_workbench_advisory_router,
+)
 from nativeforge.api.opportunity_discovery_routes import (
     demo_discovery_router,
     real_discovery_router,
@@ -22,32 +30,24 @@ from nativeforge.api.pursuit_brief_routes import (
     real_pursuit_brief_router,
 )
 from nativeforge.api.pursuit_routes import demo_pursuit_router, real_pursuit_router
+from nativeforge.api.source_ingestion_routes import (
+    demo_source_ingestion_router,
+    real_source_ingestion_router,
+)
 from nativeforge.api.spark_scoring_routes import (
     demo_spark_scoring_router,
     real_spark_scoring_router,
 )
 from nativeforge.api.sprint0_routes import demo_router, real_router
+from nativeforge.api.stage12_guided_demo_routes import (
+    demo_stage12_router,
+    real_stage12_router,
+)
 from nativeforge.api.tribal_profile_routes import (
     demo_profile_router,
     real_profile_router,
 )
 from nativeforge.api.trust_routes import demo_trust_router, real_trust_router
-from nativeforge.api.operator_workbench_advisory_routes import (
-    demo_workbench_advisory_router,
-    real_workbench_advisory_router,
-)
-from nativeforge.api.stage12_guided_demo_routes import (
-    demo_stage12_router,
-    real_stage12_router,
-)
-from nativeforge.api.source_ingestion_routes import (
-    demo_source_ingestion_router,
-    real_source_ingestion_router,
-)
-from nativeforge.api.activation_routes import (
-    demo_activation_router,
-    real_activation_router,
-)
 from nativeforge.lib.settings import get_settings
 
 

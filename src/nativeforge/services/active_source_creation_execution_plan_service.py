@@ -11,9 +11,17 @@ from typing import Any
 
 from nativeforge.services.active_source_creation_execution_command_package_service import (
     ARTIFACT_TYPE as COMMAND_PACKAGE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_command_package_service import (
     READINESS_BLOCKED_HUMAN_REVIEW as PKG_READINESS_BLOCKED_HUMAN_REVIEW,
+)
+from nativeforge.services.active_source_creation_execution_command_package_service import (
     READINESS_NOT_READY as PKG_READINESS_NOT_READY,
+)
+from nativeforge.services.active_source_creation_execution_command_package_service import (
     READINESS_READY_COMMAND_REVIEW as PKG_READINESS_READY_COMMAND_REVIEW,
+)
+from nativeforge.services.active_source_creation_execution_command_package_service import (
     TARGET_REVISION_ID,
     TARGET_TABLE,
 )
@@ -199,11 +207,7 @@ def _future_source_row_materialization_plan(
     *,
     payload_usable: bool,
 ) -> dict[str, Any]:
-    raw = (
-        pkg.get("future_source_row_field_payload")
-        if isinstance(pkg, dict)
-        else None
-    )
+    raw = pkg.get("future_source_row_field_payload") if isinstance(pkg, dict) else None
     field_mappings: dict[str, Any] = {}
     if isinstance(raw, dict) and payload_usable:
         for fk, fv in raw.items():
@@ -265,9 +269,7 @@ def _planned_execution_steps() -> list[dict[str, Any]]:
 
 
 def _build_future_execution_plan(*, plan_suffix: str) -> dict[str, Any]:
-    eid = (
-        f"nf_active_source_creation_execution_plan_{TARGET_REVISION_ID}_{plan_suffix}"
-    )
+    eid = f"nf_active_source_creation_execution_plan_{TARGET_REVISION_ID}_{plan_suffix}"
     return {
         "execution_plan_id": _preview_leaf(value=eid),
         "target_table": _preview_leaf(value=TARGET_TABLE),
@@ -373,7 +375,9 @@ def build_active_source_creation_execution_plan(
         reasons.append("command_package_artifact_required")
     elif not type_ok:
         blockers.append("wrong_command_package_artifact_type")
-        reasons.append("artifact_type_must_match_nf_active_source_creation_execution_command_package_v1")
+        reasons.append(
+            "artifact_type_must_match_nf_active_source_creation_execution_command_package_v1"
+        )
     else:
         assert pkg is not None
         rd_pkg = pkg.get("readiness_decision")
@@ -389,7 +393,9 @@ def build_active_source_creation_execution_plan(
             )
         else:
             miss_fep = not isinstance(pkg.get("future_execution_command_package"), dict)
-            miss_payload = not isinstance(pkg.get("future_source_row_field_payload"), dict)
+            miss_payload = not isinstance(
+                pkg.get("future_source_row_field_payload"), dict
+            )
             if miss_fep:
                 blockers.append("missing_future_execution_command_package")
             if miss_payload:
@@ -428,17 +434,11 @@ def build_active_source_creation_execution_plan(
         elif ready_single_row_review:
             readiness_decision = READINESS_READY_SINGLE_ROW_EXEC_REVIEW
             execution_plan_status = READINESS_READY_SINGLE_ROW_EXEC_REVIEW
-            next_allowed_step = (
-                "future_active_source_creation_execution_evidence_packet_after_human_review"
-            )
+            next_allowed_step = "future_active_source_creation_execution_evidence_packet_after_human_review"
         else:
-            next_allowed_step = (
-                "supply_valid_nf_active_source_creation_execution_command_package_v1_then_re_run"
-            )
+            next_allowed_step = "supply_valid_nf_active_source_creation_execution_command_package_v1_then_re_run"
     else:
-        next_allowed_step = (
-            "supply_nf_active_source_creation_execution_command_package_v1_ready_for_command_review"
-        )
+        next_allowed_step = "supply_nf_active_source_creation_execution_command_package_v1_ready_for_command_review"
 
     payload_usable = (
         ready_single_row_review

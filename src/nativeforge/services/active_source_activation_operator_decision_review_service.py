@@ -13,7 +13,11 @@ from typing import Any
 
 from nativeforge.services.active_source_activation_command_package_service import (
     ARTIFACT_TYPE as COMMAND_PACKAGE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_command_package_service import (
     PACKAGE_VERSION as COMMAND_PACKAGE_VERSION,
+)
+from nativeforge.services.active_source_activation_command_package_service import (
     READINESS_PREVIEW_READY,
 )
 from nativeforge.services.active_source_activation_review_packet_service import (
@@ -24,7 +28,9 @@ ARTIFACT_TYPE = "nf_active_source_activation_operator_decision_review_v1"
 REVIEW_VERSION = "v1"
 DETERMINISTIC_GENERATED_AT = "1970-01-01T00:00:00Z"
 
-OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW = "ready_for_future_activation_authorization_review"
+OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW = (
+    "ready_for_future_activation_authorization_review"
+)
 OPERATOR_DECISION_BLOCKED = "blocked_operator_decision_review"
 
 _GUARD_NOTE = (
@@ -162,7 +168,9 @@ def _collect_validation_failures(pkg: dict[str, Any] | None) -> list[str]:
         if ref.get("artifact_type") != REVIEW_PACKET_ARTIFACT_TYPE:
             failures.append("source_review_packet_reference_artifact_type_mismatch")
         if ref.get("activation_candidate_source_row_id") in (None, ""):
-            failures.append("source_review_packet_reference_missing_activation_candidate_source_row_id")
+            failures.append(
+                "source_review_packet_reference_missing_activation_candidate_source_row_id"
+            )
         if ref.get("target_revision_id") is None:
             failures.append("source_review_packet_reference_missing_target_revision_id")
         if ref.get("target_table") is None:

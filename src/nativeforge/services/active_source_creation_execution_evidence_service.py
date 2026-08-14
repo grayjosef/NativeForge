@@ -19,6 +19,8 @@ from nativeforge.db.models import NfActiveOpportunitySource
 from nativeforge.domain.enums import SourceHealthStatus
 from nativeforge.services.active_source_creation_execution_command_package_service import (
     ARTIFACT_TYPE as COMMAND_PACKAGE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_command_package_service import (
     READINESS_READY_COMMAND_REVIEW,
     _validate_execution_dry_run,
     _validate_execution_readiness_gate_ready,
@@ -27,6 +29,8 @@ from nativeforge.services.active_source_creation_execution_command_package_servi
 )
 from nativeforge.services.active_source_creation_execution_plan_service import (
     ARTIFACT_TYPE as EXECUTION_PLAN_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_plan_service import (
     READINESS_READY_SINGLE_ROW_EXEC_REVIEW as PLAN_READINESS_READY_SINGLE_ROW_EXEC_REVIEW,
 )
 from nativeforge.services.active_source_empty_state_read_model_service import (
@@ -149,7 +153,9 @@ def _validate_operator_confirmation(op: Any) -> tuple[bool, list[str]]:
     if not _strict_true(op.get("operator_confirmed_rollback_contract")):
         reasons.append("operator_confirmed_rollback_contract_must_be_strict_true")
     if op.get("operator_confirmed_target_table") != TARGET_TABLE:
-        reasons.append("operator_confirmed_target_table_must_match_nf_active_opportunity_sources")
+        reasons.append(
+            "operator_confirmed_target_table_must_match_nf_active_opportunity_sources"
+        )
     if op.get("operator_confirmed_target_revision_id") != TARGET_REVISION_ID:
         reasons.append("operator_confirmed_target_revision_id_must_be_0019")
     if reasons:
@@ -193,7 +199,9 @@ def _duplicate_exists(
         NfActiveOpportunitySource.source_type == source_type,
     )
     if source_url_or_search_target is None:
-        stmt = stmt.where(NfActiveOpportunitySource.source_url_or_search_target.is_(None))
+        stmt = stmt.where(
+            NfActiveOpportunitySource.source_url_or_search_target.is_(None)
+        )
     else:
         stmt = stmt.where(
             NfActiveOpportunitySource.source_url_or_search_target
@@ -354,12 +362,32 @@ def execute_single_active_source_creation_and_build_evidence_packet(
     warnings: list[str] = []
     blockers: list[str] = []
 
-    req = source_creation_request_artifact if isinstance(source_creation_request_artifact, dict) else None
-    ha = human_approval_intake_artifact if isinstance(human_approval_intake_artifact, dict) else None
-    dr = execution_dry_run_artifact if isinstance(execution_dry_run_artifact, dict) else None
-    rg = execution_readiness_gate_artifact if isinstance(execution_readiness_gate_artifact, dict) else None
-    pkg = command_package_artifact if isinstance(command_package_artifact, dict) else None
-    plan = execution_plan_artifact if isinstance(execution_plan_artifact, dict) else None
+    req = (
+        source_creation_request_artifact
+        if isinstance(source_creation_request_artifact, dict)
+        else None
+    )
+    ha = (
+        human_approval_intake_artifact
+        if isinstance(human_approval_intake_artifact, dict)
+        else None
+    )
+    dr = (
+        execution_dry_run_artifact
+        if isinstance(execution_dry_run_artifact, dict)
+        else None
+    )
+    rg = (
+        execution_readiness_gate_artifact
+        if isinstance(execution_readiness_gate_artifact, dict)
+        else None
+    )
+    pkg = (
+        command_package_artifact if isinstance(command_package_artifact, dict) else None
+    )
+    plan = (
+        execution_plan_artifact if isinstance(execution_plan_artifact, dict) else None
+    )
 
     rq_ok, rq_rs = (False, ["source_creation_request_absent"])
     if req is not None:
@@ -405,7 +433,8 @@ def execute_single_active_source_creation_and_build_evidence_packet(
         "command_package": {
             "artifact_present": pkg is not None,
             "artifact_type_matches": (
-                pkg is not None and pkg.get("artifact_type") == COMMAND_PACKAGE_ARTIFACT_TYPE
+                pkg is not None
+                and pkg.get("artifact_type") == COMMAND_PACKAGE_ARTIFACT_TYPE
             ),
             "readiness_decision": pkg.get("readiness_decision") if pkg else None,
             "ready_for_sprint_61": bool(
@@ -421,10 +450,17 @@ def execute_single_active_source_creation_and_build_evidence_packet(
         },
     }
 
-    upstream_ready = rq_ok and ha_ok and dr_ok and rg_ok and plan_ok and bool(
-        pkg
-        and pkg.get("artifact_type") == COMMAND_PACKAGE_ARTIFACT_TYPE
-        and pkg.get("readiness_decision") == READINESS_READY_COMMAND_REVIEW
+    upstream_ready = (
+        rq_ok
+        and ha_ok
+        and dr_ok
+        and rg_ok
+        and plan_ok
+        and bool(
+            pkg
+            and pkg.get("artifact_type") == COMMAND_PACKAGE_ARTIFACT_TYPE
+            and pkg.get("readiness_decision") == READINESS_READY_COMMAND_REVIEW
+        )
     )
 
     if not upstream_ready:
@@ -534,7 +570,11 @@ def execute_single_active_source_creation_and_build_evidence_packet(
         blockers.extend(op_rs)
         count_before = count_nf_active_opportunity_sources_readonly(db_session)
         echo = _coerce_request_echo(req) if req else {}
-        rb = echo.get("rollback_contract_id") if isinstance(echo.get("rollback_contract_id"), str) else None
+        rb = (
+            echo.get("rollback_contract_id")
+            if isinstance(echo.get("rollback_contract_id"), str)
+            else None
+        )
         pre = {
             "active_source_count_before": count_before,
             "duplicate_source_exists_before": False,
@@ -632,7 +672,9 @@ def execute_single_active_source_creation_and_build_evidence_packet(
                     "source_row_count_limit": 1,
                     "created_row_target_table": TARGET_TABLE,
                     "created_row_rollback_contract_id": None,
-                    "created_row_payload_fields": [k for k in _FIELD_PAYLOAD_ROW_KEYS if k in echo],
+                    "created_row_payload_fields": [
+                        k for k in _FIELD_PAYLOAD_ROW_KEYS if k in echo
+                    ],
                 },
                 "created_source_row_snapshot": None,
                 "post_execution_evidence": {
@@ -782,7 +824,9 @@ def execute_single_active_source_creation_and_build_evidence_packet(
         dedupe_key_strategy=str(echo["dedupe_key_strategy"]),
         provenance_capture_plan=echo["provenance_capture_plan"],
         native_relevance_basis=(
-            None if echo.get("native_relevance_basis") is None else str(echo["native_relevance_basis"])
+            None
+            if echo.get("native_relevance_basis") is None
+            else str(echo["native_relevance_basis"])
         ),
         broad_eligibility_human_review_required=bool(
             echo["broad_eligibility_human_review_required"]
@@ -979,7 +1023,9 @@ def _failed_packet_common(
             "created_row_has_rollback_contract_id": False,
             "created_row_has_governance_flags": False,
         },
-        "rollback_contract_evidence": _rollback_contract_evidence(rollback_contract_id=None),
+        "rollback_contract_evidence": _rollback_contract_evidence(
+            rollback_contract_id=None
+        ),
         "no_activation_evidence": _no_pipeline_evidence(),
         "no_scrape_ingest_api_llm_ledger_evidence": _no_pipeline_evidence(),
         "forbidden_action_boundaries": list(_FORBIDDEN_ACTION_BOUNDARIES),

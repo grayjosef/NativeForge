@@ -14,7 +14,11 @@ from typing import Any
 
 from nativeforge.services.active_source_activation_human_authorization_decision_packet_service import (
     ARTIFACT_TYPE as HUMAN_AUTHORIZATION_DECISION_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_human_authorization_decision_packet_service import (
     HUMAN_AUTH_DECISION_READY,
+)
+from nativeforge.services.active_source_activation_human_authorization_decision_packet_service import (
     PACKET_VERSION as HUMAN_AUTHORIZATION_DECISION_PACKET_VERSION,
 )
 from nativeforge.services.active_source_activation_human_authorization_request_packet_service import (
@@ -25,7 +29,9 @@ ARTIFACT_TYPE = "nf_active_source_activation_execution_plan_review_packet_v1"
 PACKET_VERSION = "v1"
 DETERMINISTIC_GENERATED_AT = "1970-01-01T00:00:00Z"
 
-EXECUTION_PLAN_REVIEW_READY = "ready_for_future_activation_execution_plan_authoring_review"
+EXECUTION_PLAN_REVIEW_READY = (
+    "ready_for_future_activation_execution_plan_authoring_review"
+)
 EXECUTION_PLAN_REVIEW_BLOCKED = "blocked_activation_execution_plan_review_packet"
 
 _GUARD_NOTE = (
@@ -141,7 +147,9 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def _human_authorization_decision_packet_reference(pkt: dict[str, Any] | None) -> dict[str, Any]:
+def _human_authorization_decision_packet_reference(
+    pkt: dict[str, Any] | None,
+) -> dict[str, Any]:
     if pkt is None or not isinstance(pkt, dict):
         return {
             "artifact_type": None,
@@ -153,7 +161,9 @@ def _human_authorization_decision_packet_reference(pkt: dict[str, Any] | None) -
         "artifact_type": pkt.get("artifact_type"),
         "version": pkt.get("version"),
         "generated_at": pkt.get("generated_at"),
-        "human_authorization_decision_status": pkt.get("human_authorization_decision_status"),
+        "human_authorization_decision_status": pkt.get(
+            "human_authorization_decision_status"
+        ),
     }
 
 
@@ -245,13 +255,19 @@ def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
         failures.append("human_authorization_decision_packet_version_mismatch")
 
     if pkt.get("preview_only") is not True:
-        failures.append("human_authorization_decision_packet_preview_only_guardrail_missing_or_false")
+        failures.append(
+            "human_authorization_decision_packet_preview_only_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_execution") is not True:
-        failures.append("human_authorization_decision_packet_no_execution_guardrail_missing_or_false")
+        failures.append(
+            "human_authorization_decision_packet_no_execution_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_activation") is not True:
-        failures.append("human_authorization_decision_packet_no_activation_guardrail_missing_or_false")
+        failures.append(
+            "human_authorization_decision_packet_no_activation_guardrail_missing_or_false"
+        )
 
     if pkt.get("future_activation_execution_plan_review_required") is not True:
         failures.append(
@@ -261,22 +277,34 @@ def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
     hds = pkt.get("human_authorization_decision_status")
     if hds != HUMAN_AUTH_DECISION_READY:
         if isinstance(hds, str):
-            failures.append(f"human_authorization_decision_status_not_ready_for_future_execution_plan_review:{hds}")
+            failures.append(
+                f"human_authorization_decision_status_not_ready_for_future_execution_plan_review:{hds}"
+            )
         else:
-            failures.append("human_authorization_decision_status_not_ready_for_future_execution_plan_review")
+            failures.append(
+                "human_authorization_decision_status_not_ready_for_future_execution_plan_review"
+            )
 
     eg = pkt.get("explicit_preview_only_no_execution_no_activation_guardrail")
     if not isinstance(eg, str) or not eg.strip():
-        failures.append("human_authorization_decision_packet_explicit_guardrail_missing_or_invalid")
+        failures.append(
+            "human_authorization_decision_packet_explicit_guardrail_missing_or_invalid"
+        )
     elif "no_activation" not in eg.lower():
-        failures.append("human_authorization_decision_packet_explicit_guardrail_missing_no_activation_assertion")
+        failures.append(
+            "human_authorization_decision_packet_explicit_guardrail_missing_no_activation_assertion"
+        )
 
     ref = pkt.get("human_authorization_request_packet_reference")
     if not isinstance(ref, dict):
-        failures.append("human_authorization_decision_packet_human_authorization_request_packet_reference_missing_or_invalid")
+        failures.append(
+            "human_authorization_decision_packet_human_authorization_request_packet_reference_missing_or_invalid"
+        )
     else:
         if ref.get("artifact_type") != HUMAN_AUTH_REQUEST_ARTIFACT_TYPE:
-            failures.append("human_authorization_request_packet_reference_artifact_type_mismatch")
+            failures.append(
+                "human_authorization_request_packet_reference_artifact_type_mismatch"
+            )
 
     ok_am, am_reasons = _actual_may_guardrails_ok(pkt)
     if not ok_am:
@@ -292,11 +320,17 @@ def build_active_source_activation_execution_plan_review_packet(
     *,
     human_authorization_decision_packet_artifact: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    pkt = human_authorization_decision_packet_artifact if isinstance(human_authorization_decision_packet_artifact, dict) else None
+    pkt = (
+        human_authorization_decision_packet_artifact
+        if isinstance(human_authorization_decision_packet_artifact, dict)
+        else None
+    )
     failures = _collect_validation_failures(pkt)
     ready = len(failures) == 0
 
-    execution_plan_review_status = EXECUTION_PLAN_REVIEW_READY if ready else EXECUTION_PLAN_REVIEW_BLOCKED
+    execution_plan_review_status = (
+        EXECUTION_PLAN_REVIEW_READY if ready else EXECUTION_PLAN_REVIEW_BLOCKED
+    )
 
     if ready:
         review_reasons = sorted(
@@ -324,7 +358,9 @@ def build_active_source_activation_execution_plan_review_packet(
             required_execution_plan_authoring_actions.extend(
                 f"inherit_human_decision_handoff:{str(x)}" for x in inherited
             )
-    required_execution_plan_authoring_actions = sorted(set(required_execution_plan_authoring_actions))
+    required_execution_plan_authoring_actions = sorted(
+        set(required_execution_plan_authoring_actions)
+    )
 
     required_pre_execution_guardrails: list[str] = sorted(
         {
@@ -348,10 +384,18 @@ def build_active_source_activation_execution_plan_review_packet(
         else:
             notes = cps.get("notes")
             command_preview_summary = {
-                "command_preview_entries_reviewed": cps.get("command_preview_entries_reviewed"),
-                "all_entries_declare_preview_only": cps.get("all_entries_declare_preview_only"),
-                "all_entries_declare_no_execution": cps.get("all_entries_declare_no_execution"),
-                "notes": sorted(str(x) for x in notes) if isinstance(notes, list) else [],
+                "command_preview_entries_reviewed": cps.get(
+                    "command_preview_entries_reviewed"
+                ),
+                "all_entries_declare_preview_only": cps.get(
+                    "all_entries_declare_preview_only"
+                ),
+                "all_entries_declare_no_execution": cps.get(
+                    "all_entries_declare_no_execution"
+                ),
+                "notes": sorted(str(x) for x in notes)
+                if isinstance(notes, list)
+                else [],
             }
         rr = pkt.get("risk_and_rollback_summary")
         if isinstance(rr, dict):
@@ -359,12 +403,22 @@ def build_active_source_activation_execution_plan_review_packet(
             rb = rr.get("rollback_notes")
             extra = rr.get("notes")
             risk_and_rollback_summary = {
-                "risk_notes": sorted(str(x) for x in rn) if isinstance(rn, list) else [],
-                "rollback_notes": sorted(str(x) for x in rb) if isinstance(rb, list) else [],
-                "notes": sorted(str(x) for x in extra) if isinstance(extra, list) else [],
+                "risk_notes": sorted(str(x) for x in rn)
+                if isinstance(rn, list)
+                else [],
+                "rollback_notes": sorted(str(x) for x in rb)
+                if isinstance(rb, list)
+                else [],
+                "notes": sorted(str(x) for x in extra)
+                if isinstance(extra, list)
+                else [],
             }
         else:
-            risk_and_rollback_summary = {"risk_notes": [], "rollback_notes": [], "notes": []}
+            risk_and_rollback_summary = {
+                "risk_notes": [],
+                "rollback_notes": [],
+                "notes": [],
+            }
     else:
         command_preview_summary = {
             "command_preview_entries_reviewed": None,
@@ -372,12 +426,22 @@ def build_active_source_activation_execution_plan_review_packet(
             "all_entries_declare_no_execution": None,
             "notes": [],
         }
-        risk_and_rollback_summary = {"risk_notes": [], "rollback_notes": [], "notes": []}
+        risk_and_rollback_summary = {
+            "risk_notes": [],
+            "rollback_notes": [],
+            "notes": [],
+        }
 
     guardrail_summary: dict[str, Any] = {
-        "input_decision_preview_only": pkt.get("preview_only") if isinstance(pkt, dict) else None,
-        "input_decision_no_execution": pkt.get("no_execution") if isinstance(pkt, dict) else None,
-        "input_decision_no_activation": pkt.get("no_activation") if isinstance(pkt, dict) else None,
+        "input_decision_preview_only": pkt.get("preview_only")
+        if isinstance(pkt, dict)
+        else None,
+        "input_decision_no_execution": pkt.get("no_execution")
+        if isinstance(pkt, dict)
+        else None,
+        "input_decision_no_activation": pkt.get("no_activation")
+        if isinstance(pkt, dict)
+        else None,
         "input_future_activation_execution_plan_review_required": pkt.get(
             "future_activation_execution_plan_review_required"
         )
@@ -414,7 +478,9 @@ def build_active_source_activation_execution_plan_review_packet(
         "artifact_type": ARTIFACT_TYPE,
         "version": PACKET_VERSION,
         "generated_at": DETERMINISTIC_GENERATED_AT,
-        "human_authorization_decision_packet_reference": _human_authorization_decision_packet_reference(pkt),
+        "human_authorization_decision_packet_reference": _human_authorization_decision_packet_reference(
+            pkt
+        ),
         "execution_plan_review_status": execution_plan_review_status,
         "review_reasons": review_reasons,
         "review_blockers": review_blockers,

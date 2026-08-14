@@ -14,11 +14,17 @@ from typing import Any
 
 from nativeforge.services.active_source_activation_authorization_readiness_packet_service import (
     ARTIFACT_TYPE as AUTHORIZATION_READINESS_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_authorization_readiness_packet_service import (
     AUTHORIZATION_READINESS_READY,
+)
+from nativeforge.services.active_source_activation_authorization_readiness_packet_service import (
     PACKET_VERSION as AUTHORIZATION_READINESS_VERSION,
 )
 from nativeforge.services.active_source_activation_operator_decision_review_service import (
     ARTIFACT_TYPE as OPERATOR_DECISION_REVIEW_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_operator_decision_review_service import (
     OPERATOR_DECISION_BLOCKED,
     OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW,
 )
@@ -27,7 +33,9 @@ ARTIFACT_TYPE = "nf_active_source_activation_human_authorization_request_packet_
 PACKET_VERSION = "v1"
 DETERMINISTIC_GENERATED_AT = "1970-01-01T00:00:00Z"
 
-HUMAN_AUTH_REQUEST_READY = "ready_for_future_explicit_human_authorization_request_review"
+HUMAN_AUTH_REQUEST_READY = (
+    "ready_for_future_explicit_human_authorization_request_review"
+)
 HUMAN_AUTH_REQUEST_BLOCKED = "blocked_human_authorization_request_packet_review"
 
 _GUARD_NOTE = (
@@ -108,7 +116,9 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def _authorization_readiness_packet_reference(pkt: dict[str, Any] | None) -> dict[str, Any]:
+def _authorization_readiness_packet_reference(
+    pkt: dict[str, Any] | None,
+) -> dict[str, Any]:
     if pkt is None or not isinstance(pkt, dict):
         return {
             "artifact_type": None,
@@ -170,41 +180,66 @@ def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
         failures.append("authorization_readiness_packet_version_mismatch")
 
     if pkt.get("preview_only") is not True:
-        failures.append("authorization_readiness_packet_preview_only_guardrail_missing_or_false")
+        failures.append(
+            "authorization_readiness_packet_preview_only_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_execution") is not True:
-        failures.append("authorization_readiness_packet_no_execution_guardrail_missing_or_false")
+        failures.append(
+            "authorization_readiness_packet_no_execution_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_authorization") is not True:
-        failures.append("authorization_readiness_packet_no_authorization_guardrail_missing_or_false")
+        failures.append(
+            "authorization_readiness_packet_no_authorization_guardrail_missing_or_false"
+        )
 
     if pkt.get("future_human_authorization_required") is not True:
-        failures.append("authorization_readiness_packet_future_human_authorization_required_missing_or_false")
+        failures.append(
+            "authorization_readiness_packet_future_human_authorization_required_missing_or_false"
+        )
 
     ar = pkt.get("authorization_readiness")
     if ar != AUTHORIZATION_READINESS_READY:
         if isinstance(ar, str):
-            failures.append(f"authorization_readiness_not_ready_for_future_human_packet_review:{ar}")
+            failures.append(
+                f"authorization_readiness_not_ready_for_future_human_packet_review:{ar}"
+            )
         else:
-            failures.append("authorization_readiness_not_ready_for_future_human_packet_review")
+            failures.append(
+                "authorization_readiness_not_ready_for_future_human_packet_review"
+            )
 
     eg = pkt.get("explicit_preview_only_no_execution_no_authorization_guardrail")
     if not isinstance(eg, str) or not eg.strip():
-        failures.append("authorization_readiness_packet_explicit_guardrail_missing_or_invalid")
+        failures.append(
+            "authorization_readiness_packet_explicit_guardrail_missing_or_invalid"
+        )
     elif "no_activation" not in eg.lower():
-        failures.append("authorization_readiness_packet_explicit_guardrail_missing_no_activation_assertion")
+        failures.append(
+            "authorization_readiness_packet_explicit_guardrail_missing_no_activation_assertion"
+        )
 
     ref = pkt.get("operator_decision_review_reference")
     if not isinstance(ref, dict):
-        failures.append("authorization_readiness_packet_operator_decision_review_reference_missing_or_invalid")
+        failures.append(
+            "authorization_readiness_packet_operator_decision_review_reference_missing_or_invalid"
+        )
     else:
         if ref.get("artifact_type") != OPERATOR_DECISION_REVIEW_ARTIFACT_TYPE:
             failures.append("operator_decision_review_reference_artifact_type_mismatch")
         od = ref.get("operator_decision")
-        if od not in (OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW, OPERATOR_DECISION_BLOCKED):
-            failures.append("operator_decision_review_reference_operator_decision_invalid_or_unknown")
+        if od not in (
+            OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW,
+            OPERATOR_DECISION_BLOCKED,
+        ):
+            failures.append(
+                "operator_decision_review_reference_operator_decision_invalid_or_unknown"
+            )
         elif od == OPERATOR_DECISION_BLOCKED:
-            failures.append("sprint_67_operator_decision_review_was_blocked_on_readiness_packet")
+            failures.append(
+                "sprint_67_operator_decision_review_was_blocked_on_readiness_packet"
+            )
 
     ok_am, am_reasons = _actual_may_guardrails_ok(pkt)
     if not ok_am:
@@ -247,11 +282,17 @@ def build_active_source_activation_human_authorization_request_packet(
     *,
     authorization_readiness_packet_artifact: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    pkt = authorization_readiness_packet_artifact if isinstance(authorization_readiness_packet_artifact, dict) else None
+    pkt = (
+        authorization_readiness_packet_artifact
+        if isinstance(authorization_readiness_packet_artifact, dict)
+        else None
+    )
     failures = _collect_validation_failures(pkt)
     ready = len(failures) == 0
 
-    human_authorization_request_status = HUMAN_AUTH_REQUEST_READY if ready else HUMAN_AUTH_REQUEST_BLOCKED
+    human_authorization_request_status = (
+        HUMAN_AUTH_REQUEST_READY if ready else HUMAN_AUTH_REQUEST_BLOCKED
+    )
 
     if ready:
         request_reasons = [
@@ -272,7 +313,9 @@ def build_active_source_activation_human_authorization_request_packet(
     if isinstance(pkt, dict):
         inherited = pkt.get("required_human_authorization_actions")
         if isinstance(inherited, list):
-            required_human_review_actions.extend(f"inherit_readiness_handoff:{str(x)}" for x in inherited)
+            required_human_review_actions.extend(
+                f"inherit_readiness_handoff:{str(x)}" for x in inherited
+            )
     required_human_review_actions = sorted(set(required_human_review_actions))
 
     required_human_acknowledgements: list[str] = sorted(
@@ -300,9 +343,15 @@ def build_active_source_activation_human_authorization_request_packet(
                 "command_preview_entries_reviewed": command_preview_summary.get(
                     "command_preview_entries_reviewed"
                 ),
-                "all_entries_declare_preview_only": command_preview_summary.get("all_entries_declare_preview_only"),
-                "all_entries_declare_no_execution": command_preview_summary.get("all_entries_declare_no_execution"),
-                "notes": sorted(str(x) for x in notes) if isinstance(notes, list) else [],
+                "all_entries_declare_preview_only": command_preview_summary.get(
+                    "all_entries_declare_preview_only"
+                ),
+                "all_entries_declare_no_execution": command_preview_summary.get(
+                    "all_entries_declare_no_execution"
+                ),
+                "notes": sorted(str(x) for x in notes)
+                if isinstance(notes, list)
+                else [],
             }
         rr = pkt.get("risk_and_rollback_summary")
         if isinstance(rr, dict):
@@ -310,12 +359,22 @@ def build_active_source_activation_human_authorization_request_packet(
             rb = rr.get("rollback_notes")
             extra = rr.get("notes")
             risk_and_rollback_summary = {
-                "risk_notes": sorted(str(x) for x in rn) if isinstance(rn, list) else [],
-                "rollback_notes": sorted(str(x) for x in rb) if isinstance(rb, list) else [],
-                "notes": sorted(str(x) for x in extra) if isinstance(extra, list) else [],
+                "risk_notes": sorted(str(x) for x in rn)
+                if isinstance(rn, list)
+                else [],
+                "rollback_notes": sorted(str(x) for x in rb)
+                if isinstance(rb, list)
+                else [],
+                "notes": sorted(str(x) for x in extra)
+                if isinstance(extra, list)
+                else [],
             }
         else:
-            risk_and_rollback_summary = {"risk_notes": [], "rollback_notes": [], "notes": []}
+            risk_and_rollback_summary = {
+                "risk_notes": [],
+                "rollback_notes": [],
+                "notes": [],
+            }
     else:
         command_preview_summary = {
             "command_preview_entries_reviewed": None,
@@ -323,17 +382,30 @@ def build_active_source_activation_human_authorization_request_packet(
             "all_entries_declare_no_execution": None,
             "notes": [],
         }
-        risk_and_rollback_summary = {"risk_notes": [], "rollback_notes": [], "notes": []}
+        risk_and_rollback_summary = {
+            "risk_notes": [],
+            "rollback_notes": [],
+            "notes": [],
+        }
 
     guardrail_summary: dict[str, Any] = {
-        "input_readiness_preview_only": pkt.get("preview_only") if isinstance(pkt, dict) else None,
-        "input_readiness_no_execution": pkt.get("no_execution") if isinstance(pkt, dict) else None,
-        "input_readiness_no_authorization": pkt.get("no_authorization") if isinstance(pkt, dict) else None,
-        "input_readiness_future_human_authorization_required": pkt.get("future_human_authorization_required")
+        "input_readiness_preview_only": pkt.get("preview_only")
+        if isinstance(pkt, dict)
+        else None,
+        "input_readiness_no_execution": pkt.get("no_execution")
+        if isinstance(pkt, dict)
+        else None,
+        "input_readiness_no_authorization": pkt.get("no_authorization")
+        if isinstance(pkt, dict)
+        else None,
+        "input_readiness_future_human_authorization_required": pkt.get(
+            "future_human_authorization_required"
+        )
         if isinstance(pkt, dict)
         else None,
         "input_explicit_guardrail_present": isinstance(
-            pkt.get("explicit_preview_only_no_execution_no_authorization_guardrail"), str
+            pkt.get("explicit_preview_only_no_execution_no_authorization_guardrail"),
+            str,
         )
         if isinstance(pkt, dict)
         else False,
@@ -362,7 +434,9 @@ def build_active_source_activation_human_authorization_request_packet(
         "artifact_type": ARTIFACT_TYPE,
         "version": PACKET_VERSION,
         "generated_at": DETERMINISTIC_GENERATED_AT,
-        "authorization_readiness_packet_reference": _authorization_readiness_packet_reference(pkt),
+        "authorization_readiness_packet_reference": _authorization_readiness_packet_reference(
+            pkt
+        ),
         "human_authorization_request_status": human_authorization_request_status,
         "request_reasons": request_reasons,
         "request_blockers": request_blockers,

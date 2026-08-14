@@ -13,6 +13,8 @@ from typing import Any
 
 from nativeforge.services.active_source_activation_review_packet_service import (
     ARTIFACT_TYPE_PACKET as REVIEW_PACKET_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_review_packet_service import (
     READINESS_BLOCKED_GATE_INVALID,
     READINESS_BLOCKED_MISSING_GATE,
     READINESS_BLOCKED_MISSING_POST_RUNTIME,
@@ -27,7 +29,9 @@ PACKAGE_VERSION = "v1"
 DETERMINISTIC_GENERATED_AT = "1970-01-01T00:00:00Z"
 
 READINESS_PREVIEW_READY = "ready_activation_command_package_preview_scaffold"
-READINESS_PREVIEW_BLOCKED = "blocked_activation_review_packet_not_ready_for_command_package_preview"
+READINESS_PREVIEW_BLOCKED = (
+    "blocked_activation_review_packet_not_ready_for_command_package_preview"
+)
 
 _SPRINT66_ZERO_COUNTS: dict[str, int] = {
     "actual_source_row_create_count": 0,
@@ -100,7 +104,10 @@ def _forbidden_list() -> list[str]:
 def _packet_ready_for_preview(pkt: dict[str, Any]) -> bool:
     if pkt.get("artifact_type") != REVIEW_PACKET_ARTIFACT_TYPE:
         return False
-    return pkt.get("readiness_decision") == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    return (
+        pkt.get("readiness_decision")
+        == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    )
 
 
 def _reference_from_packet(pkt: dict[str, Any] | None) -> dict[str, Any]:
@@ -117,7 +124,9 @@ def _reference_from_packet(pkt: dict[str, Any] | None) -> dict[str, Any]:
         "artifact_type": pkt.get("artifact_type"),
         "readiness_decision": pkt.get("readiness_decision"),
         "activation_review_packet_status": pkt.get("activation_review_packet_status"),
-        "activation_candidate_source_row_id": pkt.get("activation_candidate_source_row_id"),
+        "activation_candidate_source_row_id": pkt.get(
+            "activation_candidate_source_row_id"
+        ),
         "target_revision_id": pkt.get("target_revision_id"),
         "target_table": pkt.get("target_table"),
     }
@@ -127,7 +136,11 @@ def build_active_source_activation_command_package(
     *,
     activation_review_packet_artifact: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    pkt = activation_review_packet_artifact if isinstance(activation_review_packet_artifact, dict) else None
+    pkt = (
+        activation_review_packet_artifact
+        if isinstance(activation_review_packet_artifact, dict)
+        else None
+    )
     packet_declares_ready = pkt is not None and _packet_ready_for_preview(pkt)
 
     cid = pkt.get("activation_candidate_source_row_id") if pkt else None
@@ -151,7 +164,11 @@ def build_active_source_activation_command_package(
     command_preview: list[dict[str, Any]] = []
 
     if emit_preview:
-        snap = pkt.get("activation_candidate_snapshot") if isinstance(pkt.get("activation_candidate_snapshot"), dict) else None
+        snap = (
+            pkt.get("activation_candidate_snapshot")
+            if isinstance(pkt.get("activation_candidate_snapshot"), dict)
+            else None
+        )
         activation_candidates.append(
             {
                 "candidate_source_row_id": cid_s,
@@ -201,7 +218,11 @@ def build_active_source_activation_command_package(
             }
         )
     else:
-        rd = pkt.get("readiness_decision") if isinstance(pkt.get("readiness_decision"), str) else "unknown"
+        rd = (
+            pkt.get("readiness_decision")
+            if isinstance(pkt.get("readiness_decision"), str)
+            else "unknown"
+        )
         blocked_candidates.append(
             {
                 "candidate_source_row_id": cid_s,
@@ -229,13 +250,19 @@ def build_active_source_activation_command_package(
     elif pkt.get("readiness_decision") == READINESS_BLOCKED_MISSING_POST_RUNTIME:
         activation_preconditions = ["valid_post_runtime_verification_artifact_required"]
     elif pkt.get("readiness_decision") == READINESS_BLOCKED_POST_RUNTIME_INVALID:
-        activation_preconditions = ["post_runtime_verification_artifact_must_verify_runtime_row"]
+        activation_preconditions = [
+            "post_runtime_verification_artifact_must_verify_runtime_row"
+        ]
     elif pkt.get("readiness_decision") == READINESS_BLOCKED_MISSING_GATE:
         activation_preconditions = ["activation_readiness_gate_artifact_required"]
     elif pkt.get("readiness_decision") == READINESS_BLOCKED_GATE_INVALID:
-        activation_preconditions = ["activation_readiness_gate_artifact_must_be_valid_for_review_packet"]
+        activation_preconditions = [
+            "activation_readiness_gate_artifact_must_be_valid_for_review_packet"
+        ]
     else:
-        activation_preconditions = ["activation_review_packet_not_ready_for_command_package_preview"]
+        activation_preconditions = [
+            "activation_review_packet_not_ready_for_command_package_preview"
+        ]
 
     activation_risks = [
         "sprint_66_preview_contains_no_operator_attestation_or_runtime_writes",
@@ -267,7 +294,9 @@ def build_active_source_activation_command_package(
             if isinstance(reqs, list) and reqs:
                 required_operator_actions.extend([str(x) for x in reqs])
 
-    readiness_out = READINESS_PREVIEW_READY if emit_preview else READINESS_PREVIEW_BLOCKED
+    readiness_out = (
+        READINESS_PREVIEW_READY if emit_preview else READINESS_PREVIEW_BLOCKED
+    )
 
     proof = {
         "sprint_66_activation_command_package_is_stateless": True,

@@ -11,6 +11,9 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.active_source_activation_review_packet_service import (
+    validate_activation_review_packet_artifact_for_gate,
+)
 from nativeforge.services.active_source_post_runtime_verification_service import (
     ARTIFACT_TYPE as POST_RUNTIME_VERIFICATION_ARTIFACT_TYPE,
 )
@@ -19,9 +22,6 @@ from nativeforge.services.active_source_post_runtime_verification_service import
 )
 from nativeforge.services.active_source_post_runtime_verification_service import (
     validate_runtime_evidence_struct,
-)
-from nativeforge.services.active_source_activation_review_packet_service import (
-    validate_activation_review_packet_artifact_for_gate,
 )
 
 ARTIFACT_TYPE = "nf_active_source_activation_readiness_gate_v1"
@@ -36,7 +36,9 @@ READINESS_BLOCKED_SOURCE_NOT_VERIFIED = "blocked_source_not_verified"
 READINESS_BLOCKED_REQUIRES_ACTIVATION_REVIEW_ARTIFACTS = (
     "blocked_requires_activation_review_artifacts"
 )
-READINESS_READY_FUTURE_ACTIVATION_REVIEW_PACKET = "ready_for_future_activation_review_packet"
+READINESS_READY_FUTURE_ACTIVATION_REVIEW_PACKET = (
+    "ready_for_future_activation_review_packet"
+)
 
 _SPRINT64_ZERO_COUNTS: dict[str, int] = {
     "actual_source_row_create_count": 0,
@@ -133,7 +135,13 @@ def _validate_post_runtime(pr: dict[str, Any]) -> tuple[bool, list[str], str | N
         reasons.append(
             "artifact_type_must_be_nf_active_source_post_runtime_verification_v1"
         )
-        return ok, reasons, pr.get("readiness_decision") if isinstance(pr.get("readiness_decision"), str) else None
+        return (
+            ok,
+            reasons,
+            pr.get("readiness_decision")
+            if isinstance(pr.get("readiness_decision"), str)
+            else None,
+        )
     rd = pr.get("readiness_decision")
     if rd != POST_RUNTIME_VERIFIED:
         ok = False
@@ -184,7 +192,9 @@ def build_active_source_activation_readiness_gate(
         runtime_evidence_artifact, dict
     )
 
-    if runtime_evidence_artifact is not None and isinstance(runtime_evidence_artifact, dict):
+    if runtime_evidence_artifact is not None and isinstance(
+        runtime_evidence_artifact, dict
+    ):
         re_ok, re_reasons = validate_runtime_evidence_struct(runtime_evidence_artifact)
         runtime_evidence_validation: dict[str, Any] = {
             "supplied": True,
@@ -213,7 +223,9 @@ def build_active_source_activation_readiness_gate(
                 },
                 "post_runtime_verification_validation": {
                     "valid": False,
-                    "reasons": ["post_runtime_verification_artifact_missing_or_not_a_dict"],
+                    "reasons": [
+                        "post_runtime_verification_artifact_missing_or_not_a_dict"
+                    ],
                 },
                 "runtime_evidence_validation": runtime_evidence_validation,
                 "activation_candidate_source_row_id": None,
@@ -271,7 +283,9 @@ def build_active_source_activation_readiness_gate(
             }
         )
 
-    pr_ok, pr_reasons, _pr_rd = _validate_post_runtime(post_runtime_verification_artifact)
+    pr_ok, pr_reasons, _pr_rd = _validate_post_runtime(
+        post_runtime_verification_artifact
+    )
     pr_validation = {"valid": pr_ok, "reasons": pr_reasons}
 
     candidate_id = post_runtime_verification_artifact.get("verified_source_row_id")
@@ -358,7 +372,10 @@ def build_active_source_activation_readiness_gate(
     }
 
     if not pr_ok:
-        wrong_type = post_runtime_verification_artifact.get("artifact_type") != POST_RUNTIME_VERIFICATION_ARTIFACT_TYPE
+        wrong_type = (
+            post_runtime_verification_artifact.get("artifact_type")
+            != POST_RUNTIME_VERIFICATION_ARTIFACT_TYPE
+        )
         rd_out = (
             READINESS_BLOCKED_POST_RUNTIME_INVALID
             if wrong_type
@@ -385,7 +402,9 @@ def build_active_source_activation_readiness_gate(
             {
                 "activation_gate_status": "activation_gate_blocked",
                 "readiness_decision": READINESS_NOT_READY,
-                "activation_blockers": ["runtime_evidence_supplied_but_invalid_for_gate"],
+                "activation_blockers": [
+                    "runtime_evidence_supplied_but_invalid_for_gate"
+                ],
                 "blockers": ["runtime_evidence_supplied_but_invalid_for_gate"],
                 "warnings": [],
                 "next_allowed_step": "align_runtime_evidence_with_post_runtime_or_omit_optional_runtime_evidence",
@@ -466,10 +485,14 @@ def build_active_source_activation_readiness_gate(
         "activation_review_artifacts_not_present",
         *[f"missing_future_activation_artifact:{k}" for k in ph_missing],
     ]
-    if activation_review_packet_artifact is not None and isinstance(
-        activation_review_packet_artifact, dict
-    ) and not packet_ok:
-        blockers.append("activation_review_packet_artifact_supplied_but_invalid_for_gate")
+    if (
+        activation_review_packet_artifact is not None
+        and isinstance(activation_review_packet_artifact, dict)
+        and not packet_ok
+    ):
+        blockers.append(
+            "activation_review_packet_artifact_supplied_but_invalid_for_gate"
+        )
         blockers.extend([f"sprint_65_packet_validation:{r}" for r in packet_reasons])
     base_out.update(
         {

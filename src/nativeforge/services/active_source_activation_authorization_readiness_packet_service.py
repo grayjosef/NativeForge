@@ -14,13 +14,21 @@ from typing import Any
 
 from nativeforge.services.active_source_activation_command_package_service import (
     ARTIFACT_TYPE as COMMAND_PACKAGE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_command_package_service import (
     PACKAGE_VERSION as COMMAND_PACKAGE_VERSION,
+)
+from nativeforge.services.active_source_activation_command_package_service import (
     READINESS_PREVIEW_READY,
 )
 from nativeforge.services.active_source_activation_operator_decision_review_service import (
     ARTIFACT_TYPE as OPERATOR_DECISION_REVIEW_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_operator_decision_review_service import (
     OPERATOR_DECISION_BLOCKED,
     OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW,
+)
+from nativeforge.services.active_source_activation_operator_decision_review_service import (
     REVIEW_VERSION as OPERATOR_DECISION_REVIEW_VERSION,
 )
 
@@ -109,7 +117,9 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def _operator_decision_review_reference(review: dict[str, Any] | None) -> dict[str, Any]:
+def _operator_decision_review_reference(
+    review: dict[str, Any] | None,
+) -> dict[str, Any]:
     if review is None or not isinstance(review, dict):
         return {
             "artifact_type": None,
@@ -171,27 +181,42 @@ def _collect_validation_failures(review: dict[str, Any] | None) -> list[str]:
         failures.append("operator_decision_review_version_mismatch")
 
     if review.get("preview_only") is not True:
-        failures.append("operator_decision_review_preview_only_guardrail_missing_or_false")
+        failures.append(
+            "operator_decision_review_preview_only_guardrail_missing_or_false"
+        )
 
     if review.get("no_execution") is not True:
-        failures.append("operator_decision_review_no_execution_guardrail_missing_or_false")
+        failures.append(
+            "operator_decision_review_no_execution_guardrail_missing_or_false"
+        )
 
     if review.get("future_authorization_required") is not True:
-        failures.append("operator_decision_review_future_authorization_required_missing_or_false")
+        failures.append(
+            "operator_decision_review_future_authorization_required_missing_or_false"
+        )
 
     eg = review.get("explicit_preview_only_no_execution_guardrail")
     if not isinstance(eg, str) or not eg.strip():
-        failures.append("operator_decision_review_explicit_guardrail_missing_or_invalid")
+        failures.append(
+            "operator_decision_review_explicit_guardrail_missing_or_invalid"
+        )
 
     od = review.get("operator_decision")
-    if od not in (OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW, OPERATOR_DECISION_BLOCKED):
+    if od not in (
+        OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW,
+        OPERATOR_DECISION_BLOCKED,
+    ):
         failures.append("operator_decision_review_operator_decision_invalid_or_unknown")
     elif od == OPERATOR_DECISION_BLOCKED:
-        failures.append("sprint_67_operator_decision_review_was_blocked_operator_decision_review")
+        failures.append(
+            "sprint_67_operator_decision_review_was_blocked_operator_decision_review"
+        )
 
     ref = review.get("command_package_reference")
     if not isinstance(ref, dict):
-        failures.append("operator_decision_review_command_package_reference_missing_or_invalid")
+        failures.append(
+            "operator_decision_review_command_package_reference_missing_or_invalid"
+        )
     else:
         if ref.get("artifact_type") != COMMAND_PACKAGE_ARTIFACT_TYPE:
             failures.append("command_package_reference_artifact_type_mismatch")
@@ -200,13 +225,17 @@ def _collect_validation_failures(review: dict[str, Any] | None) -> list[str]:
         rd = ref.get("readiness_decision")
         if rd != READINESS_PREVIEW_READY:
             if isinstance(rd, str):
-                failures.append(f"command_package_reference_readiness_not_preview_ready:{rd}")
+                failures.append(
+                    f"command_package_reference_readiness_not_preview_ready:{rd}"
+                )
             else:
                 failures.append("command_package_reference_readiness_not_preview_ready")
 
     cpr = review.get("command_preview_review")
     if not isinstance(cpr, dict):
-        failures.append("operator_decision_review_command_preview_review_missing_or_invalid")
+        failures.append(
+            "operator_decision_review_command_preview_review_missing_or_invalid"
+        )
 
     ok_am, am_reasons = _actual_may_guardrails_ok(review)
     if not ok_am:
@@ -255,11 +284,22 @@ def build_active_source_activation_authorization_readiness_packet(
     *,
     operator_decision_review_artifact: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    rev = operator_decision_review_artifact if isinstance(operator_decision_review_artifact, dict) else None
+    rev = (
+        operator_decision_review_artifact
+        if isinstance(operator_decision_review_artifact, dict)
+        else None
+    )
     failures = _collect_validation_failures(rev)
-    ready = len(failures) == 0 and rev is not None and rev.get("operator_decision") == OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW
+    ready = (
+        len(failures) == 0
+        and rev is not None
+        and rev.get("operator_decision")
+        == OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW
+    )
 
-    authorization_readiness = AUTHORIZATION_READINESS_READY if ready else AUTHORIZATION_READINESS_BLOCKED
+    authorization_readiness = (
+        AUTHORIZATION_READINESS_READY if ready else AUTHORIZATION_READINESS_BLOCKED
+    )
 
     if ready:
         readiness_reasons = [
@@ -283,16 +323,24 @@ def build_active_source_activation_authorization_readiness_packet(
             required_human_authorization_actions.extend(
                 f"inherit_operator_handoff:{str(x)}" for x in roa
             )
-    required_human_authorization_actions = sorted(set(required_human_authorization_actions))
+    required_human_authorization_actions = sorted(
+        set(required_human_authorization_actions)
+    )
 
     command_preview_summary: dict[str, Any]
     if isinstance(rev, dict):
         cpr = rev.get("command_preview_review")
         if isinstance(cpr, dict):
             command_preview_summary = {
-                "command_preview_entries_reviewed": cpr.get("command_preview_entries_reviewed"),
-                "all_entries_declare_preview_only": cpr.get("all_entries_declare_preview_only"),
-                "all_entries_declare_no_execution": cpr.get("all_entries_declare_no_execution"),
+                "command_preview_entries_reviewed": cpr.get(
+                    "command_preview_entries_reviewed"
+                ),
+                "all_entries_declare_preview_only": cpr.get(
+                    "all_entries_declare_preview_only"
+                ),
+                "all_entries_declare_no_execution": cpr.get(
+                    "all_entries_declare_no_execution"
+                ),
                 "notes": sorted(str(x) for x in cpr.get("notes", []))
                 if isinstance(cpr.get("notes"), list)
                 else [],
@@ -334,9 +382,15 @@ def build_active_source_activation_authorization_readiness_packet(
     }
 
     guardrail_review: dict[str, Any] = {
-        "input_operator_decision_review_preview_only": rev.get("preview_only") if isinstance(rev, dict) else None,
-        "input_operator_decision_review_no_execution": rev.get("no_execution") if isinstance(rev, dict) else None,
-        "input_operator_decision_review_future_authorization_required": rev.get("future_authorization_required")
+        "input_operator_decision_review_preview_only": rev.get("preview_only")
+        if isinstance(rev, dict)
+        else None,
+        "input_operator_decision_review_no_execution": rev.get("no_execution")
+        if isinstance(rev, dict)
+        else None,
+        "input_operator_decision_review_future_authorization_required": rev.get(
+            "future_authorization_required"
+        )
         if isinstance(rev, dict)
         else None,
         "input_explicit_preview_only_no_execution_guardrail_present": isinstance(

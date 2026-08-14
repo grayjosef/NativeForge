@@ -13,10 +13,14 @@ from typing import Any
 from nativeforge.db.models import NfActiveOpportunitySource
 from nativeforge.services.active_source_creation_request_service import (
     ARTIFACT_TYPE as SOURCE_CREATION_REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_request_service import (
     READINESS_READY_REVIEW as SOURCE_REQUEST_READINESS_READY_FOR_HUMAN_REVIEW,
 )
 from nativeforge.services.active_source_human_approval_intake_service import (
     ARTIFACT_TYPE as HUMAN_APPROVAL_INTAKE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
     READINESS_READY_FUTURE as APPROVAL_READINESS_READY_FUTURE_SPRINT,
 )
 
@@ -159,7 +163,9 @@ def _validate_source_creation_request(req: dict[str, Any]) -> tuple[bool, list[s
     rs = req.get("request_status")
     if rs != SOURCE_REQUEST_READINESS_READY_FOR_HUMAN_REVIEW:
         ok = False
-        reasons.append("request_status_must_match_ready_for_human_source_creation_review")
+        reasons.append(
+            "request_status_must_match_ready_for_human_source_creation_review"
+        )
     if rd != rs and rd == SOURCE_REQUEST_READINESS_READY_FOR_HUMAN_REVIEW:
         reasons.append("note_request_status_should_align_with_readiness_decision")
     if ok:
@@ -172,7 +178,9 @@ def _validate_human_approval_intake(ha: dict[str, Any]) -> tuple[bool, list[str]
     ok = True
     if ha.get("artifact_type") != HUMAN_APPROVAL_INTAKE_ARTIFACT_TYPE:
         ok = False
-        reasons.append("artifact_type_must_match_nf_active_source_human_approval_intake_v1")
+        reasons.append(
+            "artifact_type_must_match_nf_active_source_human_approval_intake_v1"
+        )
     rd = ha.get("readiness_decision")
     if rd != APPROVAL_READINESS_READY_FUTURE_SPRINT:
         ok = False
@@ -192,7 +200,9 @@ def _validate_human_approval_intake(ha: dict[str, Any]) -> tuple[bool, list[str]
 
 def _orm_validation() -> dict[str, Any]:
     cols = sorted(c.name for c in NfActiveOpportunitySource.__table__.columns)
-    alignment_keys = [k for k in _FIELD_MAP_EXPECTED_KEYS if k != "proposed_activation_notes"]
+    alignment_keys = [
+        k for k in _FIELD_MAP_EXPECTED_KEYS if k != "proposed_activation_notes"
+    ]
     orm_miss = [k for k in alignment_keys if k not in cols]
     act_notes_ok = "activation_notes" in cols
     mapping_preview = {"proposed_activation_notes": "activation_notes"}
@@ -336,7 +346,8 @@ def build_active_source_creation_execution_dry_run(
         blockers.append("missing_human_approval_intake_artifact")
 
     req_type_ok = (
-        req is not None and req.get("artifact_type") == SOURCE_CREATION_REQUEST_ARTIFACT_TYPE
+        req is not None
+        and req.get("artifact_type") == SOURCE_CREATION_REQUEST_ARTIFACT_TYPE
     )
     ha_type_ok = (
         ha is not None
@@ -377,12 +388,7 @@ def build_active_source_creation_execution_dry_run(
         warnings.append("upstream_artifact_warnings_propagated")
 
     execution_ready = (
-        req_received
-        and ha_received
-        and req_type_ok
-        and ha_type_ok
-        and rq_ok
-        and aq_ok
+        req_received and ha_received and req_type_ok and ha_type_ok and rq_ok and aq_ok
     )
 
     blockers_sorted = sorted(set(blockers))
@@ -390,7 +396,9 @@ def build_active_source_creation_execution_dry_run(
     if execution_ready:
         readiness = READINESS_READY_FUTURE_EXEC
         dry_run_status = READINESS_READY_FUTURE_EXEC
-        next_allowed_step = "active_source_creation_execution_readiness_gate_future_sprint"
+        next_allowed_step = (
+            "active_source_creation_execution_readiness_gate_future_sprint"
+        )
     else:
         readiness = READINESS_NOT_READY
         dry_run_status = READINESS_NOT_READY
@@ -399,11 +407,11 @@ def build_active_source_creation_execution_dry_run(
                 "supply_nf_active_source_creation_request_v1_ready_for_human_review"
             )
         elif not ha_received or not ha_type_ok or not aq_ok:
-            next_allowed_step = (
-                "supply_nf_active_source_human_approval_intake_v1_ready_for_future_creation"
-            )
+            next_allowed_step = "supply_nf_active_source_human_approval_intake_v1_ready_for_future_creation"
         else:
-            next_allowed_step = "complete_upstream_governance_then_re_run_dry_run_builder"
+            next_allowed_step = (
+                "complete_upstream_governance_then_re_run_dry_run_builder"
+            )
 
     source_creation_request_validation: dict[str, Any] = {
         "artifact_received": req_received,
@@ -533,9 +541,7 @@ def build_active_source_creation_execution_dry_run(
         "upstream_source_creation_request_artifact_echo": {}
         if req is None
         else dict(req),
-        "upstream_human_approval_intake_artifact_echo": {}
-        if ha is None
-        else dict(ha),
+        "upstream_human_approval_intake_artifact_echo": {} if ha is None else dict(ha),
     }
     return _json_safe(art)
 

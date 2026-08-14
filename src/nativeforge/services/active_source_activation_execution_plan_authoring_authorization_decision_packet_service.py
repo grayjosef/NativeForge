@@ -14,8 +14,14 @@ from typing import Any
 
 from nativeforge.services.active_source_activation_execution_plan_authoring_authorization_request_packet_service import (
     ARTIFACT_TYPE as SPRINT72_AUTHORIZATION_REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_execution_plan_authoring_authorization_request_packet_service import (
     ARTIFACT_VERSION as SPRINT72_AUTHORIZATION_REQUEST_ARTIFACT_VERSION,
+)
+from nativeforge.services.active_source_activation_execution_plan_authoring_authorization_request_packet_service import (
     AUTHORIZATION_REQUEST_READY,
+)
+from nativeforge.services.active_source_activation_execution_plan_authoring_authorization_request_packet_service import (
     PACKET_VERSION as SPRINT72_PACKET_VERSION,
 )
 
@@ -24,8 +30,12 @@ ARTIFACT_VERSION = 1
 PACKET_VERSION = "v1"
 DETERMINISTIC_GENERATED_AT = "1970-01-01T00:00:00Z"
 
-AUTHORIZATION_DECISION_APPROVED = "approved_for_future_activation_execution_plan_authoring_only"
-AUTHORIZATION_DECISION_BLOCKED = "blocked_execution_plan_authoring_authorization_decision_packet"
+AUTHORIZATION_DECISION_APPROVED = (
+    "approved_for_future_activation_execution_plan_authoring_only"
+)
+AUTHORIZATION_DECISION_BLOCKED = (
+    "blocked_execution_plan_authoring_authorization_decision_packet"
+)
 
 _GUARD_NOTE = (
     "sprint_73_active_source_activation_execution_plan_authoring_authorization_decision_packet_preview_only_"
@@ -210,10 +220,14 @@ def _forbidden_language(pkt: dict[str, Any]) -> list[str]:
                 found.append(f"activation_implies_live_or_ran_substring:{phrase!s}")
         for phrase in _RUNNABLE_EXECUTION_PLAN_OR_COMMAND_EXECUTION_LANGUAGE:
             if phrase in low:
-                found.append(f"runnable_plan_or_command_execution_language_substring:{phrase!s}")
+                found.append(
+                    f"runnable_plan_or_command_execution_language_substring:{phrase!s}"
+                )
         for phrase in _DATA_PLANE_OR_EXTERNAL_AUTOMATION_LANGUAGE:
             if phrase in low:
-                found.append(f"data_plane_or_external_automation_language_substring:{phrase!s}")
+                found.append(
+                    f"data_plane_or_external_automation_language_substring:{phrase!s}"
+                )
     return sorted(set(found))
 
 
@@ -241,26 +255,40 @@ def _actual_may_guardrails_ok(obj: dict[str, Any]) -> tuple[bool, list[str]]:
 def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
     failures: list[str] = []
     if pkt is None or not isinstance(pkt, dict):
-        failures.append("execution_plan_authoring_authorization_request_packet_missing_or_not_a_dict")
+        failures.append(
+            "execution_plan_authoring_authorization_request_packet_missing_or_not_a_dict"
+        )
         return sorted(set(failures))
 
     if pkt.get("artifact_type") != SPRINT72_AUTHORIZATION_REQUEST_ARTIFACT_TYPE:
-        failures.append("execution_plan_authoring_authorization_request_packet_artifact_type_mismatch")
+        failures.append(
+            "execution_plan_authoring_authorization_request_packet_artifact_type_mismatch"
+        )
 
     if pkt.get("artifact_version") != SPRINT72_AUTHORIZATION_REQUEST_ARTIFACT_VERSION:
-        failures.append("execution_plan_authoring_authorization_request_packet_artifact_version_invalid")
+        failures.append(
+            "execution_plan_authoring_authorization_request_packet_artifact_version_invalid"
+        )
 
     if pkt.get("version") != SPRINT72_PACKET_VERSION:
-        failures.append("execution_plan_authoring_authorization_request_packet_version_mismatch")
+        failures.append(
+            "execution_plan_authoring_authorization_request_packet_version_mismatch"
+        )
 
     if pkt.get("preview_only") is not True:
-        failures.append("execution_plan_authoring_authorization_request_packet_preview_only_guardrail_missing_or_false")
+        failures.append(
+            "execution_plan_authoring_authorization_request_packet_preview_only_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_execution") is not True:
-        failures.append("execution_plan_authoring_authorization_request_packet_no_execution_guardrail_missing_or_false")
+        failures.append(
+            "execution_plan_authoring_authorization_request_packet_no_execution_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_activation") is not True:
-        failures.append("execution_plan_authoring_authorization_request_packet_no_activation_guardrail_missing_or_false")
+        failures.append(
+            "execution_plan_authoring_authorization_request_packet_no_activation_guardrail_missing_or_false"
+        )
 
     if pkt.get("no_runnable_plan") is not True:
         failures.append(
@@ -274,11 +302,17 @@ def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
                 f"execution_plan_authoring_authorization_request_status_not_ready_for_human_decision:{ars}"
             )
         else:
-            failures.append("execution_plan_authoring_authorization_request_status_not_ready_for_human_decision")
+            failures.append(
+                "execution_plan_authoring_authorization_request_status_not_ready_for_human_decision"
+            )
 
-    eg = pkt.get("explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_request_only_guardrail")
+    eg = pkt.get(
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_request_only_guardrail"
+    )
     if not isinstance(eg, str) or not eg.strip():
-        failures.append("execution_plan_authoring_authorization_request_packet_explicit_guardrail_missing_or_invalid")
+        failures.append(
+            "execution_plan_authoring_authorization_request_packet_explicit_guardrail_missing_or_invalid"
+        )
     else:
         egl = eg.lower()
         if "preview_only" not in egl:
@@ -314,11 +348,14 @@ def _collect_validation_failures(pkt: dict[str, Any] | None) -> list[str]:
 
 def build_active_source_activation_execution_plan_authoring_authorization_decision_packet(
     *,
-    execution_plan_authoring_authorization_request_packet_artifact: dict[str, Any] | None = None,
+    execution_plan_authoring_authorization_request_packet_artifact: dict[str, Any]
+    | None = None,
 ) -> dict[str, Any]:
     pkt = (
         execution_plan_authoring_authorization_request_packet_artifact
-        if isinstance(execution_plan_authoring_authorization_request_packet_artifact, dict)
+        if isinstance(
+            execution_plan_authoring_authorization_request_packet_artifact, dict
+        )
         else None
     )
     failures = _collect_validation_failures(pkt)
