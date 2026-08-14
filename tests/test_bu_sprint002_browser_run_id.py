@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from nativeforge.services.nm_wa_browser_demo_contract_service import validate_browser_run_id
+from nativeforge.services.nm_wa_browser_demo_contract_service import (
+    validate_browser_run_id,
+)
 
 
 def test_browser_run_id() -> None:
