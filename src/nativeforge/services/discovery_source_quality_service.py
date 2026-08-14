@@ -19,37 +19,10 @@ from nativeforge.domain.enums import (
 )
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.services import (
-    active_source_migration_dry_run_plan_service as asmdrp_svc,
-)
-from nativeforge.services import (
-    active_source_migration_file_review_service as asmdfr_svc,
-)
-from nativeforge.services import (
-    active_source_schema_rollback_contract_service as assrc_svc,
-)
-from nativeforge.services import (
-    active_source_local_migration_verification_service as aslmv_svc,
-)
-from nativeforge.services import (
-    active_source_runtime_migration_apply_plan_service as asrmap_svc,
-)
-from nativeforge.services import (
-    active_source_runtime_migration_approval_intake_service as asrmais_svc,
-)
-from nativeforge.services import (
-    active_source_runtime_migration_apply_execution_service as asrmrae_svc,
-)
-from nativeforge.services import (
-    active_source_runtime_migration_dry_run_command_package_service as asrmdrcp_svc,
-)
-from nativeforge.services import (
-    active_source_creation_request_service as ascrcreq_svc,
+    active_source_creation_execution_command_package_service as ascecpecp_svc,
 )
 from nativeforge.services import (
     active_source_creation_execution_dry_run_service as asceddrs_svc,
-)
-from nativeforge.services import (
-    active_source_creation_execution_command_package_service as ascecpecp_svc,
 )
 from nativeforge.services import (
     active_source_creation_execution_plan_service as asceplan_svc,
@@ -58,16 +31,43 @@ from nativeforge.services import (
     active_source_creation_execution_readiness_gate_service as asccerg_svc,
 )
 from nativeforge.services import (
-    active_source_human_approval_intake_service as ashai_svc,
+    active_source_creation_request_service as ascrcreq_svc,
 )
 from nativeforge.services import (
     active_source_empty_state_read_model_service as asesrm_svc,
+)
+from nativeforge.services import (
+    active_source_human_approval_intake_service as ashai_svc,
+)
+from nativeforge.services import (
+    active_source_local_migration_verification_service as aslmv_svc,
+)
+from nativeforge.services import (
+    active_source_migration_dry_run_plan_service as asmdrp_svc,
+)
+from nativeforge.services import (
+    active_source_migration_file_review_service as asmdfr_svc,
+)
+from nativeforge.services import (
+    active_source_runtime_migration_apply_execution_service as asrmrae_svc,
+)
+from nativeforge.services import (
+    active_source_runtime_migration_apply_plan_service as asrmap_svc,
+)
+from nativeforge.services import (
+    active_source_runtime_migration_approval_intake_service as asrmais_svc,
+)
+from nativeforge.services import (
+    active_source_runtime_migration_dry_run_command_package_service as asrmdrcp_svc,
 )
 from nativeforge.services import (
     active_source_runtime_migration_post_apply_verification_service as asrmrpav_svc,
 )
 from nativeforge.services import (
     active_source_runtime_migration_readiness_gate_service as asrmrg_svc,
+)
+from nativeforge.services import (
+    active_source_schema_rollback_contract_service as assrc_svc,
 )
 from nativeforge.services import (
     alembic_migration_generation_gate_service as amgg_svc,
@@ -966,9 +966,11 @@ def build_discovery_source_quality(
     out["active_source_runtime_migration_post_apply_verification_read_only"] = (
         asrmrpav_svc.build_discovery_read_only_post_apply_verification_status_attachment()
     )
-    n_active_opportunity_sources = asesrm_svc.count_nf_active_opportunity_sources_readonly(
-        session,
-        organization_id=org_id,
+    n_active_opportunity_sources = (
+        asesrm_svc.count_nf_active_opportunity_sources_readonly(
+            session,
+            organization_id=org_id,
+        )
     )
     out["active_source_empty_state_read_model"] = (
         asesrm_svc.build_discovery_read_only_active_source_empty_state_attachment(

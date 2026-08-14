@@ -6,7 +6,9 @@ import json
 import re
 from typing import Any
 
-from nativeforge.services.sc_pilot_fixture_loader_service import RECOGNITION_REQUIREMENTS
+from nativeforge.services.sc_pilot_fixture_loader_service import (
+    RECOGNITION_REQUIREMENTS,
+)
 
 SCHEMA_VERSION = "nf_grants_gov_applicant_type_recognition_v1"
 
@@ -27,7 +29,12 @@ _APPLICANT_TYPES_PREFIX_RE = re.compile(
 )
 
 _LABEL_TO_ID: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile(r"Native American tribal governments \(Federally recognized\)", re.I), TYPE_FED_TRIBAL_GOV),
+    (
+        re.compile(
+            r"Native American tribal governments \(Federally recognized\)", re.I
+        ),
+        TYPE_FED_TRIBAL_GOV,
+    ),
     (
         re.compile(
             r"Native American tribal organizations \(other than Federally recognized",
@@ -36,7 +43,10 @@ _LABEL_TO_ID: tuple[tuple[re.Pattern[str], str], ...] = (
         TYPE_NONFED_TRIBAL_ORG,
     ),
     (re.compile(r"Nonprofits having a 501\(c\)\(3\)", re.I), TYPE_NONPROFIT_501C3),
-    (re.compile(r"Nonprofits that do not have a 501\(c\)\(3\)", re.I), TYPE_NONPROFIT_NO_501C3),
+    (
+        re.compile(r"Nonprofits that do not have a 501\(c\)\(3\)", re.I),
+        TYPE_NONPROFIT_NO_501C3,
+    ),
     (re.compile(r"^Unrestricted", re.I), TYPE_UNRESTRICTED),
     (re.compile(r"Others \(see text field", re.I), TYPE_OTHERS),
     (re.compile(r"^State governments", re.I), "01"),
@@ -77,7 +87,9 @@ def infer_applicant_type_ids_from_labels(labels: list[str]) -> list[str]:
     return ids
 
 
-def parse_applicant_type_labels_from_eligibility_text(eligibility_text: str) -> list[str]:
+def parse_applicant_type_labels_from_eligibility_text(
+    eligibility_text: str,
+) -> list[str]:
     match = _APPLICANT_TYPES_PREFIX_RE.match(eligibility_text.strip())
     if not match:
         return []
@@ -106,7 +118,9 @@ def resolve_grant_applicant_type_ids(grant: dict[str, Any]) -> list[str]:
 def _gov_only(type_ids: frozenset[str]) -> bool:
     if not type_ids:
         return False
-    if type_ids & (_TRIBAL_TYPE_IDS | _NONPROFIT_TYPE_IDS | {TYPE_UNRESTRICTED, TYPE_OTHERS}):
+    if type_ids & (
+        _TRIBAL_TYPE_IDS | _NONPROFIT_TYPE_IDS | {TYPE_UNRESTRICTED, TYPE_OTHERS}
+    ):
         return False
     return type_ids <= _GOV_TYPE_IDS or type_ids == frozenset({"01"})
 
@@ -138,8 +152,8 @@ def derive_recognition_from_applicant_type_ids(
     if has_25 and not (has_07 or has_11 or has_12 or has_13 or has_99):
         if grant is not None:
             from nativeforge.services.recognition_requirement_derivation_service import (
-                _derive_from_text_body,
                 _derive_from_others_eligibility_body,
+                _derive_from_text_body,
             )
 
             body_req = _derive_from_others_eligibility_body(grant)

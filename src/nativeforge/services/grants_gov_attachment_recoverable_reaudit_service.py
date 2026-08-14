@@ -17,7 +17,9 @@ from nativeforge.services.grants_gov_eligibility_parser_service import (
 from nativeforge.services.grants_gov_search_api_adapter_service import (
     fetch_grants_gov_opportunity_detail,
 )
-from nativeforge.services.sc_pilot_fixture_loader_service import load_sc_eligibility_rules
+from nativeforge.services.sc_pilot_fixture_loader_service import (
+    load_sc_eligibility_rules,
+)
 from nativeforge.services.tier3_foundation_corpus_persist_service import (
     load_mixed_tier13_corpus,
 )
@@ -57,8 +59,7 @@ def _is_attachment_only_recoverable(
         return None
 
     hay = " ".join(
-        str(grant.get(k) or "")
-        for k in ("opportunity_title", "agency")
+        str(grant.get(k) or "") for k in ("opportunity_title", "agency")
     ).lower()
     tribal_signal = any(
         tok in hay for tok in ("tribal", "indian", "native", "ihs", "bia", "ana")
@@ -72,7 +73,11 @@ def _is_attachment_only_recoverable(
             "grants_gov_opportunity_id": grant.get("grants_gov_opportunity_id"),
             "attachment_count": inv.get("attachment_count"),
             "pdf_count": inv.get("pdf_count"),
-            "pdf_files": [a.get("file_name") for a in inv.get("attachments") or [] if "pdf" in str(a.get("mime_type", "")).lower()],
+            "pdf_files": [
+                a.get("file_name")
+                for a in inv.get("attachments") or []
+                if "pdf" in str(a.get("mime_type", "")).lower()
+            ],
         }
     )
 
@@ -107,9 +112,12 @@ def run_attachment_recoverable_reaudit(
         if hit:
             candidates.append(hit)
         else:
-            inv = parse_grants_gov_opportunity_eligibility(detail).get(
-                "grants_gov_attachment_inventory"
-            ) or {}
+            inv = (
+                parse_grants_gov_opportunity_eligibility(detail).get(
+                    "grants_gov_attachment_inventory"
+                )
+                or {}
+            )
             if inv.get("pdf_count", 0) >= 1:
                 skipped_no_pdf += 1
 

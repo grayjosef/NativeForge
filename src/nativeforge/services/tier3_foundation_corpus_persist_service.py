@@ -7,7 +7,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from nativeforge.services.fed_program_activation_binding_service import load_seed_candidate
+from nativeforge.services.fed_program_activation_binding_service import (
+    load_seed_candidate,
+)
 from nativeforge.services.no_live_nofo_state_service import build_no_live_nofo_grant
 from nativeforge.services.real_grants_corpus_loader_service import (
     CORPUS_PATH as NF13_CORPUS_PATH,
@@ -57,12 +59,16 @@ def payload_to_tier3_grant_record(
             "eligibility_text_source": payload.get("eligibility_text_source"),
             "eligibility_provenance": payload.get("eligibility_provenance"),
             "grants_gov_doc_type": payload.get("grants_gov_doc_type"),
-            "grants_gov_attachment_inventory": payload.get("grants_gov_attachment_inventory"),
+            "grants_gov_attachment_inventory": payload.get(
+                "grants_gov_attachment_inventory"
+            ),
             "synopsis": payload.get("synopsis"),
             "tribal_eligible": payload.get("tribal_eligible"),
             "applicant_type_ids": payload.get("applicant_type_ids") or [],
             "applicant_types_json": payload.get("applicant_types_json") or [],
-            "applicant_types_include_tribal": payload.get("applicant_types_include_tribal"),
+            "applicant_types_include_tribal": payload.get(
+                "applicant_types_include_tribal"
+            ),
             "application_deadline": payload.get("application_deadline"),
             "real_fetch": payload.get("real_fetch") is True,
             "fetch_mode": payload.get("fetch_mode"),
@@ -133,9 +139,7 @@ def persist_tier3_batch_to_corpus(
 ) -> dict[str, Any]:
     target = corpus_path or TIER3_CORPUS_PATH
     existing = load_tier3_foundation_corpus(path=target)
-    by_key: dict[str, dict[str, Any]] = {
-        build_grant_dedup_key(g): g for g in existing
-    }
+    by_key: dict[str, dict[str, Any]] = {build_grant_dedup_key(g): g for g in existing}
     inserted = 0
     skipped = 0
     no_live_nofo_count = 0
@@ -217,7 +221,9 @@ def persist_tier3_batch_to_corpus(
         "grants": mixed,
         "updated_at": datetime.now(tz=UTC).isoformat(),
     }
-    mixed_target.write_text(json.dumps(mixed_artifact, indent=2) + "\n", encoding="utf-8")
+    mixed_target.write_text(
+        json.dumps(mixed_artifact, indent=2) + "\n", encoding="utf-8"
+    )
 
     return _json_safe(
         {

@@ -21,39 +21,23 @@ from sqlalchemy import create_engine, inspect, text
 from nativeforge.lib.settings import get_settings
 from nativeforge.services.active_source_migration_file_review_service import (
     _EXPECTED_CONSTRAINTS,
+    _column_names_from_migration,
+    _constraint_names_from_migration,
+    _glob_migration_paths,
+    _index_names_from_migration,
+    _parse_revision_meta,
+    _read_text,
+    _repo_root,
+    _versions_dir,
 )
 from nativeforge.services.active_source_migration_file_review_service import (
     _EXPECTED_INDEXES as _MIGRATION_EXPECTED_INDEXES,
 )
 from nativeforge.services.active_source_migration_file_review_service import (
-    _TABLE_NAME as TARGET_TABLE,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
-    _column_names_from_migration,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
-    _constraint_names_from_migration,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
-    _glob_migration_paths,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
-    _index_names_from_migration,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
-    _parse_revision_meta,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
-    _read_text,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
-    _repo_root,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
-    _versions_dir,
-)
-from nativeforge.services.active_source_migration_file_review_service import (
     _REQUIRED_FIELDS as EXPECTED_COLUMNS,
+)
+from nativeforge.services.active_source_migration_file_review_service import (
+    _TABLE_NAME as TARGET_TABLE,
 )
 
 ARTIFACT_TYPE = "nf_active_source_local_migration_verification_v1"
@@ -210,9 +194,7 @@ def build_active_source_local_migration_verification(
     text = _read_text(primary) if primary else ""
 
     rev_id, down_rev = _parse_revision_meta(text) if primary else (None, None)
-    chain_ok = (
-        rev_id == SOURCE_REVISION_ID and down_rev == SOURCE_DOWN_REVISION_ID
-    )
+    chain_ok = rev_id == SOURCE_REVISION_ID and down_rev == SOURCE_DOWN_REVISION_ID
     revision_chain_check: dict[str, Any] = {
         "check_status": "passed" if chain_ok else "failed",
         "expected_revision": SOURCE_REVISION_ID,
@@ -221,11 +203,7 @@ def build_active_source_local_migration_verification(
         "parsed_down_revision": down_rev or "",
     }
 
-    rel_path = (
-        str(primary.relative_to(root))
-        if primary
-        else MIGRATION_FILE_RELATIVE
-    )
+    rel_path = str(primary.relative_to(root)) if primary else MIGRATION_FILE_RELATIVE
     migration_file_presence_check: dict[str, Any] = {
         "check_status": "passed" if primary is not None else "failed",
         "migration_file_path": rel_path,
@@ -318,7 +296,9 @@ def build_active_source_local_migration_verification(
         "check_status": (
             "not_measured_embed_path"
             if isolated_sqlite_proof is None
-            else ("passed" if iso.get("target_table_present_after_upgrade") else "failed")
+            else (
+                "passed" if iso.get("target_table_present_after_upgrade") else "failed"
+            )
         ),
         "target_table": TARGET_TABLE,
         "observed_via_isolated_sqlite": iso.get("target_table_present_after_upgrade"),
@@ -359,9 +339,7 @@ def build_active_source_local_migration_verification(
         obs_idx = set(iso.get("observed_index_names_after_upgrade") or [])
         sqlite_idx_ok = all(n in obs_idx for n in _MIGRATION_EXPECTED_INDEXES)
         obs_uc = set(iso.get("observed_unique_constraint_names_after_upgrade") or [])
-        sqlite_uc_ok = (
-            "uq_nf_active_opportunity_sources_org_name_type_lane" in obs_uc
-        )
+        sqlite_uc_ok = "uq_nf_active_opportunity_sources_org_name_type_lane" in obs_uc
         if iso.get("check_constraint_inspection_supported"):
             obs_ck = set(iso.get("observed_check_constraint_names_after_upgrade") or [])
             sqlite_ck_ok = (
@@ -439,9 +417,7 @@ def build_active_source_local_migration_verification(
     if isolated_sqlite_proof is None:
         verification_status = "passed_static_embed" if static_ok else "blocked"
     else:
-        verification_status = (
-            "passed" if static_ok and isolated_ok else "blocked"
-        )
+        verification_status = "passed" if static_ok and isolated_ok else "blocked"
 
     required_human_review = True
     next_allowed_step = (

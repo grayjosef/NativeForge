@@ -8,6 +8,9 @@ from typing import Any
 from nativeforge.services.eligibility_fit_assessment_blockers_service import (
     BLOCKER_ELIGIBILITY_EVIDENCE_GAP,
 )
+from nativeforge.services.grant_eligibility_conditions_service import (
+    enrich_grant_with_eligibility_metadata,
+)
 from nativeforge.services.matching_readiness_match_label_vocabulary_service import (
     LABEL_NEEDS_OPERATOR_REVIEW,
 )
@@ -23,9 +26,6 @@ from nativeforge.services.real_grant_native_relevance_record_service import (
 from nativeforge.services.real_resolver_validation_gate_service import (
     build_real_resolver_validation_gate_contract,
     require_real_resolver_validation_gate,
-)
-from nativeforge.services.grant_eligibility_conditions_service import (
-    enrich_grant_with_eligibility_metadata,
 )
 from nativeforge.services.recognition_tier_eligibility_gate_service import (
     apply_recognition_tier_eligibility_gate,
@@ -144,7 +144,9 @@ def run_sc_pilot_classify_match_block(
                     "profile_fixture_key": fk,
                     "opportunity_title": grant.get("opportunity_title"),
                     "recognition_requirement": opp.get("recognition_requirement"),
-                    "classification_label": nrc["classification"]["classification_label"],
+                    "classification_label": nrc["classification"][
+                        "classification_label"
+                    ],
                     "match_label": LABEL_NEEDS_OPERATOR_REVIEW,
                     "recognition_tier_gate": tier_gate,
                     "recognition_tier_mismatch": has_tier_mismatch,
@@ -153,7 +155,9 @@ def run_sc_pilot_classify_match_block(
                     "eligibility_evidence_gap": has_evidence_gap,
                     "excluded_from_match_set": excluded,
                     "blocker_codes": blockers,
-                    "fit_dimensions": match["eligibility_fit_assessment"]["dimension_results"],
+                    "fit_dimensions": match["eligibility_fit_assessment"][
+                        "dimension_results"
+                    ],
                 }
             )
 

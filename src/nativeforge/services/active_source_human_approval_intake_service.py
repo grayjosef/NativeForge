@@ -11,6 +11,8 @@ from typing import Any
 
 from nativeforge.services.active_source_creation_request_service import (
     ARTIFACT_TYPE as SOURCE_CREATION_REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_request_service import (
     READINESS_READY_REVIEW as SOURCE_CREATION_READINESS_READY_FOR_HUMAN,
 )
 
@@ -154,9 +156,7 @@ def _future_auth_preview(
             request_source_url_or_search_target=req_echo.get(
                 "source_url_or_search_target"
             ),
-            approval_source_target_reviewed=approval_echo.get(
-                "source_target_reviewed"
-            ),
+            approval_source_target_reviewed=approval_echo.get("source_target_reviewed"),
         ),
         "source_type_lane_echo": leaf(
             "Echo of reviewed type and lane (metadata only).",
@@ -310,8 +310,10 @@ def build_active_source_human_approval_intake(
     ap = ap_in
     op_reasons: list[str] = []
     op_ok = False
-    if ap is not None and "approving_operator" in ap and not _is_blank_string(
-        ap.get("approving_operator")
+    if (
+        ap is not None
+        and "approving_operator" in ap
+        and not _is_blank_string(ap.get("approving_operator"))
     ):
         op_ok = True
         op_reasons.append("approving_operator_non_blank")
@@ -320,8 +322,10 @@ def build_active_source_human_approval_intake(
 
     ts_reasons: list[str] = []
     ts_ok = False
-    if ap is not None and "approval_timestamp" in ap and not _is_blank_string(
-        ap.get("approval_timestamp")
+    if (
+        ap is not None
+        and "approval_timestamp" in ap
+        and not _is_blank_string(ap.get("approval_timestamp"))
     ):
         ts_ok = True
         ts_reasons.append("approval_timestamp_non_blank")
@@ -410,7 +414,9 @@ def build_active_source_human_approval_intake(
         else:
             readiness = READINESS_NOT_READY
             approval_status = READINESS_NOT_READY
-            next_allowed_step = "complete_approval_payload_and_sprint_56_acknowledgements"
+            next_allowed_step = (
+                "complete_approval_payload_and_sprint_56_acknowledgements"
+            )
 
     req_echo: dict[str, Any] = {}
     if isinstance(req, dict):
@@ -469,7 +475,9 @@ def build_active_source_human_approval_intake(
         "provenance_plan_review_validation": _field_validation(
             "provenance_plan_reviewed", pp_ok, pp_rs
         ),
-        "cadence_review_validation": _field_validation("cadence_reviewed", cad_ok, cad_rs),
+        "cadence_review_validation": _field_validation(
+            "cadence_reviewed", cad_ok, cad_rs
+        ),
         "rollback_reference_review_validation": _field_validation(
             "rollback_reference_reviewed", rr_ok, rr_rs
         ),
@@ -526,9 +534,9 @@ def build_active_source_human_approval_intake(
     return _json_safe(art)
 
 
-def build_discovery_read_only_active_source_human_approval_intake_attachment() -> (
-    dict[str, Any]
-):
+def build_discovery_read_only_active_source_human_approval_intake_attachment() -> dict[
+    str, Any
+]:
     """Slim embedding for discovery quality (full artifact, read-only wrapper)."""
     core = build_active_source_human_approval_intake(None, None)
     return _json_safe({"read_only_discovery_attachment": True, **core})

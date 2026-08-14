@@ -14,16 +14,26 @@ from typing import Any
 
 from nativeforge.services.active_source_creation_execution_dry_run_service import (
     ARTIFACT_TYPE as EXECUTION_DRY_RUN_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_dry_run_service import (
     READINESS_BLOCKED_HUMAN as DRY_RUN_READINESS_BLOCKED_HUMAN,
+)
+from nativeforge.services.active_source_creation_execution_dry_run_service import (
     READINESS_NOT_READY as DRY_RUN_READINESS_NOT_READY,
+)
+from nativeforge.services.active_source_creation_execution_dry_run_service import (
     READINESS_READY_FUTURE_EXEC as DRY_RUN_READINESS_READY_FUTURE_EXEC,
 )
 from nativeforge.services.active_source_creation_request_service import (
     ARTIFACT_TYPE as SOURCE_CREATION_REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_request_service import (
     READINESS_READY_REVIEW as SOURCE_REQUEST_READINESS_READY_FOR_HUMAN_REVIEW,
 )
 from nativeforge.services.active_source_human_approval_intake_service import (
     ARTIFACT_TYPE as HUMAN_APPROVAL_INTAKE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
     READINESS_READY_FUTURE as APPROVAL_READINESS_READY_FUTURE_SPRINT,
 )
 
@@ -146,7 +156,9 @@ def _validate_source_creation_request(req: dict[str, Any]) -> tuple[bool, list[s
             "request_status_must_match_ready_for_human_source_creation_review_structure"
         )
     if ok:
-        reasons.append("source_creation_request_structure_ok_for_execution_readiness_gate")
+        reasons.append(
+            "source_creation_request_structure_ok_for_execution_readiness_gate"
+        )
     return ok, reasons
 
 
@@ -169,7 +181,9 @@ def _validate_human_approval_intake(ha: dict[str, Any]) -> tuple[bool, list[str]
         ok = False
         reasons.append("approval_status_must_match_ready_future_source_creation_sprint")
     if ok:
-        reasons.append("human_approval_intake_structure_ok_for_execution_readiness_gate")
+        reasons.append(
+            "human_approval_intake_structure_ok_for_execution_readiness_gate"
+        )
     return ok, reasons
 
 
@@ -180,7 +194,9 @@ def _dry_run_may_violations(dr: dict[str, Any]) -> list[str]:
             bad.append(f"execution_dry_run.{k}_must_be_false")
     ins = dr.get("dry_run_insert_preview")
     if isinstance(ins, dict) and ins.get("may_execute_now") is True:
-        bad.append("execution_dry_run.dry_run_insert_preview.may_execute_now_must_be_false")
+        bad.append(
+            "execution_dry_run.dry_run_insert_preview.may_execute_now_must_be_false"
+        )
     return bad
 
 
@@ -383,7 +399,9 @@ def build_active_source_creation_execution_readiness_gate(
     rt_received = runtime_preconditions is not None and isinstance(
         runtime_preconditions, dict
     )
-    if runtime_preconditions is not None and not isinstance(runtime_preconditions, dict):
+    if runtime_preconditions is not None and not isinstance(
+        runtime_preconditions, dict
+    ):
         warnings.append("runtime_preconditions_coerced_non_dict_ignored")
 
     if not rq_received:
@@ -406,8 +424,7 @@ def build_active_source_creation_execution_readiness_gate(
         and ha.get("artifact_type") == HUMAN_APPROVAL_INTAKE_ARTIFACT_TYPE
     )
     dr_type_ok = (
-        dr is not None
-        and dr.get("artifact_type") == EXECUTION_DRY_RUN_ARTIFACT_TYPE
+        dr is not None and dr.get("artifact_type") == EXECUTION_DRY_RUN_ARTIFACT_TYPE
     )
 
     if rq_received and not rq_type_ok:
@@ -426,7 +443,9 @@ def build_active_source_creation_execution_readiness_gate(
         )
     )
     if req and rq_type_ok and not rq_ok:
-        blockers.append("source_creation_request_not_ready_for_execution_readiness_gate")
+        blockers.append(
+            "source_creation_request_not_ready_for_execution_readiness_gate"
+        )
 
     ha_ok, ha_reasons = (
         _validate_human_approval_intake(ha)
@@ -437,9 +456,7 @@ def build_active_source_creation_execution_readiness_gate(
         )
     )
     if ha and ha_type_ok and not ha_ok:
-        blockers.append(
-            "human_approval_intake_not_ready_for_execution_readiness_gate"
-        )
+        blockers.append("human_approval_intake_not_ready_for_execution_readiness_gate")
 
     dr_ok, dr_reasons = (
         _validate_execution_dry_run(dr)
@@ -452,7 +469,9 @@ def build_active_source_creation_execution_readiness_gate(
     if dr and dr_type_ok and not dr_ok:
         blockers.append("execution_dry_run_not_ready_for_execution_readiness_gate")
 
-    upstream_ok = rq_received and ha_received and dr_received and rq_ok and ha_ok and dr_ok
+    upstream_ok = (
+        rq_received and ha_received and dr_received and rq_ok and ha_ok and dr_ok
+    )
 
     rt_complete = False
     rt_detail: dict[str, Any] = {}
@@ -476,10 +495,7 @@ def build_active_source_creation_execution_readiness_gate(
     blockers_sorted = sorted(set(blockers))
 
     dup_human_block = (
-        upstream_ok
-        and rt is not None
-        and rt_complete
-        and dup_found_bool is True
+        upstream_ok and rt is not None and rt_complete and dup_found_bool is True
     )
 
     readiness_decision = READINESS_NOT_READY
@@ -489,23 +505,23 @@ def build_active_source_creation_execution_readiness_gate(
     if dup_human_block:
         readiness_decision = READINESS_BLOCKED_HUMAN_REVIEW
         gate_status = READINESS_BLOCKED_HUMAN_REVIEW
-        next_allowed_step = "human_review_duplicate_source_signal_before_future_execution"
+        next_allowed_step = (
+            "human_review_duplicate_source_signal_before_future_execution"
+        )
     elif upstream_ok and rt is not None and rt_complete and dup_found_bool is False:
         readiness_decision = READINESS_READY_FUTURE_EXECUTION
         gate_status = READINESS_READY_FUTURE_EXECUTION
-        next_allowed_step = (
-            "active_source_creation_execution_command_package_or_controlled_execution_plan"
-        )
+        next_allowed_step = "active_source_creation_execution_command_package_or_controlled_execution_plan"
     elif not rq_received or not rq_type_ok or not rq_ok:
-        next_allowed_step = "supply_nf_active_source_creation_request_v1_ready_for_human_review"
+        next_allowed_step = (
+            "supply_nf_active_source_creation_request_v1_ready_for_human_review"
+        )
     elif not ha_received or not ha_type_ok or not ha_ok:
         next_allowed_step = (
             "supply_nf_active_source_human_approval_intake_v1_ready_for_future_creation"
         )
     elif not dr_received or not dr_type_ok or not dr_ok:
-        next_allowed_step = (
-            "supply_nf_active_source_creation_execution_dry_run_v1_ready_for_execution_sprint"
-        )
+        next_allowed_step = "supply_nf_active_source_creation_execution_dry_run_v1_ready_for_execution_sprint"
     elif runtime_preconditions is None or not isinstance(runtime_preconditions, dict):
         next_allowed_step = "supply_runtime_precondition_boolean_map_for_readiness_gate"
     else:
@@ -519,16 +535,21 @@ def build_active_source_creation_execution_readiness_gate(
         rt_complete=rt_complete if rt is not None else False,
     )
 
-    def _scope_reason(
-        ok_: bool, *, ok_msg: str, bad_msg: str
-    ) -> list[str]:
+    def _scope_reason(ok_: bool, *, ok_msg: str, bad_msg: str) -> list[str]:
         return [ok_msg] if ok_ else [bad_msg]
 
-    prec_dup_check = isinstance(rt, dict) and rt.get("duplicate_source_check_completed") is True
+    prec_dup_check = (
+        isinstance(rt, dict) and rt.get("duplicate_source_check_completed") is True
+    )
     prec_scope = isinstance(rt, dict) and rt.get("organization_scope_confirmed") is True
     prec_rb = isinstance(rt, dict) and rt.get("rollback_contract_confirmed") is True
-    prec_win = isinstance(rt, dict) and rt.get("operator_execution_window_confirmed") is True
-    prec_post = isinstance(rt, dict) and rt.get("post_creation_validation_plan_confirmed") is True
+    prec_win = (
+        isinstance(rt, dict) and rt.get("operator_execution_window_confirmed") is True
+    )
+    prec_post = (
+        isinstance(rt, dict)
+        and rt.get("post_creation_validation_plan_confirmed") is True
+    )
 
     art: dict[str, Any] = {
         "artifact_type": ARTIFACT_TYPE,
@@ -665,7 +686,5 @@ def build_discovery_read_only_active_source_creation_execution_readiness_gate_at
     dict[str, Any]
 ):
     """Discovery embedding: no upstream artifacts and no runtime map → ``not_ready`` baseline."""
-    core = build_active_source_creation_execution_readiness_gate(
-        None, None, None, None
-    )
+    core = build_active_source_creation_execution_readiness_gate(None, None, None, None)
     return _json_safe({"read_only_discovery_attachment": True, **core})

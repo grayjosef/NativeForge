@@ -60,9 +60,10 @@ def select_tier3_foundation_batch_seed_ids(
         build_corrected_catalog_posture_report,
     )
 
-    rows = posture_candidates or build_corrected_catalog_posture_report()[
-        "posture_candidates"
-    ]
+    rows = (
+        posture_candidates
+        or build_corrected_catalog_posture_report()["posture_candidates"]
+    )
     allowed = set(TA3_COHORT_SEED_IDS) if cohort_only else None
     eligible: list[str] = []
     for row in rows:
@@ -92,10 +93,10 @@ def activate_tier3_foundation_batch_human_gate(
 ) -> dict[str, Any]:
     confirmation = parse_tier3_batch_confirmation(operator_confirmation)
     ids = seed_ids or list(TA3_COHORT_SEED_IDS)
+    from nativeforge.repositories import opportunity_sources as os_repo
     from nativeforge.services.fed_program_activation_binding_service import (
         load_seed_candidate,
     )
-    from nativeforge.repositories import opportunity_sources as os_repo
 
     persist_seed_candidates_to_registry(session, org=org)
     rows = os_repo.list_opportunity_sources_for_org(

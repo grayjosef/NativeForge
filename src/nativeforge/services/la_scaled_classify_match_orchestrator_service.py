@@ -5,16 +5,16 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.matching_profile_selector_service import (
+    PROFILE_SYNTHETIC_RED_CEDAR,
+    build_matching_profile_selector_contract,
+    resolve_matching_profile,
+)
 from nativeforge.services.real_grant_classify_match_service import (
     classify_and_match_real_grants,
 )
 from nativeforge.services.real_grant_workbench_queue_service import (
     build_real_grant_workbench_queues,
-)
-from nativeforge.services.matching_profile_selector_service import (
-    PROFILE_SYNTHETIC_RED_CEDAR,
-    build_matching_profile_selector_contract,
-    resolve_matching_profile,
 )
 from nativeforge.services.real_resolver_validation_gate_service import (
     build_real_resolver_validation_gate_contract,

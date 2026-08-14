@@ -12,10 +12,10 @@ import json
 from typing import Any
 
 from nativeforge.services import (
-    active_source_runtime_migration_readiness_gate_service as asrmrg_svc,
+    active_source_runtime_migration_apply_execution_service as asrmrae_svc,
 )
 from nativeforge.services import (
-    active_source_runtime_migration_apply_execution_service as asrmrae_svc,
+    active_source_runtime_migration_readiness_gate_service as asrmrg_svc,
 )
 
 ARTIFACT_TYPE = "nf_active_source_runtime_migration_post_apply_verification_v1"
@@ -105,11 +105,15 @@ def _norm_revision(raw: str) -> str:
     return s.split()[0]
 
 
-def _norm_name_set(names: list[str] | set[str] | frozenset[str] | tuple[str, ...]) -> set[str]:
+def _norm_name_set(
+    names: list[str] | set[str] | frozenset[str] | tuple[str, ...],
+) -> set[str]:
     return {str(x).strip().lower() for x in names if str(x).strip()}
 
 
-def build_discovery_read_only_post_apply_verification_status_attachment() -> dict[str, Any]:
+def build_discovery_read_only_post_apply_verification_status_attachment() -> dict[
+    str, Any
+]:
     """Deterministic read-only slice for ``discovery_source_quality`` (no DB / no CLI)."""
     return _json_safe(
         {
@@ -167,7 +171,9 @@ def build_active_source_runtime_migration_post_apply_verification(
     missing_constraints = sorted(REQUIRED_CONSTRAINTS - obs_con)
 
     if rev != TARGET_REVISION_ID:
-        blockers.append(f"observed_current_revision_not_{TARGET_REVISION_ID}:{rev or 'empty'}")
+        blockers.append(
+            f"observed_current_revision_not_{TARGET_REVISION_ID}:{rev or 'empty'}"
+        )
     if not target_table_exists:
         blockers.append("target_table_missing")
     if target_table_row_count != 0:

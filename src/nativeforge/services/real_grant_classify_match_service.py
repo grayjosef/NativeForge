@@ -6,6 +6,10 @@ import json
 from collections import Counter
 from typing import Any
 
+from nativeforge.services.matching_profile_selector_service import (
+    PROFILE_SYNTHETIC_RED_CEDAR,
+    resolve_matching_profile,
+)
 from nativeforge.services.matching_readiness_matching_evaluator_service import (
     evaluate_match,
 )
@@ -14,10 +18,6 @@ from nativeforge.services.matching_readiness_readiness_evaluator_service import 
 )
 from nativeforge.services.real_grant_native_relevance_record_service import (
     build_real_grant_native_relevance_record,
-)
-from nativeforge.services.matching_profile_selector_service import (
-    PROFILE_SYNTHETIC_RED_CEDAR,
-    resolve_matching_profile,
 )
 from nativeforge.services.real_grant_opportunity_metadata_service import (
     grant_to_matching_opportunity,
@@ -70,7 +70,9 @@ def classify_and_match_real_grants(
                 "classification_label": nrc["classification"]["classification_label"],
                 "match_label": match["match_label"],
                 "readiness_label": readiness["readiness_label"],
-                "fit_dimensions": match["eligibility_fit_assessment"]["dimension_results"],
+                "fit_dimensions": match["eligibility_fit_assessment"][
+                    "dimension_results"
+                ],
                 "blockers": match["eligibility_fit_assessment"]["blockers"],
                 "missing_data": match["eligibility_fit_assessment"]["missing_data"],
                 "next_action": match.get("next_action_guidance"),
@@ -80,13 +82,14 @@ def classify_and_match_real_grants(
                 "from_real_source_text": True,
             }
         )
-    label_dist = Counter(c["classification"]["classification_label"] for c in classifications)
+    label_dist = Counter(
+        c["classification"]["classification_label"] for c in classifications
+    )
     match_dist = Counter(m["match_label"] for m in matches)
     matched_count = sum(
         1
         for m in matches
-        if m["match_label"]
-        not in {"not_fit", "blocked", "needs_more_profile_data"}
+        if m["match_label"] not in {"not_fit", "blocked", "needs_more_profile_data"}
     )
     worked_examples = _select_worked_examples(classifications, matches)
     return _json_safe(
@@ -123,11 +126,15 @@ def _select_worked_examples(
                 {
                     "grant_id": gid,
                     "opportunity_title": nrc.get("opportunity_title"),
-                    "classification_label": nrc["classification"]["classification_label"],
+                    "classification_label": nrc["classification"][
+                        "classification_label"
+                    ],
                     "match_label": match["match_label"],
                     "explanation_summary": {
                         "trigger_language": nrc["explanation"]["trigger_language"],
-                        "eligible_entity_types": nrc["explanation"]["eligible_entity_types"],
+                        "eligible_entity_types": nrc["explanation"][
+                            "eligible_entity_types"
+                        ],
                         "whats_missing": nrc["explanation"]["whats_missing"],
                     },
                     "fit_dimensions": match["fit_dimensions"],
@@ -144,11 +151,15 @@ def _select_worked_examples(
                 {
                     "grant_id": gid,
                     "opportunity_title": nrc.get("opportunity_title"),
-                    "classification_label": nrc["classification"]["classification_label"],
+                    "classification_label": nrc["classification"][
+                        "classification_label"
+                    ],
                     "match_label": match.get("match_label"),
                     "explanation_summary": {
                         "trigger_language": nrc["explanation"]["trigger_language"],
-                        "eligible_entity_types": nrc["explanation"]["eligible_entity_types"],
+                        "eligible_entity_types": nrc["explanation"][
+                            "eligible_entity_types"
+                        ],
                         "whats_missing": nrc["explanation"]["whats_missing"],
                     },
                 }

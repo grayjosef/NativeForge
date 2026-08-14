@@ -6,16 +6,18 @@ import json
 from collections import defaultdict
 from typing import Any
 
-from nativeforge.services.fed_program_activation_binding_service import load_seed_candidate
+from nativeforge.services.fed_program_activation_binding_service import (
+    load_seed_candidate,
+)
+from nativeforge.services.foundation_fluxx_embed_adapter_service import (
+    extract_fluxx_listings,
+)
 from nativeforge.services.foundation_html_listing_adapter_service import (
     _listing_to_payload,
     extract_html_listings,
 )
 from nativeforge.services.foundation_listing_noise_filter_service import (
     filter_foundation_listings,
-)
-from nativeforge.services.foundation_fluxx_embed_adapter_service import (
-    extract_fluxx_listings,
 )
 from nativeforge.services.html_fetch_honest_labeling_guard_service import (
     assert_html_fetch_honest_labeling_batch,
@@ -160,9 +162,10 @@ def run_tier3_foundation_batch_live_fetch(
         ]
         for p in payloads:
             p["platform_adapter_key"] = platform
-            if platform == PLATFORM_FOUNDATION_FLUXX_EMBED and "fluxx" in str(
-                p.get("source_url", "")
-            ).lower():
+            if (
+                platform == PLATFORM_FOUNDATION_FLUXX_EMBED
+                and "fluxx" in str(p.get("source_url", "")).lower()
+            ):
                 p["apply_platform_blindspot"] = True
 
         if payloads:

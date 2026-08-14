@@ -17,6 +17,8 @@ from sqlalchemy.orm import Session
 from nativeforge.db.models import NfActiveOpportunitySource
 from nativeforge.services.active_source_runtime_migration_post_apply_verification_service import (
     REQUIRED_COLUMNS,
+)
+from nativeforge.services.active_source_runtime_migration_post_apply_verification_service import (
     TARGET_TABLE as MIGRATION_TARGET_TABLE,
 )
 
@@ -58,14 +60,16 @@ def build_active_source_empty_state_read_model(
     )
     expected_empty_state = n == 0
     org_scope: dict[str, Any] = {
-        "organization_id": str(organization_id) if organization_id is not None else None,
-        "scope_kind": "organization_scoped" if organization_id is not None else "unspecified",
+        "organization_id": str(organization_id)
+        if organization_id is not None
+        else None,
+        "scope_kind": "organization_scoped"
+        if organization_id is not None
+        else "unspecified",
     }
     orm_cols = {c.name for c in NfActiveOpportunitySource.__table__.columns}
     migration_cols = set(REQUIRED_COLUMNS)
-    orm_column_alignment = {
-        name: (name in orm_cols) for name in sorted(migration_cols)
-    }
+    orm_column_alignment = {name: (name in orm_cols) for name in sorted(migration_cols)}
 
     empty_state_message = (
         "Table nf_active_opportunity_sources exists at Alembic revision 0019; "
@@ -79,9 +83,7 @@ def build_active_source_empty_state_read_model(
         )
     )
 
-    boundary_closed = (
-        "closed_read_only_sprint_54_no_side_effects_in_this_module"
-    )
+    boundary_closed = "closed_read_only_sprint_54_no_side_effects_in_this_module"
 
     artifact: dict[str, Any] = {
         "artifact_type": ARTIFACT_TYPE,
