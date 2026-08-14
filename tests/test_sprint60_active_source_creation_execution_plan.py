@@ -12,8 +12,14 @@ from nativeforge.db.models import Organization
 from nativeforge.db.session import SessionLocal
 from nativeforge.services.active_source_creation_execution_command_package_service import (
     ARTIFACT_TYPE as PKG_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_command_package_service import (
     READINESS_BLOCKED_HUMAN_REVIEW as PKG_BLOCKED,
+)
+from nativeforge.services.active_source_creation_execution_command_package_service import (
     READINESS_NOT_READY as PKG_NOT_READY,
+)
+from nativeforge.services.active_source_creation_execution_command_package_service import (
     READINESS_READY_COMMAND_REVIEW,
     TARGET_REVISION_ID,
     TARGET_TABLE,
@@ -24,24 +30,40 @@ from nativeforge.services.active_source_creation_execution_dry_run_service impor
 )
 from nativeforge.services.active_source_creation_execution_plan_service import (
     ARTIFACT_TYPE as PLAN_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_plan_service import (
     READINESS_BLOCKED_HUMAN_REVIEW as PLAN_BLOCKED,
+)
+from nativeforge.services.active_source_creation_execution_plan_service import (
     READINESS_NOT_READY as PLAN_NOT_READY,
+)
+from nativeforge.services.active_source_creation_execution_plan_service import (
     READINESS_READY_SINGLE_ROW_EXEC_REVIEW,
     build_active_source_creation_execution_plan,
     build_discovery_read_only_active_source_creation_execution_plan_attachment,
 )
 from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     ARTIFACT_TYPE as GATE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     READINESS_BLOCKED_HUMAN_REVIEW as GATE_BLOCKED,
+)
+from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     READINESS_READY_FUTURE_EXECUTION as GATE_READY_EXEC,
+)
+from nativeforge.services.active_source_creation_execution_readiness_gate_service import (
     build_active_source_creation_execution_readiness_gate,
 )
 from nativeforge.services.active_source_creation_request_service import (
     ARTIFACT_TYPE as REQUEST_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_creation_request_service import (
     build_active_source_creation_request,
 )
 from nativeforge.services.active_source_human_approval_intake_service import (
     ARTIFACT_TYPE as APPROVAL_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
     build_active_source_human_approval_intake,
 )
 from nativeforge.services.discovery_source_quality_service import (
@@ -205,8 +227,10 @@ def _source_imports_subprocess(src: str) -> bool:
 
 def test_artifact_type_and_metadata() -> None:
     art = build_active_source_creation_execution_plan()
-    assert art["artifact_type"] == PLAN_ARTIFACT_TYPE == (
-        "nf_active_source_creation_execution_plan_v1"
+    assert (
+        art["artifact_type"]
+        == PLAN_ARTIFACT_TYPE
+        == ("nf_active_source_creation_execution_plan_v1")
     )
     assert art["target_revision_id"] == TARGET_REVISION_ID == "0019"
     assert art["target_table"] == TARGET_TABLE == "nf_active_opportunity_sources"
@@ -224,7 +248,10 @@ def test_missing_command_package_artifact_returns_not_ready() -> None:
 
 
 def test_wrong_command_package_artifact_type_returns_not_ready() -> None:
-    bad = {"artifact_type": "wrong", "readiness_decision": READINESS_READY_COMMAND_REVIEW}
+    bad = {
+        "artifact_type": "wrong",
+        "readiness_decision": READINESS_READY_COMMAND_REVIEW,
+    }
     art = build_active_source_creation_execution_plan(bad)
     assert art["readiness_decision"] == PLAN_NOT_READY
 
@@ -412,7 +439,9 @@ def test_no_new_alembic_revision_beyond_0019() -> None:
 def test_invalid_command_package_with_executable_patterns_not_ready() -> None:
     oid = uuid.uuid4()
     pkg = _valid_command_package(oid)
-    pkg["notes_injected_for_test"] = "bad " + "insert" + " " + "into" + " nf_active_opportunity_sources"
+    pkg["notes_injected_for_test"] = (
+        "bad " + "insert" + " " + "into" + " nf_active_opportunity_sources"
+    )
     art = build_active_source_creation_execution_plan(pkg)
     assert art["readiness_decision"] == PLAN_NOT_READY
     assert art["command_package_validation"]["executable_fragment_scan_ok"] is False

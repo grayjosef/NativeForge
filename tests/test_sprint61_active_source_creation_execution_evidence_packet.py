@@ -36,13 +36,15 @@ from nativeforge.services.active_source_creation_execution_readiness_gate_servic
 )
 from nativeforge.services.active_source_creation_request_service import (
     READINESS_NOT_READY as REQ_NOT_READY,
-    build_active_source_creation_request,
 )
-from nativeforge.services.active_source_human_approval_intake_service import (
-    build_active_source_human_approval_intake,
+from nativeforge.services.active_source_creation_request_service import (
+    build_active_source_creation_request,
 )
 from nativeforge.services.active_source_empty_state_read_model_service import (
     count_nf_active_opportunity_sources_readonly,
+)
+from nativeforge.services.active_source_human_approval_intake_service import (
+    build_active_source_human_approval_intake,
 )
 from nativeforge.services.discovery_source_quality_service import (
     build_discovery_source_quality,
@@ -235,8 +237,10 @@ def test_artifact_type_and_metadata() -> None:
             pkg=_valid_pkg(oid),
             plan=_valid_plan(oid),
         )
-    assert pkt["artifact_type"] == ARTIFACT_TYPE == (
-        "nf_active_source_creation_execution_evidence_packet_v1"
+    assert (
+        pkt["artifact_type"]
+        == ARTIFACT_TYPE
+        == ("nf_active_source_creation_execution_evidence_packet_v1")
     )
     assert pkt["target_revision_id"] == TARGET_REVISION_ID == "0019"
     assert pkt["target_table"] == TARGET_TABLE == "nf_active_opportunity_sources"
@@ -471,10 +475,14 @@ def test_valid_full_chain_creates_exactly_one_row_and_evidence() -> None:
     assert rid is not None
     assert pkt["post_execution_evidence"]["created_row_reloaded"] is True
     assert pkt["post_execution_evidence"]["created_row_matches_payload"] is True
-    assert pkt["post_execution_evidence"]["created_row_has_rollback_contract_id"] is True
+    assert (
+        pkt["post_execution_evidence"]["created_row_has_rollback_contract_id"] is True
+    )
     assert pkt["post_execution_evidence"]["created_row_has_governance_flags"] is True
     snap = pkt["created_source_row_snapshot"]
-    assert snap["rollback_contract_id"] == "nf_active_opportunity_sources_rollback_0019_v1"
+    assert (
+        snap["rollback_contract_id"] == "nf_active_opportunity_sources_rollback_0019_v1"
+    )
     assert snap["source_status"] == "activation_pending"
     assert snap["activation_approved_at"] is None
     assert snap["source_health_status"] == SourceHealthStatus.unknown.value

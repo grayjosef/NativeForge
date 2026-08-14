@@ -9,9 +9,6 @@ from pathlib import Path
 
 from nativeforge.db.models import Organization
 from nativeforge.db.session import SessionLocal
-from nativeforge.services.active_source_empty_state_read_model_service import (
-    count_nf_active_opportunity_sources_readonly,
-)
 from nativeforge.services.active_source_activation_readiness_gate_service import (
     ARTIFACT_TYPE,
     READINESS_BLOCKED_MISSING_POST_RUNTIME,
@@ -24,8 +21,13 @@ from nativeforge.services.active_source_activation_readiness_gate_service import
     TARGET_TABLE,
     build_active_source_activation_readiness_gate,
 )
+from nativeforge.services.active_source_empty_state_read_model_service import (
+    count_nf_active_opportunity_sources_readonly,
+)
 from nativeforge.services.active_source_post_runtime_verification_service import (
     READINESS_VERIFIED_READY_FOR_ACTIVATION_GATE as PR_VERIFIED,
+)
+from nativeforge.services.active_source_post_runtime_verification_service import (
     build_post_runtime_active_source_verification,
 )
 from nativeforge.services.active_source_runtime_creation_execution_service import (
@@ -149,7 +151,9 @@ def test_not_ready_post_runtime_blocks() -> None:
     assert g["readiness_decision"] == READINESS_BLOCKED_SOURCE_NOT_VERIFIED
 
 
-def test_valid_post_runtime_yields_blocked_requires_activation_review_artifacts() -> None:
+def test_valid_post_runtime_yields_blocked_requires_activation_review_artifacts() -> (
+    None
+):
     oid = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="demo"))
@@ -166,7 +170,10 @@ def test_valid_post_runtime_yields_blocked_requires_activation_review_artifacts(
         g = build_active_source_activation_readiness_gate(
             post_runtime_verification_artifact=pr,
         )
-    assert g["readiness_decision"] == READINESS_BLOCKED_REQUIRES_ACTIVATION_REVIEW_ARTIFACTS
+    assert (
+        g["readiness_decision"]
+        == READINESS_BLOCKED_REQUIRES_ACTIVATION_REVIEW_ARTIFACTS
+    )
 
 
 def test_gate_includes_required_future_activation_review_artifacts() -> None:
