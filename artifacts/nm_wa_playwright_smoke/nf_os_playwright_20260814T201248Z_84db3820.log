@@ -1,0 +1,20 @@
+cmd=npm run test:e2e:nm-wa-smoke
+exit_code=0
+--- stdout ---
+
+> nativeforge-web@0.1.0 test:e2e:nm-wa-smoke
+> playwright test e2e/nm_wa_operator_demo.smoke.spec.ts
+
+
+Running 1 test using 1 worker
+
+  ✓  1 [chromium] › e2e/nm_wa_operator_demo.smoke.spec.ts:16:3 › NM/WA operator demo Playwright smoke › renders all required operator surfaces (666ms)
+
+  1 passed (4.7s)
+
+--- stderr ---
+(node:18669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18669) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+

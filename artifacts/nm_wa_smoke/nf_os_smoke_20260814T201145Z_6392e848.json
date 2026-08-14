@@ -1,0 +1,86 @@
+{
+  "artifact_content_digest": "4f2eefc145c19ee78d660241b8b038627bc1721ff01b56ee518884297c705a7b",
+  "demo_html_chars": 2428,
+  "demo_text_chars": 957,
+  "external_urls_used": false,
+  "failures": [],
+  "live_ingestion": false,
+  "not_run_reason": null,
+  "offline_only": true,
+  "overall_status": "PASS",
+  "run_id": "nf_os_smoke_20260814T201145Z_6392e848",
+  "schema_version": "nf_nm_wa_smoke_runner_v1",
+  "source_activation": false,
+  "surfaces": [
+    {
+      "detail": "nm_profiles=22",
+      "status": "PASS",
+      "surface": "nm_fixture_visibility"
+    },
+    {
+      "detail": "wa_profiles=29",
+      "status": "PASS",
+      "surface": "wa_fixture_visibility"
+    },
+    {
+      "detail": "nm_classify_match_rows=22",
+      "status": "PASS",
+      "surface": "nm_classify_match_outputs"
+    },
+    {
+      "detail": "wa_classify_match_rows=29",
+      "status": "PASS",
+      "surface": "wa_classify_match_outputs"
+    },
+    {
+      "detail": "nm_report_rows=22",
+      "status": "PASS",
+      "surface": "nm_operator_report"
+    },
+    {
+      "detail": "wa_report_rows=29",
+      "status": "PASS",
+      "surface": "wa_operator_report"
+    },
+    {
+      "detail": "combined_rows=51",
+      "status": "PASS",
+      "surface": "combined_review_queue_report"
+    },
+    {
+      "detail": "missing_rows=4",
+      "status": "PASS",
+      "surface": "missing_data_display"
+    },
+    {
+      "detail": "human_review_rows=51",
+      "status": "PASS",
+      "surface": "human_review_display"
+    },
+    {
+      "detail": "next_check_rows=51",
+      "status": "PASS",
+      "surface": "operator_next_check_display"
+    },
+    {
+      "detail": "provenance_summary_present",
+      "status": "PASS",
+      "surface": "provenance_evidence_display"
+    },
+    {
+      "detail": "confidence_keys=['public_inferred_low']",
+      "status": "PASS",
+      "surface": "confidence_readiness_labels"
+    },
+    {
+      "detail": "no_final_claim_across_rows",
+      "status": "PASS",
+      "surface": "no_final_eligibility_claim_behavior"
+    },
+    {
+      "detail": "all_rows_visible_in_operator_review",
+      "status": "PASS",
+      "surface": "broad_partial_relevance_discoverable_behavior"
+    }
+  ]
+}
