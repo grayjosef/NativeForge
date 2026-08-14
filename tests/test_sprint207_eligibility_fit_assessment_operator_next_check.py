@@ -14,7 +14,9 @@ from nativeforge.services.eligibility_fit_assessment_operator_next_check_service
 
 def test_operator_next_check_for_incomplete_profile() -> None:
     opp = next(
-        o for o in load_opportunity_fixtures() if o["fixture_key"] == "efa_demo_incomplete_profile"
+        o
+        for o in load_opportunity_fixtures()
+        if o["fixture_key"] == "efa_demo_incomplete_profile"
     )
     profile = resolve_profile_for_opportunity(opp)
     guidance = build_operator_next_check_guidance(opp, profile)

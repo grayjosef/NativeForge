@@ -12,12 +12,19 @@ from nativeforge.services.native_relevance_classification_record_service import 
 
 
 def test_record_assembles_classification_and_explanation() -> None:
-    raw = next(f for f in load_demo_classification_fixtures() if f["fixture_key"] == "nrc_demo_tribal_government")
+    raw = next(
+        f
+        for f in load_demo_classification_fixtures()
+        if f["fixture_key"] == "nrc_demo_tribal_government"
+    )
     record = build_native_relevance_classification_record(raw)
     assert record["schema_version"] == SCHEMA_VERSION
     assert "classification" in record
     assert "explanation" in record
-    assert record["classification"]["classification_label"] == record["explanation"]["classification_label"]
+    assert (
+        record["classification"]["classification_label"]
+        == record["explanation"]["classification_label"]
+    )
 
 
 def test_record_flags_preview_only() -> None:

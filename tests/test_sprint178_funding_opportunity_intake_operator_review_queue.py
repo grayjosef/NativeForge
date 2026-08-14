@@ -15,7 +15,9 @@ from nativeforge.services.funding_opportunity_intake_operator_review_queue_servi
 
 def test_review_queue_flags_blocked_record() -> None:
     raw = next(
-        r for r in load_demo_fixture_corpus() if r["fixture_key"] == "foi_demo_missing_deadline"
+        r
+        for r in load_demo_fixture_corpus()
+        if r["fixture_key"] == "foi_demo_missing_deadline"
     )
     hardened = build_hardened_opportunity_record(raw, fixture_key=raw["fixture_key"])
     entry = build_operator_review_queue_entry(hardened)

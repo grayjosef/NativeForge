@@ -19,7 +19,11 @@ def test_prior_orchestrators_still_callable() -> None:
             "recognition_requirement": "federal_required",
         }
     ]
-    nm = run_nm_pilot_classify_match_block(grants=g, allow_live_completeness_fetch=False)
-    wa = run_wa_pilot_classify_match_block(grants=g, allow_live_completeness_fetch=False)
+    nm = run_nm_pilot_classify_match_block(
+        grants=g, allow_live_completeness_fetch=False
+    )
+    wa = run_wa_pilot_classify_match_block(
+        grants=g, allow_live_completeness_fetch=False
+    )
     assert nm["all_needs_operator_review"] is True
     assert wa["all_needs_operator_review"] is True
