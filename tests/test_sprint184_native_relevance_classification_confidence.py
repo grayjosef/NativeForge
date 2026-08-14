@@ -19,9 +19,9 @@ def test_confidence_levels_present() -> None:
 
 
 def test_confirmed_ranks_above_unknown() -> None:
-    assert classification_confidence_rank(CONFIDENCE_CONFIRMED) > classification_confidence_rank(
-        CONFIDENCE_UNKNOWN
-    )
+    assert classification_confidence_rank(
+        CONFIDENCE_CONFIRMED
+    ) > classification_confidence_rank(CONFIDENCE_UNKNOWN)
 
 
 def test_build_contract() -> None:
