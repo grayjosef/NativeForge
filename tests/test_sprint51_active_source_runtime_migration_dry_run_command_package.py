@@ -146,19 +146,25 @@ def test_incomplete_approval_payload_blocked() -> None:
 
 
 def test_complete_valid_payload_preview_ready() -> None:
-    p = build_active_source_runtime_migration_dry_run_command_package(_complete_payload())
+    p = build_active_source_runtime_migration_dry_run_command_package(
+        _complete_payload()
+    )
     assert p["package_status"] == PACKAGE_STATUS_PREVIEW_READY
     assert p["readiness_decision"] == "ready_for_apply_window"
 
 
 def test_preview_ready_keeps_may_execute_commands_false() -> None:
-    p = build_active_source_runtime_migration_dry_run_command_package(_complete_payload())
+    p = build_active_source_runtime_migration_dry_run_command_package(
+        _complete_payload()
+    )
     assert p["package_status"] == PACKAGE_STATUS_PREVIEW_READY
     assert p["may_execute_commands_now"] is False
 
 
 def test_preview_ready_keeps_may_apply_runtime_migration_false() -> None:
-    p = build_active_source_runtime_migration_dry_run_command_package(_complete_payload())
+    p = build_active_source_runtime_migration_dry_run_command_package(
+        _complete_payload()
+    )
     assert p["may_apply_runtime_migration_now"] is False
 
 
@@ -170,7 +176,9 @@ def test_readiness_gate_artifact_embedded() -> None:
 
 
 def test_command_previews_include_required_alembic_strings() -> None:
-    p = build_active_source_runtime_migration_dry_run_command_package(_complete_payload())
+    p = build_active_source_runtime_migration_dry_run_command_package(
+        _complete_payload()
+    )
     blob = _flattened_command_strings(p)
     ab = "alembic"
     assert f"{ab} current" in blob
@@ -192,7 +200,9 @@ def test_every_command_entry_flags() -> None:
 
 
 def test_post_apply_validation_includes_table_and_rowcount() -> None:
-    p = build_active_source_runtime_migration_dry_run_command_package(_complete_payload())
+    p = build_active_source_runtime_migration_dry_run_command_package(
+        _complete_payload()
+    )
     post = p["post_apply_validation_command_preview"]
     assert isinstance(post, list)
     blob = "\n".join(str(x.get("command", "")) for x in post)
@@ -201,7 +211,9 @@ def test_post_apply_validation_includes_table_and_rowcount() -> None:
 
 
 def test_rollback_previews_downgrade_and_preservation() -> None:
-    p = build_active_source_runtime_migration_dry_run_command_package(_complete_payload())
+    p = build_active_source_runtime_migration_dry_run_command_package(
+        _complete_payload()
+    )
     rb = p["rollback_command_preview"]
     assert isinstance(rb, list)
     blob = "\n".join(str(x.get("command", "")) for x in rb)
@@ -210,7 +222,9 @@ def test_rollback_previews_downgrade_and_preservation() -> None:
 
 
 def test_all_actual_counts_zero() -> None:
-    p = build_active_source_runtime_migration_dry_run_command_package(_complete_payload())
+    p = build_active_source_runtime_migration_dry_run_command_package(
+        _complete_payload()
+    )
     assert p["actual_runtime_migration_apply_count"] == 0
     assert p["actual_database_write_count"] == 0
     assert p["actual_source_row_seed_count"] == 0
@@ -226,7 +240,9 @@ def test_all_actual_counts_zero() -> None:
 
 
 def test_all_forbidden_may_flags_false() -> None:
-    p = build_active_source_runtime_migration_dry_run_command_package(_complete_payload())
+    p = build_active_source_runtime_migration_dry_run_command_package(
+        _complete_payload()
+    )
     assert p["may_apply_runtime_migration_now"] is False
     assert p["may_execute_commands_now"] is False
     assert p["may_write_database_now"] is False

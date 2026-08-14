@@ -83,7 +83,9 @@ def _source_imports_subprocess(src: str) -> bool:
 
 def test_artifact_type_and_metadata() -> None:
     art = build_active_source_creation_request(None)
-    assert art["artifact_type"] == ARTIFACT_TYPE == "nf_active_source_creation_request_v1"
+    assert (
+        art["artifact_type"] == ARTIFACT_TYPE == "nf_active_source_creation_request_v1"
+    )
     assert art["target_revision_id"] == TARGET_REVISION_ID == "0019"
     assert art["target_table"] == TARGET_TABLE == "nf_active_opportunity_sources"
     assert (

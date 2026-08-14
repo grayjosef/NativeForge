@@ -68,7 +68,9 @@ def _minimal_post_runtime(
     }
 
 
-def _minimal_gate(*, readiness: str = "blocked_requires_activation_review_artifacts") -> dict:
+def _minimal_gate(
+    *, readiness: str = "blocked_requires_activation_review_artifacts"
+) -> dict:
     return {
         "artifact_type": "nf_active_source_activation_readiness_gate_v1",
         "readiness_decision": readiness,
@@ -96,13 +98,19 @@ def _source_imports_subprocess(src: str) -> bool:
 
 def test_deterministic_output() -> None:
     pkt = _valid_sprint65_packet()
-    a = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
-    b = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
+    a = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
+    b = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
     assert a == b
 
 
 def test_preview_guardrail_fields() -> None:
-    out = build_active_source_activation_command_package(activation_review_packet_artifact=_valid_sprint65_packet())
+    out = build_active_source_activation_command_package(
+        activation_review_packet_artifact=_valid_sprint65_packet()
+    )
     assert out["preview_only"] is True
     assert out["no_execution"] is True
     assert out["preview_guardrail"]["preview_only"] is True
@@ -134,8 +142,12 @@ def test_no_subprocess_in_service() -> None:
 
 def test_approved_path_command_preview_only() -> None:
     pkt = _valid_sprint65_packet()
-    assert pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
-    out = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
+    assert (
+        pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    )
+    out = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
     assert out["readiness_decision"] == READINESS_PREVIEW_READY
     assert len(out["activation_candidates"]) == 1
     assert len(out["command_preview"]) == 1
@@ -150,7 +162,9 @@ def test_blocked_packet_stays_blocked_no_commands() -> None:
         post_runtime_verification_artifact=None,  # type: ignore[arg-type]
         activation_readiness_gate_artifact=_minimal_gate(),
     )
-    out = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
+    out = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
     assert out["readiness_decision"] == READINESS_PREVIEW_BLOCKED
     assert out["activation_candidates"] == []
     assert out["command_preview"] == []
@@ -163,34 +177,46 @@ def test_embedded_validation_failure_emits_no_activation_commands() -> None:
     assert isinstance(v, dict)
     v_invalid = {**v, "valid": False}
     pkt_bad = {**pkt, "post_runtime_verification_validation": v_invalid}
-    out = build_active_source_activation_command_package(activation_review_packet_artifact=pkt_bad)
+    out = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt_bad
+    )
     assert out["command_preview"] == []
     assert out["activation_candidates"] == []
     assert out["readiness_decision"] == READINESS_PREVIEW_BLOCKED
 
 
 def test_artifact_type_constant() -> None:
-    out = build_active_source_activation_command_package(activation_review_packet_artifact=_valid_sprint65_packet())
+    out = build_active_source_activation_command_package(
+        activation_review_packet_artifact=_valid_sprint65_packet()
+    )
     assert out["artifact_type"] == ARTIFACT_TYPE
     assert out["artifact_type"] == "nf_active_source_activation_command_package_v1"
 
 
 def test_json_serializable() -> None:
-    out = build_active_source_activation_command_package(activation_review_packet_artifact=_valid_sprint65_packet())
+    out = build_active_source_activation_command_package(
+        activation_review_packet_artifact=_valid_sprint65_packet()
+    )
     json.dumps(out)
 
 
 def test_sprint65_packet_compatibility_reference() -> None:
     pkt = _valid_sprint65_packet()
-    out = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
+    out = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
     ref = out["source_review_packet_reference"]
     assert ref["artifact_type"] == ARTIFACT_TYPE_PACKET
-    assert ref["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    assert (
+        ref["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    )
 
 
 def test_scaffolded_subartifacts_not_cleared_note() -> None:
     pkt = _valid_sprint65_packet()
-    out = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
+    out = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
     pre = out["activation_preconditions"]
     assert any("scaffolded" in p for p in pre)
 
@@ -207,9 +233,13 @@ def test_no_network_call_when_building(monkeypatch: object) -> None:
     import urllib.request as ureq
 
     monkeypatch.setattr(ureq, "urlopen", boom)
-    build_active_source_activation_command_package(activation_review_packet_artifact=_valid_sprint65_packet())
+    build_active_source_activation_command_package(
+        activation_review_packet_artifact=_valid_sprint65_packet()
+    )
 
 
 def test_module_importable() -> None:
-    mod = importlib.import_module("nativeforge.services.active_source_activation_command_package_service")
+    mod = importlib.import_module(
+        "nativeforge.services.active_source_activation_command_package_service"
+    )
     assert callable(mod.build_active_source_activation_command_package)
