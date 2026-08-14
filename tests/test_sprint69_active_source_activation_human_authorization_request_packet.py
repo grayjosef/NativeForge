@@ -77,7 +77,9 @@ def _minimal_post_runtime(
     }
 
 
-def _minimal_gate(*, readiness: str = "blocked_requires_activation_review_artifacts") -> dict:
+def _minimal_gate(
+    *, readiness: str = "blocked_requires_activation_review_artifacts"
+) -> dict:
     return {
         "artifact_type": "nf_active_source_activation_readiness_gate_v1",
         "readiness_decision": readiness,
@@ -140,7 +142,9 @@ def test_preview_no_execution_no_authorization_no_activation_guardrails() -> Non
     assert out["no_execution"] is True
     assert out["no_authorization"] is True
     assert out["no_activation"] is True
-    g = out["explicit_preview_only_no_execution_no_authorization_no_activation_guardrail"]
+    g = out[
+        "explicit_preview_only_no_execution_no_authorization_no_activation_guardrail"
+    ]
     assert "preview_only" in g
     assert "no_execution" in g
     assert "no_authorization" in g
@@ -179,12 +183,17 @@ def test_sprint68_compatibility_ready_path() -> None:
     assert ref["artifact_type"] == r68["artifact_type"]
 
 
-def test_valid_sprint68_becomes_ready_for_future_explicit_human_authorization_request_review() -> None:
+def test_valid_sprint68_becomes_ready_for_future_explicit_human_authorization_request_review() -> (
+    None
+):
     out = build_active_source_activation_human_authorization_request_packet(
         authorization_readiness_packet_artifact=_valid_sprint68_authorization_readiness_packet(),
     )
     assert out["human_authorization_request_status"] == HUMAN_AUTH_REQUEST_READY
-    assert "explicit_human_authorization_request_review" in out["human_authorization_request_status"]
+    assert (
+        "explicit_human_authorization_request_review"
+        in out["human_authorization_request_status"]
+    )
     assert "approved" not in out["human_authorization_request_status"]
     assert "authorized" not in out["human_authorization_request_status"]
     assert out["request_blockers"] == []
@@ -195,9 +204,15 @@ def test_blocked_sprint68_readiness_blocks_request_packet() -> None:
         post_runtime_verification_artifact=None,  # type: ignore[arg-type]
         activation_readiness_gate_artifact=_minimal_gate(),
     )
-    pkg = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
-    rev = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
-    r68 = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    pkg = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
+    rev = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
+    r68 = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert rev["operator_decision"] == OPERATOR_DECISION_BLOCKED
     out = build_active_source_activation_human_authorization_request_packet(
         authorization_readiness_packet_artifact=r68,
@@ -211,7 +226,10 @@ def test_malformed_readiness_none_blocked() -> None:
         authorization_readiness_packet_artifact=None,  # type: ignore[arg-type]
     )
     assert out["human_authorization_request_status"] == HUMAN_AUTH_REQUEST_BLOCKED
-    assert "authorization_readiness_packet_missing_or_not_a_dict" in out["request_blockers"]
+    assert (
+        "authorization_readiness_packet_missing_or_not_a_dict"
+        in out["request_blockers"]
+    )
 
 
 def test_actual_execution_indicator_blocks() -> None:
@@ -231,7 +249,10 @@ def test_missing_preview_only_on_readiness_blocks() -> None:
         authorization_readiness_packet_artifact=r68,
     )
     assert out["human_authorization_request_status"] == HUMAN_AUTH_REQUEST_BLOCKED
-    assert "authorization_readiness_packet_preview_only_guardrail_missing_or_false" in out["request_blockers"]
+    assert (
+        "authorization_readiness_packet_preview_only_guardrail_missing_or_false"
+        in out["request_blockers"]
+    )
 
 
 def test_missing_no_execution_on_readiness_blocks() -> None:
@@ -241,7 +262,10 @@ def test_missing_no_execution_on_readiness_blocks() -> None:
         authorization_readiness_packet_artifact=r68,
     )
     assert out["human_authorization_request_status"] == HUMAN_AUTH_REQUEST_BLOCKED
-    assert "authorization_readiness_packet_no_execution_guardrail_missing_or_false" in out["request_blockers"]
+    assert (
+        "authorization_readiness_packet_no_execution_guardrail_missing_or_false"
+        in out["request_blockers"]
+    )
 
 
 def test_missing_no_authorization_on_readiness_blocks() -> None:
@@ -251,12 +275,17 @@ def test_missing_no_authorization_on_readiness_blocks() -> None:
         authorization_readiness_packet_artifact=r68,
     )
     assert out["human_authorization_request_status"] == HUMAN_AUTH_REQUEST_BLOCKED
-    assert "authorization_readiness_packet_no_authorization_guardrail_missing_or_false" in out["request_blockers"]
+    assert (
+        "authorization_readiness_packet_no_authorization_guardrail_missing_or_false"
+        in out["request_blockers"]
+    )
 
 
 def test_forbidden_activation_authorized_language_blocks() -> None:
     r68 = dict(_valid_sprint68_authorization_readiness_packet())
-    r68["readiness_reasons"] = list(r68["readiness_reasons"]) + ["manual_note_activation authorized by mistake"]
+    r68["readiness_reasons"] = list(r68["readiness_reasons"]) + [
+        "manual_note_activation authorized by mistake"
+    ]
     out = build_active_source_activation_human_authorization_request_packet(
         authorization_readiness_packet_artifact=r68,
     )
@@ -269,7 +298,10 @@ def test_artifact_type_constant() -> None:
         authorization_readiness_packet_artifact=_valid_sprint68_authorization_readiness_packet(),
     )
     assert out["artifact_type"] == ARTIFACT_TYPE
-    assert out["artifact_type"] == "nf_active_source_activation_human_authorization_request_packet_v1"
+    assert (
+        out["artifact_type"]
+        == "nf_active_source_activation_human_authorization_request_packet_v1"
+    )
 
 
 def test_json_serializable() -> None:
@@ -295,7 +327,9 @@ def test_module_importable() -> None:
     mod = importlib.import_module(
         "nativeforge.services.active_source_activation_human_authorization_request_packet_service"
     )
-    assert callable(mod.build_active_source_activation_human_authorization_request_packet)
+    assert callable(
+        mod.build_active_source_activation_human_authorization_request_packet
+    )
 
 
 def test_missing_future_human_authorization_required_blocks() -> None:
@@ -316,9 +350,10 @@ def test_explicit_guardrail_missing_no_activation_substring_blocks() -> None:
         authorization_readiness_packet_artifact=r68,
     )
     assert out["human_authorization_request_status"] == HUMAN_AUTH_REQUEST_BLOCKED
-    assert "authorization_readiness_packet_explicit_guardrail_missing_no_activation_assertion" in out[
-        "request_blockers"
-    ]
+    assert (
+        "authorization_readiness_packet_explicit_guardrail_missing_no_activation_assertion"
+        in out["request_blockers"]
+    )
 
 
 def test_wrong_readiness_artifact_type_blocks() -> None:

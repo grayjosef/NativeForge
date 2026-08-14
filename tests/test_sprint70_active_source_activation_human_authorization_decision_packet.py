@@ -82,7 +82,9 @@ def _minimal_post_runtime(
     }
 
 
-def _minimal_gate(*, readiness: str = "blocked_requires_activation_review_artifacts") -> dict:
+def _minimal_gate(
+    *, readiness: str = "blocked_requires_activation_review_artifacts"
+) -> dict:
     return {
         "artifact_type": "nf_active_source_activation_readiness_gate_v1",
         "readiness_decision": readiness,
@@ -165,7 +167,9 @@ def test_explicit_authorization_decision_recorded_false_by_default() -> None:
 
 def test_explicit_authorization_decision_recorded_true_with_marker() -> None:
     r69 = dict(_valid_sprint69_human_authorization_request_packet())
-    r69[EXPLICIT_DECISION_RECORDED_INPUT_MARKER_KEY] = EXPLICIT_DECISION_RECORDED_INPUT_MARKER_ALLOWED_VALUE
+    r69[EXPLICIT_DECISION_RECORDED_INPUT_MARKER_KEY] = (
+        EXPLICIT_DECISION_RECORDED_INPUT_MARKER_ALLOWED_VALUE
+    )
     out = build_active_source_activation_human_authorization_decision_packet(
         human_authorization_request_packet_artifact=r69,
     )
@@ -182,7 +186,10 @@ def test_future_activation_execution_plan_review_required_only_when_ready() -> N
     blocked_out = build_active_source_activation_human_authorization_decision_packet(
         human_authorization_request_packet_artifact=None,  # type: ignore[arg-type]
     )
-    assert blocked_out["human_authorization_decision_status"] == HUMAN_AUTH_DECISION_BLOCKED
+    assert (
+        blocked_out["human_authorization_decision_status"]
+        == HUMAN_AUTH_DECISION_BLOCKED
+    )
     assert blocked_out["future_activation_execution_plan_review_required"] is False
 
 
@@ -218,12 +225,17 @@ def test_sprint69_compatibility_ready_path() -> None:
     assert ref["artifact_type"] == r69["artifact_type"]
 
 
-def test_valid_sprint69_becomes_ready_for_future_activation_execution_plan_review() -> None:
+def test_valid_sprint69_becomes_ready_for_future_activation_execution_plan_review() -> (
+    None
+):
     out = build_active_source_activation_human_authorization_decision_packet(
         human_authorization_request_packet_artifact=_valid_sprint69_human_authorization_request_packet(),
     )
     assert out["human_authorization_decision_status"] == HUMAN_AUTH_DECISION_READY
-    assert "future_activation_execution_plan_review" in out["human_authorization_decision_status"]
+    assert (
+        "future_activation_execution_plan_review"
+        in out["human_authorization_decision_status"]
+    )
     assert out["decision_blockers"] == []
 
 
@@ -252,7 +264,9 @@ def test_actual_execution_indicator_blocks() -> None:
         human_authorization_request_packet_artifact=r69,
     )
     assert out["human_authorization_decision_status"] == HUMAN_AUTH_DECISION_BLOCKED
-    assert any("non_zero_actual_command_execution_count" in x for x in out["decision_blockers"])
+    assert any(
+        "non_zero_actual_command_execution_count" in x for x in out["decision_blockers"]
+    )
 
 
 def test_missing_preview_only_on_request_blocks() -> None:
@@ -262,7 +276,10 @@ def test_missing_preview_only_on_request_blocks() -> None:
         human_authorization_request_packet_artifact=r69,
     )
     assert out["human_authorization_decision_status"] == HUMAN_AUTH_DECISION_BLOCKED
-    assert "human_authorization_request_packet_preview_only_guardrail_missing_or_false" in out["decision_blockers"]
+    assert (
+        "human_authorization_request_packet_preview_only_guardrail_missing_or_false"
+        in out["decision_blockers"]
+    )
 
 
 def test_missing_no_execution_on_request_blocks() -> None:
@@ -285,12 +302,17 @@ def test_missing_no_activation_on_request_blocks() -> None:
 
 def test_activation_language_implies_live_blocks() -> None:
     r69 = dict(_valid_sprint69_human_authorization_request_packet())
-    r69["request_reasons"] = list(r69["request_reasons"]) + ["note: source is now active"]
+    r69["request_reasons"] = list(r69["request_reasons"]) + [
+        "note: source is now active"
+    ]
     out = build_active_source_activation_human_authorization_decision_packet(
         human_authorization_request_packet_artifact=r69,
     )
     assert out["human_authorization_decision_status"] == HUMAN_AUTH_DECISION_BLOCKED
-    assert any("activation_implies_live_or_ran_substring:" in x for x in out["decision_blockers"])
+    assert any(
+        "activation_implies_live_or_ran_substring:" in x
+        for x in out["decision_blockers"]
+    )
 
 
 def test_missing_readiness_reference_blocks() -> None:
@@ -307,7 +329,10 @@ def test_artifact_type_constant() -> None:
         human_authorization_request_packet_artifact=_valid_sprint69_human_authorization_request_packet(),
     )
     assert out["artifact_type"] == ARTIFACT_TYPE
-    assert out["artifact_type"] == "nf_active_source_activation_human_authorization_decision_packet_v1"
+    assert (
+        out["artifact_type"]
+        == "nf_active_source_activation_human_authorization_decision_packet_v1"
+    )
 
 
 def test_json_serializable() -> None:
@@ -333,7 +358,9 @@ def test_module_importable() -> None:
     mod = importlib.import_module(
         "nativeforge.services.active_source_activation_human_authorization_decision_packet_service"
     )
-    assert callable(mod.build_active_source_activation_human_authorization_decision_packet)
+    assert callable(
+        mod.build_active_source_activation_human_authorization_decision_packet
+    )
 
 
 def test_strongest_positive_never_implies_live_activation_language() -> None:
@@ -362,7 +389,9 @@ def test_sprint69_module_still_importable() -> None:
 def test_marker_on_blocked_packet_still_sets_explicit_recorded() -> None:
     r69 = dict(_valid_sprint69_human_authorization_request_packet())
     r69["preview_only"] = False
-    r69[EXPLICIT_DECISION_RECORDED_INPUT_MARKER_KEY] = EXPLICIT_DECISION_RECORDED_INPUT_MARKER_ALLOWED_VALUE
+    r69[EXPLICIT_DECISION_RECORDED_INPUT_MARKER_KEY] = (
+        EXPLICIT_DECISION_RECORDED_INPUT_MARKER_ALLOWED_VALUE
+    )
     out = build_active_source_activation_human_authorization_decision_packet(
         human_authorization_request_packet_artifact=r69,
     )
@@ -382,9 +411,9 @@ def test_wrong_request_artifact_type_blocks() -> None:
 
 def test_explicit_guardrail_missing_no_activation_substring_on_request_blocks() -> None:
     r69 = dict(_valid_sprint69_human_authorization_request_packet())
-    r69["explicit_preview_only_no_execution_no_authorization_no_activation_guardrail"] = (
-        "preview_only_no_execution_no_authorization_only"
-    )
+    r69[
+        "explicit_preview_only_no_execution_no_authorization_no_activation_guardrail"
+    ] = "preview_only_no_execution_no_authorization_only"
     out = build_active_source_activation_human_authorization_decision_packet(
         human_authorization_request_packet_artifact=r69,
     )

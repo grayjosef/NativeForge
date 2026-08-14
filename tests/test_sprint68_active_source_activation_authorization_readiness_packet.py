@@ -74,7 +74,9 @@ def _minimal_post_runtime(
     }
 
 
-def _minimal_gate(*, readiness: str = "blocked_requires_activation_review_artifacts") -> dict:
+def _minimal_gate(
+    *, readiness: str = "blocked_requires_activation_review_artifacts"
+) -> dict:
     return {
         "artifact_type": "nf_active_source_activation_readiness_gate_v1",
         "readiness_decision": readiness,
@@ -170,7 +172,9 @@ def test_sprint67_compatibility_ready_path() -> None:
     assert ref["operator_decision"] == OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW
 
 
-def test_valid_sprint67_becomes_ready_for_future_human_authorization_packet_review() -> None:
+def test_valid_sprint67_becomes_ready_for_future_human_authorization_packet_review() -> (
+    None
+):
     out = build_active_source_activation_authorization_readiness_packet(
         operator_decision_review_artifact=_valid_sprint67_operator_decision_review(),
     )
@@ -186,8 +190,12 @@ def test_blocked_sprint67_operator_decision_blocks_packet() -> None:
         post_runtime_verification_artifact=None,  # type: ignore[arg-type]
         activation_readiness_gate_artifact=_minimal_gate(),
     )
-    pkg = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
-    rev = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    pkg = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
+    rev = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert rev["operator_decision"] == OPERATOR_DECISION_BLOCKED
     out = build_active_source_activation_authorization_readiness_packet(
         operator_decision_review_artifact=rev,
@@ -201,39 +209,62 @@ def test_malformed_review_none_blocked() -> None:
         operator_decision_review_artifact=None,  # type: ignore[arg-type]
     )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
-    assert "operator_decision_review_missing_or_not_a_dict" in out["authorization_blockers"]
+    assert (
+        "operator_decision_review_missing_or_not_a_dict"
+        in out["authorization_blockers"]
+    )
 
 
 def test_actual_execution_indicator_blocks() -> None:
     rev = dict(_valid_sprint67_operator_decision_review())
     rev["actual_activation_count"] = 1
-    out = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    out = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
-    assert any("non_zero_actual_activation_count" in x for x in out["authorization_blockers"])
+    assert any(
+        "non_zero_actual_activation_count" in x for x in out["authorization_blockers"]
+    )
 
 
 def test_missing_preview_only_on_review_blocks() -> None:
     rev = dict(_valid_sprint67_operator_decision_review())
     del rev["preview_only"]
-    out = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    out = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
-    assert "operator_decision_review_preview_only_guardrail_missing_or_false" in out["authorization_blockers"]
+    assert (
+        "operator_decision_review_preview_only_guardrail_missing_or_false"
+        in out["authorization_blockers"]
+    )
 
 
 def test_missing_no_execution_on_review_blocks() -> None:
     rev = dict(_valid_sprint67_operator_decision_review())
     del rev["no_execution"]
-    out = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    out = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
-    assert "operator_decision_review_no_execution_guardrail_missing_or_false" in out["authorization_blockers"]
+    assert (
+        "operator_decision_review_no_execution_guardrail_missing_or_false"
+        in out["authorization_blockers"]
+    )
 
 
 def test_forbidden_activation_authorized_language_blocks() -> None:
     rev = dict(_valid_sprint67_operator_decision_review())
-    rev["decision_reasons"] = list(rev["decision_reasons"]) + ["manual_note_activation authorized by mistake"]
-    out = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    rev["decision_reasons"] = list(rev["decision_reasons"]) + [
+        "manual_note_activation authorized by mistake"
+    ]
+    out = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
-    assert any("forbidden_language_substring:" in x for x in out["authorization_blockers"])
+    assert any(
+        "forbidden_language_substring:" in x for x in out["authorization_blockers"]
+    )
 
 
 def test_artifact_type_constant() -> None:
@@ -241,7 +272,10 @@ def test_artifact_type_constant() -> None:
         operator_decision_review_artifact=_valid_sprint67_operator_decision_review(),
     )
     assert out["artifact_type"] == ARTIFACT_TYPE
-    assert out["artifact_type"] == "nf_active_source_activation_authorization_readiness_packet_v1"
+    assert (
+        out["artifact_type"]
+        == "nf_active_source_activation_authorization_readiness_packet_v1"
+    )
 
 
 def test_json_serializable() -> None:
@@ -273,28 +307,36 @@ def test_module_importable() -> None:
 def test_missing_future_authorization_required_blocks() -> None:
     rev = dict(_valid_sprint67_operator_decision_review())
     del rev["future_authorization_required"]
-    out = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    out = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
 
 
 def test_missing_explicit_guardrail_blocks() -> None:
     rev = dict(_valid_sprint67_operator_decision_review())
     del rev["explicit_preview_only_no_execution_guardrail"]
-    out = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    out = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
 
 
 def test_wrong_operator_decision_review_artifact_type_blocks() -> None:
     rev = dict(_valid_sprint67_operator_decision_review())
     rev["artifact_type"] = "wrong_type"
-    out = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    out = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
 
 
 def test_missing_command_package_reference_blocks() -> None:
     rev = dict(_valid_sprint67_operator_decision_review())
     del rev["command_package_reference"]
-    out = build_active_source_activation_authorization_readiness_packet(operator_decision_review_artifact=rev)
+    out = build_active_source_activation_authorization_readiness_packet(
+        operator_decision_review_artifact=rev
+    )
     assert out["authorization_readiness"] == AUTHORIZATION_READINESS_BLOCKED
 
 

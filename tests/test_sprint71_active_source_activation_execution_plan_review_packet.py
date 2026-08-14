@@ -84,7 +84,9 @@ def _minimal_post_runtime(
     }
 
 
-def _minimal_gate(*, readiness: str = "blocked_requires_activation_review_artifacts") -> dict:
+def _minimal_gate(
+    *, readiness: str = "blocked_requires_activation_review_artifacts"
+) -> dict:
     return {
         "artifact_type": "nf_active_source_activation_readiness_gate_v1",
         "readiness_decision": readiness,
@@ -159,25 +161,34 @@ def test_preview_no_execution_no_activation_no_runnable_plan_guardrails() -> Non
     assert out["no_execution"] is True
     assert out["no_activation"] is True
     assert out["no_runnable_plan"] is True
-    g = out["explicit_preview_only_no_execution_no_activation_no_runnable_plan_guardrail"]
+    g = out[
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_guardrail"
+    ]
     assert "preview_only" in g
     assert "no_execution" in g
     assert "no_activation" in g
     assert "no_runnable_plan" in g
 
 
-def test_future_activation_execution_plan_authoring_review_required_only_when_ready() -> None:
+def test_future_activation_execution_plan_authoring_review_required_only_when_ready() -> (
+    None
+):
     ready_out = build_active_source_activation_execution_plan_review_packet(
         human_authorization_decision_packet_artifact=_valid_sprint70_human_authorization_decision_packet(),
     )
     assert ready_out["execution_plan_review_status"] == EXECUTION_PLAN_REVIEW_READY
-    assert ready_out["future_activation_execution_plan_authoring_review_required"] is True
+    assert (
+        ready_out["future_activation_execution_plan_authoring_review_required"] is True
+    )
 
     blocked_out = build_active_source_activation_execution_plan_review_packet(
         human_authorization_decision_packet_artifact=None,  # type: ignore[arg-type]
     )
     assert blocked_out["execution_plan_review_status"] == EXECUTION_PLAN_REVIEW_BLOCKED
-    assert blocked_out["future_activation_execution_plan_authoring_review_required"] is False
+    assert (
+        blocked_out["future_activation_execution_plan_authoring_review_required"]
+        is False
+    )
 
 
 def test_no_database_session_import_in_service() -> None:
@@ -212,12 +223,17 @@ def test_sprint70_compatibility_ready_path() -> None:
     assert ref["artifact_type"] == r70["artifact_type"]
 
 
-def test_valid_sprint70_becomes_ready_for_future_activation_execution_plan_authoring_review() -> None:
+def test_valid_sprint70_becomes_ready_for_future_activation_execution_plan_authoring_review() -> (
+    None
+):
     out = build_active_source_activation_execution_plan_review_packet(
         human_authorization_decision_packet_artifact=_valid_sprint70_human_authorization_decision_packet(),
     )
     assert out["execution_plan_review_status"] == EXECUTION_PLAN_REVIEW_READY
-    assert "future_activation_execution_plan_authoring_review" in out["execution_plan_review_status"]
+    assert (
+        "future_activation_execution_plan_authoring_review"
+        in out["execution_plan_review_status"]
+    )
     assert out["review_blockers"] == []
 
 
@@ -246,7 +262,9 @@ def test_actual_execution_indicator_blocks() -> None:
         human_authorization_decision_packet_artifact=r70,
     )
     assert out["execution_plan_review_status"] == EXECUTION_PLAN_REVIEW_BLOCKED
-    assert any("non_zero_actual_command_execution_count" in x for x in out["review_blockers"])
+    assert any(
+        "non_zero_actual_command_execution_count" in x for x in out["review_blockers"]
+    )
 
 
 def test_missing_preview_only_on_decision_blocks() -> None:
@@ -256,7 +274,10 @@ def test_missing_preview_only_on_decision_blocks() -> None:
         human_authorization_decision_packet_artifact=r70,
     )
     assert out["execution_plan_review_status"] == EXECUTION_PLAN_REVIEW_BLOCKED
-    assert "human_authorization_decision_packet_preview_only_guardrail_missing_or_false" in out["review_blockers"]
+    assert (
+        "human_authorization_decision_packet_preview_only_guardrail_missing_or_false"
+        in out["review_blockers"]
+    )
 
 
 def test_missing_no_execution_on_decision_blocks() -> None:
@@ -279,22 +300,30 @@ def test_missing_no_activation_on_decision_blocks() -> None:
 
 def test_runnable_command_indicator_blocks() -> None:
     r70 = dict(_valid_sprint70_human_authorization_decision_packet())
-    r70["decision_reasons"] = list(r70["decision_reasons"]) + ["note: curl http://example.invalid/foo"]
+    r70["decision_reasons"] = list(r70["decision_reasons"]) + [
+        "note: curl http://example.invalid/foo"
+    ]
     out = build_active_source_activation_execution_plan_review_packet(
         human_authorization_decision_packet_artifact=r70,
     )
     assert out["execution_plan_review_status"] == EXECUTION_PLAN_REVIEW_BLOCKED
-    assert any("runnable_command_indicator_substring:" in x for x in out["review_blockers"])
+    assert any(
+        "runnable_command_indicator_substring:" in x for x in out["review_blockers"]
+    )
 
 
 def test_activation_language_implies_live_blocks() -> None:
     r70 = dict(_valid_sprint70_human_authorization_decision_packet())
-    r70["decision_reasons"] = list(r70["decision_reasons"]) + ["note: source is now active"]
+    r70["decision_reasons"] = list(r70["decision_reasons"]) + [
+        "note: source is now active"
+    ]
     out = build_active_source_activation_execution_plan_review_packet(
         human_authorization_decision_packet_artifact=r70,
     )
     assert out["execution_plan_review_status"] == EXECUTION_PLAN_REVIEW_BLOCKED
-    assert any("activation_implies_live_or_ran_substring:" in x for x in out["review_blockers"])
+    assert any(
+        "activation_implies_live_or_ran_substring:" in x for x in out["review_blockers"]
+    )
 
 
 def test_missing_human_authorization_request_packet_reference_blocks() -> None:
@@ -320,7 +349,10 @@ def test_artifact_type_constant() -> None:
         human_authorization_decision_packet_artifact=_valid_sprint70_human_authorization_decision_packet(),
     )
     assert out["artifact_type"] == ARTIFACT_TYPE
-    assert out["artifact_type"] == "nf_active_source_activation_execution_plan_review_packet_v1"
+    assert (
+        out["artifact_type"]
+        == "nf_active_source_activation_execution_plan_review_packet_v1"
+    )
 
 
 def test_json_serializable() -> None:
@@ -370,7 +402,9 @@ def test_sprint70_module_still_importable() -> None:
     m = importlib.import_module(
         "nativeforge.services.active_source_activation_human_authorization_decision_packet_service"
     )
-    assert callable(m.build_active_source_activation_human_authorization_decision_packet)
+    assert callable(
+        m.build_active_source_activation_human_authorization_decision_packet
+    )
 
 
 def test_wrong_decision_artifact_type_blocks() -> None:
@@ -382,7 +416,9 @@ def test_wrong_decision_artifact_type_blocks() -> None:
     assert out["execution_plan_review_status"] == EXECUTION_PLAN_REVIEW_BLOCKED
 
 
-def test_explicit_guardrail_missing_no_activation_substring_on_decision_blocks() -> None:
+def test_explicit_guardrail_missing_no_activation_substring_on_decision_blocks() -> (
+    None
+):
     r70 = dict(_valid_sprint70_human_authorization_decision_packet())
     r70["explicit_preview_only_no_execution_no_activation_guardrail"] = (
         "preview_only_no_execution_only_without_activation_assertion"
@@ -395,7 +431,9 @@ def test_explicit_guardrail_missing_no_activation_substring_on_decision_blocks()
 
 def test_actual_execution_indicator_forbidden_language_blocks() -> None:
     r70 = dict(_valid_sprint70_human_authorization_decision_packet())
-    r70["decision_reasons"] = list(r70["decision_reasons"]) + ["activation executed in staging"]
+    r70["decision_reasons"] = list(r70["decision_reasons"]) + [
+        "activation executed in staging"
+    ]
     out = build_active_source_activation_execution_plan_review_packet(
         human_authorization_decision_packet_artifact=r70,
     )
@@ -403,7 +441,9 @@ def test_actual_execution_indicator_forbidden_language_blocks() -> None:
     assert any("forbidden_language_substring:" in x for x in out["review_blockers"])
 
 
-def test_sprint69_request_blocked_produces_sprint70_blocked_then_sprint71_blocked() -> None:
+def test_sprint69_request_blocked_produces_sprint70_blocked_then_sprint71_blocked() -> (
+    None
+):
     r69 = build_active_source_activation_human_authorization_request_packet(
         authorization_readiness_packet_artifact=_valid_sprint68_authorization_readiness_packet(),
     )
