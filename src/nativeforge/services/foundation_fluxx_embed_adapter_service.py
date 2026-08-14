@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import re
 from typing import Any
-from urllib.parse import urljoin
 
 from nativeforge.services.foundation_html_listing_adapter_service import (
     _listing_to_payload,
@@ -17,7 +15,6 @@ from nativeforge.services.foundation_listing_noise_filter_service import (
 )
 from nativeforge.services.platform_adapter_registry_service import (
     PLATFORM_FOUNDATION_FLUXX_EMBED,
-    PLATFORM_FOUNDATION_HTML_LISTING,
 )
 from nativeforge.services.polite_http_fetch_service import polite_http_get
 from nativeforge.services.source_fetch_adapter_contract_service import (
@@ -102,9 +99,7 @@ def fetch_foundation_fluxx_listings_for_source(
                 break
 
     all_listings, _noise = filter_foundation_listings(
-        extract_fluxx_listings(
-            html, base_url=base_url, path_hints=path_hints
-        )
+        extract_fluxx_listings(html, base_url=base_url, path_hints=path_hints)
     )
     matched = [
         lst
@@ -122,7 +117,10 @@ def fetch_foundation_fluxx_listings_for_source(
         matched = [
             lst
             for lst in all_listings
-            if any(kw.lower() in str(lst["listing_title"]).lower() for kw in program_kw.split())
+            if any(
+                kw.lower() in str(lst["listing_title"]).lower()
+                for kw in program_kw.split()
+            )
         ] or all_listings[:1]
 
     payloads = []

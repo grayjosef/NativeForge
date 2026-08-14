@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 from typing import Any
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urlparse
 from urllib.robotparser import RobotFileParser
 
 import httpx

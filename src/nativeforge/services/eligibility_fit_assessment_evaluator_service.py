@@ -13,7 +13,6 @@ from nativeforge.services.eligibility_fit_assessment_blockers_service import (
     BLOCKER_MISSING_DEADLINE,
     BLOCKER_MISSING_DOCUMENTATION,
     BLOCKER_MISSING_PROFILE,
-    BLOCKER_RECOGNITION_TIER_MISMATCH,
     build_blockers_assessment,
 )
 from nativeforge.services.eligibility_fit_assessment_confidence_service import (
@@ -75,7 +74,9 @@ def _propose_final_eligibility_claim(
     blocked = any(d["fit_status"] == FIT_STATUS_BLOCKED for d in dimension_results)
     if blocked:
         return False
-    strong_count = sum(1 for d in dimension_results if d["fit_status"] == FIT_STATUS_STRONG)
+    strong_count = sum(
+        1 for d in dimension_results if d["fit_status"] == FIT_STATUS_STRONG
+    )
     return strong_count >= 3 and documentation_readiness == READINESS_COMPLETE
 
 
@@ -125,7 +126,9 @@ def assess_eligibility_fit(
         blockers.append(BLOCKER_MISSING_DEADLINE)
     if documentation["documentation_readiness"] in {READINESS_INCOMPLETE, "unknown"}:
         blockers.append(BLOCKER_MISSING_DOCUMENTATION)
-    if not has_explicit_profile_evidence(list(profile.get("profile_evidence_codes") or [])):
+    if not has_explicit_profile_evidence(
+        list(profile.get("profile_evidence_codes") or [])
+    ):
         blockers.append(BLOCKER_ELIGIBILITY_EVIDENCE_GAP)
     if recognition_tier_gate:
         gate_blockers = list(recognition_tier_gate.get("blocker_codes") or [])
@@ -134,11 +137,20 @@ def assess_eligibility_fit(
         for code in gate_blockers:
             if code not in blockers:
                 blockers.append(code)
-    if any(d["dimension"] == "geography_fit" and d["fit_status"] == FIT_STATUS_BLOCKED for d in dimension_results):
+    if any(
+        d["dimension"] == "geography_fit" and d["fit_status"] == FIT_STATUS_BLOCKED
+        for d in dimension_results
+    ):
         blockers.append(BLOCKER_GEOGRAPHY_MISMATCH)
-    if any(d["dimension"] == "capacity_fit" and d["fit_status"] == FIT_STATUS_BLOCKED for d in dimension_results):
+    if any(
+        d["dimension"] == "capacity_fit" and d["fit_status"] == FIT_STATUS_BLOCKED
+        for d in dimension_results
+    ):
         blockers.append(BLOCKER_CAPACITY_GAP)
-    if deadline["deadline_risk"] == RISK_HIGH and (deadline.get("days_until_deadline") or 0) < 0:
+    if (
+        deadline["deadline_risk"] == RISK_HIGH
+        and (deadline.get("days_until_deadline") or 0) < 0
+    ):
         blockers.append(BLOCKER_DEADLINE_PASSED)
 
     missing_data = build_missing_data_assessment(flags=missing_flags)
@@ -178,13 +190,15 @@ def assess_eligibility_fit(
 
     readiness = (
         READINESS_COMPLETE
-        if claim_guard["final_eligibility_claim"] and not blockers_assessment["application_blocked"]
+        if claim_guard["final_eligibility_claim"]
+        and not blockers_assessment["application_blocked"]
         else READINESS_INCOMPLETE
     )
 
     discover_guard = apply_incomplete_discoverability_guard(
         profile=profile,
-        proposed_discoverable=claim_guard["final_eligibility_claim"] or not blockers_assessment["application_blocked"],
+        proposed_discoverable=claim_guard["final_eligibility_claim"]
+        or not blockers_assessment["application_blocked"],
         proposed_human_review_required=human_review_required,
         proposed_readiness=readiness,
     )

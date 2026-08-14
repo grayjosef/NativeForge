@@ -25,7 +25,6 @@ from nativeforge.services.real_grant_native_relevance_record_service import (
 )
 from nativeforge.services.real_resolver_validation_gate_service import (
     build_real_resolver_validation_gate_contract,
-    require_real_resolver_validation_gate,
 )
 from nativeforge.services.recognition_tier_eligibility_gate_service import (
     apply_recognition_tier_eligibility_gate,
