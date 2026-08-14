@@ -19,8 +19,8 @@ from nativeforge.services.active_source_post_runtime_verification_service import
     READINESS_BLOCKED_MISSING_RUNTIME_EVIDENCE,
     READINESS_BLOCKED_RUNTIME_EVIDENCE_INVALID,
     READINESS_BLOCKED_SOURCE_ALREADY_ACTIVATED,
-    READINESS_BLOCKED_SOURCE_ROW_MISSING,
     READINESS_BLOCKED_SOURCE_ROW_MISMATCH,
+    READINESS_BLOCKED_SOURCE_ROW_MISSING,
     READINESS_VERIFIED_READY_FOR_ACTIVATION_GATE,
     TARGET_REVISION_ID,
     TARGET_TABLE,
@@ -439,9 +439,15 @@ def test_committed_runtime_evidence_json_loads_and_has_expected_keys() -> None:
     if not RUNTIME_EVIDENCE_JSON.is_file():
         return
     data = json.loads(RUNTIME_EVIDENCE_JSON.read_text(encoding="utf-8"))
-    assert data.get("artifact_type") == "nf_active_source_runtime_creation_execution_evidence_v1"
+    assert (
+        data.get("artifact_type")
+        == "nf_active_source_runtime_creation_execution_evidence_v1"
+    )
     assert data.get("readiness_decision") == READINESS_EXECUTED_RUNTIME
-    assert data.get("runtime_created_source_row_id") == "67076f3c-3a03-4eab-8d02-e549c1b72b8d"
+    assert (
+        data.get("runtime_created_source_row_id")
+        == "67076f3c-3a03-4eab-8d02-e549c1b72b8d"
+    )
 
 
 def test_module_importable() -> None:

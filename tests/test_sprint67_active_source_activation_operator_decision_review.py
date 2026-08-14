@@ -9,6 +9,8 @@ from pathlib import Path
 
 from nativeforge.services.active_source_activation_command_package_service import (
     ARTIFACT_TYPE as COMMAND_PACKAGE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_command_package_service import (
     build_active_source_activation_command_package,
 )
 from nativeforge.services.active_source_activation_operator_decision_review_service import (
@@ -71,7 +73,9 @@ def _minimal_post_runtime(
     }
 
 
-def _minimal_gate(*, readiness: str = "blocked_requires_activation_review_artifacts") -> dict:
+def _minimal_gate(
+    *, readiness: str = "blocked_requires_activation_review_artifacts"
+) -> dict:
     return {
         "artifact_type": "nf_active_source_activation_readiness_gate_v1",
         "readiness_decision": readiness,
@@ -149,10 +153,16 @@ def test_no_subprocess_in_service() -> None:
 
 def test_sprint66_package_compatibility_ready_path() -> None:
     pkt = _valid_sprint65_packet()
-    assert pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
-    pkg = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
+    assert (
+        pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    )
+    pkg = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
     assert pkg["artifact_type"] == COMMAND_PACKAGE_ARTIFACT_TYPE
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_READY_FOR_FUTURE_AUTH_REVIEW
     ref = out["command_package_reference"]
     assert ref["artifact_type"] == COMMAND_PACKAGE_ARTIFACT_TYPE
@@ -174,8 +184,12 @@ def test_blocked_packet_decision_review() -> None:
         post_runtime_verification_artifact=None,  # type: ignore[arg-type]
         activation_readiness_gate_artifact=_minimal_gate(),
     )
-    pkg = build_active_source_activation_command_package(activation_review_packet_artifact=pkt)
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    pkg = build_active_source_activation_command_package(
+        activation_review_packet_artifact=pkt
+    )
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_BLOCKED
     assert out["approval_blockers"]
 
@@ -192,31 +206,44 @@ def test_malformed_package_none_blocked() -> None:
 def test_actual_execution_indicator_blocks() -> None:
     pkg = dict(_valid_sprint66_command_package())
     pkg["actual_activation_count"] = 1
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_BLOCKED
-    assert any("non_zero_actual_activation_count" in x for x in out["approval_blockers"])
+    assert any(
+        "non_zero_actual_activation_count" in x for x in out["approval_blockers"]
+    )
 
 
 def test_may_flag_true_blocks() -> None:
     pkg = dict(_valid_sprint66_command_package())
     pkg["may_activate_source_now"] = True
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_BLOCKED
 
 
 def test_missing_preview_only_on_package_blocks() -> None:
     pkg = dict(_valid_sprint66_command_package())
     del pkg["preview_only"]
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_BLOCKED
-    assert "command_package_preview_only_guardrail_missing_or_false" in out["approval_blockers"]
+    assert (
+        "command_package_preview_only_guardrail_missing_or_false"
+        in out["approval_blockers"]
+    )
 
 
 def test_empty_command_preview_blocks_even_when_other_signals_present() -> None:
     pkg = dict(_valid_sprint66_command_package())
     pkg["command_preview"] = []
     pkg["blocked_candidates"] = [{"blocked_reason_code": "x"}]
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_BLOCKED
     assert "command_preview_empty_or_invalid" in out["approval_blockers"]
 
@@ -226,7 +253,9 @@ def test_command_preview_entry_without_preview_only_blocks() -> None:
     cp = list(pkg["command_preview"])
     cp[0] = {**cp[0], "preview_only": False}
     pkg["command_preview"] = cp
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_BLOCKED
 
 
@@ -235,7 +264,10 @@ def test_artifact_type_constant() -> None:
         activation_command_package_artifact=_valid_sprint66_command_package(),
     )
     assert out["artifact_type"] == ARTIFACT_TYPE
-    assert out["artifact_type"] == "nf_active_source_activation_operator_decision_review_v1"
+    assert (
+        out["artifact_type"]
+        == "nf_active_source_activation_operator_decision_review_v1"
+    )
 
 
 def test_json_serializable() -> None:
@@ -267,12 +299,16 @@ def test_module_importable() -> None:
 def test_missing_source_review_packet_reference_blocks() -> None:
     pkg = dict(_valid_sprint66_command_package())
     del pkg["source_review_packet_reference"]
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_BLOCKED
 
 
 def test_wrong_command_package_artifact_type_blocks() -> None:
     pkg = dict(_valid_sprint66_command_package())
     pkg["artifact_type"] = "wrong_type"
-    out = build_active_source_activation_operator_decision_review(activation_command_package_artifact=pkg)
+    out = build_active_source_activation_operator_decision_review(
+        activation_command_package_artifact=pkg
+    )
     assert out["operator_decision"] == OPERATOR_DECISION_BLOCKED

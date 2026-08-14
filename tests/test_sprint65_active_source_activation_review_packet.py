@@ -8,6 +8,8 @@ from pathlib import Path
 
 from nativeforge.services.active_source_activation_readiness_gate_service import (
     ARTIFACT_TYPE as GATE_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_readiness_gate_service import (
     READINESS_BLOCKED_REQUIRES_ACTIVATION_REVIEW_ARTIFACTS,
     READINESS_READY_FUTURE_ACTIVATION_REVIEW_PACKET,
     build_active_source_activation_readiness_gate,
@@ -196,8 +198,14 @@ def test_08_valid_inputs_build_all_individual_artifacts() -> None:
     g = _minimal_gate()
     builders = (
         (build_active_source_legal_tos_activation_review, ARTIFACT_TYPE_LEGAL_TOS),
-        (build_active_source_public_access_activation_review, ARTIFACT_TYPE_PUBLIC_ACCESS),
-        (build_active_source_provenance_capture_activation_review, ARTIFACT_TYPE_PROVENANCE),
+        (
+            build_active_source_public_access_activation_review,
+            ARTIFACT_TYPE_PUBLIC_ACCESS,
+        ),
+        (
+            build_active_source_provenance_capture_activation_review,
+            ARTIFACT_TYPE_PROVENANCE,
+        ),
         (build_active_source_duplicate_activation_review, ARTIFACT_TYPE_DUPLICATE),
         (build_active_source_rate_limit_fetch_cadence_plan, ARTIFACT_TYPE_RATE_LIMIT),
         (build_active_source_failure_mode_backoff_plan, ARTIFACT_TYPE_FAILURE_BACKOFF),
@@ -220,7 +228,9 @@ def test_09_top_level_ready_for_future_activation_command_package_review() -> No
         post_runtime_verification_artifact=_minimal_post_runtime(),
         activation_readiness_gate_artifact=_minimal_gate(),
     )
-    assert pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    assert (
+        pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    )
 
 
 def test_10_legal_tos_scaffolded_not_approved() -> None:
@@ -406,7 +416,10 @@ def test_30_gate_missing_review_packet_still_blocks() -> None:
     g = build_active_source_activation_readiness_gate(
         post_runtime_verification_artifact=_minimal_post_runtime(),
     )
-    assert g["readiness_decision"] == READINESS_BLOCKED_REQUIRES_ACTIVATION_REVIEW_ARTIFACTS
+    assert (
+        g["readiness_decision"]
+        == READINESS_BLOCKED_REQUIRES_ACTIVATION_REVIEW_ARTIFACTS
+    )
 
 
 def test_31_gate_valid_review_packet_moves_to_future_review_packet_readiness() -> None:
@@ -415,7 +428,9 @@ def test_31_gate_valid_review_packet_moves_to_future_review_packet_readiness() -
         post_runtime_verification_artifact=pr,
         activation_readiness_gate_artifact=_minimal_gate(),
     )
-    assert pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    assert (
+        pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    )
     g = build_active_source_activation_readiness_gate(
         post_runtime_verification_artifact=pr,
         activation_review_packet_artifact=pkt,
@@ -460,7 +475,10 @@ def test_34_invalid_review_packet_still_blocks_gate() -> None:
         post_runtime_verification_artifact=pr,
         activation_review_packet_artifact=bad,  # type: ignore[arg-type]
     )
-    assert g["readiness_decision"] == READINESS_BLOCKED_REQUIRES_ACTIVATION_REVIEW_ARTIFACTS
+    assert (
+        g["readiness_decision"]
+        == READINESS_BLOCKED_REQUIRES_ACTIVATION_REVIEW_ARTIFACTS
+    )
 
 
 def test_module_importable() -> None:
@@ -470,13 +488,18 @@ def test_module_importable() -> None:
     assert callable(mod.build_active_source_activation_review_packet)
 
 
-def test_gate_ready_path_also_accepts_ready_for_future_review_packet_gate_input() -> None:
+def test_gate_ready_path_also_accepts_ready_for_future_review_packet_gate_input() -> (
+    None
+):
     pr = _minimal_post_runtime()
     gate_prior = build_active_source_activation_readiness_gate(
         post_runtime_verification_artifact=pr,
         activation_review_placeholders=_all_placeholders_satisfied(),
     )
-    assert gate_prior["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_REVIEW_PACKET
+    assert (
+        gate_prior["readiness_decision"]
+        == READINESS_READY_FUTURE_ACTIVATION_REVIEW_PACKET
+    )
     pkt = build_active_source_activation_review_packet(
         post_runtime_verification_artifact=pr,
         activation_readiness_gate_artifact={
@@ -484,5 +507,6 @@ def test_gate_ready_path_also_accepts_ready_for_future_review_packet_gate_input(
             "readiness_decision": READINESS_READY_FUTURE_ACTIVATION_REVIEW_PACKET,
         },
     )
-    assert pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
-
+    assert (
+        pkt["readiness_decision"] == READINESS_READY_FUTURE_ACTIVATION_COMMAND_PACKAGE
+    )
