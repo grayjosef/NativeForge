@@ -6,7 +6,9 @@ from nativeforge.services.nm_wa_smoke_manifest_service import (
     build_smoke_manifest,
     manifest_surface_names,
 )
-from nativeforge.services.nm_wa_smoke_validation_contract_service import EXPECTED_SURFACES
+from nativeforge.services.nm_wa_smoke_validation_contract_service import (
+    EXPECTED_SURFACES,
+)
 
 
 def test_manifest_surface_names() -> None:

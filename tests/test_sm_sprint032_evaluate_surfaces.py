@@ -6,7 +6,9 @@ from nativeforge.services.nm_wa_operator_surfacing_demo_artifact_service import 
     build_demo_artifact,
 )
 from nativeforge.services.nm_wa_smoke_runner_service import evaluate_surfaces
-from nativeforge.services.nm_wa_smoke_validation_contract_service import EXPECTED_SURFACES
+from nativeforge.services.nm_wa_smoke_validation_contract_service import (
+    EXPECTED_SURFACES,
+)
 
 
 def test_evaluate_surfaces_all_pass() -> None:

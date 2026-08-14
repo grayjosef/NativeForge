@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from nativeforge.services.nm_wa_smoke_validation_contract_service import EXPECTED_SURFACES
-
+from nativeforge.services.nm_wa_smoke_validation_contract_service import (
+    EXPECTED_SURFACES,
+)
 
 REQUIRED = {
     "nm_fixture_visibility",
