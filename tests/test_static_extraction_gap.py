@@ -6,7 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from nativeforge.services.fed_program_activation_binding_service import load_seed_candidate
+from nativeforge.services.fed_program_activation_binding_service import (
+    load_seed_candidate,
+)
 from nativeforge.services.foundation_html_listing_adapter_service import (
     extract_html_listings,
 )
@@ -16,7 +18,9 @@ from nativeforge.services.foundation_listing_noise_filter_service import (
 from nativeforge.services.html_card_listing_extractor_service import (
     extract_card_dom_listings,
 )
-from nativeforge.services.source_fetch_adapter_contract_service import FETCH_MODE_FIXTURE
+from nativeforge.services.source_fetch_adapter_contract_service import (
+    FETCH_MODE_FIXTURE,
+)
 from nativeforge.services.static_extraction_gap_service import (
     EXTRACTION_GAP_SEED_IDS,
 )

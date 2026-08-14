@@ -6,7 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from nativeforge.services.fed_program_activation_binding_service import load_seed_candidate
+from nativeforge.services.fed_program_activation_binding_service import (
+    load_seed_candidate,
+)
 from nativeforge.services.foundation_html_listing_adapter_service import (
     extract_html_listings,
 )
@@ -17,9 +19,14 @@ from nativeforge.services.platform_adapter_registry_service import (
     PLATFORM_FOUNDATION_FLUXX_EMBED,
     PLATFORM_FOUNDATION_HTML_LISTING,
 )
-from nativeforge.services.source_fetch_adapter_contract_service import FETCH_MODE_FIXTURE
+from nativeforge.services.source_fetch_adapter_contract_service import (
+    FETCH_MODE_FIXTURE,
+)
 from nativeforge.services.ta_tier3_honesty_regression_service import (
     run_ta_tier3_honesty_regression,
+)
+from nativeforge.services.tier3_classify_match_orchestrator_service import (
+    run_tier3_classify_match_block,
 )
 from nativeforge.services.tier3_foundation_batch_live_fetch_service import (
     run_tier3_foundation_batch_live_fetch,
@@ -29,9 +36,6 @@ from nativeforge.services.tier3_foundation_corpus_persist_service import (
 )
 from nativeforge.services.tier3_org_cluster_config_service import (
     TA3_COHORT1_SEED_IDS,
-)
-from nativeforge.services.tier3_classify_match_orchestrator_service import (
-    run_tier3_classify_match_block,
 )
 
 _FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "source_ingestion"
@@ -103,7 +107,11 @@ def test_persist_and_seed_id_dedup(tmp_path: Path) -> None:
     assert persist["tier3_grant_count"] >= 8
     seed_ids = {p["source_seed_id"] for p in batch["raw_payloads"]}
     assert len(seed_ids) >= 8
-    fpf_payloads = [p for p in batch["raw_payloads"] if p["source_seed_id"].endswith(("006", "007", "008"))]
+    fpf_payloads = [
+        p
+        for p in batch["raw_payloads"]
+        if p["source_seed_id"].endswith(("006", "007", "008"))
+    ]
     assert len(fpf_payloads) >= 2
 
 
@@ -134,7 +142,8 @@ def test_classify_match_all_needs_operator_review(
     )
     assert block["all_needs_operator_review"] is True
     assert all(
-        m["match_label"] == "needs_operator_review" for m in block["classify_match"]["matches"]
+        m["match_label"] == "needs_operator_review"
+        for m in block["classify_match"]["matches"]
     )
 
 

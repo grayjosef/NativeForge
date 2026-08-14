@@ -15,6 +15,8 @@ from nativeforge.services.active_source_activation_command_package_service impor
 )
 from nativeforge.services.active_source_activation_execution_plan_authoring_authorization_decision_packet_service import (
     ARTIFACT_TYPE as SPRINT73_ARTIFACT_TYPE,
+)
+from nativeforge.services.active_source_activation_execution_plan_authoring_authorization_decision_packet_service import (
     AUTHORIZATION_DECISION_APPROVED,
     AUTHORIZATION_DECISION_BLOCKED,
     build_active_source_activation_execution_plan_authoring_authorization_decision_packet,
@@ -97,7 +99,9 @@ def _minimal_post_runtime(
     }
 
 
-def _minimal_gate(*, readiness: str = "blocked_requires_activation_review_artifacts") -> dict:
+def _minimal_gate(
+    *, readiness: str = "blocked_requires_activation_review_artifacts"
+) -> dict:
     return {
         "artifact_type": "nf_active_source_activation_readiness_gate_v1",
         "readiness_decision": readiness,
@@ -176,7 +180,10 @@ def test_happy_path_ready_review_packet() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_READY
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_READY
+    )
     assert out["artifact_type"] == ARTIFACT_TYPE
     assert out["artifact_version"] == 1
     assert out["version"] == "v1"
@@ -191,8 +198,14 @@ def test_artifact_type_mismatch_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert "execution_plan_authoring_authorization_decision_packet_artifact_type_mismatch" in out["review_blockers"]
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert (
+        "execution_plan_authoring_authorization_decision_packet_artifact_type_mismatch"
+        in out["review_blockers"]
+    )
 
 
 def test_artifact_version_mismatch_blocks() -> None:
@@ -201,8 +214,14 @@ def test_artifact_version_mismatch_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert "execution_plan_authoring_authorization_decision_packet_artifact_version_invalid" in out["review_blockers"]
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert (
+        "execution_plan_authoring_authorization_decision_packet_artifact_version_invalid"
+        in out["review_blockers"]
+    )
 
 
 def test_missing_preview_only_blocks() -> None:
@@ -211,7 +230,10 @@ def test_missing_preview_only_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
     assert (
         "execution_plan_authoring_authorization_decision_packet_preview_only_guardrail_missing_or_false"
         in out["review_blockers"]
@@ -224,7 +246,10 @@ def test_missing_no_execution_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_missing_no_activation_blocks() -> None:
@@ -233,7 +258,10 @@ def test_missing_no_activation_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_missing_no_runnable_plan_blocks() -> None:
@@ -242,27 +270,43 @@ def test_missing_no_runnable_plan_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_sprint73_not_approved_decision_status_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["execution_plan_authoring_authorization_decision_status"] = AUTHORIZATION_DECISION_BLOCKED
+    r73["execution_plan_authoring_authorization_decision_status"] = (
+        AUTHORIZATION_DECISION_BLOCKED
+    )
     r73["review_blockers"] = ["forced"]
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert any("execution_plan_authoring_authorization_decision_status_not_approved" in x for x in out["review_blockers"])
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert any(
+        "execution_plan_authoring_authorization_decision_status_not_approved" in x
+        for x in out["review_blockers"]
+    )
 
 
-def test_approved_for_future_activation_execution_plan_authoring_only_false_blocks() -> None:
+def test_approved_for_future_activation_execution_plan_authoring_only_false_blocks() -> (
+    None
+):
     r73 = dict(_valid_sprint73_authorization_decision_packet())
     r73["approved_for_future_activation_execution_plan_authoring_only"] = False
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_future_activation_execution_plan_authoring_allowed_false_blocks() -> None:
@@ -271,7 +315,10 @@ def test_future_activation_execution_plan_authoring_allowed_false_blocks() -> No
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_future_activation_execution_plan_execution_allowed_true_blocks() -> None:
@@ -280,7 +327,10 @@ def test_future_activation_execution_plan_execution_allowed_true_blocks() -> Non
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
     assert (
         "execution_plan_authoring_authorization_decision_packet_future_activation_execution_plan_execution_allowed_not_false"
         in out["review_blockers"]
@@ -293,7 +343,10 @@ def test_future_source_activation_allowed_true_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
     assert (
         "execution_plan_authoring_authorization_decision_packet_future_source_activation_allowed_not_false"
         in out["review_blockers"]
@@ -306,8 +359,13 @@ def test_actual_nonzero_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert any("non_zero_actual_command_execution_count" in x for x in out["review_blockers"])
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert any(
+        "non_zero_actual_command_execution_count" in x for x in out["review_blockers"]
+    )
 
 
 def test_may_flag_true_blocks() -> None:
@@ -316,18 +374,30 @@ def test_may_flag_true_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert any("may_flag_true_may_activate_source_now" in x for x in out["review_blockers"])
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert any(
+        "may_flag_true_may_activate_source_now" in x for x in out["review_blockers"]
+    )
 
 
 def test_forbidden_runnable_command_string_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["review_reasons"] = list(r73["review_reasons"]) + ["note: curl http://example.invalid/foo"]
+    r73["review_reasons"] = list(r73["review_reasons"]) + [
+        "note: curl http://example.invalid/foo"
+    ]
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert any("runnable_command_indicator_substring:" in x for x in out["review_blockers"])
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert any(
+        "runnable_command_indicator_substring:" in x for x in out["review_blockers"]
+    )
 
 
 def test_forbidden_activation_language_blocks() -> None:
@@ -336,84 +406,115 @@ def test_forbidden_activation_language_blocks() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert any("activation_implies_live_or_ran_substring:" in x for x in out["review_blockers"])
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert any(
+        "activation_implies_live_or_ran_substring:" in x for x in out["review_blockers"]
+    )
 
 
 def test_forbidden_actual_execution_plan_language_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["review_reasons"] = list(r73["review_reasons"]) + ["hypothetical: actual execution plan for prod"]
+    r73["review_reasons"] = list(r73["review_reasons"]) + [
+        "hypothetical: actual execution plan for prod"
+    ]
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert any("runnable_plan_or_command_execution_language_substring:" in x for x in out["review_blockers"])
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert any(
+        "runnable_plan_or_command_execution_language_substring:" in x
+        for x in out["review_blockers"]
+    )
 
 
 def test_explicit_guardrail_missing_preview_only_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"] = (
-        "no_execution_no_activation_no_runnable_plan_authorization_decision_only_future_plan_authoring_only"
-    )
+    r73[
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"
+    ] = "no_execution_no_activation_no_runnable_plan_authorization_decision_only_future_plan_authoring_only"
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_explicit_guardrail_missing_no_execution_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"] = (
-        "preview_only_no_activation_no_runnable_plan_authorization_decision_only_future_plan_authoring_only"
-    )
+    r73[
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"
+    ] = "preview_only_no_activation_no_runnable_plan_authorization_decision_only_future_plan_authoring_only"
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_explicit_guardrail_missing_no_activation_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"] = (
-        "preview_only_no_execution_no_runnable_plan_authorization_decision_only_future_plan_authoring_only"
-    )
+    r73[
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"
+    ] = "preview_only_no_execution_no_runnable_plan_authorization_decision_only_future_plan_authoring_only"
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_explicit_guardrail_missing_no_runnable_plan_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"] = (
-        "preview_only_no_execution_no_activation_authorization_decision_only_future_plan_authoring_only"
-    )
+    r73[
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"
+    ] = "preview_only_no_execution_no_activation_authorization_decision_only_future_plan_authoring_only"
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_explicit_guardrail_missing_authorization_decision_only_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"] = (
-        "preview_only_no_execution_no_activation_no_runnable_plan_future_plan_authoring_only"
-    )
+    r73[
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"
+    ] = "preview_only_no_execution_no_activation_no_runnable_plan_future_plan_authoring_only"
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_explicit_guardrail_missing_future_plan_authoring_only_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"] = (
-        "preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only"
-    )
+    r73[
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only_guardrail"
+    ] = "preview_only_no_execution_no_activation_no_runnable_plan_authorization_decision_only"
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
 
 
 def test_output_always_has_zero_actual_counts() -> None:
@@ -479,15 +580,24 @@ def test_output_contains_sprint74_proof_dict() -> None:
     )
     proof = out["sprint_74_execution_plan_authoring_review_packet_proof"]
     assert isinstance(proof, dict)
-    assert proof["sprint_74_execution_plan_authoring_review_packet_is_stateless"] is True
-    assert proof["sprint_74_execution_plan_authoring_review_packet_does_not_create_runnable_plan"] is True
+    assert (
+        proof["sprint_74_execution_plan_authoring_review_packet_is_stateless"] is True
+    )
+    assert (
+        proof[
+            "sprint_74_execution_plan_authoring_review_packet_does_not_create_runnable_plan"
+        ]
+        is True
+    )
 
 
 def test_guardrail_string_contains_required_terms() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=_valid_sprint73_authorization_decision_packet(),
     )
-    g = out["explicit_preview_only_no_execution_no_activation_no_runnable_plan_authoring_review_only_guardrail"]
+    g = out[
+        "explicit_preview_only_no_execution_no_activation_no_runnable_plan_authoring_review_only_guardrail"
+    ]
     assert "preview_only" in g
     assert "no_execution" in g
     assert "no_activation" in g
@@ -501,10 +611,15 @@ def test_source_sprint73_reference_present() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    ref = out["source_sprint_73_execution_plan_authoring_authorization_decision_packet_reference"]
+    ref = out[
+        "source_sprint_73_execution_plan_authoring_authorization_decision_packet_reference"
+    ]
     assert ref["artifact_type"] == r73["artifact_type"]
     assert ref["artifact_version"] == r73["artifact_version"]
-    assert ref["execution_plan_authoring_authorization_decision_status"] == AUTHORIZATION_DECISION_APPROVED
+    assert (
+        ref["execution_plan_authoring_authorization_decision_status"]
+        == AUTHORIZATION_DECISION_APPROVED
+    )
 
 
 def test_json_serializable() -> None:
@@ -551,11 +666,16 @@ def test_module_importable() -> None:
     mod = importlib.import_module(
         "nativeforge.services.active_source_activation_execution_plan_authoring_review_packet_service"
     )
-    assert callable(mod.build_active_source_activation_execution_plan_authoring_review_packet)
+    assert callable(
+        mod.build_active_source_activation_execution_plan_authoring_review_packet
+    )
 
 
 def test_artifact_type_and_artifact_version_constants() -> None:
-    assert ARTIFACT_TYPE == "nf_active_source_activation_execution_plan_authoring_review_packet_v1"
+    assert (
+        ARTIFACT_TYPE
+        == "nf_active_source_activation_execution_plan_authoring_review_packet_v1"
+    )
     assert ARTIFACT_VERSION == 1
 
 
@@ -584,29 +704,45 @@ def test_strongest_positive_never_implies_live_activation_language() -> None:
 
 def test_forbidden_language_substring_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["review_reasons"] = list(r73["review_reasons"]) + ["activation executed in staging"]
+    r73["review_reasons"] = list(r73["review_reasons"]) + [
+        "activation executed in staging"
+    ]
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
     assert any("forbidden_language_substring:" in x for x in out["review_blockers"])
 
 
 def test_data_plane_or_external_automation_language_blocks() -> None:
     r73 = dict(_valid_sprint73_authorization_decision_packet())
-    r73["review_reasons"] = list(r73["review_reasons"]) + ["future scheduled ingestion was requested"]
+    r73["review_reasons"] = list(r73["review_reasons"]) + [
+        "future scheduled ingestion was requested"
+    ]
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
-    assert any("data_plane_or_external_automation_language_substring:" in x for x in out["review_blockers"])
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
+    assert any(
+        "data_plane_or_external_automation_language_substring:" in x
+        for x in out["review_blockers"]
+    )
 
 
 def test_blocked_or_malformed_decision_packet() -> None:
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=None,  # type: ignore[arg-type]
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
     assert out["review_blockers"]
     assert out["future_preview_only_execution_plan_drafting_review_required"] is False
     assert out["future_activation_execution_plan_authoring_context_ready"] is False
@@ -627,12 +763,21 @@ def test_sprint72_blocked_produces_sprint73_blocked_then_sprint74_blocked() -> N
     r72 = build_active_source_activation_execution_plan_authoring_authorization_request_packet(
         execution_plan_review_packet_artifact=r71,
     )
-    assert r72["execution_plan_authoring_authorization_request_status"] == AUTHORIZATION_REQUEST_BLOCKED
+    assert (
+        r72["execution_plan_authoring_authorization_request_status"]
+        == AUTHORIZATION_REQUEST_BLOCKED
+    )
     r73 = build_active_source_activation_execution_plan_authoring_authorization_decision_packet(
         execution_plan_authoring_authorization_request_packet_artifact=r72,
     )
-    assert r73["execution_plan_authoring_authorization_decision_status"] == AUTHORIZATION_DECISION_BLOCKED
+    assert (
+        r73["execution_plan_authoring_authorization_decision_status"]
+        == AUTHORIZATION_DECISION_BLOCKED
+    )
     out = build_active_source_activation_execution_plan_authoring_review_packet(
         execution_plan_authoring_authorization_decision_packet_artifact=r73,
     )
-    assert out["execution_plan_authoring_review_status"] == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    assert (
+        out["execution_plan_authoring_review_status"]
+        == EXECUTION_PLAN_AUTHORING_REVIEW_BLOCKED
+    )
