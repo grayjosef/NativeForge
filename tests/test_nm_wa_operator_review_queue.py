@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from nativeforge.services.nm_wa_operator_review_service import build_operator_review_queue
+from nativeforge.services.nm_wa_operator_review_service import (
+    build_operator_review_queue,
+)
 
 _GRANTS = [
     {
