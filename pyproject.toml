@@ -659,6 +659,13 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/campaign_block03_smoke_runner_service.py" = ["E501"]
 "tests/test_pursuit_workspace_campaign03.py" = ["E501"]
 
+"src/nativeforge/services/application_checklist_execution_contract_service.py" = ["E501"]
+"src/nativeforge/services/application_checklist_section_builder_service.py" = ["E501"]
+"src/nativeforge/services/missing_information_questionnaire_service.py" = ["E501"]
+"src/nativeforge/services/application_plan_workspace_assembler_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block04_smoke_runner_service.py" = ["E501"]
+"tests/test_application_plan_workspace_campaign04.py" = ["E501"]
+
 [tool.ruff.format]
 quote-style = "double"
 
