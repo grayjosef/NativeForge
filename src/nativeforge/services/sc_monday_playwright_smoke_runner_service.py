@@ -97,5 +97,7 @@ def run_playwright_sc_monday_smoke(
         "artifact_log": str(log_path.relative_to(REPO_ROOT)),
         "artifact_json": str(result_path.relative_to(REPO_ROOT)),
     }
-    result_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    result_path.write_text(
+        json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
     return result

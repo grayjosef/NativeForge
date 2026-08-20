@@ -34,7 +34,11 @@ def test_pack_has_sc_and_federal() -> None:
 def test_every_row_has_honest_labels() -> None:
     for row in grants_from_pack():
         assert row["live_ingest_not_claimed"] is True
-        assert row["data_label"] in {"curated_current", "fixture_demo", "rule_reference"}
+        assert row["data_label"] in {
+            "curated_current",
+            "fixture_demo",
+            "rule_reference",
+        }
         assert row.get("retrieval_date") or row.get("capture_date")
 
 
