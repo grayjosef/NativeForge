@@ -69,7 +69,9 @@ def _count_by(rows: list[dict[str, Any]], key: str) -> dict[str, int]:
     return out
 
 
-def _project_match_rows(cm: dict[str, Any], grants: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def _project_match_rows(
+    cm: dict[str, Any], grants: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
     """Flatten classify/match results into customer-demo review rows."""
     grant_meta = {str(g.get("grant_id")): g for g in grants}
     profile_rec = {
@@ -89,7 +91,9 @@ def _project_match_rows(cm: dict[str, Any], grants: list[dict[str, Any]]) -> lis
         if m.get("recognition_tier_mismatch"):
             next_checks.append("Review recognition-tier mismatch before pursuit")
         if m.get("condition_mismatch"):
-            next_checks.append("Review condition mismatch (incorporation/501c3/pathway)")
+            next_checks.append(
+                "Review condition mismatch (incorporation/501c3/pathway)"
+            )
         if m.get("excluded_from_match_set"):
             next_checks.append("Opportunity excluded from match set — confirm why")
         if meta.get("confirm_active_round"):
@@ -114,7 +118,8 @@ def _project_match_rows(cm: dict[str, Any], grants: list[dict[str, Any]]) -> lis
                 "data_label": meta.get("data_label") or "fixture_demo",
                 "live_ingest_not_claimed": True,
                 "classification_label": m.get("classification_label") or "unknown",
-                "match_readiness_label": m.get("match_label") or "needs_operator_review",
+                "match_readiness_label": m.get("match_label")
+                or "needs_operator_review",
                 "discoverability": (
                     "hidden_by_tier_gate"
                     if m.get("excluded_from_match_set")
@@ -134,6 +139,20 @@ def _project_match_rows(cm: dict[str, Any], grants: list[dict[str, Any]]) -> lis
                 "final_eligibility_claim_allowed": False,
                 "confirm_active_round": bool(meta.get("confirm_active_round")),
                 "excluded_from_match_set": bool(m.get("excluded_from_match_set")),
+                "opportunity_id": gid,
+                "title": meta.get("title") or meta.get("opportunity_title") or gid,
+                "source_layer": meta.get("source_layer"),
+                "data_mode": meta.get("data_mode") or "curated_current",
+                "freshness_label": meta.get("freshness_label"),
+                "current_round_status": meta.get("current_round_status"),
+                "deadline_status": meta.get("deadline_status"),
+                "deadline_date": meta.get("deadline_date"),
+                "live_ingest_claimed": False,
+                "automated_refresh_claimed": False,
+                "demo_real_isolation_label": meta.get("demo_real_isolation_label"),
+                "eligibility_summary": meta.get("eligibility_summary"),
+                "missing_fields": list(meta.get("missing_fields") or []),
+                "needs_operator_review": True,
             }
         )
     return rows
@@ -267,7 +286,11 @@ def build_sc_monday_demo_artifact(
         "ui_flags": dict(REQUIRED_UI_FLAGS),
     }
     body["content_digest"] = _digest(
-        {"pack_id": body["pack_id"], "row_count": len(rows), "profiles": body["profiles"]}
+        {
+            "pack_id": body["pack_id"],
+            "row_count": len(rows),
+            "profiles": body["profiles"],
+        }
     )
     return _json_safe(body)
 

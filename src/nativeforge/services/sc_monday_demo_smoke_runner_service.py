@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -38,7 +38,7 @@ EXPECTED_SURFACES: tuple[str, ...] = (
 
 
 def _run_id() -> str:
-    ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     return f"nf_sc_monday_smoke_{ts}_{uuid.uuid4().hex[:8]}"
 
 
@@ -59,7 +59,11 @@ def run_sc_monday_demo_smoke() -> dict[str, Any]:
 
     af = demo_artifact_invariant_failures(art)
     bf = bridge_payload_invariant_failures(payload)
-    add("sc_profiles_visible", art["profiles"]["profile_count"] >= 1, f"profiles={art['profiles']['profile_count']}")
+    add(
+        "sc_profiles_visible",
+        art["profiles"]["profile_count"] >= 1,
+        f"profiles={art['profiles']['profile_count']}",
+    )
     add(
         "sc_opportunities_visible",
         art["opportunities"]["south_carolina_count"] >= 1,
@@ -98,13 +102,21 @@ def run_sc_monday_demo_smoke() -> dict[str, Any]:
     )
     add("buyer_what_nf_did", bool(art.get("what_nativeforge_did")), "story_present")
     add("buyer_next_actions", bool(art.get("next_actions")), "next_actions_present")
-    add("no_live_ingest_claim", art.get("live_ingestion") is False, "live_ingestion=false")
+    add(
+        "no_live_ingest_claim",
+        art.get("live_ingestion") is False,
+        "live_ingestion=false",
+    )
     add(
         "no_final_eligibility_claim",
         art.get("final_eligibility_claim_allowed") is False,
         "final_claim=false",
     )
-    add("demo_route_present", payload.get("demo_route_path") == DEMO_ROUTE_PATH, DEMO_ROUTE_PATH)
+    add(
+        "demo_route_present",
+        payload.get("demo_route_path") == DEMO_ROUTE_PATH,
+        DEMO_ROUTE_PATH,
+    )
     labels_ok = all(
         r.get("data_label") in {"curated_current", "fixture_demo", "rule_reference"}
         and r.get("live_ingest_not_claimed") is True
