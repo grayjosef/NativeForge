@@ -81,6 +81,14 @@ export function WorkspaceHeader({
               >
                 NM/WA Demo
               </button>
+              <button
+                type="button"
+                className={`nf-segment-btn ${(surface ?? "workspace") === "sc_customer_demo" ? "is-active" : ""}`}
+                onClick={() => onSurfaceChange("sc_customer_demo")}
+                data-testid="sc-customer-demo-nav"
+              >
+                SC Demo
+              </button>
             </div>
           ) : null}
 
