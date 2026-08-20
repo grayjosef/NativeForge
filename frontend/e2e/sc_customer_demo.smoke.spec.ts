@@ -28,10 +28,10 @@ test.describe("SC customer demo Playwright smoke", () => {
     );
 
     await expect(page.getByTestId("sc-demo-what-nf-did")).toContainText(
-      "What NativeForge did",
+      "What NativeForge found",
     );
     await expect(page.getByTestId("sc-demo-attention")).toContainText(
-      "What requires your attention",
+      "What is uncertain / needs your attention",
     );
     await expect(page.getByTestId("sc-demo-next-actions")).toContainText(
       "What to do next",
