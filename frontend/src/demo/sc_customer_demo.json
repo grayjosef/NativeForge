@@ -1,0 +1,3610 @@
+{
+  "auth_required": false,
+  "capture_date": "2026-08-20",
+  "claim_matrix": {
+    "allowed_data_labels": [
+      "curated_current",
+      "fixture_demo",
+      "rule_reference"
+    ],
+    "federal_opportunity_mode": "curated_from_offline_corpus_and_rule_refs",
+    "final_eligibility_claim": "NOT_ALLOWED",
+    "human_review_required": true,
+    "live_ingestion": "NOT_CLAIMED",
+    "nofo_pdf_extraction": "NOT_IN_THIS_BLOCK",
+    "organization_profiles": "sc_pilot_fixtures",
+    "proposal_drafting": "NOT_IN_THIS_BLOCK",
+    "sc_opportunity_mode": "curated_current_and_rule_reference",
+    "schema_version": "nf_sc_monday_demo_labels_v1",
+    "source_activation": "NOT_CLAIMED"
+  },
+  "classify_match": {
+    "all_needs_operator_review": true,
+    "grant_count": 29,
+    "honest_labeling": true,
+    "match_pair_count": 180,
+    "profile_count": 10,
+    "schema_version": "nf_sc_pilot_classify_match_orchestrator_v1"
+  },
+  "combined_summary": {
+    "confidence_distribution": {
+      "public_inferred_low": 180
+    },
+    "federal_row_count": 150,
+    "human_review_required_count": 180,
+    "row_count": 180,
+    "south_carolina_row_count": 30
+  },
+  "content_digest": "0952cc002f8ed139",
+  "demo_dev_only": true,
+  "demo_route_path": "/?view=sc_customer_demo",
+  "external_urls_used": false,
+  "final_eligibility_claim_allowed": false,
+  "live_ingestion": false,
+  "missing_data_summary": {
+    "hidden_missing_data": false,
+    "rows_with_missing_data": 0
+  },
+  "next_actions": [
+    "Select an organization profile",
+    "Review state + federal opportunities together",
+    "Open eligibility explanation and blockers",
+    "Decide pursue / defer with human review",
+    "Next block: NOFO extraction showcase (not claimed here)"
+  ],
+  "offline_only": true,
+  "opportunities": {
+    "by_data_label": {
+      "fixture_demo": 8,
+      "rule_reference": 10
+    },
+    "federal_count": 15,
+    "opportunity_ids": [
+      "la-real-013",
+      "la-real-014",
+      "la-real-015",
+      "la-real-016",
+      "nf13-real-fed-012",
+      "la-real-006",
+      "la-real-007",
+      "la-real-009",
+      "sc-rule-SC_SHPO_STATE",
+      "sc-rule-SC_CMA_DIRECT",
+      "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "sc-rule-ANA_SEDS",
+      "sc-rule-ANA_LANGUAGE_587",
+      "sc-rule-ANA_SEEDS",
+      "sc-rule-BIA_638",
+      "sc-rule-IHS_COMPACTS",
+      "sc-rule-NEA_GAP",
+      "sc-rule-NEH_NONPROFIT"
+    ],
+    "south_carolina_count": 3,
+    "total": 18
+  },
+  "pack_id": "sc_monday_demo_curated_20260820",
+  "profiles": {
+    "federal_recognized_count": 1,
+    "fixture_keys": [
+      "sc_pilot_catawba_indian_nation",
+      "sc_pilot_waccamaw_indian_people",
+      "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "sc_pilot_pee_dee_indian_tribe",
+      "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "sc_pilot_santee_indian_organization",
+      "sc_pilot_sumter_tribe_of_cheraw_indians",
+      "sc_pilot_beaver_creek_indians",
+      "sc_pilot_wassamasaw_tribe_of_varnertown_indians"
+    ],
+    "profile_count": 10,
+    "state_only_count": 9
+  },
+  "provenance_evidence_summary": {
+    "notes_visible": true,
+    "pack_evidence_required": true
+  },
+  "read_only_advisory": true,
+  "row_sample_note": "UI sample 110 of 180 profile\u00d7opportunity rows; full artifact available from assembler.",
+  "rows": [
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_santee_indian_organization",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_santee_indian_organization",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_santee_indian_organization",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_sumter_tribe_of_cheraw_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_sumter_tribe_of_cheraw_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_sumter_tribe_of_cheraw_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_beaver_creek_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_beaver_creek_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_beaver_creek_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_SHPO_STATE",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC SHPO Historic Preservation State Grant Fund",
+      "profile_id": "sc_pilot_wassamasaw_tribe_of_varnertown_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_CMA_DIRECT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Direct Tribal Appropriation",
+      "profile_id": "sc_pilot_wassamasaw_tribe_of_varnertown_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "south_carolina",
+      "grant_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "SC Commission Food Sovereignty Grants",
+      "profile_id": "sc_pilot_wassamasaw_tribe_of_varnertown_indians",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-013",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-014",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance-Esther Martinez Immersion",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-015",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Environmental Regulatory Enhancement",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-016",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Economic Advancement Grants for Local Empowerment (EAGLE)",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "nf13-real-fed-012",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Social & Economic Development Strategies (SEDS)",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-006",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Energy Development Capacity (TEDC) Grant FY 2026",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-007",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Tourism Grant Program (TTGP)",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-009",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Management Grant (TMG) Program",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEDS",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_LANGUAGE_587",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA Language Preservation P&M/EMI",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEEDS",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-BIA_638",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "BIA Self-Determination P.L. 93-638",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-IHS_COMPACTS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "IHS Self-Governance Compacts",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEA_GAP",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEA Grants for Arts Projects",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEH_NONPROFIT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEH General Program Grants",
+      "profile_id": "sc_pilot_catawba_indian_nation",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "federal"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-013",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-014",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance-Esther Martinez Immersion",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-015",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Environmental Regulatory Enhancement",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-016",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Economic Advancement Grants for Local Empowerment (EAGLE)",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "nf13-real-fed-012",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Social & Economic Development Strategies (SEDS)",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-006",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Energy Development Capacity (TEDC) Grant FY 2026",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-007",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Tourism Grant Program (TTGP)",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-009",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Management Grant (TMG) Program",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEDS",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_LANGUAGE_587",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA Language Preservation P&M/EMI",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEEDS",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation",
+        "recognition_tier_mismatch",
+        "recognition_tier_mismatch",
+        "excluded_from_match_set"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "hidden_by_tier_gate",
+      "excluded_from_match_set": true,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-BIA_638",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Review recognition-tier mismatch before pursuit",
+        "Opportunity excluded from match set \u2014 confirm why",
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "BIA Self-Determination P.L. 93-638",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation",
+        "recognition_tier_mismatch",
+        "recognition_tier_mismatch",
+        "excluded_from_match_set"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "hidden_by_tier_gate",
+      "excluded_from_match_set": true,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-IHS_COMPACTS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Review recognition-tier mismatch before pursuit",
+        "Opportunity excluded from match set \u2014 confirm why",
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "IHS Self-Governance Compacts",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEA_GAP",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEA Grants for Arts Projects",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEH_NONPROFIT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEH General Program Grants",
+      "profile_id": "sc_pilot_waccamaw_indian_people",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-013",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-014",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance-Esther Martinez Immersion",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-015",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Environmental Regulatory Enhancement",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-016",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Economic Advancement Grants for Local Empowerment (EAGLE)",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "nf13-real-fed-012",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Social & Economic Development Strategies (SEDS)",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-006",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Energy Development Capacity (TEDC) Grant FY 2026",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-007",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Tourism Grant Program (TTGP)",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-009",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Management Grant (TMG) Program",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEDS",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_LANGUAGE_587",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA Language Preservation P&M/EMI",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEEDS",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation",
+        "recognition_tier_mismatch",
+        "recognition_tier_mismatch",
+        "excluded_from_match_set"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "hidden_by_tier_gate",
+      "excluded_from_match_set": true,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-BIA_638",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Review recognition-tier mismatch before pursuit",
+        "Opportunity excluded from match set \u2014 confirm why",
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "BIA Self-Determination P.L. 93-638",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation",
+        "recognition_tier_mismatch",
+        "recognition_tier_mismatch",
+        "excluded_from_match_set"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "hidden_by_tier_gate",
+      "excluded_from_match_set": true,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-IHS_COMPACTS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Review recognition-tier mismatch before pursuit",
+        "Opportunity excluded from match set \u2014 confirm why",
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "IHS Self-Governance Compacts",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEA_GAP",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEA Grants for Arts Projects",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEH_NONPROFIT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEH General Program Grants",
+      "profile_id": "sc_pilot_edisto_natchez_kusso_tribe_of_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-013",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-014",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance-Esther Martinez Immersion",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-015",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Environmental Regulatory Enhancement",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-016",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Economic Advancement Grants for Local Empowerment (EAGLE)",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "nf13-real-fed-012",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Social & Economic Development Strategies (SEDS)",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-006",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Energy Development Capacity (TEDC) Grant FY 2026",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-007",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Tourism Grant Program (TTGP)",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-009",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Management Grant (TMG) Program",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEDS",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_LANGUAGE_587",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA Language Preservation P&M/EMI",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEEDS",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation",
+        "recognition_tier_mismatch",
+        "recognition_tier_mismatch",
+        "excluded_from_match_set"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "hidden_by_tier_gate",
+      "excluded_from_match_set": true,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-BIA_638",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Review recognition-tier mismatch before pursuit",
+        "Opportunity excluded from match set \u2014 confirm why",
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "BIA Self-Determination P.L. 93-638",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation",
+        "recognition_tier_mismatch",
+        "recognition_tier_mismatch",
+        "excluded_from_match_set"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "hidden_by_tier_gate",
+      "excluded_from_match_set": true,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-IHS_COMPACTS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Review recognition-tier mismatch before pursuit",
+        "Opportunity excluded from match set \u2014 confirm why",
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "IHS Self-Governance Compacts",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEA_GAP",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEA Grants for Arts Projects",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEH_NONPROFIT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEH General Program Grants",
+      "profile_id": "sc_pilot_pee_dee_indian_nation_of_upper_south_carolina",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-013",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-014",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance-Esther Martinez Immersion",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-015",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Environmental Regulatory Enhancement",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-016",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Economic Advancement Grants for Local Empowerment (EAGLE)",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "nf13-real-fed-012",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Social & Economic Development Strategies (SEDS)",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-006",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Energy Development Capacity (TEDC) Grant FY 2026",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-007",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Tourism Grant Program (TTGP)",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-009",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Tribal Management Grant (TMG) Program",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEDS",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_LANGUAGE_587",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA Language Preservation P&M/EMI",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-ANA_SEEDS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "ANA SEEDS",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation",
+        "recognition_tier_mismatch",
+        "recognition_tier_mismatch",
+        "excluded_from_match_set"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "hidden_by_tier_gate",
+      "excluded_from_match_set": true,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-BIA_638",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Review recognition-tier mismatch before pursuit",
+        "Opportunity excluded from match set \u2014 confirm why",
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "BIA Self-Determination P.L. 93-638",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation",
+        "recognition_tier_mismatch",
+        "recognition_tier_mismatch",
+        "excluded_from_match_set"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "hidden_by_tier_gate",
+      "excluded_from_match_set": true,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-IHS_COMPACTS",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Review recognition-tier mismatch before pursuit",
+        "Opportunity excluded from match set \u2014 confirm why",
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "IHS Self-Governance Compacts",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=federal_required"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEA_GAP",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEA Grants for Arts Projects",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "native_entity_eligible_broad",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "rule_reference",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "sc-rule-NEH_NONPROFIT",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "NEH General Program Grants",
+      "profile_id": "sc_pilot_pee_dee_indian_tribe",
+      "provenance_evidence_notes": [
+        "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+        "data_label=rule_reference",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=open_nonprofit"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-013",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance",
+      "profile_id": "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "weak_native_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-014",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Native American Language Preservation and Maintenance-Esther Martinez Immersion",
+      "profile_id": "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-015",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Environmental Regulatory Enhancement",
+      "profile_id": "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_application_deadline",
+        "missing_documentation"
+      ],
+      "classification_label": "uncertain_relevance",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "la-real-016",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Economic Advancement Grants for Local Empowerment (EAGLE)",
+      "profile_id": "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=state_ok"
+      ],
+      "recognition_type": "state_only"
+    },
+    {
+      "blockers": [
+        "eligibility_evidence_gap",
+        "missing_documentation"
+      ],
+      "classification_label": "tribal_government_specific",
+      "confidence": "public_inferred_low",
+      "confirm_active_round": true,
+      "data_label": "fixture_demo",
+      "discoverability": "visible",
+      "excluded_from_match_set": false,
+      "final_eligibility_claim_allowed": false,
+      "funding_geography": "federal",
+      "grant_id": "nf13-real-fed-012",
+      "human_review_required": true,
+      "live_ingest_not_claimed": true,
+      "match_readiness_label": "needs_operator_review",
+      "missing_data": [],
+      "operator_next_check": [
+        "Confirm active funding round with source evidence"
+      ],
+      "opportunity_title": "Social & Economic Development Strategies (SEDS)",
+      "profile_id": "sc_pilot_piedmont_american_indian_association_lower_eastern_cherokee_nation_of_south_carolina",
+      "provenance_evidence_notes": [
+        "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+        "data_label=fixture_demo",
+        "retrieval_date=2026-08-20",
+        "recognition_requirement=unknown"
+      ],
+      "recognition_type": "state_only"
+    }
+  ],
+  "schema_version": "nf_sc_monday_browser_demo_bridge_v1",
+  "source_activation": false,
+  "title": "SC Customer Demo \u2014 Curated State + Federal Opportunities",
+  "ui_flags": {
+    "advisory_banner": "South Carolina customer demo \u2014 curated/fixture opportunities only. Not automated live ingestion. No final eligibility claim. Human review required before pursuit decisions.",
+    "show_activation_controls": false,
+    "show_submit_controls": false
+  },
+  "what_nativeforge_did": [
+    "Loaded South Carolina tribal organization profiles from operator fixtures",
+    "Surfaced curated South Carolina and federal opportunities in one workflow",
+    "Applied recognition-tier eligibility gating (federal vs state_only)",
+    "Flagged uncertainty, missing data, and human-review requirements",
+    "Did not activate sources, scrape live portals, or claim final eligibility"
+  ],
+  "what_requires_attention": [
+    "Confirm active funding rounds (confirm_active_round flags)",
+    "Human review of recognition-tier blockers before pursuit",
+    "Missing profile evidence where confidence is inferred"
+  ]
+}
