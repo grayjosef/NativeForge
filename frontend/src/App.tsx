@@ -49,6 +49,7 @@ import {
 } from "./workspaceProgress";
 import { readSurface, type AppSurface } from "./viewSurface";
 import { NmWaOperatorDemoPage } from "./pages/NmWaOperatorDemoPage";
+import { ScCustomerDemoPage } from "./pages/ScCustomerDemoPage";
 
 const LS_ORG = "nf-m0-org-id";
 const LS_PLANE = "nf-m0-plane";
@@ -143,6 +144,8 @@ export default function App() {
         u.searchParams.set("view", "activation");
       } else if (s === "nm_wa_operator_demo") {
         u.searchParams.set("view", "nm_wa_operator_demo");
+      } else if (s === "sc_customer_demo") {
+        u.searchParams.set("view", "sc_customer_demo");
       } else {
         u.searchParams.delete("view");
       }
@@ -925,6 +928,8 @@ export default function App() {
         <WorkbenchPage plane={plane} orgId={orgId.trim()} orgOk={orgOk} />
       ) : surface === "nm_wa_operator_demo" ? (
         <NmWaOperatorDemoPage />
+      ) : surface === "sc_customer_demo" ? (
+        <ScCustomerDemoPage />
       ) : (
         <ActivationPage
           plane={plane}
