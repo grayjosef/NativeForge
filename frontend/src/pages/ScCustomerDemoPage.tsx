@@ -788,6 +788,119 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.package_readiness_queue ? (
+        <section
+          data-testid="sc-demo-readiness-queue"
+          className="nf-sc-demo-section"
+        >
+          <h2>Readiness &amp; review queue</h2>
+          <p className="nf-sc-demo-why">
+            Total package status across eligibility, binder, checklist, intake,
+            approvals, narrative, and budget — with human-review priorities and the
+            next safest action. Not submission-ready.
+          </p>
+          <p data-testid="sc-demo-readiness-flags" className="nf-muted">
+            workspaces={data.package_readiness_queue.workspace_count}{" "}
+            submission_ready_claimed=
+            {String(data.package_readiness_queue.submission_ready_claimed)}{" "}
+            final_eligibility_claimed=
+            {String(data.package_readiness_queue.final_eligibility_claimed)}{" "}
+            proposal_drafting_claimed=
+            {String(data.package_readiness_queue.proposal_drafting_claimed)}{" "}
+            live_ingest_claimed=
+            {String(data.package_readiness_queue.live_ingest_claimed)}{" "}
+            not_submission_ready=
+            {String(data.package_readiness_queue.not_submission_ready_label)}
+          </p>
+          <ul data-testid="sc-demo-readiness-summary">
+            {data.package_readiness_queue.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.package_readiness_queue.workspaces.slice(0, 3).map((item) => (
+            <article
+              key={`${item.application_workspace_id}-rq`}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-readiness-card-${item.application_workspace_id}`}
+              data-source-layer={item.opportunity_source_layer}
+            >
+              <h3>
+                {item.opportunity_id} × {item.organization_profile_id}{" "}
+                <span className="nf-muted">({item.opportunity_source_layer})</span>
+              </h3>
+              <p>
+                overall={item.overall_readiness_status} missing=
+                {item.missing_information_count} human_review=
+                {item.human_review_count} unsupported=
+                {item.unsupported_capability_count} queue_items=
+                {item.review_item_count} critical={item.critical_count}
+              </p>
+              <p data-testid={`sc-demo-readiness-next-${item.application_workspace_id}`}>
+                next_safest_action={item.next_safest_action}
+              </p>
+              <div>
+                <h4>Per-layer readiness</h4>
+                <ul>
+                  <li>
+                    eligibility={item.package_readiness.eligibility_readiness}
+                  </li>
+                  <li>binder={item.package_readiness.binder_readiness}</li>
+                  <li>checklist={item.package_readiness.checklist_readiness}</li>
+                  <li>intake={item.package_readiness.intake_readiness}</li>
+                  <li>approval={item.package_readiness.approval_readiness}</li>
+                  <li>
+                    narrative=
+                    {item.package_readiness.narrative_scaffold_readiness}
+                  </li>
+                  <li>
+                    budget_match={item.package_readiness.budget_match_readiness}
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4>Blockers</h4>
+                <ul>
+                  {(item.blocked_reasons || []).slice(0, 6).map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Operator review queue</h4>
+                <ol>
+                  {item.operator_review_queue.items.slice(0, 8).map((ri) => (
+                    <li key={ri.review_item_id}>
+                      [{ri.priority}] {ri.review_type}: {ri.issue_label}
+                      {ri.unsupported_claim_guard ? " [unsupported]" : ""}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div>
+                <h4>Customer actions</h4>
+                <ul>
+                  {(item.customer_next_actions || []).slice(0, 5).map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Operator actions</h4>
+                <ul>
+                  {(item.operator_next_actions || []).slice(0, 5).map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+              <p className="nf-muted">
+                No submit control. No proposal generation. No final eligibility claim.
+                No live ingest claim.
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

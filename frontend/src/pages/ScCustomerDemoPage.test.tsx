@@ -54,6 +54,11 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("drafting_supported=false");
     expect(html).toContain("budget_claimed_complete=false");
     expect(html).toContain("match_claimed_complete=false");
+    expect(html).toContain("sc-demo-readiness-queue");
+    expect(html).toContain("Readiness &amp; review queue");
+    expect(html).toContain("submission_ready_claimed=false");
+    expect(html).toContain("final_eligibility_claimed=false");
+    expect(html).toContain("not_submission_ready=true");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
     expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
@@ -87,6 +92,12 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.narrative_budget_scaffold?.drafting_supported).toBe(false);
     expect(payload.narrative_budget_scaffold?.budget_claimed_complete).toBe(false);
     expect(payload.narrative_budget_scaffold?.match_claimed_complete).toBe(false);
+    expect(
+      payload.package_readiness_queue?.workspace_count,
+    ).toBeGreaterThanOrEqual(1);
+    expect(payload.package_readiness_queue?.submission_ready_claimed).toBe(false);
+    expect(payload.package_readiness_queue?.final_eligibility_claimed).toBe(false);
+    expect(payload.package_readiness_queue?.not_submission_ready_label).toBe(true);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

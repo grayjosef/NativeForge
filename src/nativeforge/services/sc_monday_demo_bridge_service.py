@@ -30,6 +30,10 @@ from nativeforge.services.opportunity_engine_product_surface_service import (
     build_opportunity_engine_product_surface,
     opportunity_engine_surface_invariant_failures,
 )
+from nativeforge.services.package_readiness_queue_assembler_service import (
+    build_package_readiness_demo_surface,
+    package_readiness_demo_surface_invariant_failures,
+)
 from nativeforge.services.pursuit_workspace_assembler_service import (
     build_pursuit_workspace_demo_surface,
     pursuit_demo_surface_invariant_failures,
@@ -113,6 +117,15 @@ def build_sc_customer_demo_bridge_payload(
             f"Narrative budget scaffold surface invariants failed: {narrative_fails}"
         )
 
+    readiness_surface = build_package_readiness_demo_surface()
+    readiness_fails = package_readiness_demo_surface_invariant_failures(
+        readiness_surface
+    )
+    if readiness_fails:
+        raise ValueError(
+            f"Package readiness queue surface invariants failed: {readiness_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -154,6 +167,7 @@ def build_sc_customer_demo_bridge_payload(
             "application_plan_workspace": plan_surface,
             "intake_approval_workspace": intake_surface,
             "narrative_budget_scaffold": narrative_surface,
+            "package_readiness_queue": readiness_surface,
         }
     )
 
@@ -220,4 +234,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("narrative_budget_scaffold_missing")
     else:
         fails.extend(narrative_budget_demo_surface_invariant_failures(narrative))
+    readiness = payload.get("package_readiness_queue") or {}
+    if not readiness:
+        fails.append("package_readiness_queue_missing")
+    else:
+        fails.extend(package_readiness_demo_surface_invariant_failures(readiness))
     return fails

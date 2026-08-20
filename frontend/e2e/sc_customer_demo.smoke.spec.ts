@@ -135,6 +135,25 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.locator('[data-testid^="sc-demo-narrative-card-"]').first(),
     ).toContainText("Budget / match evidence");
+    await expect(page.getByTestId("sc-demo-readiness-queue")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-readiness-flags")).toContainText(
+      "submission_ready_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-readiness-flags")).toContainText(
+      "final_eligibility_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-readiness-flags")).toContainText(
+      "not_submission_ready=true",
+    );
+    await expect(page.getByTestId("sc-demo-readiness-summary")).toContainText(
+      "package readiness",
+    );
+    await expect(
+      page.locator('[data-testid^="sc-demo-readiness-card-"]').first(),
+    ).toContainText("next_safest_action=");
+    await expect(
+      page.locator('[data-testid^="sc-demo-readiness-card-"]').first(),
+    ).toContainText("Operator review queue");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );
