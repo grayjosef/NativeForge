@@ -59,6 +59,12 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("submission_ready_claimed=false");
     expect(html).toContain("final_eligibility_claimed=false");
     expect(html).toContain("not_submission_ready=true");
+    expect(html).toContain("sc-demo-org-evidence-memory");
+    expect(html).toContain("Organization evidence memory");
+    expect(html).toContain("customer_data_persistence_claimed=false");
+    expect(html).toContain("binary_upload_persistence_supported=false");
+    expect(html).toContain("None auto-approved without review.");
+    expect(html).toContain("Must not claim");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
     expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
@@ -98,6 +104,22 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.package_readiness_queue?.submission_ready_claimed).toBe(false);
     expect(payload.package_readiness_queue?.final_eligibility_claimed).toBe(false);
     expect(payload.package_readiness_queue?.not_submission_ready_label).toBe(true);
+    expect(
+      payload.organization_evidence_memory?.profile_count,
+    ).toBeGreaterThanOrEqual(1);
+    expect(payload.organization_evidence_memory?.federal_count).toBeGreaterThanOrEqual(
+      1,
+    );
+    expect(
+      payload.organization_evidence_memory?.state_only_count,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      payload.organization_evidence_memory?.customer_data_persistence_claimed,
+    ).toBe(false);
+    expect(payload.organization_evidence_memory?.final_eligibility_claimed).toBe(
+      false,
+    );
+    expect(payload.organization_evidence_memory?.fabricated_org_facts).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );
