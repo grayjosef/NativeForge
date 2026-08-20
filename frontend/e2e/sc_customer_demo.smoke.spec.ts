@@ -16,6 +16,25 @@ test.describe("SC customer demo Playwright smoke", () => {
   test("renders required Monday customer surfaces", async ({ page }) => {
     await openDemo(page);
 
+    await expect(page.getByTestId("sc-demo-opening-line")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-closing-line")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-trust-strip")).toContainText(
+      "curated-current",
+    );
+    await expect(page.getByTestId("sc-demo-trust-strip")).toContainText(
+      "not automated live ingest",
+    );
+    await expect(page.getByTestId("sc-demo-trust-strip")).toContainText(
+      "human review required",
+    );
+    await expect(page.getByTestId("sc-demo-allowed-claims")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-forbidden-claims")).toContainText(
+      "Automated live ingestion",
+    );
+    await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
+      "NOT_SUPPORTED",
+    );
+
     await expect(page.getByTestId("sc-demo-banner")).toBeVisible();
     await expect(page.getByTestId("sc-demo-flags")).toContainText(
       "live_ingestion=false",
@@ -52,6 +71,9 @@ test.describe("SC customer demo Playwright smoke", () => {
     );
     await expect(page.getByTestId("sc-demo-provenance")).toContainText(
       "notes_visible=true",
+    );
+    await expect(page.getByTestId("sc-demo-provenance")).toContainText(
+      "demo_real_isolation=visible",
     );
 
     const table = page.getByTestId("sc-demo-review-table");

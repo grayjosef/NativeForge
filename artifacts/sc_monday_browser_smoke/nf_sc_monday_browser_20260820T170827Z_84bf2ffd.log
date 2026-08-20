@@ -1,0 +1,16 @@
+
+> nativeforge-web@0.1.0 test
+> vitest run --run src/pages/ScCustomerDemoPage.test.tsx src/scCustomerDemoSurface.test.ts
+
+
+ RUN  v3.2.4 /home/josefgray/projects/nativeforge/frontend
+
+ ✓ src/scCustomerDemoSurface.test.ts (1 test) 25ms
+ ✓ src/pages/ScCustomerDemoPage.test.tsx (2 tests) 47ms
+
+ Test Files  2 passed (2)
+      Tests  3 passed (3)
+   Start at  13:08:28
+   Duration  2.60s (transform 391ms, setup 398ms, collect 334ms, tests 72ms, environment 2.44s, prepare 505ms)
+
+

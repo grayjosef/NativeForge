@@ -1,0 +1,84 @@
+{
+  "artifact_json": "artifacts/sc_monday_playwright_smoke/nf_sc_monday_playwright_20260820T170831Z_2ccfd373.json",
+  "artifact_log": "artifacts/sc_monday_playwright_smoke/nf_sc_monday_playwright_20260820T170831Z_2ccfd373.log",
+  "demo_route_path": "/?view=sc_customer_demo",
+  "exit_code": 0,
+  "failures": [],
+  "headless": true,
+  "overall_status": "PASS",
+  "run_id": "nf_sc_monday_playwright_20260820T170831Z_2ccfd373",
+  "schema_version": "nf_sc_monday_playwright_smoke_runner_v1",
+  "smoke_mode": "playwright_e2e",
+  "surfaces": [
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "sc_profiles_visible"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "sc_opportunities_visible"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "federal_opportunities_visible"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "combined_state_federal_workflow"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "buyer_what_nf_did"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "buyer_attention"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "buyer_next_actions"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "missing_data_display"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "human_review_display"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "provenance_evidence_display"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "no_live_ingest_claim"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "no_final_eligibility_claim"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "honest_flags_visible"
+    },
+    {
+      "detail": "playwright_spec_passed_visible_markers",
+      "status": "PASS",
+      "surface": "review_table_visible"
+    }
+  ]
+}

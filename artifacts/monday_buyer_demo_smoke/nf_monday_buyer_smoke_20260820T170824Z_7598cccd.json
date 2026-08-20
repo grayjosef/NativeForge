@@ -1,0 +1,61 @@
+{
+  "closing_line": "Next step: human review of missing evidence and active rounds, then decide pursue or defer \u2014 NativeForge will not submit or invent facts for you.",
+  "demo_route_path": "/?view=sc_customer_demo",
+  "failed_surfaces": [],
+  "opening_line": "NativeForge structures South Carolina and federal grant opportunities for your organization \u2014 curated-current intelligence, honest gaps, and an application-plan skeleton \u2014 without fabricating live ingest, NOFO PDFs, or proposal prose.",
+  "run_id": "nf_monday_buyer_smoke_20260820T170824Z_7598cccd",
+  "schema_version": "nf_monday_buyer_demo_smoke_v1",
+  "status": "PASS",
+  "surfaces": [
+    {
+      "detail": "/?view=sc_customer_demo",
+      "status": "PASS",
+      "surface": "demo_route"
+    },
+    {
+      "detail": "opening present",
+      "status": "PASS",
+      "surface": "opening_line"
+    },
+    {
+      "detail": "closing present",
+      "status": "PASS",
+      "surface": "closing_line"
+    },
+    {
+      "detail": "allowed=7",
+      "status": "PASS",
+      "surface": "allowed_forbidden_claims"
+    },
+    {
+      "detail": "sc+federal",
+      "status": "PASS",
+      "surface": "sc_federal_visible"
+    },
+    {
+      "detail": "nofo present",
+      "status": "PASS",
+      "surface": "nofo_showcase"
+    },
+    {
+      "detail": "workload present",
+      "status": "PASS",
+      "surface": "workload_statement"
+    },
+    {
+      "detail": "why present",
+      "status": "PASS",
+      "surface": "why_this_matters"
+    },
+    {
+      "detail": "bridge=[] contract=[]",
+      "status": "PASS",
+      "surface": "no_overclaims"
+    },
+    {
+      "detail": "[]",
+      "status": "PASS",
+      "surface": "buyer_labels"
+    }
+  ]
+}
