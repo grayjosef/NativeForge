@@ -2,40 +2,39 @@
 
 ## Campaign Block complete
 
-**Block 6 of 20 — NF Campaign Block 06 — Narrative Scaffold Handoff + Budget/Match Evidence Capture**
+**Block 7 of 20 — NF Campaign Block 07 — Package Readiness Rollup + Operator Review Queue**
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
-- HEAD before: `794577b`
-- HEAD after: `402b44c`
+- HEAD before: `7640479`
+- HEAD after: *(set at closeout)*
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
-## Narrative / budget delivered
+## Readiness / queue delivered
 
-- Narrative scaffold contract (`drafting_supported=false`, `generated_prose=null`)
-- Deterministic scaffold builder from NOFO/checklist/binder/intake
-- Budget/match evidence capture with completeness guards and null amounts
-- Assembler for showcase SC + federal × org profiles
-- SC customer demo panel: Narrative & budget scaffold
-- Explicit: no generated prose, no fabricated budgets, no match completeness without evidence
+- Package readiness rollup contract across eligibility→binder→checklist→intake→approvals→narrative→budget
+- Deterministic aggregation with visible blockers and unsupported capability counts
+- Operator review queue with critical-first priorities
+- SC customer demo panel: Readiness & review queue
+- Explicit: not submission-ready, no final eligibility, no drafting, no live ingest
 
 ## Smoke run_ids
 
-- Block 06 offline: `nf_camp06_narrative_smoke_20260820T181232Z_968b5e6d`
-- Demo-runtime: `nf_sc_monday_browser_20260820T181234Z_b2d10aa0`
-- Playwright: `nf_sc_monday_playwright_20260820T181236Z_6b909412`
+- Block 07 offline: `nf_camp07_readiness_smoke_20260820T182540Z_cb0d8e62`
+- Demo-runtime: `nf_sc_monday_browser_20260820T182543Z_1f20e73e`
+- Playwright: `nf_sc_monday_playwright_20260820T182546Z_eace90bf`
 
 ## Sunday checkpoint
 
-`docs/operations/117_CAMPAIGN_BLOCK06_SUNDAY_DEMO_CHECKPOINT.md` (checkpoint 109)
+`docs/operations/120_CAMPAIGN_BLOCK07_SUNDAY_DEMO_CHECKPOINT.md` (checkpoint 110)
 
 ## Closeout matrix
 
-See `docs/operations/118_CAMPAIGN_BLOCK06_CLAIM_MATRIX.md`
+See `docs/operations/121_CAMPAIGN_BLOCK07_CLAIM_MATRIX.md`
 
 ## NEXT SAFE ACTION
 
-Campaign Block 07 — Package readiness rollup + operator review queue across pursuit→checklist→intake→approvals→narrative/budget (still no auto-submit / no fabricated prose).
+Campaign Block 08 — Human-authored draft workspace handoff (import customer prose only; still no fabrication) + package export preview.
