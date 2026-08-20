@@ -12,7 +12,7 @@
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
 - HEAD before Gate 01 Block 08: `6011b14`
-- HEAD after Block 08 (pre-push): see git tip after docs commit
+- HEAD after: `1098c9f`
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
