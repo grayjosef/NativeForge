@@ -56,3 +56,8 @@ Open: `/?view=sc_customer_demo`
 ## Claims allowed / forbidden
 
 See on-page guardrails and `docs/operations/100_MONDAY_BUYER_CLAIM_MATRIX.md`.
+
+## Campaign Block 01 note
+
+Durable opportunity engine foundation is on the same route (`opportunity_engine` panel).
+Monday-safe claims/fallbacks: `docs/operations/102_CAMPAIGN_BLOCK01_SUNDAY_DEMO_CHECKPOINT.md`.

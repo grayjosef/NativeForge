@@ -1,44 +1,33 @@
 # 13_HANDOFF_LATEST — NativeForge
 
-## Block complete
+## Campaign Block complete
 
-**NF Monday Buyer Demo Polish Block — SC Customer Story, Rehearsal, Trust, and Close Readiness**
+**Block 1 of 20 — NF Campaign Block 01 — Durable SC + Federal Opportunity Engine Foundation**
 
 ## Control point
 
-- path: `/home/josefgray/projects/nativeforge` (stale clone `/home/josefgray/projects/NativeForge` avoided)
+- path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
-- HEAD before: `ce79b9f`
-- HEAD after: `653cef7`
-- origin/main: push after green validation
+- HEAD before: `4f5e166`
+- HEAD after: (set at closeout)
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
-## Monday buyer demo
+## Durable software delivered
 
-- route: `/?view=sc_customer_demo`
-- opening line + closing line: on-page (`sc-demo-opening-line` / `sc-demo-closing-line`)
-- trust strip: curated-current, not live ingest, human review, skeleton-only, NOFO/proposal not supported
-- claim guardrails: allowed + forbidden lists on page
-- NOFO showcase + application-plan skeleton: retained
-- runbook: `docs/operations/99_MONDAY_BUYER_DEMO_RUNBOOK.md`
-- claim matrix: `docs/operations/100_MONDAY_BUYER_CLAIM_MATRIX.md`
-- rehearsal: `docs/operations/101_MONDAY_BUYER_REHEARSAL_CHECKLIST.md`
+- Opportunity engine contracts (`source_layer`, `data_mode`, health, freshness, lifecycle, eligibility handoff)
+- SC reference-state adapter/config (`state_portal_sc_curated`) — not a product fork
+- Federal foundation enricher for SC customers (org geo ≠ funding geo)
+- Combined opportunity workflow service (deterministic SC-then-federal ordering)
+- Product surface on `/?view=sc_customer_demo` via `opportunity_engine` bridge payload
+- Sunday/Monday demo checkpoint: `docs/operations/102_CAMPAIGN_BLOCK01_SUNDAY_DEMO_CHECKPOINT.md`
 
 ## Smoke run_ids
 
-- offline buyer: `nf_monday_buyer_smoke_20260820T170824Z_7598cccd`
-- demo-runtime: `nf_sc_monday_browser_20260820T170827Z_84bf2ffd`
-- Playwright: `nf_sc_monday_playwright_20260820T170831Z_2ccfd373`
-
-## Exact opening line
-
-NativeForge structures South Carolina and federal grant opportunities for your organization — curated-current intelligence, honest gaps, and an application-plan skeleton — without fabricating live ingest, NOFO PDFs, or proposal prose.
-
-## Exact closing line
-
-Next step: human review of missing evidence and active rounds, then decide pursue or defer — NativeForge will not submit or invent facts for you.
+- Block 01 offline: `nf_camp01_engine_smoke_20260820T171835Z_09ea0e8d`
+- Demo-runtime: `nf_sc_monday_browser_20260820T171738Z_558ae376`
+- Playwright: `nf_sc_monday_playwright_20260820T171847Z_58e3fd4b`
 
 ## NEXT SAFE ACTION
 
-Rehearse Monday talk track from runbook 99. Optional next: approved real NOFO PDF extraction pilot.
+Campaign Block 02 — recommended: Evidence-backed eligibility + recognition-tier productization (still no live ingest), or approved NOFO PDF extraction pilot for one showcase opportunity.

@@ -1,0 +1,50 @@
+{
+  "counts": {
+    "federal": 15,
+    "other_state": 0,
+    "sc_state": 3,
+    "total": 18
+  },
+  "demo_route_path": "/?view=sc_customer_demo",
+  "failed_surfaces": [],
+  "run_id": "nf_camp01_engine_smoke_20260820T171835Z_09ea0e8d",
+  "schema_version": "nf_campaign_block01_smoke_v1",
+  "status": "PASS",
+  "surfaces": [
+    {
+      "detail": "/?view=sc_customer_demo",
+      "status": "PASS",
+      "surface": "demo_route"
+    },
+    {
+      "detail": "{'total': 18, 'sc_state': 3, 'federal': 15, 'other_state': 0}",
+      "status": "PASS",
+      "surface": "sc_and_federal"
+    },
+    {
+      "detail": "false",
+      "status": "PASS",
+      "surface": "org_geo_does_not_filter_federal"
+    },
+    {
+      "detail": "false",
+      "status": "PASS",
+      "surface": "no_live_ingest"
+    },
+    {
+      "detail": "bf=[] wf=[]",
+      "status": "PASS",
+      "surface": "engine_on_bridge"
+    },
+    {
+      "detail": "visible",
+      "status": "PASS",
+      "surface": "missing_visible"
+    },
+    {
+      "detail": "required",
+      "status": "PASS",
+      "surface": "human_review"
+    }
+  ]
+}
