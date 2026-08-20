@@ -94,6 +94,25 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.locator('[data-testid^="sc-demo-checklist-card-"]').first(),
     ).toContainText("Missing information questions");
+    await expect(page.getByTestId("sc-demo-intake-approvals")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-intake-flags")).toContainText(
+      "upload_persistence_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-intake-flags")).toContainText(
+      "approval_persistence_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-intake-flags")).toContainText(
+      "package_readiness_unlocked=false",
+    );
+    await expect(page.getByTestId("sc-demo-intake-summary")).toContainText(
+      "files, confirmations, and approvals",
+    );
+    await expect(
+      page.locator('[data-testid^="sc-demo-intake-card-"]').first(),
+    ).toContainText("why_package_not_ready=");
+    await expect(
+      page.locator('[data-testid^="sc-demo-intake-card-"]').first(),
+    ).toContainText("Required intake items");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

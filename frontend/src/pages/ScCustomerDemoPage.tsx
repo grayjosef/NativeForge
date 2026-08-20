@@ -554,6 +554,122 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.intake_approval_workspace ? (
+        <section
+          data-testid="sc-demo-intake-approvals"
+          className="nf-sc-demo-section"
+        >
+          <h2>Intake &amp; approvals / package gaps</h2>
+          <p className="nf-sc-demo-why">
+            Where documents, confirmations, and human approvals go to close checklist
+            gaps — planned intake only. No binary upload persistence and no approval
+            persistence claimed in this layer.
+          </p>
+          <p data-testid="sc-demo-intake-flags" className="nf-muted">
+            workspaces={data.intake_approval_workspace.workspace_count}{" "}
+            upload_persistence_supported=
+            {String(
+              data.intake_approval_workspace.binary_upload_persistence_supported,
+            )}{" "}
+            upload_persistence_claimed=
+            {String(data.intake_approval_workspace.binary_upload_persistence_claimed)}{" "}
+            approval_persistence_supported=
+            {String(data.intake_approval_workspace.approval_persistence_supported)}{" "}
+            approval_persistence_claimed=
+            {String(data.intake_approval_workspace.approval_persistence_claimed)}{" "}
+            package_readiness_unlocked=
+            {String(data.intake_approval_workspace.package_readiness_unlocked)}{" "}
+            submission_ready_claimed=
+            {String(data.intake_approval_workspace.submission_ready_claimed)}
+          </p>
+          <ul data-testid="sc-demo-intake-summary">
+            {data.intake_approval_workspace.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.intake_approval_workspace.workspaces.slice(0, 3).map((item) => (
+            <article
+              key={item.application_workspace_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-intake-card-${item.application_workspace_id}`}
+              data-source-layer={item.opportunity_source_layer}
+            >
+              <h3>
+                {item.opportunity_id} × {item.organization_profile_id}{" "}
+                <span className="nf-muted">({item.opportunity_source_layer})</span>
+              </h3>
+              <p>
+                intake_items={item.intake_item_count} approvals={item.approval_count}{" "}
+                open_approvals={item.open_approval_count}
+              </p>
+              <p data-testid={`sc-demo-intake-why-${item.application_workspace_id}`}>
+                why_package_not_ready={item.why_package_not_ready}
+              </p>
+              <div>
+                <h4>Required intake items</h4>
+                <ul>
+                  {item.intake_plan.intake_items.slice(0, 6).map((ii) => (
+                    <li key={ii.intake_item_id}>
+                      [{ii.intake_type}] {ii.item_label} — status={ii.current_status}{" "}
+                      evidence=
+                      {(ii.accepted_evidence_types || []).join("|")} section=
+                      {ii.source_checklist_section}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>What the customer must provide</h4>
+                <ul>
+                  {(item.customer_must_provide || []).slice(0, 6).map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>What the operator must verify</h4>
+                <ul>
+                  {(item.operator_must_verify || []).slice(0, 6).map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Required reviewer roles</h4>
+                <ul>
+                  {(item.required_reviewer_roles || []).map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Approval status sample</h4>
+                <ul>
+                  {item.approval_workflow.approvals.slice(0, 5).map((a) => (
+                    <li key={a.approval_id}>
+                      {a.approval_type} — role={a.required_reviewer_role} status=
+                      {a.approval_status}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>What remains blocked</h4>
+                <ul>
+                  {(item.what_remains_blocked || []).map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+              <p className="nf-muted">
+                No upload storage claim. No approval persistence claim. No submit
+                control. No proposal generation.
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

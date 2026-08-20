@@ -43,6 +43,11 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("Application checklist / package build plan");
     expect(html).toContain("submission_allowed=false");
     expect(html).toContain("application_complete_claimed=false");
+    expect(html).toContain("sc-demo-intake-approvals");
+    expect(html).toContain("Intake &amp; approvals / package gaps");
+    expect(html).toContain("upload_persistence_claimed=false");
+    expect(html).toContain("approval_persistence_claimed=false");
+    expect(html).toContain("package_readiness_unlocked=false");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
     expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
@@ -55,6 +60,18 @@ describe("ScCustomerDemoPage", () => {
       false,
     );
     expect(payload.application_plan_workspace?.application_complete_claimed).toBe(
+      false,
+    );
+    expect(
+      payload.intake_approval_workspace?.workspace_count,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      payload.intake_approval_workspace?.binary_upload_persistence_claimed,
+    ).toBe(false);
+    expect(payload.intake_approval_workspace?.approval_persistence_claimed).toBe(
+      false,
+    );
+    expect(payload.intake_approval_workspace?.package_readiness_unlocked).toBe(
       false,
     );
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(

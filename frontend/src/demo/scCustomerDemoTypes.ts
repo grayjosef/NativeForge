@@ -234,6 +234,71 @@ export type ScCustomerDemoPayload = {
       application_complete_claimed: boolean;
     }>;
   };
+  intake_approval_workspace?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    workspace_count: number;
+    showcase_opportunity_ids: string[];
+    binary_upload_persistence_supported: boolean;
+    binary_upload_persistence_claimed: boolean;
+    approval_persistence_supported: boolean;
+    approval_persistence_claimed: boolean;
+    submission_allowed: boolean;
+    submission_ready_claimed: boolean;
+    proposal_drafting_claimed: boolean;
+    package_readiness_unlocked: boolean;
+    live_ingest_claimed: boolean;
+    scoring_math_changed: boolean;
+    buyer_summary: string[];
+    workspaces: Array<{
+      application_workspace_id: string;
+      pursuit_workspace_id: string;
+      opportunity_id: string;
+      organization_profile_id: string;
+      opportunity_source_layer: string;
+      intake_item_count: number;
+      approval_count: number;
+      open_approval_count: number;
+      customer_must_provide: string[];
+      operator_must_verify: string[];
+      required_reviewer_roles: string[];
+      what_remains_blocked: string[];
+      why_package_not_ready: string;
+      binary_upload_persistence_supported: boolean;
+      binary_upload_persistence_claimed: boolean;
+      approval_persistence_supported: boolean;
+      approval_persistence_claimed: boolean;
+      submission_allowed: boolean;
+      submission_ready_claimed: boolean;
+      proposal_drafting_claimed: boolean;
+      package_readiness_unlocked: boolean;
+      intake_plan: {
+        intake_items: Array<{
+          intake_item_id: string;
+          intake_type: string;
+          item_label: string;
+          current_status: string;
+          accepted_evidence_types: string[];
+          customer_action_required: boolean;
+          operator_action_required: boolean;
+          approval_status: string;
+          why_it_matters?: string;
+          what_remains_blocked?: string;
+          source_checklist_section?: string;
+        }>;
+      };
+      approval_workflow: {
+        approvals: Array<{
+          approval_id: string;
+          approval_type: string;
+          required_reviewer_role: string;
+          approval_status: string;
+          cannot_unlock_reason?: string;
+        }>;
+      };
+    }>;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

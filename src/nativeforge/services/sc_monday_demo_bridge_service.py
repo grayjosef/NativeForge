@@ -14,6 +14,10 @@ from nativeforge.services.buyer_demo_flow_contract_service import (
     build_buyer_demo_flow_contract,
     buyer_flow_contract_invariant_failures,
 )
+from nativeforge.services.intake_approval_workspace_assembler_service import (
+    build_intake_approval_demo_surface,
+    intake_approval_demo_surface_invariant_failures,
+)
 from nativeforge.services.nofo_showcase_demo_surface_service import (
     build_nofo_showcase_demo_surface,
     nofo_showcase_surface_invariant_failures,
@@ -89,6 +93,13 @@ def build_sc_customer_demo_bridge_payload(
             f"Application plan workspace surface invariants failed: {plan_fails}"
         )
 
+    intake_surface = build_intake_approval_demo_surface()
+    intake_fails = intake_approval_demo_surface_invariant_failures(intake_surface)
+    if intake_fails:
+        raise ValueError(
+            f"Intake approval workspace surface invariants failed: {intake_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -128,6 +139,7 @@ def build_sc_customer_demo_bridge_payload(
             "opportunity_engine": engine_surface,
             "pursuit_workspace": pursuit_surface,
             "application_plan_workspace": plan_surface,
+            "intake_approval_workspace": intake_surface,
         }
     )
 
@@ -184,4 +196,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("application_plan_workspace_missing")
     else:
         fails.extend(application_plan_demo_surface_invariant_failures(plan))
+    intake = payload.get("intake_approval_workspace") or {}
+    if not intake:
+        fails.append("intake_approval_workspace_missing")
+    else:
+        fails.extend(intake_approval_demo_surface_invariant_failures(intake))
     return fails
