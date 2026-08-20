@@ -1,0 +1,44 @@
+{
+  "demo_route_path": "/?view=sc_customer_demo",
+  "failed_surfaces": [],
+  "run_id": "nf_camp02_eligibility_smoke_20260820T172530Z_243119cd",
+  "schema_version": "nf_campaign_block02_smoke_v1",
+  "status": "PASS",
+  "surfaces": [
+    {
+      "detail": "/?view=sc_customer_demo",
+      "status": "PASS",
+      "surface": "demo_route"
+    },
+    {
+      "detail": "pairs=21",
+      "status": "PASS",
+      "surface": "eligibility_handoff_present"
+    },
+    {
+      "detail": "federal_pairs_visible",
+      "status": "PASS",
+      "surface": "federal_visible"
+    },
+    {
+      "detail": "false",
+      "status": "PASS",
+      "surface": "no_final_eligibility"
+    },
+    {
+      "detail": "false",
+      "status": "PASS",
+      "surface": "scoring_unchanged"
+    },
+    {
+      "detail": "bf=[] wf=[]",
+      "status": "PASS",
+      "surface": "bridge_surface"
+    },
+    {
+      "detail": "required",
+      "status": "PASS",
+      "surface": "human_review"
+    }
+  ]
+}

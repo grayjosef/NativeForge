@@ -61,3 +61,8 @@ See on-page guardrails and `docs/operations/100_MONDAY_BUYER_CLAIM_MATRIX.md`.
 
 Durable opportunity engine foundation is on the same route (`opportunity_engine` panel).
 Monday-safe claims/fallbacks: `docs/operations/102_CAMPAIGN_BLOCK01_SUNDAY_DEMO_CHECKPOINT.md`.
+
+## Campaign Block 02 note
+
+Evidence-backed eligibility + recognition-tier explanations are on the same route.
+See `docs/operations/105_CAMPAIGN_BLOCK02_SUNDAY_DEMO_CHECKPOINT.md`.
