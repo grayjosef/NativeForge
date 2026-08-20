@@ -60,5 +60,38 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(table).toContainText("federal");
     await expect(table).toContainText("true"); // human review
     await expect(table).toContainText("false"); // final claim
+
+    const nofo = page.getByTestId("sc-demo-nofo-showcase");
+    await expect(nofo).toBeVisible();
+    await expect(page.getByTestId("sc-demo-nofo-showcase-flags")).toContainText(
+      "live_ingest_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-nofo-showcase-flags")).toContainText(
+      "nofo_pdf_extraction_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-nofo-showcase-flags")).toContainText(
+      "proposal_drafting_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-nofo-buyer-sections")).toContainText(
+      "What NativeForge found",
+    );
+    await expect(page.getByTestId("sc-demo-nofo-buyer-sections")).toContainText(
+      "What needs human review",
+    );
+
+    // At least one SC and one federal intelligence card
+    await expect(
+      page.locator('[data-testid^="sc-demo-nofo-card-"][data-source-layer="sc_state"]'),
+    ).toHaveCount(1, { timeout: 5000 });
+    await expect(
+      page.locator('[data-testid^="sc-demo-nofo-card-"][data-source-layer="federal"]'),
+    ).not.toHaveCount(0);
+
+    const firstCard = page.locator('[data-testid^="sc-demo-nofo-card-"]').first();
+    await expect(firstCard).toContainText("What NativeForge found");
+    await expect(firstCard).toContainText("What is missing");
+    await expect(firstCard).toContainText("Application plan skeleton");
+    await expect(firstCard).toContainText("Evidence / provenance");
+    await expect(firstCard).toContainText("not_supported");
   });
 });

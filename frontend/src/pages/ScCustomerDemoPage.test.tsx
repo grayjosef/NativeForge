@@ -16,6 +16,14 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("south_carolina=");
     expect(html).toContain("federal=");
     expect(html).toContain("nofo_pdf_extraction=NOT_IN_THIS_BLOCK");
+    expect(html).toContain("sc-demo-nofo-showcase");
+    expect(html).toContain("What NativeForge found");
+    expect(html).toContain("Application plan skeleton");
+    expect(html).toContain("live_ingest_claimed=false");
+    expect(html).toContain("nofo_pdf_extraction_claimed=false");
+    expect(html).toContain("proposal_drafting_claimed=false");
+    expect(payload.nofo_showcase?.sc_selected_count).toBeGreaterThanOrEqual(1);
+    expect(payload.nofo_showcase?.federal_selected_count).toBeGreaterThanOrEqual(1);
     expect(payload.opportunities.south_carolina_count).toBeGreaterThanOrEqual(1);
     expect(payload.opportunities.federal_count).toBeGreaterThanOrEqual(1);
   });
