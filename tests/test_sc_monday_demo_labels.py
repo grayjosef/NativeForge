@@ -31,6 +31,18 @@ def test_assert_honest_labels_rejects_live_claim() -> None:
     assert "live_ingestion_claimed_must_not_be_true" in fails
 
 
+def test_assert_honest_labels_rejects_automated_refresh_claim() -> None:
+    row = {
+        "data_label": LABEL_FIXTURE_DEMO,
+        "live_ingest_not_claimed": True,
+        "live_ingestion_claimed": False,
+        "automated_refresh_claimed": True,
+        "retrieval_date": "2026-08-20",
+    }
+    fails = assert_honest_opportunity_labels(row)
+    assert "automated_refresh_claimed_must_not_be_true" in fails
+
+
 def test_assert_honest_labels_ok_for_fixture() -> None:
     row = {
         "data_label": LABEL_FIXTURE_DEMO,
@@ -47,8 +59,9 @@ def test_rule_reference_requires_flag() -> None:
         "live_ingest_not_claimed": True,
         "retrieval_date": "2026-08-20",
     }
-    assert "rule_reference_requires_sc_pilot_rule_reference" in assert_honest_opportunity_labels(
-        row
+    assert (
+        "rule_reference_requires_sc_pilot_rule_reference"
+        in assert_honest_opportunity_labels(row)
     )
 
 
