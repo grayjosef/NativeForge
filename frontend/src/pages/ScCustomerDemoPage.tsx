@@ -434,6 +434,126 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.application_plan_workspace ? (
+        <section
+          data-testid="sc-demo-application-checklist"
+          className="nf-sc-demo-section"
+        >
+          <h2>Application checklist / package build plan</h2>
+          <p className="nf-sc-demo-why">
+            What exactly is needed to move the application forward: executable checklist
+            sections, missing-information questions, and review gates — not a finished
+            proposal or submission.
+          </p>
+          <p data-testid="sc-demo-checklist-flags" className="nf-muted">
+            workspaces={data.application_plan_workspace.workspace_count}{" "}
+            submission_allowed=
+            {String(data.application_plan_workspace.submission_allowed)}{" "}
+            submission_ready_claimed=
+            {String(data.application_plan_workspace.submission_ready_claimed)}{" "}
+            proposal_drafting_claimed=
+            {String(data.application_plan_workspace.proposal_drafting_claimed)}{" "}
+            application_complete_claimed=
+            {String(data.application_plan_workspace.application_complete_claimed)}{" "}
+            nofo_pdf_extraction_claimed=
+            {String(data.application_plan_workspace.nofo_pdf_extraction_claimed)}
+          </p>
+          <ul data-testid="sc-demo-checklist-summary">
+            {data.application_plan_workspace.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.application_plan_workspace.workspaces.slice(0, 3).map((item) => {
+            const aw = item.application_workspace;
+            return (
+              <article
+                key={aw.application_workspace_id}
+                className="nf-sc-demo-nofo-card"
+                data-testid={`sc-demo-checklist-card-${aw.application_workspace_id}`}
+                data-source-layer={item.opportunity_source_layer}
+              >
+                <h3>
+                  {item.opportunity_id} × {item.organization_profile_id}{" "}
+                  <span className="nf-muted">({item.opportunity_source_layer})</span>
+                </h3>
+                <p>
+                  sections={aw.section_count} items={aw.item_count} incomplete=
+                  {item.incomplete_item_count} questions={item.question_count}{" "}
+                  submission_allowed={String(item.submission_allowed)}
+                </p>
+                <p data-testid={`sc-demo-checklist-why-${aw.application_workspace_id}`}>
+                  why_submission_not_allowed={item.why_submission_not_allowed}
+                </p>
+                <div>
+                  <h4>Checklist sections</h4>
+                  <ul>
+                    {aw.checklist_sections.slice(0, 8).map((s) => (
+                      <li key={s.section_id}>{s.title}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>Item status sample</h4>
+                  <ul>
+                    {aw.checklist_items.slice(0, 6).map((ci) => (
+                      <li key={ci.item_id}>
+                        {ci.label} — status={ci.item_status}
+                        {ci.unsupported_claim_guard ? " [unsupported]" : ""}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>Missing information questions</h4>
+                  <ul>
+                    {item.questionnaire.questions.slice(0, 5).map((q) => (
+                      <li key={q.question_id}>
+                        [{q.group}] {q.prompt}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>What NativeForge already knows</h4>
+                  <ul>
+                    {(item.what_nativeforge_knows || []).map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>What the customer must provide</h4>
+                  <ul>
+                    {(item.what_customer_must_provide || []).slice(0, 6).map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>What requires human review</h4>
+                  <ul>
+                    {(item.what_requires_human_review || []).slice(0, 5).map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>Unsupported claims</h4>
+                  <ul data-testid={`sc-demo-checklist-unsupported-${aw.application_workspace_id}`}>
+                    {(item.unsupported_claims || []).map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="nf-muted">
+                  No submit control. No proposal generation. Application not complete.
+                </p>
+              </article>
+            );
+          })}
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

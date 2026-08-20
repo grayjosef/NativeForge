@@ -171,6 +171,69 @@ export type ScCustomerDemoPayload = {
       nofo_intelligence_present?: boolean;
     }>;
   };
+  application_plan_workspace?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    workspace_count: number;
+    showcase_opportunity_ids: string[];
+    submission_allowed: boolean;
+    submission_ready_claimed: boolean;
+    proposal_drafting_claimed: boolean;
+    application_complete_claimed: boolean;
+    nofo_pdf_extraction_claimed: boolean;
+    live_ingest_claimed: boolean;
+    scoring_math_changed: boolean;
+    buyer_summary: string[];
+    workspaces: Array<{
+      application_workspace: {
+        application_workspace_id: string;
+        pursuit_workspace_id: string;
+        opportunity_id: string;
+        organization_profile_id: string;
+        section_count: number;
+        item_count: number;
+        checklist_sections: Array<{ section_id: string; title: string }>;
+        checklist_items: Array<{
+          item_id: string;
+          section_id: string;
+          label: string;
+          item_status: string;
+          what_nativeforge_knows?: string;
+          what_is_missing?: string[];
+          next_action?: string;
+          required_human_review?: boolean;
+          unsupported_claim_guard?: boolean;
+        }>;
+        submission_allowed: boolean;
+        why_submission_not_allowed?: string;
+      };
+      questionnaire: {
+        question_count: number;
+        questions: Array<{
+          question_id: string;
+          group: string;
+          prompt: string;
+          answer: null;
+        }>;
+        customer_next_actions?: string[];
+        operator_next_actions?: string[];
+      };
+      opportunity_id: string;
+      organization_profile_id: string;
+      opportunity_source_layer: string;
+      incomplete_item_count: number;
+      question_count: number;
+      what_nativeforge_knows?: string[];
+      what_customer_must_provide?: string[];
+      what_requires_human_review?: string[];
+      why_submission_not_allowed?: string;
+      unsupported_claims?: string[];
+      submission_allowed: boolean;
+      proposal_drafting_claimed: boolean;
+      application_complete_claimed: boolean;
+    }>;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

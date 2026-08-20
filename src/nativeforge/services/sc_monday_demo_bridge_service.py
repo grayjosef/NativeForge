@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from nativeforge.services.application_plan_workspace_assembler_service import (
+    application_plan_demo_surface_invariant_failures,
+    build_application_plan_workspace_demo_surface,
+)
 from nativeforge.services.buyer_demo_flow_contract_service import (
     build_buyer_demo_flow_contract,
     buyer_flow_contract_invariant_failures,
@@ -78,6 +82,13 @@ def build_sc_customer_demo_bridge_payload(
             f"Pursuit workspace surface invariants failed: {pursuit_fails}"
         )
 
+    plan_surface = build_application_plan_workspace_demo_surface()
+    plan_fails = application_plan_demo_surface_invariant_failures(plan_surface)
+    if plan_fails:
+        raise ValueError(
+            f"Application plan workspace surface invariants failed: {plan_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -116,6 +127,7 @@ def build_sc_customer_demo_bridge_payload(
             "buyer_demo": buyer_flow,
             "opportunity_engine": engine_surface,
             "pursuit_workspace": pursuit_surface,
+            "application_plan_workspace": plan_surface,
         }
     )
 
@@ -167,4 +179,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("pursuit_workspace_missing")
     else:
         fails.extend(pursuit_demo_surface_invariant_failures(pursuit))
+    plan = payload.get("application_plan_workspace") or {}
+    if not plan:
+        fails.append("application_plan_workspace_missing")
+    else:
+        fails.extend(application_plan_demo_surface_invariant_failures(plan))
     return fails

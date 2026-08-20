@@ -39,10 +39,24 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("submission_ready_claimed=false");
     expect(html).toContain("proposal_drafting_claimed=false");
     expect(html).toContain("not_submission_ready=");
+    expect(html).toContain("sc-demo-application-checklist");
+    expect(html).toContain("Application checklist / package build plan");
+    expect(html).toContain("submission_allowed=false");
+    expect(html).toContain("application_complete_claimed=false");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
     expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
     expect(payload.pursuit_workspace?.proposal_drafting_claimed).toBe(false);
+    expect(
+      payload.application_plan_workspace?.workspace_count,
+    ).toBeGreaterThanOrEqual(1);
+    expect(payload.application_plan_workspace?.submission_allowed).toBe(false);
+    expect(payload.application_plan_workspace?.proposal_drafting_claimed).toBe(
+      false,
+    );
+    expect(payload.application_plan_workspace?.application_complete_claimed).toBe(
+      false,
+    );
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

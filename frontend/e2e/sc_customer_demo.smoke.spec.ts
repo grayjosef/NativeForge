@@ -75,6 +75,25 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.locator('[data-testid^="sc-demo-pursuit-card-"]').first(),
     ).toContainText("What NativeForge pre-built");
+    await expect(page.getByTestId("sc-demo-application-checklist")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-checklist-flags")).toContainText(
+      "submission_allowed=false",
+    );
+    await expect(page.getByTestId("sc-demo-checklist-flags")).toContainText(
+      "proposal_drafting_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-checklist-flags")).toContainText(
+      "application_complete_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-checklist-summary")).toContainText(
+      "package we need to assemble",
+    );
+    await expect(
+      page.locator('[data-testid^="sc-demo-checklist-card-"]').first(),
+    ).toContainText("why_submission_not_allowed=");
+    await expect(
+      page.locator('[data-testid^="sc-demo-checklist-card-"]').first(),
+    ).toContainText("Missing information questions");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );
