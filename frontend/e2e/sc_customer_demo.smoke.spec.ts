@@ -154,6 +154,25 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.locator('[data-testid^="sc-demo-readiness-card-"]').first(),
     ).toContainText("Operator review queue");
+    await expect(page.getByTestId("sc-demo-org-evidence-memory")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-org-memory-flags")).toContainText(
+      "customer_data_persistence_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-org-memory-flags")).toContainText(
+      "final_eligibility_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-org-memory-flags")).toContainText(
+      "binary_upload_persistence_supported=false",
+    );
+    await expect(page.getByTestId("sc-demo-org-memory-summary")).toContainText(
+      "organization",
+    );
+    await expect(
+      page.locator('[data-testid^="sc-demo-org-memory-card-"]').first(),
+    ).toContainText("Must not claim");
+    await expect(
+      page.locator('[data-testid^="sc-demo-org-memory-card-"]').first(),
+    ).toContainText("None auto-approved without review.");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

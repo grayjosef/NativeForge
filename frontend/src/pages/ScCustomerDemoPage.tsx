@@ -901,6 +901,125 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.organization_evidence_memory ? (
+        <section
+          data-testid="sc-demo-org-evidence-memory"
+          className="nf-sc-demo-section"
+        >
+          <h2>Organization evidence memory</h2>
+          <p className="nf-sc-demo-why">
+            Durable fixture-backed org context for recognition, UEI/SAM gaps,
+            attachments, governance, and prohibited claims — so packages are not a
+            blank slate. No customer persistence claimed. No final eligibility from
+            memory alone.
+          </p>
+          <p data-testid="sc-demo-org-memory-flags" className="nf-muted">
+            profiles={data.organization_evidence_memory.profile_count} federal=
+            {data.organization_evidence_memory.federal_count} state_only=
+            {data.organization_evidence_memory.state_only_count}{" "}
+            customer_data_persistence_claimed=
+            {String(
+              data.organization_evidence_memory.customer_data_persistence_claimed,
+            )}{" "}
+            final_eligibility_claimed=
+            {String(data.organization_evidence_memory.final_eligibility_claimed)}{" "}
+            live_ingest_claimed=
+            {String(data.organization_evidence_memory.live_ingest_claimed)}{" "}
+            binary_upload_persistence_supported=
+            {String(
+              data.organization_evidence_memory.binary_upload_persistence_supported,
+            )}
+          </p>
+          <ul data-testid="sc-demo-org-memory-summary">
+            {data.organization_evidence_memory.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.organization_evidence_memory.cards.slice(0, 4).map((card) => (
+            <article
+              key={card.organization_evidence_profile_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-org-memory-card-${card.organization_profile_id}`}
+            >
+              <h3>
+                {card.organization_name}{" "}
+                <span className="nf-muted">
+                  ({card.recognition_tier} / {card.recognition_status})
+                </span>
+              </h3>
+              <p>
+                evidence_status={card.evidence_status} uei={card.uei_status} sam=
+                {card.sam_status} geography=
+                {card.service_geography || "unknown"} human_review=
+                {String(card.human_review_required)}
+              </p>
+              <div>
+                <h4>Approved facts</h4>
+                {(card.approved_org_facts || []).length === 0 ? (
+                  <p className="nf-muted">None auto-approved without review.</p>
+                ) : (
+                  <ul>
+                    {card.approved_org_facts.map((f) => (
+                      <li key={String(f.fact_id)}>{String(f.label)}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <div>
+                <h4>Must not claim</h4>
+                <ul>
+                  {(card.prohibited_org_claims || []).slice(0, 4).map((c) => (
+                    <li key={c}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Missing evidence</h4>
+                <ul>
+                  {(card.missing_evidence || []).slice(0, 6).map((m) => (
+                    <li key={m}>{m}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Standard attachments / governance</h4>
+                <ul>
+                  {(card.standard_attachments || []).slice(0, 4).map((a) => (
+                    <li key={String(a.attachment_id)}>
+                      {String(a.label)}: {String(a.status)}
+                    </li>
+                  ))}
+                  {(card.governance_documents || []).slice(0, 2).map((g) => (
+                    <li key={String(g.document_id)}>
+                      {String(g.label)}: {String(g.status)}
+                    </li>
+                  ))}
+                  {(card.tribal_resolution_requirements || [])
+                    .slice(0, 2)
+                    .map((r) => (
+                      <li key={String(r.requirement_id)}>
+                        {String(r.label)}: {String(r.status)}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+              <div>
+                <h4>How memory helps readiness</h4>
+                <ul>
+                  {(card.how_memory_helps_readiness || []).slice(0, 4).map((h) => (
+                    <li key={h}>{h}</li>
+                  ))}
+                </ul>
+              </div>
+              <p className="nf-muted">
+                No fabricated org facts. No binary upload persistence. Federal and
+                state recognition stay distinct.
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

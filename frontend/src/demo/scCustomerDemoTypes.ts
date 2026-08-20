@@ -416,6 +416,48 @@ export type ScCustomerDemoPayload = {
       };
     }>;
   };
+  organization_evidence_memory?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    profile_count: number;
+    federal_count: number;
+    state_only_count: number;
+    customer_data_persistence_claimed: boolean;
+    final_eligibility_claimed: boolean;
+    live_ingest_claimed: boolean;
+    fabricated_org_facts: boolean;
+    federal_state_recognition_conflated: boolean;
+    binary_upload_persistence_supported: boolean;
+    buyer_summary: string[];
+    cards: Array<{
+      organization_evidence_profile_id: string;
+      organization_profile_id: string;
+      organization_name: string;
+      recognition_status: string;
+      recognition_tier: string;
+      recognition_source?: string | null;
+      uei_status: string;
+      sam_status: string;
+      service_geography?: string | null;
+      evidence_status: string;
+      missing_evidence: string[];
+      missing_evidence_prompts: string[];
+      approved_org_facts: Array<Record<string, unknown>>;
+      prohibited_org_claims: string[];
+      candidate_facts_needing_review?: Array<Record<string, unknown>>;
+      standard_attachments: Array<Record<string, unknown>>;
+      governance_documents: Array<Record<string, unknown>>;
+      tribal_resolution_requirements: Array<Record<string, unknown>>;
+      prior_awards: Array<Record<string, unknown>>;
+      fiscal_sponsor_relationships: Array<Record<string, unknown>>;
+      how_memory_helps_readiness: string[];
+      human_review_required: boolean;
+      customer_data_persistence_claimed: boolean;
+      final_eligibility_claimed: boolean;
+    }>;
+    eligibility_integrations?: Array<Record<string, unknown>>;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

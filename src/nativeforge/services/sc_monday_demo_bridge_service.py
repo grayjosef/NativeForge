@@ -30,6 +30,10 @@ from nativeforge.services.opportunity_engine_product_surface_service import (
     build_opportunity_engine_product_surface,
     opportunity_engine_surface_invariant_failures,
 )
+from nativeforge.services.organization_evidence_memory_assembler_service import (
+    build_organization_evidence_demo_surface,
+    organization_evidence_demo_surface_invariant_failures,
+)
 from nativeforge.services.package_readiness_queue_assembler_service import (
     build_package_readiness_demo_surface,
     package_readiness_demo_surface_invariant_failures,
@@ -126,6 +130,15 @@ def build_sc_customer_demo_bridge_payload(
             f"Package readiness queue surface invariants failed: {readiness_fails}"
         )
 
+    org_memory_surface = build_organization_evidence_demo_surface()
+    org_memory_fails = organization_evidence_demo_surface_invariant_failures(
+        org_memory_surface
+    )
+    if org_memory_fails:
+        raise ValueError(
+            f"Organization evidence memory surface invariants failed: {org_memory_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -168,6 +181,7 @@ def build_sc_customer_demo_bridge_payload(
             "intake_approval_workspace": intake_surface,
             "narrative_budget_scaffold": narrative_surface,
             "package_readiness_queue": readiness_surface,
+            "organization_evidence_memory": org_memory_surface,
         }
     )
 
@@ -239,4 +253,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("package_readiness_queue_missing")
     else:
         fails.extend(package_readiness_demo_surface_invariant_failures(readiness))
+    org_memory = payload.get("organization_evidence_memory") or {}
+    if not org_memory:
+        fails.append("organization_evidence_memory_missing")
+    else:
+        fails.extend(organization_evidence_demo_surface_invariant_failures(org_memory))
     return fails
