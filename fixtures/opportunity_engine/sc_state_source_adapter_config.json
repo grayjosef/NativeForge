@@ -1,0 +1,30 @@
+{
+  "adapter_key": "state_portal_sc_curated",
+  "combined_with_federal_required": true,
+  "data_mode_default": "curated_current",
+  "display_name": "South Carolina (reference state)",
+  "is_reference_state_implementation": true,
+  "live_ingest_claimed": false,
+  "live_ingest_implemented": false,
+  "nationwide_hardcoded_in_ui": false,
+  "no_credentials": true,
+  "notes": [
+    "SC is reference-state architecture for additional states",
+    "UI must consume adapter/config \u2014 not hard-code nationwide behavior",
+    "Curated-current only in Campaign Block 01"
+  ],
+  "opportunity_pack_paths": [
+    "fixtures/sc_monday_demo/sc_state_curated_current_opportunity_pack.json",
+    "fixtures/sc_monday_demo/sc_curated_current_opportunity_pack.json"
+  ],
+  "organization_geography_must_not_filter_federal": true,
+  "product_fork": false,
+  "public_listings_only": true,
+  "requires_operator_activation": true,
+  "retrieval_method_default": "curated_pack_offline_normalize_v1",
+  "schema_version": "nf_sc_state_source_adapter_config_v1",
+  "source_health_default": "curated_offline",
+  "source_layer": "sc_state",
+  "state_code": "SC",
+  "upgrade_path": "Future live SC portal connector requires Mayhem approval, validated public-listings capture, and honest live_ingest labeling"
+}
