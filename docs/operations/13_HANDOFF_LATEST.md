@@ -9,47 +9,24 @@
 - path: `/home/josefgray/projects/nativeforge` (stale clone `/home/josefgray/projects/NativeForge` avoided)
 - branch: `main`
 - HEAD before: `7e62fbf`
-- HEAD after: `1fc4b89` (confirm with git rev-parse)
+- HEAD after: `7a93536` (confirm with git rev-parse)
 - origin/main: local ahead (**not pushed**)
-- working tree: clean at block stop (ignore untracked prior Playwright debris if any)
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched/unstaged
-- prior block: NF Full-Suite Health / Lint-Debt Containment Block
 
 ## Monday demo lane
 
 - route: `/?view=sc_customer_demo`
-- curated pack: `fixtures/sc_monday_demo/sc_curated_current_opportunity_pack.json`
+- curated pack: `fixtures/sc_monday_demo/sc_curated_current_opportunity_pack.json` (+ SC/federal split packs)
+- GO data contract: `sc_monday_go_contract_service` (live_ingest_claimed=false, automated_refresh_claimed=false)
 - profiles: 10 SC pilot fixtures
-- opportunities: 18 (3 SC + 15 federal), honestly labeled
-- live_ingestion claimed: **no**
-- source_activation: **no**
-- final eligibility claim: **not allowed**
-- offline smoke: PASS `nf_sc_monday_smoke_20260820T151221Z_f29132e0`
-- Playwright: PASS `nf_sc_monday_playwright_20260820T151118Z_009c45c6`
-
-## Validation
-
-- staging verify: OK
-- scoped pytest: PASS
-- frontend typecheck: PASS
-- Playwright E2E: PASS
-- full suite: NOT_RUN this block
-- repo-wide ruff autofix: not used
-
-## Safety
-
-- scoring/match math unchanged (recognition-tier gate reused only)
-- no migrations
-- no live ingest / activation
-- stash preserved
-- pushed: **no**
-
-## UNKNOWNs
-
-- Freshness of curated opportunities vs true live portal rounds (confirm_active_round required)
-- Which of the four SC prospect orgs map 1:1 onto fixture keys for live demos
+- opportunities: 18 (3 SC + 15 federal)
+- offline smoke: PASS `nf_sc_monday_smoke_20260820T161217Z_53533b08`
+- demo-runtime smoke: PASS `nf_sc_monday_browser_20260820T161227Z_8e58492b`
+- Playwright: PASS `nf_sc_monday_playwright_20260820T161253Z_5c1c16cc`
+- NOFO PDF extraction: NOT_IN_THIS_BLOCK
+- proposal drafting: NOT_IN_THIS_BLOCK
 
 ## NEXT SAFE ACTION
 
-Continue campaign block 2 (federal curated-current completeness) or NOFO extraction showcase. Mayhem push when ready.
+Campaign block 2 (federal curated completeness) or NOFO extraction showcase. Mayhem push when ready.
