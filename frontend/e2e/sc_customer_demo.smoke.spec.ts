@@ -113,6 +113,28 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.locator('[data-testid^="sc-demo-intake-card-"]').first(),
     ).toContainText("Required intake items");
+    await expect(page.getByTestId("sc-demo-narrative-budget")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-narrative-flags")).toContainText(
+      "generated_prose_produced=false",
+    );
+    await expect(page.getByTestId("sc-demo-narrative-flags")).toContainText(
+      "drafting_supported=false",
+    );
+    await expect(page.getByTestId("sc-demo-narrative-flags")).toContainText(
+      "budget_claimed_complete=false",
+    );
+    await expect(page.getByTestId("sc-demo-narrative-flags")).toContainText(
+      "match_claimed_complete=false",
+    );
+    await expect(page.getByTestId("sc-demo-narrative-summary")).toContainText(
+      "narrative and budget areas",
+    );
+    await expect(
+      page.locator('[data-testid^="sc-demo-narrative-card-"]').first(),
+    ).toContainText("why_drafting_not_supported=");
+    await expect(
+      page.locator('[data-testid^="sc-demo-narrative-card-"]').first(),
+    ).toContainText("Budget / match evidence");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

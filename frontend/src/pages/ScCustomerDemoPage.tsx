@@ -670,6 +670,124 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.narrative_budget_scaffold ? (
+        <section
+          data-testid="sc-demo-narrative-budget"
+          className="nf-sc-demo-section"
+        >
+          <h2>Narrative &amp; budget scaffold</h2>
+          <p className="nf-sc-demo-why">
+            What sections this application probably needs, what evidence exists, and
+            what budget/match facts must be gathered before anyone writes — no generated
+            proposal prose.
+          </p>
+          <p data-testid="sc-demo-narrative-flags" className="nf-muted">
+            workspaces={data.narrative_budget_scaffold.workspace_count}{" "}
+            drafting_supported=
+            {String(data.narrative_budget_scaffold.drafting_supported)}{" "}
+            generated_prose_produced=
+            {String(data.narrative_budget_scaffold.generated_prose_produced)}{" "}
+            proposal_drafting_claimed=
+            {String(data.narrative_budget_scaffold.proposal_drafting_claimed)}{" "}
+            budget_claimed_complete=
+            {String(data.narrative_budget_scaffold.budget_claimed_complete)}{" "}
+            match_claimed_complete=
+            {String(data.narrative_budget_scaffold.match_claimed_complete)}
+          </p>
+          <ul data-testid="sc-demo-narrative-summary">
+            {data.narrative_budget_scaffold.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.narrative_budget_scaffold.workspaces.slice(0, 3).map((item) => (
+            <article
+              key={`${item.application_workspace_id}-nb`}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-narrative-card-${item.application_workspace_id}`}
+              data-source-layer={item.opportunity_source_layer}
+            >
+              <h3>
+                {item.opportunity_id} × {item.organization_profile_id}{" "}
+                <span className="nf-muted">({item.opportunity_source_layer})</span>
+              </h3>
+              <p>
+                sections={item.section_count} drafting_supported=
+                {String(item.drafting_supported)} generated_prose=
+                {String(item.generated_prose_produced)}
+              </p>
+              <p data-testid={`sc-demo-narrative-why-${item.application_workspace_id}`}>
+                why_drafting_not_supported={item.why_drafting_not_supported}
+              </p>
+              <div>
+                <h4>Likely / required narrative sections</h4>
+                <ul>
+                  {item.narrative_scaffold.sections.slice(0, 8).map((s) => (
+                    <li key={s.section_id}>
+                      {s.section_label} — status={s.section_required_status}
+                      {s.unsupported_claim_guard ? " [unsupported]" : ""} known=
+                      {(s.known_evidence || []).length} missing=
+                      {(s.missing_evidence || []).length}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Missing narrative questions</h4>
+                <ul>
+                  {(item.customer_questions || []).slice(0, 5).map((q) => (
+                    <li key={q}>{q}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Budget / match evidence</h4>
+                <p>
+                  budget_required={item.budget_match_evidence.budget_required_status}{" "}
+                  match_required={item.budget_match_evidence.match_required_status}{" "}
+                  cost_share=
+                  {item.budget_match_evidence.cost_share_required_status}{" "}
+                  amount_requested_known=
+                  {String(item.budget_match_evidence.amount_requested_known)}{" "}
+                  match_amount_known=
+                  {String(item.budget_match_evidence.match_amount_known)}{" "}
+                  budget_complete=
+                  {String(item.budget_match_evidence.budget_claimed_complete)}{" "}
+                  match_complete=
+                  {String(item.budget_match_evidence.match_claimed_complete)}
+                </p>
+                <ul>
+                  {(item.budget_match_evidence.missing_budget_facts || [])
+                    .slice(0, 6)
+                    .map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Budget customer questions</h4>
+                <ul>
+                  {(item.budget_customer_questions || []).slice(0, 5).map((q) => (
+                    <li key={q}>{q}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Operator checks</h4>
+                <ul>
+                  {(item.operator_checks || []).slice(0, 5).map((q) => (
+                    <li key={q}>{q}</li>
+                  ))}
+                </ul>
+              </div>
+              <p className="nf-muted">
+                No generate-proposal control. No fabricated budget. No match claim
+                without evidence.
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

@@ -299,6 +299,64 @@ export type ScCustomerDemoPayload = {
       };
     }>;
   };
+  narrative_budget_scaffold?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    workspace_count: number;
+    showcase_opportunity_ids: string[];
+    drafting_supported: boolean;
+    generated_prose_produced: boolean;
+    proposal_drafting_claimed: boolean;
+    budget_claimed_complete: boolean;
+    match_claimed_complete: boolean;
+    live_ingest_claimed: boolean;
+    scoring_math_changed: boolean;
+    nofo_pdf_extraction_claimed: boolean;
+    buyer_summary: string[];
+    workspaces: Array<{
+      application_workspace_id: string;
+      pursuit_workspace_id: string;
+      opportunity_id: string;
+      organization_profile_id: string;
+      opportunity_source_layer: string;
+      section_count: number;
+      customer_questions: string[];
+      operator_checks: string[];
+      budget_customer_questions: string[];
+      drafting_supported: boolean;
+      generated_prose_produced: boolean;
+      proposal_drafting_claimed: boolean;
+      budget_claimed_complete: boolean;
+      match_claimed_complete: boolean;
+      why_drafting_not_supported: string;
+      narrative_scaffold: {
+        sections: Array<{
+          section_id: string;
+          section_label: string;
+          section_type: string;
+          section_required_status: string;
+          known_evidence: string[];
+          missing_evidence: string[];
+          question_prompts: string[];
+          drafting_supported: boolean;
+          generated_prose: null;
+          unsupported_claim_guard?: boolean;
+        }>;
+      };
+      budget_match_evidence: {
+        budget_required_status: string;
+        match_required_status: string;
+        cost_share_required_status: string;
+        amount_requested_known: boolean;
+        match_amount_known: boolean;
+        missing_budget_facts: string[];
+        customer_questions: string[];
+        budget_claimed_complete: boolean;
+        match_claimed_complete: boolean;
+      };
+    }>;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

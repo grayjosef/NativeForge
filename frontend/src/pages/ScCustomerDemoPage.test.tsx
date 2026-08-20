@@ -48,6 +48,12 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("upload_persistence_claimed=false");
     expect(html).toContain("approval_persistence_claimed=false");
     expect(html).toContain("package_readiness_unlocked=false");
+    expect(html).toContain("sc-demo-narrative-budget");
+    expect(html).toContain("Narrative &amp; budget scaffold");
+    expect(html).toContain("generated_prose_produced=false");
+    expect(html).toContain("drafting_supported=false");
+    expect(html).toContain("budget_claimed_complete=false");
+    expect(html).toContain("match_claimed_complete=false");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
     expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
@@ -74,6 +80,13 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.intake_approval_workspace?.package_readiness_unlocked).toBe(
       false,
     );
+    expect(
+      payload.narrative_budget_scaffold?.workspace_count,
+    ).toBeGreaterThanOrEqual(1);
+    expect(payload.narrative_budget_scaffold?.generated_prose_produced).toBe(false);
+    expect(payload.narrative_budget_scaffold?.drafting_supported).toBe(false);
+    expect(payload.narrative_budget_scaffold?.budget_claimed_complete).toBe(false);
+    expect(payload.narrative_budget_scaffold?.match_claimed_complete).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );
