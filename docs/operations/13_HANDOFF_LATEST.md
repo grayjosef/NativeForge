@@ -2,39 +2,43 @@
 
 ## Block complete
 
-**NF NOFO Showcase Block — SC/Federal Opportunity Intelligence + Application Plan Skeleton**
+**NF Monday Buyer Demo Polish Block — SC Customer Story, Rehearsal, Trust, and Close Readiness**
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone `/home/josefgray/projects/NativeForge` avoided)
 - branch: `main`
-- HEAD before: `89c99ef`
-- HEAD after: `a5fe818`
-- origin/main: push authorized after green validation for this block
+- HEAD before: `ce79b9f`
+- HEAD after: (set after final commit)
+- origin/main: push after green validation
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
-- uv.lock: present, untouched/unstaged
+- uv.lock: present, untouched
 
-## Monday demo lane + NOFO showcase
+## Monday buyer demo
 
 - route: `/?view=sc_customer_demo`
-- selected opportunities:
-  - `sc-rule-SC_FOOD_SOVEREIGNTY` (SC)
-  - `nf13-real-fed-012` (federal ANA SEDS)
-  - `la-real-006` (federal TEDC)
-- intelligence packs: `fixtures/nofo_showcase/`
-- application plans: `fixtures/nofo_showcase/selected_opportunity_application_plans.json`
-- offline NOFO smoke: PASS `nf_nofo_showcase_smoke_20260820T164133Z_8b3d9c41`
-- demo-runtime smoke: PASS `nf_sc_monday_browser_20260820T164156Z_72917c42`
-- Playwright: PASS `nf_sc_monday_playwright_20260820T164135Z_c0476cb2`
-- SC Monday staging verify: OK
-- NOFO PDF extraction: NOT_SUPPORTED (honest)
-- proposal drafting: NOT_SUPPORTED (honest)
-- live ingest claimed: false
+- opening line + closing line: on-page (`sc-demo-opening-line` / `sc-demo-closing-line`)
+- trust strip: curated-current, not live ingest, human review, skeleton-only, NOFO/proposal not supported
+- claim guardrails: allowed + forbidden lists on page
+- NOFO showcase + application-plan skeleton: retained
+- runbook: `docs/operations/99_MONDAY_BUYER_DEMO_RUNBOOK.md`
+- claim matrix: `docs/operations/100_MONDAY_BUYER_CLAIM_MATRIX.md`
+- rehearsal: `docs/operations/101_MONDAY_BUYER_REHEARSAL_CHECKLIST.md`
 
-## Runbook
+## Smoke run_ids
 
-See `docs/operations/92_NOFO_SHOWCASE_MONDAY_RUNBOOK.md`
+- offline buyer: `nf_monday_buyer_smoke_20260820T170824Z_7598cccd`
+- demo-runtime: `nf_sc_monday_browser_20260820T170827Z_84bf2ffd`
+- Playwright: `nf_sc_monday_playwright_20260820T170831Z_2ccfd373`
+
+## Exact opening line
+
+NativeForge structures South Carolina and federal grant opportunities for your organization — curated-current intelligence, honest gaps, and an application-plan skeleton — without fabricating live ingest, NOFO PDFs, or proposal prose.
+
+## Exact closing line
+
+Next step: human review of missing evidence and active rounds, then decide pursue or defer — NativeForge will not submit or invent facts for you.
 
 ## NEXT SAFE ACTION
 
-Buyer-facing polish or real NOFO PDF extraction (only with approved source + validation). Mayhem may review push already completed for this block.
+Rehearse Monday talk track from runbook 99. Optional next: approved real NOFO PDF extraction pilot.
