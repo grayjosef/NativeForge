@@ -1,0 +1,161 @@
+{
+  "capture_date": "2026-08-20",
+  "counts": {
+    "federal": 0,
+    "sc_state": 1,
+    "total": 1
+  },
+  "live_ingest_claimed": false,
+  "nofo_pdf_extraction_claimed": false,
+  "opportunities": [
+    {
+      "captured_at": "2026-08-20",
+      "data_mode": "curated_current",
+      "demo_real_isolation_label": "demo_curated_current_not_live_ingest",
+      "extraction_confidence": "low_public_inferred",
+      "extraction_method": "deterministic_curated_synopsis_mapper_v1",
+      "federal_relevance_explanation": "",
+      "fields": {
+        "agency_or_source": {
+          "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+          "source_ref": "https://advance.sc.gov/food-sovereignty",
+          "status": "known",
+          "value": "SC Pilot Rules"
+        },
+        "award_range": {
+          "evidence_note": "award floor/ceiling not present in curated pack",
+          "source_ref": "",
+          "status": "not_in_source",
+          "value": null
+        },
+        "deadline": {
+          "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+          "source_ref": "https://advance.sc.gov/food-sovereignty",
+          "status": "needs_confirmation",
+          "value": "2026-12-31"
+        },
+        "eligibility": {
+          "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+          "source_ref": "https://advance.sc.gov/food-sovereignty",
+          "status": "known",
+          "value": "https://advance.sc.gov/food-sovereignty"
+        },
+        "evaluation_criteria": {
+          "evidence_note": "evaluation criteria not in curated pack",
+          "source_ref": "",
+          "status": "not_in_source",
+          "value": null
+        },
+        "geography": {
+          "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+          "source_ref": "",
+          "status": "known",
+          "value": "south_carolina"
+        },
+        "match_cost_share": {
+          "evidence_note": "match/cost-share not present in curated pack",
+          "source_ref": "",
+          "status": "not_in_source",
+          "value": null
+        },
+        "pdf_nofo_full_text": {
+          "evidence_note": "Full NOFO PDF extraction not supported in this block",
+          "source_ref": "",
+          "status": "not_supported",
+          "value": null
+        },
+        "proposal_narrative": {
+          "evidence_note": "Proposal drafting not supported in this block",
+          "source_ref": "",
+          "status": "not_supported",
+          "value": null
+        },
+        "purpose": {
+          "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+          "source_ref": "https://advance.sc.gov/food-sovereignty",
+          "status": "needs_confirmation",
+          "value": "https://advance.sc.gov/food-sovereignty"
+        },
+        "reporting_burdens": {
+          "evidence_note": "reporting obligations not in curated pack",
+          "source_ref": "",
+          "status": "not_in_source",
+          "value": null
+        },
+        "required_attachments": {
+          "evidence_note": "attachments list not in curated synopsis/pack",
+          "source_ref": "",
+          "status": "not_in_source",
+          "value": null
+        },
+        "required_forms": {
+          "evidence_note": "forms list not in curated synopsis/pack",
+          "source_ref": "",
+          "status": "not_in_source",
+          "value": null
+        },
+        "required_narratives": {
+          "evidence_note": "Typical federal/state application sections inferred for planning only \u2014 not extracted from a live NOFO PDF",
+          "source_ref": "",
+          "status": "inferred",
+          "value": [
+            "Project narrative",
+            "Evaluation plan"
+          ]
+        },
+        "title": {
+          "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+          "source_ref": "https://advance.sc.gov/food-sovereignty",
+          "status": "known",
+          "value": "SC Commission Food Sovereignty Grants"
+        },
+        "tribal_native_relevance": {
+          "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+          "source_ref": "https://advance.sc.gov/food-sovereignty",
+          "status": "known",
+          "value": "state_ok"
+        },
+        "tribal_resolution_text": {
+          "evidence_note": "Do not fabricate tribal resolutions",
+          "source_ref": "",
+          "status": "not_supported",
+          "value": null
+        }
+      },
+      "human_review_required": true,
+      "live_ingest_claimed": false,
+      "nofo_document_availability": "not_supported_pdf_extraction",
+      "operator_next_check": [
+        "Confirm active funding round and official notice text",
+        "Human review of eligibility evidence before pursuit decision",
+        "Confirm deadline with official source",
+        "Locate official forms list from NOFO/synopsis PDF when available"
+      ],
+      "opportunity_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "retrieved_at": "2026-08-20",
+      "sc_relevance_explanation": "South Carolina state program surfaced for SC Native/tribal orgs",
+      "source_layer": "sc_state",
+      "source_name": "SC Pilot Rules",
+      "source_reference": "https://advance.sc.gov/food-sovereignty",
+      "synopsis_availability": "partial_from_curated_pack",
+      "unresolved_fields": [
+        "purpose",
+        "deadline",
+        "award_range",
+        "match_cost_share",
+        "required_forms",
+        "required_attachments",
+        "reporting_burdens",
+        "evaluation_criteria",
+        "proposal_narrative",
+        "pdf_nofo_full_text",
+        "tribal_resolution_text"
+      ]
+    }
+  ],
+  "pack_id": "nofo_showcase_selected_20260820_sc",
+  "parent_curated_pack_id": "sc_monday_demo_curated_20260820",
+  "proposal_drafting_claimed": false,
+  "schema_version": "nf_nofo_showcase_intelligence_pack_v1",
+  "title": "NOFO Showcase \u2014 Selected Opportunity Intelligence"
+}
