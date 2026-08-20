@@ -1,40 +1,54 @@
 # 13_HANDOFF_LATEST — NativeForge
 
-## Campaign Block complete
+## Gate / Campaign Block complete
 
-**Block 7 of 20 — NF Campaign Block 07 — Package Readiness Rollup + Operator Review Queue**
+**Gate 01 complete — Blocks 07–08 / Sprints 001–100**
+
+- Block 7 of 20 — Package Readiness Rollup + Operator Review Queue (already on main at `6011b14`)
+- Block 8 of 20 — Customer / Organization Evidence Memory + Profile Hardening
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
-- HEAD before: `7640479`
-- HEAD after: `054eefd`
+- HEAD before Gate 01 Block 08: `6011b14`
+- HEAD after Block 08 (pre-push): see git tip after docs commit
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
-## Readiness / queue delivered
+## Block 08 delivered
 
-- Package readiness rollup contract across eligibility→binder→checklist→intake→approvals→narrative→budget
-- Deterministic aggregation with visible blockers and unsupported capability counts
-- Operator review queue with critical-first priorities
-- SC customer demo panel: Readiness & review queue
-- Explicit: not submission-ready, no final eligibility, no drafting, no live ingest
+- Organization evidence memory contract + fixture builder
+- Recognition/eligibility integration (federal ≠ state; memory alone ≠ final eligibility)
+- Attachments / governance / prior awards / fiscal inventory (honest missing; no binary upload)
+- SC demo panel: Organization evidence memory
+- Explicit: no customer persistence, no fabricated org facts, no final eligibility
 
-## Smoke run_ids
+## Smoke run_ids (Gate 01 closeout)
 
-- Block 07 offline: `nf_camp07_readiness_smoke_20260820T182540Z_cb0d8e62`
-- Demo-runtime: `nf_sc_monday_browser_20260820T182543Z_1f20e73e`
-- Playwright: `nf_sc_monday_playwright_20260820T182546Z_eace90bf`
+- Block 07 offline: `nf_camp07_readiness_smoke_20260820T185011Z_2c37a7f1`
+- Block 08 offline: `nf_camp08_orgmem_smoke_20260820T185012Z_f5d02b07`
+- Demo-runtime: `nf_sc_monday_browser_20260820T185021Z_c5844a8b`
+- Playwright: `nf_sc_monday_playwright_20260820T185024Z_53961576`
 
 ## Sunday checkpoint
 
-`docs/operations/120_CAMPAIGN_BLOCK07_SUNDAY_DEMO_CHECKPOINT.md` (checkpoint 110)
+`docs/operations/123_CAMPAIGN_BLOCK08_SUNDAY_DEMO_CHECKPOINT.md` (checkpoint 111)
 
 ## Closeout matrix
 
-See `docs/operations/121_CAMPAIGN_BLOCK07_CLAIM_MATRIX.md`
+See `docs/operations/124_CAMPAIGN_BLOCK08_CLAIM_MATRIX.md`
+
+## World-class maturity
+
+- Estimated maturity before Gate 01: ~30–35%
+- Estimated maturity after Gate 01: ~35–40%
+- Improved: full package readiness + operator queue + durable org evidence memory spine
+- Still below world-class: real NOFO PDF extraction, source freshness pilot, controlled drafting, export, multi-org pilot
 
 ## NEXT SAFE ACTION
 
-Campaign Block 08 — Human-authored draft workspace handoff (import customer prose only; still no fabrication) + package export preview.
+**Gate 02 — Blocks 09–10 / Sprints 101–200**
+
+- Block 09: Real NOFO PDF Extraction Pilot (one showcase opportunity; fixture/controlled path only)
+- Block 10: Source Ingestion + Freshness Pilot (read-only; no production mutation)
