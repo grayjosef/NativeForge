@@ -115,27 +115,61 @@ export type ScCustomerDemoPayload = {
         final_eligibility_claimed?: boolean;
         scoring_math_changed?: boolean;
         human_review_required?: boolean;
-        sample_pairs?: Array<{
-          profile_id?: string | null;
-          opportunity_id?: string | null;
-          source_layer?: string;
-          applicant_category?: string;
-          recognition_tier?: string;
-          evidence_status?: string;
-          missing_evidence?: string[];
-          eligibility_uncertainty?: string[];
-          operator_next_check?: string[];
-          final_eligibility_claimed?: boolean;
-          human_review_required?: boolean;
-          gate_outcome?: string;
-          why_federal_recognition_matters?: string;
-          why_state_recognition_matters?: string;
-        }>;
+        sample_pairs?: Array<Record<string, unknown>>;
       };
       provenance_summary: Record<string, unknown>;
       combined_ordering_sample: Array<Record<string, unknown>>;
       next_checks_sample: string[];
     };
+  };
+  pursuit_workspace?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    workspace_count: number;
+    showcase_opportunity_ids: string[];
+    final_submission_allowed: boolean;
+    submission_ready_claimed: boolean;
+    proposal_drafting_claimed: boolean;
+    live_ingest_claimed: boolean;
+    scoring_math_changed: boolean;
+    buyer_summary: string[];
+    workspaces: Array<{
+      workspace: {
+        pursuit_workspace_id: string;
+        opportunity_id: string;
+        organization_profile_id: string;
+        opportunity_source_layer: string;
+        readiness_status: string;
+        pursuit_status: string;
+        missing_information_summary: string[];
+        human_review_required: boolean;
+        operator_next_actions: string[];
+        customer_next_actions: string[];
+        why_worth_review?: string;
+        final_submission_allowed: boolean;
+        submission_ready_claimed: boolean;
+        proposal_drafting_claimed: boolean;
+        not_submission_ready_label?: boolean;
+        what_nativeforge_prebuilt?: string[];
+        what_customer_must_provide?: string[];
+      };
+      evidence_binder: {
+        item_count: number;
+        missing_or_needs_confirmation_ids: string[];
+        human_review_required: boolean;
+        proposal_drafting_claimed: boolean;
+        submission_ready_claimed: boolean;
+      };
+      readiness: {
+        readiness_status: string;
+        not_submission_ready: boolean;
+        operator_next_actions: string[];
+        customer_next_actions: string[];
+      };
+      application_plan_summary?: Record<string, unknown>;
+      nofo_intelligence_present?: boolean;
+    }>;
   };
   nofo_showcase?: {
     schema_version: string;

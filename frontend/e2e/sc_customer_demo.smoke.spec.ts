@@ -56,6 +56,25 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-eligibility-tier-why")).toContainText(
       "Federal recognition",
     );
+    await expect(page.getByTestId("sc-demo-pursuit-workspace")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-pursuit-flags")).toContainText(
+      "submission_ready_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-pursuit-flags")).toContainText(
+      "proposal_drafting_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-pursuit-flags")).toContainText(
+      "final_submission_allowed=false",
+    );
+    await expect(page.getByTestId("sc-demo-pursuit-summary")).toContainText(
+      "pursuit workspace",
+    );
+    await expect(
+      page.locator('[data-testid^="sc-demo-pursuit-card-"]').first(),
+    ).toContainText("not_submission_ready=");
+    await expect(
+      page.locator('[data-testid^="sc-demo-pursuit-card-"]').first(),
+    ).toContainText("What NativeForge pre-built");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

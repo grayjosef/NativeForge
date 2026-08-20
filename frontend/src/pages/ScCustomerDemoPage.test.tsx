@@ -34,8 +34,15 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-eligibility-evidence");
     expect(html).toContain("final_eligibility_claimed=false");
     expect(html).toContain("Evidence-backed eligibility");
+    expect(html).toContain("sc-demo-pursuit-workspace");
+    expect(html).toContain("Pursuit workspace / application package");
+    expect(html).toContain("submission_ready_claimed=false");
+    expect(html).toContain("proposal_drafting_claimed=false");
+    expect(html).toContain("not_submission_ready=");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
-    expect(payload.buyer_demo?.closing_line).toBeTruthy();
+    expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
+    expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
+    expect(payload.pursuit_workspace?.proposal_drafting_claimed).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

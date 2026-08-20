@@ -319,21 +319,118 @@ export function ScCustomerDemoPage({
                   ))}
               </ul>
               <p data-testid="sc-demo-eligibility-tier-why" className="nf-muted">
-                {
+                {String(
                   (
                     data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
                       .sample_pairs || []
-                  )[0]?.why_federal_recognition_matters
-                }{" "}
-                {
+                  )[0]?.why_federal_recognition_matters ?? "",
+                )}{" "}
+                {String(
                   (
                     data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
                       .sample_pairs || []
-                  )[0]?.why_state_recognition_matters
-                }
+                  )[0]?.why_state_recognition_matters ?? "",
+                )}
               </p>
             </div>
           ) : null}
+        </section>
+      ) : null}
+
+      {data.pursuit_workspace ? (
+        <section data-testid="sc-demo-pursuit-workspace" className="nf-sc-demo-section">
+          <h2>Pursuit workspace / application package</h2>
+          <p className="nf-sc-demo-why">
+            What happens after you decide an opportunity is worth pursuing: a review-gated
+            workspace and evidence binder — not a finished proposal or submission.
+          </p>
+          <p data-testid="sc-demo-pursuit-flags" className="nf-muted">
+            workspaces={data.pursuit_workspace.workspace_count} final_submission_allowed=
+            {String(data.pursuit_workspace.final_submission_allowed)}{" "}
+            submission_ready_claimed=
+            {String(data.pursuit_workspace.submission_ready_claimed)}{" "}
+            proposal_drafting_claimed=
+            {String(data.pursuit_workspace.proposal_drafting_claimed)} live_ingest_claimed=
+            {String(data.pursuit_workspace.live_ingest_claimed)} scoring_math_changed=
+            {String(data.pursuit_workspace.scoring_math_changed)}
+          </p>
+          <ul data-testid="sc-demo-pursuit-summary">
+            {data.pursuit_workspace.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.pursuit_workspace.workspaces.slice(0, 4).map((item) => {
+            const ws = item.workspace;
+            return (
+              <article
+                key={ws.pursuit_workspace_id}
+                className="nf-sc-demo-nofo-card"
+                data-testid={`sc-demo-pursuit-card-${ws.pursuit_workspace_id}`}
+                data-source-layer={ws.opportunity_source_layer}
+              >
+                <h3>
+                  {ws.opportunity_id} × {ws.organization_profile_id}{" "}
+                  <span className="nf-muted">({ws.opportunity_source_layer})</span>
+                </h3>
+                <p>
+                  readiness={ws.readiness_status} pursuit_status={ws.pursuit_status}{" "}
+                  not_submission_ready=
+                  {String(ws.not_submission_ready_label ?? true)} human_review=
+                  {String(ws.human_review_required)} final_submission_allowed=
+                  {String(ws.final_submission_allowed)}
+                </p>
+                <p data-testid={`sc-demo-pursuit-why-${ws.pursuit_workspace_id}`}>
+                  why_worth_review={ws.why_worth_review}
+                </p>
+                <p>
+                  binder_items={item.evidence_binder.item_count} missing_or_needs_conf=
+                  {item.evidence_binder.missing_or_needs_confirmation_ids.length}{" "}
+                  nofo_linked={String(item.nofo_intelligence_present)} checklist=
+                  {String(
+                    (item.application_plan_summary as { checklist_count?: number })
+                      ?.checklist_count ?? 0,
+                  )}
+                </p>
+                <div>
+                  <h4>Missing information</h4>
+                  <ul>
+                    {ws.missing_information_summary.slice(0, 6).map((m) => (
+                      <li key={m}>{m}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>Operator next actions</h4>
+                  <ol>
+                    {ws.operator_next_actions.slice(0, 5).map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ol>
+                </div>
+                <div>
+                  <h4>What NativeForge pre-built</h4>
+                  <ul>
+                    {(ws.what_nativeforge_prebuilt || []).map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4>What the customer must provide</h4>
+                  <ul>
+                    {(ws.what_customer_must_provide || []).map((a) => (
+                      <li key={a}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="nf-muted">
+                  proposal_drafting_claimed=
+                  {String(ws.proposal_drafting_claimed)} submission_ready_claimed=
+                  {String(ws.submission_ready_claimed)} — no submit control
+                </p>
+              </article>
+            );
+          })}
         </section>
       ) : null}
 

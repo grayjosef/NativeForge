@@ -18,6 +18,10 @@ from nativeforge.services.opportunity_engine_product_surface_service import (
     build_opportunity_engine_product_surface,
     opportunity_engine_surface_invariant_failures,
 )
+from nativeforge.services.pursuit_workspace_assembler_service import (
+    build_pursuit_workspace_demo_surface,
+    pursuit_demo_surface_invariant_failures,
+)
 from nativeforge.services.sc_monday_demo_assembler_service import (
     build_sc_monday_demo_artifact,
     demo_artifact_invariant_failures,
@@ -67,6 +71,13 @@ def build_sc_customer_demo_bridge_payload(
             f"Opportunity engine surface invariants failed: {engine_fails}"
         )
 
+    pursuit_surface = build_pursuit_workspace_demo_surface()
+    pursuit_fails = pursuit_demo_surface_invariant_failures(pursuit_surface)
+    if pursuit_fails:
+        raise ValueError(
+            f"Pursuit workspace surface invariants failed: {pursuit_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -104,6 +115,7 @@ def build_sc_customer_demo_bridge_payload(
             "nofo_showcase": nofo_surface,
             "buyer_demo": buyer_flow,
             "opportunity_engine": engine_surface,
+            "pursuit_workspace": pursuit_surface,
         }
     )
 
@@ -150,4 +162,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("opportunity_engine_missing")
     else:
         fails.extend(opportunity_engine_surface_invariant_failures(engine))
+    pursuit = payload.get("pursuit_workspace") or {}
+    if not pursuit:
+        fails.append("pursuit_workspace_missing")
+    else:
+        fails.extend(pursuit_demo_surface_invariant_failures(pursuit))
     return fails
