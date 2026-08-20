@@ -38,9 +38,19 @@ def assert_honest_opportunity_labels(row: dict[str, Any]) -> list[str]:
         failures.append(f"invalid_data_label:{label!r}")
     if row.get("live_ingest_not_claimed") is not True:
         failures.append("live_ingest_not_claimed_must_be_true")
-    if row.get("live_ingestion_claimed") is True:
+    if (
+        row.get("live_ingestion_claimed") is True
+        or row.get("live_ingest_claimed") is True
+    ):
         failures.append("live_ingestion_claimed_must_not_be_true")
-    if not row.get("retrieval_date") and not row.get("capture_date"):
+    if row.get("automated_refresh_claimed") is True:
+        failures.append("automated_refresh_claimed_must_not_be_true")
+    if (
+        not row.get("retrieval_date")
+        and not row.get("capture_date")
+        and not row.get("retrieved_at")
+        and not row.get("captured_at")
+    ):
         failures.append("missing_retrieval_or_capture_date")
     if label == LABEL_RULE_REFERENCE and not row.get("sc_pilot_rule_reference"):
         failures.append("rule_reference_requires_sc_pilot_rule_reference")
