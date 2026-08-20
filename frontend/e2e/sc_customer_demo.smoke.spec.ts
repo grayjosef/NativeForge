@@ -31,6 +31,15 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-forbidden-claims")).toContainText(
       "Automated live ingestion",
     );
+    await expect(page.getByTestId("sc-demo-opportunity-engine")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-engine-flags")).toContainText(
+      "live_ingest_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-engine-flags")).toContainText(
+      "org_geo_filters_federal=false",
+    );
+    await expect(page.getByTestId("sc-demo-engine-counts")).toContainText("sc_state");
+    await expect(page.getByTestId("sc-demo-engine-counts")).toContainText("federal");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

@@ -225,6 +225,46 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.opportunity_engine ? (
+        <section data-testid="sc-demo-opportunity-engine" className="nf-sc-demo-section">
+          <h2>Durable opportunity engine foundation</h2>
+          <p className="nf-sc-demo-why">
+            Product spine behind the Monday demo: SC reference-state adapter + federal
+            layer + combined workflow (curated-current only).
+          </p>
+          <p data-testid="sc-demo-engine-flags" className="nf-muted">
+            campaign_block={data.opportunity_engine.campaign_block} live_ingest_claimed=
+            {String(data.opportunity_engine.live_ingest_claimed)} source_activation_claimed=
+            {String(data.opportunity_engine.source_activation_claimed)}{" "}
+            final_eligibility_claim_allowed=
+            {String(data.opportunity_engine.final_eligibility_claim_allowed)}{" "}
+            org_geo_filters_federal=
+            {String(
+              data.opportunity_engine.combined_workflow
+                .organization_geography_filters_federal,
+            )}
+          </p>
+          <p data-testid="sc-demo-engine-adapter">
+            sc_adapter={String(data.opportunity_engine.sc_state_adapter.adapter_key)}{" "}
+            reference_state=
+            {String(
+              data.opportunity_engine.sc_state_adapter.is_reference_state_implementation,
+            )}{" "}
+            data_mode_default=
+            {String(data.opportunity_engine.sc_state_adapter.data_mode_default)}
+          </p>
+          <p data-testid="sc-demo-engine-counts">
+            combined_counts=
+            {JSON.stringify(data.opportunity_engine.combined_workflow.counts)}
+          </p>
+          <ul data-testid="sc-demo-engine-summary">
+            {data.opportunity_engine.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

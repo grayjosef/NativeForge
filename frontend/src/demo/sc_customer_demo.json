@@ -1022,6 +1022,213 @@
     "south_carolina_count": 3,
     "total": 18
   },
+  "opportunity_engine": {
+    "block_name": "NF Campaign Block 01 \u2014 Durable SC + Federal Opportunity Engine Foundation",
+    "buyer_summary": [
+      "Durable SC state + federal opportunity engine foundation (curated-current)",
+      "SC is reference-state adapter/config \u2014 not a product fork",
+      "Federal opportunities remain visible for SC organizations",
+      "Missing freshness/deadline fields stay visible",
+      "Live ingest and source activation are not claimed"
+    ],
+    "campaign_block": 1,
+    "combined_workflow": {
+      "combined_ordering_sample": [
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "needs_human_review",
+          "opportunity_id": "sc-rule-SC_CMA_DIRECT",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "sc_state",
+          "title": "SC Commission Direct Tribal Appropriation"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "needs_human_review",
+          "opportunity_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "sc_state",
+          "title": "SC Commission Food Sovereignty Grants"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "needs_human_review",
+          "opportunity_id": "sc-rule-SC_SHPO_STATE",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "sc_state",
+          "title": "SC SHPO Historic Preservation State Grant Fund"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "needs_human_review",
+          "opportunity_id": "sc-rule-ANA_LANGUAGE_587",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "ANA Language Preservation P&M/EMI"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "needs_human_review",
+          "opportunity_id": "sc-rule-ANA_SEDS",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "ANA SEDS"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "needs_human_review",
+          "opportunity_id": "sc-rule-ANA_SEEDS",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "ANA SEEDS"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "needs_human_review",
+          "opportunity_id": "sc-rule-BIA_638",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "BIA Self-Determination P.L. 93-638"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "evidence_partial",
+          "opportunity_id": "la-real-016",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "Economic Advancement Grants for Local Empowerment (EAGLE)"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "evidence_partial",
+          "opportunity_id": "la-real-015",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "Environmental Regulatory Enhancement"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "needs_human_review",
+          "opportunity_id": "sc-rule-IHS_COMPACTS",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "IHS Self-Governance Compacts"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "evidence_partial",
+          "opportunity_id": "la-real-013",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "Native American Language Preservation and Maintenance"
+        },
+        {
+          "data_mode": "curated_current",
+          "eligibility_handoff_state": "evidence_partial",
+          "opportunity_id": "la-real-014",
+          "opportunity_lifecycle_state": "needs_confirmation",
+          "source_layer": "federal",
+          "title": "Native American Language Preservation and Maintenance-Esther Martinez Immersion"
+        }
+      ],
+      "counts": {
+        "federal": 15,
+        "other_state": 0,
+        "sc_state": 3,
+        "total": 18
+      },
+      "eligibility_readiness_handoff": {
+        "by_state": {
+          "evidence_partial": 5,
+          "needs_human_review": 13
+        },
+        "no_final_eligibility_claim": true
+      },
+      "human_review": {
+        "all_require_human_review": true,
+        "required_count": 18
+      },
+      "missing_data_summary": {
+        "common_missing_fields": [
+          "deadline_date"
+        ],
+        "hidden_missing_data": false,
+        "opportunities_with_missing_fields": 5
+      },
+      "next_checks_sample": [
+        "Confirm active funding round with source evidence",
+        "Confirm deadline before calendar commitment",
+        "Human review required before pursuit decision"
+      ],
+      "organization_geography_filters_federal": false,
+      "provenance_summary": {
+        "capture_dates_present": true,
+        "demo_real_isolation_labels": [
+          "demo_curated_current_not_live_ingest"
+        ],
+        "notes_visible": true
+      }
+    },
+    "final_eligibility_claim_allowed": false,
+    "live_ingest_claimed": false,
+    "sc_state_adapter": {
+      "adapter_key": "state_portal_sc_curated",
+      "data_mode_default": "curated_current",
+      "is_reference_state_implementation": true,
+      "live_ingest_claimed": false,
+      "state_code": "SC"
+    },
+    "schema_version": "nf_opportunity_engine_product_surface_v1",
+    "source_activation_claimed": false,
+    "vocab": {
+      "block01_allowed_data_modes": [
+        "curated_current",
+        "fixture_demo",
+        "live_ingest_not_claimed"
+      ],
+      "data_modes": [
+        "curated_current",
+        "fixture_demo",
+        "live_ingest",
+        "live_ingest_not_claimed"
+      ],
+      "eligibility_handoff_states": [
+        "blocked_missing_evidence",
+        "evidence_partial",
+        "needs_human_review",
+        "not_started",
+        "ready_for_pursuit_decision"
+      ],
+      "final_eligibility_claim_allowed_default": false,
+      "lifecycle_states": [
+        "curated_current",
+        "discovered",
+        "live_ingest_blocked",
+        "needs_confirmation",
+        "normalized",
+        "paused",
+        "ready_for_human_review",
+        "retired"
+      ],
+      "live_ingest_default": false,
+      "schema_version": "nf_opportunity_engine_contract_v1",
+      "source_activation_default": false,
+      "source_health_labels": [
+        "attention_needed",
+        "curated_offline",
+        "degraded",
+        "failing",
+        "healthy",
+        "stale",
+        "unknown"
+      ],
+      "source_layers": [
+        "federal",
+        "other_state",
+        "sc_state"
+      ]
+    }
+  },
   "pack_id": "sc_monday_demo_curated_20260820",
   "profiles": {
     "federal_recognized_count": 1,

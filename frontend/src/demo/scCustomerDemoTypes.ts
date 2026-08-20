@@ -94,6 +94,26 @@ export type ScCustomerDemoPayload = {
     proposal_drafting_claimed: boolean;
     final_eligibility_claim_allowed: boolean;
   };
+  opportunity_engine?: {
+    schema_version: string;
+    campaign_block: number;
+    block_name: string;
+    live_ingest_claimed: boolean;
+    source_activation_claimed: boolean;
+    final_eligibility_claim_allowed: boolean;
+    buyer_summary: string[];
+    sc_state_adapter: Record<string, unknown>;
+    combined_workflow: {
+      counts: Record<string, number>;
+      organization_geography_filters_federal: boolean;
+      missing_data_summary: Record<string, unknown>;
+      human_review: Record<string, unknown>;
+      eligibility_readiness_handoff: Record<string, unknown>;
+      provenance_summary: Record<string, unknown>;
+      combined_ordering_sample: Array<Record<string, unknown>>;
+      next_checks_sample: string[];
+    };
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

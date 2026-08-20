@@ -14,6 +14,10 @@ from nativeforge.services.nofo_showcase_demo_surface_service import (
     build_nofo_showcase_demo_surface,
     nofo_showcase_surface_invariant_failures,
 )
+from nativeforge.services.opportunity_engine_product_surface_service import (
+    build_opportunity_engine_product_surface,
+    opportunity_engine_surface_invariant_failures,
+)
 from nativeforge.services.sc_monday_demo_assembler_service import (
     build_sc_monday_demo_artifact,
     demo_artifact_invariant_failures,
@@ -56,6 +60,13 @@ def build_sc_customer_demo_bridge_payload(
     if buyer_fails:
         raise ValueError(f"Buyer demo flow contract invariants failed: {buyer_fails}")
 
+    engine_surface = build_opportunity_engine_product_surface(write_config=True)
+    engine_fails = opportunity_engine_surface_invariant_failures(engine_surface)
+    if engine_fails:
+        raise ValueError(
+            f"Opportunity engine surface invariants failed: {engine_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -92,6 +103,7 @@ def build_sc_customer_demo_bridge_payload(
             "ui_flags": art.get("ui_flags"),
             "nofo_showcase": nofo_surface,
             "buyer_demo": buyer_flow,
+            "opportunity_engine": engine_surface,
         }
     )
 
@@ -133,4 +145,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("buyer_demo_missing")
     else:
         fails.extend(buyer_flow_contract_invariant_failures(buyer))
+    engine = payload.get("opportunity_engine") or {}
+    if not engine:
+        fails.append("opportunity_engine_missing")
+    else:
+        fails.extend(opportunity_engine_surface_invariant_failures(engine))
     return fails

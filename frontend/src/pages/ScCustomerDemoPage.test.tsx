@@ -28,8 +28,17 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("curated-current");
     expect(html).toContain("not automated live ingest");
     expect(html).toContain("Forbidden claims");
+    expect(html).toContain("sc-demo-opportunity-engine");
+    expect(html).toContain("Durable opportunity engine foundation");
+    expect(html).toContain("org_geo_filters_federal=false");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.buyer_demo?.closing_line).toBeTruthy();
+    expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
+      1,
+    );
+    expect(
+      payload.opportunity_engine?.combined_workflow.counts.federal,
+    ).toBeGreaterThanOrEqual(1);
     expect(payload.nofo_showcase?.sc_selected_count).toBeGreaterThanOrEqual(1);
     expect(payload.nofo_showcase?.federal_selected_count).toBeGreaterThanOrEqual(1);
     expect(payload.opportunities.south_carolina_count).toBeGreaterThanOrEqual(1);
