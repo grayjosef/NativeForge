@@ -1,0 +1,71 @@
+{
+  "demo_route_path": "/?view=sc_customer_demo",
+  "failures": [],
+  "overall_status": "PASS",
+  "playwright_status": "NOT_RUN",
+  "run_id": "nf_sc_monday_browser_20260820T161227Z_8e58492b",
+  "schema_version": "nf_sc_monday_demo_runtime_smoke_v1",
+  "screens": [
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "sc_profiles_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "sc_opportunities_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "federal_opportunities_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "combined_workflow_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "curated_current_labels_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "no_live_ingest_claim",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "buyer_story_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "missing_data_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "human_review_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "provenance_visible",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "nofo_not_overclaimed",
+      "status": "PASS"
+    },
+    {
+      "detail": "demo_runtime_static_vitest",
+      "screen": "proposal_not_overclaimed",
+      "status": "PASS"
+    }
+  ],
+  "smoke_mode": "demo_runtime_static_vitest"
+}
