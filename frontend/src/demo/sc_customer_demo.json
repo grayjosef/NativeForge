@@ -1,5 +1,130 @@
 {
   "auth_required": false,
+  "buyer_demo": {
+    "allowed_claims": [
+      "Curated-current SC and federal opportunities in one workflow",
+      "Recognition-tier eligibility gating with visible blockers",
+      "Honest missing-field and needs-confirmation labels",
+      "Synopsis/curated NOFO intelligence for selected showcase opportunities",
+      "Application-plan skeleton and checklist (not a finished proposal)",
+      "Human review required before pursuit or submission",
+      "Material reduction of discovery and pursuit prep workload"
+    ],
+    "claim_matrix": {
+      "application_plan_skeleton": "IMPLEMENTED",
+      "buyer_story_polish": "IMPLEMENTED",
+      "final_eligibility_without_human_review": "BLOCKED",
+      "full_nofo_pdf_extraction": "BLOCKED",
+      "live_ingest": "BLOCKED",
+      "live_validated": "NOT_CLAIMED",
+      "local_pytest_frontend_playwright": "LOCALLY_VALIDATED",
+      "monday_demo_ready": "DEMO_READY",
+      "nofo_synopsis_intelligence": "IMPLEMENTED",
+      "production_customer_validation": "UNKNOWN",
+      "proposal_drafting": "BLOCKED",
+      "sc_customer_demo_route": "IMPLEMENTED",
+      "sc_federal_combined_workflow": "IMPLEMENTED"
+    },
+    "closing_line": "Next step: human review of missing evidence and active rounds, then decide pursue or defer \u2014 NativeForge will not submit or invent facts for you.",
+    "demo_route_path": "/?view=sc_customer_demo",
+    "final_eligibility_claim_allowed": false,
+    "flow_steps": [
+      {
+        "buyer_question": "What am I looking at?",
+        "id": "opening",
+        "say": "NativeForge structures South Carolina and federal grant opportunities for your organization \u2014 curated-current intelligence, honest gaps, and an application-plan skeleton \u2014 without fabricating live ingest, NOFO PDFs, or proposal prose.",
+        "title": "Opening state"
+      },
+      {
+        "buyer_question": "Does NativeForge know our SC organization?",
+        "id": "organization_context",
+        "say": "Show SC pilot profiles and recognition tiers (federal vs state_only).",
+        "title": "Organization context"
+      },
+      {
+        "buyer_question": "What opportunities were found?",
+        "id": "opportunity_overview",
+        "say": "Show curated South Carolina and federal opportunities together.",
+        "title": "SC + federal opportunity overview"
+      },
+      {
+        "buyer_question": "What happens after we pick one?",
+        "id": "selected_detail",
+        "say": "Open NOFO/synopsis intelligence for a showcase opportunity.",
+        "title": "Selected opportunity detail"
+      },
+      {
+        "buyer_question": "Why might this fit \u2014 and what is uncertain?",
+        "id": "eligibility",
+        "say": "Walk eligibility evidence, blockers, and needs-confirmation labels.",
+        "title": "Eligibility explanation"
+      },
+      {
+        "buyer_question": "What requirements are known vs missing?",
+        "id": "nofo_intelligence",
+        "say": "Show known/inferred/missing/not_supported field statuses honestly.",
+        "title": "NOFO/synopsis intelligence"
+      },
+      {
+        "buyer_question": "What do we do next to pursue?",
+        "id": "application_plan",
+        "say": "Show checklist, missing-info questions, and human approval gates.",
+        "title": "Application-plan skeleton"
+      },
+      {
+        "buyer_question": "What still needs people?",
+        "id": "missing_and_review",
+        "say": "Emphasize human review; never invent answers for missing org facts.",
+        "title": "Missing information + human review"
+      },
+      {
+        "buyer_question": "What should we do after this meeting?",
+        "id": "close",
+        "say": "Next step: human review of missing evidence and active rounds, then decide pursue or defer \u2014 NativeForge will not submit or invent facts for you.",
+        "title": "Closing next step"
+      }
+    ],
+    "forbidden_claims": [
+      "Automated live ingestion from live portals",
+      "Full live NOFO PDF extraction",
+      "Automated proposal narrative drafting",
+      "Final eligibility determination without human evidence review",
+      "Fabricated tribal facts, budgets, resolutions, or past performance",
+      "Source activation or production data mutation",
+      "Independent penetration test or production-ready auth",
+      "Full sovereignty deployment or automated submission"
+    ],
+    "live_ingest_claimed": false,
+    "nofo_pdf_extraction_claimed": false,
+    "opening_line": "NativeForge structures South Carolina and federal grant opportunities for your organization \u2014 curated-current intelligence, honest gaps, and an application-plan skeleton \u2014 without fabricating live ingest, NOFO PDFs, or proposal prose.",
+    "proposal_drafting_claimed": false,
+    "required_story_labels": [
+      "organization_context",
+      "sc_and_federal_opportunities",
+      "fit_eligibility_uncertainty",
+      "nofo_synopsis_intelligence",
+      "application_plan_skeleton",
+      "missing_information",
+      "human_review_required",
+      "workload_reduction",
+      "curated_current_not_live_ingest",
+      "demo_real_isolation"
+    ],
+    "schema_version": "nf_monday_buyer_demo_flow_contract_v1",
+    "trust_cues_required": [
+      "curated_current",
+      "not_automated_live_ingest",
+      "source_evidence",
+      "captured_or_retrieved_date",
+      "missing_fields_visible",
+      "human_review_required",
+      "no_final_eligibility_claim",
+      "nofo_pdf_extraction_not_supported",
+      "proposal_drafting_not_supported",
+      "application_plan_skeleton_only",
+      "demo_real_isolation"
+    ]
+  },
   "capture_date": "2026-08-20",
   "claim_matrix": {
     "allowed_data_labels": [
@@ -7,13 +132,16 @@
       "fixture_demo",
       "rule_reference"
     ],
+    "application_plan": "SKELETON_ONLY",
     "federal_opportunity_mode": "curated_from_offline_corpus_and_rule_refs",
     "final_eligibility_claim": "NOT_ALLOWED",
     "human_review_required": true,
     "live_ingestion": "NOT_CLAIMED",
-    "nofo_pdf_extraction": "NOT_IN_THIS_BLOCK",
+    "live_validated": "NOT_CLAIMED",
+    "monday_demo_ready": "DEMO_READY",
+    "nofo_pdf_extraction": "NOT_SUPPORTED",
     "organization_profiles": "sc_pilot_fixtures",
-    "proposal_drafting": "NOT_IN_THIS_BLOCK",
+    "proposal_drafting": "NOT_SUPPORTED",
     "sc_opportunity_mode": "curated_current_and_rule_reference",
     "schema_version": "nf_sc_monday_demo_labels_v1",
     "source_activation": "NOT_CLAIMED"
@@ -47,10 +175,11 @@
   },
   "next_actions": [
     "Select an organization profile",
-    "Review state + federal opportunities together",
-    "Open eligibility explanation and blockers",
-    "Decide pursue / defer with human review",
-    "Next block: NOFO extraction showcase (not claimed here)"
+    "Review South Carolina + federal opportunities together",
+    "Open eligibility explanation, blockers, and missing data",
+    "Review NOFO/synopsis intelligence for a showcase opportunity",
+    "Walk the application-plan skeleton and missing-information questions",
+    "Decide pursue / defer with human review \u2014 NativeForge does not submit"
   ],
   "nofo_showcase": {
     "buyer_sections": [
@@ -6000,7 +6129,7 @@
   "source_activation": false,
   "title": "SC Customer Demo \u2014 Curated State + Federal Opportunities",
   "ui_flags": {
-    "advisory_banner": "South Carolina customer demo \u2014 curated/fixture opportunities only. Not automated live ingestion. No final eligibility claim. Human review required before pursuit decisions.",
+    "advisory_banner": "South Carolina Monday buyer demo \u2014 curated-current opportunities only. Not automated live ingestion. Demo/real isolation visible. Human review required. No final eligibility claim. NOFO PDF extraction and proposal drafting are not supported yet.",
     "show_activation_controls": false,
     "show_submit_controls": false
   },
@@ -6009,11 +6138,21 @@
     "Surfaced curated South Carolina and federal opportunities in one workflow",
     "Applied recognition-tier eligibility gating (federal vs state_only)",
     "Flagged uncertainty, missing data, and human-review requirements",
+    "Structured synopsis/curated NOFO intelligence for selected showcase opportunities",
+    "Built an application-plan skeleton and checklist without fabricating prose",
     "Did not activate sources, scrape live portals, or claim final eligibility"
   ],
   "what_requires_attention": [
     "Confirm active funding rounds (confirm_active_round flags)",
     "Human review of recognition-tier blockers before pursuit",
-    "Missing profile evidence where confidence is inferred"
-  ]
+    "Missing profile evidence where confidence is inferred",
+    "Locate official forms, attachments, match, and evaluation criteria when not in source",
+    "Do not invent budgets, resolutions, past performance, or community statistics"
+  ],
+  "why_this_matters": [
+    "Reduces discovery and pursuit prep time by structuring evidence and gaps",
+    "Keeps SC state and federal opportunities in one honest review queue",
+    "Makes limitations visible so buyers trust what is (and is not) claimed"
+  ],
+  "workload_reduction_statement": "NativeForge materially reduces grant pursuit workload by organizing opportunities, eligibility uncertainty, missing information, and a pursuit checklist \u2014 without inventing customer facts or drafting proposals."
 }

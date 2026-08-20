@@ -47,14 +47,37 @@ export function ScCustomerDemoPage({
   const scRows = data.rows.filter((r) => r.funding_geography === "south_carolina");
   const fedRows = data.rows.filter((r) => r.funding_geography === "federal");
   const sample = [...scRows.slice(0, 8), ...fedRows.slice(0, 12)];
+  const buyer = data.buyer_demo;
+  const opening =
+    buyer?.opening_line ||
+    "NativeForge structures South Carolina and federal grant opportunities for your organization.";
+  const closing =
+    buyer?.closing_line ||
+    "Next step: human review of missing evidence — NativeForge will not submit or invent facts.";
 
   return (
     <main className="nf-sc-customer-demo" data-testid="sc-customer-demo-page">
       <header className="nf-sc-customer-demo-header">
+        <p className="nf-sc-demo-kicker" data-testid="sc-demo-kicker">
+          Monday buyer demo · South Carolina customer story
+        </p>
         <h1 data-testid="sc-demo-title">{data.title}</h1>
+        <p className="nf-sc-demo-opening" data-testid="sc-demo-opening-line">
+          {opening}
+        </p>
         <p className="nf-muted" data-testid="sc-demo-banner">
           {data.ui_flags.advisory_banner}
         </p>
+        <div className="nf-sc-demo-trust-strip" data-testid="sc-demo-trust-strip">
+          <span>curated-current</span>
+          <span>not automated live ingest</span>
+          <span>demo/real isolation</span>
+          <span>human review required</span>
+          <span>no final eligibility claim</span>
+          <span>application-plan skeleton only</span>
+          <span>NOFO PDF extraction not supported</span>
+          <span>proposal drafting not supported</span>
+        </div>
         <p className="nf-muted" data-testid="sc-demo-flags">
           demo_dev_only={String(data.demo_dev_only)} offline_only=
           {String(data.offline_only)} live_ingestion=
@@ -66,12 +89,14 @@ export function ScCustomerDemoPage({
           {data.pack_id} capture_date={data.capture_date}
         </p>
         <p data-testid="sc-demo-nofo-proposal-honesty" className="nf-muted">
-          nofo_pdf_extraction=NOT_IN_THIS_BLOCK proposal_drafting=NOT_IN_THIS_BLOCK
+          nofo_pdf_extraction=NOT_SUPPORTED proposal_drafting=NOT_SUPPORTED
+          application_plan=SKELETON_ONLY
         </p>
       </header>
 
-      <section data-testid="sc-demo-what-nf-did">
+      <section data-testid="sc-demo-what-nf-did" className="nf-sc-demo-section">
         <h2>What NativeForge found / did</h2>
+        <p className="nf-sc-demo-why">Why this matters: structures discovery so your team reviews evidence, not raw noise.</p>
         <ul>
           {data.what_nativeforge_did.map((item) => (
             <li key={item}>{item}</li>
@@ -79,8 +104,23 @@ export function ScCustomerDemoPage({
         </ul>
       </section>
 
-      <section data-testid="sc-demo-attention">
+      {data.why_this_matters && data.why_this_matters.length > 0 ? (
+        <section data-testid="sc-demo-why-matters" className="nf-sc-demo-section">
+          <h2>Why this matters</h2>
+          <ul>
+            {data.why_this_matters.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.workload_reduction_statement ? (
+            <p data-testid="sc-demo-workload">{data.workload_reduction_statement}</p>
+          ) : null}
+        </section>
+      ) : null}
+
+      <section data-testid="sc-demo-attention" className="nf-sc-demo-section">
         <h2>What is uncertain / needs your attention</h2>
+        <p className="nf-sc-demo-why">What needs attention: active rounds, blockers, and missing evidence stay visible.</p>
         <ul>
           {data.what_requires_attention.map((item) => (
             <li key={item}>{item}</li>
@@ -88,8 +128,9 @@ export function ScCustomerDemoPage({
         </ul>
       </section>
 
-      <section data-testid="sc-demo-next-actions">
+      <section data-testid="sc-demo-next-actions" className="nf-sc-demo-section">
         <h2>What to do next</h2>
+        <p className="nf-sc-demo-why">What happens next: walk opportunities → intelligence → plan → human decision.</p>
         <ol>
           {data.next_actions.map((item) => (
             <li key={item}>{item}</li>
@@ -97,8 +138,9 @@ export function ScCustomerDemoPage({
         </ol>
       </section>
 
-      <section data-testid="sc-demo-profiles">
-        <h2>Organization profiles (South Carolina)</h2>
+      <section data-testid="sc-demo-profiles" className="nf-sc-demo-section">
+        <h2>Organization context (South Carolina)</h2>
+        <p className="nf-sc-demo-why">What NativeForge did: loaded SC organization profiles with recognition tiers.</p>
         <p>
           profiles={data.profiles.profile_count}; federal_recognized=
           {data.profiles.federal_recognized_count}; state_only=
@@ -106,8 +148,11 @@ export function ScCustomerDemoPage({
         </p>
       </section>
 
-      <section data-testid="sc-demo-opportunities">
-        <h2>Which opportunities fit (curated state + federal)</h2>
+      <section data-testid="sc-demo-opportunities" className="nf-sc-demo-section">
+        <h2>South Carolina + federal opportunities (curated-current)</h2>
+        <p className="nf-sc-demo-why">
+          Why this matters: one review queue for state and federal lanes — not live ingest.
+        </p>
         <p>
           total={data.opportunities.total}; south_carolina=
           {data.opportunities.south_carolina_count}; federal=
@@ -115,11 +160,11 @@ export function ScCustomerDemoPage({
         </p>
         <p data-testid="sc-demo-labels">
           by_data_label={JSON.stringify(data.opportunities.by_data_label)}{" "}
-          curated_current_labels_visible=true
+          curated_current_labels_visible=true not_automated_live_ingest=true
         </p>
       </section>
 
-      <section data-testid="sc-demo-combined-summary">
+      <section data-testid="sc-demo-combined-summary" className="nf-sc-demo-section">
         <h2>Combined review queue</h2>
         <p>
           rows={data.combined_summary.row_count}; sc_rows=
@@ -133,8 +178,9 @@ export function ScCustomerDemoPage({
         </p>
       </section>
 
-      <section data-testid="sc-demo-missing-data">
+      <section data-testid="sc-demo-missing-data" className="nf-sc-demo-section">
         <h2>Missing data / uncertainty</h2>
+        <p className="nf-sc-demo-why">Missing fields remain visible — they are not silently filled.</p>
         <p>
           hidden_missing_data=
           {String(data.missing_data_summary.hidden_missing_data)}; rows_with_missing=
@@ -142,17 +188,44 @@ export function ScCustomerDemoPage({
         </p>
       </section>
 
-      <section data-testid="sc-demo-provenance">
-        <h2>Provenance / source evidence</h2>
+      <section data-testid="sc-demo-provenance" className="nf-sc-demo-section">
+        <h2>Trust / provenance / source evidence</h2>
+        <p className="nf-sc-demo-why">
+          Source evidence and capture dates stay visible. This is not a pen-test claim or
+          production-auth claim.
+        </p>
         <p>
           notes_visible=
           {String(data.provenance_evidence_summary.notes_visible)};
           pack_evidence_required=
-          {String(data.provenance_evidence_summary.pack_evidence_required)}
+          {String(data.provenance_evidence_summary.pack_evidence_required)}; capture_date=
+          {data.capture_date}; demo_real_isolation=visible
         </p>
       </section>
 
-      <section data-testid="sc-demo-review-table">
+      {buyer ? (
+        <section data-testid="sc-demo-claim-guardrails" className="nf-sc-demo-section">
+          <h2>Claim guardrails (say this / do not say this)</h2>
+          <div data-testid="sc-demo-allowed-claims">
+            <h3>Allowed claims</h3>
+            <ul>
+              {buyer.allowed_claims.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </div>
+          <div data-testid="sc-demo-forbidden-claims">
+            <h3>Forbidden claims</h3>
+            <ul>
+              {buyer.forbidden_claims.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
+
+      <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
         <table>
@@ -179,7 +252,9 @@ export function ScCustomerDemoPage({
                 <td>{r.funding_geography}</td>
                 <td>{r.opportunity_title}</td>
                 <td>{r.data_label}</td>
-                <td>{(r as { current_round_status?: string }).current_round_status || "n/a"}</td>
+                <td>
+                  {(r as { current_round_status?: string }).current_round_status || "n/a"}
+                </td>
                 <td>{r.classification_label}</td>
                 <td>{r.match_readiness_label}</td>
                 <td>{r.discoverability}</td>
@@ -192,8 +267,12 @@ export function ScCustomerDemoPage({
       </section>
 
       {data.nofo_showcase ? (
-        <section data-testid="sc-demo-nofo-showcase">
+        <section data-testid="sc-demo-nofo-showcase" className="nf-sc-demo-section">
           <h2>{data.nofo_showcase.title}</h2>
+          <p className="nf-sc-demo-why">
+            What happens after you pick an opportunity: honest synopsis intelligence and an
+            application-plan skeleton — not a finished proposal.
+          </p>
           <p data-testid="sc-demo-nofo-showcase-flags" className="nf-muted">
             selected={data.nofo_showcase.selected_count} sc=
             {data.nofo_showcase.sc_selected_count} federal=
@@ -209,6 +288,7 @@ export function ScCustomerDemoPage({
           {data.nofo_showcase.cards.map((card) => (
             <article
               key={card.opportunity_id}
+              className="nf-sc-demo-nofo-card"
               data-testid={`sc-demo-nofo-card-${card.opportunity_id}`}
               data-source-layer={card.source_layer}
             >
@@ -303,6 +383,11 @@ export function ScCustomerDemoPage({
           ))}
         </section>
       ) : null}
+
+      <footer className="nf-sc-demo-close" data-testid="sc-demo-closing">
+        <h2>Close the demo</h2>
+        <p data-testid="sc-demo-closing-line">{closing}</p>
+      </footer>
     </main>
   );
 }

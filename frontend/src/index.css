@@ -1892,3 +1892,71 @@ code,
   color: var(--nf-error);
   margin: 0;
 }
+
+/* SC Monday buyer demo polish — hierarchy only, not a visual redesign */
+.nf-sc-customer-demo {
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.nf-sc-customer-demo-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--nf-border);
+}
+
+.nf-sc-demo-kicker {
+  margin: 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-demo-opening {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  max-width: 52rem;
+}
+
+.nf-sc-demo-trust-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  color: var(--nf-muted);
+}
+
+.nf-sc-demo-trust-strip span::before {
+  content: "· ";
+}
+
+.nf-sc-demo-section h2 {
+  margin: 0 0 0.35rem;
+}
+
+.nf-sc-demo-why {
+  margin: 0 0 0.65rem;
+  color: var(--nf-muted);
+  font-size: 0.95rem;
+}
+
+.nf-sc-demo-nofo-card {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--nf-border);
+}
+
+.nf-sc-demo-close {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--nf-border);
+}
+

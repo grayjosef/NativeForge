@@ -69,6 +69,8 @@ export type ScCustomerDemoPayload = {
   };
   what_nativeforge_did: string[];
   what_requires_attention: string[];
+  why_this_matters?: string[];
+  workload_reduction_statement?: string;
   next_actions: string[];
   rows: ScCustomerDemoRow[];
   row_sample_note?: string;
@@ -76,6 +78,21 @@ export type ScCustomerDemoPayload = {
     show_activation_controls: boolean;
     show_submit_controls: boolean;
     advisory_banner: string;
+  };
+  buyer_demo?: {
+    schema_version: string;
+    demo_route_path: string;
+    opening_line: string;
+    closing_line: string;
+    required_story_labels: string[];
+    allowed_claims: string[];
+    forbidden_claims: string[];
+    trust_cues_required?: string[];
+    claim_matrix?: Record<string, string>;
+    live_ingest_claimed: boolean;
+    nofo_pdf_extraction_claimed: boolean;
+    proposal_drafting_claimed: boolean;
+    final_eligibility_claim_allowed: boolean;
   };
   nofo_showcase?: {
     schema_version: string;

@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from nativeforge.services.buyer_demo_flow_contract_service import (
+    build_buyer_demo_flow_contract,
+    buyer_flow_contract_invariant_failures,
+)
 from nativeforge.services.nofo_showcase_demo_surface_service import (
     build_nofo_showcase_demo_surface,
     nofo_showcase_surface_invariant_failures,
@@ -47,6 +51,11 @@ def build_sc_customer_demo_bridge_payload(
     if nofo_fails:
         raise ValueError(f"NOFO showcase surface invariants failed: {nofo_fails}")
 
+    buyer_flow = build_buyer_demo_flow_contract()
+    buyer_fails = buyer_flow_contract_invariant_failures(buyer_flow)
+    if buyer_fails:
+        raise ValueError(f"Buyer demo flow contract invariants failed: {buyer_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -72,6 +81,8 @@ def build_sc_customer_demo_bridge_payload(
             "provenance_evidence_summary": art.get("provenance_evidence_summary"),
             "what_nativeforge_did": art.get("what_nativeforge_did"),
             "what_requires_attention": art.get("what_requires_attention"),
+            "why_this_matters": art.get("why_this_matters"),
+            "workload_reduction_statement": art.get("workload_reduction_statement"),
             "next_actions": art.get("next_actions"),
             "rows": sample,
             "row_sample_note": (
@@ -80,6 +91,7 @@ def build_sc_customer_demo_bridge_payload(
             ),
             "ui_flags": art.get("ui_flags"),
             "nofo_showcase": nofo_surface,
+            "buyer_demo": buyer_flow,
         }
     )
 
@@ -116,4 +128,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("nofo_showcase_missing")
     else:
         fails.extend(nofo_showcase_surface_invariant_failures(nofo))
+    buyer = payload.get("buyer_demo") or {}
+    if not buyer:
+        fails.append("buyer_demo_missing")
+    else:
+        fails.extend(buyer_flow_contract_invariant_failures(buyer))
     return fails
