@@ -9,7 +9,7 @@
 - path: `/home/josefgray/projects/nativeforge` (stale clone `/home/josefgray/projects/NativeForge` avoided)
 - branch: `main`
 - HEAD before: `ce79b9f`
-- HEAD after: (set after final commit)
+- HEAD after: `a613c50`
 - origin/main: push after green validation
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
