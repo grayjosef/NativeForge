@@ -23,9 +23,10 @@ REQUIRED_UI_FLAGS: dict[str, Any] = {
     "show_activation_controls": False,
     "show_submit_controls": False,
     "advisory_banner": (
-        "South Carolina customer demo — curated/fixture opportunities only. "
-        "Not automated live ingestion. No final eligibility claim. "
-        "Human review required before pursuit decisions."
+        "South Carolina Monday buyer demo — curated-current opportunities only. "
+        "Not automated live ingestion. Demo/real isolation visible. "
+        "Human review required. No final eligibility claim. "
+        "NOFO PDF extraction and proposal drafting are not supported yet."
     ),
 }
 
@@ -67,9 +68,12 @@ def build_demo_lane_claim_matrix() -> dict[str, Any]:
         "sc_opportunity_mode": "curated_current_and_rule_reference",
         "federal_opportunity_mode": "curated_from_offline_corpus_and_rule_refs",
         "organization_profiles": "sc_pilot_fixtures",
-        "nofo_pdf_extraction": "NOT_IN_THIS_BLOCK",
-        "proposal_drafting": "NOT_IN_THIS_BLOCK",
+        "nofo_pdf_extraction": "NOT_SUPPORTED",
+        "proposal_drafting": "NOT_SUPPORTED",
+        "application_plan": "SKELETON_ONLY",
         "human_review_required": True,
+        "monday_demo_ready": "DEMO_READY",
+        "live_validated": "NOT_CLAIMED",
         "allowed_data_labels": sorted(ALLOWED_DATA_LABELS),
     }
 

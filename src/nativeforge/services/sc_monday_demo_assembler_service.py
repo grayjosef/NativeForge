@@ -268,20 +268,35 @@ def build_sc_monday_demo_artifact(
             "Surfaced curated South Carolina and federal opportunities in one workflow",
             "Applied recognition-tier eligibility gating (federal vs state_only)",
             "Flagged uncertainty, missing data, and human-review requirements",
+            "Structured synopsis/curated NOFO intelligence for selected showcase opportunities",
+            "Built an application-plan skeleton and checklist without fabricating prose",
             "Did not activate sources, scrape live portals, or claim final eligibility",
         ],
         "what_requires_attention": [
             "Confirm active funding rounds (confirm_active_round flags)",
             "Human review of recognition-tier blockers before pursuit",
             "Missing profile evidence where confidence is inferred",
+            "Locate official forms, attachments, match, and evaluation criteria when not in source",
+            "Do not invent budgets, resolutions, past performance, or community statistics",
         ],
         "next_actions": [
             "Select an organization profile",
-            "Review state + federal opportunities together",
-            "Open eligibility explanation and blockers",
-            "Decide pursue / defer with human review",
-            "Next block: NOFO extraction showcase (not claimed here)",
+            "Review South Carolina + federal opportunities together",
+            "Open eligibility explanation, blockers, and missing data",
+            "Review NOFO/synopsis intelligence for a showcase opportunity",
+            "Walk the application-plan skeleton and missing-information questions",
+            "Decide pursue / defer with human review — NativeForge does not submit",
         ],
+        "why_this_matters": [
+            "Reduces discovery and pursuit prep time by structuring evidence and gaps",
+            "Keeps SC state and federal opportunities in one honest review queue",
+            "Makes limitations visible so buyers trust what is (and is not) claimed",
+        ],
+        "workload_reduction_statement": (
+            "NativeForge materially reduces grant pursuit workload by organizing "
+            "opportunities, eligibility uncertainty, missing information, and a "
+            "pursuit checklist — without inventing customer facts or drafting proposals."
+        ),
         "rows": rows,
         "ui_flags": dict(REQUIRED_UI_FLAGS),
     }
