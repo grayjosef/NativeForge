@@ -31,6 +31,9 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-opportunity-engine");
     expect(html).toContain("Durable opportunity engine foundation");
     expect(html).toContain("org_geo_filters_federal=false");
+    expect(html).toContain("sc-demo-eligibility-evidence");
+    expect(html).toContain("final_eligibility_claimed=false");
+    expect(html).toContain("Evidence-backed eligibility");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.buyer_demo?.closing_line).toBeTruthy();
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
@@ -39,6 +42,14 @@ describe("ScCustomerDemoPage", () => {
     expect(
       payload.opportunity_engine?.combined_workflow.counts.federal,
     ).toBeGreaterThanOrEqual(1);
+    expect(
+      payload.opportunity_engine?.combined_workflow.eligibility_evidence_handoff
+        ?.federal_pairs_visible,
+    ).toBe(true);
+    expect(
+      payload.opportunity_engine?.combined_workflow.eligibility_evidence_handoff
+        ?.final_eligibility_claimed,
+    ).toBe(false);
     expect(payload.nofo_showcase?.sc_selected_count).toBeGreaterThanOrEqual(1);
     expect(payload.nofo_showcase?.federal_selected_count).toBeGreaterThanOrEqual(1);
     expect(payload.opportunities.south_carolina_count).toBeGreaterThanOrEqual(1);

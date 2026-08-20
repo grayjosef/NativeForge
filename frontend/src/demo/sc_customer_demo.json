@@ -1023,15 +1023,15 @@
     "total": 18
   },
   "opportunity_engine": {
-    "block_name": "NF Campaign Block 01 \u2014 Durable SC + Federal Opportunity Engine Foundation",
+    "block_name": "NF Campaign Block 02 \u2014 Evidence-Backed Eligibility + Recognition-Tier Productization",
     "buyer_summary": [
-      "Durable SC state + federal opportunity engine foundation (curated-current)",
-      "SC is reference-state adapter/config \u2014 not a product fork",
-      "Federal opportunities remain visible for SC organizations",
-      "Missing freshness/deadline fields stay visible",
-      "Live ingest and source activation are not claimed"
+      "Evidence-backed eligibility explanations for SC + federal opportunities",
+      "Federal and state recognition tiers remain separate",
+      "Missing eligibility evidence stays visible; human review required",
+      "Final eligibility is never claimed without explicit evidence",
+      "Scoring math unchanged; curated-current only"
     ],
-    "campaign_block": 1,
+    "campaign_block": 2,
     "combined_workflow": {
       "combined_ordering_sample": [
         {
@@ -1137,6 +1137,181 @@
         "sc_state": 3,
         "total": 18
       },
+      "eligibility_evidence_handoff": {
+        "federal_pairs_visible": true,
+        "final_eligibility_claimed": false,
+        "human_review_required": true,
+        "pair_count": 21,
+        "sample_pairs": [
+          {
+            "applicant_category": "federally_recognized_tribe",
+            "eligibility_uncertainty": [],
+            "evidence_status": "known",
+            "final_eligibility_claimed": false,
+            "gate_outcome": "eligible",
+            "human_review_required": true,
+            "missing_evidence": [],
+            "operator_next_check": [
+              "Human review required before any final eligibility claim"
+            ],
+            "opportunity_id": "sc-rule-SC_SHPO_STATE",
+            "profile_id": "sc_pilot_catawba_indian_nation",
+            "recognition_tier": "federal",
+            "source_layer": "sc_state",
+            "why_federal_recognition_matters": "Federal recognition unlocks pathways that require federally recognized tribes or federal tribal government eligibility.",
+            "why_state_recognition_matters": "State recognition is distinct from federal recognition. State-recognized tribes must not be treated as federally recognized for federal-only pathways."
+          },
+          {
+            "applicant_category": "federally_recognized_tribe",
+            "eligibility_uncertainty": [],
+            "evidence_status": "known",
+            "final_eligibility_claimed": false,
+            "gate_outcome": "eligible",
+            "human_review_required": true,
+            "missing_evidence": [],
+            "operator_next_check": [
+              "Human review required before any final eligibility claim"
+            ],
+            "opportunity_id": "sc-rule-SC_CMA_DIRECT",
+            "profile_id": "sc_pilot_catawba_indian_nation",
+            "recognition_tier": "federal",
+            "source_layer": "sc_state",
+            "why_federal_recognition_matters": "Federal recognition unlocks pathways that require federally recognized tribes or federal tribal government eligibility.",
+            "why_state_recognition_matters": "State recognition is distinct from federal recognition. State-recognized tribes must not be treated as federally recognized for federal-only pathways."
+          },
+          {
+            "applicant_category": "federally_recognized_tribe",
+            "eligibility_uncertainty": [],
+            "evidence_status": "known",
+            "final_eligibility_claimed": false,
+            "gate_outcome": "eligible",
+            "human_review_required": true,
+            "missing_evidence": [],
+            "operator_next_check": [
+              "Human review required before any final eligibility claim"
+            ],
+            "opportunity_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+            "profile_id": "sc_pilot_catawba_indian_nation",
+            "recognition_tier": "federal",
+            "source_layer": "sc_state",
+            "why_federal_recognition_matters": "Federal recognition unlocks pathways that require federally recognized tribes or federal tribal government eligibility.",
+            "why_state_recognition_matters": "State recognition is distinct from federal recognition. State-recognized tribes must not be treated as federally recognized for federal-only pathways."
+          },
+          {
+            "applicant_category": "federally_recognized_tribe",
+            "eligibility_uncertainty": [
+              "missing_evidence"
+            ],
+            "evidence_status": "partial",
+            "final_eligibility_claimed": false,
+            "gate_outcome": "eligible",
+            "human_review_required": true,
+            "missing_evidence": [
+              "recognition_requirement"
+            ],
+            "operator_next_check": [
+              "Human review required before any final eligibility claim",
+              "Locate official eligibility language for this opportunity"
+            ],
+            "opportunity_id": "la-real-013",
+            "profile_id": "sc_pilot_catawba_indian_nation",
+            "recognition_tier": "federal",
+            "source_layer": "federal",
+            "why_federal_recognition_matters": "Federal recognition unlocks pathways that require federally recognized tribes or federal tribal government eligibility.",
+            "why_state_recognition_matters": "State recognition is distinct from federal recognition. State-recognized tribes must not be treated as federally recognized for federal-only pathways."
+          },
+          {
+            "applicant_category": "federally_recognized_tribe",
+            "eligibility_uncertainty": [
+              "missing_evidence"
+            ],
+            "evidence_status": "partial",
+            "final_eligibility_claimed": false,
+            "gate_outcome": "eligible",
+            "human_review_required": true,
+            "missing_evidence": [
+              "recognition_requirement"
+            ],
+            "operator_next_check": [
+              "Human review required before any final eligibility claim",
+              "Locate official eligibility language for this opportunity"
+            ],
+            "opportunity_id": "la-real-014",
+            "profile_id": "sc_pilot_catawba_indian_nation",
+            "recognition_tier": "federal",
+            "source_layer": "federal",
+            "why_federal_recognition_matters": "Federal recognition unlocks pathways that require federally recognized tribes or federal tribal government eligibility.",
+            "why_state_recognition_matters": "State recognition is distinct from federal recognition. State-recognized tribes must not be treated as federally recognized for federal-only pathways."
+          },
+          {
+            "applicant_category": "federally_recognized_tribe",
+            "eligibility_uncertainty": [
+              "missing_evidence"
+            ],
+            "evidence_status": "partial",
+            "final_eligibility_claimed": false,
+            "gate_outcome": "eligible",
+            "human_review_required": true,
+            "missing_evidence": [
+              "recognition_requirement"
+            ],
+            "operator_next_check": [
+              "Human review required before any final eligibility claim",
+              "Locate official eligibility language for this opportunity"
+            ],
+            "opportunity_id": "la-real-015",
+            "profile_id": "sc_pilot_catawba_indian_nation",
+            "recognition_tier": "federal",
+            "source_layer": "federal",
+            "why_federal_recognition_matters": "Federal recognition unlocks pathways that require federally recognized tribes or federal tribal government eligibility.",
+            "why_state_recognition_matters": "State recognition is distinct from federal recognition. State-recognized tribes must not be treated as federally recognized for federal-only pathways."
+          },
+          {
+            "applicant_category": "federally_recognized_tribe",
+            "eligibility_uncertainty": [
+              "missing_evidence"
+            ],
+            "evidence_status": "partial",
+            "final_eligibility_claimed": false,
+            "gate_outcome": "eligible",
+            "human_review_required": true,
+            "missing_evidence": [
+              "recognition_requirement"
+            ],
+            "operator_next_check": [
+              "Human review required before any final eligibility claim",
+              "Locate official eligibility language for this opportunity"
+            ],
+            "opportunity_id": "la-real-016",
+            "profile_id": "sc_pilot_catawba_indian_nation",
+            "recognition_tier": "federal",
+            "source_layer": "federal",
+            "why_federal_recognition_matters": "Federal recognition unlocks pathways that require federally recognized tribes or federal tribal government eligibility.",
+            "why_state_recognition_matters": "State recognition is distinct from federal recognition. State-recognized tribes must not be treated as federally recognized for federal-only pathways."
+          },
+          {
+            "applicant_category": "state_recognized_tribe",
+            "eligibility_uncertainty": [],
+            "evidence_status": "known",
+            "final_eligibility_claimed": false,
+            "gate_outcome": "eligible",
+            "human_review_required": true,
+            "missing_evidence": [],
+            "operator_next_check": [
+              "Human review required before any final eligibility claim",
+              "Confirm whether this opportunity accepts state-recognized tribes (do not treat as federally recognized)"
+            ],
+            "opportunity_id": "sc-rule-SC_SHPO_STATE",
+            "profile_id": "sc_pilot_waccamaw_indian_people",
+            "recognition_tier": "state_recognized",
+            "source_layer": "sc_state",
+            "why_federal_recognition_matters": "Federal recognition unlocks pathways that require federally recognized tribes or federal tribal government eligibility.",
+            "why_state_recognition_matters": "State recognition is distinct from federal recognition. State-recognized tribes must not be treated as federally recognized for federal-only pathways."
+          }
+        ],
+        "schema_version": "nf_eligibility_handoff_pack_v1",
+        "scoring_math_changed": false
+      },
       "eligibility_readiness_handoff": {
         "by_state": {
           "evidence_partial": 5,
@@ -1179,6 +1354,7 @@
       "state_code": "SC"
     },
     "schema_version": "nf_opportunity_engine_product_surface_v1",
+    "scoring_math_changed": false,
     "source_activation_claimed": false,
     "vocab": {
       "block01_allowed_data_modes": [

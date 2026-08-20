@@ -36,11 +36,15 @@ def build_opportunity_engine_product_surface(
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
-            "campaign_block": 1,
-            "block_name": "NF Campaign Block 01 — Durable SC + Federal Opportunity Engine Foundation",
+            "campaign_block": 2,
+            "block_name": (
+                "NF Campaign Block 02 — Evidence-Backed Eligibility + "
+                "Recognition-Tier Productization"
+            ),
             "live_ingest_claimed": False,
             "source_activation_claimed": False,
             "final_eligibility_claim_allowed": False,
+            "scoring_math_changed": False,
             "vocab": vocab,
             "sc_state_adapter": {
                 "adapter_key": cfg.get("adapter_key"),
@@ -61,6 +65,9 @@ def build_opportunity_engine_product_surface(
                 "eligibility_readiness_handoff": workflow.get(
                     "eligibility_readiness_handoff"
                 ),
+                "eligibility_evidence_handoff": workflow.get(
+                    "eligibility_evidence_handoff"
+                ),
                 "provenance_summary": workflow.get("provenance_summary"),
                 "combined_ordering_sample": (workflow.get("combined_ordering") or [])[
                     :12
@@ -68,11 +75,11 @@ def build_opportunity_engine_product_surface(
                 "next_checks_sample": (workflow.get("next_checks") or [])[:8],
             },
             "buyer_summary": [
-                "Durable SC state + federal opportunity engine foundation (curated-current)",
-                "SC is reference-state adapter/config — not a product fork",
-                "Federal opportunities remain visible for SC organizations",
-                "Missing freshness/deadline fields stay visible",
-                "Live ingest and source activation are not claimed",
+                "Evidence-backed eligibility explanations for SC + federal opportunities",
+                "Federal and state recognition tiers remain separate",
+                "Missing eligibility evidence stays visible; human review required",
+                "Final eligibility is never claimed without explicit evidence",
+                "Scoring math unchanged; curated-current only",
             ],
         }
     )
@@ -94,6 +101,13 @@ def opportunity_engine_surface_invariant_failures(surface: dict[str, Any]) -> li
         fails.append("fed_count")
     if cw.get("organization_geography_filters_federal") is True:
         fails.append("org_geo_filter")
+    if surface.get("scoring_math_changed") is True:
+        fails.append("scoring_math_changed")
+    eeh = cw.get("eligibility_evidence_handoff") or {}
+    if not eeh.get("sample_pairs"):
+        fails.append("eligibility_samples_missing")
+    if eeh.get("final_eligibility_claimed") is True:
+        fails.append("eligibility_final_claimed")
     # Full workflow invariants via rebuild
     fails.extend(
         combined_workflow_invariant_failures(build_combined_opportunity_workflow())

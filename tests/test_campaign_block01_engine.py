@@ -18,7 +18,7 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 def test_product_surface_invariants() -> None:
     surface = build_opportunity_engine_product_surface(write_config=True)
     assert opportunity_engine_surface_invariant_failures(surface) == []
-    assert surface["campaign_block"] == 1
+    assert surface["campaign_block"] >= 1
 
 
 def test_bridge_includes_opportunity_engine() -> None:

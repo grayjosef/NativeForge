@@ -50,3 +50,8 @@ def test_combined_workflow_sc_and_federal_ordering() -> None:
     assert all(L == "sc_state" for L in layers[:first_fed])
     assert wf["missing_data_summary"]["hidden_missing_data"] is False
     assert wf["human_review"]["all_require_human_review"] is True
+    eeh = wf["eligibility_evidence_handoff"]
+    assert eeh["federal_pairs_visible"] is True
+    assert eeh["final_eligibility_claimed"] is False
+    assert eeh["scoring_math_changed"] is False
+    assert eeh["sample_pairs"]

@@ -645,6 +645,13 @@ select = ["E", "F", "I", "UP", "B"]
 "tests/test_combined_opportunity_workflow.py" = ["E501"]
 "tests/test_campaign_block01_engine.py" = ["E501"]
 
+"src/nativeforge/services/eligibility_evidence_contract_service.py" = ["E501"]
+"src/nativeforge/services/recognition_tier_explanation_service.py" = ["E501"]
+"src/nativeforge/services/eligibility_handoff_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block02_smoke_runner_service.py" = ["E501"]
+"tests/test_eligibility_evidence_campaign02.py" = ["E501"]
+"tests/test_campaign_block02_smoke.py" = ["E501"]
+
 [tool.ruff.format]
 quote-style = "double"
 

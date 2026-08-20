@@ -9,6 +9,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.eligibility_handoff_service import (
+    build_sc_customer_eligibility_handoff_pack,
+    eligibility_handoff_pack_invariant_failures,
+)
 from nativeforge.services.federal_opportunity_foundation_service import (
     enrich_federal_opportunity_for_sc_customer,
 )
@@ -88,6 +92,54 @@ def build_combined_opportunity_workflow(
         {c for o in combined for c in (o.get("operator_next_check") or [])}
     )[:25]
 
+    eligibility_pack = build_sc_customer_eligibility_handoff_pack()
+    sample_pairs = (eligibility_pack.get("pairs") or [])[:8]
+    eligibility_summary = {
+        "schema_version": eligibility_pack.get("schema_version"),
+        "pair_count": eligibility_pack.get("pair_count"),
+        "federal_pairs_visible": eligibility_pack.get("federal_pairs_visible"),
+        "final_eligibility_claimed": False,
+        "scoring_math_changed": False,
+        "human_review_required": True,
+        "sample_pairs": [
+            {
+                "profile_id": p.get("profile_id"),
+                "opportunity_id": p.get("opportunity_id"),
+                "source_layer": p.get("source_layer"),
+                "applicant_category": (p.get("eligibility_evidence") or {}).get(
+                    "applicant_category"
+                ),
+                "recognition_tier": (p.get("eligibility_evidence") or {}).get(
+                    "recognition_tier"
+                ),
+                "evidence_status": (p.get("eligibility_evidence") or {}).get(
+                    "evidence_status"
+                ),
+                "missing_evidence": (p.get("eligibility_evidence") or {}).get(
+                    "missing_evidence"
+                ),
+                "eligibility_uncertainty": (p.get("eligibility_evidence") or {}).get(
+                    "eligibility_uncertainty"
+                ),
+                "operator_next_check": (p.get("eligibility_evidence") or {}).get(
+                    "operator_next_check"
+                ),
+                "final_eligibility_claimed": False,
+                "human_review_required": True,
+                "gate_outcome": ((p.get("explanation") or {}).get("gate") or {}).get(
+                    "outcome"
+                ),
+                "why_federal_recognition_matters": (p.get("explanation") or {}).get(
+                    "why_federal_recognition_matters"
+                ),
+                "why_state_recognition_matters": (p.get("explanation") or {}).get(
+                    "why_state_recognition_matters"
+                ),
+            }
+            for p in sample_pairs
+        ],
+    }
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -134,6 +186,7 @@ def build_combined_opportunity_workflow(
                 },
                 "no_final_eligibility_claim": True,
             },
+            "eligibility_evidence_handoff": eligibility_summary,
             "missing_data_summary": missing_summary,
             "human_review": human_review,
             "next_checks": next_checks,
@@ -189,4 +242,25 @@ def combined_workflow_invariant_failures(workflow: dict[str, Any]) -> list[str]:
         build_sc_state_source_adapter_config()
     )
     fails.extend([f"adapter:{f}" for f in cfg_fails])
+    eeh = workflow.get("eligibility_evidence_handoff") or {}
+    if not eeh:
+        fails.append("eligibility_evidence_handoff_missing")
+    else:
+        if eeh.get("final_eligibility_claimed") is True:
+            fails.append("eeh_final_claim")
+        if eeh.get("scoring_math_changed") is True:
+            fails.append("eeh_scoring_changed")
+        if eeh.get("federal_pairs_visible") is not True:
+            fails.append("eeh_federal_not_visible")
+        if not eeh.get("sample_pairs"):
+            fails.append("eeh_no_samples")
+        # Rebuild full pack invariants for safety
+        fails.extend(
+            [
+                f"handoff:{x}"
+                for x in eligibility_handoff_pack_invariant_failures(
+                    build_sc_customer_eligibility_handoff_pack()
+                )
+            ]
+        )
     return fails

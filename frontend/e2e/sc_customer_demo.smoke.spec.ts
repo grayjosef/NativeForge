@@ -40,6 +40,22 @@ test.describe("SC customer demo Playwright smoke", () => {
     );
     await expect(page.getByTestId("sc-demo-engine-counts")).toContainText("sc_state");
     await expect(page.getByTestId("sc-demo-engine-counts")).toContainText("federal");
+    await expect(page.getByTestId("sc-demo-eligibility-evidence")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-eligibility-flags")).toContainText(
+      "final_eligibility_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-eligibility-flags")).toContainText(
+      "federal_pairs_visible=true",
+    );
+    await expect(page.getByTestId("sc-demo-eligibility-flags")).toContainText(
+      "scoring_math_changed=false",
+    );
+    await expect(page.getByTestId("sc-demo-eligibility-samples")).toContainText(
+      "recognition_tier=",
+    );
+    await expect(page.getByTestId("sc-demo-eligibility-tier-why")).toContainText(
+      "Federal recognition",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

@@ -262,6 +262,78 @@ export function ScCustomerDemoPage({
               <li key={item}>{item}</li>
             ))}
           </ul>
+          {data.opportunity_engine.combined_workflow.eligibility_evidence_handoff ? (
+            <div data-testid="sc-demo-eligibility-evidence">
+              <h3>Evidence-backed eligibility (recognition tier)</h3>
+              <p className="nf-sc-demo-why">
+                What NativeForge explains: applicant category, recognition tier, evidence,
+                uncertainty, and next checks — without claiming final eligibility.
+              </p>
+              <p data-testid="sc-demo-eligibility-flags" className="nf-muted">
+                pairs=
+                {
+                  data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
+                    .pair_count
+                }{" "}
+                federal_pairs_visible=
+                {String(
+                  data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
+                    .federal_pairs_visible,
+                )}{" "}
+                final_eligibility_claimed=
+                {String(
+                  data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
+                    .final_eligibility_claimed,
+                )}{" "}
+                scoring_math_changed=
+                {String(
+                  data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
+                    .scoring_math_changed,
+                )}{" "}
+                human_review_required=
+                {String(
+                  data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
+                    .human_review_required,
+                )}
+              </p>
+              <ul data-testid="sc-demo-eligibility-samples">
+                {(
+                  data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
+                    .sample_pairs || []
+                )
+                  .slice(0, 6)
+                  .map((p) => (
+                    <li
+                      key={`${p.profile_id}-${p.opportunity_id}`}
+                      data-testid={`sc-demo-eligibility-pair-${p.profile_id}-${p.opportunity_id}`}
+                    >
+                      profile={String(p.profile_id)} opportunity=
+                      {String(p.opportunity_id)} layer={String(p.source_layer)} category=
+                      {String(p.applicant_category)} recognition_tier=
+                      {String(p.recognition_tier)} evidence_status=
+                      {String(p.evidence_status)} missing=
+                      {JSON.stringify(p.missing_evidence || [])} gate=
+                      {String(p.gate_outcome)} final_eligibility_claimed=
+                      {String(p.final_eligibility_claimed)}
+                    </li>
+                  ))}
+              </ul>
+              <p data-testid="sc-demo-eligibility-tier-why" className="nf-muted">
+                {
+                  (
+                    data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
+                      .sample_pairs || []
+                  )[0]?.why_federal_recognition_matters
+                }{" "}
+                {
+                  (
+                    data.opportunity_engine.combined_workflow.eligibility_evidence_handoff
+                      .sample_pairs || []
+                  )[0]?.why_state_recognition_matters
+                }
+              </p>
+            </div>
+          ) : null}
         </section>
       ) : null}
 

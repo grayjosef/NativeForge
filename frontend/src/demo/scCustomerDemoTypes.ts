@@ -109,6 +109,29 @@ export type ScCustomerDemoPayload = {
       missing_data_summary: Record<string, unknown>;
       human_review: Record<string, unknown>;
       eligibility_readiness_handoff: Record<string, unknown>;
+      eligibility_evidence_handoff?: {
+        pair_count?: number;
+        federal_pairs_visible?: boolean;
+        final_eligibility_claimed?: boolean;
+        scoring_math_changed?: boolean;
+        human_review_required?: boolean;
+        sample_pairs?: Array<{
+          profile_id?: string | null;
+          opportunity_id?: string | null;
+          source_layer?: string;
+          applicant_category?: string;
+          recognition_tier?: string;
+          evidence_status?: string;
+          missing_evidence?: string[];
+          eligibility_uncertainty?: string[];
+          operator_next_check?: string[];
+          final_eligibility_claimed?: boolean;
+          human_review_required?: boolean;
+          gate_outcome?: string;
+          why_federal_recognition_matters?: string;
+          why_state_recognition_matters?: string;
+        }>;
+      };
       provenance_summary: Record<string, unknown>;
       combined_ordering_sample: Array<Record<string, unknown>>;
       next_checks_sample: string[];
