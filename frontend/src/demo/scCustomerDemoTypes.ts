@@ -77,4 +77,45 @@ export type ScCustomerDemoPayload = {
     show_submit_controls: boolean;
     advisory_banner: string;
   };
+  nofo_showcase?: {
+    schema_version: string;
+    title: string;
+    pack_id: string;
+    selected_count: number;
+    sc_selected_count: number;
+    federal_selected_count: number;
+    live_ingest_claimed: boolean;
+    nofo_pdf_extraction_claimed: boolean;
+    proposal_drafting_claimed: boolean;
+    buyer_sections: string[];
+    cards: Array<{
+      opportunity_id: string;
+      source_layer: string;
+      source_name?: string | null;
+      title?: string | null;
+      data_mode?: string | null;
+      live_ingest_claimed: boolean;
+      human_review_required: boolean;
+      field_status_counts: Record<string, number>;
+      unresolved_fields: string[];
+      what_nativeforge_found: Record<string, unknown>;
+      what_this_means?: string | null;
+      what_is_missing: Array<Record<string, unknown>>;
+      what_needs_human_review: string[];
+      what_to_do_next: string[];
+      application_plan: {
+        recommendation_label?: string;
+        application_checklist?: Array<Record<string, unknown>>;
+        narrative_section_scaffold?: Array<Record<string, unknown>>;
+        forms_checklist?: Array<Record<string, unknown>>;
+        attachment_checklist?: Array<Record<string, unknown>>;
+        missing_information_questions?: Array<Record<string, unknown>>;
+        completeness?: Record<string, unknown>;
+        proposal_drafting_claimed: boolean;
+        nofo_pdf_extraction_claimed: boolean;
+      };
+      evidence_provenance: Record<string, unknown>;
+      limitations: string[];
+    }>;
+  };
 };

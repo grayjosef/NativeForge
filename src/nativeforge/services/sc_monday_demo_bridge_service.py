@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from nativeforge.services.nofo_showcase_demo_surface_service import (
+    build_nofo_showcase_demo_surface,
+    nofo_showcase_surface_invariant_failures,
+)
 from nativeforge.services.sc_monday_demo_assembler_service import (
     build_sc_monday_demo_artifact,
     demo_artifact_invariant_failures,
@@ -37,6 +41,11 @@ def build_sc_customer_demo_bridge_payload(
     sample = sc[:40] + fed[:80]
     if len(sample) < 20:
         sample = rows[:120]
+
+    nofo_surface = build_nofo_showcase_demo_surface(write_fixtures=False)
+    nofo_fails = nofo_showcase_surface_invariant_failures(nofo_surface)
+    if nofo_fails:
+        raise ValueError(f"NOFO showcase surface invariants failed: {nofo_fails}")
 
     return _json_safe(
         {
@@ -70,6 +79,7 @@ def build_sc_customer_demo_bridge_payload(
                 "full artifact available from assembler."
             ),
             "ui_flags": art.get("ui_flags"),
+            "nofo_showcase": nofo_surface,
         }
     )
 
@@ -101,4 +111,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("sc_opps")
     if opps.get("federal_count", 0) < 1:
         fails.append("fed_opps")
+    nofo = payload.get("nofo_showcase") or {}
+    if not nofo:
+        fails.append("nofo_showcase_missing")
+    else:
+        fails.extend(nofo_showcase_surface_invariant_failures(nofo))
     return fails

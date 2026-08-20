@@ -52,6 +52,817 @@
     "Decide pursue / defer with human review",
     "Next block: NOFO extraction showcase (not claimed here)"
   ],
+  "nofo_showcase": {
+    "buyer_sections": [
+      "What NativeForge found",
+      "What this means",
+      "What is missing",
+      "What needs human review",
+      "What to do next"
+    ],
+    "cards": [
+      {
+        "application_plan": {
+          "application_checklist": [
+            {
+              "item": "Confirm official notice / active round",
+              "owner": "human",
+              "status": "needs_confirmation"
+            },
+            {
+              "item": "Verify eligibility pathway for this organization",
+              "owner": "human",
+              "status": "known"
+            },
+            {
+              "item": "Locate required forms list",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Locate required attachments list",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Draft narratives only after evidence pack is ready",
+              "note": "NativeForge does not fabricate narrative claims in this block",
+              "owner": "human",
+              "status": "not_supported"
+            },
+            {
+              "item": "Budget/match worksheet from verified org facts only",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Tribal resolution if required",
+              "note": "Do not fabricate resolution text",
+              "owner": "human",
+              "status": "not_supported"
+            }
+          ],
+          "attachment_checklist": [
+            {
+              "item": "Official attachments list",
+              "status": "not_in_source"
+            }
+          ],
+          "completeness": {
+            "missing_info_question_count": 14,
+            "ready_for_narrative_drafting": false,
+            "ready_for_submission": false,
+            "resolved_field_hint": 5,
+            "status": "incomplete",
+            "unresolved_count": 11
+          },
+          "forms_checklist": [
+            {
+              "item": "Official forms list",
+              "status": "not_in_source"
+            }
+          ],
+          "missing_information_questions": [
+            {
+              "question": "Confirm or locate official evidence for 'award_range' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "award_range"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'deadline' (currently needs_confirmation). Do not invent.",
+              "status": "needs_confirmation",
+              "topic": "deadline"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'evaluation_criteria' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "evaluation_criteria"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "match_cost_share"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'purpose' (currently needs_confirmation). Do not invent.",
+              "status": "needs_confirmation",
+              "topic": "purpose"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'reporting_burdens' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "reporting_burdens"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'required_attachments' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "required_attachments"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'required_forms' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "required_forms"
+            },
+            {
+              "question": "What staff capacity can this organization commit?",
+              "status": "missing_org_fact",
+              "topic": "organizational_capacity"
+            },
+            {
+              "question": "What verified past performance evidence exists (do not invent)?",
+              "status": "missing_org_fact",
+              "topic": "past_performance"
+            },
+            {
+              "question": "Is cost-share/match available if required?",
+              "status": "missing_org_fact",
+              "topic": "match_funding"
+            },
+            {
+              "question": "Is a tribal resolution required and available for human review?",
+              "status": "missing_org_fact",
+              "topic": "tribal_resolution"
+            },
+            {
+              "question": "Is UEI/SAM registration current?",
+              "status": "missing_org_fact",
+              "topic": "ue_sam"
+            },
+            {
+              "question": "What verified budget inputs exist (do not invent amounts)?",
+              "status": "missing_org_fact",
+              "topic": "budget_basis"
+            }
+          ],
+          "narrative_section_scaffold": [
+            {
+              "content": null,
+              "note": "Section title only \u2014 no generated prose",
+              "section": "Project narrative",
+              "status": "scaffold_only"
+            },
+            {
+              "content": null,
+              "note": "Section title only \u2014 no generated prose",
+              "section": "Evaluation plan",
+              "status": "scaffold_only"
+            }
+          ],
+          "nofo_pdf_extraction_claimed": false,
+          "proposal_drafting_claimed": false,
+          "recommendation_label": "review"
+        },
+        "data_mode": "curated_current",
+        "evidence_provenance": {
+          "captured_at": "2026-08-20",
+          "demo_real_isolation_label": "demo_curated_current_not_live_ingest",
+          "retrieved_at": "2026-08-20",
+          "source_reference": "https://advance.sc.gov/food-sovereignty"
+        },
+        "extraction_confidence": "low_public_inferred",
+        "extraction_method": "deterministic_curated_synopsis_mapper_v1",
+        "field_status_counts": {
+          "inferred": 1,
+          "known": 5,
+          "needs_confirmation": 2,
+          "not_in_source": 6,
+          "not_supported": 3
+        },
+        "human_review_required": true,
+        "limitations": [
+          "Curated-current / synopsis intelligence only",
+          "Full NOFO PDF extraction is not_supported",
+          "Proposal narrative drafting is not_supported",
+          "No fabricated org facts, budgets, resolutions, or past performance"
+        ],
+        "live_ingest_claimed": false,
+        "nofo_document_availability": "not_supported_pdf_extraction",
+        "opportunity_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+        "source_layer": "sc_state",
+        "source_name": "SC Pilot Rules",
+        "synopsis_availability": "partial_from_curated_pack",
+        "title": "SC Commission Food Sovereignty Grants",
+        "unresolved_fields": [
+          "purpose",
+          "deadline",
+          "award_range",
+          "match_cost_share",
+          "required_forms",
+          "required_attachments",
+          "reporting_burdens",
+          "evaluation_criteria",
+          "proposal_narrative",
+          "pdf_nofo_full_text",
+          "tribal_resolution_text"
+        ],
+        "what_is_missing": [
+          {
+            "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+            "field": "purpose",
+            "status": "needs_confirmation"
+          },
+          {
+            "evidence_note": "SC pilot eligibility rule-reference program \u2014 not a live portal listing. Confirm active funding round before customer pursuit.",
+            "field": "deadline",
+            "status": "needs_confirmation"
+          },
+          {
+            "evidence_note": "award floor/ceiling not present in curated pack",
+            "field": "award_range",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "match/cost-share not present in curated pack",
+            "field": "match_cost_share",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "forms list not in curated synopsis/pack",
+            "field": "required_forms",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "attachments list not in curated synopsis/pack",
+            "field": "required_attachments",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "reporting obligations not in curated pack",
+            "field": "reporting_burdens",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "evaluation criteria not in curated pack",
+            "field": "evaluation_criteria",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "Proposal drafting not supported in this block",
+            "field": "proposal_narrative",
+            "status": "not_supported"
+          },
+          {
+            "evidence_note": "Full NOFO PDF extraction not supported in this block",
+            "field": "pdf_nofo_full_text",
+            "status": "not_supported"
+          },
+          {
+            "evidence_note": "Do not fabricate tribal resolutions",
+            "field": "tribal_resolution_text",
+            "status": "not_supported"
+          }
+        ],
+        "what_nativeforge_found": {
+          "deadline": "2026-12-31",
+          "deadline_status": "needs_confirmation",
+          "eligibility": "https://advance.sc.gov/food-sovereignty",
+          "purpose": "https://advance.sc.gov/food-sovereignty",
+          "tribal_native_relevance": "state_ok"
+        },
+        "what_needs_human_review": [
+          "Eligibility evidence review",
+          "Active-round confirmation",
+          "No fabricated narrative/budget/resolution content",
+          "Submission remains human-controlled"
+        ],
+        "what_this_means": "Opportunity is worth human review based on curated Native/tribal relevance, but key requirements remain unresolved or need confirmation.",
+        "what_to_do_next": [
+          "Confirm organization wants to pursue after human eligibility review",
+          "Confirm official deadline and active round",
+          "Assign owners for missing evidence questions"
+        ]
+      },
+      {
+        "application_plan": {
+          "application_checklist": [
+            {
+              "item": "Confirm official notice / active round",
+              "owner": "human",
+              "status": "needs_confirmation"
+            },
+            {
+              "item": "Verify eligibility pathway for this organization",
+              "owner": "human",
+              "status": "known"
+            },
+            {
+              "item": "Locate required forms list",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Locate required attachments list",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Draft narratives only after evidence pack is ready",
+              "note": "NativeForge does not fabricate narrative claims in this block",
+              "owner": "human",
+              "status": "not_supported"
+            },
+            {
+              "item": "Budget/match worksheet from verified org facts only",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Tribal resolution if required",
+              "note": "Do not fabricate resolution text",
+              "owner": "human",
+              "status": "not_supported"
+            }
+          ],
+          "attachment_checklist": [
+            {
+              "item": "Official attachments list",
+              "status": "not_in_source"
+            }
+          ],
+          "completeness": {
+            "missing_info_question_count": 13,
+            "ready_for_narrative_drafting": false,
+            "ready_for_submission": false,
+            "resolved_field_hint": 6,
+            "status": "incomplete",
+            "unresolved_count": 10
+          },
+          "forms_checklist": [
+            {
+              "item": "Official forms list",
+              "status": "not_in_source"
+            }
+          ],
+          "missing_information_questions": [
+            {
+              "question": "Confirm or locate official evidence for 'award_range' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "award_range"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'deadline' (currently needs_confirmation). Do not invent.",
+              "status": "needs_confirmation",
+              "topic": "deadline"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'evaluation_criteria' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "evaluation_criteria"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "match_cost_share"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'reporting_burdens' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "reporting_burdens"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'required_attachments' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "required_attachments"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'required_forms' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "required_forms"
+            },
+            {
+              "question": "What staff capacity can this organization commit?",
+              "status": "missing_org_fact",
+              "topic": "organizational_capacity"
+            },
+            {
+              "question": "What verified past performance evidence exists (do not invent)?",
+              "status": "missing_org_fact",
+              "topic": "past_performance"
+            },
+            {
+              "question": "Is cost-share/match available if required?",
+              "status": "missing_org_fact",
+              "topic": "match_funding"
+            },
+            {
+              "question": "Is a tribal resolution required and available for human review?",
+              "status": "missing_org_fact",
+              "topic": "tribal_resolution"
+            },
+            {
+              "question": "Is UEI/SAM registration current?",
+              "status": "missing_org_fact",
+              "topic": "ue_sam"
+            },
+            {
+              "question": "What verified budget inputs exist (do not invent amounts)?",
+              "status": "missing_org_fact",
+              "topic": "budget_basis"
+            }
+          ],
+          "narrative_section_scaffold": [
+            {
+              "content": null,
+              "note": "Section title only \u2014 no generated prose",
+              "section": "Project narrative",
+              "status": "scaffold_only"
+            },
+            {
+              "content": null,
+              "note": "Section title only \u2014 no generated prose",
+              "section": "Evaluation plan",
+              "status": "scaffold_only"
+            }
+          ],
+          "nofo_pdf_extraction_claimed": false,
+          "proposal_drafting_claimed": false,
+          "recommendation_label": "review"
+        },
+        "data_mode": "curated_current",
+        "evidence_provenance": {
+          "captured_at": "2026-08-20",
+          "demo_real_isolation_label": "demo_curated_current_not_live_ingest",
+          "retrieved_at": "2026-08-20",
+          "source_reference": "https://www.grants.gov/ (offline corpus evidence only)"
+        },
+        "extraction_confidence": "low_public_inferred",
+        "extraction_method": "deterministic_curated_synopsis_mapper_v1",
+        "field_status_counts": {
+          "inferred": 2,
+          "known": 5,
+          "needs_confirmation": 1,
+          "not_in_source": 6,
+          "not_supported": 3
+        },
+        "human_review_required": true,
+        "limitations": [
+          "Curated-current / synopsis intelligence only",
+          "Full NOFO PDF extraction is not_supported",
+          "Proposal narrative drafting is not_supported",
+          "No fabricated org facts, budgets, resolutions, or past performance"
+        ],
+        "live_ingest_claimed": false,
+        "nofo_document_availability": "not_supported_pdf_extraction",
+        "opportunity_id": "nf13-real-fed-012",
+        "source_layer": "federal",
+        "source_name": "ANA / HHS-ACF",
+        "synopsis_availability": "partial_from_curated_pack",
+        "title": "Social & Economic Development Strategies (SEDS)",
+        "unresolved_fields": [
+          "deadline",
+          "award_range",
+          "match_cost_share",
+          "required_forms",
+          "required_attachments",
+          "reporting_burdens",
+          "evaluation_criteria",
+          "proposal_narrative",
+          "pdf_nofo_full_text",
+          "tribal_resolution_text"
+        ],
+        "what_is_missing": [
+          {
+            "evidence_note": "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+            "field": "deadline",
+            "status": "needs_confirmation"
+          },
+          {
+            "evidence_note": "award floor/ceiling not present in curated pack",
+            "field": "award_range",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "match/cost-share not present in curated pack",
+            "field": "match_cost_share",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "forms list not in curated synopsis/pack",
+            "field": "required_forms",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "attachments list not in curated synopsis/pack",
+            "field": "required_attachments",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "reporting obligations not in curated pack",
+            "field": "reporting_burdens",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "evaluation criteria not in curated pack",
+            "field": "evaluation_criteria",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "Proposal drafting not supported in this block",
+            "field": "proposal_narrative",
+            "status": "not_supported"
+          },
+          {
+            "evidence_note": "Full NOFO PDF extraction not supported in this block",
+            "field": "pdf_nofo_full_text",
+            "status": "not_supported"
+          },
+          {
+            "evidence_note": "Do not fabricate tribal resolutions",
+            "field": "tribal_resolution_text",
+            "status": "not_supported"
+          }
+        ],
+        "what_nativeforge_found": {
+          "deadline": "2026-12-31",
+          "deadline_status": "needs_confirmation",
+          "eligibility": "Applicant types: Native American tribal governments (Federally recognized)",
+          "purpose": "Federal grant program: ANA / HHS-ACF \u2014 Social & Economic Development Strategies (SEDS)",
+          "tribal_native_relevance": "tribal_eligible=true"
+        },
+        "what_needs_human_review": [
+          "Eligibility evidence review",
+          "Active-round confirmation",
+          "No fabricated narrative/budget/resolution content",
+          "Submission remains human-controlled"
+        ],
+        "what_this_means": "Opportunity is worth human review based on curated Native/tribal relevance, but key requirements remain unresolved or need confirmation.",
+        "what_to_do_next": [
+          "Confirm organization wants to pursue after human eligibility review",
+          "Confirm official deadline and active round",
+          "Assign owners for missing evidence questions"
+        ]
+      },
+      {
+        "application_plan": {
+          "application_checklist": [
+            {
+              "item": "Confirm official notice / active round",
+              "owner": "human",
+              "status": "needs_confirmation"
+            },
+            {
+              "item": "Verify eligibility pathway for this organization",
+              "owner": "human",
+              "status": "known"
+            },
+            {
+              "item": "Locate required forms list",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Locate required attachments list",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Draft narratives only after evidence pack is ready",
+              "note": "NativeForge does not fabricate narrative claims in this block",
+              "owner": "human",
+              "status": "not_supported"
+            },
+            {
+              "item": "Budget/match worksheet from verified org facts only",
+              "owner": "human",
+              "status": "not_in_source"
+            },
+            {
+              "item": "Tribal resolution if required",
+              "note": "Do not fabricate resolution text",
+              "owner": "human",
+              "status": "not_supported"
+            }
+          ],
+          "attachment_checklist": [
+            {
+              "item": "Official attachments list",
+              "status": "not_in_source"
+            }
+          ],
+          "completeness": {
+            "missing_info_question_count": 13,
+            "ready_for_narrative_drafting": false,
+            "ready_for_submission": false,
+            "resolved_field_hint": 6,
+            "status": "incomplete",
+            "unresolved_count": 10
+          },
+          "forms_checklist": [
+            {
+              "item": "Official forms list",
+              "status": "not_in_source"
+            }
+          ],
+          "missing_information_questions": [
+            {
+              "question": "Confirm or locate official evidence for 'award_range' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "award_range"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'deadline' (currently needs_confirmation). Do not invent.",
+              "status": "needs_confirmation",
+              "topic": "deadline"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'evaluation_criteria' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "evaluation_criteria"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "match_cost_share"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'reporting_burdens' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "reporting_burdens"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'required_attachments' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "required_attachments"
+            },
+            {
+              "question": "Confirm or locate official evidence for 'required_forms' (currently not_in_source). Do not invent.",
+              "status": "not_in_source",
+              "topic": "required_forms"
+            },
+            {
+              "question": "What staff capacity can this organization commit?",
+              "status": "missing_org_fact",
+              "topic": "organizational_capacity"
+            },
+            {
+              "question": "What verified past performance evidence exists (do not invent)?",
+              "status": "missing_org_fact",
+              "topic": "past_performance"
+            },
+            {
+              "question": "Is cost-share/match available if required?",
+              "status": "missing_org_fact",
+              "topic": "match_funding"
+            },
+            {
+              "question": "Is a tribal resolution required and available for human review?",
+              "status": "missing_org_fact",
+              "topic": "tribal_resolution"
+            },
+            {
+              "question": "Is UEI/SAM registration current?",
+              "status": "missing_org_fact",
+              "topic": "ue_sam"
+            },
+            {
+              "question": "What verified budget inputs exist (do not invent amounts)?",
+              "status": "missing_org_fact",
+              "topic": "budget_basis"
+            }
+          ],
+          "narrative_section_scaffold": [
+            {
+              "content": null,
+              "note": "Section title only \u2014 no generated prose",
+              "section": "Project narrative",
+              "status": "scaffold_only"
+            },
+            {
+              "content": null,
+              "note": "Section title only \u2014 no generated prose",
+              "section": "Evaluation plan",
+              "status": "scaffold_only"
+            }
+          ],
+          "nofo_pdf_extraction_claimed": false,
+          "proposal_drafting_claimed": false,
+          "recommendation_label": "review"
+        },
+        "data_mode": "curated_current",
+        "evidence_provenance": {
+          "captured_at": "2026-08-20",
+          "demo_real_isolation_label": "demo_curated_current_not_live_ingest",
+          "retrieved_at": "2026-08-20",
+          "source_reference": "https://www.grants.gov/search-results-detail/362648"
+        },
+        "extraction_confidence": "low_public_inferred",
+        "extraction_method": "deterministic_curated_synopsis_mapper_v1",
+        "field_status_counts": {
+          "inferred": 2,
+          "known": 5,
+          "needs_confirmation": 1,
+          "not_in_source": 6,
+          "not_supported": 3
+        },
+        "human_review_required": true,
+        "limitations": [
+          "Curated-current / synopsis intelligence only",
+          "Full NOFO PDF extraction is not_supported",
+          "Proposal narrative drafting is not_supported",
+          "No fabricated org facts, budgets, resolutions, or past performance"
+        ],
+        "live_ingest_claimed": false,
+        "nofo_document_availability": "not_supported_pdf_extraction",
+        "opportunity_id": "la-real-006",
+        "source_layer": "federal",
+        "source_name": "Bureau of Indian Affairs",
+        "synopsis_availability": "partial_from_curated_pack",
+        "title": "Tribal Energy Development Capacity (TEDC) Grant FY 2026",
+        "unresolved_fields": [
+          "deadline",
+          "award_range",
+          "match_cost_share",
+          "required_forms",
+          "required_attachments",
+          "reporting_burdens",
+          "evaluation_criteria",
+          "proposal_narrative",
+          "pdf_nofo_full_text",
+          "tribal_resolution_text"
+        ],
+        "what_is_missing": [
+          {
+            "evidence_note": "Offline mixed Tier1/3 corpus row curated for SC Native/tribal relevance demo. Not a live Grants.gov pull in this block.",
+            "field": "deadline",
+            "status": "needs_confirmation"
+          },
+          {
+            "evidence_note": "award floor/ceiling not present in curated pack",
+            "field": "award_range",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "match/cost-share not present in curated pack",
+            "field": "match_cost_share",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "forms list not in curated synopsis/pack",
+            "field": "required_forms",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "attachments list not in curated synopsis/pack",
+            "field": "required_attachments",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "reporting obligations not in curated pack",
+            "field": "reporting_burdens",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "evaluation criteria not in curated pack",
+            "field": "evaluation_criteria",
+            "status": "not_in_source"
+          },
+          {
+            "evidence_note": "Proposal drafting not supported in this block",
+            "field": "proposal_narrative",
+            "status": "not_supported"
+          },
+          {
+            "evidence_note": "Full NOFO PDF extraction not supported in this block",
+            "field": "pdf_nofo_full_text",
+            "status": "not_supported"
+          },
+          {
+            "evidence_note": "Do not fabricate tribal resolutions",
+            "field": "tribal_resolution_text",
+            "status": "not_supported"
+          }
+        ],
+        "what_nativeforge_found": {
+          "deadline": "07/16/2026",
+          "deadline_status": "needs_confirmation",
+          "eligibility": "Applicant types: Native American tribal governments (Federally recognized); Native American tribal organizations (other than Federally recognized tribal governments)\n\nOnly Indian Tribes and Tribal Energy Development Organizations (TEDOs) are eligible to receive TEDC grants for projects on Indian land, as provided under the Energy Policy Act of 2005, as amended, and codified under sections 3501-3503 of title 25 of the United States Code (25 U.S.C. \u00a7\u00a7 3501-3503). TEDC grants may only fund projects occurring on Indian land as defined in the under 25 U.S.C. \u00a7 3501.",
+          "purpose": "The Secretary of the Interior (\"Secretary\"), through the Division of Energy and Mineral Development (DEMD), Office of Trust Services, Bureau of Indian Affairs (BIA), is soliciting grant proposals from Federally recognized Tribal entities for the Tribal Energy Development Capacity (TEDC) grant. The TEDC grant seeks to build Tribal management, organizational and technical capacity needed to maximize the economic impact of energy resource development on Indian land. Grants may fund development of organizational and business structures for energy development, as well as legal and regulatory infrastructure. Certified Local Governments are encouraged to prioritize projects in support of the celebration of America's 250th birthday (America250). This may include, but is not limited to, preservation 2 planning, interpretation, public engagement, and rehabilitation projects that recognize and honor the nation's founding, history, and cultural heritage.New TERA Pathways Topic Area - As part of this solicitation, applicants may elect to pursue activities aligned with the TERA Pathways Initiative, a strategic capacity building effort focused on supporting Tribal progress toward energy self-determination under the Tribal Energy Resource Agreement (TERA) framework. Applications should specify if they are applying for this topic area.",
+          "tribal_native_relevance": "tribal_eligible=true"
+        },
+        "what_needs_human_review": [
+          "Eligibility evidence review",
+          "Active-round confirmation",
+          "No fabricated narrative/budget/resolution content",
+          "Submission remains human-controlled"
+        ],
+        "what_this_means": "Opportunity is worth human review based on curated Native/tribal relevance, but key requirements remain unresolved or need confirmation.",
+        "what_to_do_next": [
+          "Confirm organization wants to pursue after human eligibility review",
+          "Confirm official deadline and active round",
+          "Assign owners for missing evidence questions"
+        ]
+      }
+    ],
+    "federal_selected_count": 2,
+    "live_ingest_claimed": false,
+    "nofo_pdf_extraction_claimed": false,
+    "pack_id": "nofo_showcase_selected_20260820",
+    "proposal_drafting_claimed": false,
+    "sc_selected_count": 1,
+    "schema_version": "nf_nofo_showcase_demo_surface_v1",
+    "selected_count": 3,
+    "title": "NOFO / synopsis intelligence + application plan skeleton"
+  },
   "offline_only": true,
   "opportunities": {
     "by_data_label": {

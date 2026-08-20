@@ -621,6 +621,15 @@ select = ["E", "F", "I", "UP", "B"]
 "tests/test_sc_monday_curated_pack.py" = ["E501"]
 "tests/test_sc_monday_demo_assembler.py" = ["E501"]
 
+"src/nativeforge/services/nofo_showcase_field_status_service.py" = ["E501"]
+"src/nativeforge/services/nofo_showcase_intelligence_pack_service.py" = ["E501"]
+"src/nativeforge/services/nofo_showcase_application_plan_service.py" = ["E501"]
+"tests/test_nofo_showcase_field_status.py" = ["E501"]
+"tests/test_nofo_showcase_intelligence_and_plan.py" = ["E501"]
+"src/nativeforge/services/nofo_showcase_demo_surface_service.py" = ["E501"]
+"src/nativeforge/services/nofo_showcase_smoke_runner_service.py" = ["E501"]
+"tests/test_nofo_showcase_surface_and_smoke.py" = ["E501"]
+
 [tool.ruff.format]
 quote-style = "double"
 
