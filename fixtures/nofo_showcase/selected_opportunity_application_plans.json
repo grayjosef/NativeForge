@@ -1,0 +1,563 @@
+{
+  "nofo_pdf_extraction_claimed": false,
+  "pack_id": "nofo_showcase_selected_20260820",
+  "plan_count": 3,
+  "plans": [
+    {
+      "application_checklist": [
+        {
+          "item": "Confirm official notice / active round",
+          "owner": "human",
+          "status": "needs_confirmation"
+        },
+        {
+          "item": "Verify eligibility pathway for this organization",
+          "owner": "human",
+          "status": "known"
+        },
+        {
+          "item": "Locate required forms list",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Locate required attachments list",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Draft narratives only after evidence pack is ready",
+          "note": "NativeForge does not fabricate narrative claims in this block",
+          "owner": "human",
+          "status": "not_supported"
+        },
+        {
+          "item": "Budget/match worksheet from verified org facts only",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Tribal resolution if required",
+          "note": "Do not fabricate resolution text",
+          "owner": "human",
+          "status": "not_supported"
+        }
+      ],
+      "attachment_checklist": [
+        {
+          "item": "Official attachments list",
+          "status": "not_in_source"
+        }
+      ],
+      "budget_match_questions": [
+        {
+          "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "match_cost_share"
+        },
+        {
+          "question": "Is cost-share/match available if required?",
+          "status": "missing_org_fact",
+          "topic": "match_funding"
+        },
+        {
+          "question": "What verified budget inputs exist (do not invent amounts)?",
+          "status": "missing_org_fact",
+          "topic": "budget_basis"
+        }
+      ],
+      "completeness": {
+        "missing_info_question_count": 14,
+        "ready_for_narrative_drafting": false,
+        "ready_for_submission": false,
+        "resolved_field_hint": 5,
+        "status": "incomplete",
+        "unresolved_count": 11
+      },
+      "forms_checklist": [
+        {
+          "item": "Official forms list",
+          "status": "not_in_source"
+        }
+      ],
+      "human_approval_gates": [
+        "Eligibility evidence review",
+        "Active-round confirmation",
+        "No fabricated narrative/budget/resolution content",
+        "Submission remains human-controlled"
+      ],
+      "live_ingest_claimed": false,
+      "missing_information_questions": [
+        {
+          "question": "Confirm or locate official evidence for 'award_range' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "award_range"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'deadline' (currently needs_confirmation). Do not invent.",
+          "status": "needs_confirmation",
+          "topic": "deadline"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'evaluation_criteria' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "evaluation_criteria"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "match_cost_share"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'purpose' (currently needs_confirmation). Do not invent.",
+          "status": "needs_confirmation",
+          "topic": "purpose"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'reporting_burdens' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "reporting_burdens"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'required_attachments' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "required_attachments"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'required_forms' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "required_forms"
+        },
+        {
+          "question": "What staff capacity can this organization commit?",
+          "status": "missing_org_fact",
+          "topic": "organizational_capacity"
+        },
+        {
+          "question": "What verified past performance evidence exists (do not invent)?",
+          "status": "missing_org_fact",
+          "topic": "past_performance"
+        },
+        {
+          "question": "Is cost-share/match available if required?",
+          "status": "missing_org_fact",
+          "topic": "match_funding"
+        },
+        {
+          "question": "Is a tribal resolution required and available for human review?",
+          "status": "missing_org_fact",
+          "topic": "tribal_resolution"
+        },
+        {
+          "question": "Is UEI/SAM registration current?",
+          "status": "missing_org_fact",
+          "topic": "ue_sam"
+        },
+        {
+          "question": "What verified budget inputs exist (do not invent amounts)?",
+          "status": "missing_org_fact",
+          "topic": "budget_basis"
+        }
+      ],
+      "narrative_section_scaffold": [
+        {
+          "content": null,
+          "note": "Section title only \u2014 no generated prose",
+          "section": "Project narrative",
+          "status": "scaffold_only"
+        },
+        {
+          "content": null,
+          "note": "Section title only \u2014 no generated prose",
+          "section": "Evaluation plan",
+          "status": "scaffold_only"
+        }
+      ],
+      "nofo_pdf_extraction_claimed": false,
+      "opportunity_id": "sc-rule-SC_FOOD_SOVEREIGNTY",
+      "proposal_drafting_claimed": false,
+      "recommendation_label": "review",
+      "required_decisions": [
+        "Confirm organization wants to pursue after human eligibility review",
+        "Confirm official deadline and active round",
+        "Assign owners for missing evidence questions"
+      ],
+      "schema_version": "nf_nofo_showcase_application_plan_v1",
+      "source_layer": "sc_state",
+      "tribal_resolution_question": {
+        "question": "If a tribal resolution is required, obtain human-approved resolution text \u2014 do not invent.",
+        "required_unknown": true,
+        "status": "not_supported"
+      },
+      "why_worth_review": "Opportunity is worth human review based on curated Native/tribal relevance, but key requirements remain unresolved or need confirmation."
+    },
+    {
+      "application_checklist": [
+        {
+          "item": "Confirm official notice / active round",
+          "owner": "human",
+          "status": "needs_confirmation"
+        },
+        {
+          "item": "Verify eligibility pathway for this organization",
+          "owner": "human",
+          "status": "known"
+        },
+        {
+          "item": "Locate required forms list",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Locate required attachments list",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Draft narratives only after evidence pack is ready",
+          "note": "NativeForge does not fabricate narrative claims in this block",
+          "owner": "human",
+          "status": "not_supported"
+        },
+        {
+          "item": "Budget/match worksheet from verified org facts only",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Tribal resolution if required",
+          "note": "Do not fabricate resolution text",
+          "owner": "human",
+          "status": "not_supported"
+        }
+      ],
+      "attachment_checklist": [
+        {
+          "item": "Official attachments list",
+          "status": "not_in_source"
+        }
+      ],
+      "budget_match_questions": [
+        {
+          "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "match_cost_share"
+        },
+        {
+          "question": "Is cost-share/match available if required?",
+          "status": "missing_org_fact",
+          "topic": "match_funding"
+        },
+        {
+          "question": "What verified budget inputs exist (do not invent amounts)?",
+          "status": "missing_org_fact",
+          "topic": "budget_basis"
+        }
+      ],
+      "completeness": {
+        "missing_info_question_count": 13,
+        "ready_for_narrative_drafting": false,
+        "ready_for_submission": false,
+        "resolved_field_hint": 6,
+        "status": "incomplete",
+        "unresolved_count": 10
+      },
+      "forms_checklist": [
+        {
+          "item": "Official forms list",
+          "status": "not_in_source"
+        }
+      ],
+      "human_approval_gates": [
+        "Eligibility evidence review",
+        "Active-round confirmation",
+        "No fabricated narrative/budget/resolution content",
+        "Submission remains human-controlled"
+      ],
+      "live_ingest_claimed": false,
+      "missing_information_questions": [
+        {
+          "question": "Confirm or locate official evidence for 'award_range' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "award_range"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'deadline' (currently needs_confirmation). Do not invent.",
+          "status": "needs_confirmation",
+          "topic": "deadline"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'evaluation_criteria' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "evaluation_criteria"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "match_cost_share"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'reporting_burdens' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "reporting_burdens"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'required_attachments' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "required_attachments"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'required_forms' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "required_forms"
+        },
+        {
+          "question": "What staff capacity can this organization commit?",
+          "status": "missing_org_fact",
+          "topic": "organizational_capacity"
+        },
+        {
+          "question": "What verified past performance evidence exists (do not invent)?",
+          "status": "missing_org_fact",
+          "topic": "past_performance"
+        },
+        {
+          "question": "Is cost-share/match available if required?",
+          "status": "missing_org_fact",
+          "topic": "match_funding"
+        },
+        {
+          "question": "Is a tribal resolution required and available for human review?",
+          "status": "missing_org_fact",
+          "topic": "tribal_resolution"
+        },
+        {
+          "question": "Is UEI/SAM registration current?",
+          "status": "missing_org_fact",
+          "topic": "ue_sam"
+        },
+        {
+          "question": "What verified budget inputs exist (do not invent amounts)?",
+          "status": "missing_org_fact",
+          "topic": "budget_basis"
+        }
+      ],
+      "narrative_section_scaffold": [
+        {
+          "content": null,
+          "note": "Section title only \u2014 no generated prose",
+          "section": "Project narrative",
+          "status": "scaffold_only"
+        },
+        {
+          "content": null,
+          "note": "Section title only \u2014 no generated prose",
+          "section": "Evaluation plan",
+          "status": "scaffold_only"
+        }
+      ],
+      "nofo_pdf_extraction_claimed": false,
+      "opportunity_id": "nf13-real-fed-012",
+      "proposal_drafting_claimed": false,
+      "recommendation_label": "review",
+      "required_decisions": [
+        "Confirm organization wants to pursue after human eligibility review",
+        "Confirm official deadline and active round",
+        "Assign owners for missing evidence questions"
+      ],
+      "schema_version": "nf_nofo_showcase_application_plan_v1",
+      "source_layer": "federal",
+      "tribal_resolution_question": {
+        "question": "If a tribal resolution is required, obtain human-approved resolution text \u2014 do not invent.",
+        "required_unknown": true,
+        "status": "not_supported"
+      },
+      "why_worth_review": "Opportunity is worth human review based on curated Native/tribal relevance, but key requirements remain unresolved or need confirmation."
+    },
+    {
+      "application_checklist": [
+        {
+          "item": "Confirm official notice / active round",
+          "owner": "human",
+          "status": "needs_confirmation"
+        },
+        {
+          "item": "Verify eligibility pathway for this organization",
+          "owner": "human",
+          "status": "known"
+        },
+        {
+          "item": "Locate required forms list",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Locate required attachments list",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Draft narratives only after evidence pack is ready",
+          "note": "NativeForge does not fabricate narrative claims in this block",
+          "owner": "human",
+          "status": "not_supported"
+        },
+        {
+          "item": "Budget/match worksheet from verified org facts only",
+          "owner": "human",
+          "status": "not_in_source"
+        },
+        {
+          "item": "Tribal resolution if required",
+          "note": "Do not fabricate resolution text",
+          "owner": "human",
+          "status": "not_supported"
+        }
+      ],
+      "attachment_checklist": [
+        {
+          "item": "Official attachments list",
+          "status": "not_in_source"
+        }
+      ],
+      "budget_match_questions": [
+        {
+          "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "match_cost_share"
+        },
+        {
+          "question": "Is cost-share/match available if required?",
+          "status": "missing_org_fact",
+          "topic": "match_funding"
+        },
+        {
+          "question": "What verified budget inputs exist (do not invent amounts)?",
+          "status": "missing_org_fact",
+          "topic": "budget_basis"
+        }
+      ],
+      "completeness": {
+        "missing_info_question_count": 13,
+        "ready_for_narrative_drafting": false,
+        "ready_for_submission": false,
+        "resolved_field_hint": 6,
+        "status": "incomplete",
+        "unresolved_count": 10
+      },
+      "forms_checklist": [
+        {
+          "item": "Official forms list",
+          "status": "not_in_source"
+        }
+      ],
+      "human_approval_gates": [
+        "Eligibility evidence review",
+        "Active-round confirmation",
+        "No fabricated narrative/budget/resolution content",
+        "Submission remains human-controlled"
+      ],
+      "live_ingest_claimed": false,
+      "missing_information_questions": [
+        {
+          "question": "Confirm or locate official evidence for 'award_range' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "award_range"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'deadline' (currently needs_confirmation). Do not invent.",
+          "status": "needs_confirmation",
+          "topic": "deadline"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'evaluation_criteria' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "evaluation_criteria"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'match_cost_share' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "match_cost_share"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'reporting_burdens' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "reporting_burdens"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'required_attachments' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "required_attachments"
+        },
+        {
+          "question": "Confirm or locate official evidence for 'required_forms' (currently not_in_source). Do not invent.",
+          "status": "not_in_source",
+          "topic": "required_forms"
+        },
+        {
+          "question": "What staff capacity can this organization commit?",
+          "status": "missing_org_fact",
+          "topic": "organizational_capacity"
+        },
+        {
+          "question": "What verified past performance evidence exists (do not invent)?",
+          "status": "missing_org_fact",
+          "topic": "past_performance"
+        },
+        {
+          "question": "Is cost-share/match available if required?",
+          "status": "missing_org_fact",
+          "topic": "match_funding"
+        },
+        {
+          "question": "Is a tribal resolution required and available for human review?",
+          "status": "missing_org_fact",
+          "topic": "tribal_resolution"
+        },
+        {
+          "question": "Is UEI/SAM registration current?",
+          "status": "missing_org_fact",
+          "topic": "ue_sam"
+        },
+        {
+          "question": "What verified budget inputs exist (do not invent amounts)?",
+          "status": "missing_org_fact",
+          "topic": "budget_basis"
+        }
+      ],
+      "narrative_section_scaffold": [
+        {
+          "content": null,
+          "note": "Section title only \u2014 no generated prose",
+          "section": "Project narrative",
+          "status": "scaffold_only"
+        },
+        {
+          "content": null,
+          "note": "Section title only \u2014 no generated prose",
+          "section": "Evaluation plan",
+          "status": "scaffold_only"
+        }
+      ],
+      "nofo_pdf_extraction_claimed": false,
+      "opportunity_id": "la-real-006",
+      "proposal_drafting_claimed": false,
+      "recommendation_label": "review",
+      "required_decisions": [
+        "Confirm organization wants to pursue after human eligibility review",
+        "Confirm official deadline and active round",
+        "Assign owners for missing evidence questions"
+      ],
+      "schema_version": "nf_nofo_showcase_application_plan_v1",
+      "source_layer": "federal",
+      "tribal_resolution_question": {
+        "question": "If a tribal resolution is required, obtain human-approved resolution text \u2014 do not invent.",
+        "required_unknown": true,
+        "status": "not_supported"
+      },
+      "why_worth_review": "Opportunity is worth human review based on curated Native/tribal relevance, but key requirements remain unresolved or need confirmation."
+    }
+  ],
+  "proposal_drafting_claimed": false,
+  "schema_version": "nf_nofo_showcase_application_plan_v1"
+}
