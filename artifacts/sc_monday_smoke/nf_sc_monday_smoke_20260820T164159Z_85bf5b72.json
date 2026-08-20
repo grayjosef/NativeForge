@@ -1,0 +1,97 @@
+{
+  "content_digest": "0952cc002f8ed139",
+  "demo_route_path": "/?view=sc_customer_demo",
+  "expected_surfaces": [
+    "sc_profiles_visible",
+    "sc_opportunities_visible",
+    "federal_opportunities_visible",
+    "combined_state_federal_workflow",
+    "eligibility_explanation",
+    "missing_data_display",
+    "human_review_display",
+    "provenance_evidence_display",
+    "buyer_what_nf_did",
+    "buyer_next_actions",
+    "no_live_ingest_claim",
+    "no_final_eligibility_claim",
+    "demo_route_present",
+    "honest_data_labels"
+  ],
+  "failures": [],
+  "overall_status": "PASS",
+  "run_id": "nf_sc_monday_smoke_20260820T164159Z_85bf5b72",
+  "schema_version": "nf_sc_monday_demo_smoke_v1",
+  "smoke_mode": "offline_sc_monday_demo",
+  "surfaces": [
+    {
+      "detail": "profiles=10",
+      "status": "PASS",
+      "surface": "sc_profiles_visible"
+    },
+    {
+      "detail": "sc=3",
+      "status": "PASS",
+      "surface": "sc_opportunities_visible"
+    },
+    {
+      "detail": "federal=15",
+      "status": "PASS",
+      "surface": "federal_opportunities_visible"
+    },
+    {
+      "detail": "rows=180",
+      "status": "PASS",
+      "surface": "combined_state_federal_workflow"
+    },
+    {
+      "detail": "blockers_field_present",
+      "status": "PASS",
+      "surface": "eligibility_explanation"
+    },
+    {
+      "detail": "hidden_missing_data=false",
+      "status": "PASS",
+      "surface": "missing_data_display"
+    },
+    {
+      "detail": "human_review=180",
+      "status": "PASS",
+      "surface": "human_review_display"
+    },
+    {
+      "detail": "notes_visible",
+      "status": "PASS",
+      "surface": "provenance_evidence_display"
+    },
+    {
+      "detail": "story_present",
+      "status": "PASS",
+      "surface": "buyer_what_nf_did"
+    },
+    {
+      "detail": "next_actions_present",
+      "status": "PASS",
+      "surface": "buyer_next_actions"
+    },
+    {
+      "detail": "live_ingestion=false",
+      "status": "PASS",
+      "surface": "no_live_ingest_claim"
+    },
+    {
+      "detail": "final_claim=false",
+      "status": "PASS",
+      "surface": "no_final_eligibility_claim"
+    },
+    {
+      "detail": "/?view=sc_customer_demo",
+      "status": "PASS",
+      "surface": "demo_route_present"
+    },
+    {
+      "detail": "af=[] bf=[]",
+      "status": "PASS",
+      "surface": "honest_data_labels"
+    }
+  ]
+}

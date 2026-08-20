@@ -1,0 +1,76 @@
+{
+  "demo_route_path": "/?view=sc_customer_demo",
+  "failed_surfaces": [],
+  "federal_selected_count": 2,
+  "invariant_failures": {
+    "bridge": [],
+    "surface": []
+  },
+  "run_id": "nf_nofo_showcase_smoke_20260820T164133Z_8b3d9c41",
+  "sc_selected_count": 1,
+  "schema_version": "nf_nofo_showcase_smoke_v1",
+  "selected_count": 3,
+  "status": "PASS",
+  "surfaces": [
+    {
+      "detail": "/?view=sc_customer_demo",
+      "status": "PASS",
+      "surface": "demo_route_present"
+    },
+    {
+      "detail": "sc=1",
+      "status": "PASS",
+      "surface": "sc_intelligence_visible"
+    },
+    {
+      "detail": "federal=2",
+      "status": "PASS",
+      "surface": "federal_intelligence_visible"
+    },
+    {
+      "detail": "{'known': 5, 'not_in_source': 6, 'needs_confirmation': 2, 'not_supported': 3, 'inferred': 1}",
+      "status": "PASS",
+      "surface": "field_status_labels_visible"
+    },
+    {
+      "detail": "cards=3",
+      "status": "PASS",
+      "surface": "application_plan_visible"
+    },
+    {
+      "detail": "checklist present on cards",
+      "status": "PASS",
+      "surface": "checklist_visible"
+    },
+    {
+      "detail": "captured_at present",
+      "status": "PASS",
+      "surface": "evidence_provenance_visible"
+    },
+    {
+      "detail": "human_review_required=true",
+      "status": "PASS",
+      "surface": "human_review_visible"
+    },
+    {
+      "detail": "questions present",
+      "status": "PASS",
+      "surface": "missing_info_questions_visible"
+    },
+    {
+      "detail": "proposal_drafting_claimed=false",
+      "status": "PASS",
+      "surface": "no_proposal_drafting_claim"
+    },
+    {
+      "detail": "nofo_pdf_extraction_claimed=false",
+      "status": "PASS",
+      "surface": "no_nofo_pdf_claim"
+    },
+    {
+      "detail": "surface_fails=[] bridge_fails=[]",
+      "status": "PASS",
+      "surface": "no_live_ingest_claim"
+    }
+  ]
+}
