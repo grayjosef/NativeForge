@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:nm-wa-smoke": "playwright test e2e/nm_wa_operator_demo.smoke.spec.ts"
+    "test:e2e:nm-wa-smoke": "playwright test e2e/nm_wa_operator_demo.smoke.spec.ts",
+    "test:e2e:sc-monday-smoke": "playwright test e2e/sc_customer_demo.smoke.spec.ts"
   },
   "dependencies": {
     "react": "^19.0.0",
