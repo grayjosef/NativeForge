@@ -1,33 +1,32 @@
-# 13_HANDOFF_LATEST — Gate 26 closeout
+# 13_HANDOFF_LATEST — Gate 27 closeout
 
 **Date:** 2026-08-21
-**Gate:** 26 — Security Attestation / Pen-Test + Controlled Pilot Master Resolver
-**Blocks:** 57 (2501–2550), 58 (2551–2600)
+**Gate:** 27 — Owner Mode B Unlock Packet + Production Cutover Checklist
+**Blocks:** 59 (2601–2650), 60 (2651–2700)
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `3b83815`
-**HEAD after:** `6113b9d`
-**Mode:** A (no pen-test evidence; pilot below GO)
+**HEAD before:** `904835d`
+**HEAD after:** `d9b1b9a`
+**Mode:** A (owner unlock inputs absent)
 
 ## Shipped
 
-### Block 57
-- Security attestation + pen-test evidence contracts
-- Finding severity/status + pass rules (no silent pass)
-- Panel: `sc-demo-security-attestation`
-- Doc: `266`
+### Block 59
+- Owner unlock packet (Auth0 / storage / pen-test requirements)
+- Repo-safe vs OOB secret map; secret rejection
+- Panel: `sc-demo-owner-unlock-packet`
+- Doc: `272`
 
-### Block 58
-- Controlled pilot master GO/NO-GO resolver across all gates
-- Allowed/forbidden claims + missing gates
-- Panel: `sc-demo-controlled-pilot-master`
-- Doc: `267`
+### Block 60
+- Production/pilot cutover checklists + claim freeze matrix
+- Panel: `sc-demo-cutover-claim-freeze`
+- Docs: `273`, `274`
 
 ## Claims remain false
-pen-test passed, pilot GO, production rollout GO, login live, production storage, customer persistence
+login live, production auth/storage, customer persistence, pen-test pass, pilot GO, rollout GO, Mode B executed
 
-## Next — Gate 27
-Owner Mode B unlock packet (Auth0 + storage + pen-test evidence ingest) or production cutover checklist (Blocks 59–60)
+## Next — Gate 28
+Mode B execution under real owner inputs OR production dry-run rehearsal (Blocks 61–62)
 
 ## Safety
-No secrets; no fake pen-test/pilot GO; stash/uv.lock untouched; SCA not invalidated
+No secrets; no fake Mode B/approval; stash/uv.lock untouched; SCA not invalidated

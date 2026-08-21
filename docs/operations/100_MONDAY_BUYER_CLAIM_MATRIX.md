@@ -38,5 +38,7 @@
 | Object storage signed-URL unlock (Gate 25) | IMPLEMENTED / blocked without approval/SSE/malware |
 | Security attestation / pen-test gate (Gate 26) | IMPLEMENTED / no report; pen_test_passed false |
 | Controlled pilot master resolver (Gate 26) | IMPLEMENTED / CONDITIONAL_INTERNAL_ONLY; not GO |
+| Owner Mode B unlock packet (Gate 27) | IMPLEMENTED / Mode A; inputs absent |
+| Production cutover + claim freeze (Gate 27) | IMPLEMENTED / rollout NO_GO; claims frozen false |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
