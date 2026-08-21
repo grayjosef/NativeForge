@@ -2,58 +2,56 @@
 
 ## Gate / Campaign Block complete
 
-**Gate 06 complete — Blocks 17–18 / Sprints 501–600**
+**Gate 07 complete — Blocks 19–20 / Sprints 601–700**
 
-- Block 17 of 20 — Code Health, Test Inventory, Coverage Risk Map
-- Block 18 of 20 — Security, Adversarial QA, Pen-Test Readiness Hardening
+- Block 19 of 20 — Multi-Organization Pilot / Cohort Readiness Packaging
+- Block 20 of 20 — Collaboration Dark-Launch Foundation Expansion
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
-- HEAD before: `2250839`
-- HEAD after: `f0887ca`
+- HEAD before: `203cfd3`
+- HEAD after: _(set after final push align)_
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
-## Block 17 delivered
+## Block 19 delivered
 
-- Code/test inventory service + report (`149_CODE_HEALTH_TEST_POSTURE_REPORT.md`)
-- Critical-path coverage map (`150_CRITICAL_PATH_COVERAGE_MAP.md`)
-- No-fail claim/governance invariant suite
-- Approximate test-to-code ratio measured (~0.56)
-- Full suite **not** re-run; full-suite green **not** claimed
+- Multi-org pilot cohort contract (4 SC Native/tribal fixture orgs)
+- Per-org package state assembler + isolation checks
+- Cohort operator rollup
+- SC demo panel: Multi-organization pilot / cohort readiness
 
-## Block 18 delivered
+## Block 20 delivered
 
-- Security posture inventory (`151_SECURITY_POSTURE_INVENTORY.md`)
-- Adversarial fixtures + suite (`fixtures/adversarial_qa_pilot/`)
-- Payload/Slack sanitization hardening
-- Data isolation / QA-bypass / overclaim resistance suite
-- Pen-test readiness report (`152_PEN_TEST_READINESS_REPORT.md`) — **pen-test pass NOT claimed**
+- Collaboration consent + opt-in statuses
+- Future fit model (dark / not computed)
+- Cohort/global rollout controls (default dark/disabled)
+- SC demo panel: Future collaboration / dark launch (OFF)
 
-## Smoke run_ids (Gate 06 closeout)
+## Smoke run_ids (Gate 07 closeout)
 
-- Block 17: `nf_camp17_code_health_smoke_20260821T011814Z_7de3967d`
-- Block 18: `nf_camp18_security_smoke_20260821T011817Z_d9c4aa4d`
-- Staging: `sc_monday_demo_staging_verify: OK`
-- Playwright: not re-run (no route/UI changes this gate); latest Gate 05: `nf_sc_monday_playwright_20260821T010851Z_dc756cf5`
+- Block 19: `nf_camp19_multiorg_smoke_20260821T013153Z_111d36e4`
+- Block 20: `nf_camp20_collab_dark_smoke_20260821T013156Z_f04c02ba`
+- Demo-runtime: `nf_sc_monday_browser_20260821T013202Z_dc688d6a`
+- Playwright: `nf_sc_monday_playwright_20260821T013204Z_c9f2cfbc`
 
 ## Docs
 
-- `149`–`152` reports; `153`–`156` Block 17/18 specs + claim matrices
-- Sprint stubs: `campaign_block17_sprints/`, `campaign_block18_sprints/`
+- `157`–`158` Block 19; `159`–`160` Block 20
+- Sprint stubs: `campaign_block19_sprints/`, `campaign_block20_sprints/`
 
 ## World-class maturity
 
-- Before Gate 06: ~74–80%
-- After Gate 06: ~80–86%
-- Improved: measurable test posture + adversarial/security evidence pack
-- Still below: external pen-test, SCA, multi-tenant durable isolation, live freshness/PDF/uploads
+- Before Gate 07: ~80–86%
+- After Gate 07: ~86–92%
+- Improved: multi-org cohort credibility + collaboration dark architecture
+- Still below: production multi-tenant, live login, external pen-test, durable uploads, live collaboration
 
 ## NEXT SAFE ACTION
 
-**Gate 07 — Multi-org pilot packaging + collaboration dark-launch foundation**
+**Gate 08 — Durable evidence/upload persistence + operator enablement (or external pen-test engagement prep)**
 
-- Block 19: Multi-organization pilot / cohort readiness packaging
-- Block 20: Collaboration dark-launch foundation (remain OFF until explicit enable)
+- Block 21: Durable evidence/upload persistence with human review (honest claims)
+- Block 22: Operator enablement / production readiness checklist (still no fake pen-test pass)
