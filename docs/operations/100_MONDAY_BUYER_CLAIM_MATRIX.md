@@ -40,5 +40,7 @@
 | Controlled pilot master resolver (Gate 26) | IMPLEMENTED / CONDITIONAL_INTERNAL_ONLY; not GO |
 | Owner Mode B unlock packet (Gate 27) | IMPLEMENTED / Mode A; inputs absent |
 | Production cutover + claim freeze (Gate 27) | IMPLEMENTED / rollout NO_GO; claims frozen false |
+| Mode B execution rehearsal (Gate 28) | IMPLEMENTED / synthetic only; Mode B executed=false |
+| Production dry-run cutover (Gate 28) | IMPLEMENTED / stops at Auth0; cutover not executed |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |

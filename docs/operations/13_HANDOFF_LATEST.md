@@ -1,32 +1,35 @@
-# 13_HANDOFF_LATEST — Gate 27 closeout
+# NativeForge Handoff — Gate 28 Complete
 
 **Date:** 2026-08-21
-**Gate:** 27 — Owner Mode B Unlock Packet + Production Cutover Checklist
-**Blocks:** 59 (2601–2650), 60 (2651–2700)
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `904835d`
-**HEAD after:** `21cef40`
-**Mode:** A (owner unlock inputs absent)
+**HEAD before:** `7854249`
+**Mode:** A (synthetic Mode B rehearsal; dry-run cutover)
 
 ## Shipped
 
-### Block 59
-- Owner unlock packet (Auth0 / storage / pen-test requirements)
-- Repo-safe vs OOB secret map; secret rejection
-- Panel: `sc-demo-owner-unlock-packet`
-- Doc: `272`
+- **Block 61:** Mode B live unlock rehearsal (synthetic fixtures; claim freeze verified; live claims false)
+- **Block 62:** Production dry-run cutover (22 steps; stops at Auth0; final freeze verified)
 
-### Block 60
-- Production/pilot cutover checklists + claim freeze matrix
-- Panel: `sc-demo-cutover-claim-freeze`
-- Docs: `273`, `274`
+## Claims
 
-## Claims remain false
-login live, production auth/storage, customer persistence, pen-test pass, pilot GO, rollout GO, Mode B executed
+Real owner inputs: **absent**
+Mode B executed: **false**
+Production cutover executed: **false**
+Controlled customer pilot: **CONDITIONAL_INTERNAL_ONLY / NO_GO**
+Production rollout: **PRODUCTION_ROLLOUT_NO_GO**
 
-## Next — Gate 28
-Mode B execution under real owner inputs OR production dry-run rehearsal (Blocks 61–62)
+## First dry-run blocker
 
-## Safety
-No secrets; no fake Mode B/approval; stash/uv.lock untouched; SCA not invalidated
+`auth0_oidc_preflight` — provide Auth0 OOB, then storage, then pen-test report.
+
+## Docs
+
+- `278_GATE28_MODEB_EXECUTION_REHEARSAL.md`
+- `279_GATE28_PRODUCTION_DRY_RUN_CUTOVER.md`
+- `280_GATE28_FINAL_FREEZE_VERIFICATION.md`
+- `281`–`283` specs/maturity
+
+## Next
+
+Gate 29 — real Mode B input ingest when owner supplies Auth0/storage/pen-test out-of-band (still no fake GO).
