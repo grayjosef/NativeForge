@@ -20,5 +20,8 @@
 | Login claim resolver | IMPLEMENTED / dry-run cannot unlock login_live |
 | Storage feature-flag scaffolding | IMPLEMENTED / production_storage_enabled=false |
 | Production storage readiness validator | IMPLEMENTED / claims remain false |
+| Auth0 live validation execution support | IMPLEMENTED / Mode A dry-run; login_live=false |
+| Storage approval / provisioning execution path | IMPLEMENTED / dry-run only; real provisioning blocked |
+| Controlled customer pilot gate resolver | IMPLEMENTED / NO_GO or CONDITIONAL_INTERNAL_ONLY |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
