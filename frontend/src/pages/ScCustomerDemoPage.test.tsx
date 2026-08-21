@@ -112,6 +112,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-storage-sca-pentest");
     expect(html).toContain("sc-demo-oidc-live-path");
     expect(html).toContain("sc-demo-storage-pentest-support");
+    expect(html).toContain("sc-demo-auth0-validation");
+    expect(html).toContain("sc-demo-storage-feature-flags");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -292,6 +294,10 @@ describe("ScCustomerDemoPage", () => {
       false,
     );
     expect(payload.storage_pentest_support?.pen_test_passed_claimed).toBe(false);
+    expect(payload.auth0_validation?.login_live_claimed).toBe(false);
+    expect(payload.auth0_validation?.controlled_pilot_auth_ready).toBe(false);
+    expect(payload.storage_feature_flags?.production_storage_enabled).toBe(false);
+    expect(payload.storage_feature_flags?.production_storage_claimed).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

@@ -2286,6 +2286,62 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.auth0_validation ? (
+        <section
+          data-testid="sc-demo-auth0-validation"
+          className="nf-sc-demo-section"
+        >
+          <h2>Auth0 validation run / login claim resolver</h2>
+          <p className="nf-sc-demo-why">
+            Login live requires all Auth0/OIDC gates. Dry-run and partial config
+            cannot unlock live login. Secrets are never printed.
+          </p>
+          <p data-testid="sc-demo-auth0-validation-flags" className="nf-muted">
+            configured={String(data.auth0_validation.provider_configured)} secret=
+            {String(data.auth0_validation.secret_present)} validated=
+            {String(data.auth0_validation.provider_validated)} login_live=
+            {String(data.auth0_validation.login_live_claimed)} pilot_auth=
+            {String(data.auth0_validation.controlled_pilot_auth_ready)} pilot=
+            {data.auth0_validation.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-auth0-validation-summary">
+            {data.auth0_validation.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.storage_feature_flags ? (
+        <section
+          data-testid="sc-demo-storage-feature-flags"
+          className="nf-sc-demo-section"
+        >
+          <h2>Storage feature flags / readiness validator</h2>
+          <p className="nf-sc-demo-why">
+            Local/dev storage stays enabled. Production storage stays OFF without
+            approval and config. Adapter stubs return blocked when unconfigured.
+          </p>
+          <p data-testid="sc-demo-storage-feature-flags-flags" className="nf-muted">
+            local_dev={String(data.storage_feature_flags.local_dev_storage_enabled)}{" "}
+            prod_enabled=
+            {String(data.storage_feature_flags.production_storage_enabled)}{" "}
+            approval={String(data.storage_feature_flags.owner_approval_present)}{" "}
+            adapter={data.storage_feature_flags.production_adapter_status || "n/a"}{" "}
+            storage_claimed=
+            {String(data.storage_feature_flags.production_storage_claimed)}{" "}
+            persistence=
+            {String(data.storage_feature_flags.customer_data_persistence_claimed)}{" "}
+            pilot={data.storage_feature_flags.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-storage-feature-flags-summary">
+            {data.storage_feature_flags.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

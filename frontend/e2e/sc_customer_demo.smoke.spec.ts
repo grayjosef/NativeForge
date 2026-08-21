@@ -421,6 +421,17 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-storage-pentest-support-flags"),
     ).toContainText("pen_test_passed=false");
+    await expect(page.getByTestId("sc-demo-auth0-validation")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-auth0-validation-flags")).toContainText(
+      "login_live=false",
+    );
+    await expect(page.getByTestId("sc-demo-storage-feature-flags")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-storage-feature-flags-flags"),
+    ).toContainText("prod_enabled=false");
+    await expect(
+      page.getByTestId("sc-demo-storage-feature-flags-flags"),
+    ).toContainText("storage_claimed=false");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

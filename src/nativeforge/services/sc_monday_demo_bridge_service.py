@@ -18,6 +18,10 @@ from nativeforge.services.audit_operator_storage_assembler_service import (
     audit_operator_storage_demo_surface_invariant_failures,
     build_audit_operator_storage_demo_surface,
 )
+from nativeforge.services.auth0_validation_assembler_service import (
+    auth0_validation_demo_surface_invariant_failures,
+    build_auth0_validation_demo_surface,
+)
 from nativeforge.services.buyer_demo_flow_contract_service import (
     build_buyer_demo_flow_contract,
     buyer_flow_contract_invariant_failures,
@@ -149,6 +153,10 @@ from nativeforge.services.sca_security_loop_assembler_service import (
 from nativeforge.services.source_freshness_pilot_checker_service import (
     build_source_freshness_demo_surface,
     source_freshness_demo_surface_invariant_failures,
+)
+from nativeforge.services.storage_feature_flag_assembler_service import (
+    build_storage_feature_flag_demo_surface,
+    storage_feature_flag_demo_surface_invariant_failures,
 )
 from nativeforge.services.storage_pentest_support_assembler_service import (
     build_storage_pentest_support_demo_surface,
@@ -523,6 +531,25 @@ def build_sc_customer_demo_bridge_payload(
             f"{storage_pentest_support_fails}"
         )
 
+    auth0_validation_surface = build_auth0_validation_demo_surface()
+    auth0_validation_fails = auth0_validation_demo_surface_invariant_failures(
+        auth0_validation_surface
+    )
+    if auth0_validation_fails:
+        raise ValueError(
+            f"Auth0 validation surface invariants failed: {auth0_validation_fails}"
+        )
+
+    storage_feature_flags_surface = build_storage_feature_flag_demo_surface()
+    storage_feature_flags_fails = storage_feature_flag_demo_surface_invariant_failures(
+        storage_feature_flags_surface
+    )
+    if storage_feature_flags_fails:
+        raise ValueError(
+            "Storage feature-flag surface invariants failed: "
+            f"{storage_feature_flags_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -595,6 +622,8 @@ def build_sc_customer_demo_bridge_payload(
             "storage_sca_pentest": storage_sca_pentest_surface,
             "oidc_live_path": oidc_live_path_surface,
             "storage_pentest_support": storage_pentest_support_surface,
+            "auth0_validation": auth0_validation_surface,
+            "storage_feature_flags": storage_feature_flags_surface,
         }
     )
 
@@ -857,5 +886,17 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
             storage_pentest_support_demo_surface_invariant_failures(
                 storage_pentest_support
             )
+        )
+    auth0_validation = payload.get("auth0_validation") or {}
+    if not auth0_validation:
+        fails.append("auth0_validation_missing")
+    else:
+        fails.extend(auth0_validation_demo_surface_invariant_failures(auth0_validation))
+    storage_feature_flags = payload.get("storage_feature_flags") or {}
+    if not storage_feature_flags:
+        fails.append("storage_feature_flags_missing")
+    else:
+        fails.extend(
+            storage_feature_flag_demo_surface_invariant_failures(storage_feature_flags)
         )
     return fails
