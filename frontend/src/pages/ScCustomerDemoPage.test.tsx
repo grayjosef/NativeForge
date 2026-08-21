@@ -83,6 +83,15 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-controlled-drafting");
     expect(html).toContain("Controlled draft v0");
     expect(html).toContain("complete_proposal_claimed=false");
+    expect(html).toContain("sc-demo-ai-governance");
+    expect(html).toContain("AI governance / QA gates");
+    expect(html).toContain("qa_passed=false");
+    expect(html).toContain("export_allowed=false");
+    expect(html).toContain("submission_allowed=false");
+    expect(html).toContain("sc-demo-feedback-loop");
+    expect(html).toContain("Customer feedback / reporting");
+    expect(html).toContain("slack_live_sent_claimed=false");
+    expect(html).toContain("collaboration_feature_enabled=false");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
     expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
@@ -155,6 +164,15 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.controlled_drafting?.complete_proposal_claimed).toBe(false);
     expect(payload.controlled_drafting?.submission_ready_claimed).toBe(false);
     expect(payload.controlled_drafting?.final_text_claimed).toBe(false);
+    expect(payload.ai_governance?.qa_passed).toBe(false);
+    expect(payload.ai_governance?.export_allowed).toBe(false);
+    expect(payload.ai_governance?.submission_allowed).toBe(false);
+    expect(payload.feedback_loop?.report_hook_count).toBeGreaterThanOrEqual(10);
+    expect(payload.feedback_loop?.slack_live_sent_claimed).toBe(false);
+    expect(payload.feedback_loop?.persistence_claimed).toBe(false);
+    expect(
+      payload.feedback_loop?.collaboration.collaboration_feature_enabled,
+    ).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

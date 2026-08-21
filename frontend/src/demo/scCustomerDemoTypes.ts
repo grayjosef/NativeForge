@@ -604,6 +604,70 @@ export type ScCustomerDemoPayload = {
       }>;
     }>;
   };
+  ai_governance?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    workspace_count: number;
+    buyer_summary: string[];
+    qa_passed: boolean;
+    export_allowed: boolean;
+    submission_allowed: boolean;
+    submission_ready_claimed: boolean;
+    final_application_claimed: boolean;
+    final_eligibility_claimed: boolean;
+    live_ingest_claimed: boolean;
+    human_review_required: boolean;
+    governance_complete_claimed: boolean;
+    workspaces: Array<{
+      draft_workspace_id: string;
+      opportunity_id: string;
+      organization_profile_id: string;
+      overall_qa_status: string;
+      qa_passed: boolean;
+      blocker_count: number;
+      check_count: number;
+      hard_blockers: Array<Record<string, unknown>>;
+      per_section_qa: Array<Record<string, unknown>>;
+      reviewer_actions: string[];
+      customer_actions: string[];
+      operator_actions: string[];
+      export_allowed: boolean;
+      submission_allowed: boolean;
+      human_review_required: boolean;
+      what_must_be_fixed_before_export_review: string[];
+    }>;
+  };
+  feedback_loop?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    route: string;
+    report_hook_count: number;
+    report_hooks: Array<{
+      surface_id: string;
+      user_visible_label: string;
+      route: string;
+      page_id: string;
+      report_hook_available: boolean;
+      dialog_hook_supported: boolean;
+    }>;
+    sample_reports: Array<Record<string, unknown>>;
+    buyer_summary: string[];
+    slack_live_sent_claimed: boolean;
+    persistence_claimed: boolean;
+    live_ingest_claimed: boolean;
+    collaboration: {
+      collaboration_feature_enabled: boolean;
+      collaboration_global_enabled: boolean;
+      collaboration_cohort_enabled: boolean;
+      organization_opt_in_required: boolean;
+      partner_matching_live_claimed: boolean;
+      cohort_rollout_claimed: boolean;
+      global_rollout_claimed: boolean;
+      buyer_summary: string[];
+    };
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

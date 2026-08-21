@@ -213,6 +213,23 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-controlled-draft-flags")).toContainText(
       "submission_ready_claimed=false",
     );
+    await expect(page.getByTestId("sc-demo-ai-governance")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-ai-gov-flags")).toContainText(
+      "qa_passed=false",
+    );
+    await expect(page.getByTestId("sc-demo-ai-gov-flags")).toContainText(
+      "export_allowed=false",
+    );
+    await expect(page.getByTestId("sc-demo-ai-gov-flags")).toContainText(
+      "submission_allowed=false",
+    );
+    await expect(page.getByTestId("sc-demo-feedback-loop")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-feedback-flags")).toContainText(
+      "slack_live_sent_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-feedback-flags")).toContainText(
+      "collaboration_feature_enabled=false",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

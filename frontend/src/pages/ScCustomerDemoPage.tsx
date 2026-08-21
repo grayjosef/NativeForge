@@ -1267,6 +1267,113 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.ai_governance ? (
+        <section
+          data-testid="sc-demo-ai-governance"
+          className="nf-sc-demo-section"
+        >
+          <h2>AI governance / QA gates</h2>
+          <p className="nf-sc-demo-why">
+            Deterministic checks against org evidence, citations, recognition
+            tier, and claim guards. QA does not replace human review.
+          </p>
+          <p data-testid="sc-demo-ai-gov-flags" className="nf-muted">
+            workspaces={data.ai_governance.workspace_count} qa_passed=
+            {String(data.ai_governance.qa_passed)} export_allowed=
+            {String(data.ai_governance.export_allowed)} submission_allowed=
+            {String(data.ai_governance.submission_allowed)}{" "}
+            submission_ready_claimed=
+            {String(data.ai_governance.submission_ready_claimed)}{" "}
+            governance_complete_claimed=
+            {String(data.ai_governance.governance_complete_claimed)}
+          </p>
+          <ul data-testid="sc-demo-ai-gov-summary">
+            {data.ai_governance.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.ai_governance.workspaces.slice(0, 2).map((ws) => (
+            <article
+              key={ws.draft_workspace_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-ai-gov-card-${ws.draft_workspace_id}`}
+            >
+              <h3>
+                {ws.opportunity_id} — qa={ws.overall_qa_status} blockers=
+                {ws.blocker_count}
+              </h3>
+              <div>
+                <h4>Hard blockers</h4>
+                <ul>
+                  {(ws.hard_blockers || []).slice(0, 5).map((b, idx) => (
+                    <li key={`${String(b.section_id)}-${idx}`}>
+                      [{String(b.check_scope)}] {String(b.issue_summary)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="nf-muted">
+                export_allowed={String(ws.export_allowed)} submission_allowed=
+                {String(ws.submission_allowed)} human_review_required=
+                {String(ws.human_review_required)}
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
+      {data.feedback_loop ? (
+        <section
+          data-testid="sc-demo-feedback-loop"
+          className="nf-sc-demo-section"
+        >
+          <h2>Customer feedback / reporting</h2>
+          <p className="nf-sc-demo-why">
+            Report hooks on major panels capture route, surface, claim flags, and
+            blockers. Slack plumbing is dry-run safe. Collaboration remains dark
+            and off.
+          </p>
+          <p data-testid="sc-demo-feedback-flags" className="nf-muted">
+            report_hooks={data.feedback_loop.report_hook_count}{" "}
+            slack_live_sent_claimed=
+            {String(data.feedback_loop.slack_live_sent_claimed)}{" "}
+            persistence_claimed=
+            {String(data.feedback_loop.persistence_claimed)}{" "}
+            collaboration_feature_enabled=
+            {String(
+              data.feedback_loop.collaboration.collaboration_feature_enabled,
+            )}{" "}
+            partner_matching_live_claimed=
+            {String(
+              data.feedback_loop.collaboration.partner_matching_live_claimed,
+            )}
+          </p>
+          <ul data-testid="sc-demo-feedback-summary">
+            {data.feedback_loop.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <div>
+            <h3>Report hooks</h3>
+            <ul data-testid="sc-demo-feedback-hooks">
+              {data.feedback_loop.report_hooks.map((h) => (
+                <li key={h.surface_id}>
+                  {h.user_visible_label} ({h.surface_id}) — report available
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="nf-muted">
+            Collaboration dark foundation: global=
+            {String(data.feedback_loop.collaboration.collaboration_global_enabled)}{" "}
+            cohort=
+            {String(data.feedback_loop.collaboration.collaboration_cohort_enabled)}{" "}
+            opt_in_required=
+            {String(data.feedback_loop.collaboration.organization_opt_in_required)}
+          </p>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

@@ -22,6 +22,10 @@ from nativeforge.services.draft_workspace_assembler_service import (
     build_draft_workspace_demo_surface,
     draft_workspace_demo_surface_invariant_failures,
 )
+from nativeforge.services.feedback_loop_assembler_service import (
+    build_feedback_loop_demo_surface,
+    feedback_loop_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -49,6 +53,10 @@ from nativeforge.services.organization_evidence_memory_assembler_service import 
 from nativeforge.services.package_readiness_queue_assembler_service import (
     build_package_readiness_demo_surface,
     package_readiness_demo_surface_invariant_failures,
+)
+from nativeforge.services.proposal_qa_gate_service import (
+    ai_governance_demo_surface_invariant_failures,
+    build_ai_governance_demo_surface,
 )
 from nativeforge.services.pursuit_workspace_assembler_service import (
     build_pursuit_workspace_demo_surface,
@@ -187,6 +195,16 @@ def build_sc_customer_demo_bridge_payload(
             f"Controlled drafting surface invariants failed: {controlled_draft_fails}"
         )
 
+    ai_gov_surface = build_ai_governance_demo_surface()
+    ai_gov_fails = ai_governance_demo_surface_invariant_failures(ai_gov_surface)
+    if ai_gov_fails:
+        raise ValueError(f"AI governance surface invariants failed: {ai_gov_fails}")
+
+    feedback_surface = build_feedback_loop_demo_surface()
+    feedback_fails = feedback_loop_demo_surface_invariant_failures(feedback_surface)
+    if feedback_fails:
+        raise ValueError(f"Feedback loop surface invariants failed: {feedback_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -234,6 +252,8 @@ def build_sc_customer_demo_bridge_payload(
             "source_freshness_pilot": freshness_surface,
             "draft_workspace": draft_ws_surface,
             "controlled_drafting": controlled_draft_surface,
+            "ai_governance": ai_gov_surface,
+            "feedback_loop": feedback_surface,
         }
     )
 
@@ -330,4 +350,14 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("controlled_drafting_missing")
     else:
         fails.extend(controlled_drafting_demo_surface_invariant_failures(controlled))
+    ai_gov = payload.get("ai_governance") or {}
+    if not ai_gov:
+        fails.append("ai_governance_missing")
+    else:
+        fails.extend(ai_governance_demo_surface_invariant_failures(ai_gov))
+    feedback = payload.get("feedback_loop") or {}
+    if not feedback:
+        fails.append("feedback_loop_missing")
+    else:
+        fails.extend(feedback_loop_demo_surface_invariant_failures(feedback))
     return fails
