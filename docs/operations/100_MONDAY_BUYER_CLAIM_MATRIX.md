@@ -23,5 +23,8 @@
 | Auth0 live validation execution support | IMPLEMENTED / Mode A dry-run; login_live=false |
 | Storage approval / provisioning execution path | IMPLEMENTED / dry-run only; real provisioning blocked |
 | Controlled customer pilot gate resolver | IMPLEMENTED / NO_GO or CONDITIONAL_INTERNAL_ONLY |
+| Auth0 Mode A/B detector + Mode B path | IMPLEMENTED / Mode A this run; login_live=false |
+| Pen-test evidence capture | IMPLEMENTED / no report → pen_test_passed=false |
+| 2000-sprint closeout report | IMPLEMENTED / Gate 20 Mode A |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
