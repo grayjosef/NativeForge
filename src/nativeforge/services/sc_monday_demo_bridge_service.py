@@ -26,6 +26,10 @@ from nativeforge.services.feedback_loop_assembler_service import (
     build_feedback_loop_demo_surface,
     feedback_loop_demo_surface_invariant_failures,
 )
+from nativeforge.services.forms_attachments_mapper_service import (
+    build_forms_attachments_demo_surface,
+    forms_attachments_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -49,6 +53,10 @@ from nativeforge.services.opportunity_engine_product_surface_service import (
 from nativeforge.services.organization_evidence_memory_assembler_service import (
     build_organization_evidence_demo_surface,
     organization_evidence_demo_surface_invariant_failures,
+)
+from nativeforge.services.package_export_preview_assembler_service import (
+    build_package_export_preview_demo_surface,
+    package_export_preview_demo_surface_invariant_failures,
 )
 from nativeforge.services.package_readiness_queue_assembler_service import (
     build_package_readiness_demo_surface,
@@ -205,6 +213,24 @@ def build_sc_customer_demo_bridge_payload(
     if feedback_fails:
         raise ValueError(f"Feedback loop surface invariants failed: {feedback_fails}")
 
+    export_preview_surface = build_package_export_preview_demo_surface()
+    export_preview_fails = package_export_preview_demo_surface_invariant_failures(
+        export_preview_surface
+    )
+    if export_preview_fails:
+        raise ValueError(
+            f"Package export preview surface invariants failed: {export_preview_fails}"
+        )
+
+    forms_map_surface = build_forms_attachments_demo_surface()
+    forms_map_fails = forms_attachments_demo_surface_invariant_failures(
+        forms_map_surface
+    )
+    if forms_map_fails:
+        raise ValueError(
+            f"Forms/attachments map surface invariants failed: {forms_map_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -254,6 +280,8 @@ def build_sc_customer_demo_bridge_payload(
             "controlled_drafting": controlled_draft_surface,
             "ai_governance": ai_gov_surface,
             "feedback_loop": feedback_surface,
+            "package_export_preview": export_preview_surface,
+            "forms_attachments_map": forms_map_surface,
         }
     )
 
@@ -360,4 +388,16 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("feedback_loop_missing")
     else:
         fails.extend(feedback_loop_demo_surface_invariant_failures(feedback))
+    export_preview = payload.get("package_export_preview") or {}
+    if not export_preview:
+        fails.append("package_export_preview_missing")
+    else:
+        fails.extend(
+            package_export_preview_demo_surface_invariant_failures(export_preview)
+        )
+    forms_map = payload.get("forms_attachments_map") or {}
+    if not forms_map:
+        fails.append("forms_attachments_map_missing")
+    else:
+        fails.extend(forms_attachments_demo_surface_invariant_failures(forms_map))
     return fails

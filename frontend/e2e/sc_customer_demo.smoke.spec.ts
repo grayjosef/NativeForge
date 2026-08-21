@@ -230,6 +230,26 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-feedback-flags")).toContainText(
       "collaboration_feature_enabled=false",
     );
+    await expect(page.getByTestId("sc-demo-package-export-preview")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-export-preview-flags")).toContainText(
+      "export_allowed=false",
+    );
+    await expect(page.getByTestId("sc-demo-export-preview-flags")).toContainText(
+      "final_export_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-export-preview-flags")).toContainText(
+      "submission_ready_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-forms-attachments-map")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-forms-map-flags")).toContainText(
+      "binary_upload_supported=false",
+    );
+    await expect(page.getByTestId("sc-demo-forms-map-flags")).toContainText(
+      "form_completion_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-forms-map-flags")).toContainText(
+      "attachment_persistence_claimed=false",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

@@ -1374,6 +1374,153 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.package_export_preview ? (
+        <section
+          data-testid="sc-demo-package-export-preview"
+          className="nf-sc-demo-section"
+        >
+          <h2>Package export preview</h2>
+          <p className="nf-sc-demo-why">
+            Structured preview of package materials, evidence map, missing items,
+            and blockers. Preview-only — not final export and not
+            submission-ready.
+          </p>
+          <p data-testid="sc-demo-export-preview-flags" className="nf-muted">
+            workspaces={data.package_export_preview.workspace_count}{" "}
+            export_allowed=
+            {String(data.package_export_preview.export_allowed)}{" "}
+            final_export_claimed=
+            {String(data.package_export_preview.final_export_claimed)}{" "}
+            submission_ready_claimed=
+            {String(data.package_export_preview.submission_ready_claimed)}{" "}
+            download_supported=
+            {String(data.package_export_preview.download_supported)}
+          </p>
+          <ul data-testid="sc-demo-export-preview-summary">
+            {data.package_export_preview.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.package_export_preview.workspaces.slice(0, 2).map((ws) => (
+            <article
+              key={ws.package_export_preview_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-export-preview-card-${ws.package_export_preview_id}`}
+            >
+              <h3>
+                {ws.opportunity_id} — mode={ws.export_mode} status=
+                {ws.export_status}
+              </h3>
+              <p className="nf-muted">
+                included={ws.included_sections.length} excluded=
+                {ws.excluded_sections.length} missing={ws.missing_items.length}{" "}
+                blocked={ws.blocked_items.length} human_review_required=
+                {String(ws.human_review_required)}
+              </p>
+              <div>
+                <h4>Included sections (preview)</h4>
+                <ul>
+                  {ws.included_sections.slice(0, 8).map((s) => (
+                    <li key={String(s.section_id)}>
+                      {String(s.section_label)} — {String(s.status)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Missing / blocked</h4>
+                <ul>
+                  {ws.missing_items.slice(0, 5).map((m) => (
+                    <li key={`m-${m}`}>{m}</li>
+                  ))}
+                  {ws.blocked_items.slice(0, 5).map((b) => (
+                    <li key={`b-${b}`}>{b}</li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Evidence map (sample)</h4>
+                <ul>
+                  {(ws.evidence_map || []).slice(0, 6).map((row, idx) => (
+                    <li key={`${String(row.evidence_item)}-${idx}`}>
+                      {String(row.evidence_item)} → exported=
+                      {String(row.exported_in_preview)} ({String(row.reason)})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
+      {data.forms_attachments_map ? (
+        <section
+          data-testid="sc-demo-forms-attachments-map"
+          className="nf-sc-demo-section"
+        >
+          <h2>Forms &amp; attachments map</h2>
+          <p className="nf-sc-demo-why">
+            Requirement mapping from NOFO pilot, checklist, and org evidence
+            memory. Forms are not completed; uploads and persistence are not
+            supported.
+          </p>
+          <p data-testid="sc-demo-forms-map-flags" className="nf-muted">
+            workspaces={data.forms_attachments_map.workspace_count}{" "}
+            binary_upload_supported=
+            {String(data.forms_attachments_map.binary_upload_supported)}{" "}
+            attachment_persistence_claimed=
+            {String(data.forms_attachments_map.attachment_persistence_claimed)}{" "}
+            form_completion_claimed=
+            {String(data.forms_attachments_map.form_completion_claimed)}{" "}
+            submission_ready_claimed=
+            {String(data.forms_attachments_map.submission_ready_claimed)}
+          </p>
+          <ul data-testid="sc-demo-forms-map-summary">
+            {data.forms_attachments_map.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.forms_attachments_map.workspaces.slice(0, 2).map((ws) => (
+            <article
+              key={ws.forms_attachment_map_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-forms-map-card-${ws.forms_attachment_map_id}`}
+            >
+              <h3>
+                {ws.opportunity_id} — mapping={ws.mapping_status}
+              </h3>
+              <div>
+                <h4>Forms</h4>
+                <ul>
+                  {(ws.form_items || []).slice(0, 8).map((f) => (
+                    <li key={String(f.item_id)}>
+                      {String(f.label)} — {String(f.requirement_status)} (complete=
+                      {String(f.completed)})
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h4>Attachments (missing stay visible)</h4>
+                <ul>
+                  {(ws.missing_attachments || []).slice(0, 8).map((a) => (
+                    <li key={String(a.item_id)}>
+                      {String(a.label)} — {String(a.requirement_status)} / evidence=
+                      {String(a.current_evidence_status)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="nf-muted">
+                human_review_required={String(ws.human_review_required)}{" "}
+                upload_supported=false persistence=false
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

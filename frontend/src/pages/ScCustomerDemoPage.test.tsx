@@ -89,6 +89,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("export_allowed=false");
     expect(html).toContain("submission_allowed=false");
     expect(html).toContain("sc-demo-feedback-loop");
+    expect(html).toContain("sc-demo-package-export-preview");
+    expect(html).toContain("sc-demo-forms-attachments-map");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -173,6 +175,16 @@ describe("ScCustomerDemoPage", () => {
     expect(
       payload.feedback_loop?.collaboration.collaboration_feature_enabled,
     ).toBe(false);
+    expect(payload.package_export_preview?.export_allowed).toBe(false);
+    expect(payload.package_export_preview?.final_export_claimed).toBe(false);
+    expect(payload.package_export_preview?.submission_ready_claimed).toBe(false);
+    expect(payload.package_export_preview?.download_supported).toBe(false);
+    expect(payload.forms_attachments_map?.binary_upload_supported).toBe(false);
+    expect(payload.forms_attachments_map?.attachment_persistence_claimed).toBe(
+      false,
+    );
+    expect(payload.forms_attachments_map?.form_completion_claimed).toBe(false);
+    expect(payload.forms_attachments_map?.submission_ready_claimed).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

@@ -35,6 +35,8 @@ REPORT_SURFACES: tuple[tuple[str, str], ...] = (
     ("draft_workspace", "Draft workspace"),
     ("controlled_drafting", "Controlled draft v0"),
     ("ai_governance", "AI governance / QA gates"),
+    ("package_export_preview", "Package export preview"),
+    ("forms_attachments_map", "Forms & attachments map"),
 )
 
 
