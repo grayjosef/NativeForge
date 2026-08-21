@@ -30,5 +30,7 @@
 | Storage approval token ingest | IMPLEMENTED / prompt≠approval; absent this run |
 | Production metadata adapter (flagged) | IMPLEMENTED / writes blocked without approval |
 | Object storage + signed URL path (flagged) | IMPLEMENTED / production writes blocked |
+| Customer data policy enforcement | IMPLEMENTED / persistence false; AI training default false |
+| Retention/delete/export resolver | IMPLEMENTED / production delete/export blocked |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
