@@ -705,6 +705,20 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/campaign_block10_smoke_runner_service.py" = ["E501"]
 "tests/test_source_freshness_campaign10.py" = ["E501"]
 
+"src/nativeforge/services/draft_workspace_contract_service.py" = ["E501"]
+"src/nativeforge/services/draft_section_model_service.py" = ["E501"]
+"src/nativeforge/services/draft_unsupported_claim_checker_service.py" = ["E501"]
+"src/nativeforge/services/draft_workspace_builder_service.py" = ["E501"]
+"src/nativeforge/services/draft_workspace_assembler_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block11_smoke_runner_service.py" = ["E501"]
+"tests/test_draft_workspace_campaign11.py" = ["E501"]
+
+"src/nativeforge/services/controlled_drafting_contract_service.py" = ["E501"]
+"src/nativeforge/services/evidence_cited_drafting_service.py" = ["E501"]
+"src/nativeforge/services/controlled_drafting_assembler_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block12_smoke_runner_service.py" = ["E501"]
+"tests/test_controlled_drafting_campaign12.py" = ["E501"]
+
 [tool.ruff.format]
 quote-style = "double"
 
