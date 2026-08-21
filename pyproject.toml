@@ -742,6 +742,20 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/campaign_block16_smoke_runner_service.py" = ["E501"]
 "tests/test_forms_attachments_campaign16.py" = ["E501"]
 
+"src/nativeforge/services/code_health_inventory_service.py" = ["E501"]
+"src/nativeforge/services/critical_path_coverage_map_service.py" = ["E501"]
+"src/nativeforge/services/no_fail_invariant_suite_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block17_smoke_runner_service.py" = ["E501"]
+"tests/test_code_health_campaign17.py" = ["E501"]
+
+"src/nativeforge/services/security_posture_inventory_service.py" = ["E501"]
+"src/nativeforge/services/adversarial_fixture_service.py" = ["E501"]
+"src/nativeforge/services/payload_safety_hardening_service.py" = ["E501"]
+"src/nativeforge/services/data_isolation_bypass_suite_service.py" = ["E501"]
+"src/nativeforge/services/pen_test_readiness_report_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block18_smoke_runner_service.py" = ["E501"]
+"tests/test_security_adversarial_campaign18.py" = ["E501"]
+
 [tool.ruff.format]
 quote-style = "double"
 

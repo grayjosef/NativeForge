@@ -2,57 +2,58 @@
 
 ## Gate / Campaign Block complete
 
-**Gate 05 complete — Blocks 15–16 / Sprints 401–500**
+**Gate 06 complete — Blocks 17–18 / Sprints 501–600**
 
-- Block 15 of 20 — Package Export Preview
-- Block 16 of 20 — Forms and Attachments Mapping v0
+- Block 17 of 20 — Code Health, Test Inventory, Coverage Risk Map
+- Block 18 of 20 — Security, Adversarial QA, Pen-Test Readiness Hardening
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
-- HEAD before: `793bb23`
-- HEAD after: `469bdc5`
+- HEAD before: `2250839`
+- HEAD after: _(set after final push align)_
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
-## Block 15 delivered
+## Block 17 delivered
 
-- Package export preview contract + section assembler + evidence map
-- export_allowed=false; final_export_claimed=false; submission_ready_claimed=false; download_supported=false
-- Draft sections without citations excluded from supported export content
-- SC demo: Package export preview panel
+- Code/test inventory service + report (`149_CODE_HEALTH_TEST_POSTURE_REPORT.md`)
+- Critical-path coverage map (`150_CRITICAL_PATH_COVERAGE_MAP.md`)
+- No-fail claim/governance invariant suite
+- Approximate test-to-code ratio measured (~0.56)
+- Full suite **not** re-run; full-suite green **not** claimed
 
-## Block 16 delivered
+## Block 18 delivered
 
-- Forms/attachments mapping contract + conservative form/attachment mapper
-- Linked to NOFO pilot, checklist/intake refs, org evidence memory, package preview
-- binary_upload_supported=false; attachment_persistence_claimed=false; form_completion_claimed=false
-- Missing attachments remain visible and incomplete
-- SC demo: Forms & attachments map panel
+- Security posture inventory (`151_SECURITY_POSTURE_INVENTORY.md`)
+- Adversarial fixtures + suite (`fixtures/adversarial_qa_pilot/`)
+- Payload/Slack sanitization hardening
+- Data isolation / QA-bypass / overclaim resistance suite
+- Pen-test readiness report (`152_PEN_TEST_READINESS_REPORT.md`) — **pen-test pass NOT claimed**
 
-## Smoke run_ids (Gate 05 closeout)
+## Smoke run_ids (Gate 06 closeout)
 
-- Block 15: `nf_camp15_export_preview_smoke_20260821T010837Z_549bb0ad`
-- Block 16: `nf_camp16_forms_map_smoke_20260821T010840Z_d3aea4a4`
-- Demo-runtime: `nf_sc_monday_browser_20260821T010844Z_706d06ff`
-- Playwright: `nf_sc_monday_playwright_20260821T010851Z_dc756cf5`
+- Block 17: `nf_camp17_code_health_smoke_20260821T011814Z_7de3967d`
+- Block 18: `nf_camp18_security_smoke_20260821T011817Z_d9c4aa4d`
+- Staging: `sc_monday_demo_staging_verify: OK`
+- Playwright: not re-run (no route/UI changes this gate); latest Gate 05: `nf_sc_monday_playwright_20260821T010851Z_dc756cf5`
 
 ## Docs
 
-- `143`–`145` Block 15; `146`–`148` Block 16
-- Sprint stubs: `campaign_block15_sprints/`, `campaign_block16_sprints/`
+- `149`–`152` reports; `153`–`156` Block 17/18 specs + claim matrices
+- Sprint stubs: `campaign_block17_sprints/`, `campaign_block18_sprints/`
 
 ## World-class maturity
 
-- Before Gate 05: ~68–74%
-- After Gate 05: ~74–80%
-- Improved: package assembly credibility (preview + forms/attachments map)
-- Still below: multi-org pilot, collaboration live, durable uploads, full PDF, live freshness, final export unlock
+- Before Gate 06: ~74–80%
+- After Gate 06: ~80–86%
+- Improved: measurable test posture + adversarial/security evidence pack
+- Still below: external pen-test, SCA, multi-tenant durable isolation, live freshness/PDF/uploads
 
 ## NEXT SAFE ACTION
 
-**Gate 06 — Multi-org pilot + collaboration dark-launch foundation**
+**Gate 07 — Multi-org pilot packaging + collaboration dark-launch foundation**
 
-- Block 17: Multi-organization pilot packaging / cohort readiness
-- Block 18: Collaboration dark-launch foundation (still off until explicit enable)
+- Block 19: Multi-organization pilot / cohort readiness packaging
+- Block 20: Collaboration dark-launch foundation (remain OFF until explicit enable)
