@@ -28,5 +28,7 @@
 | 2000-sprint closeout report | IMPLEMENTED / Gate 20 Mode A |
 | Auth0 Mode B live unlock attempt | IMPLEMENTED / Mode A this run; login_live=false |
 | Storage approval token ingest | IMPLEMENTED / prompt≠approval; absent this run |
+| Production metadata adapter (flagged) | IMPLEMENTED / writes blocked without approval |
+| Object storage + signed URL path (flagged) | IMPLEMENTED / production writes blocked |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
