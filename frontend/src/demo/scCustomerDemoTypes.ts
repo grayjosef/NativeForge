@@ -1146,6 +1146,35 @@ export type ScCustomerDemoPayload = {
     production_rollout_status: string;
     next_safe_actions: string[];
   };
+  oidc_live_path?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    provider_configured: boolean;
+    provider_validated: boolean;
+    login_live_claimed: boolean;
+    owner_setup_checklist: string;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+    fake_login_ui_exposed: boolean;
+  };
+  storage_pentest_support?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    owner_approval_status: string;
+    dry_run_status: string;
+    production_storage_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    pen_test_passed_claimed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+    login_live_claimed: boolean;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

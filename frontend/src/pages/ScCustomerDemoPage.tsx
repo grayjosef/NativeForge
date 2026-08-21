@@ -2235,6 +2235,57 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.oidc_live_path ? (
+        <section
+          data-testid="sc-demo-oidc-live-path"
+          className="nf-sc-demo-section"
+        >
+          <h2>Auth0/OIDC live-path validation</h2>
+          <p className="nf-sc-demo-why">
+            Config schema, identity mapper, and callback harness are ready.
+            Secrets are never stored in-repo. Login is not live until the owner
+            configures and validates Auth0/OIDC.
+          </p>
+          <p data-testid="sc-demo-oidc-live-path-flags" className="nf-muted">
+            configured={String(data.oidc_live_path.provider_configured)} validated=
+            {String(data.oidc_live_path.provider_validated)} login_live=
+            {String(data.oidc_live_path.login_live_claimed)} pilot=
+            {data.oidc_live_path.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-oidc-live-path-summary">
+            {data.oidc_live_path.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.storage_pentest_support ? (
+        <section
+          data-testid="sc-demo-storage-pentest-support"
+          className="nf-sc-demo-section"
+        >
+          <h2>Storage dry-run / pen-test support loop</h2>
+          <p className="nf-sc-demo-why">
+            Provisioning dry-run and pen-test remediation loop are operator-ready.
+            Production storage and pen-test pass remain unclaimed.
+          </p>
+          <p data-testid="sc-demo-storage-pentest-support-flags" className="nf-muted">
+            owner_approval={data.storage_pentest_support.owner_approval_status}{" "}
+            dry_run={data.storage_pentest_support.dry_run_status} storage_claimed=
+            {String(data.storage_pentest_support.production_storage_claimed)}{" "}
+            pen_test_passed=
+            {String(data.storage_pentest_support.pen_test_passed_claimed)} pilot=
+            {data.storage_pentest_support.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-storage-pentest-support-summary">
+            {data.storage_pentest_support.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

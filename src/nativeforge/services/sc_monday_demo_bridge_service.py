@@ -94,6 +94,10 @@ from nativeforge.services.nofo_showcase_demo_surface_service import (
     build_nofo_showcase_demo_surface,
     nofo_showcase_surface_invariant_failures,
 )
+from nativeforge.services.oidc_live_path_assembler_service import (
+    build_oidc_live_path_demo_surface,
+    oidc_live_path_demo_surface_invariant_failures,
+)
 from nativeforge.services.operator_readiness_assembler_service import (
     build_operator_readiness_demo_surface,
     operator_readiness_demo_surface_invariant_failures,
@@ -145,6 +149,10 @@ from nativeforge.services.sca_security_loop_assembler_service import (
 from nativeforge.services.source_freshness_pilot_checker_service import (
     build_source_freshness_demo_surface,
     source_freshness_demo_surface_invariant_failures,
+)
+from nativeforge.services.storage_pentest_support_assembler_service import (
+    build_storage_pentest_support_demo_surface,
+    storage_pentest_support_demo_surface_invariant_failures,
 )
 from nativeforge.services.storage_sca_pentest_assembler_service import (
     build_storage_sca_pentest_demo_surface,
@@ -494,6 +502,27 @@ def build_sc_customer_demo_bridge_payload(
             f"{storage_sca_pentest_fails}"
         )
 
+    oidc_live_path_surface = build_oidc_live_path_demo_surface()
+    oidc_live_path_fails = oidc_live_path_demo_surface_invariant_failures(
+        oidc_live_path_surface
+    )
+    if oidc_live_path_fails:
+        raise ValueError(
+            f"OIDC live-path surface invariants failed: {oidc_live_path_fails}"
+        )
+
+    storage_pentest_support_surface = build_storage_pentest_support_demo_surface()
+    storage_pentest_support_fails = (
+        storage_pentest_support_demo_surface_invariant_failures(
+            storage_pentest_support_surface
+        )
+    )
+    if storage_pentest_support_fails:
+        raise ValueError(
+            "Storage/pen-test support surface invariants failed: "
+            f"{storage_pentest_support_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -564,6 +593,8 @@ def build_sc_customer_demo_bridge_payload(
             "audit_operator_storage": audit_operator_storage_surface,
             "external_pilot_auth": external_pilot_auth_surface,
             "storage_sca_pentest": storage_sca_pentest_surface,
+            "oidc_live_path": oidc_live_path_surface,
+            "storage_pentest_support": storage_pentest_support_surface,
         }
     )
 
@@ -812,5 +843,19 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             storage_sca_pentest_demo_surface_invariant_failures(storage_sca_pentest)
+        )
+    oidc_live_path = payload.get("oidc_live_path") or {}
+    if not oidc_live_path:
+        fails.append("oidc_live_path_missing")
+    else:
+        fails.extend(oidc_live_path_demo_surface_invariant_failures(oidc_live_path))
+    storage_pentest_support = payload.get("storage_pentest_support") or {}
+    if not storage_pentest_support:
+        fails.append("storage_pentest_support_missing")
+    else:
+        fails.extend(
+            storage_pentest_support_demo_surface_invariant_failures(
+                storage_pentest_support
+            )
         )
     return fails
