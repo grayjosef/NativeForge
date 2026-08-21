@@ -2342,6 +2342,66 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.auth0_live_validation ? (
+        <section
+          data-testid="sc-demo-auth0-live-validation"
+          className="nf-sc-demo-section"
+        >
+          <h2>Auth0 live validation execution</h2>
+          <p className="nf-sc-demo-why">
+            Preflight detects config presence without printing secrets. Live
+            validation defaults to dry-run. Login live stays false until every
+            promotion gate passes.
+          </p>
+          <p
+            data-testid="sc-demo-auth0-live-validation-flags"
+            className="nf-muted"
+          >
+            config={String(data.auth0_live_validation.config_present)} possible=
+            {String(data.auth0_live_validation.validation_possible)} dry_run=
+            {data.auth0_live_validation.dry_run_status || "n/a"} login_live=
+            {String(data.auth0_live_validation.login_live_claimed)} pilot_auth=
+            {String(data.auth0_live_validation.controlled_pilot_auth_ready)}{" "}
+            pilot={data.auth0_live_validation.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-auth0-live-validation-summary">
+            {data.auth0_live_validation.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.storage_pilot_gate ? (
+        <section
+          data-testid="sc-demo-storage-pilot-gate"
+          className="nf-sc-demo-section"
+        >
+          <h2>Storage approval / pilot gate resolver</h2>
+          <p className="nf-sc-demo-why">
+            Owner approval tokens are repo-safe. Dry-run provisioning is allowed;
+            real provisioning and customer persistence stay blocked without
+            approval and validation.
+          </p>
+          <p data-testid="sc-demo-storage-pilot-gate-flags" className="nf-muted">
+            approval={String(data.storage_pilot_gate.owner_approval_present)}{" "}
+            dry_run={String(data.storage_pilot_gate.dry_run_allowed)} real_prov=
+            {String(data.storage_pilot_gate.real_provisioning_allowed)}{" "}
+            storage_claimed=
+            {String(data.storage_pilot_gate.production_storage_claimed)}{" "}
+            persistence=
+            {String(data.storage_pilot_gate.customer_data_persistence_claimed)}{" "}
+            pilot={data.storage_pilot_gate.controlled_customer_pilot_status}{" "}
+            rollout={data.storage_pilot_gate.production_rollout_status}
+          </p>
+          <ul data-testid="sc-demo-storage-pilot-gate-summary">
+            {data.storage_pilot_gate.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

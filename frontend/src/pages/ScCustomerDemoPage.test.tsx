@@ -114,6 +114,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-storage-pentest-support");
     expect(html).toContain("sc-demo-auth0-validation");
     expect(html).toContain("sc-demo-storage-feature-flags");
+    expect(html).toContain("sc-demo-auth0-live-validation");
+    expect(html).toContain("sc-demo-storage-pilot-gate");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -298,6 +300,12 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.auth0_validation?.controlled_pilot_auth_ready).toBe(false);
     expect(payload.storage_feature_flags?.production_storage_enabled).toBe(false);
     expect(payload.storage_feature_flags?.production_storage_claimed).toBe(false);
+    expect(payload.auth0_live_validation?.login_live_claimed).toBe(false);
+    expect(payload.auth0_live_validation?.validation_possible).toBe(false);
+    expect(payload.storage_pilot_gate?.real_provisioning_allowed).toBe(false);
+    expect(payload.storage_pilot_gate?.controlled_customer_pilot_status).not.toBe(
+      "CONTROLLED_CUSTOMER_GO",
+    );
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

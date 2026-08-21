@@ -18,6 +18,10 @@ from nativeforge.services.audit_operator_storage_assembler_service import (
     audit_operator_storage_demo_surface_invariant_failures,
     build_audit_operator_storage_demo_surface,
 )
+from nativeforge.services.auth0_live_validation_assembler_service import (
+    auth0_live_validation_demo_surface_invariant_failures,
+    build_auth0_live_validation_demo_surface,
+)
 from nativeforge.services.auth0_validation_assembler_service import (
     auth0_validation_demo_surface_invariant_failures,
     build_auth0_validation_demo_surface,
@@ -161,6 +165,10 @@ from nativeforge.services.storage_feature_flag_assembler_service import (
 from nativeforge.services.storage_pentest_support_assembler_service import (
     build_storage_pentest_support_demo_surface,
     storage_pentest_support_demo_surface_invariant_failures,
+)
+from nativeforge.services.storage_pilot_gate_assembler_service import (
+    build_storage_pilot_gate_demo_surface,
+    storage_pilot_gate_demo_surface_invariant_failures,
 )
 from nativeforge.services.storage_sca_pentest_assembler_service import (
     build_storage_sca_pentest_demo_surface,
@@ -550,6 +558,25 @@ def build_sc_customer_demo_bridge_payload(
             f"{storage_feature_flags_fails}"
         )
 
+    auth0_live_validation_surface = build_auth0_live_validation_demo_surface()
+    auth0_live_validation_fails = auth0_live_validation_demo_surface_invariant_failures(
+        auth0_live_validation_surface
+    )
+    if auth0_live_validation_fails:
+        raise ValueError(
+            "Auth0 live validation surface invariants failed: "
+            f"{auth0_live_validation_fails}"
+        )
+
+    storage_pilot_gate_surface = build_storage_pilot_gate_demo_surface()
+    storage_pilot_gate_fails = storage_pilot_gate_demo_surface_invariant_failures(
+        storage_pilot_gate_surface
+    )
+    if storage_pilot_gate_fails:
+        raise ValueError(
+            f"Storage/pilot gate surface invariants failed: {storage_pilot_gate_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -624,6 +651,8 @@ def build_sc_customer_demo_bridge_payload(
             "storage_pentest_support": storage_pentest_support_surface,
             "auth0_validation": auth0_validation_surface,
             "storage_feature_flags": storage_feature_flags_surface,
+            "auth0_live_validation": auth0_live_validation_surface,
+            "storage_pilot_gate": storage_pilot_gate_surface,
         }
     )
 
@@ -898,5 +927,19 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             storage_feature_flag_demo_surface_invariant_failures(storage_feature_flags)
+        )
+    auth0_live_validation = payload.get("auth0_live_validation") or {}
+    if not auth0_live_validation:
+        fails.append("auth0_live_validation_missing")
+    else:
+        fails.extend(
+            auth0_live_validation_demo_surface_invariant_failures(auth0_live_validation)
+        )
+    storage_pilot_gate = payload.get("storage_pilot_gate") or {}
+    if not storage_pilot_gate:
+        fails.append("storage_pilot_gate_missing")
+    else:
+        fails.extend(
+            storage_pilot_gate_demo_surface_invariant_failures(storage_pilot_gate)
         )
     return fails

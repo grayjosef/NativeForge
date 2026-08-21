@@ -1207,6 +1207,39 @@ export type ScCustomerDemoPayload = {
     production_rollout_status: string;
     next_safe_actions: string[];
   };
+  auth0_live_validation?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    config_present: boolean;
+    secret_present: boolean;
+    validation_possible: boolean;
+    dry_run_status?: string;
+    login_live_claimed: boolean;
+    production_auth_claimed: boolean;
+    controlled_pilot_auth_ready: boolean;
+    operator_approval_needed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+    secret_value_printed: boolean;
+  };
+  storage_pilot_gate?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    owner_approval_present: boolean;
+    approval_scope?: string;
+    dry_run_allowed: boolean;
+    real_provisioning_allowed: boolean;
+    production_storage_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;
