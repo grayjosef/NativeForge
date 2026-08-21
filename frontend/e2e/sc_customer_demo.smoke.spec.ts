@@ -270,6 +270,29 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-collab-dark-flags")).toContainText(
       "data_sharing_allowed=false",
     );
+    await expect(page.getByTestId("sc-demo-evidence-intake")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-evidence-intake-flags")).toContainText(
+      "upload_persistence_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-evidence-intake-flags")).toContainText(
+      "package_unlock_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-evidence-intake-flags")).toContainText(
+      "upload_ui_supported=false",
+    );
+    await expect(page.getByTestId("sc-demo-operator-readiness")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-operator-ready-flags")).toContainText(
+      "production_ready_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-operator-ready-flags")).toContainText(
+      "pen_test_passed_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-operator-ready-flags")).toContainText(
+      "monday=GO",
+    );
+    await expect(page.getByTestId("sc-demo-operator-ready-flags")).toContainText(
+      "production=NO_GO",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

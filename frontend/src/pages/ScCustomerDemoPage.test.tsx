@@ -93,6 +93,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-forms-attachments-map");
     expect(html).toContain("sc-demo-multi-org-pilot");
     expect(html).toContain("sc-demo-collaboration-dark-launch");
+    expect(html).toContain("sc-demo-evidence-intake");
+    expect(html).toContain("sc-demo-operator-readiness");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -203,6 +205,13 @@ describe("ScCustomerDemoPage", () => {
     expect(
       payload.collaboration_dark_launch?.partner_recommendations_claimed,
     ).toBe(false);
+    expect(payload.evidence_intake?.upload_persistence_claimed).toBe(false);
+    expect(payload.evidence_intake?.package_unlock_claimed).toBe(false);
+    expect(payload.evidence_intake?.upload_ui_supported).toBe(false);
+    expect(payload.operator_readiness?.production_ready_claimed).toBe(false);
+    expect(payload.operator_readiness?.pen_test_passed_claimed).toBe(false);
+    expect(payload.operator_readiness?.monday_demo_status).toBe("GO");
+    expect(payload.operator_readiness?.production_rollout_status).toBe("NO_GO");
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

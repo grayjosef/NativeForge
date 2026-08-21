@@ -26,6 +26,10 @@ from nativeforge.services.draft_workspace_assembler_service import (
     build_draft_workspace_demo_surface,
     draft_workspace_demo_surface_invariant_failures,
 )
+from nativeforge.services.evidence_intake_assembler_service import (
+    build_evidence_intake_demo_surface,
+    evidence_intake_demo_surface_invariant_failures,
+)
 from nativeforge.services.feedback_loop_assembler_service import (
     build_feedback_loop_demo_surface,
     feedback_loop_demo_surface_invariant_failures,
@@ -53,6 +57,10 @@ from nativeforge.services.nofo_extraction_pilot_assembler_service import (
 from nativeforge.services.nofo_showcase_demo_surface_service import (
     build_nofo_showcase_demo_surface,
     nofo_showcase_surface_invariant_failures,
+)
+from nativeforge.services.operator_readiness_assembler_service import (
+    build_operator_readiness_demo_surface,
+    operator_readiness_demo_surface_invariant_failures,
 )
 from nativeforge.services.opportunity_engine_product_surface_service import (
     build_opportunity_engine_product_surface,
@@ -255,6 +263,24 @@ def build_sc_customer_demo_bridge_payload(
             f"Collaboration dark-launch surface invariants failed: {collab_dark_fails}"
         )
 
+    evidence_intake_surface = build_evidence_intake_demo_surface()
+    evidence_intake_fails = evidence_intake_demo_surface_invariant_failures(
+        evidence_intake_surface
+    )
+    if evidence_intake_fails:
+        raise ValueError(
+            f"Evidence intake surface invariants failed: {evidence_intake_fails}"
+        )
+
+    operator_readiness_surface = build_operator_readiness_demo_surface()
+    operator_readiness_fails = operator_readiness_demo_surface_invariant_failures(
+        operator_readiness_surface
+    )
+    if operator_readiness_fails:
+        raise ValueError(
+            f"Operator readiness surface invariants failed: {operator_readiness_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -308,6 +334,8 @@ def build_sc_customer_demo_bridge_payload(
             "forms_attachments_map": forms_map_surface,
             "multi_org_pilot": multi_org_surface,
             "collaboration_dark_launch": collab_dark_surface,
+            "evidence_intake": evidence_intake_surface,
+            "operator_readiness": operator_readiness_surface,
         }
     )
 
@@ -437,5 +465,17 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             collaboration_dark_launch_demo_surface_invariant_failures(collab_dark)
+        )
+    evidence_intake = payload.get("evidence_intake") or {}
+    if not evidence_intake:
+        fails.append("evidence_intake_missing")
+    else:
+        fails.extend(evidence_intake_demo_surface_invariant_failures(evidence_intake))
+    operator_readiness = payload.get("operator_readiness") or {}
+    if not operator_readiness:
+        fails.append("operator_readiness_missing")
+    else:
+        fails.extend(
+            operator_readiness_demo_surface_invariant_failures(operator_readiness)
         )
     return fails

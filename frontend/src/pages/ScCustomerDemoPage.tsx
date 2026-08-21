@@ -1640,6 +1640,122 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.evidence_intake ? (
+        <section
+          data-testid="sc-demo-evidence-intake"
+          className="nf-sc-demo-section"
+        >
+          <h2>Evidence intake / uploads</h2>
+          <p className="nf-sc-demo-why">
+            Evidence needed is linked to checklist, binder, forms map, and package
+            preview. Storage is fixture/planned — durable binary upload is not
+            claimed. No upload UI unless validated storage exists.
+          </p>
+          <p data-testid="sc-demo-evidence-intake-flags" className="nf-muted">
+            workspaces={data.evidence_intake.workspace_count} adapter=
+            {data.evidence_intake.storage_adapter} upload_ui_supported=
+            {String(data.evidence_intake.upload_ui_supported)}{" "}
+            upload_persistence_claimed=
+            {String(data.evidence_intake.upload_persistence_claimed)}{" "}
+            customer_data_persistence_claimed=
+            {String(data.evidence_intake.customer_data_persistence_claimed)}{" "}
+            production_storage_claimed=
+            {String(data.evidence_intake.production_storage_claimed)}{" "}
+            package_unlock_claimed=
+            {String(data.evidence_intake.package_unlock_claimed)}{" "}
+            migration_required=
+            {String(data.evidence_intake.migration_required)}
+          </p>
+          <ul data-testid="sc-demo-evidence-intake-summary">
+            {data.evidence_intake.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            Storage proposal: {data.evidence_intake.storage_proposal_path}
+          </p>
+          {data.evidence_intake.workspaces.slice(0, 2).map((ws) => (
+            <article
+              key={ws.organization_profile_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-evidence-intake-card-${ws.organization_profile_id}`}
+            >
+              <h3>
+                {ws.organization_profile_id} — records={ws.record_count}
+              </h3>
+              <ul>
+                {(ws.records || []).slice(0, 5).map((r) => (
+                  <li key={String(r.evidence_intake_id)}>
+                    {String(r.evidence_label)} — mode={String(r.storage_mode)}{" "}
+                    review={String(r.review_status)} persist=
+                    {String(r.upload_persistence_claimed)}
+                  </li>
+                ))}
+              </ul>
+              <p className="nf-muted">
+                unlock=
+                {String(
+                  (ws.unlock_evaluation || {}).package_unlock_claimed ?? false,
+                )}{" "}
+                human_review_required={String(ws.human_review_required)}
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
+      {data.operator_readiness ? (
+        <section
+          data-testid="sc-demo-operator-readiness"
+          className="nf-sc-demo-section"
+        >
+          <h2>Operator enablement / production readiness</h2>
+          <p className="nf-sc-demo-why">
+            Go/no-go checklist for demo, pilot, upload, collaboration, and
+            production. Production-ready and pen-test passed remain false.
+          </p>
+          <p data-testid="sc-demo-operator-ready-flags" className="nf-muted">
+            head={data.operator_readiness.contract.current_head} monday=
+            {String(data.operator_readiness.monday_demo_status)} production=
+            {String(data.operator_readiness.production_rollout_status)} upload=
+            {String(data.operator_readiness.upload_rollout_status)} collab=
+            {String(data.operator_readiness.collaboration_rollout_status)}{" "}
+            production_ready_claimed=
+            {String(data.operator_readiness.production_ready_claimed)}{" "}
+            pen_test_passed_claimed=
+            {String(data.operator_readiness.pen_test_passed_claimed)}{" "}
+            upload_persistence_claimed=
+            {String(data.operator_readiness.upload_persistence_claimed)}
+          </p>
+          <ul data-testid="sc-demo-operator-ready-summary">
+            {data.operator_readiness.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <div>
+            <h3>Go / no-go</h3>
+            <ul data-testid="sc-demo-operator-go-nogo">
+              {data.operator_readiness.go_no_go_matrix.map((row) => (
+                <li key={String(row.target)}>
+                  {String(row.target)}: {String(row.status)}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>Blockers</h3>
+            <ul>
+              {data.operator_readiness.blockers.slice(0, 6).map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+          </div>
+          <p className="nf-muted">
+            Commands: {(data.operator_readiness.required_commands || []).join(" | ")}
+          </p>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
