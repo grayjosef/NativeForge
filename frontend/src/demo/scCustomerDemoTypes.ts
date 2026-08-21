@@ -982,6 +982,31 @@ export type ScCustomerDemoPayload = {
     federal_authority: Record<string, unknown>;
     state_authority: Record<string, unknown>;
   };
+  evidence_lifecycle?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    audit_event_count: number;
+    submission_unlock_status: boolean;
+    production_policy_validated: boolean;
+    legal_compliance_claimed: boolean;
+    package_unlock_behavior: string;
+    export_unlock_behavior: string;
+  };
+  top15_source_validation?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    packet_count: number;
+    states_packeted: string[];
+    active_customer_lane: string;
+    all_top15_live_claimed: boolean;
+    non_sc_live_coverage_claimed: boolean;
+    sc_packet: Record<string, unknown>;
+    resolutions: Array<Record<string, unknown>>;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

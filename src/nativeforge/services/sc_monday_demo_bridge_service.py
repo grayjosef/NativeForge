@@ -38,6 +38,10 @@ from nativeforge.services.evidence_intake_assembler_service import (
     build_evidence_intake_demo_surface,
     evidence_intake_demo_surface_invariant_failures,
 )
+from nativeforge.services.evidence_lifecycle_assembler_service import (
+    build_evidence_lifecycle_demo_surface,
+    evidence_lifecycle_demo_surface_invariant_failures,
+)
 from nativeforge.services.feedback_loop_assembler_service import (
     build_feedback_loop_demo_surface,
     feedback_loop_demo_surface_invariant_failures,
@@ -113,6 +117,10 @@ from nativeforge.services.sc_monday_demo_assembler_service import (
 from nativeforge.services.source_freshness_pilot_checker_service import (
     build_source_freshness_demo_surface,
     source_freshness_demo_surface_invariant_failures,
+)
+from nativeforge.services.top15_source_validation_assembler_service import (
+    build_top15_source_validation_demo_surface,
+    top15_source_validation_demo_surface_invariant_failures,
 )
 
 SCHEMA_VERSION = "nf_sc_monday_browser_demo_bridge_v1"
@@ -349,6 +357,27 @@ def build_sc_customer_demo_bridge_payload(
             f"{applicant_authority_fails}"
         )
 
+    evidence_lifecycle_surface = build_evidence_lifecycle_demo_surface()
+    evidence_lifecycle_fails = evidence_lifecycle_demo_surface_invariant_failures(
+        evidence_lifecycle_surface
+    )
+    if evidence_lifecycle_fails:
+        raise ValueError(
+            f"Evidence lifecycle surface invariants failed: {evidence_lifecycle_fails}"
+        )
+
+    top15_source_validation_surface = build_top15_source_validation_demo_surface()
+    top15_source_validation_fails = (
+        top15_source_validation_demo_surface_invariant_failures(
+            top15_source_validation_surface
+        )
+    )
+    if top15_source_validation_fails:
+        raise ValueError(
+            "Top-15 source validation surface invariants failed: "
+            f"{top15_source_validation_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -409,6 +438,8 @@ def build_sc_customer_demo_bridge_payload(
             "gate10_closeout": gate10_closeout_surface,
             "national_coverage": national_coverage_surface,
             "applicant_authority": applicant_authority_surface,
+            "evidence_lifecycle": evidence_lifecycle_surface,
+            "top15_source_validation": top15_source_validation_surface,
         }
     )
 
@@ -583,5 +614,21 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             applicant_authority_demo_surface_invariant_failures(applicant_authority)
+        )
+    evidence_lifecycle = payload.get("evidence_lifecycle") or {}
+    if not evidence_lifecycle:
+        fails.append("evidence_lifecycle_missing")
+    else:
+        fails.extend(
+            evidence_lifecycle_demo_surface_invariant_failures(evidence_lifecycle)
+        )
+    top15_source_validation = payload.get("top15_source_validation") or {}
+    if not top15_source_validation:
+        fails.append("top15_source_validation_missing")
+    else:
+        fails.extend(
+            top15_source_validation_demo_surface_invariant_failures(
+                top15_source_validation
+            )
         )
     return fails

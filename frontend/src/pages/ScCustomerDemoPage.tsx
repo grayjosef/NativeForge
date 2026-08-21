@@ -1936,6 +1936,66 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.evidence_lifecycle ? (
+        <section
+          data-testid="sc-demo-evidence-lifecycle"
+          className="nf-sc-demo-section"
+        >
+          <h2>Evidence lifecycle / retention / audit</h2>
+          <p className="nf-sc-demo-why">
+            Local/dev evidence lifecycle with audit events. Package unlock requires
+            approval; submission unlock remains false. Production retention/legal
+            compliance are not claimed.
+          </p>
+          <p data-testid="sc-demo-evidence-lifecycle-flags" className="nf-muted">
+            audit_events={data.evidence_lifecycle.audit_event_count}{" "}
+            submission_unlock_status=
+            {String(data.evidence_lifecycle.submission_unlock_status)}{" "}
+            production_policy_validated=
+            {String(data.evidence_lifecycle.production_policy_validated)}{" "}
+            legal_compliance_claimed=
+            {String(data.evidence_lifecycle.legal_compliance_claimed)}
+          </p>
+          <ul data-testid="sc-demo-evidence-lifecycle-summary">
+            {data.evidence_lifecycle.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.top15_source_validation ? (
+        <section
+          data-testid="sc-demo-top15-source-validation"
+          className="nf-sc-demo-section"
+        >
+          <h2>Top-15 source research packets</h2>
+          <p className="nf-sc-demo-why">
+            Structured source-validation packets for each Top-15 state. SC is the
+            active curated-current lane; other states are research packets, not live
+            coverage.
+          </p>
+          <p data-testid="sc-demo-top15-source-flags" className="nf-muted">
+            packet_count={data.top15_source_validation.packet_count} active_lane=
+            {data.top15_source_validation.active_customer_lane} all_top15_live=
+            {String(data.top15_source_validation.all_top15_live_claimed)}{" "}
+            non_sc_live=
+            {String(data.top15_source_validation.non_sc_live_coverage_claimed)}{" "}
+            sc_freshness=
+            {String(data.top15_source_validation.sc_packet?.freshness_status)}
+          </p>
+          <ul data-testid="sc-demo-top15-source-summary">
+            {data.top15_source_validation.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            states=
+            {(data.top15_source_validation.states_packeted || []).join(", ")}
+          </p>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

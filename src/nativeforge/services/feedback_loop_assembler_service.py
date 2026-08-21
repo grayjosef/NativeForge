@@ -46,6 +46,8 @@ REPORT_SURFACES: tuple[tuple[str, str], ...] = (
     ("gate10_closeout", "Gate 10 closeout / pen-test readiness"),
     ("national_coverage", "National coverage / recognition routing"),
     ("applicant_authority", "Applicant authority verification"),
+    ("evidence_lifecycle", "Evidence lifecycle / audit"),
+    ("top15_source_validation", "Top-15 source research packets"),
 )
 
 
