@@ -1020,6 +1020,137 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.nofo_extraction_pilot ? (
+        <section
+          data-testid="sc-demo-nofo-extraction-pilot"
+          className="nf-sc-demo-section"
+        >
+          <h2>NOFO extraction pilot</h2>
+          <p className="nf-sc-demo-why">
+            Controlled extraction for one showcase opportunity from fixture text
+            derived from Grants.gov synopsis. PDF bytes are not parsed. Not
+            generalized. Human review required.
+          </p>
+          <p data-testid="sc-demo-nofo-extract-flags" className="nf-muted">
+            opportunity={data.nofo_extraction_pilot.pilot_opportunity_id} status=
+            {data.nofo_extraction_pilot.extraction_status} scope=
+            {data.nofo_extraction_pilot.extraction_scope}{" "}
+            full_pdf_extraction_claimed=
+            {String(data.nofo_extraction_pilot.full_pdf_extraction_claimed)}{" "}
+            broad_pdf_support_claimed=
+            {String(data.nofo_extraction_pilot.broad_pdf_support_claimed)}{" "}
+            pdf_bytes_parsed=
+            {String(data.nofo_extraction_pilot.pdf_bytes_parsed)}{" "}
+            proposal_drafting_claimed=
+            {String(data.nofo_extraction_pilot.proposal_drafting_claimed)}{" "}
+            final_eligibility_claimed=
+            {String(data.nofo_extraction_pilot.final_eligibility_claimed)}
+          </p>
+          <ul data-testid="sc-demo-nofo-extract-summary">
+            {data.nofo_extraction_pilot.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            source={data.nofo_extraction_pilot.source_document_label} named_pdf=
+            {data.nofo_extraction_pilot.named_pdf_attachment_referenced || "none"}
+          </p>
+          <div>
+            <h3>Sections</h3>
+            <ul data-testid="sc-demo-nofo-extract-sections">
+              {data.nofo_extraction_pilot.sections.slice(0, 12).map((s) => (
+                <li key={String(s.section_id)}>
+                  {String(s.heading)}: {String(s.status)} / confidence=
+                  {String(s.confidence)}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>Requirements map</h3>
+            <ul data-testid="sc-demo-nofo-extract-requirements">
+              {data.nofo_extraction_pilot.requirements_map.map((r) => (
+                <li key={String(r.requirement_id || r.field_id)}>
+                  {String(r.label)}: {String(r.status)} / confidence=
+                  {String(r.confidence)}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="nf-muted">
+            No full PDF claim. No broad coverage. No proposal drafting. No final
+            eligibility from extraction.
+          </p>
+        </section>
+      ) : null}
+
+      {data.source_freshness_pilot ? (
+        <section
+          data-testid="sc-demo-source-freshness"
+          className="nf-sc-demo-section"
+        >
+          <h2>Source freshness / source health</h2>
+          <p className="nf-sc-demo-why">
+            Read-only freshness pilot for controlled sources. Fixture-backed
+            checks only — external live network check not run. Not continuous
+            monitoring. Not production activation.
+          </p>
+          <p data-testid="sc-demo-source-freshness-flags" className="nf-muted">
+            sources={data.source_freshness_pilot.source_count}{" "}
+            external_live_check_not_run=
+            {String(data.source_freshness_pilot.external_live_check_not_run)}{" "}
+            live_ingest_claimed=
+            {String(data.source_freshness_pilot.live_ingest_claimed)}{" "}
+            continuous_monitoring_claimed=
+            {String(data.source_freshness_pilot.continuous_monitoring_claimed)}{" "}
+            production_activation_claimed=
+            {String(data.source_freshness_pilot.production_activation_claimed)}
+          </p>
+          <ul data-testid="sc-demo-source-freshness-summary">
+            {data.source_freshness_pilot.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.source_freshness_pilot.records.map((rec) => (
+            <article
+              key={rec.source_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-source-card-${rec.source_id}`}
+            >
+              <h3>
+                {rec.source_name}{" "}
+                <span className="nf-muted">({rec.source_layer})</span>
+              </h3>
+              <p>
+                freshness={rec.freshness_status} health={rec.source_health}{" "}
+                retrieval={rec.retrieval_status} change={rec.change_status}{" "}
+                last_checked={rec.last_checked_at || "not_checked"}
+              </p>
+              <p>
+                deadline_risk={rec.known_deadline_risk} expiration_risk=
+                {rec.known_expiration_risk}
+              </p>
+              <p>operator_next_check={rec.operator_next_check}</p>
+            </article>
+          ))}
+          <div>
+            <h3>Verify before customer reliance</h3>
+            <ul>
+              {(
+                data.source_freshness_pilot
+                  .what_must_be_verified_before_customer_reliance || []
+              ).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <p className="nf-muted">
+            No live ingest claim. No continuous monitoring claim. No production
+            activation claim.
+          </p>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

@@ -65,6 +65,16 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("binary_upload_persistence_supported=false");
     expect(html).toContain("None auto-approved without review.");
     expect(html).toContain("Must not claim");
+    expect(html).toContain("sc-demo-nofo-extraction-pilot");
+    expect(html).toContain("NOFO extraction pilot");
+    expect(html).toContain("full_pdf_extraction_claimed=false");
+    expect(html).toContain("broad_pdf_support_claimed=false");
+    expect(html).toContain("pdf_bytes_parsed=false");
+    expect(html).toContain("sc-demo-source-freshness");
+    expect(html).toContain("Source freshness / source health");
+    expect(html).toContain("external_live_check_not_run=true");
+    expect(html).toContain("continuous_monitoring_claimed=false");
+    expect(html).toContain("production_activation_claimed=false");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
     expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
@@ -120,6 +130,15 @@ describe("ScCustomerDemoPage", () => {
       false,
     );
     expect(payload.organization_evidence_memory?.fabricated_org_facts).toBe(false);
+    expect(payload.nofo_extraction_pilot?.pilot_opportunity_id).toBe("la-real-006");
+    expect(payload.nofo_extraction_pilot?.full_pdf_extraction_claimed).toBe(false);
+    expect(payload.nofo_extraction_pilot?.broad_pdf_support_claimed).toBe(false);
+    expect(payload.nofo_extraction_pilot?.pdf_bytes_parsed).toBe(false);
+    expect(payload.source_freshness_pilot?.source_count).toBeGreaterThanOrEqual(1);
+    expect(payload.source_freshness_pilot?.live_ingest_claimed).toBe(false);
+    expect(payload.source_freshness_pilot?.continuous_monitoring_claimed).toBe(false);
+    expect(payload.source_freshness_pilot?.production_activation_claimed).toBe(false);
+    expect(payload.source_freshness_pilot?.external_live_check_not_run).toBe(true);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

@@ -22,6 +22,10 @@ from nativeforge.services.narrative_budget_scaffold_assembler_service import (
     build_narrative_budget_demo_surface,
     narrative_budget_demo_surface_invariant_failures,
 )
+from nativeforge.services.nofo_extraction_pilot_assembler_service import (
+    build_nofo_extraction_demo_surface,
+    nofo_extraction_demo_surface_invariant_failures,
+)
 from nativeforge.services.nofo_showcase_demo_surface_service import (
     build_nofo_showcase_demo_surface,
     nofo_showcase_surface_invariant_failures,
@@ -45,6 +49,10 @@ from nativeforge.services.pursuit_workspace_assembler_service import (
 from nativeforge.services.sc_monday_demo_assembler_service import (
     build_sc_monday_demo_artifact,
     demo_artifact_invariant_failures,
+)
+from nativeforge.services.source_freshness_pilot_checker_service import (
+    build_source_freshness_demo_surface,
+    source_freshness_demo_surface_invariant_failures,
 )
 
 SCHEMA_VERSION = "nf_sc_monday_browser_demo_bridge_v1"
@@ -139,6 +147,24 @@ def build_sc_customer_demo_bridge_payload(
             f"Organization evidence memory surface invariants failed: {org_memory_fails}"
         )
 
+    nofo_extraction_surface = build_nofo_extraction_demo_surface()
+    nofo_extraction_fails = nofo_extraction_demo_surface_invariant_failures(
+        nofo_extraction_surface
+    )
+    if nofo_extraction_fails:
+        raise ValueError(
+            f"NOFO extraction pilot surface invariants failed: {nofo_extraction_fails}"
+        )
+
+    freshness_surface = build_source_freshness_demo_surface()
+    freshness_fails = source_freshness_demo_surface_invariant_failures(
+        freshness_surface
+    )
+    if freshness_fails:
+        raise ValueError(
+            f"Source freshness pilot surface invariants failed: {freshness_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -182,6 +208,8 @@ def build_sc_customer_demo_bridge_payload(
             "narrative_budget_scaffold": narrative_surface,
             "package_readiness_queue": readiness_surface,
             "organization_evidence_memory": org_memory_surface,
+            "nofo_extraction_pilot": nofo_extraction_surface,
+            "source_freshness_pilot": freshness_surface,
         }
     )
 
@@ -258,4 +286,14 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("organization_evidence_memory_missing")
     else:
         fails.extend(organization_evidence_demo_surface_invariant_failures(org_memory))
+    nofo_x = payload.get("nofo_extraction_pilot") or {}
+    if not nofo_x:
+        fails.append("nofo_extraction_pilot_missing")
+    else:
+        fails.extend(nofo_extraction_demo_surface_invariant_failures(nofo_x))
+    freshness = payload.get("source_freshness_pilot") or {}
+    if not freshness:
+        fails.append("source_freshness_pilot_missing")
+    else:
+        fails.extend(source_freshness_demo_surface_invariant_failures(freshness))
     return fails

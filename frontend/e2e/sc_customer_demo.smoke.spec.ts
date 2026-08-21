@@ -173,6 +173,29 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.locator('[data-testid^="sc-demo-org-memory-card-"]').first(),
     ).toContainText("None auto-approved without review.");
+    await expect(page.getByTestId("sc-demo-nofo-extraction-pilot")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-nofo-extract-flags")).toContainText(
+      "full_pdf_extraction_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-nofo-extract-flags")).toContainText(
+      "broad_pdf_support_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-nofo-extract-flags")).toContainText(
+      "pdf_bytes_parsed=false",
+    );
+    await expect(page.getByTestId("sc-demo-nofo-extract-summary")).toContainText(
+      "Controlled NOFO",
+    );
+    await expect(page.getByTestId("sc-demo-source-freshness")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-source-freshness-flags")).toContainText(
+      "live_ingest_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-source-freshness-flags")).toContainText(
+      "continuous_monitoring_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-source-freshness-flags")).toContainText(
+      "external_live_check_not_run=true",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );
