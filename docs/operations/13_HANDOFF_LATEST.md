@@ -1,57 +1,45 @@
-# 13_HANDOFF_LATEST — NativeForge
+# 13_HANDOFF_LATEST — Gate 09 closeout
 
-## Gate / Campaign Block complete
+**Date:** 2026-08-21
+**Gate:** 09 — Persistent Evidence Storage Approval Gate + Controlled Customer Auth Scaffolding
+**Blocks:** 23 (sprints 801–850), 24 (sprints 851–900)
+**Path:** `/home/josefgray/projects/nativeforge`
+**Branch:** `main`
+**HEAD before:** `6ba60f5`
+**HEAD after:** *(filled after push)*
 
-**Gate 08 complete — Blocks 21–22 / Sprints 701–800**
+## Shipped
 
-- Block 21 — Durable Evidence / Upload Persistence with Human Review
-- Block 22 — Operator Enablement / Production Readiness Checklist
+### Block 23
+- Persistence approval gate contract (`OWNER_APPROVED_MIGRATIONS=false`)
+- Storage adapters: fixture_backed, local_dev_only, planned_external; validated_persistent unavailable
+- Docs: `161` update + `166_PERSISTENT_STORAGE_APPROVAL_GATE.md`
+- SC panel: `sc-demo-persistence-approval-gate`
+- Claims: upload/customer/production persistence **false**; migrations **not** applied
 
-## Control point
+### Block 24
+- Customer access boundary contract + org-scoped allowlists
+- Cross-org isolation checks
+- Customer pilot readiness checklist → **NO_GO**
+- SC panel: `sc-demo-customer-pilot-auth`
+- Claims: login live / production auth / RBAC / multi-tenant / isolation **false**
 
-- path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
-- branch: `main`
-- HEAD before: `294baf6`
-- HEAD after: `a8ac251`
-- protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
-- uv.lock: present, untouched
+## Validation
+- Scoped pytest Blocks 23–24: green
+- Scoped ruff: green
+- FE typecheck / vitest / build: green
+- Block 23/24 smokes: PASS
+- Playwright: *(run_id after e2e)*
 
-## Block 21 delivered
+## Monday demo
+- Route: `/?view=sc_customer_demo`
+- Status: **GO** (demo)
+- Controlled customer pilot: **NO_GO**
+- Production: **NO_GO**
 
-- Evidence intake contract + fixture/planned adapter
-- Linkage to forms/checklist/binder/preview + unlock rules (always blocked without validated persistence)
-- Storage proposal: `docs/operations/161_EVIDENCE_UPLOAD_STORAGE_PROPOSAL.md`
-- SC demo: Evidence intake / uploads panel
-- upload_persistence_claimed=false; no upload UI; migrations not applied
+## Next — Gate 10 recommendation
+- Block 25: Owner-approved migration dry-run → apply only if Mayhem approves; validated_persistent path
+- Block 26: External pilot auth spike / pen-test readiness packet (still no fake pen-test pass)
 
-## Block 22 delivered
-
-- Operator readiness contract + go/no-go matrix
-- Monday demo GO; production/upload/collab NO_GO
-- Runbook updated (`99_MONDAY_BUYER_DEMO_RUNBOOK.md`)
-- SC demo: Operator enablement / production readiness panel
-
-## Smoke run_ids (Gate 08 closeout)
-
-- Block 21: `nf_camp21_evidence_intake_smoke_20260821T014215Z_0cd60f5e`
-- Block 22: `nf_camp22_operator_ready_smoke_20260821T014220Z_203f8c98`
-- Demo-runtime: `nf_sc_monday_browser_20260821T014228Z_5496e8e1`
-- Playwright: `nf_sc_monday_playwright_20260821T014230Z_6bdecf12`
-
-## Docs
-
-- `161` storage proposal; `162`–`165` Block 21/22 specs + claim matrices
-
-## World-class maturity
-
-- Before Gate 08: ~86–92%
-- After Gate 08: ~90–94%
-- Improved: evidence intake honesty + operator go/no-go enablement
-- Still below: validated persistent uploads, auth login, external pen-test, production multi-tenant
-
-## NEXT SAFE ACTION
-
-**Gate 09 — Validated persistent upload path (approved migration) + controlled customer pilot auth scaffolding**
-
-- Block 23: Approved migration + validated_persistent adapter (only after owner approval)
-- Block 24: Controlled customer pilot auth scaffolding (no fake login live)
+## Safety
+- Stash untouched; uv.lock untouched; no migrations applied; no scoring changes; no fake live login/uploads/pen-test.
