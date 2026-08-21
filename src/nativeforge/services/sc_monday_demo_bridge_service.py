@@ -118,6 +118,10 @@ from nativeforge.services.nofo_showcase_demo_surface_service import (
     build_nofo_showcase_demo_surface,
     nofo_showcase_surface_invariant_failures,
 )
+from nativeforge.services.object_storage_assembler_service import (
+    build_object_storage_demo_surface,
+    object_storage_demo_surface_invariant_failures,
+)
 from nativeforge.services.oidc_live_path_assembler_service import (
     build_oidc_live_path_demo_surface,
     oidc_live_path_demo_surface_invariant_failures,
@@ -149,6 +153,10 @@ from nativeforge.services.persistence_approval_assembler_service import (
 from nativeforge.services.production_enforcement_assembler_service import (
     build_production_enforcement_demo_surface,
     production_enforcement_demo_surface_invariant_failures,
+)
+from nativeforge.services.production_metadata_assembler_service import (
+    build_production_metadata_demo_surface,
+    production_metadata_demo_surface_invariant_failures,
 )
 from nativeforge.services.proposal_qa_gate_service import (
     ai_governance_demo_surface_invariant_failures,
@@ -633,6 +641,26 @@ def build_sc_customer_demo_bridge_payload(
             f"{gate21_storage_pilot_fails}"
         )
 
+    production_metadata_surface = build_production_metadata_demo_surface()
+    production_metadata_fails = production_metadata_demo_surface_invariant_failures(
+        production_metadata_surface
+    )
+    if production_metadata_fails:
+        raise ValueError(
+            "Production metadata surface invariants failed: "
+            f"{production_metadata_fails}"
+        )
+
+    object_storage_signed_url_surface = build_object_storage_demo_surface()
+    object_storage_signed_url_fails = object_storage_demo_surface_invariant_failures(
+        object_storage_signed_url_surface
+    )
+    if object_storage_signed_url_fails:
+        raise ValueError(
+            "Object storage surface invariants failed: "
+            f"{object_storage_signed_url_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -713,6 +741,8 @@ def build_sc_customer_demo_bridge_payload(
             "gate20_closeout": gate20_closeout_surface,
             "auth0_mode_b_live_unlock": auth0_mode_b_live_unlock_surface,
             "gate21_storage_pilot": gate21_storage_pilot_surface,
+            "production_metadata": production_metadata_surface,
+            "object_storage_signed_url": object_storage_signed_url_surface,
         }
     )
 
@@ -1027,5 +1057,19 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             gate21_storage_pilot_demo_surface_invariant_failures(gate21_storage_pilot)
+        )
+    production_metadata = payload.get("production_metadata") or {}
+    if not production_metadata:
+        fails.append("production_metadata_missing")
+    else:
+        fails.extend(
+            production_metadata_demo_surface_invariant_failures(production_metadata)
+        )
+    object_storage_signed_url = payload.get("object_storage_signed_url") or {}
+    if not object_storage_signed_url:
+        fails.append("object_storage_signed_url_missing")
+    else:
+        fails.extend(
+            object_storage_demo_surface_invariant_failures(object_storage_signed_url)
         )
     return fails

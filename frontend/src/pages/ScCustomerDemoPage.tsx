@@ -2518,6 +2518,68 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.production_metadata ? (
+        <section
+          data-testid="sc-demo-production-metadata"
+          className="nf-sc-demo-section"
+        >
+          <h2>Production metadata adapter (flagged)</h2>
+          <p className="nf-sc-demo-why">
+            Managed Postgres metadata path exists behind flags. Local/dev remains
+            allowed. Production writes stay blocked without approval and config.
+          </p>
+          <p data-testid="sc-demo-production-metadata-flags" className="nf-muted">
+            interface={String(data.production_metadata.metadata_adapter_interface)}{" "}
+            local={data.production_metadata.local_dev_metadata_behavior} config=
+            {String(data.production_metadata.production_metadata_config_present)}{" "}
+            approval={String(data.production_metadata.owner_approval_present)} writes=
+            {String(data.production_metadata.production_metadata_writes_allowed)}{" "}
+            storage_claimed=
+            {String(data.production_metadata.production_storage_claimed)} pilot=
+            {data.production_metadata.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-production-metadata-summary">
+            {data.production_metadata.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.object_storage_signed_url ? (
+        <section
+          data-testid="sc-demo-object-storage-signed-url"
+          className="nf-sc-demo-section"
+        >
+          <h2>Object storage / signed URL path (flagged)</h2>
+          <p className="nf-sc-demo-why">
+            S3-compatible adapter and signed URL path are modeled behind gates. No
+            fake production upload UI. Malware scan and org-scoped keys required.
+          </p>
+          <p
+            data-testid="sc-demo-object-storage-signed-url-flags"
+            className="nf-muted"
+          >
+            adapter={String(data.object_storage_signed_url.object_storage_adapter)}{" "}
+            config=
+            {String(data.object_storage_signed_url.production_object_config_present)}{" "}
+            writes=
+            {String(data.object_storage_signed_url.production_writes_allowed)}{" "}
+            malware={data.object_storage_signed_url.malware_scan_hook || "n/a"}{" "}
+            fake_ui=
+            {String(data.object_storage_signed_url.fake_upload_ui_exposed)}{" "}
+            storage_claimed=
+            {String(data.object_storage_signed_url.production_storage_claimed)} pilot=
+            {data.object_storage_signed_url.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-object-storage-signed-url-summary">
+            {data.object_storage_signed_url.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

@@ -1308,6 +1308,42 @@ export type ScCustomerDemoPayload = {
     production_rollout_status: string;
     next_safe_actions: string[];
   };
+  production_metadata?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    metadata_adapter_interface: boolean;
+    local_dev_metadata_behavior: string;
+    production_metadata_config_present: boolean;
+    owner_approval_present: boolean;
+    production_metadata_writes_allowed: boolean;
+    tenant_org_scoping: boolean;
+    audit_linkage: boolean;
+    production_storage_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+  };
+  object_storage_signed_url?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    object_storage_adapter: boolean;
+    production_object_config_present: boolean;
+    signed_upload_url_path?: string;
+    signed_download_url_path?: string;
+    malware_scan_hook?: string;
+    production_writes_allowed: boolean;
+    production_storage_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    fake_upload_ui_exposed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

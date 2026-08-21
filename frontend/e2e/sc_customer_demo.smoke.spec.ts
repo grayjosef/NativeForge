@@ -470,6 +470,19 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-gate21-storage-pilot-flags"),
     ).toContainText("storage_claimed=false");
+    await expect(page.getByTestId("sc-demo-production-metadata")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-production-metadata-flags"),
+    ).toContainText("writes=false");
+    await expect(
+      page.getByTestId("sc-demo-object-storage-signed-url"),
+    ).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-object-storage-signed-url-flags"),
+    ).toContainText("fake_ui=false");
+    await expect(
+      page.getByTestId("sc-demo-object-storage-signed-url-flags"),
+    ).toContainText("storage_claimed=false");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );
