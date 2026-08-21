@@ -6,7 +6,7 @@
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
 **HEAD before:** `8c8a04c`
-**HEAD after:** _(pending commit)_
+**HEAD after:** `fb4a239`
 **Mode:** A (no owner approval; production writes blocked)
 
 ## Shipped
