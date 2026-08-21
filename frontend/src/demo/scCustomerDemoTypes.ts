@@ -1466,6 +1466,48 @@ export type ScCustomerDemoPayload = {
     next_owner_action?: string;
     next_safe_actions: string[];
   };
+  security_attestation?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    security_attestation_contract: boolean;
+    evidence_report_present: boolean;
+    evidence_status: string;
+    critical_high_open: number;
+    remediation_status: string;
+    retest_status: string;
+    pen_test_passed: boolean;
+    pass_claimed: boolean;
+    pilot_impact: string;
+    production_impact: string;
+    fake_secure_badge: boolean;
+    fake_pen_test_passed_badge: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
+  controlled_pilot_master?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    master_resolver: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    allowed_claims?: string[];
+    forbidden_claims?: string[];
+    missing_gates?: string[];
+    fake_pilot_ready_banner: boolean;
+    fake_secure_badge: boolean;
+    login_live_claimed: boolean;
+    production_storage_claimed: boolean;
+    customer_persistence_claimed: boolean;
+    pen_test_passed_claimed: boolean;
+    next_owner_actions?: string[];
+    next_safe_actions: string[];
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

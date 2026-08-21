@@ -106,6 +106,14 @@ from nativeforge.services.gate25_storage_approval_assembler_service import (
     build_storage_approval_metadata_demo_surface,
     storage_approval_metadata_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate26_controlled_pilot_assembler_service import (
+    build_controlled_pilot_master_demo_surface,
+    controlled_pilot_master_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate26_security_attestation_assembler_service import (
+    build_security_attestation_demo_surface,
+    security_attestation_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -748,6 +756,28 @@ def build_sc_customer_demo_bridge_payload(
             f"{object_storage_unlock_fails}"
         )
 
+    security_attestation_surface = build_security_attestation_demo_surface()
+    security_attestation_fails = security_attestation_demo_surface_invariant_failures(
+        security_attestation_surface
+    )
+    if security_attestation_fails:
+        raise ValueError(
+            "Security attestation surface invariants failed: "
+            f"{security_attestation_fails}"
+        )
+
+    controlled_pilot_master_surface = build_controlled_pilot_master_demo_surface()
+    controlled_pilot_master_fails = (
+        controlled_pilot_master_demo_surface_invariant_failures(
+            controlled_pilot_master_surface
+        )
+    )
+    if controlled_pilot_master_fails:
+        raise ValueError(
+            "Controlled pilot master surface invariants failed: "
+            f"{controlled_pilot_master_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -836,6 +866,8 @@ def build_sc_customer_demo_bridge_payload(
             "session_tenant_enforcement": session_tenant_enforcement_surface,
             "storage_approval_metadata": storage_approval_metadata_surface,
             "object_storage_unlock": object_storage_unlock_surface,
+            "security_attestation": security_attestation_surface,
+            "controlled_pilot_master": controlled_pilot_master_surface,
         }
     )
 
@@ -1208,5 +1240,21 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             object_storage_unlock_demo_surface_invariant_failures(object_storage_unlock)
+        )
+    security_attestation = payload.get("security_attestation") or {}
+    if not security_attestation:
+        fails.append("security_attestation_missing")
+    else:
+        fails.extend(
+            security_attestation_demo_surface_invariant_failures(security_attestation)
+        )
+    controlled_pilot_master = payload.get("controlled_pilot_master") or {}
+    if not controlled_pilot_master:
+        fails.append("controlled_pilot_master_missing")
+    else:
+        fails.extend(
+            controlled_pilot_master_demo_surface_invariant_failures(
+                controlled_pilot_master
+            )
         )
     return fails

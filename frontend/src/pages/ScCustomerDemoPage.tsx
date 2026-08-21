@@ -2765,6 +2765,67 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.security_attestation ? (
+        <section
+          data-testid="sc-demo-security-attestation"
+          className="nf-sc-demo-section"
+        >
+          <h2>Security attestation / pen-test</h2>
+          <p className="nf-sc-demo-why">
+            No report means no pass. Open critical/high and pending remediations
+            block security claims. No fake secure badge.
+          </p>
+          <p
+            data-testid="sc-demo-security-attestation-flags"
+            className="nf-muted"
+          >
+            evidence={data.security_attestation.evidence_status} report=
+            {String(data.security_attestation.evidence_report_present)} crit_high=
+            {data.security_attestation.critical_high_open} pen_test=
+            {String(data.security_attestation.pen_test_passed)} fake_badge=
+            {String(data.security_attestation.fake_secure_badge)} pilot=
+            {data.security_attestation.controlled_customer_pilot_status} rollout=
+            {data.security_attestation.production_rollout_status}
+          </p>
+          <ul data-testid="sc-demo-security-attestation-summary">
+            {data.security_attestation.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.controlled_pilot_master ? (
+        <section
+          data-testid="sc-demo-controlled-pilot-master"
+          className="nf-sc-demo-section"
+        >
+          <h2>Controlled pilot master resolver</h2>
+          <p className="nf-sc-demo-why">
+            Aggregates auth, storage, policy, SCA, and pen-test. Mode A stays
+            below customer pilot GO. No fake pilot-ready banner.
+          </p>
+          <p
+            data-testid="sc-demo-controlled-pilot-master-flags"
+            className="nf-muted"
+          >
+            pilot={data.controlled_pilot_master.controlled_customer_pilot_status}{" "}
+            rollout={data.controlled_pilot_master.production_rollout_status}{" "}
+            fake_banner=
+            {String(data.controlled_pilot_master.fake_pilot_ready_banner)} login=
+            {String(data.controlled_pilot_master.login_live_claimed)} storage=
+            {String(data.controlled_pilot_master.production_storage_claimed)}{" "}
+            pen_test=
+            {String(data.controlled_pilot_master.pen_test_passed_claimed)}
+          </p>
+          <ul data-testid="sc-demo-controlled-pilot-master-summary">
+            {data.controlled_pilot_master.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
