@@ -1,33 +1,40 @@
-# 13_HANDOFF_LATEST — Gate 17 closeout
+# 13_HANDOFF_LATEST — Gate 18 closeout
 
 **Date:** 2026-08-21
-**Gate:** 17 — Owner-Executed Live Auth Validation + Storage Provisioning Dry-Run + Pen-Test Support
-**Blocks:** 39 (1601–1650), 40 (1651–1700)
+**Gate:** 18 — Auth0 Validation Run Support + Storage Feature-Flag Scaffolding
+**Blocks:** 41 (1701–1750), 42 (1751–1800)
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `8ed797b`
-**HEAD after:** `d962533`
+**HEAD before:** `48d9e98`
+**HEAD after:** _(pending commit)_
 
 ## Shipped
 
-### Block 39
-- OIDC config schema (secret values never stored)
-- OIDC identity → auth context mapper + RBAC handoff
-- Callback/session dry-run harness
-- Owner checklist: `212_AUTH0_OIDC_OWNER_SETUP_CHECKLIST.md`
-- Panel: `sc-demo-oidc-live-path`
-- login_live=false
+### Block 41
+- Auth validation run contract (all gates required for login live)
+- Login claim resolver (dry-run/fixture/partial/secret-alone cannot unlock)
+- Smoke: `scripts/nativeforge_auth0_validation_smoke.py` (never prints secrets)
+- Panel: `sc-demo-auth0-validation`
+- Docs: `218_AUTH0_VALIDATION_RUN_SUPPORT.md`
+- login_live_claimed=false; production_auth_claimed=false; pilot auth ready=false
 
-### Block 40
-- Storage provisioning dry-run contract
-- Checklist: `213_PRODUCTION_STORAGE_PROVISIONING_DRY_RUN.md`
-- Pen-test support/remediation loop: `214`
-- Panel: `sc-demo-storage-pentest-support`
-- production storage / pen-test claims false
+### Block 42
+- Storage feature-flag contract
+- Adapter interface + safe stubs (production blocked without flag/approval/config)
+- Production storage readiness validator
+- Panel: `sc-demo-storage-feature-flags`
+- Docs: `219_STORAGE_FEATURE_FLAG_SCAFFOLDING.md`
+- production_storage_claimed=false; customer_data_persistence_claimed=false
 
-## Next — Gate 18
-- Block 41: Owner-configured live Auth0 validation runbook execution support
-- Block 42: Storage provisioning implementation behind feature flag (only after approval)
+## Honest GO/NO_GO
+- Monday demo: GO
+- Controlled customer pilot: NO_GO
+- Production rollout: NO_GO
+- Login live / production storage / pen-test passed: false
+
+## Next — Gate 19
+- Block 43: Owner Auth0 live validation execution (with real secrets out-of-band)
+- Block 44: Owner storage approval + provisioning execution path
 
 ## Safety
-- No secrets committed; login/storage/pen-test/pilot GO not falsely claimed; stash/uv.lock untouched
+- No secrets committed; no fake live login/storage/pilot GO; stash/uv.lock untouched

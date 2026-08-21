@@ -16,5 +16,9 @@
 | Live production validation | UNKNOWN |
 | Independent penetration test | NOT_CLAIMED |
 | Production-ready auth | NOT_CLAIMED |
+| Auth0/OIDC validation run support | IMPLEMENTED / login_live=false until configured+validated |
+| Login claim resolver | IMPLEMENTED / dry-run cannot unlock login_live |
+| Storage feature-flag scaffolding | IMPLEMENTED / production_storage_enabled=false |
+| Production storage readiness validator | IMPLEMENTED / claims remain false |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
