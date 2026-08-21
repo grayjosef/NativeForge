@@ -1,0 +1,66 @@
+CONTROLLED NOFO EXTRACTION PILOT SOURCE TEXT
+data_mode: fixture_controlled
+opportunity_id: la-real-006
+grants_gov_opportunity_id: 362648
+opportunity_number: BIA-TEDC-2026
+title: Tribal Energy Development Capacity (TEDC) Grant FY 2026
+agency: Bureau of Indian Affairs
+
+=== OVERVIEW / SUMMARY ===
+The Secretary of the Interior ("Secretary"), through the Division of Energy and Mineral Development (DEMD), Office of Trust Services, Bureau of Indian Affairs (BIA), is soliciting grant proposals from Federally recognized Tribal entities for the Tribal Energy Development Capacity (TEDC) grant. The TEDC grant seeks to build Tribal management, organizational and technical capacity needed to maximize the economic impact of energy resource development on Indian land. Grants may fund development of organizational and business structures for energy development, as well as legal and regulatory infrastructure. Certified Local Governments are encouraged to prioritize projects in support of the celebration of America's 250th birthday (America250). This may include, but is not limited to, preservation 2 planning, interpretation, public engagement, and rehabilitation projects that recognize and honor the nation's founding, history, and cultural heritage.New TERA Pathways Topic Area - As part of this solicitation, applicants may elect to pursue activities aligned with the TERA Pathways Initiative, a strategic capacity building effort focused on supporting Tribal progress toward energy self-determination under the Tribal Energy Resource Agreement (TERA) framework. Applications should specify if they are applying for this topic area.
+
+=== ELIGIBILITY ===
+Only Indian Tribes and Tribal Energy Development Organizations (TEDOs) are eligible to receive TEDC grants for projects on Indian land, as provided under the Energy Policy Act of 2005, as amended, and codified under sections 3501-3503 of title 25 of the United States Code (25 U.S.C. &sect;&sect; 3501-3503). TEDC grants may only fund projects occurring on Indian land as defined in the under 25 U.S.C. &sect; 3501.
+Applicant types:
+- Native American tribal governments (Federally recognized)
+- Native American tribal organizations (other than Federally recognized tribal governments)
+
+=== DEADLINE / AWARD PERIOD ===
+response_date: Jul 16, 2026 12:00:00 AM EDT
+response_date_desc: Electronically submitted applications must be submitted no later than 11:59 pm ET on July 16, 2026 in grants.gov
+posting_date: Jun 02, 2026 12:00:00 AM EDT
+archive_date: Jul 18, 2026 12:00:00 AM EDT
+
+=== FUNDING AMOUNT ===
+estimated_funding: 6,800,000
+award_ceiling: 450,000
+award_floor: 10,000
+number_of_awards: 30
+
+=== MATCH / COST-SHARE ===
+cost_sharing: False
+NOTE: costSharing=false in Grants.gov synopsis; do not invent match requirements.
+
+=== REQUIRED FORMS / ATTACHMENTS ===
+Named PDF attachment (bytes not stored in this pilot):
+- TEDC NOFO FY 2026.pdf
+Application packages referenced in Grants.gov metadata (forms inventory incomplete without full NOFO PDF bytes).
+
+=== NARRATIVE REQUIREMENTS ===
+not_in_source: Full narrative section list requires full NOFO PDF text; synopsis does not enumerate narrative headings.
+
+=== BUDGET REQUIREMENTS ===
+not_in_source: Detailed budget narrative requirements not present in synopsis fields.
+
+=== SCORING / EVALUATION CRITERIA ===
+not_in_source: Evaluation criteria scoring table not present in synopsis fields.
+
+=== REPORTING / COMPLIANCE ===
+not_in_source: Reporting schedule not present in synopsis fields.
+mod_comments: Form 3881 for ACH banking listed as a requirement for this solicitation is no longer needed as all funding payments go through ASAP. 
+
+
+&#57619;
+Form 3881
+
+=== CONTACT / SOURCE INFO ===
+agency_contact: JoAnn Metcalfe, Grant Officer
+Jo.Metcalfe@bia.gov
+agency_email: Jo.Metcalfe@bia.gov
+agency_phone: 7033906410
+cfda: ['15.148']
+
+=== EXTRACTION HONESTY ===
+full_pdf_extraction_claimed=false
+broad_pdf_support_claimed=false
+This text is derived from a controlled Grants.gov fetch fixture, not from parsing TEDC NOFO FY 2026.pdf bytes.
