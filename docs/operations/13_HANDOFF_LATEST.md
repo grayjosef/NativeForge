@@ -2,55 +2,57 @@
 
 ## Gate / Campaign Block complete
 
-**Gate 04 complete — Blocks 13–14 / Sprints 301–400**
+**Gate 05 complete — Blocks 15–16 / Sprints 401–500**
 
-- Block 13 of 20 — Deterministic AI Governance + Proposal QA Hard Gates
-- Block 14 of 20 — Customer Feedback / Slack Reporting + Collaboration Dark Flag
+- Block 15 of 20 — Package Export Preview
+- Block 16 of 20 — Forms and Attachments Mapping v0
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
-- HEAD before: `6acb510`
-- HEAD after: `f6d2bbc`
+- HEAD before: `793bb23`
+- HEAD after: _(set after final push align)_
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
-## Block 13 delivered
+## Block 15 delivered
 
-- AI governance contract + personalization attribution checks
-- Proposal QA gate aggregation (citations, prohibited facts, human review, submission guard)
-- qa_passed/export/submission forced false while blockers/review incomplete
-- SC demo: AI governance / QA gates
+- Package export preview contract + section assembler + evidence map
+- export_allowed=false; final_export_claimed=false; submission_ready_claimed=false; download_supported=false
+- Draft sections without citations excluded from supported export content
+- SC demo: Package export preview panel
 
-## Block 14 delivered
+## Block 16 delivered
 
-- Feedback report contract + report hooks on major demo panels
-- Slack alert dry-run plumbing (never fake sent)
-- Collaboration dark flag foundation (all live claims false/off)
-- SC demo: Customer feedback / reporting
+- Forms/attachments mapping contract + conservative form/attachment mapper
+- Linked to NOFO pilot, checklist/intake refs, org evidence memory, package preview
+- binary_upload_supported=false; attachment_persistence_claimed=false; form_completion_claimed=false
+- Missing attachments remain visible and incomplete
+- SC demo: Forms & attachments map panel
 
-## Smoke run_ids (Gate 04 closeout)
+## Smoke run_ids (Gate 05 closeout)
 
-- Block 13: `nf_camp13_ai_gov_smoke_20260821T005649Z_b3fc45d1`
-- Block 14: `nf_camp14_feedback_smoke_20260821T005650Z_733310f9`
-- Demo-runtime: `nf_sc_monday_browser_20260821T005651Z_816dbde4`
-- Playwright: `nf_sc_monday_playwright_20260821T005654Z_f06c235e`
+- Block 15: `nf_camp15_export_preview_smoke_20260821T010837Z_549bb0ad`
+- Block 16: `nf_camp16_forms_map_smoke_20260821T010840Z_d3aea4a4`
+- Demo-runtime: `nf_sc_monday_browser_20260821T010844Z_706d06ff`
+- Playwright: `nf_sc_monday_playwright_20260821T010851Z_dc756cf5`
 
 ## Docs
 
-- `137`–`139` Block 13; `140`–`142` Block 14
+- `143`–`145` Block 15; `146`–`148` Block 16
+- Sprint stubs: `campaign_block15_sprints/`, `campaign_block16_sprints/`
 
 ## World-class maturity
 
-- Before Gate 04: ~60–68%
-- After Gate 04: ~68–74%
-- Improved: deterministic draft QA + feedback/Slack foundation + collab dark flag
-- Still below: package export, forms mapping, multi-org pilot, live freshness, binary PDF
+- Before Gate 05: ~68–74%
+- After Gate 05: ~74–80%
+- Improved: package assembly credibility (preview + forms/attachments map)
+- Still below: multi-org pilot, collaboration live, durable uploads, full PDF, live freshness, final export unlock
 
 ## NEXT SAFE ACTION
 
-**Gate 05 — Package Export Preview + Forms/Attachments Mapping**
+**Gate 06 — Multi-org pilot + collaboration dark-launch foundation**
 
-- Block 15: Package Export Preview
-- Block 16: Forms and Attachments Mapping v0
+- Block 17: Multi-organization pilot packaging / cohort readiness
+- Block 18: Collaboration dark-launch foundation (still off until explicit enable)
