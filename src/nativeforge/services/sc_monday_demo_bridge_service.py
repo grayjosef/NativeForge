@@ -98,6 +98,14 @@ from nativeforge.services.gate21_storage_pilot_assembler_service import (
     build_gate21_storage_pilot_demo_surface,
     gate21_storage_pilot_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate25_object_storage_assembler_service import (
+    build_object_storage_unlock_demo_surface,
+    object_storage_unlock_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate25_storage_approval_assembler_service import (
+    build_storage_approval_metadata_demo_surface,
+    storage_approval_metadata_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -718,6 +726,28 @@ def build_sc_customer_demo_bridge_payload(
             f"{session_tenant_enforcement_fails}"
         )
 
+    storage_approval_metadata_surface = build_storage_approval_metadata_demo_surface()
+    storage_approval_metadata_fails = (
+        storage_approval_metadata_demo_surface_invariant_failures(
+            storage_approval_metadata_surface
+        )
+    )
+    if storage_approval_metadata_fails:
+        raise ValueError(
+            "Storage approval/metadata surface invariants failed: "
+            f"{storage_approval_metadata_fails}"
+        )
+
+    object_storage_unlock_surface = build_object_storage_unlock_demo_surface()
+    object_storage_unlock_fails = object_storage_unlock_demo_surface_invariant_failures(
+        object_storage_unlock_surface
+    )
+    if object_storage_unlock_fails:
+        raise ValueError(
+            "Object storage unlock surface invariants failed: "
+            f"{object_storage_unlock_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -804,6 +834,8 @@ def build_sc_customer_demo_bridge_payload(
             "retention_delete_export": retention_delete_export_surface,
             "auth0_login_rbac": auth0_login_rbac_surface,
             "session_tenant_enforcement": session_tenant_enforcement_surface,
+            "storage_approval_metadata": storage_approval_metadata_surface,
+            "object_storage_unlock": object_storage_unlock_surface,
         }
     )
 
@@ -1160,5 +1192,21 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             session_tenant_demo_surface_invariant_failures(session_tenant_enforcement)
+        )
+    storage_approval_metadata = payload.get("storage_approval_metadata") or {}
+    if not storage_approval_metadata:
+        fails.append("storage_approval_metadata_missing")
+    else:
+        fails.extend(
+            storage_approval_metadata_demo_surface_invariant_failures(
+                storage_approval_metadata
+            )
+        )
+    object_storage_unlock = payload.get("object_storage_unlock") or {}
+    if not object_storage_unlock:
+        fails.append("object_storage_unlock_missing")
+    else:
+        fails.extend(
+            object_storage_unlock_demo_surface_invariant_failures(object_storage_unlock)
         )
     return fails

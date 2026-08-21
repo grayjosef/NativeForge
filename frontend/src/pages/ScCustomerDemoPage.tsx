@@ -2700,6 +2700,71 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.storage_approval_metadata ? (
+        <section
+          data-testid="sc-demo-storage-approval-metadata"
+          className="nf-sc-demo-section"
+        >
+          <h2>Storage approval / metadata live path</h2>
+          <p className="nf-sc-demo-why">
+            Prompt text is not approval. Mode A keeps metadata writes and
+            production storage blocked until owner token, config, and validation
+            pass. No fake upload UI.
+          </p>
+          <p
+            data-testid="sc-demo-storage-approval-metadata-flags"
+            className="nf-muted"
+          >
+            mode={data.storage_approval_metadata.mode} token=
+            {String(data.storage_approval_metadata.approval_token_present)} scope=
+            {data.storage_approval_metadata.approval_scope} writes=
+            {String(data.storage_approval_metadata.metadata_writes_allowed)} storage=
+            {String(data.storage_approval_metadata.production_storage_claimed)}{" "}
+            persistence=
+            {String(data.storage_approval_metadata.customer_persistence_claimed)}{" "}
+            fake_ui={String(data.storage_approval_metadata.fake_upload_ui)}
+          </p>
+          <ul data-testid="sc-demo-storage-approval-metadata-summary">
+            {data.storage_approval_metadata.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.object_storage_unlock ? (
+        <section
+          data-testid="sc-demo-object-storage-unlock"
+          className="nf-sc-demo-section"
+        >
+          <h2>Object storage / signed URL unlock</h2>
+          <p className="nf-sc-demo-why">
+            Signed URLs and production object writes stay blocked without
+            approval, config, SSE, and malware gates. Cross-org keys denied. No
+            fake signed URL UI.
+          </p>
+          <p
+            data-testid="sc-demo-object-storage-unlock-flags"
+            className="nf-muted"
+          >
+            upload={data.object_storage_unlock.signed_upload_status || "n/a"}{" "}
+            download={data.object_storage_unlock.signed_download_status || "n/a"}{" "}
+            writes=
+            {String(data.object_storage_unlock.production_object_writes_allowed)}{" "}
+            signed_live={String(data.object_storage_unlock.signed_urls_live)} storage=
+            {String(data.object_storage_unlock.production_storage_claimed)}{" "}
+            persistence=
+            {String(data.object_storage_unlock.customer_persistence_claimed)} fake_ui=
+            {String(data.object_storage_unlock.fake_signed_url_ui)}
+          </p>
+          <ul data-testid="sc-demo-object-storage-unlock-summary">
+            {data.object_storage_unlock.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
