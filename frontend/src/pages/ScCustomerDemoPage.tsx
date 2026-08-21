@@ -1871,6 +1871,71 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.national_coverage ? (
+        <section
+          data-testid="sc-demo-national-coverage"
+          className="nf-sc-demo-section"
+        >
+          <h2>National coverage + recognition routing</h2>
+          <p className="nf-sc-demo-why">
+            Provisional Top-15 state coverage model. SC is the active demo lane;
+            other states are modeled. Live multi-state coverage is not claimed.
+            State-recognized status is never treated as federally recognized.
+          </p>
+          <p data-testid="sc-demo-national-coverage-flags" className="nf-muted">
+            top_15_count={data.national_coverage.top_15_count} active_lane=
+            {data.national_coverage.active_customer_lane} live_coverage_claimed=
+            {String(data.national_coverage.live_coverage_claimed)} confidence=
+            {data.national_coverage.ranking_confidence_summary} fed_source=
+            {data.national_coverage.federally_recognized_tribe_source}
+          </p>
+          <ul data-testid="sc-demo-national-coverage-summary">
+            {data.national_coverage.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            top15=
+            {data.national_coverage.top_15_states
+              .map((s) => s.state_code)
+              .join(", ")}
+          </p>
+        </section>
+      ) : null}
+
+      {data.applicant_authority ? (
+        <section
+          data-testid="sc-demo-applicant-authority"
+          className="nf-sc-demo-section"
+        >
+          <h2>Applicant authority verification</h2>
+          <p className="nf-sc-demo-why">
+            Draft, manage, and submit authorities are separate. Submission
+            authority, AOR, EBiz POC, and SAM are not claimed without evidence.
+          </p>
+          <p data-testid="sc-demo-applicant-authority-flags" className="nf-muted">
+            submission_authority_claimed=
+            {String(data.applicant_authority.submission_authority_claimed)}{" "}
+            federal_authority_claimed=
+            {String(data.applicant_authority.federal_authority_claimed)}{" "}
+            state_authority_claimed=
+            {String(data.applicant_authority.state_authority_claimed)}{" "}
+            human_review_required=
+            {String(data.applicant_authority.human_review_required)} confidence=
+            {data.applicant_authority.verification_confidence}
+          </p>
+          <ul data-testid="sc-demo-applicant-authority-summary">
+            {data.applicant_authority.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            blocked=
+            {(data.applicant_authority.blocked_actions || []).slice(0, 4).join(", ")}
+          </p>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

@@ -950,6 +950,38 @@ export type ScCustomerDemoPayload = {
     final_forbidden_claims: string[];
     final_fallback_path: string;
   };
+  national_coverage?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    top_15_count: number;
+    top_15_states: Array<{ state_code: string; state_name: string }>;
+    active_customer_lane: string;
+    live_coverage_claimed: boolean;
+    ranking_confidence_summary: string;
+    what_is_live: string[];
+    what_is_modeled_only: string[];
+    what_needs_research: string[];
+    federally_recognized_tribe_source: string;
+  };
+  applicant_authority?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    submission_authority_claimed: boolean;
+    federal_authority_claimed: boolean;
+    state_authority_claimed: boolean;
+    human_review_required: boolean;
+    verification_confidence: string;
+    missing_evidence: string[];
+    allowed_actions: string[];
+    blocked_actions: string[];
+    selected_person: Record<string, unknown>;
+    federal_authority: Record<string, unknown>;
+    state_authority: Record<string, unknown>;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

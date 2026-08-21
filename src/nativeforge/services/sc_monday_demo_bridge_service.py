@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from nativeforge.services.applicant_authority_assembler_service import (
+    applicant_authority_demo_surface_invariant_failures,
+    build_applicant_authority_demo_surface,
+)
 from nativeforge.services.application_plan_workspace_assembler_service import (
     application_plan_demo_surface_invariant_failures,
     build_application_plan_workspace_demo_surface,
@@ -57,6 +61,10 @@ from nativeforge.services.multi_org_pilot_assembler_service import (
 from nativeforge.services.narrative_budget_scaffold_assembler_service import (
     build_narrative_budget_demo_surface,
     narrative_budget_demo_surface_invariant_failures,
+)
+from nativeforge.services.national_coverage_assembler_service import (
+    build_national_coverage_demo_surface,
+    national_coverage_demo_surface_invariant_failures,
 )
 from nativeforge.services.nofo_extraction_pilot_assembler_service import (
     build_nofo_extraction_demo_surface,
@@ -322,6 +330,25 @@ def build_sc_customer_demo_bridge_payload(
             f"Gate 10 closeout surface invariants failed: {gate10_closeout_fails}"
         )
 
+    national_coverage_surface = build_national_coverage_demo_surface()
+    national_coverage_fails = national_coverage_demo_surface_invariant_failures(
+        national_coverage_surface
+    )
+    if national_coverage_fails:
+        raise ValueError(
+            f"National coverage surface invariants failed: {national_coverage_fails}"
+        )
+
+    applicant_authority_surface = build_applicant_authority_demo_surface()
+    applicant_authority_fails = applicant_authority_demo_surface_invariant_failures(
+        applicant_authority_surface
+    )
+    if applicant_authority_fails:
+        raise ValueError(
+            "Applicant authority surface invariants failed: "
+            f"{applicant_authority_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -380,6 +407,8 @@ def build_sc_customer_demo_bridge_payload(
             "persistence_approval_gate": persistence_approval_surface,
             "customer_pilot_auth": customer_pilot_auth_surface,
             "gate10_closeout": gate10_closeout_surface,
+            "national_coverage": national_coverage_surface,
+            "applicant_authority": applicant_authority_surface,
         }
     )
 
@@ -541,4 +570,18 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("gate10_closeout_missing")
     else:
         fails.extend(gate10_closeout_demo_surface_invariant_failures(gate10_closeout))
+    national_coverage = payload.get("national_coverage") or {}
+    if not national_coverage:
+        fails.append("national_coverage_missing")
+    else:
+        fails.extend(
+            national_coverage_demo_surface_invariant_failures(national_coverage)
+        )
+    applicant_authority = payload.get("applicant_authority") or {}
+    if not applicant_authority:
+        fails.append("applicant_authority_missing")
+    else:
+        fails.extend(
+            applicant_authority_demo_surface_invariant_failures(applicant_authority)
+        )
     return fails

@@ -44,6 +44,8 @@ REPORT_SURFACES: tuple[tuple[str, str], ...] = (
     ("persistence_approval_gate", "Persistent storage approval gate"),
     ("customer_pilot_auth", "Customer pilot auth scaffolding"),
     ("gate10_closeout", "Gate 10 closeout / pen-test readiness"),
+    ("national_coverage", "National coverage / recognition routing"),
+    ("applicant_authority", "Applicant authority verification"),
 )
 
 

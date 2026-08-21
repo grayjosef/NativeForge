@@ -98,6 +98,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-persistence-approval-gate");
     expect(html).toContain("sc-demo-customer-pilot-auth");
     expect(html).toContain("sc-demo-gate10-closeout");
+    expect(html).toContain("sc-demo-national-coverage");
+    expect(html).toContain("sc-demo-applicant-authority");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -235,6 +237,11 @@ describe("ScCustomerDemoPage", () => {
     );
     expect(payload.gate10_closeout?.monday_demo_status).toBe("GO");
     expect(payload.gate10_closeout?.pen_test_passed_claimed).toBe(false);
+    expect(payload.national_coverage?.top_15_count).toBe(15);
+    expect(payload.national_coverage?.live_coverage_claimed).toBe(false);
+    expect(payload.national_coverage?.active_customer_lane).toBe("SC");
+    expect(payload.applicant_authority?.submission_authority_claimed).toBe(false);
+    expect(payload.applicant_authority?.federal_authority_claimed).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );
