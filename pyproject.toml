@@ -14,7 +14,7 @@ dependencies = [
     "sqlalchemy>=2.0",
     "alembic>=1.14",
     "psycopg[binary]>=3.2",
-    "pydantic-settings>=2.6",
+    "pydantic-settings>=2.14.2",
 ]
 
 [project.optional-dependencies]
@@ -853,6 +853,19 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/audit_operator_storage_assembler_service.py" = ["E501"]
 "src/nativeforge/services/campaign_block36_smoke_runner_service.py" = ["E501"]
 "tests/test_audit_operator_storage_campaign36.py" = ["E501"]
+"src/nativeforge/services/auth_provider_decision_matrix_service.py" = ["E501"]
+"src/nativeforge/services/pilot_invite_allowlist_contract_service.py" = ["E501"]
+"src/nativeforge/services/external_auth_context_adapter_service.py" = ["E501"]
+"src/nativeforge/services/external_pilot_auth_assembler_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block37_smoke_runner_service.py" = ["E501"]
+"tests/test_external_pilot_auth_campaign37.py" = ["E501"]
+"src/nativeforge/services/production_storage_backend_recommendation_service.py" = ["E501"]
+"src/nativeforge/services/production_storage_owner_approval_service.py" = ["E501"]
+"src/nativeforge/services/python_sca_execution_service.py" = ["E501"]
+"src/nativeforge/services/pen_test_scheduling_burndown_service.py" = ["E501"]
+"src/nativeforge/services/storage_sca_pentest_assembler_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block38_smoke_runner_service.py" = ["E501"]
+"tests/test_storage_sca_pentest_campaign38.py" = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"
