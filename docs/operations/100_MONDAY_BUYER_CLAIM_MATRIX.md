@@ -36,5 +36,7 @@
 | Session/tenant enforcement (Gate 24) | IMPLEMENTED / cross-org deny; external access false |
 | Storage approval + metadata live path (Gate 25) | IMPLEMENTED / Mode A; production storage false |
 | Object storage signed-URL unlock (Gate 25) | IMPLEMENTED / blocked without approval/SSE/malware |
+| Security attestation / pen-test gate (Gate 26) | IMPLEMENTED / no report; pen_test_passed false |
+| Controlled pilot master resolver (Gate 26) | IMPLEMENTED / CONDITIONAL_INTERNAL_ONLY; not GO |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
