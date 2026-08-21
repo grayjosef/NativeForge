@@ -124,6 +124,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-object-storage-signed-url");
     expect(html).toContain("sc-demo-customer-data-policy");
     expect(html).toContain("sc-demo-retention-delete-export");
+    expect(html).toContain("sc-demo-auth0-login-rbac");
+    expect(html).toContain("sc-demo-session-tenant");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -334,6 +336,12 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.customer_data_policy?.ai_training_consent_default).toBe(false);
     expect(payload.retention_delete_export?.final_export_claimed).toBe(false);
     expect(payload.retention_delete_export?.fake_production_export_ui).toBe(false);
+    expect(payload.auth0_login_rbac?.login_live_claimed).toBe(false);
+    expect(payload.auth0_login_rbac?.fake_login_ui).toBe(false);
+    expect(payload.session_tenant_enforcement?.production_multi_tenant_claimed).toBe(
+      false,
+    );
+    expect(payload.session_tenant_enforcement?.fake_customer_access_ui).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

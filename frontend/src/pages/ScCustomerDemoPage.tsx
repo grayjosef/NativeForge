@@ -2640,6 +2640,66 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.auth0_login_rbac ? (
+        <section
+          data-testid="sc-demo-auth0-login-rbac"
+          className="nf-sc-demo-section"
+        >
+          <h2>Auth0 login / RBAC validation</h2>
+          <p className="nf-sc-demo-why">
+            Mode A dry-run by default. Login live stays false until Mode B
+            provider validation, invite/org/role, RBAC, and tenant gates pass.
+            No fake login UI.
+          </p>
+          <p data-testid="sc-demo-auth0-login-rbac-flags" className="nf-muted">
+            mode={data.auth0_login_rbac.mode} provider=
+            {String(data.auth0_login_rbac.provider_config_present)} live_attempted=
+            {String(data.auth0_login_rbac.live_validation_attempted)} login_live=
+            {String(data.auth0_login_rbac.login_live_claimed)} prod_auth=
+            {String(data.auth0_login_rbac.production_auth_claimed)} pilot_auth=
+            {String(data.auth0_login_rbac.controlled_pilot_auth_ready)} fake_ui=
+            {String(data.auth0_login_rbac.fake_login_ui)}
+          </p>
+          <ul data-testid="sc-demo-auth0-login-rbac-summary">
+            {data.auth0_login_rbac.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.session_tenant_enforcement ? (
+        <section
+          data-testid="sc-demo-session-tenant"
+          className="nf-sc-demo-section"
+        >
+          <h2>Session / tenant enforcement</h2>
+          <p className="nf-sc-demo-why">
+            Dry-run and live session statuses enforce org isolation. Cross-org
+            denials are audited. External customer access and production
+            multi-tenant claims remain false.
+          </p>
+          <p data-testid="sc-demo-session-tenant-flags" className="nf-muted">
+            session={data.session_tenant_enforcement.session_status || "n/a"}{" "}
+            multi_tenant=
+            {String(data.session_tenant_enforcement.production_multi_tenant_claimed)}{" "}
+            external=
+            {String(
+              data.session_tenant_enforcement.external_users_can_access_claimed,
+            )}{" "}
+            login_live=
+            {String(data.session_tenant_enforcement.login_live_claimed)} fake_ui=
+            {String(data.session_tenant_enforcement.fake_customer_access_ui)} pilot=
+            {data.session_tenant_enforcement.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-session-tenant-summary">
+            {data.session_tenant_enforcement.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

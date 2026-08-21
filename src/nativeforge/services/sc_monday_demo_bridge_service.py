@@ -22,6 +22,10 @@ from nativeforge.services.auth0_live_validation_assembler_service import (
     auth0_live_validation_demo_surface_invariant_failures,
     build_auth0_live_validation_demo_surface,
 )
+from nativeforge.services.auth0_login_rbac_validation_assembler_service import (
+    auth0_login_rbac_demo_surface_invariant_failures,
+    build_auth0_login_rbac_demo_surface,
+)
 from nativeforge.services.auth0_mode_b_assembler_service import (
     auth0_mode_b_demo_surface_invariant_failures,
     build_auth0_mode_b_demo_surface,
@@ -185,6 +189,10 @@ from nativeforge.services.sc_monday_demo_assembler_service import (
 from nativeforge.services.sca_security_loop_assembler_service import (
     build_sca_security_loop_demo_surface,
     sca_security_loop_demo_surface_invariant_failures,
+)
+from nativeforge.services.session_tenant_enforcement_assembler_service import (
+    build_session_tenant_demo_surface,
+    session_tenant_demo_surface_invariant_failures,
 )
 from nativeforge.services.source_freshness_pilot_checker_service import (
     build_source_freshness_demo_surface,
@@ -691,6 +699,25 @@ def build_sc_customer_demo_bridge_payload(
             f"{retention_delete_export_fails}"
         )
 
+    auth0_login_rbac_surface = build_auth0_login_rbac_demo_surface()
+    auth0_login_rbac_fails = auth0_login_rbac_demo_surface_invariant_failures(
+        auth0_login_rbac_surface
+    )
+    if auth0_login_rbac_fails:
+        raise ValueError(
+            f"Auth0 login/RBAC surface invariants failed: {auth0_login_rbac_fails}"
+        )
+
+    session_tenant_enforcement_surface = build_session_tenant_demo_surface()
+    session_tenant_enforcement_fails = session_tenant_demo_surface_invariant_failures(
+        session_tenant_enforcement_surface
+    )
+    if session_tenant_enforcement_fails:
+        raise ValueError(
+            "Session/tenant surface invariants failed: "
+            f"{session_tenant_enforcement_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -775,6 +802,8 @@ def build_sc_customer_demo_bridge_payload(
             "object_storage_signed_url": object_storage_signed_url_surface,
             "customer_data_policy": customer_data_policy_surface,
             "retention_delete_export": retention_delete_export_surface,
+            "auth0_login_rbac": auth0_login_rbac_surface,
+            "session_tenant_enforcement": session_tenant_enforcement_surface,
         }
     )
 
@@ -1119,5 +1148,17 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
             retention_delete_export_demo_surface_invariant_failures(
                 retention_delete_export
             )
+        )
+    auth0_login_rbac = payload.get("auth0_login_rbac") or {}
+    if not auth0_login_rbac:
+        fails.append("auth0_login_rbac_missing")
+    else:
+        fails.extend(auth0_login_rbac_demo_surface_invariant_failures(auth0_login_rbac))
+    session_tenant_enforcement = payload.get("session_tenant_enforcement") or {}
+    if not session_tenant_enforcement:
+        fails.append("session_tenant_enforcement_missing")
+    else:
+        fails.extend(
+            session_tenant_demo_surface_invariant_failures(session_tenant_enforcement)
         )
     return fails

@@ -497,6 +497,20 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-retention-delete-export-flags"),
     ).toContainText("fake_ui=false");
+    await expect(page.getByTestId("sc-demo-auth0-login-rbac")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-auth0-login-rbac-flags")).toContainText(
+      "login_live=false",
+    );
+    await expect(page.getByTestId("sc-demo-auth0-login-rbac-flags")).toContainText(
+      "fake_ui=false",
+    );
+    await expect(page.getByTestId("sc-demo-session-tenant")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-session-tenant-flags")).toContainText(
+      "multi_tenant=false",
+    );
+    await expect(page.getByTestId("sc-demo-session-tenant-flags")).toContainText(
+      "fake_ui=false",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );
