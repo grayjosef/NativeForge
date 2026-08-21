@@ -37,6 +37,8 @@ REPORT_SURFACES: tuple[tuple[str, str], ...] = (
     ("ai_governance", "AI governance / QA gates"),
     ("package_export_preview", "Package export preview"),
     ("forms_attachments_map", "Forms & attachments map"),
+    ("multi_org_pilot", "Multi-organization pilot cohort"),
+    ("collaboration_dark_launch", "Future collaboration / dark launch"),
 )
 
 

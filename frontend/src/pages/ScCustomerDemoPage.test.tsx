@@ -91,6 +91,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-feedback-loop");
     expect(html).toContain("sc-demo-package-export-preview");
     expect(html).toContain("sc-demo-forms-attachments-map");
+    expect(html).toContain("sc-demo-multi-org-pilot");
+    expect(html).toContain("sc-demo-collaboration-dark-launch");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -185,6 +187,22 @@ describe("ScCustomerDemoPage", () => {
     );
     expect(payload.forms_attachments_map?.form_completion_claimed).toBe(false);
     expect(payload.forms_attachments_map?.submission_ready_claimed).toBe(false);
+    expect(payload.multi_org_pilot?.cohort.organization_count).toBeGreaterThanOrEqual(
+      4,
+    );
+    expect(payload.multi_org_pilot?.production_multi_tenant_claimed).toBe(false);
+    expect(payload.multi_org_pilot?.live_customer_login_claimed).toBe(false);
+    expect(payload.multi_org_pilot?.collaboration_enabled).toBe(false);
+    expect(
+      payload.collaboration_dark_launch?.collaboration_feature_enabled,
+    ).toBe(false);
+    expect(payload.collaboration_dark_launch?.data_sharing_allowed).toBe(false);
+    expect(
+      payload.collaboration_dark_launch?.partner_matching_live_claimed,
+    ).toBe(false);
+    expect(
+      payload.collaboration_dark_launch?.partner_recommendations_claimed,
+    ).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

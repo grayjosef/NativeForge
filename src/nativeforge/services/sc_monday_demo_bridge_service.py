@@ -14,6 +14,10 @@ from nativeforge.services.buyer_demo_flow_contract_service import (
     build_buyer_demo_flow_contract,
     buyer_flow_contract_invariant_failures,
 )
+from nativeforge.services.collaboration_dark_launch_assembler_service import (
+    build_collaboration_dark_launch_demo_surface,
+    collaboration_dark_launch_demo_surface_invariant_failures,
+)
 from nativeforge.services.controlled_drafting_assembler_service import (
     build_controlled_drafting_demo_surface,
     controlled_drafting_demo_surface_invariant_failures,
@@ -33,6 +37,10 @@ from nativeforge.services.forms_attachments_mapper_service import (
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
+)
+from nativeforge.services.multi_org_pilot_assembler_service import (
+    build_multi_org_pilot_demo_surface,
+    multi_org_pilot_demo_surface_invariant_failures,
 )
 from nativeforge.services.narrative_budget_scaffold_assembler_service import (
     build_narrative_budget_demo_surface,
@@ -231,6 +239,22 @@ def build_sc_customer_demo_bridge_payload(
             f"Forms/attachments map surface invariants failed: {forms_map_fails}"
         )
 
+    multi_org_surface = build_multi_org_pilot_demo_surface()
+    multi_org_fails = multi_org_pilot_demo_surface_invariant_failures(multi_org_surface)
+    if multi_org_fails:
+        raise ValueError(
+            f"Multi-org pilot surface invariants failed: {multi_org_fails}"
+        )
+
+    collab_dark_surface = build_collaboration_dark_launch_demo_surface()
+    collab_dark_fails = collaboration_dark_launch_demo_surface_invariant_failures(
+        collab_dark_surface
+    )
+    if collab_dark_fails:
+        raise ValueError(
+            f"Collaboration dark-launch surface invariants failed: {collab_dark_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -282,6 +306,8 @@ def build_sc_customer_demo_bridge_payload(
             "feedback_loop": feedback_surface,
             "package_export_preview": export_preview_surface,
             "forms_attachments_map": forms_map_surface,
+            "multi_org_pilot": multi_org_surface,
+            "collaboration_dark_launch": collab_dark_surface,
         }
     )
 
@@ -400,4 +426,16 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("forms_attachments_map_missing")
     else:
         fails.extend(forms_attachments_demo_surface_invariant_failures(forms_map))
+    multi_org = payload.get("multi_org_pilot") or {}
+    if not multi_org:
+        fails.append("multi_org_pilot_missing")
+    else:
+        fails.extend(multi_org_pilot_demo_surface_invariant_failures(multi_org))
+    collab_dark = payload.get("collaboration_dark_launch") or {}
+    if not collab_dark:
+        fails.append("collaboration_dark_launch_missing")
+    else:
+        fails.extend(
+            collaboration_dark_launch_demo_surface_invariant_failures(collab_dark)
+        )
     return fails

@@ -1521,6 +1521,125 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.multi_org_pilot ? (
+        <section
+          data-testid="sc-demo-multi-org-pilot"
+          className="nf-sc-demo-section"
+        >
+          <h2>Multi-organization pilot / cohort readiness</h2>
+          <p className="nf-sc-demo-why">
+            Fixture-backed SC Native/tribal cohort with isolated per-org package
+            state. Production multi-tenant isolation and live customer login are
+            not claimed.
+          </p>
+          <p data-testid="sc-demo-multi-org-flags" className="nf-muted">
+            orgs={data.multi_org_pilot.cohort.organization_count} data_mode=
+            {data.multi_org_pilot.cohort.cohort_data_mode}{" "}
+            collaboration_enabled=
+            {String(data.multi_org_pilot.collaboration_enabled)}{" "}
+            production_multi_tenant_claimed=
+            {String(data.multi_org_pilot.production_multi_tenant_claimed)}{" "}
+            live_customer_login_claimed=
+            {String(data.multi_org_pilot.live_customer_login_claimed)}
+          </p>
+          <ul data-testid="sc-demo-multi-org-summary">
+            {data.multi_org_pilot.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            Selected org: {data.multi_org_pilot.selected_organization_profile_id}{" "}
+            | cohort next:{" "}
+            {data.multi_org_pilot.operator_rollup.cohort_next_safest_action}
+          </p>
+          {data.multi_org_pilot.organizations.slice(0, 4).map((org) => (
+            <article
+              key={org.organization_profile_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-multi-org-card-${org.organization_profile_id}`}
+            >
+              <h3>
+                {org.organization_name || org.organization_profile_id} — readiness=
+                {org.overall_readiness_status}
+              </h3>
+              <p className="nf-muted">
+                recognition={String(org.recognition_status)} opportunities=
+                {org.opportunity_count} qa_blockers={org.qa_blocker_count}{" "}
+                export_allowed={String(org.export_allowed)}{" "}
+                submission_ready_claimed=
+                {String(org.submission_ready_claimed)}
+              </p>
+              <div>
+                <h4>Blockers</h4>
+                <ul>
+                  {(org.blockers || []).slice(0, 4).map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+              </div>
+              <p className="nf-muted">
+                feedback_context={org.feedback_context_id} next=
+                {org.next_safest_action}
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
+      {data.collaboration_dark_launch ? (
+        <section
+          data-testid="sc-demo-collaboration-dark-launch"
+          className="nf-sc-demo-section"
+        >
+          <h2>Future collaboration / dark launch</h2>
+          <p className="nf-sc-demo-why">
+            Architecture for future opt-in partnership discovery. Feature remains
+            OFF — no matching, recommendations, introductions, or data sharing.
+          </p>
+          <p data-testid="sc-demo-collab-dark-flags" className="nf-muted">
+            feature_enabled=
+            {String(data.collaboration_dark_launch.collaboration_feature_enabled)}{" "}
+            global_enabled=
+            {String(data.collaboration_dark_launch.collaboration_global_enabled)}{" "}
+            cohort_enabled=
+            {String(data.collaboration_dark_launch.collaboration_cohort_enabled)}{" "}
+            opt_in_required=
+            {String(data.collaboration_dark_launch.organization_opt_in_required)}{" "}
+            data_sharing_allowed=
+            {String(data.collaboration_dark_launch.data_sharing_allowed)}{" "}
+            partner_matching_live_claimed=
+            {String(
+              data.collaboration_dark_launch.partner_matching_live_claimed,
+            )}{" "}
+            partner_recommendations_claimed=
+            {String(
+              data.collaboration_dark_launch.partner_recommendations_claimed,
+            )}
+          </p>
+          <ul data-testid="sc-demo-collab-dark-summary">
+            {data.collaboration_dark_launch.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            rollout_stage=
+            {data.collaboration_dark_launch.rollout_controls.rollout_stage}{" "}
+            exposure=
+            {
+              data.collaboration_dark_launch.rollout_controls
+                .feature_exposure_status
+            }{" "}
+            fit_dims=
+            {data.collaboration_dark_launch.fit_model.dimensions.length}{" "}
+            fit_score_claimed=
+            {String(data.collaboration_dark_launch.fit_score_claimed)}
+          </p>
+          <p className="nf-muted">
+            {data.collaboration_dark_launch.fit_model.not_live_reason}
+          </p>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

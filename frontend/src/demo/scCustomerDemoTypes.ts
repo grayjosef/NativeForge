@@ -733,6 +733,93 @@ export type ScCustomerDemoPayload = {
       submission_ready_claimed: boolean;
     }>;
   };
+  multi_org_pilot?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    selected_organization_profile_id?: string | null;
+    collaboration_enabled: boolean;
+    customer_data_persistence_claimed: boolean;
+    production_multi_tenant_claimed: boolean;
+    live_customer_login_claimed: boolean;
+    live_ingest_claimed: boolean;
+    submission_ready_claimed: boolean;
+    final_export_claimed: boolean;
+    human_review_required: boolean;
+    cohort: {
+      pilot_cohort_id: string;
+      cohort_label: string;
+      cohort_data_mode: string;
+      organization_count: number;
+      organization_profile_ids: string[];
+      collaboration_enabled: boolean;
+      production_multi_tenant_claimed: boolean;
+      live_customer_login_claimed: boolean;
+    };
+    organizations: Array<{
+      organization_profile_id: string;
+      organization_name?: string | null;
+      recognition_status?: string | null;
+      overall_readiness_status: string;
+      opportunity_count: number;
+      blockers: string[];
+      qa_blocker_count: number;
+      customer_actions: string[];
+      operator_actions: string[];
+      feedback_context_id: string;
+      evidence_memory: Record<string, unknown>;
+      next_safest_action: string;
+      export_allowed: boolean;
+      submission_ready_claimed: boolean;
+      final_export_claimed: boolean;
+    }>;
+    operator_rollup: {
+      org_count: number;
+      package_count: number;
+      opportunities_under_review: number;
+      readiness_by_org: Record<string, string | undefined>;
+      blockers_by_org: Record<string, string[]>;
+      cohort_next_safest_action: string;
+      production_multi_tenant_claimed: boolean;
+      live_customer_login_claimed: boolean;
+      collaboration_enabled: boolean;
+    };
+  };
+  collaboration_dark_launch?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    collaboration_feature_enabled: boolean;
+    collaboration_global_enabled: boolean;
+    collaboration_cohort_enabled: boolean;
+    organization_opt_in_required: boolean;
+    data_sharing_allowed: boolean;
+    partner_matching_live_claimed: boolean;
+    partner_recommendations_claimed: boolean;
+    fit_score_claimed: boolean;
+    cohort_rollout_claimed: boolean;
+    global_rollout_claimed: boolean;
+    introduction_claimed: boolean;
+    operator_review_required: boolean;
+    consent: Record<string, unknown>;
+    fit_model: {
+      feature_enabled: boolean;
+      fit_score_claimed: boolean;
+      partner_recommendation_claimed: boolean;
+      partner_names_surfaced: boolean;
+      not_live_reason: string;
+      dimensions: Array<Record<string, unknown>>;
+    };
+    rollout_controls: {
+      rollout_stage: string;
+      feature_exposure_status: string;
+      collaboration_feature_enabled: boolean;
+      collaboration_global_enabled: boolean;
+      collaboration_cohort_enabled: boolean;
+    };
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

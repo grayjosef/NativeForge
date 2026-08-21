@@ -250,6 +250,26 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-forms-map-flags")).toContainText(
       "attachment_persistence_claimed=false",
     );
+    await expect(page.getByTestId("sc-demo-multi-org-pilot")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-multi-org-flags")).toContainText(
+      "production_multi_tenant_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-multi-org-flags")).toContainText(
+      "live_customer_login_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-multi-org-flags")).toContainText(
+      "collaboration_enabled=false",
+    );
+    await expect(page.getByTestId("sc-demo-collaboration-dark-launch")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-collab-dark-flags")).toContainText(
+      "feature_enabled=false",
+    );
+    await expect(page.getByTestId("sc-demo-collab-dark-flags")).toContainText(
+      "partner_matching_live_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-collab-dark-flags")).toContainText(
+      "data_sharing_allowed=false",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );
