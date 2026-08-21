@@ -1828,5 +1828,104 @@ class NfAutoPublishConfig(Base):
     organization: Mapped[Organization] = relationship()
 
 
+class NfEvidenceIntakeRecord(Base):
+    """Gate 10 local/dev persistent evidence metadata (not production storage)."""
+
+    __tablename__ = "nf_evidence_intake_records"
+    __table_args__ = (
+        UniqueConstraint(
+            "evidence_intake_id", name="uq_nf_evidence_intake_records_ei_id"
+        ),
+        CheckConstraint(
+            "storage_mode IN ("
+            "'not_supported','planned','fixture_backed','local_dev_only',"
+            "'validated_persistent','external_storage_required'"
+            ")",
+            name="ck_nf_evidence_intake_storage_mode",
+        ),
+        CheckConstraint(
+            "review_status IN ("
+            "'not_started','provided','needs_review','approved','rejected',"
+            "'needs_more_information','blocked','not_supported','archived'"
+            ")",
+            name="ck_nf_evidence_intake_review_status",
+        ),
+        CheckConstraint(
+            "persistence_scope IN ("
+            "'local_dev_only','not_claimed','production_forbidden'"
+            ")",
+            name="ck_nf_evidence_intake_persistence_scope",
+        ),
+        Index(
+            "ix_nf_evidence_intake_org_profile",
+            "organization_profile_id",
+        ),
+        Index(
+            "ix_nf_evidence_intake_org_review",
+            "organization_profile_id",
+            "review_status",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        Uuid(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    evidence_intake_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    organization_profile_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    application_workspace_id: Mapped[str | None] = mapped_column(
+        String(128), nullable=True
+    )
+    pursuit_workspace_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    checklist_item_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    binder_item_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    forms_attachment_map_id: Mapped[str | None] = mapped_column(
+        String(128), nullable=True
+    )
+    package_export_preview_id: Mapped[str | None] = mapped_column(
+        String(128), nullable=True
+    )
+    evidence_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    evidence_label: Mapped[str] = mapped_column(String(512), nullable=False)
+    source_context: Mapped[str | None] = mapped_column(String(256), nullable=True)
+    storage_mode: Mapped[str] = mapped_column(String(64), nullable=False)
+    storage_reference: Mapped[str | None] = mapped_column(String(1024), nullable=True)
+    hash_or_digest: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    file_name: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    mime_type: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    size_bytes: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    review_status: Mapped[str] = mapped_column(String(64), nullable=False)
+    human_review_required: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("true")
+    )
+    package_unlock_claimed: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    upload_persistence_claimed: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    persistence_scope: Mapped[str] = mapped_column(
+        String(32), nullable=False, server_default="local_dev_only"
+    )
+    customer_data_persistence_claimed: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    production_storage_claimed: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    archived: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false")
+    )
+    payload_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False,
+    )
+
+
 def is_demo_for_org_type(org_type: str) -> bool:
     return org_type == OrganizationOrgType.demo.value

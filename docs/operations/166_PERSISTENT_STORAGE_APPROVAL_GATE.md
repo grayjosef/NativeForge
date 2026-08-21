@@ -51,3 +51,13 @@ Until approval:
 
 * Proposal: `docs/operations/161_EVIDENCE_UPLOAD_STORAGE_PROPOSAL.md`
 * Evidence intake contract: Gate 08 Block 21
+
+
+## Gate 10 status
+
+- Owner approval status: **approved** (local_dev_only)
+- Approval source: current_chat_mayhem_gate10
+- Migration applied: **yes** (local/dev only) — see 172
+- validated_persistent: available in local/dev
+- Production storage claim: **false**
+- Customer data persistence claim: **false**

@@ -73,16 +73,17 @@ def build_evidence_intake_record(
     mode = storage_mode if storage_mode in STORAGE_MODES else "not_supported"
     status = review_status if review_status in REVIEW_STATUSES else "needs_review"
     persistent = mode in _VALIDATED_PERSISTENT
-    # Hard honesty: never claim persistence unless validated_persistent
+    # Gate 10: upload persistence only for validated_persistent, local/dev scoped.
+    # Customer/production persistence claims remain false always.
     upload_persistence_claimed = bool(persistent)
-    customer_data_persistence_claimed = bool(persistent)
-    production_storage_claimed = False  # never in Gate 08 without approval
+    customer_data_persistence_claimed = False
+    production_storage_claimed = False
     package_unlock_claimed = False
+    persistence_scope = "local_dev_only" if persistent else "not_claimed"
     if status in {"rejected", "blocked", "not_started", "needs_review"}:
         package_unlock_claimed = False
     if not persistent:
         upload_persistence_claimed = False
-        customer_data_persistence_claimed = False
 
     return _json_safe(
         {
@@ -113,6 +114,7 @@ def build_evidence_intake_record(
             "human_review_required": human_review_required,
             "package_unlock_claimed": package_unlock_claimed,
             "upload_persistence_claimed": upload_persistence_claimed,
+            "persistence_scope": persistence_scope,
             "customer_data_persistence_claimed": customer_data_persistence_claimed,
             "production_storage_claimed": production_storage_claimed,
             "submission_ready_claimed": False,
@@ -135,11 +137,9 @@ def evidence_intake_invariant_failures(record: dict[str, Any]) -> list[str]:
         and mode not in _VALIDATED_PERSISTENT
     ):
         fails.append("persistence_claimed_without_validated_storage")
-    if (
-        record.get("customer_data_persistence_claimed") is True
-        and mode not in _VALIDATED_PERSISTENT
-    ):
-        fails.append("customer_persistence_without_validated_storage")
+    # Gate 10: customer/production persistence claims are never allowed
+    if record.get("customer_data_persistence_claimed") is True:
+        fails.append("customer_data_persistence_claimed")
     for key in (
         "production_storage_claimed",
         "package_unlock_claimed",
@@ -150,6 +150,12 @@ def evidence_intake_invariant_failures(record: dict[str, Any]) -> list[str]:
     ):
         if record.get(key) is True:
             fails.append(key)
+    if (
+        record.get("upload_persistence_claimed") is True
+        and record.get("persistence_scope") not in {None, "local_dev_only"}
+        and mode in _VALIDATED_PERSISTENT
+    ):
+        fails.append("upload_persistence_scope_not_local_dev")
     if record.get("review_status") in {"rejected", "needs_review", "not_started"}:
         if record.get("package_unlock_claimed") is True:
             fails.append("unlock_with_unreviewed_or_rejected")

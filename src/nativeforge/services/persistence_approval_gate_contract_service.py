@@ -1,6 +1,6 @@
-"""Persistent evidence storage approval gate (Campaign Block 23).
+"""Persistent evidence storage approval gate (Campaign Blocks 23/25).
 
-OWNER_APPROVED_MIGRATIONS=false by default for this gate.
+Gate 10: OWNER_APPROVED_MIGRATIONS=true for local_dev_only only.
 """
 
 from __future__ import annotations
@@ -9,10 +9,13 @@ import hashlib
 import json
 from typing import Any
 
-SCHEMA_VERSION = "nf_persistence_approval_gate_contract_v1"
+from nativeforge.services.persistence_approval_resolver_service import (
+    APPROVED_ENVIRONMENT,
+    OWNER_APPROVED_MIGRATIONS,
+    resolve_persistence_approval_lane,
+)
 
-# Explicit gate constant — do not flip without owner instruction
-OWNER_APPROVED_MIGRATIONS = False
+SCHEMA_VERSION = "nf_persistence_approval_gate_contract_v1"
 
 APPROVAL_STATUSES = frozenset(
     {
@@ -31,6 +34,7 @@ DRY_RUN_STATUSES = frozenset(
         "dry_run_ok",
         "dry_run_failed",
         "blocked_pending_approval",
+        "applied_local_dev",
         "not_supported",
     }
 )
@@ -50,25 +54,32 @@ def build_persistence_approval_gate_contract(
     *,
     owner_approved_migrations: bool = OWNER_APPROVED_MIGRATIONS,
     owner_approval_status: str | None = None,
+    migration_applied: bool = False,
+    validated_local_dev: bool = False,
 ) -> dict[str, Any]:
-    if owner_approved_migrations:
-        # Still require explicit status; this gate run defaults false
-        status = (
-            owner_approval_status
-            if owner_approval_status in APPROVAL_STATUSES
-            else "approved"
-        )
+    lane = resolve_persistence_approval_lane(
+        owner_approved_migrations=owner_approved_migrations,
+        approved_environment=APPROVED_ENVIRONMENT
+        if owner_approved_migrations
+        else "not_approved",
+    )
+    approved = bool(lane.get("gate10_local_dev_lane"))
+    if owner_approval_status in APPROVAL_STATUSES and not approved:
+        status = owner_approval_status
+    elif approved:
+        status = "approved"
     else:
-        status = "requested"  # approval-ready request prepared, not granted
-        if (
-            owner_approval_status in APPROVAL_STATUSES
-            and owner_approval_status != "approved"
-        ):
-            status = owner_approval_status
+        status = "requested"
 
-    # Hard: never claim validated persistent without true approval + this flag
-    approved = bool(owner_approved_migrations) and status == "approved"
-    dry_run = "blocked_pending_approval" if not approved else "dry_run_ok"
+    if approved and migration_applied and validated_local_dev:
+        dry_run = "applied_local_dev"
+    elif approved:
+        dry_run = "dry_run_ok"
+    else:
+        dry_run = "blocked_pending_approval"
+
+    # Local/dev scoped claims only when applied+validated
+    local_claims = bool(approved and migration_applied and validated_local_dev)
 
     return _json_safe(
         {
@@ -83,41 +94,57 @@ def build_persistence_approval_gate_contract(
             "approval_ready_artifact_reference": (
                 "docs/operations/166_PERSISTENT_STORAGE_APPROVAL_GATE.md"
             ),
+            "applied_artifact_reference": (
+                "docs/operations/172_LOCAL_DEV_PERSISTENT_STORAGE_APPLIED.md"
+            ),
             "owner_approval_required": True,
-            "owner_approval_status": status
-            if status in APPROVAL_STATUSES
-            else "blocked",
+            "owner_approval_status": status if status in APPROVAL_STATUSES else "blocked",
             "owner_approved_migrations_flag": bool(owner_approved_migrations),
+            "approval_source": lane.get("approval_source"),
+            "approval_scope": lane.get("approval_scope"),
+            "approved_environment": lane.get("approved_environment"),
             "migration_required": True,
-            "migration_applied": False,
-            "validated_persistent_adapter_claimed": False,
-            "upload_persistence_claimed": False,
+            "migration_allowed": bool(lane.get("migration_allowed")),
+            "migration_applied": bool(migration_applied and approved),
+            "migration_environment": "local_dev_only"
+            if migration_applied and approved
+            else None,
+            "validated_persistent_adapter_claimed": bool(local_claims),
+            "validated_persistent_scope": "local_dev_only" if local_claims else None,
+            "upload_persistence_claimed": bool(local_claims),
+            "upload_persistence_scope": "local_dev_only" if local_claims else None,
             "customer_data_persistence_claimed": False,
             "production_storage_claimed": False,
             "dry_run_status": dry_run if dry_run in DRY_RUN_STATUSES else "not_run",
-            "blocker_reasons": [
-                "OWNER_APPROVED_MIGRATIONS=false",
-                "Alembic migration not applied",
-                "validated_persistent adapter unavailable until approval",
-                "malware scanning / retention / IAM not production-validated",
-            ]
-            if not approved
-            else [],
+            "blocker_reasons": []
+            if local_claims
+            else (
+                [
+                    "Await local/dev migration apply + adapter validation"
+                    if approved
+                    else "OWNER_APPROVED_MIGRATIONS=false",
+                    "malware scanning / retention / IAM not production-validated",
+                    "production storage not approved",
+                ]
+            ),
             "approval_request_text": (
-                "Mayhem: please approve Alembic migration + object-storage path for "
-                "nf_evidence_intake_records before any validated_persistent adapter or "
-                "upload_persistence claim. Dry-run and rollback plan are documented in "
-                "docs/operations/166_PERSISTENT_STORAGE_APPROVAL_GATE.md."
+                "Gate 10 Mayhem approval: local_dev_only migrations + validated_persistent."
             ),
             "next_safe_action": (
-                "Keep fixture/local adapters; do not apply migrations; wait for owner approval"
-                if not approved
-                else "Run approved dry-run then apply migration under review"
+                "Use local/dev validated_persistent; keep production/customer claims false"
+                if local_claims
+                else (
+                    "Run dry-run then apply Alembic 0022 in local/dev"
+                    if approved
+                    else "Wait for owner approval"
+                )
             ),
-            "what_would_change_after_approval": [
-                "Alembic migration for evidence intake metadata tables",
-                "Object-storage or approved local_dev blob path",
-                "Possible validated_persistent adapter after validation tests",
+            "what_remains_blocked_for_production": [
+                "Production object storage + IAM",
+                "Customer data persistence path",
+                "External customer login / multi-tenant auth",
+                "Pen-test / SCA pass (not claimed)",
+                "Controlled customer pilot GO",
             ],
             "submission_ready_claimed": False,
             "final_export_claimed": False,
@@ -129,9 +156,6 @@ def build_persistence_approval_gate_contract(
 def persistence_approval_gate_invariant_failures(gate: dict[str, Any]) -> list[str]:
     fails: list[str] = []
     for key in (
-        "migration_applied",
-        "validated_persistent_adapter_claimed",
-        "upload_persistence_claimed",
         "customer_data_persistence_claimed",
         "production_storage_claimed",
         "submission_ready_claimed",
@@ -146,14 +170,20 @@ def persistence_approval_gate_invariant_failures(gate: dict[str, Any]) -> list[s
         fails.append("bad_approval_status")
     if gate.get("dry_run_status") not in DRY_RUN_STATUSES:
         fails.append("bad_dry_run_status")
-    # Without approved migrations flag, never allow approved+persistent claims
+    # Local/dev claims must be scoped
+    if gate.get("validated_persistent_adapter_claimed") is True:
+        if gate.get("validated_persistent_scope") != "local_dev_only":
+            fails.append("validated_persistent_not_local_dev_scoped")
+        if gate.get("migration_environment") != "local_dev_only":
+            fails.append("migration_env_not_local_dev")
+    if gate.get("upload_persistence_claimed") is True:
+        if gate.get("upload_persistence_scope") != "local_dev_only":
+            fails.append("upload_persistence_not_local_dev_scoped")
     if not gate.get("owner_approved_migrations_flag"):
         if gate.get("owner_approval_status") == "approved":
             fails.append("approved_without_migrations_flag")
-        if gate.get("dry_run_status") not in {
-            "blocked_pending_approval",
-            "not_run",
-            "not_supported",
-        }:
-            fails.append("dry_run_not_blocked_without_approval")
+        if gate.get("migration_applied") is True:
+            fails.append("migration_applied_without_approval")
+        if gate.get("validated_persistent_adapter_claimed") is True:
+            fails.append("validated_without_approval")
     return fails

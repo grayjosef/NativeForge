@@ -44,3 +44,12 @@ See `docs/operations/166_PERSISTENT_STORAGE_APPROVAL_GATE.md`.
 - Adapter dry-run validates fixture/local_dev/planned_external only
 - `validated_persistent` remains unavailable
 - No Alembic migrations applied
+
+## Gate 10 update — local/dev applied
+
+See `docs/operations/172_LOCAL_DEV_PERSISTENT_STORAGE_APPLIED.md`.
+
+- `OWNER_APPROVED_MIGRATIONS=true` with `APPROVED_ENVIRONMENT=local_dev_only`
+- Alembic `0022` applied to `nativeforge.local.db`
+- `validated_persistent` adapter available for **local/dev only**
+- Production storage / customer data persistence claims remain **false**

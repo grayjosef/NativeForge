@@ -1,4 +1,4 @@
-"""Evidence storage adapters (Campaign Block 23). validated_persistent gated off."""
+"""Evidence storage adapters (Campaign Blocks 23/25)."""
 
 from __future__ import annotations
 
@@ -10,6 +10,12 @@ from typing import Any, Protocol
 from nativeforge.services.persistence_approval_gate_contract_service import (
     OWNER_APPROVED_MIGRATIONS,
     build_persistence_approval_gate_contract,
+)
+from nativeforge.services.persistence_approval_resolver_service import (
+    resolve_persistence_approval_lane,
+)
+from nativeforge.services.validated_persistent_evidence_adapter_service import (
+    ValidatedPersistentAdapter,
 )
 
 SCHEMA_VERSION = "nf_evidence_storage_adapter_v1"
@@ -72,7 +78,6 @@ class LocalDevOnlyAdapter:
         digest = hashlib.sha256(f"{org_id}:{evidence_label}".encode()).hexdigest()[:16]
         path = self.root / org_id / f"{digest}.txt"
         path.parent.mkdir(parents=True, exist_ok=True)
-        # Metadata-only placeholder file — not customer binary upload
         path.write_text(
             f"PLACEHOLDER ONLY\norg={org_id}\nlabel={evidence_label}\n"
             "upload_persistence_claimed=false\n",
@@ -108,37 +113,29 @@ class PlannedExternalAdapter:
         }
 
 
-class ValidatedPersistentAdapter:
-    """Unavailable unless owner approvals and infrastructure are true."""
-
-    kind = "validated_persistent"
-
-    def available(self) -> bool:
-        return False
-
-    def put_placeholder(self, *, evidence_label: str, org_id: str) -> dict[str, Any]:
-        raise RuntimeError(
-            "validated_persistent adapter unavailable — OWNER_APPROVED_MIGRATIONS=false"
-        )
-
-
 def get_available_adapters(
     *,
     owner_approved_migrations: bool = OWNER_APPROVED_MIGRATIONS,
 ) -> list[str]:
     available = ["fixture_backed", "local_dev_only", "planned_external"]
-    if owner_approved_migrations:
-        # Still do not claim validated_persistent without separate validation
-        pass
+    lane = resolve_persistence_approval_lane(
+        owner_approved_migrations=owner_approved_migrations
+    )
+    if lane.get("gate10_local_dev_lane"):
+        available.append("validated_persistent")
     return available
 
 
 def run_storage_adapter_dry_run(
     *,
     owner_approved_migrations: bool = OWNER_APPROVED_MIGRATIONS,
+    migration_applied: bool = False,
+    validated_local_dev: bool = False,
 ) -> dict[str, Any]:
     gate = build_persistence_approval_gate_contract(
-        owner_approved_migrations=owner_approved_migrations
+        owner_approved_migrations=owner_approved_migrations,
+        migration_applied=migration_applied,
+        validated_local_dev=validated_local_dev,
     )
     results = []
     for adapter in (
@@ -153,14 +150,19 @@ def run_storage_adapter_dry_run(
             )
         )
     validated = ValidatedPersistentAdapter()
+    local_ok = bool(
+        validated.available() and migration_applied and validated_local_dev
+    )
     validated_result = {
         "adapter_kind": validated.kind,
         "available": validated.available(),
-        "upload_persistence_claimed": False,
-        "validated_persistent": False,
+        "upload_persistence_claimed": bool(local_ok),
+        "upload_persistence_scope": "local_dev_only" if local_ok else None,
+        "validated_persistent": bool(local_ok),
+        "validated_persistent_scope": "local_dev_only" if local_ok else None,
         "error": None
         if validated.available()
-        else "unavailable_without_owner_approval_and_validation",
+        else "unavailable_without_local_dev_approval",
     }
     return _json_safe(
         {
@@ -172,11 +174,14 @@ def run_storage_adapter_dry_run(
             ),
             "adapter_results": results,
             "validated_persistent_result": validated_result,
-            "validated_persistent_adapter_claimed": False,
-            "upload_persistence_claimed": False,
+            "validated_persistent_adapter_claimed": bool(local_ok),
+            "validated_persistent_scope": "local_dev_only" if local_ok else None,
+            "upload_persistence_claimed": bool(local_ok),
+            "upload_persistence_scope": "local_dev_only" if local_ok else None,
             "customer_data_persistence_claimed": False,
             "production_storage_claimed": False,
-            "migration_applied": False,
+            "migration_applied": bool(migration_applied),
+            "migration_environment": "local_dev_only" if migration_applied else None,
             "dry_run_status": gate.get("dry_run_status"),
         }
     )
@@ -185,16 +190,17 @@ def run_storage_adapter_dry_run(
 def storage_adapter_dry_run_invariant_failures(report: dict[str, Any]) -> list[str]:
     fails: list[str] = []
     for key in (
-        "validated_persistent_adapter_claimed",
-        "upload_persistence_claimed",
         "customer_data_persistence_claimed",
         "production_storage_claimed",
-        "migration_applied",
     ):
         if report.get(key) is True:
             fails.append(key)
-    if "validated_persistent" in (report.get("available_adapters") or []):
-        fails.append("validated_persistent_listed_available")
-    if (report.get("validated_persistent_result") or {}).get("available") is True:
-        fails.append("validated_persistent_available")
+    if report.get("validated_persistent_adapter_claimed") is True:
+        if report.get("validated_persistent_scope") != "local_dev_only":
+            fails.append("validated_not_local_dev_scoped")
+        if "validated_persistent" not in (report.get("available_adapters") or []):
+            fails.append("validated_claimed_but_not_listed")
+    if report.get("upload_persistence_claimed") is True:
+        if report.get("upload_persistence_scope") != "local_dev_only":
+            fails.append("upload_not_local_dev_scoped")
     return fails
