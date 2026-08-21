@@ -4,7 +4,7 @@
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
 **HEAD before:** `7854249`
-**HEAD after:** `6697926`
+**HEAD after:** `ae91be1`
 **Mode:** A (synthetic Mode B rehearsal; dry-run cutover)
 
 ## Shipped
