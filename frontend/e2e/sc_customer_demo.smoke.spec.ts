@@ -539,6 +539,20 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-controlled-pilot-master-flags"),
     ).not.toContainText("CONTROLLED_CUSTOMER_GO");
+    await expect(page.getByTestId("sc-demo-owner-unlock-packet")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-owner-unlock-packet-flags"),
+    ).toContainText("executed=false");
+    await expect(
+      page.getByTestId("sc-demo-owner-unlock-packet-flags"),
+    ).toContainText("fake_mode_b=false");
+    await expect(page.getByTestId("sc-demo-cutover-claim-freeze")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-cutover-claim-freeze-flags"),
+    ).toContainText("fake_prod=false");
+    await expect(
+      page.getByTestId("sc-demo-cutover-claim-freeze-flags"),
+    ).toContainText("fake_pilot=false");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

@@ -2826,6 +2826,63 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.owner_unlock_packet ? (
+        <section
+          data-testid="sc-demo-owner-unlock-packet"
+          className="nf-sc-demo-section"
+        >
+          <h2>Owner Mode B unlock packet</h2>
+          <p className="nf-sc-demo-why">
+            Exact Auth0, storage, and pen-test inputs required. Secrets stay
+            out-of-band. Prompt text is not approval. Mode B-ready is not GO.
+          </p>
+          <p data-testid="sc-demo-owner-unlock-packet-flags" className="nf-muted">
+            mode={data.owner_unlock_packet.mode} mode_b_ready=
+            {String(data.owner_unlock_packet.mode_b_ready)} executed=
+            {String(data.owner_unlock_packet.mode_b_executed)} auth0=
+            {String(data.owner_unlock_packet.auth0_complete)} storage=
+            {String(data.owner_unlock_packet.storage_complete)} login=
+            {String(data.owner_unlock_packet.login_live_claimed)} fake_mode_b=
+            {String(data.owner_unlock_packet.fake_mode_b)}
+          </p>
+          <ul data-testid="sc-demo-owner-unlock-packet-summary">
+            {data.owner_unlock_packet.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.cutover_claim_freeze ? (
+        <section
+          data-testid="sc-demo-cutover-claim-freeze"
+          className="nf-sc-demo-section"
+        >
+          <h2>Cutover checklist / claim freeze</h2>
+          <p className="nf-sc-demo-why">
+            Authoritative allowed vs forbidden claims with evidence. No fake
+            production-ready, pilot-ready, or secure language.
+          </p>
+          <p
+            data-testid="sc-demo-cutover-claim-freeze-flags"
+            className="nf-muted"
+          >
+            pilot={data.cutover_claim_freeze.controlled_customer_pilot_status}{" "}
+            rollout={data.cutover_claim_freeze.production_rollout_status}{" "}
+            fake_prod=
+            {String(data.cutover_claim_freeze.fake_production_ready)} fake_pilot=
+            {String(data.cutover_claim_freeze.fake_pilot_ready)} login=
+            {String(data.cutover_claim_freeze.login_live_claimed)} storage=
+            {String(data.cutover_claim_freeze.production_storage_claimed)}
+          </p>
+          <ul data-testid="sc-demo-cutover-claim-freeze-summary">
+            {data.cutover_claim_freeze.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

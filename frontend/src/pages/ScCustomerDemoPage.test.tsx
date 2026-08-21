@@ -130,6 +130,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-object-storage-unlock");
     expect(html).toContain("sc-demo-security-attestation");
     expect(html).toContain("sc-demo-controlled-pilot-master");
+    expect(html).toContain("sc-demo-owner-unlock-packet");
+    expect(html).toContain("sc-demo-cutover-claim-freeze");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -356,6 +358,10 @@ describe("ScCustomerDemoPage", () => {
     expect(
       payload.controlled_pilot_master?.controlled_customer_pilot_status,
     ).not.toBe("CONTROLLED_CUSTOMER_GO");
+    expect(payload.owner_unlock_packet?.mode_b_executed).toBe(false);
+    expect(payload.owner_unlock_packet?.fake_mode_b).toBe(false);
+    expect(payload.cutover_claim_freeze?.fake_production_ready).toBe(false);
+    expect(payload.cutover_claim_freeze?.fake_pilot_ready).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

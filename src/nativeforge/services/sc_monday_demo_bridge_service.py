@@ -114,6 +114,14 @@ from nativeforge.services.gate26_security_attestation_assembler_service import (
     build_security_attestation_demo_surface,
     security_attestation_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate27_cutover_assembler_service import (
+    build_cutover_claim_freeze_demo_surface,
+    cutover_claim_freeze_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate27_owner_unlock_assembler_service import (
+    build_owner_unlock_demo_surface,
+    owner_unlock_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -778,6 +786,26 @@ def build_sc_customer_demo_bridge_payload(
             f"{controlled_pilot_master_fails}"
         )
 
+    owner_unlock_packet_surface = build_owner_unlock_demo_surface()
+    owner_unlock_packet_fails = owner_unlock_demo_surface_invariant_failures(
+        owner_unlock_packet_surface
+    )
+    if owner_unlock_packet_fails:
+        raise ValueError(
+            "Owner unlock packet surface invariants failed: "
+            f"{owner_unlock_packet_fails}"
+        )
+
+    cutover_claim_freeze_surface = build_cutover_claim_freeze_demo_surface()
+    cutover_claim_freeze_fails = cutover_claim_freeze_demo_surface_invariant_failures(
+        cutover_claim_freeze_surface
+    )
+    if cutover_claim_freeze_fails:
+        raise ValueError(
+            "Cutover claim freeze surface invariants failed: "
+            f"{cutover_claim_freeze_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -868,6 +896,8 @@ def build_sc_customer_demo_bridge_payload(
             "object_storage_unlock": object_storage_unlock_surface,
             "security_attestation": security_attestation_surface,
             "controlled_pilot_master": controlled_pilot_master_surface,
+            "owner_unlock_packet": owner_unlock_packet_surface,
+            "cutover_claim_freeze": cutover_claim_freeze_surface,
         }
     )
 
@@ -1256,5 +1286,17 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
             controlled_pilot_master_demo_surface_invariant_failures(
                 controlled_pilot_master
             )
+        )
+    owner_unlock_packet = payload.get("owner_unlock_packet") or {}
+    if not owner_unlock_packet:
+        fails.append("owner_unlock_packet_missing")
+    else:
+        fails.extend(owner_unlock_demo_surface_invariant_failures(owner_unlock_packet))
+    cutover_claim_freeze = payload.get("cutover_claim_freeze") or {}
+    if not cutover_claim_freeze:
+        fails.append("cutover_claim_freeze_missing")
+    else:
+        fails.extend(
+            cutover_claim_freeze_demo_surface_invariant_failures(cutover_claim_freeze)
         )
     return fails
