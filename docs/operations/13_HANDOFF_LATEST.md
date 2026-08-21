@@ -6,7 +6,7 @@
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
 **HEAD before:** `3b83815`
-**HEAD after:** `a241a0b`
+**HEAD after:** `4cb2a68`
 **Mode:** A (no pen-test evidence; pilot below GO)
 
 ## Shipped
