@@ -46,6 +46,10 @@ from nativeforge.services.controlled_drafting_assembler_service import (
     build_controlled_drafting_demo_surface,
     controlled_drafting_demo_surface_invariant_failures,
 )
+from nativeforge.services.customer_data_policy_assembler_service import (
+    build_customer_data_policy_demo_surface,
+    customer_data_policy_demo_surface_invariant_failures,
+)
 from nativeforge.services.customer_pilot_auth_assembler_service import (
     build_customer_pilot_auth_demo_surface,
     customer_pilot_auth_demo_surface_invariant_failures,
@@ -169,6 +173,10 @@ from nativeforge.services.pursuit_workspace_assembler_service import (
 from nativeforge.services.rbac_enforcement_assembler_service import (
     build_rbac_enforcement_demo_surface,
     rbac_enforcement_demo_surface_invariant_failures,
+)
+from nativeforge.services.retention_delete_export_assembler_service import (
+    build_retention_delete_export_demo_surface,
+    retention_delete_export_demo_surface_invariant_failures,
 )
 from nativeforge.services.sc_monday_demo_assembler_service import (
     build_sc_monday_demo_artifact,
@@ -661,6 +669,28 @@ def build_sc_customer_demo_bridge_payload(
             f"{object_storage_signed_url_fails}"
         )
 
+    customer_data_policy_surface = build_customer_data_policy_demo_surface()
+    customer_data_policy_fails = customer_data_policy_demo_surface_invariant_failures(
+        customer_data_policy_surface
+    )
+    if customer_data_policy_fails:
+        raise ValueError(
+            "Customer data policy surface invariants failed: "
+            f"{customer_data_policy_fails}"
+        )
+
+    retention_delete_export_surface = build_retention_delete_export_demo_surface()
+    retention_delete_export_fails = (
+        retention_delete_export_demo_surface_invariant_failures(
+            retention_delete_export_surface
+        )
+    )
+    if retention_delete_export_fails:
+        raise ValueError(
+            "Retention/delete/export surface invariants failed: "
+            f"{retention_delete_export_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -743,6 +773,8 @@ def build_sc_customer_demo_bridge_payload(
             "gate21_storage_pilot": gate21_storage_pilot_surface,
             "production_metadata": production_metadata_surface,
             "object_storage_signed_url": object_storage_signed_url_surface,
+            "customer_data_policy": customer_data_policy_surface,
+            "retention_delete_export": retention_delete_export_surface,
         }
     )
 
@@ -1071,5 +1103,21 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             object_storage_demo_surface_invariant_failures(object_storage_signed_url)
+        )
+    customer_data_policy = payload.get("customer_data_policy") or {}
+    if not customer_data_policy:
+        fails.append("customer_data_policy_missing")
+    else:
+        fails.extend(
+            customer_data_policy_demo_surface_invariant_failures(customer_data_policy)
+        )
+    retention_delete_export = payload.get("retention_delete_export") or {}
+    if not retention_delete_export:
+        fails.append("retention_delete_export_missing")
+    else:
+        fails.extend(
+            retention_delete_export_demo_surface_invariant_failures(
+                retention_delete_export
+            )
         )
     return fails

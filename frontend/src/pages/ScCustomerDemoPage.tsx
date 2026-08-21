@@ -2580,6 +2580,66 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.customer_data_policy ? (
+        <section
+          data-testid="sc-demo-customer-data-policy"
+          className="nf-sc-demo-section"
+        >
+          <h2>Customer data policy</h2>
+          <p className="nf-sc-demo-why">
+            Classifies customer/org/evidence data. AI training consent defaults
+            false. Customer persistence stays blocked without full policy and
+            storage/auth gates.
+          </p>
+          <p data-testid="sc-demo-customer-data-policy-flags" className="nf-muted">
+            status={data.customer_data_policy.organization_policy_status} ai_train=
+            {String(data.customer_data_policy.ai_training_consent)} default=
+            {String(data.customer_data_policy.ai_training_consent_default)}{" "}
+            persistence=
+            {String(data.customer_data_policy.customer_data_persistence_claimed)}{" "}
+            legal=
+            {String(data.customer_data_policy.legal_compliance_claimed)} pilot=
+            {data.customer_data_policy.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-customer-data-policy-summary">
+            {data.customer_data_policy.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.retention_delete_export ? (
+        <section
+          data-testid="sc-demo-retention-delete-export"
+          className="nf-sc-demo-section"
+        >
+          <h2>Retention / delete / export</h2>
+          <p className="nf-sc-demo-why">
+            Production delete and customer export stay blocked without policy,
+            authority, review, and config. Legal hold unsupported blocks legal
+            compliance claims. No fake production export UI.
+          </p>
+          <p
+            data-testid="sc-demo-retention-delete-export-flags"
+            className="nf-muted"
+          >
+            delete={data.retention_delete_export.production_delete_status || "n/a"}{" "}
+            export={data.retention_delete_export.export_status || "n/a"} final_export=
+            {String(data.retention_delete_export.final_export_claimed)} persistence=
+            {String(data.retention_delete_export.customer_data_persistence_claimed)}{" "}
+            fake_ui=
+            {String(data.retention_delete_export.fake_production_export_ui)} pilot=
+            {data.retention_delete_export.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-retention-delete-export-summary">
+            {data.retention_delete_export.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

@@ -1344,6 +1344,42 @@ export type ScCustomerDemoPayload = {
     production_rollout_status: string;
     next_safe_actions: string[];
   };
+  customer_data_policy?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    customer_data_policy_contract: boolean;
+    ai_training_consent_default: boolean;
+    ai_training_consent: boolean;
+    organization_policy_status: string;
+    customer_persistence_resolver: boolean;
+    customer_data_persistence_claimed: boolean;
+    customer_data_policy_production_claimed: boolean;
+    legal_compliance_claimed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+  };
+  retention_delete_export?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    retention_policy_contract: boolean;
+    deletion_request_contract: boolean;
+    export_request_contract: boolean;
+    audit_linkage: boolean;
+    production_delete_status?: string;
+    export_status?: string;
+    final_export_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    legal_compliance_claimed: boolean;
+    fake_production_export_ui: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

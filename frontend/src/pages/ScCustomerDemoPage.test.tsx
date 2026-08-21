@@ -122,6 +122,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-gate21-storage-pilot");
     expect(html).toContain("sc-demo-production-metadata");
     expect(html).toContain("sc-demo-object-storage-signed-url");
+    expect(html).toContain("sc-demo-customer-data-policy");
+    expect(html).toContain("sc-demo-retention-delete-export");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -326,6 +328,12 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.production_metadata?.production_storage_claimed).toBe(false);
     expect(payload.object_storage_signed_url?.production_writes_allowed).toBe(false);
     expect(payload.object_storage_signed_url?.fake_upload_ui_exposed).toBe(false);
+    expect(payload.customer_data_policy?.customer_data_persistence_claimed).toBe(
+      false,
+    );
+    expect(payload.customer_data_policy?.ai_training_consent_default).toBe(false);
+    expect(payload.retention_delete_export?.final_export_claimed).toBe(false);
+    expect(payload.retention_delete_export?.fake_production_export_ui).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );
