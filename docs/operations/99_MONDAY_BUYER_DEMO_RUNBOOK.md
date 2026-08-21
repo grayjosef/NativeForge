@@ -93,3 +93,40 @@ Allowed: evidence intake contract; storage proposal; operator go/no-go; Monday d
 Forbidden: uploads stored/durable; production-ready; pen-test passed; customer login live; submission-ready; final export; collaboration matching.
 
 Storage proposal: `docs/operations/161_EVIDENCE_UPLOAD_STORAGE_PROPOSAL.md` (migrations not applied).
+
+## Gate 09–10 operator notes
+
+### Additional panels
+
+- Persistent storage approval / local/dev validated persistence
+- Customer pilot auth scaffolding (login not live)
+- Gate 10 closeout / pen-test readiness
+
+### Monday story (Gate 10)
+
+NativeForge is a Native-specific grant pursuit operating system with evidence-backed
+eligibility, source intelligence, package assembly, controlled drafting, deterministic
+QA, feedback reporting, multi-org cohort view, **local/dev validated evidence
+persistence**, and honest no-go boundaries for production/customer rollout.
+
+### Operator commands (Gate 10)
+
+```bash
+source .venv/bin/activate
+bash scripts/campaign_block25_smoke_verify.sh
+bash scripts/campaign_block26_smoke_verify.sh
+bash scripts/nofo_showcase_regen_bridge.sh
+# frontend e2e
+cd frontend && npm run test:e2e -- e2e/sc_customer_demo.smoke.spec.ts
+```
+
+### Monday-safe claim boundaries (Gate 10)
+
+Allowed: Monday demo GO; local/dev validated persistent evidence storage; external
+pilot auth path scoped; pen-test/SCA readiness packets complete.
+
+Forbidden: production storage; customer data persistence; customer login live;
+production auth/multi-tenant; pen-test passed; SCA passed (unless tooling green);
+controlled customer pilot GO; submission-ready; final export; collaboration live.
+
+Applied storage record: `docs/operations/172_LOCAL_DEV_PERSISTENT_STORAGE_APPLIED.md`

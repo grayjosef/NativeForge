@@ -1,45 +1,46 @@
-# 13_HANDOFF_LATEST — Gate 09 closeout
+# 13_HANDOFF_LATEST — Gate 10 closeout
 
 **Date:** 2026-08-21
-**Gate:** 09 — Persistent Evidence Storage Approval Gate + Controlled Customer Auth Scaffolding
-**Blocks:** 23 (sprints 801–850), 24 (sprints 851–900)
+**Gate:** 10 — Approved Local/Dev Persistent Storage + External Pilot / Pen-Test Packet
+**Blocks:** 25 (901–950), 26 (951–1000)
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `6ba60f5`
-**HEAD after:** `e086974`
+**HEAD before:** `201e053`
+**HEAD after:** *(filled after push)*
 
 ## Shipped
 
-### Block 23
-- Persistence approval gate contract (`OWNER_APPROVED_MIGRATIONS=false`)
-- Storage adapters: fixture_backed, local_dev_only, planned_external; validated_persistent unavailable
-- Docs: `161` update + `166_PERSISTENT_STORAGE_APPROVAL_GATE.md`
-- SC panel: `sc-demo-persistence-approval-gate`
-- Claims: upload/customer/production persistence **false**; migrations **not** applied
+### Block 25
+- Approval resolver: local_dev_only lane (`OWNER_APPROVED_MIGRATIONS=true`)
+- Alembic `0022` `nf_evidence_intake_records` applied to `nativeforge.local.db`
+- `validated_persistent` adapter: create/read/link/review/reject/archive + isolation
+- Docs: `172_LOCAL_DEV_PERSISTENT_STORAGE_APPLIED.md`
+- Claims: upload persistence **local_dev_only**; production/customer persistence **false**
 
-### Block 24
-- Customer access boundary contract + org-scoped allowlists
-- Cross-org isolation checks
-- Customer pilot readiness checklist → **NO_GO**
-- SC panel: `sc-demo-customer-pilot-auth`
-- Claims: login live / production auth / RBAC / multi-tenant / isolation **false**
+### Block 26
+- External pilot auth spike (login not live)
+- Pen-test / SCA readiness packet (pass not claimed)
+- Monday runbook Gate 10 notes
+- SC panel: `sc-demo-gate10-closeout`
+- Controlled customer pilot: **NO_GO**; Monday demo: **GO**; production: **NO_GO**
 
 ## Validation
-- Scoped pytest Blocks 23–24: green
+- Scoped pytest Blocks 23/25/26 + evidence intake: green
 - Scoped ruff: green
-- FE typecheck / vitest / build: green
-- Block 23/24 smokes: PASS
-- Playwright: *(run_id after e2e)*
+- FE typecheck / vitest / build: *(pending this closeout)*
+- Block 25/26 smokes: *(pending)*
+- Playwright: *(pending)*
 
 ## Monday demo
 - Route: `/?view=sc_customer_demo`
-- Status: **GO** (demo)
+- Status: **GO**
 - Controlled customer pilot: **NO_GO**
 - Production: **NO_GO**
 
-## Next — Gate 10 recommendation
-- Block 25: Owner-approved migration dry-run → apply only if Mayhem approves; validated_persistent path
-- Block 26: External pilot auth spike / pen-test readiness packet (still no fake pen-test pass)
+## Final campaign status
+- Gates 01–10 complete (world-class acceleration)
+- Sprint-equivalents ~1000
+- Remaining: production storage approval, live external auth, pen-test/SCA pass
 
 ## Safety
-- Stash untouched; uv.lock untouched; no migrations applied; no scoring changes; no fake live login/uploads/pen-test.
+- Stash untouched; uv.lock untouched; migrations local/dev only; no production/customer data mutation; no fake login/pen-test/production claims.
