@@ -12,6 +12,9 @@ from typing import Any
 from nativeforge.services.feedback_report_contract_service import (
     feedback_report_invariant_failures,
 )
+from nativeforge.services.payload_safety_hardening_service import (
+    escape_slack_mrkdwn_fragment,
+)
 
 SCHEMA_VERSION = "nf_feedback_slack_alert_service_v1"
 ENV_WEBHOOK = "NATIVEFORGE_FEEDBACK_SLACK_WEBHOOK_URL"
@@ -24,6 +27,11 @@ def _json_safe(x: Any) -> Any:
 
 def format_slack_message(report: dict[str, Any]) -> dict[str, Any]:
     sev = report.get("severity") or "medium"
+    safe_msg = escape_slack_mrkdwn_fragment(str(report.get("user_message") or ""))
+    safe_blockers = ", ".join(
+        escape_slack_mrkdwn_fragment(str(b))
+        for b in (report.get("current_blockers") or [])
+    ) or "none"
     return _json_safe(
         {
             "text": (
@@ -46,8 +54,8 @@ def format_slack_message(report: dict[str, Any]) -> dict[str, Any]:
                             f"Org: `{report.get('organization_profile_id') or 'n/a'}` | "
                             f"Opp: `{report.get('opportunity_id') or 'n/a'}`\n"
                             f"Data mode: `{report.get('data_mode')}`\n"
-                            f"Message: {report.get('user_message')}\n"
-                            f"Blockers: {', '.join(report.get('current_blockers') or []) or 'none'}\n"
+                            f"Message: {safe_msg}\n"
+                            f"Blockers: {safe_blockers}\n"
                             f"Claim flags: `{json.dumps(report.get('current_claim_flags') or {})}`"
                         ),
                     },

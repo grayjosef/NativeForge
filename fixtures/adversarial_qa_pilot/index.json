@@ -1,0 +1,70 @@
+{
+  "schema_version": "nf_adversarial_fixture_service_v1",
+  "cases": [
+    {
+      "case_id": "prompt_injection_customer_prose",
+      "category": "prompt_injection",
+      "path": "fixtures/adversarial_qa_pilot/prompt_injection_customer_prose.txt"
+    },
+    {
+      "case_id": "prompt_injection_nofo",
+      "category": "prompt_injection",
+      "path": "fixtures/adversarial_qa_pilot/prompt_injection_nofo.txt"
+    },
+    {
+      "case_id": "prompt_injection_feedback",
+      "category": "prompt_injection",
+      "path": "fixtures/adversarial_qa_pilot/prompt_injection_feedback.txt"
+    },
+    {
+      "case_id": "fake_citation",
+      "category": "fake_citation",
+      "path": "fixtures/adversarial_qa_pilot/fake_citation.txt"
+    },
+    {
+      "case_id": "wrong_org_name",
+      "category": "wrong_personalization",
+      "path": "fixtures/adversarial_qa_pilot/wrong_org_name.txt"
+    },
+    {
+      "case_id": "state_as_federal",
+      "category": "recognition_abuse",
+      "path": "fixtures/adversarial_qa_pilot/state_as_federal.txt"
+    },
+    {
+      "case_id": "fake_budget",
+      "category": "budget_fabrication",
+      "path": "fixtures/adversarial_qa_pilot/fake_budget.txt"
+    },
+    {
+      "case_id": "fake_partner",
+      "category": "partner_fabrication",
+      "path": "fixtures/adversarial_qa_pilot/fake_partner.txt"
+    },
+    {
+      "case_id": "html_script_report",
+      "category": "xss_like",
+      "path": "fixtures/adversarial_qa_pilot/html_script_report.txt"
+    },
+    {
+      "case_id": "slack_markdown_injection",
+      "category": "slack_injection",
+      "path": "fixtures/adversarial_qa_pilot/slack_markdown_injection.txt"
+    },
+    {
+      "case_id": "collab_flag_bypass",
+      "category": "feature_flag_bypass",
+      "path": "fixtures/adversarial_qa_pilot/collab_flag_bypass.txt"
+    },
+    {
+      "case_id": "fake_export_complete",
+      "category": "export_overclaim",
+      "path": "fixtures/adversarial_qa_pilot/fake_export_complete.txt"
+    },
+    {
+      "case_id": "fake_form_complete",
+      "category": "form_overclaim",
+      "path": "fixtures/adversarial_qa_pilot/fake_form_complete.txt"
+    }
+  ]
+}

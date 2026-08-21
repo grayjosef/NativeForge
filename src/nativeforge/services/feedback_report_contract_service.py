@@ -7,6 +7,11 @@ import json
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.payload_safety_hardening_service import (
+    MAX_REPORT_BLOCKERS,
+    sanitize_user_visible_text,
+)
+
 SCHEMA_VERSION = "nf_feedback_report_contract_v1"
 
 REPORT_TYPES = frozenset(
@@ -75,6 +80,11 @@ def build_feedback_report(
     # Never claim sent without explicit external confirmation path
     if slack == "sent":
         slack = "not_run"
+    safe_message = sanitize_user_visible_text(user_message)
+    safe_blockers = [
+        sanitize_user_visible_text(str(b), max_chars=200)
+        for b in list(current_blockers or [])[:MAX_REPORT_BLOCKERS]
+    ]
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -98,10 +108,10 @@ def build_feedback_report(
             "data_mode": data_mode,
             "report_type": rtype,
             "severity": sev,
-            "user_message": user_message,
+            "user_message": safe_message,
             "system_context": system_context or {},
             "current_claim_flags": current_claim_flags or {},
-            "current_blockers": list(current_blockers or []),
+            "current_blockers": safe_blockers,
             "smoke_run_reference": smoke_run_reference,
             "client_context": client_context or {},
             "slack_alert_requested": slack_alert_requested,
