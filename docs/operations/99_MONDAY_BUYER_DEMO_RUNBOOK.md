@@ -66,3 +66,30 @@ Monday-safe claims/fallbacks: `docs/operations/102_CAMPAIGN_BLOCK01_SUNDAY_DEMO_
 
 Evidence-backed eligibility + recognition-tier explanations are on the same route.
 See `docs/operations/105_CAMPAIGN_BLOCK02_SUNDAY_DEMO_CHECKPOINT.md`.
+
+## Gate 07–08 operator notes
+
+### Additional panels on `/?view=sc_customer_demo`
+
+- Multi-organization pilot / cohort readiness
+- Future collaboration / dark launch (OFF)
+- Evidence intake / uploads (fixture/planned — persistence not claimed)
+- Operator enablement / production readiness (go/no-go)
+
+### Operator commands
+
+```bash
+source .venv/bin/activate
+bash scripts/sc_monday_demo_staging_verify.sh
+bash scripts/campaign_block21_smoke_verify.sh
+bash scripts/campaign_block22_smoke_verify.sh
+bash scripts/sc_monday_playwright_e2e_smoke_verify.sh
+```
+
+### Monday-safe claim boundaries (Gate 08)
+
+Allowed: evidence intake contract; storage proposal; operator go/no-go; Monday demo GO.
+
+Forbidden: uploads stored/durable; production-ready; pen-test passed; customer login live; submission-ready; final export; collaboration matching.
+
+Storage proposal: `docs/operations/161_EVIDENCE_UPLOAD_STORAGE_PROPOSAL.md` (migrations not applied).
