@@ -14,6 +14,14 @@ from nativeforge.services.buyer_demo_flow_contract_service import (
     build_buyer_demo_flow_contract,
     buyer_flow_contract_invariant_failures,
 )
+from nativeforge.services.controlled_drafting_assembler_service import (
+    build_controlled_drafting_demo_surface,
+    controlled_drafting_demo_surface_invariant_failures,
+)
+from nativeforge.services.draft_workspace_assembler_service import (
+    build_draft_workspace_demo_surface,
+    draft_workspace_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -165,6 +173,20 @@ def build_sc_customer_demo_bridge_payload(
             f"Source freshness pilot surface invariants failed: {freshness_fails}"
         )
 
+    draft_ws_surface = build_draft_workspace_demo_surface()
+    draft_ws_fails = draft_workspace_demo_surface_invariant_failures(draft_ws_surface)
+    if draft_ws_fails:
+        raise ValueError(f"Draft workspace surface invariants failed: {draft_ws_fails}")
+
+    controlled_draft_surface = build_controlled_drafting_demo_surface()
+    controlled_draft_fails = controlled_drafting_demo_surface_invariant_failures(
+        controlled_draft_surface
+    )
+    if controlled_draft_fails:
+        raise ValueError(
+            f"Controlled drafting surface invariants failed: {controlled_draft_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -210,6 +232,8 @@ def build_sc_customer_demo_bridge_payload(
             "organization_evidence_memory": org_memory_surface,
             "nofo_extraction_pilot": nofo_extraction_surface,
             "source_freshness_pilot": freshness_surface,
+            "draft_workspace": draft_ws_surface,
+            "controlled_drafting": controlled_draft_surface,
         }
     )
 
@@ -296,4 +320,14 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("source_freshness_pilot_missing")
     else:
         fails.extend(source_freshness_demo_surface_invariant_failures(freshness))
+    draft_ws = payload.get("draft_workspace") or {}
+    if not draft_ws:
+        fails.append("draft_workspace_missing")
+    else:
+        fails.extend(draft_workspace_demo_surface_invariant_failures(draft_ws))
+    controlled = payload.get("controlled_drafting") or {}
+    if not controlled:
+        fails.append("controlled_drafting_missing")
+    else:
+        fails.extend(controlled_drafting_demo_surface_invariant_failures(controlled))
     return fails

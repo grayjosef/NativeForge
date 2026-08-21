@@ -75,6 +75,14 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("external_live_check_not_run=true");
     expect(html).toContain("continuous_monitoring_claimed=false");
     expect(html).toContain("production_activation_claimed=false");
+    expect(html).toContain("sc-demo-draft-workspace");
+    expect(html).toContain("Draft workspace (human-authored)");
+    expect(html).toContain("ai_drafting_enabled=false");
+    expect(html).toContain("generated_prose_present=false");
+    expect(html).toContain("customer_prose_persistence_claimed=false");
+    expect(html).toContain("sc-demo-controlled-drafting");
+    expect(html).toContain("Controlled draft v0");
+    expect(html).toContain("complete_proposal_claimed=false");
     expect(payload.buyer_demo?.opening_line).toBeTruthy();
     expect(payload.pursuit_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
     expect(payload.pursuit_workspace?.final_submission_allowed).toBe(false);
@@ -139,6 +147,14 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.source_freshness_pilot?.continuous_monitoring_claimed).toBe(false);
     expect(payload.source_freshness_pilot?.production_activation_claimed).toBe(false);
     expect(payload.source_freshness_pilot?.external_live_check_not_run).toBe(true);
+    expect(payload.draft_workspace?.workspace_count).toBeGreaterThanOrEqual(1);
+    expect(payload.draft_workspace?.ai_drafting_enabled).toBe(false);
+    expect(payload.draft_workspace?.generated_prose_present).toBe(false);
+    expect(payload.draft_workspace?.customer_prose_persistence_claimed).toBe(false);
+    expect(payload.controlled_drafting?.workspace_count).toBeGreaterThanOrEqual(1);
+    expect(payload.controlled_drafting?.complete_proposal_claimed).toBe(false);
+    expect(payload.controlled_drafting?.submission_ready_claimed).toBe(false);
+    expect(payload.controlled_drafting?.final_text_claimed).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

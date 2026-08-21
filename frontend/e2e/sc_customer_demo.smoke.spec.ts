@@ -196,6 +196,23 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-source-freshness-flags")).toContainText(
       "external_live_check_not_run=true",
     );
+    await expect(page.getByTestId("sc-demo-draft-workspace")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-draft-ws-flags")).toContainText(
+      "ai_drafting_enabled=false",
+    );
+    await expect(page.getByTestId("sc-demo-draft-ws-flags")).toContainText(
+      "generated_prose_present=false",
+    );
+    await expect(page.getByTestId("sc-demo-draft-ws-flags")).toContainText(
+      "customer_prose_persistence_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-controlled-drafting")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-controlled-draft-flags")).toContainText(
+      "complete_proposal_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-controlled-draft-flags")).toContainText(
+      "submission_ready_claimed=false",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

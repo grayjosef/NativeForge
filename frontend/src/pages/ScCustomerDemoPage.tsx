@@ -1151,6 +1151,122 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.draft_workspace ? (
+        <section
+          data-testid="sc-demo-draft-workspace"
+          className="nf-sc-demo-section"
+        >
+          <h2>Draft workspace (human-authored)</h2>
+          <p className="nf-sc-demo-why">
+            Organize customer/human prose by narrative section, link evidence,
+            and flag unsupported claims. AI drafting is disabled here. No generate
+            proposal control.
+          </p>
+          <p data-testid="sc-demo-draft-ws-flags" className="nf-muted">
+            workspaces={data.draft_workspace.workspace_count} ai_drafting_enabled=
+            {String(data.draft_workspace.ai_drafting_enabled)}{" "}
+            generated_prose_present=
+            {String(data.draft_workspace.generated_prose_present)}{" "}
+            customer_prose_persistence_claimed=
+            {String(data.draft_workspace.customer_prose_persistence_claimed)}{" "}
+            submission_ready_claimed=
+            {String(data.draft_workspace.submission_ready_claimed)}{" "}
+            final_application_claimed=
+            {String(data.draft_workspace.final_application_claimed)}
+          </p>
+          <ul data-testid="sc-demo-draft-ws-summary">
+            {data.draft_workspace.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.draft_workspace.workspaces.slice(0, 2).map((ws) => (
+            <article
+              key={ws.draft_workspace_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-draft-ws-card-${ws.draft_workspace_id}`}
+            >
+              <h3>
+                {ws.opportunity_id} × {ws.organization_profile_id}
+              </h3>
+              <p>
+                mode={ws.draft_mode} status={ws.draft_status} sections=
+                {ws.section_count}
+              </p>
+              <ul>
+                {ws.sections.slice(0, 6).map((s) => (
+                  <li key={s.draft_section_id}>
+                    {s.section_label}: text_source={s.text_source} review=
+                    {s.review_status} unsupported=
+                    {(s.unsupported_claim_flags || []).length} missing_citations=
+                    {(s.missing_citation_flags || []).length} generated_text=
+                    {String(s.generated_text)}
+                  </li>
+                ))}
+              </ul>
+              <p className="nf-muted">
+                Reviewer notes placeholder: human review required. Persistence not
+                claimed.
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
+      {data.controlled_drafting ? (
+        <section
+          data-testid="sc-demo-controlled-drafting"
+          className="nf-sc-demo-section"
+        >
+          <h2>Controlled draft v0</h2>
+          <p className="nf-sc-demo-why">
+            Evidence-cited drafting only. Missing facts become placeholders and
+            questions. Not a complete proposal. Not submission-ready.
+          </p>
+          <p data-testid="sc-demo-controlled-draft-flags" className="nf-muted">
+            workspaces={data.controlled_drafting.workspace_count}{" "}
+            complete_proposal_claimed=
+            {String(data.controlled_drafting.complete_proposal_claimed)}{" "}
+            submission_ready_claimed=
+            {String(data.controlled_drafting.submission_ready_claimed)}{" "}
+            final_text_claimed=
+            {String(data.controlled_drafting.final_text_claimed)}{" "}
+            proposal_drafting_claimed=
+            {String(data.controlled_drafting.proposal_drafting_claimed)}
+          </p>
+          <ul data-testid="sc-demo-controlled-draft-summary">
+            {data.controlled_drafting.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          {data.controlled_drafting.workspaces.slice(0, 2).map((ws) => (
+            <article
+              key={ws.draft_workspace_id}
+              className="nf-sc-demo-nofo-card"
+              data-testid={`sc-demo-controlled-draft-card-${ws.draft_workspace_id}`}
+            >
+              <h3>
+                {ws.opportunity_id} — from_evidence=
+                {ws.generated_from_evidence_count} placeholder_or_blocked=
+                {ws.placeholder_or_blocked_count}
+              </h3>
+              <ul>
+                {ws.drafts.slice(0, 6).map((d) => (
+                  <li key={d.section_id}>
+                    {d.section_id}: mode={d.drafting_mode} status=
+                    {d.generation_status} citations=
+                    {(d.citation_requirements || []).length}
+                    {d.generated_text ? " [DRAFT TEXT]" : " [NO CLAIM PROSE]"}
+                  </li>
+                ))}
+              </ul>
+              <p className="nf-muted">
+                No submit control. No budget fabrication. Human review required.
+              </p>
+            </article>
+          ))}
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
