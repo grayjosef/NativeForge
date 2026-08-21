@@ -2,58 +2,57 @@
 
 ## Gate / Campaign Block complete
 
-**Gate 02 complete — Blocks 09–10 / Sprints 101–200**
+**Gate 03 complete — Blocks 11–12 / Sprints 201–300**
 
-- Block 9 of 20 — Real NOFO PDF Extraction Pilot (`la-real-006` / TEDC controlled fixture text)
-- Block 10 of 20 — Source Ingestion + Freshness Pilot (fixture-backed read-only)
+- Block 11 of 20 — Human-Authored Draft Workspace + Import Customer Prose Only
+- Block 12 of 20 — Evidence-Cited Controlled Drafting v0
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
-- HEAD before: `1368af3`
-- HEAD after: `4984e5b`
+- HEAD before: `6c2f8f1`
+- HEAD after: (set on closeout)
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
-## Block 09 delivered
+## Block 11 delivered
 
-- Controlled NOFO extraction contract + section detection + requirements map
-- Source: `fixtures/nofo_extraction_pilot/tedc_la_real_006_controlled_source.txt` (from Grants.gov fetch 362648)
-- Named PDF referenced; **PDF bytes not parsed**
-- Parallel package-chain integration; curated showcase not replaced
-- SC demo: NOFO extraction pilot panel
+- Draft workspace contract + section model
+- Unsupported claim / missing citation checker v0 (no rewrite)
+- Demo human-authored imports with intentional flag demo
+- AI drafting disabled; generated_text always null; persistence not claimed
+- SC demo: Draft workspace (human-authored)
 
-## Block 10 delivered
+## Block 12 delivered
 
-- Source freshness contract + fixture-backed checks
-- TEDC fixture, SC curated pack, unsupported SC portal monitor
-- Deadline/staleness/change labels; no auto-removal
-- SC demo: Source freshness / source health panel
-- `external_live_check_not_run=true`
+- Controlled drafting contract + evidence-only drafting service
+- Placeholders/questions when evidence missing
+- Citation/provenance required for generated drafts
+- Budget/tribal fabrication blocked
+- SC demo: Controlled draft v0
 
-## Smoke run_ids (Gate 02 closeout)
+## Smoke run_ids (Gate 03 closeout)
 
-- Block 09: `nf_camp09_nofo_extract_smoke_20260821T003653Z_4a5330c0`
-- Block 10: `nf_camp10_freshness_smoke_20260821T003655Z_41e4f61a`
-- Demo-runtime: `nf_sc_monday_browser_20260821T003657Z_77557d83`
-- Playwright: `nf_sc_monday_playwright_20260821T003700Z_e539cb32`
+- Block 11: `nf_camp11_draft_ws_smoke_20260821T004902Z_a6294d6a`
+- Block 12: `nf_camp12_controlled_draft_smoke_20260821T004903Z_1645840d`
+- Demo-runtime: `nf_sc_monday_browser_20260821T004903Z_4f26133e`
+- Playwright: `nf_sc_monday_playwright_20260821T004904Z_05fd9b9d`
 
-## Checkpoints / matrices
+## Docs
 
-- `docs/operations/125`–`127` Block 09
-- `docs/operations/128`–`130` Block 10
+- `131`–`133` Block 11; `134`–`136` Block 12
 
 ## World-class maturity
 
-- Estimated maturity before Gate 02: ~35–40%
-- Estimated maturity after Gate 02: ~45–55%
-- Improved: controlled NOFO extraction pilot + read-only source freshness honesty
-- Still below world-class: binary PDF parsing, live network freshness, controlled drafting
+- Before Gate 03: ~45–55%
+- After Gate 03: ~60–68%
+- Improved: controlled draft workspace + evidence-cited drafting v0
+- Still below: package export, forms mapping, multi-org pilot, binary PDF parsing, live freshness
 
 ## NEXT SAFE ACTION
 
-**Gate 03 — Blocks 11–12 / Sprints 201–300**
+**Gate 04 — Blocks 13–14 / Sprints 301–400**
 
-- Block 11: Human-authored draft workspace + import customer prose only
-- Block 12: Evidence-cited controlled drafting v0 (after evidence rails)
+- Block 13: Package Export Preview
+- Block 14: Forms and Attachments Mapping v0
