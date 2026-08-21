@@ -62,6 +62,10 @@ from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
 )
+from nativeforge.services.live_authority_spike_assembler_service import (
+    build_live_authority_spike_demo_surface,
+    live_authority_spike_demo_surface_invariant_failures,
+)
 from nativeforge.services.multi_org_pilot_assembler_service import (
     build_multi_org_pilot_demo_surface,
     multi_org_pilot_demo_surface_invariant_failures,
@@ -121,6 +125,10 @@ from nativeforge.services.pursuit_workspace_assembler_service import (
 from nativeforge.services.sc_monday_demo_assembler_service import (
     build_sc_monday_demo_artifact,
     demo_artifact_invariant_failures,
+)
+from nativeforge.services.sca_security_loop_assembler_service import (
+    build_sca_security_loop_demo_surface,
+    sca_security_loop_demo_surface_invariant_failures,
 )
 from nativeforge.services.source_freshness_pilot_checker_service import (
     build_source_freshness_demo_surface,
@@ -387,8 +395,10 @@ def build_sc_customer_demo_bridge_payload(
         )
 
     production_enforcement_surface = build_production_enforcement_demo_surface()
-    production_enforcement_fails = production_enforcement_demo_surface_invariant_failures(
-        production_enforcement_surface
+    production_enforcement_fails = (
+        production_enforcement_demo_surface_invariant_failures(
+            production_enforcement_surface
+        )
     )
     if production_enforcement_fails:
         raise ValueError(
@@ -404,6 +414,25 @@ def build_sc_customer_demo_bridge_payload(
         raise ValueError(
             "Gate 13 pentest/pilot surface invariants failed: "
             f"{gate13_pentest_pilot_fails}"
+        )
+
+    live_authority_spike_surface = build_live_authority_spike_demo_surface()
+    live_authority_spike_fails = live_authority_spike_demo_surface_invariant_failures(
+        live_authority_spike_surface
+    )
+    if live_authority_spike_fails:
+        raise ValueError(
+            "Live authority spike surface invariants failed: "
+            f"{live_authority_spike_fails}"
+        )
+
+    sca_security_loop_surface = build_sca_security_loop_demo_surface(run_checks=False)
+    sca_security_loop_fails = sca_security_loop_demo_surface_invariant_failures(
+        sca_security_loop_surface
+    )
+    if sca_security_loop_fails:
+        raise ValueError(
+            f"SCA security loop surface invariants failed: {sca_security_loop_fails}"
         )
 
     return _json_safe(
@@ -470,6 +499,8 @@ def build_sc_customer_demo_bridge_payload(
             "top15_source_validation": top15_source_validation_surface,
             "production_enforcement": production_enforcement_surface,
             "gate13_pentest_pilot": gate13_pentest_pilot_surface,
+            "live_authority_spike": live_authority_spike_surface,
+            "sca_security_loop": sca_security_loop_surface,
         }
     )
 
@@ -676,5 +707,19 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             gate13_pentest_pilot_demo_surface_invariant_failures(gate13_pentest_pilot)
+        )
+    live_authority_spike = payload.get("live_authority_spike") or {}
+    if not live_authority_spike:
+        fails.append("live_authority_spike_missing")
+    else:
+        fails.extend(
+            live_authority_spike_demo_surface_invariant_failures(live_authority_spike)
+        )
+    sca_security_loop = payload.get("sca_security_loop") or {}
+    if not sca_security_loop:
+        fails.append("sca_security_loop_missing")
+    else:
+        fails.extend(
+            sca_security_loop_demo_surface_invariant_failures(sca_security_loop)
         )
     return fails

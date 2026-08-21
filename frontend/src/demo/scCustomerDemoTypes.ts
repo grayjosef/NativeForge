@@ -1037,6 +1037,46 @@ export type ScCustomerDemoPayload = {
     allowed_claims: string[];
     forbidden_claims: string[];
   };
+  live_authority_spike?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    states_covered: string[];
+    sam_uei_live_checked: boolean;
+    sam_uei_verified_claimed: boolean;
+    ebiz_poc_live_checked: boolean;
+    ebiz_poc_verified_claimed: boolean;
+    aor_live_checked: boolean;
+    aor_verified_claimed: boolean;
+    state_authority_live_checked: boolean;
+    state_authority_verified_claimed: boolean;
+    submit_authority: boolean;
+    draft_authority: boolean;
+    manage_workspace_authority: boolean;
+    login_live_claimed: boolean;
+    human_review_required: boolean;
+  };
+  sca_security_loop?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    sca_run: boolean;
+    sca_passed_claimed: boolean;
+    npm_audit_clean?: boolean;
+    pip_audit_clean?: boolean;
+    high_critical_findings: string[];
+    blocked_checks: string[];
+    unresolved_findings: string[];
+    remediated_items: string[];
+    pen_test_passed_claimed: boolean;
+    uv_lock_touched: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    login_live_claimed: boolean;
+    human_review_required: boolean;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

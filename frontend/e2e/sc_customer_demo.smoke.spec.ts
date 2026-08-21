@@ -365,6 +365,20 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-gate13-pentest-flags")).toContainText(
       "sca_passed_claimed=false",
     );
+    await expect(page.getByTestId("sc-demo-live-authority-spike")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-live-authority-flags")).toContainText(
+      "sam_uei_verified=false",
+    );
+    await expect(page.getByTestId("sc-demo-live-authority-flags")).toContainText(
+      "submit=false",
+    );
+    await expect(page.getByTestId("sc-demo-sca-security-loop")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-sca-security-flags")).toContainText(
+      "sca_passed_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-sca-security-flags")).toContainText(
+      "pen_test_passed=false",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

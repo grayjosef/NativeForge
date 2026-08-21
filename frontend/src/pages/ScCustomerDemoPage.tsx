@@ -2055,6 +2055,67 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.live_authority_spike ? (
+        <section
+          data-testid="sc-demo-live-authority-spike"
+          className="nf-sc-demo-section"
+        >
+          <h2>Live authority verification spike</h2>
+          <p className="nf-sc-demo-why">
+            Authority source registry and claim resolver are modeled. SAM/UEI,
+            EBiz POC, AOR, and state portal authority are not live-verified.
+            Self-attestation cannot unlock submit authority.
+          </p>
+          <p data-testid="sc-demo-live-authority-flags" className="nf-muted">
+            sam_uei_verified=
+            {String(data.live_authority_spike.sam_uei_verified_claimed)} ebiz=
+            {String(data.live_authority_spike.ebiz_poc_verified_claimed)} aor=
+            {String(data.live_authority_spike.aor_verified_claimed)} state=
+            {String(data.live_authority_spike.state_authority_verified_claimed)}{" "}
+            draft={String(data.live_authority_spike.draft_authority)} manage=
+            {String(data.live_authority_spike.manage_workspace_authority)} submit=
+            {String(data.live_authority_spike.submit_authority)} login_live=
+            {String(data.live_authority_spike.login_live_claimed)}
+          </p>
+          <ul data-testid="sc-demo-live-authority-summary">
+            {data.live_authority_spike.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            states={(data.live_authority_spike.states_covered || []).join(", ")}
+          </p>
+        </section>
+      ) : null}
+
+      {data.sca_security_loop ? (
+        <section
+          data-testid="sc-demo-sca-security-loop"
+          className="nf-sc-demo-section"
+        >
+          <h2>SCA execution / security remediation</h2>
+          <p className="nf-sc-demo-why">
+            Tooling discovery and safe SCA checks where available. Pass is only
+            claimed when checks actually run clean. Pen-test remains not passed;
+            pilot remains NO_GO.
+          </p>
+          <p data-testid="sc-demo-sca-security-flags" className="nf-muted">
+            sca_run={String(data.sca_security_loop.sca_run)} sca_passed_claimed=
+            {String(data.sca_security_loop.sca_passed_claimed)} npm_audit_clean=
+            {String(Boolean(data.sca_security_loop.npm_audit_clean))} pen_test_passed=
+            {String(data.sca_security_loop.pen_test_passed_claimed)} uv_lock=
+            {String(data.sca_security_loop.uv_lock_touched)} pilot=
+            {data.sca_security_loop.controlled_customer_pilot_status} production=
+            {data.sca_security_loop.production_rollout_status}
+          </p>
+          <ul data-testid="sc-demo-sca-security-summary">
+            {data.sca_security_loop.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
