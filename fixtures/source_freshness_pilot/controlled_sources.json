@@ -1,0 +1,57 @@
+{
+  "schema_version": "nf_source_freshness_pilot_fixture_v1",
+  "data_mode": "fixture_backed_read_only_pilot",
+  "external_live_check_not_run": true,
+  "live_ingest_claimed": false,
+  "continuous_monitoring_claimed": false,
+  "production_activation_claimed": false,
+  "sources": [
+    {
+      "source_id": "grants_gov_tedc_362648_fixture",
+      "source_name": "Grants.gov TEDC FY2026 (controlled fetch fixture)",
+      "source_layer": "federal",
+      "source_type": "grants_gov_shaped_fixture",
+      "source_url_or_reference": "fixtures/source_ingestion/grants_gov_fetch_opportunity_362648.json",
+      "content_digest": "sha256:fixture",
+      "prior_content_digest": "sha256:fixture",
+      "opportunity_ids": [
+        "la-real-006"
+      ],
+      "deadline_iso": "2026-07-16",
+      "archive_iso": "2026-07-18",
+      "fixture_checked_at": "2026-08-20T18:00:00Z",
+      "retrieval_status": "success_fixture"
+    },
+    {
+      "source_id": "sc_state_curated_pack",
+      "source_name": "South Carolina curated-current opportunity pack",
+      "source_layer": "south_carolina",
+      "source_type": "curated_pack",
+      "source_url_or_reference": "fixtures/sc_monday_demo/",
+      "content_digest": "sha256:sc-curated",
+      "prior_content_digest": "sha256:sc-curated",
+      "opportunity_ids": [
+        "sc-rule-SC_FOOD_SOVEREIGNTY"
+      ],
+      "deadline_iso": null,
+      "archive_iso": null,
+      "fixture_checked_at": "2026-08-20T18:00:00Z",
+      "retrieval_status": "success_fixture"
+    },
+    {
+      "source_id": "sc_portal_live_monitor",
+      "source_name": "SC state portal live monitor",
+      "source_layer": "south_carolina",
+      "source_type": "portal_monitor",
+      "source_url_or_reference": "not_implemented",
+      "content_digest": null,
+      "prior_content_digest": null,
+      "opportunity_ids": [],
+      "deadline_iso": null,
+      "archive_iso": null,
+      "fixture_checked_at": null,
+      "retrieval_status": "not_checked",
+      "unsupported": true
+    }
+  ]
+}
