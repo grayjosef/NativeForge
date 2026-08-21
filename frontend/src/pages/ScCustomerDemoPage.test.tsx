@@ -97,6 +97,7 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-operator-readiness");
     expect(html).toContain("sc-demo-persistence-approval-gate");
     expect(html).toContain("sc-demo-customer-pilot-auth");
+    expect(html).toContain("sc-demo-gate10-closeout");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -214,18 +215,26 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.operator_readiness?.pen_test_passed_claimed).toBe(false);
     expect(payload.operator_readiness?.monday_demo_status).toBe("GO");
     expect(payload.operator_readiness?.production_rollout_status).toBe("NO_GO");
-    expect(payload.persistence_approval_gate?.migration_applied).toBe(false);
-    expect(payload.persistence_approval_gate?.upload_persistence_claimed).toBe(
+    expect(payload.persistence_approval_gate?.migration_applied).toBe(true);
+    expect(payload.persistence_approval_gate?.upload_persistence_scope).toBe(
+      "local_dev_only",
+    );
+    expect(
+      payload.persistence_approval_gate?.validated_persistent_scope,
+    ).toBe("local_dev_only");
+    expect(payload.persistence_approval_gate?.production_storage_claimed).toBe(
       false,
     );
     expect(
-      payload.persistence_approval_gate?.validated_persistent_adapter_claimed,
+      payload.persistence_approval_gate?.customer_data_persistence_claimed,
     ).toBe(false);
     expect(payload.customer_pilot_auth?.login_live_claimed).toBe(false);
     expect(payload.customer_pilot_auth?.production_auth_claimed).toBe(false);
     expect(payload.customer_pilot_auth?.controlled_customer_pilot_status).toBe(
       "NO_GO",
     );
+    expect(payload.gate10_closeout?.monday_demo_status).toBe("GO");
+    expect(payload.gate10_closeout?.pen_test_passed_claimed).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

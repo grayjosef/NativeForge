@@ -42,6 +42,10 @@ from nativeforge.services.forms_attachments_mapper_service import (
     build_forms_attachments_demo_surface,
     forms_attachments_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate10_closeout_assembler_service import (
+    build_gate10_closeout_demo_surface,
+    gate10_closeout_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -309,6 +313,15 @@ def build_sc_customer_demo_bridge_payload(
             f"{customer_pilot_auth_fails}"
         )
 
+    gate10_closeout_surface = build_gate10_closeout_demo_surface()
+    gate10_closeout_fails = gate10_closeout_demo_surface_invariant_failures(
+        gate10_closeout_surface
+    )
+    if gate10_closeout_fails:
+        raise ValueError(
+            f"Gate 10 closeout surface invariants failed: {gate10_closeout_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -366,6 +379,7 @@ def build_sc_customer_demo_bridge_payload(
             "operator_readiness": operator_readiness_surface,
             "persistence_approval_gate": persistence_approval_surface,
             "customer_pilot_auth": customer_pilot_auth_surface,
+            "gate10_closeout": gate10_closeout_surface,
         }
     )
 
@@ -522,4 +536,9 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.extend(
             customer_pilot_auth_demo_surface_invariant_failures(customer_pilot_auth)
         )
+    gate10_closeout = payload.get("gate10_closeout") or {}
+    if not gate10_closeout:
+        fails.append("gate10_closeout_missing")
+    else:
+        fails.extend(gate10_closeout_demo_surface_invariant_failures(gate10_closeout))
     return fails

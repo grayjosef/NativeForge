@@ -1761,25 +1761,34 @@ export function ScCustomerDemoPage({
           data-testid="sc-demo-persistence-approval-gate"
           className="nf-sc-demo-section"
         >
-          <h2>Persistent storage approval gate</h2>
+          <h2>Local/dev persistent evidence storage</h2>
           <p className="nf-sc-demo-why">
-            Durable evidence storage is approval-ready but not applied.
-            OWNER_APPROVED_MIGRATIONS=false — no validated_persistent adapter.
+            Gate 10: local/dev migration applied and validated_persistent adapter
+            available in local/dev only. Production storage and customer data
+            persistence remain false. Customer pilot remains NO_GO.
           </p>
           <p data-testid="sc-demo-persist-gate-flags" className="nf-muted">
             owner_approval_status=
             {data.persistence_approval_gate.owner_approval_status}{" "}
-            migration_required=
-            {String(data.persistence_approval_gate.migration_required)}{" "}
+            approval_scope=
+            {data.persistence_approval_gate.approval_scope || "n/a"}{" "}
             migration_applied=
             {String(data.persistence_approval_gate.migration_applied)}{" "}
-            validated_persistent_adapter_claimed=
+            migration_environment=
+            {data.persistence_approval_gate.migration_environment || "n/a"}{" "}
+            validated_persistent_scope=
+            {data.persistence_approval_gate.validated_persistent_scope || "n/a"}{" "}
+            upload_persistence_scope=
+            {data.persistence_approval_gate.upload_persistence_scope || "n/a"}{" "}
+            production_storage_claimed=
+            {String(data.persistence_approval_gate.production_storage_claimed)}{" "}
+            customer_data_persistence_claimed=
             {String(
-              data.persistence_approval_gate.validated_persistent_adapter_claimed,
+              data.persistence_approval_gate.customer_data_persistence_claimed,
             )}{" "}
-            upload_persistence_claimed=
-            {String(data.persistence_approval_gate.upload_persistence_claimed)}{" "}
-            dry_run_status={data.persistence_approval_gate.dry_run_status}
+            controlled_customer_pilot_status=
+            {data.persistence_approval_gate.controlled_customer_pilot_status ||
+              "NO_GO"}
           </p>
           <ul data-testid="sc-demo-persist-gate-summary">
             {data.persistence_approval_gate.buyer_summary.map((item) => (
@@ -1831,6 +1840,34 @@ export function ScCustomerDemoPage({
               ))}
             </ul>
           </div>
+        </section>
+      ) : null}
+
+      {data.gate10_closeout ? (
+        <section
+          data-testid="sc-demo-gate10-closeout"
+          className="nf-sc-demo-section"
+        >
+          <h2>Monday closeout / pen-test readiness</h2>
+          <p className="nf-sc-demo-why">
+            Launch-control packet: external pilot auth scoped, pen-test/SCA
+            readiness complete. Pen-test pass and live login are not claimed.
+          </p>
+          <p data-testid="sc-demo-gate10-closeout-flags" className="nf-muted">
+            monday={data.gate10_closeout.monday_demo_status} customer_pilot=
+            {data.gate10_closeout.controlled_customer_pilot_status} production=
+            {data.gate10_closeout.production_rollout_status} login_live_claimed=
+            {String(data.gate10_closeout.login_live_claimed)}{" "}
+            pen_test_passed_claimed=
+            {String(data.gate10_closeout.pen_test_passed_claimed)}{" "}
+            sca_passed_claimed=
+            {String(data.gate10_closeout.sca_passed_claimed)}
+          </p>
+          <ul data-testid="sc-demo-gate10-closeout-summary">
+            {data.gate10_closeout.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
         </section>
       ) : null}
 

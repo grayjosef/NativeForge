@@ -295,13 +295,16 @@ test.describe("SC customer demo Playwright smoke", () => {
     );
     await expect(page.getByTestId("sc-demo-persistence-approval-gate")).toBeVisible();
     await expect(page.getByTestId("sc-demo-persist-gate-flags")).toContainText(
-      "migration_applied=false",
+      "migration_applied=true",
     );
     await expect(page.getByTestId("sc-demo-persist-gate-flags")).toContainText(
-      "upload_persistence_claimed=false",
+      "validated_persistent_scope=local_dev_only",
     );
     await expect(page.getByTestId("sc-demo-persist-gate-flags")).toContainText(
-      "validated_persistent_adapter_claimed=false",
+      "production_storage_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-persist-gate-flags")).toContainText(
+      "customer_data_persistence_claimed=false",
     );
     await expect(page.getByTestId("sc-demo-customer-pilot-auth")).toBeVisible();
     await expect(page.getByTestId("sc-demo-customer-auth-flags")).toContainText(
@@ -312,6 +315,13 @@ test.describe("SC customer demo Playwright smoke", () => {
     );
     await expect(page.getByTestId("sc-demo-customer-auth-flags")).toContainText(
       "controlled_customer_pilot_status=NO_GO",
+    );
+    await expect(page.getByTestId("sc-demo-gate10-closeout")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-gate10-closeout-flags")).toContainText(
+      "monday=GO",
+    );
+    await expect(page.getByTestId("sc-demo-gate10-closeout-flags")).toContainText(
+      "pen_test_passed_claimed=false",
     );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
