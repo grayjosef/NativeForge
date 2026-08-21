@@ -393,6 +393,20 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-audit-operator-storage-flags"),
     ).toContainText("pilot=NO_GO");
+    await expect(page.getByTestId("sc-demo-external-pilot-auth")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-external-pilot-auth-flags"),
+    ).toContainText("login_live=false");
+    await expect(
+      page.getByTestId("sc-demo-external-pilot-auth-flags"),
+    ).toContainText("invite=draft");
+    await expect(page.getByTestId("sc-demo-storage-sca-pentest")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-storage-sca-pentest-flags"),
+    ).toContainText("storage_approved=false");
+    await expect(
+      page.getByTestId("sc-demo-storage-sca-pentest-flags"),
+    ).toContainText("pen_test=false");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

@@ -2177,6 +2177,64 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.external_pilot_auth ? (
+        <section
+          data-testid="sc-demo-external-pilot-auth"
+          className="nf-sc-demo-section"
+        >
+          <h2>External pilot auth path / invite boundary</h2>
+          <p className="nf-sc-demo-why">
+            Auth provider decision matrix recommends Auth0/OIDC with invite
+            allowlist. External auth is not configured. Login is not live. No
+            fake login UI. Invites stay draft until auth/storage/pen-test clear.
+          </p>
+          <p data-testid="sc-demo-external-pilot-auth-flags" className="nf-muted">
+            recommended={data.external_pilot_auth.recommended_auth_path} invite=
+            {data.external_pilot_auth.invite_status} external_auth=
+            {String(data.external_pilot_auth.external_auth_configured)} login_live=
+            {String(data.external_pilot_auth.login_live_claimed)} pilot_go=
+            {String(data.external_pilot_auth.pilot_go_claimed)} pilot=
+            {data.external_pilot_auth.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-external-pilot-auth-summary">
+            {data.external_pilot_auth.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.storage_sca_pentest ? (
+        <section
+          data-testid="sc-demo-storage-sca-pentest"
+          className="nf-sc-demo-section"
+        >
+          <h2>Storage execution / Python SCA / pen-test schedule</h2>
+          <p className="nf-sc-demo-why">
+            Production storage backend recommendation and owner approval packet
+            are ready. Storage is not approved or validated. Python SCA and
+            pen-test status are reported honestly.
+          </p>
+          <p data-testid="sc-demo-storage-sca-pentest-flags" className="nf-muted">
+            storage_approved=
+            {String(data.storage_sca_pentest.production_storage_approved)}{" "}
+            storage_validated=
+            {String(data.storage_sca_pentest.production_storage_validated)}{" "}
+            python_sca_run={String(data.storage_sca_pentest.python_sca_run)}{" "}
+            python_sca_passed=
+            {String(data.storage_sca_pentest.python_sca_passed)} full_sca=
+            {String(data.storage_sca_pentest.full_sca_passed_claimed)} pen_test=
+            {String(data.storage_sca_pentest.pen_test_passed_claimed)} pilot=
+            {data.storage_sca_pentest.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-storage-sca-pentest-summary">
+            {data.storage_sca_pentest.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

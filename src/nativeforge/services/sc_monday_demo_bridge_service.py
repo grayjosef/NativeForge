@@ -46,6 +46,10 @@ from nativeforge.services.evidence_lifecycle_assembler_service import (
     build_evidence_lifecycle_demo_surface,
     evidence_lifecycle_demo_surface_invariant_failures,
 )
+from nativeforge.services.external_pilot_auth_assembler_service import (
+    build_external_pilot_auth_demo_surface,
+    external_pilot_auth_demo_surface_invariant_failures,
+)
 from nativeforge.services.feedback_loop_assembler_service import (
     build_feedback_loop_demo_surface,
     feedback_loop_demo_surface_invariant_failures,
@@ -141,6 +145,10 @@ from nativeforge.services.sca_security_loop_assembler_service import (
 from nativeforge.services.source_freshness_pilot_checker_service import (
     build_source_freshness_demo_surface,
     source_freshness_demo_surface_invariant_failures,
+)
+from nativeforge.services.storage_sca_pentest_assembler_service import (
+    build_storage_sca_pentest_demo_surface,
+    storage_sca_pentest_demo_surface_invariant_failures,
 )
 from nativeforge.services.top15_source_validation_assembler_service import (
     build_top15_source_validation_demo_surface,
@@ -464,6 +472,28 @@ def build_sc_customer_demo_bridge_payload(
             f"{audit_operator_storage_fails}"
         )
 
+    external_pilot_auth_surface = build_external_pilot_auth_demo_surface()
+    external_pilot_auth_fails = external_pilot_auth_demo_surface_invariant_failures(
+        external_pilot_auth_surface
+    )
+    if external_pilot_auth_fails:
+        raise ValueError(
+            "External pilot auth surface invariants failed: "
+            f"{external_pilot_auth_fails}"
+        )
+
+    storage_sca_pentest_surface = build_storage_sca_pentest_demo_surface(
+        run_python_sca=False
+    )
+    storage_sca_pentest_fails = storage_sca_pentest_demo_surface_invariant_failures(
+        storage_sca_pentest_surface
+    )
+    if storage_sca_pentest_fails:
+        raise ValueError(
+            "Storage/SCA/pen-test surface invariants failed: "
+            f"{storage_sca_pentest_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -532,6 +562,8 @@ def build_sc_customer_demo_bridge_payload(
             "sca_security_loop": sca_security_loop_surface,
             "rbac_enforcement": rbac_enforcement_surface,
             "audit_operator_storage": audit_operator_storage_surface,
+            "external_pilot_auth": external_pilot_auth_surface,
+            "storage_sca_pentest": storage_sca_pentest_surface,
         }
     )
 
@@ -766,5 +798,19 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
             audit_operator_storage_demo_surface_invariant_failures(
                 audit_operator_storage
             )
+        )
+    external_pilot_auth = payload.get("external_pilot_auth") or {}
+    if not external_pilot_auth:
+        fails.append("external_pilot_auth_missing")
+    else:
+        fails.extend(
+            external_pilot_auth_demo_surface_invariant_failures(external_pilot_auth)
+        )
+    storage_sca_pentest = payload.get("storage_sca_pentest") or {}
+    if not storage_sca_pentest:
+        fails.append("storage_sca_pentest_missing")
+    else:
+        fails.extend(
+            storage_sca_pentest_demo_surface_invariant_failures(storage_sca_pentest)
         )
     return fails
