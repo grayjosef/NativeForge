@@ -776,6 +776,17 @@ select = ["E", "F", "I", "UP", "B"]
 "src/nativeforge/services/campaign_block22_smoke_runner_service.py" = ["E501"]
 "tests/test_operator_readiness_campaign22.py" = ["E501"]
 
+"src/nativeforge/services/persistence_approval_gate_contract_service.py" = ["E501"]
+"src/nativeforge/services/evidence_storage_adapter_service.py" = ["E501"]
+"src/nativeforge/services/persistence_approval_assembler_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block23_smoke_runner_service.py" = ["E501"]
+"tests/test_persistence_approval_campaign23.py" = ["E501"]
+
+"src/nativeforge/services/customer_access_boundary_contract_service.py" = ["E501"]
+"src/nativeforge/services/customer_pilot_auth_assembler_service.py" = ["E501"]
+"src/nativeforge/services/campaign_block24_smoke_runner_service.py" = ["E501"]
+"tests/test_customer_pilot_auth_campaign24.py" = ["E501"]
+
 [tool.ruff.format]
 quote-style = "double"
 

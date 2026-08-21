@@ -35,3 +35,12 @@ NativeForge can map required attachments and show evidence gaps, but durable bin
 - Attachment persistence is complete
 - Production customer data storage is ready
 - Auth/user upload flow is live
+
+## Gate 09 update — approval gate
+
+See `docs/operations/166_PERSISTENT_STORAGE_APPROVAL_GATE.md`.
+
+- `OWNER_APPROVED_MIGRATIONS=false` (this run)
+- Adapter dry-run validates fixture/local_dev/planned_external only
+- `validated_persistent` remains unavailable
+- No Alembic migrations applied
