@@ -443,6 +443,20 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-storage-pilot-gate-flags"),
     ).toContainText("approval=false");
+    await expect(page.getByTestId("sc-demo-auth0-mode-b")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-auth0-mode-b-flags")).toContainText(
+      "mode=mode_a",
+    );
+    await expect(page.getByTestId("sc-demo-auth0-mode-b-flags")).toContainText(
+      "login_live=false",
+    );
+    await expect(page.getByTestId("sc-demo-gate20-closeout")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-gate20-closeout-flags")).toContainText(
+      "pen_test=false",
+    );
+    await expect(page.getByTestId("sc-demo-gate20-closeout-flags")).toContainText(
+      "storage_claimed=false",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

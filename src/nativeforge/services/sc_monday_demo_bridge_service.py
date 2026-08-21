@@ -22,6 +22,10 @@ from nativeforge.services.auth0_live_validation_assembler_service import (
     auth0_live_validation_demo_surface_invariant_failures,
     build_auth0_live_validation_demo_surface,
 )
+from nativeforge.services.auth0_mode_b_assembler_service import (
+    auth0_mode_b_demo_surface_invariant_failures,
+    build_auth0_mode_b_demo_surface,
+)
 from nativeforge.services.auth0_validation_assembler_service import (
     auth0_validation_demo_surface_invariant_failures,
     build_auth0_validation_demo_surface,
@@ -73,6 +77,10 @@ from nativeforge.services.gate10_closeout_assembler_service import (
 from nativeforge.services.gate13_pentest_pilot_assembler_service import (
     build_gate13_pentest_pilot_demo_surface,
     gate13_pentest_pilot_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate20_closeout_assembler_service import (
+    build_gate20_closeout_demo_surface,
+    gate20_closeout_demo_surface_invariant_failures,
 )
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
@@ -577,6 +585,24 @@ def build_sc_customer_demo_bridge_payload(
             f"Storage/pilot gate surface invariants failed: {storage_pilot_gate_fails}"
         )
 
+    auth0_mode_b_surface = build_auth0_mode_b_demo_surface()
+    auth0_mode_b_fails = auth0_mode_b_demo_surface_invariant_failures(
+        auth0_mode_b_surface
+    )
+    if auth0_mode_b_fails:
+        raise ValueError(
+            f"Auth0 Mode B surface invariants failed: {auth0_mode_b_fails}"
+        )
+
+    gate20_closeout_surface = build_gate20_closeout_demo_surface()
+    gate20_closeout_fails = gate20_closeout_demo_surface_invariant_failures(
+        gate20_closeout_surface
+    )
+    if gate20_closeout_fails:
+        raise ValueError(
+            f"Gate 20 closeout surface invariants failed: {gate20_closeout_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -653,6 +679,8 @@ def build_sc_customer_demo_bridge_payload(
             "storage_feature_flags": storage_feature_flags_surface,
             "auth0_live_validation": auth0_live_validation_surface,
             "storage_pilot_gate": storage_pilot_gate_surface,
+            "auth0_mode_b": auth0_mode_b_surface,
+            "gate20_closeout": gate20_closeout_surface,
         }
     )
 
@@ -942,4 +970,14 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.extend(
             storage_pilot_gate_demo_surface_invariant_failures(storage_pilot_gate)
         )
+    auth0_mode_b = payload.get("auth0_mode_b") or {}
+    if not auth0_mode_b:
+        fails.append("auth0_mode_b_missing")
+    else:
+        fails.extend(auth0_mode_b_demo_surface_invariant_failures(auth0_mode_b))
+    gate20_closeout = payload.get("gate20_closeout") or {}
+    if not gate20_closeout:
+        fails.append("gate20_closeout_missing")
+    else:
+        fails.extend(gate20_closeout_demo_surface_invariant_failures(gate20_closeout))
     return fails

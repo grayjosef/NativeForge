@@ -2402,6 +2402,59 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.auth0_mode_b ? (
+        <section data-testid="sc-demo-auth0-mode-b" className="nf-sc-demo-section">
+          <h2>Auth0 Mode A/B + pilot auth unlock</h2>
+          <p className="nf-sc-demo-why">
+            Mode detector reports Mode A when owner Auth0 config is absent. Mode B
+            live validation only runs with real config. Login live stays false
+            until every gate passes.
+          </p>
+          <p data-testid="sc-demo-auth0-mode-b-flags" className="nf-muted">
+            mode={data.auth0_mode_b.mode_detected} config=
+            {String(data.auth0_mode_b.auth0_config_present)} live_possible=
+            {String(data.auth0_mode_b.live_validation_possible)} attempted=
+            {String(data.auth0_mode_b.live_validation_attempted)} login_live=
+            {String(data.auth0_mode_b.login_live_claimed)} pilot_auth=
+            {String(data.auth0_mode_b.controlled_pilot_auth_ready)} pilot=
+            {data.auth0_mode_b.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-auth0-mode-b-summary">
+            {data.auth0_mode_b.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.gate20_closeout ? (
+        <section
+          data-testid="sc-demo-gate20-closeout"
+          className="nf-sc-demo-section"
+        >
+          <h2>2000-sprint closeout / final pilot gate</h2>
+          <p className="nf-sc-demo-why">
+            Final readiness closeout for the second 1000-sprint push. Storage Mode
+            B and pen-test pass remain blocked without owner evidence.
+          </p>
+          <p data-testid="sc-demo-gate20-closeout-flags" className="nf-muted">
+            mode={data.gate20_closeout.mode || "n/a"} storage_b=
+            {String(data.gate20_closeout.storage_mode_b_possible)} approval=
+            {String(data.gate20_closeout.owner_approval_present)} storage_claimed=
+            {String(data.gate20_closeout.production_storage_claimed)} pen_test=
+            {String(data.gate20_closeout.pen_test_passed_claim)} pilot=
+            {data.gate20_closeout.controlled_customer_pilot_status} rollout=
+            {data.gate20_closeout.production_rollout_status} maturity=
+            {String(data.gate20_closeout.estimated_maturity_pct ?? "n/a")}%
+          </p>
+          <ul data-testid="sc-demo-gate20-closeout-summary">
+            {data.gate20_closeout.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
