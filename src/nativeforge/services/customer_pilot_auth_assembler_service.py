@@ -39,10 +39,10 @@ def build_customer_pilot_readiness_checklist() -> dict[str, Any]:
         "source_freshness_ready": False,
         "pen_test_passed": False,
         "required_before_controlled_customer_pilot": [
-            "Owner-approved durable storage (validated_persistent)",
-            "External pilot auth path (login live still false until validated)",
+            "Production or customer-scoped durable storage (local/dev only is not enough)",
+            "External pilot auth path enabled and validated (login still gated)",
             "Org-scoped access enforcement beyond fixture model",
-            "Pen-test / SCA as applicable",
+            "Pen-test / SCA as applicable (not claimed passed)",
         ],
         "required_before_production": [
             "Production auth + multi-tenant isolation validated",
