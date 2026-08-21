@@ -14,6 +14,10 @@ from nativeforge.services.application_plan_workspace_assembler_service import (
     application_plan_demo_surface_invariant_failures,
     build_application_plan_workspace_demo_surface,
 )
+from nativeforge.services.audit_operator_storage_assembler_service import (
+    audit_operator_storage_demo_surface_invariant_failures,
+    build_audit_operator_storage_demo_surface,
+)
 from nativeforge.services.buyer_demo_flow_contract_service import (
     build_buyer_demo_flow_contract,
     buyer_flow_contract_invariant_failures,
@@ -121,6 +125,10 @@ from nativeforge.services.proposal_qa_gate_service import (
 from nativeforge.services.pursuit_workspace_assembler_service import (
     build_pursuit_workspace_demo_surface,
     pursuit_demo_surface_invariant_failures,
+)
+from nativeforge.services.rbac_enforcement_assembler_service import (
+    build_rbac_enforcement_demo_surface,
+    rbac_enforcement_demo_surface_invariant_failures,
 )
 from nativeforge.services.sc_monday_demo_assembler_service import (
     build_sc_monday_demo_artifact,
@@ -435,6 +443,27 @@ def build_sc_customer_demo_bridge_payload(
             f"SCA security loop surface invariants failed: {sca_security_loop_fails}"
         )
 
+    rbac_enforcement_surface = build_rbac_enforcement_demo_surface()
+    rbac_enforcement_fails = rbac_enforcement_demo_surface_invariant_failures(
+        rbac_enforcement_surface
+    )
+    if rbac_enforcement_fails:
+        raise ValueError(
+            f"RBAC enforcement surface invariants failed: {rbac_enforcement_fails}"
+        )
+
+    audit_operator_storage_surface = build_audit_operator_storage_demo_surface()
+    audit_operator_storage_fails = (
+        audit_operator_storage_demo_surface_invariant_failures(
+            audit_operator_storage_surface
+        )
+    )
+    if audit_operator_storage_fails:
+        raise ValueError(
+            "Audit/operator/storage surface invariants failed: "
+            f"{audit_operator_storage_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -501,6 +530,8 @@ def build_sc_customer_demo_bridge_payload(
             "gate13_pentest_pilot": gate13_pentest_pilot_surface,
             "live_authority_spike": live_authority_spike_surface,
             "sca_security_loop": sca_security_loop_surface,
+            "rbac_enforcement": rbac_enforcement_surface,
+            "audit_operator_storage": audit_operator_storage_surface,
         }
     )
 
@@ -721,5 +752,19 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             sca_security_loop_demo_surface_invariant_failures(sca_security_loop)
+        )
+    rbac_enforcement = payload.get("rbac_enforcement") or {}
+    if not rbac_enforcement:
+        fails.append("rbac_enforcement_missing")
+    else:
+        fails.extend(rbac_enforcement_demo_surface_invariant_failures(rbac_enforcement))
+    audit_operator_storage = payload.get("audit_operator_storage") or {}
+    if not audit_operator_storage:
+        fails.append("audit_operator_storage_missing")
+    else:
+        fails.extend(
+            audit_operator_storage_demo_surface_invariant_failures(
+                audit_operator_storage
+            )
         )
     return fails

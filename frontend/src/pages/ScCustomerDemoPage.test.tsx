@@ -106,6 +106,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-gate13-pentest-pilot");
     expect(html).toContain("sc-demo-live-authority-spike");
     expect(html).toContain("sc-demo-sca-security-loop");
+    expect(html).toContain("sc-demo-rbac-enforcement");
+    expect(html).toContain("sc-demo-audit-operator-storage");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -263,6 +265,17 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.live_authority_spike?.states_covered?.length).toBe(15);
     expect(payload.sca_security_loop?.pen_test_passed_claimed).toBe(false);
     expect(payload.sca_security_loop?.controlled_customer_pilot_status).toBe(
+      "NO_GO",
+    );
+    expect(payload.rbac_enforcement?.login_live_claimed).toBe(false);
+    expect(payload.rbac_enforcement?.rbac_enforced_claimed).toBe(true);
+    expect(payload.rbac_enforcement?.controlled_customer_pilot_status).toBe(
+      "NO_GO",
+    );
+    expect(payload.audit_operator_storage?.production_storage_claimed).toBe(
+      false,
+    );
+    expect(payload.audit_operator_storage?.controlled_customer_pilot_status).toBe(
       "NO_GO",
     );
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(

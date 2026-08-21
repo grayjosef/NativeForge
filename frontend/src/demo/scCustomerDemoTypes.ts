@@ -1077,6 +1077,42 @@ export type ScCustomerDemoPayload = {
     login_live_claimed: boolean;
     human_review_required: boolean;
   };
+  rbac_enforcement?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    auth_mode: string;
+    login_live_claimed: boolean;
+    external_auth_configured: boolean;
+    production_auth_claimed: boolean;
+    rbac_enforced_claimed: boolean;
+    production_multi_tenant_claimed: boolean;
+    rbac_policy_status: string;
+    enforcement_status: string;
+    denied_actions_default: string[];
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+    fake_login_ui_exposed: boolean;
+  };
+  audit_operator_storage?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    operator_queue_count?: number;
+    owner_approval_needed: boolean;
+    production_storage_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    pilot_blocker_matrix: string[];
+    production_blocker_matrix: string[];
+    next_safe_actions: string[];
+    login_live_claimed: boolean;
+    audit_compliance_complete_claimed: boolean;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

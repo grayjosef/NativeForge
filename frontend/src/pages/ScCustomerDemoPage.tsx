@@ -2116,6 +2116,67 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.rbac_enforcement ? (
+        <section
+          data-testid="sc-demo-rbac-enforcement"
+          className="nf-sc-demo-section"
+        >
+          <h2>Customer pilot auth / RBAC enforcement</h2>
+          <p className="nf-sc-demo-why">
+            Fixture/internal auth context enforces org-scoped RBAC. Login is not
+            live. Submit, final export, user management, and collaboration remain
+            denied. No fake login UI.
+          </p>
+          <p data-testid="sc-demo-rbac-enforcement-flags" className="nf-muted">
+            auth_mode={data.rbac_enforcement.auth_mode} login_live=
+            {String(data.rbac_enforcement.login_live_claimed)} rbac_enforced=
+            {String(data.rbac_enforcement.rbac_enforced_claimed)} production_auth=
+            {String(data.rbac_enforcement.production_auth_claimed)} multi_tenant=
+            {String(data.rbac_enforcement.production_multi_tenant_claimed)} pilot=
+            {data.rbac_enforcement.controlled_customer_pilot_status} production=
+            {data.rbac_enforcement.production_rollout_status}
+          </p>
+          <p className="nf-muted">
+            denied=
+            {(data.rbac_enforcement.denied_actions_default || []).join(", ")}
+          </p>
+          <ul data-testid="sc-demo-rbac-enforcement-summary">
+            {data.rbac_enforcement.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.audit_operator_storage ? (
+        <section
+          data-testid="sc-demo-audit-operator-storage"
+          className="nf-sc-demo-section"
+        >
+          <h2>Audit trail / operator review / storage decision</h2>
+          <p className="nf-sc-demo-why">
+            Unified audit events, operator review trail, and an explicit
+            production storage owner decision path. Production storage and
+            customer data persistence remain false; pilot remains NO_GO.
+          </p>
+          <p data-testid="sc-demo-audit-operator-storage-flags" className="nf-muted">
+            owner_approval={String(data.audit_operator_storage.owner_approval_needed)}{" "}
+            production_storage=
+            {String(data.audit_operator_storage.production_storage_claimed)}{" "}
+            customer_persistence=
+            {String(data.audit_operator_storage.customer_data_persistence_claimed)}{" "}
+            queue={String(data.audit_operator_storage.operator_queue_count ?? 0)}{" "}
+            pilot={data.audit_operator_storage.controlled_customer_pilot_status}{" "}
+            production={data.audit_operator_storage.production_rollout_status}
+          </p>
+          <ul data-testid="sc-demo-audit-operator-storage-summary">
+            {data.audit_operator_storage.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
