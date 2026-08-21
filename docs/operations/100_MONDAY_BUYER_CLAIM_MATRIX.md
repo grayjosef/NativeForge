@@ -34,5 +34,7 @@
 | Retention/delete/export resolver | IMPLEMENTED / production delete/export blocked |
 | Auth0 login/RBAC validation (Gate 24) | IMPLEMENTED / Mode A dry-run; login_live false |
 | Session/tenant enforcement (Gate 24) | IMPLEMENTED / cross-org deny; external access false |
+| Storage approval + metadata live path (Gate 25) | IMPLEMENTED / Mode A; production storage false |
+| Object storage signed-URL unlock (Gate 25) | IMPLEMENTED / blocked without approval/SSE/malware |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
