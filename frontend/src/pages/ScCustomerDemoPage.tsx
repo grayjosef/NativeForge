@@ -2455,6 +2455,69 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.auth0_mode_b_live_unlock ? (
+        <section
+          data-testid="sc-demo-auth0-mode-b-live-unlock"
+          className="nf-sc-demo-section"
+        >
+          <h2>Auth0 Mode B live unlock attempt</h2>
+          <p className="nf-sc-demo-why">
+            Live unlock runs only with real owner Auth0 config. Without it, Mode A
+            keeps login_live false and lists exact owner actions.
+          </p>
+          <p
+            data-testid="sc-demo-auth0-mode-b-live-unlock-flags"
+            className="nf-muted"
+          >
+            mode={data.auth0_mode_b_live_unlock.mode_detected} config=
+            {String(data.auth0_mode_b_live_unlock.owner_config_present)} attempted=
+            {String(data.auth0_mode_b_live_unlock.live_validation_attempted)}{" "}
+            login_live=
+            {String(data.auth0_mode_b_live_unlock.login_live_claimed)} pilot_auth=
+            {String(data.auth0_mode_b_live_unlock.controlled_pilot_auth_ready)}{" "}
+            pilot={data.auth0_mode_b_live_unlock.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-auth0-mode-b-live-unlock-summary">
+            {data.auth0_mode_b_live_unlock.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.gate21_storage_pilot ? (
+        <section
+          data-testid="sc-demo-gate21-storage-pilot"
+          className="nf-sc-demo-section"
+        >
+          <h2>Storage approval ingest / pilot resolver</h2>
+          <p className="nf-sc-demo-why">
+            This campaign prompt is not storage approval. Without a repo-safe
+            approval token file, production storage and customer persistence stay
+            false.
+          </p>
+          <p
+            data-testid="sc-demo-gate21-storage-pilot-flags"
+            className="nf-muted"
+          >
+            approval=
+            {String(data.gate21_storage_pilot.owner_storage_approval_present)}{" "}
+            valid={String(data.gate21_storage_pilot.approval_valid)} provisioning=
+            {String(data.gate21_storage_pilot.provisioning_validation_attempted)}{" "}
+            storage_claimed=
+            {String(data.gate21_storage_pilot.production_storage_claimed)} pen_test=
+            {String(data.gate21_storage_pilot.pen_test_passed)} pilot=
+            {data.gate21_storage_pilot.final_controlled_pilot_status} rollout=
+            {data.gate21_storage_pilot.production_rollout_status}
+          </p>
+          <ul data-testid="sc-demo-gate21-storage-pilot-summary">
+            {data.gate21_storage_pilot.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

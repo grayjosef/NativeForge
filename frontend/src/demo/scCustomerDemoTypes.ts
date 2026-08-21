@@ -1275,6 +1275,39 @@ export type ScCustomerDemoPayload = {
     estimated_maturity_pct?: number;
     next_safe_actions: string[];
   };
+  auth0_mode_b_live_unlock?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    mode_detected: string;
+    owner_config_present: boolean;
+    secret_present_flag: boolean;
+    live_validation_attempted: boolean;
+    login_live_claimed: boolean;
+    production_auth_claimed: boolean;
+    controlled_pilot_auth_ready: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+    secret_value_printed: boolean;
+  };
+  gate21_storage_pilot?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    owner_storage_approval_present: boolean;
+    approval_valid: boolean;
+    provisioning_validation_attempted: boolean;
+    production_storage_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    pen_test_evidence_captured: boolean;
+    pen_test_passed: boolean;
+    final_controlled_pilot_status: string;
+    production_rollout_status: string;
+    next_safe_actions: string[];
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

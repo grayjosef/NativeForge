@@ -118,6 +118,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-storage-pilot-gate");
     expect(html).toContain("sc-demo-auth0-mode-b");
     expect(html).toContain("sc-demo-gate20-closeout");
+    expect(html).toContain("sc-demo-auth0-mode-b-live-unlock");
+    expect(html).toContain("sc-demo-gate21-storage-pilot");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -312,6 +314,10 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.auth0_mode_b?.login_live_claimed).toBe(false);
     expect(payload.gate20_closeout?.pen_test_passed_claim).toBe(false);
     expect(payload.gate20_closeout?.production_storage_claimed).toBe(false);
+    expect(payload.auth0_mode_b_live_unlock?.login_live_claimed).toBe(false);
+    expect(payload.auth0_mode_b_live_unlock?.mode_detected).toBe("mode_a");
+    expect(payload.gate21_storage_pilot?.owner_storage_approval_present).toBe(false);
+    expect(payload.gate21_storage_pilot?.production_storage_claimed).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );
