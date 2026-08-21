@@ -22,6 +22,10 @@ from nativeforge.services.controlled_drafting_assembler_service import (
     build_controlled_drafting_demo_surface,
     controlled_drafting_demo_surface_invariant_failures,
 )
+from nativeforge.services.customer_pilot_auth_assembler_service import (
+    build_customer_pilot_auth_demo_surface,
+    customer_pilot_auth_demo_surface_invariant_failures,
+)
 from nativeforge.services.draft_workspace_assembler_service import (
     build_draft_workspace_demo_surface,
     draft_workspace_demo_surface_invariant_failures,
@@ -77,6 +81,10 @@ from nativeforge.services.package_export_preview_assembler_service import (
 from nativeforge.services.package_readiness_queue_assembler_service import (
     build_package_readiness_demo_surface,
     package_readiness_demo_surface_invariant_failures,
+)
+from nativeforge.services.persistence_approval_assembler_service import (
+    build_persistence_approval_demo_surface,
+    persistence_approval_demo_surface_invariant_failures,
 )
 from nativeforge.services.proposal_qa_gate_service import (
     ai_governance_demo_surface_invariant_failures,
@@ -281,6 +289,26 @@ def build_sc_customer_demo_bridge_payload(
             f"Operator readiness surface invariants failed: {operator_readiness_fails}"
         )
 
+    persistence_approval_surface = build_persistence_approval_demo_surface()
+    persistence_approval_fails = persistence_approval_demo_surface_invariant_failures(
+        persistence_approval_surface
+    )
+    if persistence_approval_fails:
+        raise ValueError(
+            "Persistence approval surface invariants failed: "
+            f"{persistence_approval_fails}"
+        )
+
+    customer_pilot_auth_surface = build_customer_pilot_auth_demo_surface()
+    customer_pilot_auth_fails = customer_pilot_auth_demo_surface_invariant_failures(
+        customer_pilot_auth_surface
+    )
+    if customer_pilot_auth_fails:
+        raise ValueError(
+            "Customer pilot auth surface invariants failed: "
+            f"{customer_pilot_auth_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -336,6 +364,8 @@ def build_sc_customer_demo_bridge_payload(
             "collaboration_dark_launch": collab_dark_surface,
             "evidence_intake": evidence_intake_surface,
             "operator_readiness": operator_readiness_surface,
+            "persistence_approval_gate": persistence_approval_surface,
+            "customer_pilot_auth": customer_pilot_auth_surface,
         }
     )
 
@@ -477,5 +507,19 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
     else:
         fails.extend(
             operator_readiness_demo_surface_invariant_failures(operator_readiness)
+        )
+    persistence_approval = payload.get("persistence_approval_gate") or {}
+    if not persistence_approval:
+        fails.append("persistence_approval_gate_missing")
+    else:
+        fails.extend(
+            persistence_approval_demo_surface_invariant_failures(persistence_approval)
+        )
+    customer_pilot_auth = payload.get("customer_pilot_auth") or {}
+    if not customer_pilot_auth:
+        fails.append("customer_pilot_auth_missing")
+    else:
+        fails.extend(
+            customer_pilot_auth_demo_surface_invariant_failures(customer_pilot_auth)
         )
     return fails

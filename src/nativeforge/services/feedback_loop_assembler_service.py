@@ -41,6 +41,8 @@ REPORT_SURFACES: tuple[tuple[str, str], ...] = (
     ("collaboration_dark_launch", "Future collaboration / dark launch"),
     ("evidence_intake", "Evidence intake / uploads"),
     ("operator_readiness", "Operator readiness checklist"),
+    ("persistence_approval_gate", "Persistent storage approval gate"),
+    ("customer_pilot_auth", "Customer pilot auth scaffolding"),
 )
 
 

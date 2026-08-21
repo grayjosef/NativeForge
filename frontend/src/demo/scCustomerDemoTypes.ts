@@ -888,6 +888,42 @@ export type ScCustomerDemoPayload = {
       pen_test_readiness_reference: string;
     };
   };
+  persistence_approval_gate?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    owner_approval_status: string;
+    migration_required: boolean;
+    migration_applied: boolean;
+    validated_persistent_adapter_claimed: boolean;
+    upload_persistence_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    production_storage_claimed: boolean;
+    dry_run_status: string;
+    next_safe_action: string;
+    approval_request_text: string;
+    storage_adapters: string[];
+    gate: Record<string, unknown>;
+    dry_run: Record<string, unknown>;
+  };
+  customer_pilot_auth?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    boundary_count: number;
+    login_live_claimed: boolean;
+    production_auth_claimed: boolean;
+    rbac_enforced_claimed: boolean;
+    production_multi_tenant_claimed: boolean;
+    customer_data_isolation_claimed: boolean;
+    controlled_customer_pilot_status: string;
+    blockers: string[];
+    next_safe_actions: string[];
+    readiness_checklist: Record<string, unknown>;
+    boundaries: Array<Record<string, unknown>>;
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

@@ -293,6 +293,26 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-operator-ready-flags")).toContainText(
       "production=NO_GO",
     );
+    await expect(page.getByTestId("sc-demo-persistence-approval-gate")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-persist-gate-flags")).toContainText(
+      "migration_applied=false",
+    );
+    await expect(page.getByTestId("sc-demo-persist-gate-flags")).toContainText(
+      "upload_persistence_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-persist-gate-flags")).toContainText(
+      "validated_persistent_adapter_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-customer-pilot-auth")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-customer-auth-flags")).toContainText(
+      "login_live_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-customer-auth-flags")).toContainText(
+      "production_auth_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-customer-auth-flags")).toContainText(
+      "controlled_customer_pilot_status=NO_GO",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

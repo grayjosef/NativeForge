@@ -1756,6 +1756,84 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.persistence_approval_gate ? (
+        <section
+          data-testid="sc-demo-persistence-approval-gate"
+          className="nf-sc-demo-section"
+        >
+          <h2>Persistent storage approval gate</h2>
+          <p className="nf-sc-demo-why">
+            Durable evidence storage is approval-ready but not applied.
+            OWNER_APPROVED_MIGRATIONS=false — no validated_persistent adapter.
+          </p>
+          <p data-testid="sc-demo-persist-gate-flags" className="nf-muted">
+            owner_approval_status=
+            {data.persistence_approval_gate.owner_approval_status}{" "}
+            migration_required=
+            {String(data.persistence_approval_gate.migration_required)}{" "}
+            migration_applied=
+            {String(data.persistence_approval_gate.migration_applied)}{" "}
+            validated_persistent_adapter_claimed=
+            {String(
+              data.persistence_approval_gate.validated_persistent_adapter_claimed,
+            )}{" "}
+            upload_persistence_claimed=
+            {String(data.persistence_approval_gate.upload_persistence_claimed)}{" "}
+            dry_run_status={data.persistence_approval_gate.dry_run_status}
+          </p>
+          <ul data-testid="sc-demo-persist-gate-summary">
+            {data.persistence_approval_gate.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="nf-muted">
+            adapters=
+            {(data.persistence_approval_gate.storage_adapters || []).join(", ")}{" "}
+            next={data.persistence_approval_gate.next_safe_action}
+          </p>
+        </section>
+      ) : null}
+
+      {data.customer_pilot_auth ? (
+        <section
+          data-testid="sc-demo-customer-pilot-auth"
+          className="nf-sc-demo-section"
+        >
+          <h2>Controlled customer pilot auth scaffolding</h2>
+          <p className="nf-sc-demo-why">
+            Org-scoped access boundary model for a future pilot. Login is not
+            live; production auth and multi-tenant isolation are not claimed.
+          </p>
+          <p data-testid="sc-demo-customer-auth-flags" className="nf-muted">
+            boundaries={data.customer_pilot_auth.boundary_count} login_live_claimed=
+            {String(data.customer_pilot_auth.login_live_claimed)}{" "}
+            production_auth_claimed=
+            {String(data.customer_pilot_auth.production_auth_claimed)}{" "}
+            rbac_enforced_claimed=
+            {String(data.customer_pilot_auth.rbac_enforced_claimed)}{" "}
+            production_multi_tenant_claimed=
+            {String(data.customer_pilot_auth.production_multi_tenant_claimed)}{" "}
+            customer_data_isolation_claimed=
+            {String(data.customer_pilot_auth.customer_data_isolation_claimed)}{" "}
+            controlled_customer_pilot_status=
+            {data.customer_pilot_auth.controlled_customer_pilot_status}
+          </p>
+          <ul data-testid="sc-demo-customer-auth-summary">
+            {data.customer_pilot_auth.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <div>
+            <h3>Blockers before controlled customer pilot</h3>
+            <ul>
+              {data.customer_pilot_auth.blockers.slice(0, 5).map((b) => (
+                <li key={b}>{b}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
