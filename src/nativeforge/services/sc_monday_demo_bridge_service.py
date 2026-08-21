@@ -54,6 +54,10 @@ from nativeforge.services.gate10_closeout_assembler_service import (
     build_gate10_closeout_demo_surface,
     gate10_closeout_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate13_pentest_pilot_assembler_service import (
+    build_gate13_pentest_pilot_demo_surface,
+    gate13_pentest_pilot_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -101,6 +105,10 @@ from nativeforge.services.package_readiness_queue_assembler_service import (
 from nativeforge.services.persistence_approval_assembler_service import (
     build_persistence_approval_demo_surface,
     persistence_approval_demo_surface_invariant_failures,
+)
+from nativeforge.services.production_enforcement_assembler_service import (
+    build_production_enforcement_demo_surface,
+    production_enforcement_demo_surface_invariant_failures,
 )
 from nativeforge.services.proposal_qa_gate_service import (
     ai_governance_demo_surface_invariant_failures,
@@ -378,6 +386,26 @@ def build_sc_customer_demo_bridge_payload(
             f"{top15_source_validation_fails}"
         )
 
+    production_enforcement_surface = build_production_enforcement_demo_surface()
+    production_enforcement_fails = production_enforcement_demo_surface_invariant_failures(
+        production_enforcement_surface
+    )
+    if production_enforcement_fails:
+        raise ValueError(
+            "Production enforcement surface invariants failed: "
+            f"{production_enforcement_fails}"
+        )
+
+    gate13_pentest_pilot_surface = build_gate13_pentest_pilot_demo_surface()
+    gate13_pentest_pilot_fails = gate13_pentest_pilot_demo_surface_invariant_failures(
+        gate13_pentest_pilot_surface
+    )
+    if gate13_pentest_pilot_fails:
+        raise ValueError(
+            "Gate 13 pentest/pilot surface invariants failed: "
+            f"{gate13_pentest_pilot_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -440,6 +468,8 @@ def build_sc_customer_demo_bridge_payload(
             "applicant_authority": applicant_authority_surface,
             "evidence_lifecycle": evidence_lifecycle_surface,
             "top15_source_validation": top15_source_validation_surface,
+            "production_enforcement": production_enforcement_surface,
+            "gate13_pentest_pilot": gate13_pentest_pilot_surface,
         }
     )
 
@@ -630,5 +660,21 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
             top15_source_validation_demo_surface_invariant_failures(
                 top15_source_validation
             )
+        )
+    production_enforcement = payload.get("production_enforcement") or {}
+    if not production_enforcement:
+        fails.append("production_enforcement_missing")
+    else:
+        fails.extend(
+            production_enforcement_demo_surface_invariant_failures(
+                production_enforcement
+            )
+        )
+    gate13_pentest_pilot = payload.get("gate13_pentest_pilot") or {}
+    if not gate13_pentest_pilot:
+        fails.append("gate13_pentest_pilot_missing")
+    else:
+        fails.extend(
+            gate13_pentest_pilot_demo_surface_invariant_failures(gate13_pentest_pilot)
         )
     return fails

@@ -102,6 +102,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-applicant-authority");
     expect(html).toContain("sc-demo-evidence-lifecycle");
     expect(html).toContain("sc-demo-top15-source-validation");
+    expect(html).toContain("sc-demo-production-enforcement");
+    expect(html).toContain("sc-demo-gate13-pentest-pilot");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -248,6 +250,12 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.evidence_lifecycle?.legal_compliance_claimed).toBe(false);
     expect(payload.top15_source_validation?.packet_count).toBe(15);
     expect(payload.top15_source_validation?.all_top15_live_claimed).toBe(false);
+    expect(payload.production_enforcement?.production_storage_claimed).toBe(false);
+    expect(payload.production_enforcement?.controlled_customer_pilot_status).toBe(
+      "NO_GO",
+    );
+    expect(payload.gate13_pentest_pilot?.pen_test_passed_claimed).toBe(false);
+    expect(payload.gate13_pentest_pilot?.sca_passed_claimed).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

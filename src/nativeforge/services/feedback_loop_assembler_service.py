@@ -48,6 +48,8 @@ REPORT_SURFACES: tuple[tuple[str, str], ...] = (
     ("applicant_authority", "Applicant authority verification"),
     ("evidence_lifecycle", "Evidence lifecycle / audit"),
     ("top15_source_validation", "Top-15 source research packets"),
+    ("production_enforcement", "Production storage / tenant enforcement"),
+    ("gate13_pentest_pilot", "Pen-test / SCA / controlled pilot invite"),
 )
 
 

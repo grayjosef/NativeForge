@@ -1007,6 +1007,36 @@ export type ScCustomerDemoPayload = {
     sc_packet: Record<string, unknown>;
     resolutions: Array<Record<string, unknown>>;
   };
+  production_enforcement?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    local_dev_persistence_validated: boolean;
+    production_storage_claimed: boolean;
+    customer_data_persistence_claimed: boolean;
+    production_multi_tenant_claimed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    tenant_isolation_status: string;
+    blockers: string[];
+    next_safe_actions: string[];
+  };
+  gate13_pentest_pilot?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    pen_test_passed_claimed: boolean;
+    sca_passed_claimed: boolean;
+    sca_run: boolean;
+    login_live_claimed: boolean;
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    blockers: string[];
+    allowed_claims: string[];
+    forbidden_claims: string[];
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

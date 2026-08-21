@@ -1996,6 +1996,65 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.production_enforcement ? (
+        <section
+          data-testid="sc-demo-production-enforcement"
+          className="nf-sc-demo-section"
+        >
+          <h2>Production storage / multi-tenant enforcement</h2>
+          <p className="nf-sc-demo-why">
+            Enforcement packet and claim resolver. Local/dev persistence is
+            validated; production storage and customer data persistence remain
+            false. Cross-org access is denied by tenant boundary rules.
+          </p>
+          <p data-testid="sc-demo-production-enforcement-flags" className="nf-muted">
+            local_dev_validated=
+            {String(data.production_enforcement.local_dev_persistence_validated)}{" "}
+            production_storage_claimed=
+            {String(data.production_enforcement.production_storage_claimed)}{" "}
+            customer_data_persistence_claimed=
+            {String(data.production_enforcement.customer_data_persistence_claimed)}{" "}
+            production_multi_tenant_claimed=
+            {String(data.production_enforcement.production_multi_tenant_claimed)}{" "}
+            pilot={data.production_enforcement.controlled_customer_pilot_status}{" "}
+            production={data.production_enforcement.production_rollout_status}
+          </p>
+          <ul data-testid="sc-demo-production-enforcement-summary">
+            {data.production_enforcement.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.gate13_pentest_pilot ? (
+        <section
+          data-testid="sc-demo-gate13-pentest-pilot"
+          className="nf-sc-demo-section"
+        >
+          <h2>Pen-test / SCA / controlled pilot invite</h2>
+          <p className="nf-sc-demo-why">
+            Execution packets and invite design are complete. Pen-test/SCA pass
+            and live login are not claimed. Controlled customer pilot remains
+            NO_GO.
+          </p>
+          <p data-testid="sc-demo-gate13-pentest-flags" className="nf-muted">
+            pen_test_passed_claimed=
+            {String(data.gate13_pentest_pilot.pen_test_passed_claimed)} sca_run=
+            {String(data.gate13_pentest_pilot.sca_run)} sca_passed_claimed=
+            {String(data.gate13_pentest_pilot.sca_passed_claimed)} login_live=
+            {String(data.gate13_pentest_pilot.login_live_claimed)} pilot=
+            {data.gate13_pentest_pilot.controlled_customer_pilot_status} production=
+            {data.gate13_pentest_pilot.production_rollout_status}
+          </p>
+          <ul data-testid="sc-demo-gate13-pentest-summary">
+            {data.gate13_pentest_pilot.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

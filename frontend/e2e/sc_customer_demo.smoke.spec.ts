@@ -351,6 +351,20 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(page.getByTestId("sc-demo-top15-source-flags")).toContainText(
       "all_top15_live=false",
     );
+    await expect(page.getByTestId("sc-demo-production-enforcement")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-production-enforcement-flags"),
+    ).toContainText("production_storage_claimed=false");
+    await expect(
+      page.getByTestId("sc-demo-production-enforcement-flags"),
+    ).toContainText("pilot=NO_GO");
+    await expect(page.getByTestId("sc-demo-gate13-pentest-pilot")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-gate13-pentest-flags")).toContainText(
+      "pen_test_passed_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-gate13-pentest-flags")).toContainText(
+      "sca_passed_claimed=false",
+    );
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );
