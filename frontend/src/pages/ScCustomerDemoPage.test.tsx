@@ -132,6 +132,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-controlled-pilot-master");
     expect(html).toContain("sc-demo-owner-unlock-packet");
     expect(html).toContain("sc-demo-cutover-claim-freeze");
+    expect(html).toContain("sc-demo-mode-b-rehearsal");
+    expect(html).toContain("sc-demo-dry-run-cutover");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -362,6 +364,12 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.owner_unlock_packet?.fake_mode_b).toBe(false);
     expect(payload.cutover_claim_freeze?.fake_production_ready).toBe(false);
     expect(payload.cutover_claim_freeze?.fake_pilot_ready).toBe(false);
+    expect(payload.mode_b_rehearsal?.mode_b_executed_claimed).toBe(false);
+    expect(payload.mode_b_rehearsal?.fake_mode_b).toBe(false);
+    expect(payload.mode_b_rehearsal?.synthetic_fixture_used).toBe(true);
+    expect(payload.dry_run_cutover?.production_cutover_executed).toBe(false);
+    expect(payload.dry_run_cutover?.fake_cutover_complete).toBe(false);
+    expect(payload.dry_run_cutover?.first_hard_blocker).toBe("auth0_oidc_preflight");
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

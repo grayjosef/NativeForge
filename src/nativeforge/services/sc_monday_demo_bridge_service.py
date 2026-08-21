@@ -122,6 +122,14 @@ from nativeforge.services.gate27_owner_unlock_assembler_service import (
     build_owner_unlock_demo_surface,
     owner_unlock_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate28_dry_run_cutover_assembler_service import (
+    build_dry_run_cutover_demo_surface,
+    dry_run_cutover_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate28_mode_b_rehearsal_assembler_service import (
+    build_mode_b_rehearsal_demo_surface,
+    mode_b_rehearsal_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -806,6 +814,24 @@ def build_sc_customer_demo_bridge_payload(
             f"{cutover_claim_freeze_fails}"
         )
 
+    mode_b_rehearsal_surface = build_mode_b_rehearsal_demo_surface()
+    mode_b_rehearsal_fails = mode_b_rehearsal_demo_surface_invariant_failures(
+        mode_b_rehearsal_surface
+    )
+    if mode_b_rehearsal_fails:
+        raise ValueError(
+            f"Mode B rehearsal surface invariants failed: {mode_b_rehearsal_fails}"
+        )
+
+    dry_run_cutover_surface = build_dry_run_cutover_demo_surface()
+    dry_run_cutover_fails = dry_run_cutover_demo_surface_invariant_failures(
+        dry_run_cutover_surface
+    )
+    if dry_run_cutover_fails:
+        raise ValueError(
+            f"Dry-run cutover surface invariants failed: {dry_run_cutover_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -898,6 +924,8 @@ def build_sc_customer_demo_bridge_payload(
             "controlled_pilot_master": controlled_pilot_master_surface,
             "owner_unlock_packet": owner_unlock_packet_surface,
             "cutover_claim_freeze": cutover_claim_freeze_surface,
+            "mode_b_rehearsal": mode_b_rehearsal_surface,
+            "dry_run_cutover": dry_run_cutover_surface,
         }
     )
 
@@ -1299,4 +1327,14 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.extend(
             cutover_claim_freeze_demo_surface_invariant_failures(cutover_claim_freeze)
         )
+    mode_b_rehearsal = payload.get("mode_b_rehearsal") or {}
+    if not mode_b_rehearsal:
+        fails.append("mode_b_rehearsal_missing")
+    else:
+        fails.extend(mode_b_rehearsal_demo_surface_invariant_failures(mode_b_rehearsal))
+    dry_run_cutover = payload.get("dry_run_cutover") or {}
+    if not dry_run_cutover:
+        fails.append("dry_run_cutover_missing")
+    else:
+        fails.extend(dry_run_cutover_demo_surface_invariant_failures(dry_run_cutover))
     return fails

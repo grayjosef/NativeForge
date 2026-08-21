@@ -553,6 +553,26 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-cutover-claim-freeze-flags"),
     ).toContainText("fake_pilot=false");
+    await expect(page.getByTestId("sc-demo-mode-b-rehearsal")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-mode-b-rehearsal-flags"),
+    ).toContainText("executed=false");
+    await expect(
+      page.getByTestId("sc-demo-mode-b-rehearsal-flags"),
+    ).toContainText("fake_mode_b=false");
+    await expect(
+      page.getByTestId("sc-demo-mode-b-rehearsal-flags"),
+    ).toContainText("synthetic=true");
+    await expect(page.getByTestId("sc-demo-dry-run-cutover")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-dry-run-cutover-flags"),
+    ).toContainText("first_blocker=auth0_oidc_preflight");
+    await expect(
+      page.getByTestId("sc-demo-dry-run-cutover-flags"),
+    ).toContainText("cutover_executed=false");
+    await expect(
+      page.getByTestId("sc-demo-dry-run-cutover-flags"),
+    ).toContainText("fake=false");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

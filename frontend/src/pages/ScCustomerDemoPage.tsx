@@ -2883,6 +2883,60 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.mode_b_rehearsal ? (
+        <section
+          data-testid="sc-demo-mode-b-rehearsal"
+          className="nf-sc-demo-section"
+        >
+          <h2>Mode B unlock rehearsal</h2>
+          <p className="nf-sc-demo-why">
+            Synthetic fixtures rehearse control flow only. Real owner inputs
+            unlock live claims. Mode B executed stays false until real inputs.
+          </p>
+          <p data-testid="sc-demo-mode-b-rehearsal-flags" className="nf-muted">
+            mode={data.mode_b_rehearsal.mode} synthetic=
+            {String(data.mode_b_rehearsal.synthetic_fixture_used)} real_inputs=
+            {String(data.mode_b_rehearsal.real_owner_inputs_present)} executed=
+            {String(data.mode_b_rehearsal.mode_b_executed_claimed)} login=
+            {String(data.mode_b_rehearsal.login_live_claimed)} freeze=
+            {String(data.mode_b_rehearsal.claim_freeze_verified)} fake_mode_b=
+            {String(data.mode_b_rehearsal.fake_mode_b)}
+          </p>
+          <ul data-testid="sc-demo-mode-b-rehearsal-summary">
+            {data.mode_b_rehearsal.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.dry_run_cutover ? (
+        <section
+          data-testid="sc-demo-dry-run-cutover"
+          className="nf-sc-demo-section"
+        >
+          <h2>Production dry-run cutover</h2>
+          <p className="nf-sc-demo-why">
+            Walks every cutover gate in order and stops at the first hard
+            blocker. Dry-run is not production cutover complete.
+          </p>
+          <p data-testid="sc-demo-dry-run-cutover-flags" className="nf-muted">
+            first_blocker={String(data.dry_run_cutover.first_hard_blocker)}{" "}
+            skipped={String(data.dry_run_cutover.skipped_after_blocker_count)}{" "}
+            freeze={String(data.dry_run_cutover.final_freeze_verified)} pilot=
+            {data.dry_run_cutover.controlled_customer_pilot_status} rollout=
+            {data.dry_run_cutover.production_rollout_status} cutover_executed=
+            {String(data.dry_run_cutover.production_cutover_executed)} fake=
+            {String(data.dry_run_cutover.fake_cutover_complete)}
+          </p>
+          <ul data-testid="sc-demo-dry-run-cutover-summary">
+            {data.dry_run_cutover.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
