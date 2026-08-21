@@ -32,5 +32,7 @@
 | Object storage + signed URL path (flagged) | IMPLEMENTED / production writes blocked |
 | Customer data policy enforcement | IMPLEMENTED / persistence false; AI training default false |
 | Retention/delete/export resolver | IMPLEMENTED / production delete/export blocked |
+| Auth0 login/RBAC validation (Gate 24) | IMPLEMENTED / Mode A dry-run; login_live false |
+| Session/tenant enforcement (Gate 24) | IMPLEMENTED / cross-org deny; external access false |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
