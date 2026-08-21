@@ -1,39 +1,31 @@
-# 13_HANDOFF_LATEST — Gate 20 closeout (2000-sprint)
+# 13_HANDOFF_LATEST — Gate 21 closeout
 
 **Date:** 2026-08-21
-**Gate:** 20 — Mode B Owner Credential Execution + Pen-Test Evidence Capture + 2000-Sprint Closeout
-**Blocks:** 45 (1901–1950), 46 (1951–2000)
+**Gate:** 21 — Owner Auth0 Mode B Live Unlock + Storage Approval Token Ingest
+**Blocks:** 47 (2001–2050), 48 (2051–2100)
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `1d853fc`
-**HEAD after:** `9530c26`
-**Mode:** A (no owner secrets / storage approval / pen-test report)
+**HEAD before:** `f55ce07`
+**HEAD after:** _(pending commit)_
+**Mode:** A (no owner Auth0 secrets; no storage approval token file)
 
 ## Shipped
 
-### Block 45
-- Auth0 Mode A/B detector
-- Mode B execution path (dry-run when Mode A)
-- Pilot auth readiness resolver
-- Results: `229_GATE20_AUTH0_MODEB_VALIDATION_RESULTS.md`
-- Panel: `sc-demo-auth0-mode-b`
+### Block 47
+- Mode B live unlock attempt (stays Mode A without config)
+- No-secret validation log under `artifacts/auth0_mode_b_no_secret_logs/`
+- Panel: `sc-demo-auth0-mode-b-live-unlock`
 - login_live=false; production_auth=false; pilot auth ready=false
 
-### Block 46
-- Storage Mode B detection (blocked without approval)
-- Pen-test evidence capture (no report → pass false)
-- Final controlled pilot resolver + Gate 20 closeout packet
-- Docs: `230`, `231_NATIVEFORGE_2000_SPRINT_CLOSEOUT_REPORT.md`
-- Panel: `sc-demo-gate20-closeout`
+### Block 48
+- Storage approval ingest (prompt alone ≠ approval; file absent)
+- Provisioning + pilot resolver rerun
+- Panel: `sc-demo-gate21-storage-pilot`
 - production_storage=false; customer_persistence=false; pen_test_passed=false
-- controlled customer pilot: NO_GO / CONDITIONAL_INTERNAL_ONLY
-- production rollout: PRODUCTION_ROLLOUT_NO_GO
+- controlled pilot: NO_GO / CONDITIONAL_INTERNAL_ONLY
 
-## Honest maturity
-~96.0% internal; controlled customer pilot NO_GO; production rollout NO_GO
-
-## Next campaign
-External Gate Execution — Mode B Auth0 + storage approval/provision + pen-test evidence
+## Next
+Owner provides OIDC_* and/or `artifacts/owner_storage_approval_token.json` and/or pen-test evidence, then re-run Block 47/48 smokes.
 
 ## Safety
-No secrets committed/printed; no fake Mode B/login/storage/pen-test/pilot GO; stash/uv.lock untouched
+No secrets; no fake unlocks; stash/uv.lock untouched
