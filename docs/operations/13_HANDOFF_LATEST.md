@@ -1,29 +1,49 @@
-# 13_HANDOFF_LATEST — Gate 13 closeout
+# 13_HANDOFF_LATEST — Gate 14 closeout
 
 **Date:** 2026-08-21
-**Gate:** 13 — Production Storage / Multi-Tenant Enforcement Packet + Pen-Test Execution Readiness
-**Blocks:** 31 (1201–1250), 32 (1251–1300)
+**Gate:** 14 — Live Authority Verification Spike + SCA Execution / Security Remediation Loop
+**Blocks:** 33 (1301–1350), 34 (1351–1400)
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `120e07b`
-**HEAD after:** `390edd5`
+**HEAD before:** `1a71711`
+**HEAD after:** (pending commit)
 
 ## Shipped
 
-### Block 31
-- Production storage readiness contract
-- Tenant boundary enforcement + isolation suite
-- Production claim resolver (local/dev cannot unlock production)
-- Panel: `sc-demo-production-enforcement`
+### Block 33
+- Authority source registry (10 sources; no live checks configured)
+- Federal live/read-only spike = dry-run only; all verified claims false
+- Top-15 state authority profiles; none live-verified
+- Authority claim resolver (view/draft/manage/submit); submit always false
+- Panel: `sc-demo-live-authority-spike`
+- Docs: `194_LIVE_AUTHORITY_VERIFICATION_SPIKE.md`
 
-### Block 32
-- Docs 189/190 pen-test + SCA execution packets
-- Controlled pilot invite design (NO_GO)
-- Panel: `sc-demo-gate13-pentest-pilot`
+### Block 34
+- SCA tooling discovery (no new installs)
+- SCA run: frontend `npm audit --omit=dev` → clean
+- Full SCA passed claim: **false** (`pip-audit` not installed)
+- Panel: `sc-demo-sca-security-loop`
+- Docs: `195_SCA_EXECUTION_RESULTS.md`, maturity `198`
 
-## Next — Gate 14
-- Block 33: Live authority verification spike (SAM/AOR read-only if approved)
-- Block 34: External pen-test scheduling + SCA remediation loop
+## Validation
+- Scoped pytest Block 33/34 PASS
+- Block 33/34 smoke PASS
+- Frontend typecheck + vitest + build PASS
+- Playwright `sc_customer_demo` smoke (Gate 14 panels)
+- `git diff --check` clean
+
+## Honest readiness
+- Monday demo: GO
+- Controlled customer pilot: NO_GO
+- Production rollout: NO_GO
+- SAM/AOR/EBiz verified: false
+- SCA passed: false (partial npm clean only)
+- Pen-test passed: false
+
+## Next — Gate 15
+- Block 35: Customer auth/RBAC enforcement path toward controlled pilot
+- Block 36: Audit logging + operator review trail + production storage owner path
+- Or: pip-audit install under approval + live authority credential design
 
 ## Safety
-- No fake production/pen-test/pilot GO claims; stash/uv.lock untouched
+- No fake live authority / SCA full pass / pen-test / pilot GO; stash/uv.lock untouched
