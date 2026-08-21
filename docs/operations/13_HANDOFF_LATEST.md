@@ -12,7 +12,7 @@
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
 - HEAD before: `6c2f8f1`
-- HEAD after: `cdcfc62`
+- HEAD after: `6c09038`
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
