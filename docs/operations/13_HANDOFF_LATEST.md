@@ -2,57 +2,55 @@
 
 ## Gate / Campaign Block complete
 
-**Gate 03 complete — Blocks 11–12 / Sprints 201–300**
+**Gate 04 complete — Blocks 13–14 / Sprints 301–400**
 
-- Block 11 of 20 — Human-Authored Draft Workspace + Import Customer Prose Only
-- Block 12 of 20 — Evidence-Cited Controlled Drafting v0
+- Block 13 of 20 — Deterministic AI Governance + Proposal QA Hard Gates
+- Block 14 of 20 — Customer Feedback / Slack Reporting + Collaboration Dark Flag
 
 ## Control point
 
 - path: `/home/josefgray/projects/nativeforge` (stale clone avoided)
 - branch: `main`
-- HEAD before: `6c2f8f1`
-- HEAD after: `6c09038`
+- HEAD before: `6acb510`
+- HEAD after: (set on closeout)
 - protected stash: `stash@{0}: On main: wip-sprint8-ui-redesign-do-not-commit`
 - uv.lock: present, untouched
 
-## Block 11 delivered
+## Block 13 delivered
 
-- Draft workspace contract + section model
-- Unsupported claim / missing citation checker v0 (no rewrite)
-- Demo human-authored imports with intentional flag demo
-- AI drafting disabled; generated_text always null; persistence not claimed
-- SC demo: Draft workspace (human-authored)
+- AI governance contract + personalization attribution checks
+- Proposal QA gate aggregation (citations, prohibited facts, human review, submission guard)
+- qa_passed/export/submission forced false while blockers/review incomplete
+- SC demo: AI governance / QA gates
 
-## Block 12 delivered
+## Block 14 delivered
 
-- Controlled drafting contract + evidence-only drafting service
-- Placeholders/questions when evidence missing
-- Citation/provenance required for generated drafts
-- Budget/tribal fabrication blocked
-- SC demo: Controlled draft v0
+- Feedback report contract + report hooks on major demo panels
+- Slack alert dry-run plumbing (never fake sent)
+- Collaboration dark flag foundation (all live claims false/off)
+- SC demo: Customer feedback / reporting
 
-## Smoke run_ids (Gate 03 closeout)
+## Smoke run_ids (Gate 04 closeout)
 
-- Block 11: `nf_camp11_draft_ws_smoke_20260821T004902Z_a6294d6a`
-- Block 12: `nf_camp12_controlled_draft_smoke_20260821T004903Z_1645840d`
-- Demo-runtime: `nf_sc_monday_browser_20260821T004903Z_4f26133e`
-- Playwright: `nf_sc_monday_playwright_20260821T004904Z_05fd9b9d`
+- Block 13: `nf_camp13_ai_gov_smoke_20260821T005649Z_b3fc45d1`
+- Block 14: `nf_camp14_feedback_smoke_20260821T005650Z_733310f9`
+- Demo-runtime: `nf_sc_monday_browser_20260821T005651Z_816dbde4`
+- Playwright: `nf_sc_monday_playwright_20260821T005654Z_f06c235e`
 
 ## Docs
 
-- `131`–`133` Block 11; `134`–`136` Block 12
+- `137`–`139` Block 13; `140`–`142` Block 14
 
 ## World-class maturity
 
-- Before Gate 03: ~45–55%
-- After Gate 03: ~60–68%
-- Improved: controlled draft workspace + evidence-cited drafting v0
-- Still below: package export, forms mapping, multi-org pilot, binary PDF parsing, live freshness
+- Before Gate 04: ~60–68%
+- After Gate 04: ~68–74%
+- Improved: deterministic draft QA + feedback/Slack foundation + collab dark flag
+- Still below: package export, forms mapping, multi-org pilot, live freshness, binary PDF
 
 ## NEXT SAFE ACTION
 
-**Gate 04 — Blocks 13–14 / Sprints 301–400**
+**Gate 05 — Package Export Preview + Forms/Attachments Mapping**
 
-- Block 13: Package Export Preview
-- Block 14: Forms and Attachments Mapping v0
+- Block 15: Package Export Preview
+- Block 16: Forms and Attachments Mapping v0
