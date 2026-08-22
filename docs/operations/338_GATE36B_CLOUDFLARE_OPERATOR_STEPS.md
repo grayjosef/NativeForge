@@ -8,8 +8,12 @@ Public cutover is **not** performed by this gate.
 
 **Target local listener:** `127.0.0.1:5175`
 
-**Recommended hostname:** `nf-dev.josef-gray.dev` unless Mayhem chooses
-another.
+**Recommended hostname:** `nf-dev.mayhem-nc.dev` (Mayhem domain family).
+
+Do not assume ordinary Cloudflare DNS alone can reach WSL. Prefer Cloudflare
+Tunnel from MAYHEM to `http://127.0.0.1:5175` (no router port-forward, no
+public bind of 5175). Alternatives (not Monday default): public IP/NAT, or
+host the app on Google Cloud later.
 
 ## Ingress snippet (placeholder only)
 
@@ -18,12 +22,12 @@ Do not commit credential JSON.
 
 ```yaml
 ingress:
-  - hostname: nf-dev.josef-gray.dev
+  - hostname: nf-dev.mayhem-nc.dev
     service: http://127.0.0.1:5175
   - service: http_status:404
 ```
 
-Cloudflare ingress should map `nf-dev.josef-gray.dev` to
+Cloudflare ingress should map `nf-dev.mayhem-nc.dev` to
 `http://127.0.0.1:5175`.
 
 TLS terminates at the Cloudflare edge.
@@ -42,11 +46,28 @@ Do not bind the preview listener to `0.0.0.0`.
 Run:
 
 ```bash
-NF_VERIFY_BASE_URL='https://nf-dev.josef-gray.dev' \
+NF_VERIFY_BASE_URL='https://nf-dev.mayhem-nc.dev' \
   ./scripts/verify_nativeforge_demo_deployment.sh
 ```
 
 Use `/?view=sc_customer_demo` for the Monday demo.
+
+## Future customer auth (not Monday)
+
+Real customer login is intentionally deferred from the Monday demo gate.
+
+Future customer-auth lane:
+
+- Auth0 tenant/application
+- callback/logout URLs for `mayhem-nc.dev`
+- Google Cloud deployment/storage decisions
+- production secrets stored outside repo
+- customer RBAC validation
+- audit logging
+- controlled customer pilot gate rerun
+
+Do not implement Auth0 for Monday unless Mayhem switches from a
+password-gated demo to real customer-login.
 
 ## Allowed claims
 

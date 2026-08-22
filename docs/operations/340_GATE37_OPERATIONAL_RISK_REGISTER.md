@@ -17,7 +17,7 @@ gate. Do not claim controlled customer pilot GO. Do not claim production-ready.
 | Port collision on 5175 | `--strictPort` + pre-check refuse serve | Stop the other listener |
 | Public bind accident | WSL port on all interfaces | Serve script binds `127.0.0.1` only |
 | Lack of pen-test | not a production security claim | Keep pen-test passed = false |
-| Lack of production storage | no customer persistence | Keep storage claims false |
+| Slack feedback alert not proven | Mayhem may miss buyer reports | Default `dry_run`; live needs webhook out-of-repo + tests |
 
 ## Logs
 

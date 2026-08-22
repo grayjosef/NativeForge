@@ -11,8 +11,9 @@ stay closed.
 - Runbook exists (`docs/operations/339_GATE36B_MONDAY_DEMO_RUNBOOK.md`)
 - Loopback listener: `127.0.0.1:5175`
 
-**Limited external demo:** GO **candidate** after public verifier PASS
-(`NF_VERIFY_BASE_URL=https://nf-dev.josef-gray.dev`).
+**Limited external demo:** GO **candidate** after local verifier PASS **and**
+public Cloudflare verifier PASS
+(`NF_VERIFY_BASE_URL=https://nf-dev.mayhem-nc.dev`).
 
 ## Still blocked for controlled customer pilot
 

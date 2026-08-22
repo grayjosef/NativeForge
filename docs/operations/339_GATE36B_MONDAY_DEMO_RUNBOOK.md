@@ -4,11 +4,10 @@ This is **local loopback deployment machinery only**.
 Public cutover is **not** performed by this gate.
 
 **Listener:** `127.0.0.1:5175`
-**Recommended hostname:** `nf-dev.josef-gray.dev` unless Mayhem chooses
-another.
+**Recommended hostname:** `nf-dev.mayhem-nc.dev`.
 **Demo route:** `/?view=sc_customer_demo`
 
-Cloudflare ingress should map `nf-dev.josef-gray.dev` to
+Cloudflare ingress should map `nf-dev.mayhem-nc.dev` to
 `http://127.0.0.1:5175`.
 Cloudflare Access / password is outside the repo.
 Do not store Cloudflare secrets in the repo.
@@ -28,7 +27,7 @@ Do not expose 5175 publicly.
 5. Verify loopback: `./scripts/verify_nativeforge_demo_deployment.sh`
 6. Mayhem applies DNS / Cloudflare Access / tunnel **outside** this repo.
 7. Verify public URL (after step 6):
-   `NF_VERIFY_BASE_URL='https://nf-dev.josef-gray.dev' ./scripts/verify_nativeforge_demo_deployment.sh`
+   `NF_VERIFY_BASE_URL='https://nf-dev.mayhem-nc.dev' ./scripts/verify_nativeforge_demo_deployment.sh`
 8. Use `/?view=sc_customer_demo` for the demo (not bare `/` as the buyer URL).
 9. State claim boundary (below). Talk-track: limited external / dev-domain demo
    of an evidence-backed Native-relevant opportunity workflow; customer pilot

@@ -33,7 +33,9 @@ REPORT_TYPES = frozenset(
 
 SEVERITIES = frozenset({"low", "medium", "high", "critical"})
 
-SLACK_STATUSES = frozenset({"not_configured", "dry_run", "sent", "failed", "not_run"})
+SLACK_STATUSES = frozenset(
+    {"not_configured", "dry_run", "sent", "failed", "not_run", "config_error", "off"}
+)
 
 
 def _json_safe(x: Any) -> Any:

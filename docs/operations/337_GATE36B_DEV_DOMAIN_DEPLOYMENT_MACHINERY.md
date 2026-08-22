@@ -5,8 +5,7 @@ performed by this gate.
 
 **Listener:** `127.0.0.1:5175`
 
-**Recommended hostname (Mayhem ops, later):** `nf-dev.josef-gray.dev` unless
-Mayhem chooses another.
+**Recommended hostname (Mayhem ops, later):** `nf-dev.mayhem-nc.dev`.
 
 ## What this gate is
 
@@ -33,7 +32,7 @@ bundle.
 - Not production auth, login live, production storage, or customer persistence.
 
 Cloudflare ingress (later, Mayhem-only) should map
-`nf-dev.josef-gray.dev` to `http://127.0.0.1:5175`.
+`nf-dev.mayhem-nc.dev` to `http://127.0.0.1:5175`.
 Cloudflare Access / password gate is configured **outside** this repo.
 Do not store Cloudflare secrets in the repo.
 Do not expose port 5175 on the public internet.
