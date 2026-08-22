@@ -130,6 +130,14 @@ from nativeforge.services.gate28_mode_b_rehearsal_assembler_service import (
     build_mode_b_rehearsal_demo_surface,
     mode_b_rehearsal_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate29_auth0_real_input_assembler_service import (
+    auth0_real_input_demo_surface_invariant_failures,
+    build_auth0_real_input_demo_surface,
+)
+from nativeforge.services.gate29_storage_security_assembler_service import (
+    build_storage_security_real_input_demo_surface,
+    storage_security_real_input_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -832,6 +840,29 @@ def build_sc_customer_demo_bridge_payload(
             f"Dry-run cutover surface invariants failed: {dry_run_cutover_fails}"
         )
 
+    auth0_real_input_surface = build_auth0_real_input_demo_surface()
+    auth0_real_input_fails = auth0_real_input_demo_surface_invariant_failures(
+        auth0_real_input_surface
+    )
+    if auth0_real_input_fails:
+        raise ValueError(
+            f"Auth0 real-input surface invariants failed: {auth0_real_input_fails}"
+        )
+
+    storage_security_real_input_surface = (
+        build_storage_security_real_input_demo_surface()
+    )
+    storage_security_fails = (
+        storage_security_real_input_demo_surface_invariant_failures(
+            storage_security_real_input_surface
+        )
+    )
+    if storage_security_fails:
+        raise ValueError(
+            "Storage/security real-input surface invariants failed: "
+            f"{storage_security_fails}"
+        )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -926,6 +957,8 @@ def build_sc_customer_demo_bridge_payload(
             "cutover_claim_freeze": cutover_claim_freeze_surface,
             "mode_b_rehearsal": mode_b_rehearsal_surface,
             "dry_run_cutover": dry_run_cutover_surface,
+            "auth0_real_input": auth0_real_input_surface,
+            "storage_security_real_input": storage_security_real_input_surface,
         }
     )
 
@@ -1337,4 +1370,18 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("dry_run_cutover_missing")
     else:
         fails.extend(dry_run_cutover_demo_surface_invariant_failures(dry_run_cutover))
+    auth0_real_input = payload.get("auth0_real_input") or {}
+    if not auth0_real_input:
+        fails.append("auth0_real_input_missing")
+    else:
+        fails.extend(auth0_real_input_demo_surface_invariant_failures(auth0_real_input))
+    storage_security_real_input = payload.get("storage_security_real_input") or {}
+    if not storage_security_real_input:
+        fails.append("storage_security_real_input_missing")
+    else:
+        fails.extend(
+            storage_security_real_input_demo_surface_invariant_failures(
+                storage_security_real_input
+            )
+        )
     return fails

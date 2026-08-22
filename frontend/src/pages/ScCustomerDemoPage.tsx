@@ -2937,6 +2937,75 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.auth0_real_input ? (
+        <section
+          data-testid="sc-demo-auth0-real-input"
+          className="nf-sc-demo-section"
+        >
+          <h2>Auth0 real-input ingest</h2>
+          <p className="nf-sc-demo-why">
+            Consumes real OOB Auth0/OIDC only. Synthetic Gate 28 fixtures are
+            ignored. Login live stays false unless every validator passes.
+          </p>
+          <p data-testid="sc-demo-auth0-real-input-flags" className="nf-muted">
+            mode={data.auth0_real_input.mode} synthetic_ignored=
+            {String(data.auth0_real_input.synthetic_rehearsal_artifacts_ignored)}{" "}
+            real_inputs=
+            {String(data.auth0_real_input.real_owner_auth0_inputs_present)} live=
+            {String(data.auth0_real_input.live_validation_attempted)} login=
+            {String(data.auth0_real_input.login_live_claimed)} prod_auth=
+            {String(data.auth0_real_input.production_auth_claimed)} executed=
+            {String(data.auth0_real_input.mode_b_executed_claimed)}
+          </p>
+          <ul data-testid="sc-demo-auth0-real-input-summary">
+            {data.auth0_real_input.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.storage_security_real_input ? (
+        <section
+          data-testid="sc-demo-storage-security-real-input"
+          className="nf-sc-demo-section"
+        >
+          <h2>Storage / pen-test ingest + pilot resolver</h2>
+          <p className="nf-sc-demo-why">
+            Real approval and evidence only. Synthetic artifacts ignored.
+            Production storage, persistence, and pen-test pass stay frozen
+            unless gates actually pass.
+          </p>
+          <p
+            data-testid="sc-demo-storage-security-real-input-flags"
+            className="nf-muted"
+          >
+            approval=
+            {String(data.storage_security_real_input.approval_token_present)}{" "}
+            storage=
+            {String(data.storage_security_real_input.production_storage_claimed)}{" "}
+            persist=
+            {String(
+              data.storage_security_real_input.customer_persistence_claimed
+            )}{" "}
+            pentest=
+            {String(data.storage_security_real_input.pen_test_pass_claimed)}{" "}
+            freeze=
+            {String(data.storage_security_real_input.claim_freeze_verified)}{" "}
+            pilot=
+            {data.storage_security_real_input.controlled_customer_pilot_status}{" "}
+            rollout=
+            {data.storage_security_real_input.production_rollout_status} fake=
+            {String(data.storage_security_real_input.fake_pilot_ready)}
+          </p>
+          <ul data-testid="sc-demo-storage-security-real-input-summary">
+            {data.storage_security_real_input.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>

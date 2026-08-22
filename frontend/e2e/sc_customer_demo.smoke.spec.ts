@@ -573,6 +573,28 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-dry-run-cutover-flags"),
     ).toContainText("fake=false");
+    await expect(page.getByTestId("sc-demo-auth0-real-input")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-auth0-real-input-flags"),
+    ).toContainText("login=false");
+    await expect(
+      page.getByTestId("sc-demo-auth0-real-input-flags"),
+    ).toContainText("synthetic_ignored=true");
+    await expect(
+      page.getByTestId("sc-demo-auth0-real-input-flags"),
+    ).toContainText("executed=false");
+    await expect(
+      page.getByTestId("sc-demo-storage-security-real-input"),
+    ).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-storage-security-real-input-flags"),
+    ).toContainText("storage=false");
+    await expect(
+      page.getByTestId("sc-demo-storage-security-real-input-flags"),
+    ).toContainText("pentest=false");
+    await expect(
+      page.getByTestId("sc-demo-storage-security-real-input-flags"),
+    ).toContainText("fake=false");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

@@ -134,6 +134,8 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-cutover-claim-freeze");
     expect(html).toContain("sc-demo-mode-b-rehearsal");
     expect(html).toContain("sc-demo-dry-run-cutover");
+    expect(html).toContain("sc-demo-auth0-real-input");
+    expect(html).toContain("sc-demo-storage-security-real-input");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -370,6 +372,15 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.dry_run_cutover?.production_cutover_executed).toBe(false);
     expect(payload.dry_run_cutover?.fake_cutover_complete).toBe(false);
     expect(payload.dry_run_cutover?.first_hard_blocker).toBe("auth0_oidc_preflight");
+    expect(payload.auth0_real_input?.login_live_claimed).toBe(false);
+    expect(payload.auth0_real_input?.synthetic_rehearsal_artifacts_ignored).toBe(
+      true,
+    );
+    expect(payload.storage_security_real_input?.production_storage_claimed).toBe(
+      false,
+    );
+    expect(payload.storage_security_real_input?.pen_test_pass_claimed).toBe(false);
+    expect(payload.storage_security_real_input?.fake_pilot_ready).toBe(false);
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );
