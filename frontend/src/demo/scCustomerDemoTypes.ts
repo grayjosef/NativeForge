@@ -1969,6 +1969,55 @@ export type ScCustomerDemoPayload = {
     next_owner_action?: string;
     next_safe_actions: string[];
   };
+  auth0_ingest?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    real_artifacts_present: boolean;
+    login_live_claim: boolean;
+    production_auth_claim: boolean;
+    live_validation_attempted: boolean;
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
+  storage_ingest?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    approval_artifact_present: boolean;
+    production_storage_claim: boolean;
+    customer_persistence_claim: boolean;
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
+  pentest_ingest?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    report_reference_present: boolean;
+    pen_test_pass_claim: boolean;
+    controlled_pilot_security_ready: boolean;
+    production_rollout_security_ready: boolean;
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
+  pilot_resolver?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    controlled_customer_pilot_status: string;
+    limited_external_validation_status?: string;
+    production_rollout_status: string;
+    allowed_claims?: string[];
+    forbidden_claims?: string[];
+    remaining_blockers?: string[];
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

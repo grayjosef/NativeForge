@@ -598,6 +598,102 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.auth0_ingest ? (
+        <section
+          data-testid="sc-demo-gate35-auth0"
+          className="nf-sc-demo-section"
+        >
+          <h2>Auth0/OIDC ingest</h2>
+          <p className="nf-sc-demo-why">
+            Owner artifacts absent. login_live stays false. No fake live
+            validation.
+          </p>
+          <p data-testid="sc-demo-gate35-auth0-flags" className="nf-muted">
+            artifacts={String(data.auth0_ingest.real_artifacts_present)} login_live=
+            {String(data.auth0_ingest.login_live_claim)} prod_auth=
+            {String(data.auth0_ingest.production_auth_claim)} attempted=
+            {String(data.auth0_ingest.live_validation_attempted)}
+          </p>
+          <ul>
+            {data.auth0_ingest.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.storage_ingest ? (
+        <section
+          data-testid="sc-demo-gate35-storage"
+          className="nf-sc-demo-section"
+        >
+          <h2>Storage ingest</h2>
+          <p className="nf-sc-demo-why">
+            Approval/config absent. Production storage and persistence stay
+            false.
+          </p>
+          <p data-testid="sc-demo-gate35-storage-flags" className="nf-muted">
+            approval={String(data.storage_ingest.approval_artifact_present)} prod_storage=
+            {String(data.storage_ingest.production_storage_claim)} persist=
+            {String(data.storage_ingest.customer_persistence_claim)}
+          </p>
+          <ul>
+            {data.storage_ingest.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.pentest_ingest ? (
+        <section
+          data-testid="sc-demo-gate35-pentest"
+          className="nf-sc-demo-section"
+        >
+          <h2>Pen-test evidence</h2>
+          <p className="nf-sc-demo-why">
+            Vendor report absent. Pen-test pass stays false.
+          </p>
+          <p data-testid="sc-demo-gate35-pentest-flags" className="nf-muted">
+            report={String(data.pentest_ingest.report_reference_present)} pass=
+            {String(data.pentest_ingest.pen_test_pass_claim)} rollout_sec=
+            {String(data.pentest_ingest.production_rollout_security_ready)}
+          </p>
+          <ul>
+            {data.pentest_ingest.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.pilot_resolver ? (
+        <section
+          data-testid="sc-demo-gate35-pilot"
+          className="nf-sc-demo-section"
+        >
+          <h2>Post-input pilot resolver</h2>
+          <p className="nf-sc-demo-why">
+            Mode A: no owner/vendor artifacts. Customer GO stays false.
+          </p>
+          <p data-testid="sc-demo-gate35-pilot-flags" className="nf-muted">
+            pilot={data.pilot_resolver.controlled_customer_pilot_status} rollout=
+            {data.pilot_resolver.production_rollout_status}
+          </p>
+          <div data-testid="sc-demo-gate35-allowed-claims">
+            allowed={(data.pilot_resolver.allowed_claims || []).join(", ")}
+          </div>
+          <div data-testid="sc-demo-gate35-forbidden-claims">
+            forbidden={(data.pilot_resolver.forbidden_claims || []).join(", ")}
+          </div>
+          <ul>
+            {data.pilot_resolver.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-what-nf-did" className="nf-sc-demo-section">
         <h2>What NativeForge found / did</h2>
         <p className="nf-sc-demo-why">Why this matters: structures discovery so your team reviews evidence, not raw noise.</p>

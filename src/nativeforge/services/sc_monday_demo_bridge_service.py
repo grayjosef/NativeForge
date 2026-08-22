@@ -212,6 +212,16 @@ from nativeforge.services.gate34_talk_track_assembler_service import (
     build_talk_track_demo_surface,
     talk_track_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate35_ingest_assembler_service import (
+    auth0_ingest_demo_surface_invariant_failures,
+    build_auth0_ingest_demo_surface,
+    build_pentest_ingest_demo_surface,
+    build_pilot_resolver_demo_surface,
+    build_storage_ingest_demo_surface,
+    pentest_ingest_demo_surface_invariant_failures,
+    pilot_resolver_demo_surface_invariant_failures,
+    storage_ingest_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -1057,6 +1067,26 @@ def build_sc_customer_demo_bridge_payload(
     if closeout_fails:
         raise ValueError(f"Closeout surface invariants failed: {closeout_fails}")
 
+    auth0_ingest_surface = build_auth0_ingest_demo_surface()
+    auth_fails = auth0_ingest_demo_surface_invariant_failures(auth0_ingest_surface)
+    if auth_fails:
+        raise ValueError(f"Auth0 ingest surface invariants failed: {auth_fails}")
+
+    storage_ingest_surface = build_storage_ingest_demo_surface()
+    stor_fails = storage_ingest_demo_surface_invariant_failures(storage_ingest_surface)
+    if stor_fails:
+        raise ValueError(f"Storage ingest surface invariants failed: {stor_fails}")
+
+    pentest_ingest_surface = build_pentest_ingest_demo_surface()
+    pt_fails = pentest_ingest_demo_surface_invariant_failures(pentest_ingest_surface)
+    if pt_fails:
+        raise ValueError(f"Pen-test ingest surface invariants failed: {pt_fails}")
+
+    pilot_resolver_surface = build_pilot_resolver_demo_surface()
+    pr_fails = pilot_resolver_demo_surface_invariant_failures(pilot_resolver_surface)
+    if pr_fails:
+        raise ValueError(f"Pilot resolver surface invariants failed: {pr_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -1171,6 +1201,10 @@ def build_sc_customer_demo_bridge_payload(
             "talk_track": talk_track_surface,
             "operator_drill": operator_drill_surface,
             "pre_owner_closeout": pre_owner_closeout_surface,
+            "auth0_ingest": auth0_ingest_surface,
+            "storage_ingest": storage_ingest_surface,
+            "pentest_ingest": pentest_ingest_surface,
+            "pilot_resolver": pilot_resolver_surface,
         }
     )
 
@@ -1696,4 +1730,24 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("pre_owner_closeout_missing")
     else:
         fails.extend(closeout_demo_surface_invariant_failures(pre_owner_closeout))
+    auth0_ingest = payload.get("auth0_ingest") or {}
+    if not auth0_ingest:
+        fails.append("auth0_ingest_missing")
+    else:
+        fails.extend(auth0_ingest_demo_surface_invariant_failures(auth0_ingest))
+    storage_ingest = payload.get("storage_ingest") or {}
+    if not storage_ingest:
+        fails.append("storage_ingest_missing")
+    else:
+        fails.extend(storage_ingest_demo_surface_invariant_failures(storage_ingest))
+    pentest_ingest = payload.get("pentest_ingest") or {}
+    if not pentest_ingest:
+        fails.append("pentest_ingest_missing")
+    else:
+        fails.extend(pentest_ingest_demo_surface_invariant_failures(pentest_ingest))
+    pilot_resolver = payload.get("pilot_resolver") or {}
+    if not pilot_resolver:
+        fails.append("pilot_resolver_missing")
+    else:
+        fails.extend(pilot_resolver_demo_surface_invariant_failures(pilot_resolver))
     return fails
