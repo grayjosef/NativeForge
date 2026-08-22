@@ -62,5 +62,9 @@
 | Buyer talk-track (Gate 34) | IMPLEMENTED / forbidden phrases blocked; CTA safe |
 | Operator drill (Gate 34) | IMPLEMENTED / drill pass ≠ production pass |
 | Pre-owner closeout (Gate 34) | IMPLEMENTED / GO=false until owner+vendor inputs |
+| Auth0 ingest (Gate 35) | MODE A / artifacts absent; login_live=false |
+| Storage ingest (Gate 35) | MODE A / approval absent; production storage=false |
+| Pen-test ingest (Gate 35) | MODE A / report absent; pass=false |
+| Pilot resolver (Gate 35) | MODE A / CONDITIONAL_INTERNAL_ONLY; rollout NO_GO |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |

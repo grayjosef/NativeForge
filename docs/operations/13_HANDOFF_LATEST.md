@@ -1,24 +1,20 @@
-# NativeForge Handoff — Gate 34 Complete
+# NativeForge Handoff — Gate 35 Complete (Mode A owner-blocked)
 
 **Date:** 2026-08-22
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `c1ffc43`
-**HEAD after:** `7aab08b`
-**Mode:** A
-**Sprint range:** 3601–3800
-**Blocks:** 79–82
+**HEAD before:** `f7c3ed0`
+**HEAD after:** pending
+**Mode:** A (owner/vendor artifacts ABSENT)
 
-## Shipped
+## Locator result
 
-Owner wait-state, buyer talk-track honesty, operator demo-route drills, pre-owner closeout packet.
-
-## Claims
-
-Controlled customer: **CONDITIONAL_INTERNAL_ONLY / NO_GO**
+OIDC_*, storage approval/config, pen-test report refs: **ABSENT**
+Live validation: **not attempted**
+Claims unlocked: **none**
+Pilot status: **CONDITIONAL_INTERNAL_ONLY** (unchanged)
 Production rollout: **NO_GO**
-Drill pass ≠ production pass.
 
 ## Next
 
-Wait for owner OIDC/storage and vendor pen-test. Do not rehearse missing inputs as progress. Gate 35 only after those inputs exist.
+Do not rehearse missing inputs. Provide real OOB Auth0, storage, and pen-test artifacts, then re-run Gate 35 Mode B.
