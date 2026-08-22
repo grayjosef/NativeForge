@@ -42,5 +42,7 @@
 | Production cutover + claim freeze (Gate 27) | IMPLEMENTED / rollout NO_GO; claims frozen false |
 | Mode B execution rehearsal (Gate 28) | IMPLEMENTED / synthetic only; Mode B executed=false |
 | Production dry-run cutover (Gate 28) | IMPLEMENTED / stops at Auth0; cutover not executed |
+| Auth0 real-input ingest (Gate 29) | IMPLEMENTED / Mode A; login_live=false; synthetic ignored |
+| Storage + pen-test ingest + resolver (Gate 29) | IMPLEMENTED / claims frozen; pilot NO_GO |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
