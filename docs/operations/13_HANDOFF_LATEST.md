@@ -1,23 +1,21 @@
-# NativeForge Handoff — Gate 30 Complete (3000-sprint closeout)
+# NativeForge Handoff — Gate 31 Complete
 
 **Date:** 2026-08-22
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `a8bfc61`
-**HEAD after:** `a2c2815`
+**HEAD before:** `789a935`
 **Mode:** A
+**Sprint range:** 3001–3200 (200-sprint gate)
 
 ## Shipped
 
-- **Block 65:** Final GO/NO-GO resolver + 3000-sprint closeout packet
-- **Block 66:** Buyer-grade trust surfaces + final claim freeze on SC demo
+Blocks 67–70: live authority path, Top-15 source packet map, pilot onboarding, support triage.
 
 ## Claims
 
-Controlled customer pilot: **CONDITIONAL_INTERNAL_ONLY / NO_GO**
-Production rollout: **PRODUCTION_ROLLOUT_NO_GO**
-Live claims (login/storage/pen-test/Mode B): **false**
+Customer pilot: **CONDITIONAL_INTERNAL_ONLY / NO_GO**
+Invite sent / customer active / Top-15 live / submit authority: **false**
 
-## Next owner action
+## Next
 
-Provide real OIDC_* OOB, storage approval/config, and pen-test report.
+Gate 32: observability, rollback/backup proof, freshness live checks, launch packet — still no fake GO.

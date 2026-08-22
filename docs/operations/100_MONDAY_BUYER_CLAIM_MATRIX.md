@@ -46,5 +46,9 @@
 | Storage + pen-test ingest + resolver (Gate 29) | IMPLEMENTED / claims frozen; pilot NO_GO |
 | 3000-sprint closeout (Gate 30) | IMPLEMENTED / CONDITIONAL_INTERNAL_ONLY; rollout NO_GO |
 | Buyer-grade trust surfaces (Gate 30) | IMPLEMENTED / freeze visible; no fake badges |
+| Live authority execution (Gate 31) | IMPLEMENTED / submit+eligibility false |
+| Live source coverage (Gate 31) | IMPLEMENTED / packet_only; Top-15 live=false |
+| Pilot onboarding (Gate 31) | IMPLEMENTED / invite blocked |
+| Support triage (Gate 31) | IMPLEMENTED / Slack not sent; readiness false |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
