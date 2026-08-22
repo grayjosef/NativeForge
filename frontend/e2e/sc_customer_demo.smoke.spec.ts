@@ -619,6 +619,28 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-trust-view-controlled_pilot_go_nogo"),
     ).toBeVisible();
+    await expect(page.getByTestId("sc-demo-live-authority-execution")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-live-authority-execution-flags"),
+    ).toContainText("can_submit=false");
+    await expect(
+      page.getByTestId("sc-demo-live-authority-execution-flags"),
+    ).toContainText("eligibility=false");
+    await expect(page.getByTestId("sc-demo-live-source-coverage")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-live-source-coverage-flags"),
+    ).toContainText("top15=false");
+    await expect(
+      page.getByTestId("sc-demo-live-source-coverage-flags"),
+    ).toContainText("broad=false");
+    await expect(page.getByTestId("sc-demo-pilot-org-onboarding")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-pilot-org-onboarding-flags"),
+    ).toContainText("invite_sent=false");
+    await expect(page.getByTestId("sc-demo-support-triage")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-support-triage-flags"),
+    ).toContainText("slack_sent=false");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

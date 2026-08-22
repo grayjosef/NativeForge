@@ -209,6 +209,106 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.live_authority_execution ? (
+        <section
+          data-testid="sc-demo-live-authority-execution"
+          className="nf-sc-demo-section"
+        >
+          <h2>Authority verification execution</h2>
+          <p className="nf-sc-demo-why">
+            View/draft vs submit stay distinct. Final eligibility and
+            submission-ready remain false without hard evidence.
+          </p>
+          <p data-testid="sc-demo-live-authority-execution-flags" className="nf-muted">
+            can_view={String(data.live_authority_execution.can_view)} can_draft=
+            {String(data.live_authority_execution.can_draft)} can_submit=
+            {String(data.live_authority_execution.can_submit)} final_authority=
+            {String(data.live_authority_execution.final_authority_claim)} eligibility=
+            {String(data.live_authority_execution.final_eligibility_claim)}{" "}
+            submission_ready=
+            {String(data.live_authority_execution.submission_ready_claim)} live_check=
+            {String(data.live_authority_execution.live_check_attempted)}
+          </p>
+          <ul>
+            {data.live_authority_execution.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.live_source_coverage ? (
+        <section
+          data-testid="sc-demo-live-source-coverage"
+          className="nf-sc-demo-section"
+        >
+          <h2>Source coverage / Top-15 execution</h2>
+          <p className="nf-sc-demo-why">
+            Packet exists is not live. SC is demo-current. Top-15 live and
+            broad coverage stay false until every required check passes.
+          </p>
+          <p data-testid="sc-demo-live-source-coverage-flags" className="nf-muted">
+            sc={String(data.live_source_coverage.sc_status)} live=
+            {String(data.live_source_coverage.live_coverage_claimed)} top15=
+            {String(data.live_source_coverage.top15_live_claimed)} broad=
+            {String(data.live_source_coverage.broad_coverage_claimed)} mapped=
+            {String(data.live_source_coverage.source_packets_mapped)}
+          </p>
+          <ul>
+            {data.live_source_coverage.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.pilot_org_onboarding ? (
+        <section
+          data-testid="sc-demo-pilot-org-onboarding"
+          className="nf-sc-demo-section"
+        >
+          <h2>Pilot org onboarding / invite readiness</h2>
+          <p className="nf-sc-demo-why">
+            Workflow exists; invite send and customer access stay blocked while
+            login_live is false.
+          </p>
+          <p data-testid="sc-demo-pilot-org-onboarding-flags" className="nf-muted">
+            status={String(data.pilot_org_onboarding.pilot_org_status)} invite_gate=
+            {String(data.pilot_org_onboarding.invite_send_gate)} invite_sent=
+            {String(data.pilot_org_onboarding.invite_sent_claimed)} access=
+            {String(data.pilot_org_onboarding.customer_access_claim)}
+          </p>
+          <ul>
+            {data.pilot_org_onboarding.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.support_triage ? (
+        <section
+          data-testid="sc-demo-support-triage"
+          className="nf-sc-demo-section"
+        >
+          <h2>Support / feedback / incident triage</h2>
+          <p className="nf-sc-demo-why">
+            Sev0/Sev1 block expansion/GO until resolved. Slack sent is not
+            claimed unless actually sent.
+          </p>
+          <p data-testid="sc-demo-support-triage-flags" className="nf-muted">
+            support_ready={String(data.support_triage.support_ready)} slack_sent=
+            {String(data.support_triage.slack_sent_claimed)} owner=
+            {String(data.support_triage.owner_assignment)}
+          </p>
+          <ul>
+            {data.support_triage.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-what-nf-did" className="nf-sc-demo-section">
         <h2>What NativeForge found / did</h2>
         <p className="nf-sc-demo-why">Why this matters: structures discovery so your team reviews evidence, not raw noise.</p>

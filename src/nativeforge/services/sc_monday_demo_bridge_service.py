@@ -146,6 +146,22 @@ from nativeforge.services.gate30_final_closeout_assembler_service import (
     build_final_closeout_demo_surface,
     final_closeout_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate31_live_authority_assembler_service import (
+    build_live_authority_demo_surface,
+    live_authority_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate31_live_source_coverage_assembler_service import (
+    build_live_source_coverage_demo_surface,
+    live_source_coverage_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate31_pilot_onboarding_assembler_service import (
+    build_pilot_onboarding_demo_surface,
+    pilot_onboarding_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate31_support_triage_assembler_service import (
+    build_support_triage_demo_surface,
+    support_triage_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -885,6 +901,40 @@ def build_sc_customer_demo_bridge_payload(
     if buyer_trust_fails:
         raise ValueError(f"Buyer trust surface invariants failed: {buyer_trust_fails}")
 
+    live_authority_execution_surface = build_live_authority_demo_surface()
+    live_authority_fails = live_authority_demo_surface_invariant_failures(
+        live_authority_execution_surface
+    )
+    if live_authority_fails:
+        raise ValueError(
+            f"Live authority surface invariants failed: {live_authority_fails}"
+        )
+
+    live_source_coverage_surface = build_live_source_coverage_demo_surface()
+    live_source_fails = live_source_coverage_demo_surface_invariant_failures(
+        live_source_coverage_surface
+    )
+    if live_source_fails:
+        raise ValueError(
+            f"Live source coverage surface invariants failed: {live_source_fails}"
+        )
+
+    pilot_org_onboarding_surface = build_pilot_onboarding_demo_surface()
+    onboarding_fails = pilot_onboarding_demo_surface_invariant_failures(
+        pilot_org_onboarding_surface
+    )
+    if onboarding_fails:
+        raise ValueError(
+            f"Pilot onboarding surface invariants failed: {onboarding_fails}"
+        )
+
+    support_triage_surface = build_support_triage_demo_surface()
+    support_fails = support_triage_demo_surface_invariant_failures(
+        support_triage_surface
+    )
+    if support_fails:
+        raise ValueError(f"Support triage surface invariants failed: {support_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -983,6 +1033,10 @@ def build_sc_customer_demo_bridge_payload(
             "storage_security_real_input": storage_security_real_input_surface,
             "final_closeout": final_closeout_surface,
             "buyer_trust": buyer_trust_surface,
+            "live_authority_execution": live_authority_execution_surface,
+            "live_source_coverage": live_source_coverage_surface,
+            "pilot_org_onboarding": pilot_org_onboarding_surface,
+            "support_triage": support_triage_surface,
         }
     )
 
@@ -1418,4 +1472,30 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("buyer_trust_missing")
     else:
         fails.extend(buyer_trust_demo_surface_invariant_failures(buyer_trust))
+    live_authority_execution = payload.get("live_authority_execution") or {}
+    if not live_authority_execution:
+        fails.append("live_authority_execution_missing")
+    else:
+        fails.extend(
+            live_authority_demo_surface_invariant_failures(live_authority_execution)
+        )
+    live_source_coverage = payload.get("live_source_coverage") or {}
+    if not live_source_coverage:
+        fails.append("live_source_coverage_missing")
+    else:
+        fails.extend(
+            live_source_coverage_demo_surface_invariant_failures(live_source_coverage)
+        )
+    pilot_org_onboarding = payload.get("pilot_org_onboarding") or {}
+    if not pilot_org_onboarding:
+        fails.append("pilot_org_onboarding_missing")
+    else:
+        fails.extend(
+            pilot_onboarding_demo_surface_invariant_failures(pilot_org_onboarding)
+        )
+    support_triage = payload.get("support_triage") or {}
+    if not support_triage:
+        fails.append("support_triage_missing")
+    else:
+        fails.extend(support_triage_demo_surface_invariant_failures(support_triage))
     return fails
