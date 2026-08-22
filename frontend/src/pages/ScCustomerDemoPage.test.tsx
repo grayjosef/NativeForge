@@ -151,6 +151,10 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-gate33-healthchecks");
     expect(html).toContain("sc-demo-gate33-restore");
     expect(html).toContain("sc-demo-gate33-runbooks");
+    expect(html).toContain("sc-demo-gate34-owner-wait");
+    expect(html).toContain("sc-demo-gate34-talk-track");
+    expect(html).toContain("sc-demo-gate34-drill");
+    expect(html).toContain("sc-demo-gate34-closeout");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -424,6 +428,12 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.healthchecks?.alert_sent_claimed).toBe(false);
     expect(payload.restore_rehearsal?.production_restore_claimed).toBe(false);
     expect(payload.operator_runbooks?.controlled_customer_pilot_status).not.toBe(
+      "CONTROLLED_CUSTOMER_GO",
+    );
+    expect(payload.owner_wait?.live_claims_unlocked).toBe(false);
+    expect(payload.talk_track?.cta_safe).toBe(true);
+    expect(payload.operator_drill?.pilot_go_claimed).toBe(false);
+    expect(payload.pre_owner_closeout?.controlled_customer_pilot_status).not.toBe(
       "CONTROLLED_CUSTOMER_GO",
     );
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(

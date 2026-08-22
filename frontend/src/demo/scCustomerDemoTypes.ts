@@ -1911,6 +1911,64 @@ export type ScCustomerDemoPayload = {
     next_owner_action?: string;
     next_safe_actions: string[];
   };
+  owner_wait?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    wait_state_contract: boolean;
+    no_progress_without_input: boolean;
+    live_claims_unlocked: boolean;
+    owner_blockers?: string[];
+    external_vendor_blockers?: string[];
+    policy_decision_blockers?: string[];
+    missing_gates?: string[];
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
+  talk_track?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    buyer_talk_track_contract: boolean;
+    cta_safe: boolean;
+    fake_claim_language_blocked: boolean;
+    owner_action_exposed?: string;
+    demo_narrative?: string;
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
+  operator_drill?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    drill_contract: boolean;
+    drills_passed?: string[];
+    pilot_go_claimed: boolean;
+    production_rollout_claimed: boolean;
+    alert_sent_claimed: boolean;
+    production_restore_claimed: boolean;
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
+  pre_owner_closeout?: {
+    schema_version: string;
+    campaign_block: number;
+    title: string;
+    buyer_summary: string[];
+    closeout_packet_contract: boolean;
+    owner_input_package_checklist?: string[];
+    external_vendor_package_checklist?: string[];
+    post_owner_rerun_sequence?: string[];
+    controlled_customer_pilot_status: string;
+    production_rollout_status: string;
+    allowed_claims?: string[];
+    forbidden_claims?: string[];
+    next_owner_action?: string;
+    next_safe_actions: string[];
+  };
   nofo_showcase?: {
     schema_version: string;
     title: string;

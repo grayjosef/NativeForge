@@ -196,6 +196,22 @@ from nativeforge.services.gate33_source_probe_assembler_service import (
     build_source_probe_demo_surface,
     source_probe_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate34_closeout_assembler_service import (
+    build_closeout_demo_surface,
+    closeout_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate34_operator_drill_assembler_service import (
+    build_operator_drill_demo_surface,
+    operator_drill_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate34_owner_wait_assembler_service import (
+    build_owner_wait_demo_surface,
+    owner_wait_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate34_talk_track_assembler_service import (
+    build_talk_track_demo_surface,
+    talk_track_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -1019,6 +1035,28 @@ def build_sc_customer_demo_bridge_payload(
     if runbook_fails:
         raise ValueError(f"Runbook surface invariants failed: {runbook_fails}")
 
+    owner_wait_surface = build_owner_wait_demo_surface()
+    wait_fails = owner_wait_demo_surface_invariant_failures(owner_wait_surface)
+    if wait_fails:
+        raise ValueError(f"Owner wait surface invariants failed: {wait_fails}")
+
+    talk_track_surface = build_talk_track_demo_surface()
+    talk_fails = talk_track_demo_surface_invariant_failures(talk_track_surface)
+    if talk_fails:
+        raise ValueError(f"Talk-track surface invariants failed: {talk_fails}")
+
+    operator_drill_surface = build_operator_drill_demo_surface()
+    drill_fails = operator_drill_demo_surface_invariant_failures(operator_drill_surface)
+    if drill_fails:
+        raise ValueError(f"Operator drill surface invariants failed: {drill_fails}")
+
+    pre_owner_closeout_surface = build_closeout_demo_surface()
+    closeout_fails = closeout_demo_surface_invariant_failures(
+        pre_owner_closeout_surface
+    )
+    if closeout_fails:
+        raise ValueError(f"Closeout surface invariants failed: {closeout_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -1129,6 +1167,10 @@ def build_sc_customer_demo_bridge_payload(
             "healthchecks": healthcheck_surface,
             "restore_rehearsal": restore_rehearsal_surface,
             "operator_runbooks": operator_runbook_surface,
+            "owner_wait": owner_wait_surface,
+            "talk_track": talk_track_surface,
+            "operator_drill": operator_drill_surface,
+            "pre_owner_closeout": pre_owner_closeout_surface,
         }
     )
 
@@ -1634,4 +1676,24 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("operator_runbooks_missing")
     else:
         fails.extend(runbook_demo_surface_invariant_failures(operator_runbooks))
+    owner_wait = payload.get("owner_wait") or {}
+    if not owner_wait:
+        fails.append("owner_wait_missing")
+    else:
+        fails.extend(owner_wait_demo_surface_invariant_failures(owner_wait))
+    talk_track = payload.get("talk_track") or {}
+    if not talk_track:
+        fails.append("talk_track_missing")
+    else:
+        fails.extend(talk_track_demo_surface_invariant_failures(talk_track))
+    operator_drill = payload.get("operator_drill") or {}
+    if not operator_drill:
+        fails.append("operator_drill_missing")
+    else:
+        fails.extend(operator_drill_demo_surface_invariant_failures(operator_drill))
+    pre_owner_closeout = payload.get("pre_owner_closeout") or {}
+    if not pre_owner_closeout:
+        fails.append("pre_owner_closeout_missing")
+    else:
+        fails.extend(closeout_demo_surface_invariant_failures(pre_owner_closeout))
     return fails

@@ -505,6 +505,99 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.owner_wait ? (
+        <section
+          data-testid="sc-demo-gate34-owner-wait"
+          className="nf-sc-demo-section"
+        >
+          <h2>Owner-input wait-state</h2>
+          <p className="nf-sc-demo-why">
+            Missing owner input is a launch blocker. Fixtures and prompt text
+            cannot satisfy it.
+          </p>
+          <p data-testid="sc-demo-gate34-owner-wait-flags" className="nf-muted">
+            no_progress={String(data.owner_wait.no_progress_without_input)} live_unlocked=
+            {String(data.owner_wait.live_claims_unlocked)}
+          </p>
+          <ul>
+            {data.owner_wait.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.talk_track ? (
+        <section
+          data-testid="sc-demo-gate34-talk-track"
+          className="nf-sc-demo-section"
+        >
+          <h2>Buyer talk-track honesty</h2>
+          <p className="nf-sc-demo-why">
+            Demo GO is not customer access. Forbidden phrases stay blocked.
+          </p>
+          <p data-testid="sc-demo-gate34-talk-track-flags" className="nf-muted">
+            cta_safe={String(data.talk_track.cta_safe)} fake_blocked=
+            {String(data.talk_track.fake_claim_language_blocked)}
+          </p>
+          <ul>
+            {data.talk_track.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.operator_drill ? (
+        <section
+          data-testid="sc-demo-gate34-drill"
+          className="nf-sc-demo-section"
+        >
+          <h2>Operator runbook drill</h2>
+          <p className="nf-sc-demo-why">
+            Drill passed is not production passed. Alert sent stays false.
+          </p>
+          <p data-testid="sc-demo-gate34-drill-flags" className="nf-muted">
+            pilot_go={String(data.operator_drill.pilot_go_claimed)} restore=
+            {String(data.operator_drill.production_restore_claimed)} alert_sent=
+            {String(data.operator_drill.alert_sent_claimed)}
+          </p>
+          <ul>
+            {data.operator_drill.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.pre_owner_closeout ? (
+        <section
+          data-testid="sc-demo-gate34-closeout"
+          className="nf-sc-demo-section"
+        >
+          <h2>Pre-owner closeout packet</h2>
+          <p className="nf-sc-demo-why">
+            Remaining blockers require owner and vendor inputs. Rerun sequence
+            is listed; GO stays false.
+          </p>
+          <p data-testid="sc-demo-gate34-closeout-flags" className="nf-muted">
+            pilot={data.pre_owner_closeout.controlled_customer_pilot_status} rollout=
+            {data.pre_owner_closeout.production_rollout_status}
+          </p>
+          <div data-testid="sc-demo-gate34-allowed-claims">
+            allowed={(data.pre_owner_closeout.allowed_claims || []).join(", ")}
+          </div>
+          <div data-testid="sc-demo-gate34-forbidden-claims">
+            forbidden={(data.pre_owner_closeout.forbidden_claims || []).join(", ")}
+          </div>
+          <ul>
+            {data.pre_owner_closeout.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-what-nf-did" className="nf-sc-demo-section">
         <h2>What NativeForge found / did</h2>
         <p className="nf-sc-demo-why">Why this matters: structures discovery so your team reviews evidence, not raw noise.</p>
