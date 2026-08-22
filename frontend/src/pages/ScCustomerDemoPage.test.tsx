@@ -24,7 +24,12 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("proposal_drafting_claimed=false");
     expect(html).toContain("sc-demo-opening-line");
     expect(html).toContain("sc-demo-closing-line");
-    expect(html).toContain("sc-demo-trust-strip");
+    expect(html).toContain("sc-demo-claim-boundary");
+    expect(html).toContain("Limited external demo");
+    expect(html).toContain("Dev-domain demo");
+    expect(html).toContain("Customer pilot pending");
+    expect(html).toContain("Production rollout blocked until gates pass");
+    expect(html).toContain("sc-demo-buyer-talk-track");
     expect(html).toContain("curated-current");
     expect(html).toContain("not automated live ingest");
     expect(html).toContain("Forbidden claims");

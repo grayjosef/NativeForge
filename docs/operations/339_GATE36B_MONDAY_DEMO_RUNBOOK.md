@@ -30,7 +30,10 @@ Do not expose 5175 publicly.
 7. Verify public URL (after step 6):
    `NF_VERIFY_BASE_URL='https://nf-dev.josef-gray.dev' ./scripts/verify_nativeforge_demo_deployment.sh`
 8. Use `/?view=sc_customer_demo` for the demo (not bare `/` as the buyer URL).
-9. State claim boundary (below).
+9. State claim boundary (below). Talk-track: limited external / dev-domain demo
+   of an evidence-backed Native-relevant opportunity workflow; customer pilot
+   pending auth/storage/security gates; production rollout blocked until gates
+   pass.
 10. Rollback: stop user unit and remove/disable Cloudflare ingress.
     Do not rebuild to roll back; keep the stamped bytes.
 

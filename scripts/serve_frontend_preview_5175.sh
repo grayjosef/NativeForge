@@ -11,9 +11,18 @@ from pathlib import Path
 from nativeforge.services.gate36b_dev_domain_deployment_machinery_service import (
     require_stamped_dist,
 )
+from nativeforge.services.gate37_production_grade_hardening_service import (
+    require_loopback_serve_contract,
+    require_preview_port_free,
+)
 
 require_stamped_dist(Path("frontend/dist"))
-print("fail-closed dist checks passed")
+script = Path("scripts/serve_frontend_preview_5175.sh").read_text(
+    encoding="utf-8"
+)
+require_loopback_serve_contract(script)
+require_preview_port_free()
+print("fail-closed dist, loopback, and port checks passed")
 PY
 
 cd "$ROOT/frontend"

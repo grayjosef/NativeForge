@@ -1,24 +1,21 @@
-# NativeForge Handoff — Gate 36B (loopback deploy machinery)
+# NativeForge Handoff — Gate 36B + Gate 37 parallel
 
 **Date:** 2026-08-22
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**Mode:** local loopback deployment machinery only — no public cutover
+**Mode:** demo loopback machinery + production-grade hardening
+**Not claimed:** public cutover, customer pilot GO, production rollout
 
-## What Gate 36B did
+## Lane 1 (36B)
 
-Added stamped Vite build, fail-closed preview on `127.0.0.1:5175`, user
-systemd unit template, verifier (`RESULT=PASS|FAIL`), and operator docs.
-Did **not** start cloudflared, edit tunnel credentials, or bind `0.0.0.0`.
+Stamped Vite preview, fail-closed serve, verifier, user unit, runbook.
 
-## Claims
+## Lane 2 (37)
 
-Monday limited external demo: **not GO** until Mayhem DNS/Access/tunnel
-and public verifier PASS.
-Controlled customer: NO_GO
-Production rollout: NO_GO
+Restart drill, claim-boundary UI strip, risk register, rollback drill,
+pilot readiness packet v2.
 
 ## Next Mayhem ops
 
-DNS for `nf-dev.josef-gray.dev`, Cloudflare ingress to `127.0.0.1:5175`,
-Access password, start tunnel, then public verify.
+DNS + Access + tunnel for `nf-dev.josef-gray.dev` → `127.0.0.1:5175`,
+then public verifier. Do not push until asked.

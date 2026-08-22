@@ -78,6 +78,12 @@ export function ScCustomerDemoPage({
           <span>NOFO PDF extraction not supported</span>
           <span>proposal drafting not supported</span>
         </div>
+        <p className="nf-muted" data-testid="sc-demo-claim-boundary">
+          Limited external demo · Dev-domain demo · Evidence-backed Native-relevant opportunity workflow · Customer pilot pending auth/storage/security gates · Production rollout blocked until gates pass
+        </p>
+        <p className="nf-muted" data-testid="sc-demo-buyer-talk-track">
+          Talk-track: limited external / Dev-domain demo of an Evidence-backed Native-relevant opportunity workflow. Customer pilot pending auth/storage/security gates. Production rollout blocked until gates pass.
+        </p>
         <p className="nf-muted" data-testid="sc-demo-flags">
           demo_dev_only={String(data.demo_dev_only)} offline_only=
           {String(data.offline_only)} live_ingestion=
