@@ -180,6 +180,22 @@ from nativeforge.services.gate32_source_freshness_assembler_service import (
 from nativeforge.services.gate32_source_freshness_assembler_service import (
     source_freshness_demo_surface_invariant_failures as gate32_source_freshness_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate33_healthcheck_assembler_service import (
+    build_healthcheck_demo_surface,
+    healthcheck_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate33_restore_rehearsal_assembler_service import (
+    build_restore_rehearsal_demo_surface,
+    restore_rehearsal_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate33_runbook_assembler_service import (
+    build_runbook_demo_surface,
+    runbook_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate33_source_probe_assembler_service import (
+    build_source_probe_demo_surface,
+    source_probe_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -979,6 +995,30 @@ def build_sc_customer_demo_bridge_payload(
     if launch_fails:
         raise ValueError(f"Launch packet surface invariants failed: {launch_fails}")
 
+    source_probe_surface = build_source_probe_demo_surface()
+    probe_fails = source_probe_demo_surface_invariant_failures(source_probe_surface)
+    if probe_fails:
+        raise ValueError(f"Source probe surface invariants failed: {probe_fails}")
+
+    healthcheck_surface = build_healthcheck_demo_surface()
+    hc_fails = healthcheck_demo_surface_invariant_failures(healthcheck_surface)
+    if hc_fails:
+        raise ValueError(f"Healthcheck surface invariants failed: {hc_fails}")
+
+    restore_rehearsal_surface = build_restore_rehearsal_demo_surface()
+    restore_fails = restore_rehearsal_demo_surface_invariant_failures(
+        restore_rehearsal_surface
+    )
+    if restore_fails:
+        raise ValueError(
+            f"Restore rehearsal surface invariants failed: {restore_fails}"
+        )
+
+    operator_runbook_surface = build_runbook_demo_surface()
+    runbook_fails = runbook_demo_surface_invariant_failures(operator_runbook_surface)
+    if runbook_fails:
+        raise ValueError(f"Runbook surface invariants failed: {runbook_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -1085,6 +1125,10 @@ def build_sc_customer_demo_bridge_payload(
             "observability": observability_surface,
             "backup_restore": backup_restore_surface,
             "launch_packet": launch_packet_surface,
+            "source_probes": source_probe_surface,
+            "healthchecks": healthcheck_surface,
+            "restore_rehearsal": restore_rehearsal_surface,
+            "operator_runbooks": operator_runbook_surface,
         }
     )
 
@@ -1568,4 +1612,26 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("launch_packet_missing")
     else:
         fails.extend(launch_packet_demo_surface_invariant_failures(launch_packet))
+    source_probes = payload.get("source_probes") or {}
+    if not source_probes:
+        fails.append("source_probes_missing")
+    else:
+        fails.extend(source_probe_demo_surface_invariant_failures(source_probes))
+    healthchecks = payload.get("healthchecks") or {}
+    if not healthchecks:
+        fails.append("healthchecks_missing")
+    else:
+        fails.extend(healthcheck_demo_surface_invariant_failures(healthchecks))
+    restore_rehearsal = payload.get("restore_rehearsal") or {}
+    if not restore_rehearsal:
+        fails.append("restore_rehearsal_missing")
+    else:
+        fails.extend(
+            restore_rehearsal_demo_surface_invariant_failures(restore_rehearsal)
+        )
+    operator_runbooks = payload.get("operator_runbooks") or {}
+    if not operator_runbooks:
+        fails.append("operator_runbooks_missing")
+    else:
+        fails.extend(runbook_demo_surface_invariant_failures(operator_runbooks))
     return fails

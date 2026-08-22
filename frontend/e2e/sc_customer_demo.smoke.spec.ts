@@ -657,6 +657,22 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-launch-packet-flags"),
     ).not.toContainText("CONTROLLED_CUSTOMER_GO");
+    await expect(page.getByTestId("sc-demo-gate33-source-probes")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-gate33-source-probes-flags"),
+    ).toContainText("live=false");
+    await expect(page.getByTestId("sc-demo-gate33-healthchecks")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-gate33-healthchecks-flags"),
+    ).toContainText("alert_sent=false");
+    await expect(page.getByTestId("sc-demo-gate33-restore")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-gate33-restore-flags"),
+    ).toContainText("prod_restore=false");
+    await expect(page.getByTestId("sc-demo-gate33-runbooks")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-gate33-runbooks-flags"),
+    ).not.toContainText("CONTROLLED_CUSTOMER_GO");
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

@@ -408,6 +408,103 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.source_probes ? (
+        <section
+          data-testid="sc-demo-gate33-source-probes"
+          className="nf-sc-demo-section"
+        >
+          <h2>Source probes (allowlisted, no network)</h2>
+          <p className="nf-sc-demo-why">
+            Unallowlisted sources stay packet-only. A probe is not live coverage.
+          </p>
+          <p data-testid="sc-demo-gate33-source-probes-flags" className="nf-muted">
+            attempted={String(data.source_probes.read_only_probes_attempted)} live=
+            {String(data.source_probes.live_source_claim)} top15=
+            {String(data.source_probes.top15_live_claimed)} broad=
+            {String(data.source_probes.broad_coverage_claimed)}
+          </p>
+          <ul>
+            {data.source_probes.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.healthchecks ? (
+        <section
+          data-testid="sc-demo-gate33-healthchecks"
+          className="nf-sc-demo-section"
+        >
+          <h2>Healthcheck / error budget</h2>
+          <p className="nf-sc-demo-why">
+            Healthcheck-ready is not production monitoring. Alert sent stays
+            false unless actually sent.
+          </p>
+          <p data-testid="sc-demo-gate33-healthchecks-flags" className="nf-muted">
+            alert_ready={String(data.healthchecks.alert_readiness)} alert_sent=
+            {String(data.healthchecks.alert_sent_claimed)} ops=
+            {String(data.healthchecks.pilot_ops_readiness)} monitored=
+            {String(data.healthchecks.production_monitoring_claimed)}
+          </p>
+          <ul>
+            {data.healthchecks.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.restore_rehearsal ? (
+        <section
+          data-testid="sc-demo-gate33-restore"
+          className="nf-sc-demo-section"
+        >
+          <h2>Non-prod restore rehearsal</h2>
+          <p className="nf-sc-demo-why">
+            Non-prod evidence is not production restore. Persistence stays false.
+          </p>
+          <p data-testid="sc-demo-gate33-restore-flags" className="nf-muted">
+            prod_backup=
+            {String(data.restore_rehearsal.production_backup_claimed)} prod_restore=
+            {String(data.restore_rehearsal.production_restore_claimed)} persist=
+            {String(data.restore_rehearsal.customer_persistence_claimed)}
+          </p>
+          <ul>
+            {data.restore_rehearsal.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.operator_runbooks ? (
+        <section
+          data-testid="sc-demo-gate33-runbooks"
+          className="nf-sc-demo-section"
+        >
+          <h2>Operator runbooks / non-owner closeout</h2>
+          <p className="nf-sc-demo-why">
+            Owner-gated work stays owner-gated. Runbooks are not pilot GO.
+          </p>
+          <p data-testid="sc-demo-gate33-runbooks-flags" className="nf-muted">
+            pilot={data.operator_runbooks.controlled_customer_pilot_status} rollout=
+            {data.operator_runbooks.production_rollout_status}
+          </p>
+          <div data-testid="sc-demo-gate33-allowed-claims">
+            allowed={(data.operator_runbooks.allowed_claims || []).join(", ")}
+          </div>
+          <div data-testid="sc-demo-gate33-forbidden-claims">
+            forbidden={(data.operator_runbooks.forbidden_claims || []).join(", ")}
+          </div>
+          <ul>
+            {data.operator_runbooks.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-what-nf-did" className="nf-sc-demo-section">
         <h2>What NativeForge found / did</h2>
         <p className="nf-sc-demo-why">Why this matters: structures discovery so your team reviews evidence, not raw noise.</p>
