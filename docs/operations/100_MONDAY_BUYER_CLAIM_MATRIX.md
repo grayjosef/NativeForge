@@ -54,5 +54,9 @@
 | Observability (Gate 32) | IMPLEMENTED / smoke_only; alert sent=false |
 | Backup/restore (Gate 32) | IMPLEMENTED / non-prod only; prod restore=false |
 | Launch packet (Gate 32) | IMPLEMENTED / owner vs non-owner blockers; GO=false |
+| Source probes (Gate 33) | IMPLEMENTED / allowlisted local only; live=false |
+| Healthchecks (Gate 33) | IMPLEMENTED / registry; alert sent=false; ops=false |
+| Non-prod restore (Gate 33) | IMPLEMENTED / model+evidence ref; prod restore=false |
+| Operator runbooks (Gate 33) | IMPLEMENTED / owner-gated stays owner-gated; GO=false |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
