@@ -41,6 +41,9 @@ Do not store Cloudflare secrets in the repo.
 Do not expose 5175 publicly.
 Do not bind the preview listener to `0.0.0.0`.
 
+Vite preview `allowedHosts` includes `nf-dev.mayhem-nc.dev` so the Cloudflare
+`Host` header is accepted. Bind remains `127.0.0.1:5175`.
+
 ## After Mayhem enables tunnel + DNS + Access
 
 Run:

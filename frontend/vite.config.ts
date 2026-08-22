@@ -23,6 +23,8 @@ export default defineConfig({
   preview: {
     // Stamped dist/health is the demo listener check; do not proxy to API.
     proxy: { ...apiProxy },
+    // Cloudflare Tunnel forwards Host: nf-dev.mayhem-nc.dev to loopback preview.
+    allowedHosts: ["nf-dev.mayhem-nc.dev"],
   },
   test: {
     environment: "jsdom",
