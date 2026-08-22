@@ -1,0 +1,16 @@
+[Unit]
+Description=NativeForge stamped Vite preview (loopback 127.0.0.1:5175)
+Documentation=docs/operations/337_GATE36B_DEV_DOMAIN_DEPLOYMENT_MACHINERY.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/josefgray/projects/nativeforge
+ExecStart=/home/josefgray/projects/nativeforge/scripts/serve_frontend_preview_5175.sh
+Restart=on-failure
+RestartSec=3
+# Loopback-only preview. Does not start cloudflared. No secrets.
+
+[Install]
+WantedBy=default.target

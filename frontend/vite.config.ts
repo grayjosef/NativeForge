@@ -3,6 +3,13 @@ import { defineConfig } from "vitest/config";
 
 const api = "http://127.0.0.1:8000";
 
+const apiProxy = {
+  "/v1": api,
+  "/docs": api,
+  "/openapi.json": api,
+  "/redoc": api,
+};
+
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -10,11 +17,12 @@ export default defineConfig({
     proxy: {
       // Browser calls same-origin `/health` and `/v1/...` in dev; Vite forwards to the API.
       "/health": api,
-      "/v1": api,
-      "/docs": api,
-      "/openapi.json": api,
-      "/redoc": api,
+      ...apiProxy,
     },
+  },
+  preview: {
+    // Stamped dist/health is the demo listener check; do not proxy to API.
+    proxy: { ...apiProxy },
   },
   test: {
     environment: "jsdom",

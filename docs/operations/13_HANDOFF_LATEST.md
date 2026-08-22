@@ -1,27 +1,24 @@
-# NativeForge Handoff — Gate 36 STOP (Mode A, no-progress-without-input)
+# NativeForge Handoff — Gate 36B (loopback deploy machinery)
 
 **Date:** 2026-08-22
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `722abd0`
-**HEAD after:** `b097ad4`
-**Mode:** A stop — owner/vendor artifacts still ABSENT
+**Mode:** local loopback deployment machinery only — no public cutover
 
-## What Gate 36 did
+## What Gate 36B did
 
-Verified absence. Did **not** add services, UX, or live-validation scaffolding. Readiness did **not** increase.
-
-Locator: Auth0/storage/pen-test/ops artifacts all absent. `mode_b_allowed=false`.
-
-Existing smokes still owner-blocked (Blocks 83–86). Claim freeze tests still pass.
+Added stamped Vite build, fail-closed preview on `127.0.0.1:5175`, user
+systemd unit template, verifier (`RESULT=PASS|FAIL`), and operator docs.
+Did **not** start cloudflared, edit tunnel credentials, or bind `0.0.0.0`.
 
 ## Claims
 
-Monday demo: GO
-Internal: CONDITIONAL_INTERNAL_ONLY (~98.5%)
+Monday limited external demo: **not GO** until Mayhem DNS/Access/tunnel
+and public verifier PASS.
 Controlled customer: NO_GO
 Production rollout: NO_GO
 
-## Next owner action
+## Next Mayhem ops
 
-Deliver real OOB Auth0, storage approval/config, and pen-test package. Then re-run Gate 36 as Mode B — do not open another Mode A rehearsal gate.
+DNS for `nf-dev.josef-gray.dev`, Cloudflare ingress to `127.0.0.1:5175`,
+Access password, start tunnel, then public verify.
