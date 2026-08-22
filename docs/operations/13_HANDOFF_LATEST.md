@@ -4,7 +4,7 @@
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
 **HEAD before:** `a0ff4cd`
-**HEAD after:** `fa07877`
+**HEAD after:** `a59bb6e`
 **Mode:** A (real owner inputs absent; synthetic artifacts ignored)
 
 ## Shipped
