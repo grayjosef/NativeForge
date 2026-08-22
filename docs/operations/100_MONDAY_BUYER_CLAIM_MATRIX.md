@@ -50,5 +50,9 @@
 | Live source coverage (Gate 31) | IMPLEMENTED / packet_only; Top-15 live=false |
 | Pilot onboarding (Gate 31) | IMPLEMENTED / invite blocked |
 | Support triage (Gate 31) | IMPLEMENTED / Slack not sent; readiness false |
+| Source freshness/dedupe (Gate 32) | IMPLEMENTED / packet_only; live=false |
+| Observability (Gate 32) | IMPLEMENTED / smoke_only; alert sent=false |
+| Backup/restore (Gate 32) | IMPLEMENTED / non-prod only; prod restore=false |
+| Launch packet (Gate 32) | IMPLEMENTED / owner vs non-owner blockers; GO=false |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
