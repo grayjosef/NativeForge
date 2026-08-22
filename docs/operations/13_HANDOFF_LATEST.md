@@ -1,20 +1,27 @@
-# NativeForge Handoff — Gate 35 Complete (Mode A owner-blocked)
+# NativeForge Handoff — Gate 36 STOP (Mode A, no-progress-without-input)
 
 **Date:** 2026-08-22
 **Path:** `/home/josefgray/projects/nativeforge`
 **Branch:** `main`
-**HEAD before:** `f7c3ed0`
-**HEAD after:** `78d725e`
-**Mode:** A (owner/vendor artifacts ABSENT)
+**HEAD before:** `722abd0`
+**HEAD after:** pending
+**Mode:** A stop — owner/vendor artifacts still ABSENT
 
-## Locator result
+## What Gate 36 did
 
-OIDC_*, storage approval/config, pen-test report refs: **ABSENT**
-Live validation: **not attempted**
-Claims unlocked: **none**
-Pilot status: **CONDITIONAL_INTERNAL_ONLY** (unchanged)
-Production rollout: **NO_GO**
+Verified absence. Did **not** add services, UX, or live-validation scaffolding. Readiness did **not** increase.
 
-## Next
+Locator: Auth0/storage/pen-test/ops artifacts all absent. `mode_b_allowed=false`.
 
-Do not rehearse missing inputs. Provide real OOB Auth0, storage, and pen-test artifacts, then re-run Gate 35 Mode B.
+Existing smokes still owner-blocked (Blocks 83–86). Claim freeze tests still pass.
+
+## Claims
+
+Monday demo: GO
+Internal: CONDITIONAL_INTERNAL_ONLY (~98.5%)
+Controlled customer: NO_GO
+Production rollout: NO_GO
+
+## Next owner action
+
+Deliver real OOB Auth0, storage approval/config, and pen-test package. Then re-run Gate 36 as Mode B — do not open another Mode A rehearsal gate.
