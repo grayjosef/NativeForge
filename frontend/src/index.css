@@ -1,29 +1,105 @@
-/* NativeForge — warm civic-tech workspace (Sprint 8 redesign) */
+/* NativeForge — executive institutional surface (UX redesign, doc 346).
+   Light-first: ivory field, deep navy ink, restrained copper accent.
+   No external font/CDN requests — the demo must stay self-contained. */
 
 :root {
   color-scheme: light;
-  --nf-page: #f4f1eb;
-  --nf-page-accent: #ebe4d9;
+
+  /* — surfaces — */
+  --nf-page: #faf7f0;
+  --nf-page-accent: #f3efe4;
   --nf-card: #ffffff;
-  --nf-card-muted: #faf8f5;
-  --nf-border: #e2dcd3;
-  --nf-border-strong: #cfc5b6;
-  --nf-text: #1c2524;
-  --nf-muted: #5c5650;
-  --nf-muted2: #7a7269;
-  --nf-primary: #1e4d42;
-  --nf-primary-hover: #163830;
-  --nf-primary-fg: #f8faf9;
-  --nf-trust: #8b5c33;
-  --nf-trust-bg: rgba(139, 92, 51, 0.08);
-  --nf-trust-border: rgba(139, 92, 51, 0.28);
-  --nf-success: #2d6a4f;
-  --nf-warn: #b35900;
-  --nf-error: #b4232c;
-  --nf-radius: 12px;
-  --nf-radius-sm: 8px;
-  --nf-font: "Segoe UI", system-ui, -apple-system, sans-serif;
-  --nf-shadow: 0 1px 2px rgba(28, 37, 36, 0.06);
+  --nf-card-muted: #f6f2e8;
+  --nf-border: #e4ddd0;
+  --nf-border-strong: #d3c9b6;
+  /* editorial hairlines */
+  --nf-rule: #e4ddd0;
+  --nf-rule-fine: #ede7d9;
+
+  /* — ink — */
+  --nf-text: #1c1a15;
+  --nf-muted: #4a4538;
+  --nf-muted2: #6b6558;
+  --nf-faint: #8a8477;
+
+  /* — retained for non-demo surfaces — */
+  --nf-navy: #2f2a20;
+  --nf-navy-deep: #221e16;
+  --nf-navy-fg: #faf7f0;
+
+  /* — actions — */
+  --nf-primary: #4c7a63;
+  --nf-primary-hover: #3d6350;
+  --nf-primary-fg: #faf7f0;
+
+  /* — ochre accent — */
+  --nf-accent: #8a6a3c;
+  --nf-accent-hover: #6b5230;
+  --nf-accent-deep: #6b5230;
+  --nf-accent-soft: rgba(138, 106, 60, 0.09);
+  --nf-accent-line: rgba(138, 106, 60, 0.34);
+
+  /* — status dots — */
+  --nf-sage: #4c7a63;
+  --nf-dot-neutral: #c9bfa8;
+  /* legacy aliases — existing selectors depend on these */
+  --nf-trust: var(--nf-accent);
+  --nf-trust-bg: var(--nf-accent-soft);
+  --nf-trust-border: var(--nf-accent-line);
+
+  /* — semantic status —
+     "Held" is ochre, never red and never green: a held gate is a deliberate
+     decision at the same visual weight as a passing one, not a failure. */
+  --nf-verified: #4c7a63;
+  --nf-verified-bg: rgba(76, 122, 99, 0.10);
+  --nf-held: #8a6a3c;
+  --nf-warn: #8a6a3c;
+  --nf-warn-bg: rgba(138, 106, 60, 0.10);
+  --nf-blocked: #8a6a3c;
+  --nf-blocked-bg: rgba(138, 106, 60, 0.07);
+  --nf-blocked-line: rgba(138, 106, 60, 0.34);
+  --nf-success: var(--nf-verified);
+  /* genuine failures elsewhere in the app still read red */
+  --nf-error: #a32530;
+
+  /* — type — */
+  --nf-font-display: "Iowan Old Style", Georgia, "Palatino Linotype",
+    "Book Antiqua", serif;
+  --nf-font: -apple-system, "Segoe UI", system-ui, Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  --nf-font-mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Menlo,
+    Consolas, monospace;
+  --nf-t-display: clamp(2rem, 1.35rem + 2.3vw, 3rem);
+  --nf-t-h1: clamp(1.45rem, 1.2rem + 1vw, 1.9rem);
+  --nf-t-h2: clamp(1.02rem, 0.96rem + 0.3vw, 1.2rem);
+  --nf-t-h3: 0.95rem;
+  --nf-t-body: 0.95rem;
+  --nf-t-sm: 0.86rem;
+  --nf-t-xs: 0.78rem;
+  --nf-t-micro: 0.7rem;
+  --nf-track-eyebrow: 0.14em;
+
+  /* — spacing — */
+  --nf-s1: 4px;
+  --nf-s2: 8px;
+  --nf-s3: 12px;
+  --nf-s4: 16px;
+  --nf-s5: 24px;
+  --nf-s6: 32px;
+  --nf-s7: 48px;
+  --nf-s8: 64px;
+
+  /* — elevation / radius — */
+  --nf-e1: 0 1px 2px rgba(16, 32, 46, 0.05), 0 1px 1px rgba(16, 32, 46, 0.04);
+  --nf-e2: 0 2px 4px rgba(16, 32, 46, 0.06),
+    0 10px 28px -14px rgba(16, 32, 46, 0.2);
+  --nf-e3: 0 16px 44px -18px rgba(16, 32, 46, 0.3);
+  --nf-shadow: var(--nf-e1);
+  --nf-radius-sm: 6px;
+  --nf-radius: 10px;
+  --nf-radius-lg: 14px;
+  --nf-radius-pill: 999px;
+
   --nf-max: 1240px;
   --nf-touch: 44px;
 }
@@ -31,22 +107,43 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --nf-page: #141916;
-    --nf-page-accent: #1a221f;
-    --nf-card: #1c2421;
-    --nf-card-muted: #18201d;
-    --nf-border: #2f3a36;
-    --nf-border-strong: #3d4a45;
-    --nf-text: #eef3f1;
-    --nf-muted: #a8b0ad;
-    --nf-muted2: #8f9794;
-    --nf-primary: #3d8f7a;
-    --nf-primary-hover: #52a894;
-    --nf-primary-fg: #0d1513;
-    --nf-trust: #c9956c;
-    --nf-trust-bg: rgba(201, 149, 108, 0.12);
-    --nf-trust-border: rgba(201, 149, 108, 0.35);
-    --nf-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+    --nf-page: #16150f;
+    --nf-page-accent: #1c1a13;
+    --nf-card: #1d1b14;
+    --nf-card-muted: #1c1a13;
+    --nf-border: #33301f;
+    --nf-border-strong: #4a4530;
+    --nf-rule: #33301f;
+    --nf-rule-fine: #292718;
+    --nf-text: #f2eee2;
+    --nf-muted: #cdc6b3;
+    --nf-muted2: #a49c88;
+    --nf-faint: #8a8477;
+    --nf-navy: #f2eee2;
+    --nf-navy-deep: #cdc6b3;
+    --nf-navy-fg: #16150f;
+    --nf-primary: #6ea88b;
+    --nf-primary-hover: #85bda1;
+    --nf-primary-fg: #0d1310;
+    --nf-accent: #c49a5f;
+    --nf-accent-hover: #d8b078;
+    --nf-accent-deep: #a8834f;
+    --nf-accent-soft: rgba(196, 154, 95, 0.13);
+    --nf-accent-line: rgba(196, 154, 95, 0.38);
+    --nf-sage: #6ea88b;
+    --nf-dot-neutral: #5c5744;
+    --nf-verified: #6ea88b;
+    --nf-verified-bg: rgba(110, 168, 139, 0.13);
+    --nf-held: #c49a5f;
+    --nf-warn: #c49a5f;
+    --nf-warn-bg: rgba(196, 154, 95, 0.13);
+    --nf-blocked: #c49a5f;
+    --nf-blocked-bg: rgba(196, 154, 95, 0.10);
+    --nf-blocked-line: rgba(196, 154, 95, 0.38);
+    --nf-error: #e07b83;
+    --nf-e1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --nf-e2: 0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 30px -16px rgba(0, 0, 0, 0.7);
+    --nf-e3: 0 18px 48px -20px rgba(0, 0, 0, 0.8);
   }
 }
 
@@ -58,25 +155,30 @@
 
 html {
   font-family: var(--nf-font);
+  font-size: 16px;
   background: var(--nf-page);
-  background-image: linear-gradient(
-    180deg,
-    var(--nf-page) 0%,
-    var(--nf-page-accent) 100%
-  );
-  background-attachment: fixed;
   color: var(--nf-text);
-  line-height: 1.55;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  font-size: var(--nf-t-body);
 }
 
 a {
   color: var(--nf-primary);
   text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+:where(a, button, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--nf-accent);
+  outline-offset: 2px;
+  border-radius: var(--nf-radius-sm);
 }
 
 code,
@@ -116,17 +218,29 @@ code,
   }
 }
 
-/* ——— App header (Pass 2) ——— */
+/* ——— App header (executive lockup) ——— */
 .nf-header-shell {
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--nf-s6);
 }
 
 .nf-header-bar {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding-bottom: 1rem;
+  gap: var(--nf-s4);
+  padding-bottom: var(--nf-s4);
   border-bottom: 1px solid var(--nf-border);
+  position: relative;
+}
+
+/* Hairline copper rule under the masthead — the one piece of brand ornament. */
+.nf-header-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 96px;
+  height: 2px;
+  background: var(--nf-accent);
 }
 
 @media (min-width: 900px) {
@@ -143,28 +257,30 @@ code,
 }
 
 .nf-header-product {
-  margin: 0 0 0.2rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  margin: 0 0 var(--nf-s1);
+  font-size: var(--nf-t-micro);
+  font-weight: 600;
+  letter-spacing: var(--nf-track-eyebrow);
   text-transform: uppercase;
-  color: var(--nf-muted);
+  color: var(--nf-muted2);
 }
 
 .nf-wordmark {
   margin: 0;
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  font-family: var(--nf-font-display);
+  font-size: clamp(1.6rem, 4vw, 2.15rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
   color: var(--nf-text);
 }
 
 .nf-header-promise {
-  margin: 0.4rem 0 0;
-  max-width: 28rem;
-  font-size: 0.92rem;
-  color: var(--nf-muted2);
-  line-height: 1.45;
+  margin: var(--nf-s2) 0 0;
+  max-width: 30rem;
+  font-size: var(--nf-t-sm);
+  color: var(--nf-muted);
+  line-height: 1.5;
 }
 
 .nf-header-cluster {
@@ -202,13 +318,23 @@ code,
 }
 
 .nf-cluster-pill.is-ok {
-  border-color: rgba(45, 106, 79, 0.4);
-  color: var(--nf-success);
+  border-color: rgba(31, 107, 79, 0.4);
+  background: var(--nf-verified-bg);
+  color: var(--nf-verified);
 }
 
 .nf-cluster-pill.is-bad {
-  border-color: rgba(180, 35, 44, 0.35);
-  color: var(--nf-error);
+  border-color: var(--nf-blocked-line);
+  background: var(--nf-blocked-bg);
+  color: var(--nf-blocked);
+}
+
+/* Offline demo bridges report their data mode, not a backend verdict. */
+.nf-cluster-pill--demo {
+  border-color: var(--nf-accent-line);
+  background: var(--nf-accent-soft);
+  color: var(--nf-accent);
+  letter-spacing: 0.02em;
 }
 
 .nf-cluster-pill.is-wait {
@@ -285,13 +411,45 @@ code,
   box-shadow: var(--nf-shadow);
 }
 
+/* Scrollable at narrow widths: previously the surface switcher was clipped at
+   390px with no way to reach the last controls (UX-01 §9). */
 .nf-segment {
-  display: inline-flex;
-  border-radius: 999px;
+  display: flex;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-radius: var(--nf-radius-pill);
   border: 1px solid var(--nf-border);
   background: var(--nf-card);
   padding: 2px;
-  box-shadow: var(--nf-shadow);
+  box-shadow: var(--nf-e1);
+  /* fade the right edge so a cut-off control reads as "scroll me" */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 18px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 18px),
+    transparent 100%
+  );
+}
+
+.nf-segment::-webkit-scrollbar {
+  display: none;
+}
+
+/* No fade needed once nothing is actually overflowing. */
+@media (min-width: 900px) {
+  .nf-segment {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
 }
 
 .nf-segment-btn {
@@ -299,17 +457,25 @@ code,
   background: transparent;
   color: var(--nf-muted);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: var(--nf-t-xs);
   font-weight: 600;
   padding: 0.35rem 0.85rem;
-  border-radius: 999px;
+  border-radius: var(--nf-radius-pill);
   cursor: pointer;
   min-height: 36px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.nf-segment-btn:hover:not(.is-active) {
+  background: var(--nf-card-muted);
+  color: var(--nf-text);
 }
 
 .nf-segment-btn.is-active {
-  background: var(--nf-primary);
-  color: var(--nf-primary-fg);
+  background: var(--nf-navy);
+  color: var(--nf-navy-fg);
 }
 
 .nf-status-pills {
@@ -1893,100 +2059,1010 @@ code,
   margin: 0;
 }
 
-/* SC Monday buyer demo polish — hierarchy only, not a visual redesign */
+/* ═══════════════════════════════════════════════════════════════════════════
+   SC customer demo — editorial register (Claude Design direction, 2026-08-22)
+
+   Source of truth: design project 6119b075 "NativeForge customer demo",
+   CLAUDE.md + "SC Customer Demo — Direction.dc.html".
+
+   Register is prospectus/annual-report, NOT dashboard: ivory field, hairline
+   rules, typographic contrast. Explicitly NO bordered card boxes for content.
+
+   Three tiers by decision weight:
+     I.   Decision    — command center, GO/NO-GO
+     II.  System state— gate ledger, one line per gate (not duplicate cards)
+     III. Case work   — pursuit / eligibility examples, given room
+
+   Layout is delivered with CSS `order` over the existing 95 pinned sections,
+   so no pinned JSX is reordered and the Playwright contract (~90 visible
+   sections, ~86 exact key=value flag strings) stays intact.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 .nf-sc-customer-demo {
-  max-width: 68rem;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 1.25rem 1.5rem 3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  padding: 0 0 var(--nf-s8);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  background: var(--nf-page);
+  color: var(--nf-text);
+  align-content: start;
 }
+
+.nf-sc-customer-demo > * {
+  min-width: 0;
+}
+
+/* Editorial links — underline on hover, colour shift on visited/active. */
+.nf-sc-customer-demo a {
+  color: var(--nf-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.nf-sc-customer-demo a:hover {
+  border-bottom-color: var(--nf-accent);
+}
+
+.nf-sc-customer-demo a:visited {
+  color: var(--nf-accent-deep);
+}
+
+.nf-sc-customer-demo a:active {
+  color: var(--nf-sage);
+}
+
+/* ───────────────────────── Hero ───────────────────────── */
 
 .nf-sc-customer-demo-header {
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--nf-border);
+  order: -100;
+  display: block;
+  padding: 88px 64px 72px;
+  border-bottom: 1px solid var(--nf-rule);
+  background: none;
+  color: inherit;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-.nf-sc-demo-kicker {
-  margin: 0;
-  font-size: 0.85rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--nf-muted2);
-}
-
-.nf-sc-demo-opening {
-  margin: 0;
-  font-size: 1.05rem;
-  line-height: 1.45;
-  max-width: 52rem;
-}
-
-.nf-sc-demo-trust-strip {
+.nf-hero-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem 0.75rem;
-  font-size: 0.8rem;
+  gap: 24px;
+  margin-bottom: 32px;
+  font-size: 13px;
+}
+
+.nf-sc-demo-brandline {
+  margin: 0 0 28px;
+  font-family: var(--nf-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--nf-accent);
+}
+
+.nf-sc-demo-headline {
+  margin: 0 0 24px;
+  max-width: 17ch;
+  font-family: var(--nf-font-display);
+  font-size: clamp(34px, 5vw, 54px);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  color: var(--nf-text);
+}
+
+.nf-sc-demo-lede {
+  margin: 0 0 40px;
+  max-width: 54ch;
+  font-size: 17px;
+  line-height: 1.6;
   color: var(--nf-muted);
 }
 
-.nf-sc-demo-trust-strip span::before {
-  content: "· ";
+/* Three-column value strip, ruled top and bottom. */
+.nf-value-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  padding: 32px 0;
+  margin-bottom: 28px;
+  border-top: 1px solid var(--nf-rule);
+  border-bottom: 1px solid var(--nf-rule);
 }
 
-.nf-sc-demo-cockpit {
-  border: 1px solid var(--nf-border);
-  padding: 1rem;
-  background: color-mix(in srgb, var(--nf-bg, #0b0f14) 92%, #1a2a3a);
+.nf-value-strip h2 {
+  margin: 0 0 6px;
+  font-family: var(--nf-font-display);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--nf-text);
+}
+
+.nf-value-strip p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--nf-muted2);
+}
+
+/* Credential row — plain text, no pills. */
+.nf-sc-demo-trust-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  margin-bottom: 28px;
+  font-size: 13px;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-demo-trust-strip span {
+  padding: 0;
+  border: 0;
+  background: none;
+  border-radius: 0;
+  color: inherit;
+  white-space: normal;
+}
+
+.nf-sc-demo-trust-strip span::before {
+  content: none;
+}
+
+/* Environment / kicker / boundary — small, ruled, never a coloured panel. */
+.nf-sc-demo-envline {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-demo-kicker {
+  margin: 0 0 20px;
+  font-family: var(--nf-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--nf-faint);
+}
+
+.nf-sc-demo-boundary {
+  margin: 0 0 16px;
+  padding: 0 0 0 16px;
+  max-width: 68ch;
+  border: 0;
+  border-left: 1px solid var(--nf-accent-line);
+  border-radius: 0;
+  background: none;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--nf-muted);
+}
+
+.nf-sc-demo-boundary-label {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--nf-font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nf-accent);
+}
+
+.nf-sc-demo-talktrack {
+  margin: 0 0 20px;
+  font-size: 13px;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-demo-talktrack > summary {
+  cursor: pointer;
+  font-family: var(--nf-font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nf-faint);
+  list-style: none;
+}
+
+.nf-sc-demo-talktrack > summary::-webkit-details-marker {
+  display: none;
+}
+
+.nf-sc-demo-talktrack > summary::before {
+  content: "+ ";
+}
+
+.nf-sc-demo-talktrack[open] > summary::before {
+  content: "– ";
+}
+
+.nf-sc-demo-talktrack p {
+  margin: 8px 0 0;
+  max-width: 68ch;
+  line-height: 1.6;
+}
+
+/* ───────────────────── Tier band headers ───────────────────── */
+
+.nf-tier {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 48px;
+  padding: 56px 64px 24px;
+  border-top: 1px solid var(--nf-rule);
+}
+
+.nf-tier-label {
+  margin: 0 0 8px;
+  font-family: var(--nf-font-display);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--nf-accent);
+}
+
+.nf-tier-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--nf-muted2);
+}
+
+.nf-tier-lead {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--nf-muted);
+}
+
+/* ───────────────────── Sections (shared) ─────────────────────
+   No borders, no shadows, no radius. Structure comes from rules and rhythm.
+   Every section aligns to the 220px + 48px editorial rail. */
+
+.nf-sc-demo-section {
+  display: block;
+  margin: 0 64px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+.nf-sc-demo-section:hover {
+  box-shadow: none;
+  border-color: transparent;
+}
+
+.nf-sc-demo-section h2 {
+  margin: 0 0 10px;
+  font-family: var(--nf-font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: var(--nf-text);
+}
+
+.nf-sc-demo-why {
+  margin: 0 0 22px;
+  max-width: 56ch;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-demo-section > p,
+.nf-sc-demo-section li {
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.nf-sc-demo-section ul,
+.nf-sc-demo-section ol {
+  margin: 0 0 16px;
+  padding-left: 16px;
+  color: var(--nf-muted);
+}
+
+.nf-sc-demo-section h3,
+.nf-sc-demo-section h4 {
+  margin: 16px 0 6px;
+  font-family: var(--nf-font-display);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--nf-text);
+}
+
+/* ─────────────── Machine flags — evidence, quietly ───────────────
+   Exact key=value strings are pinned by Playwright and stay verbatim. They
+   are set in mono at small size with a neutral status dot, so they read as
+   recorded fact rather than as debug output. */
+
+.nf-sc-customer-demo [data-testid$="-flags"],
+.nf-sc-customer-demo [data-testid="sc-demo-nofo-proposal-honesty"] {
+  display: block;
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-family: var(--nf-font-mono);
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--nf-muted2);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.nf-sc-customer-demo [data-testid$="-flags"]::before,
+.nf-sc-customer-demo [data-testid="sc-demo-nofo-proposal-honesty"]::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--nf-dot-neutral);
+  position: relative;
+  top: -1px;
+}
+
+/* Owner action — stated plainly at body weight, not as an alert. */
+.nf-sc-customer-demo [data-testid="sc-demo-owner-next-action"] {
+  margin: 0 0 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--nf-text);
+}
+
+.nf-sc-customer-demo [data-testid="sc-demo-owner-next-action"]::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--nf-accent);
+  position: relative;
+  top: -1px;
+}
+
+/* ───────────── Tier II: gate ledger — one line per gate ─────────────
+   Default treatment for every section that is not hoisted into the buyer
+   surface. Condensed to title / status / judgment, kept fully visible. */
+
+.nf-sc-customer-demo > section {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 16px 24px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--nf-rule-fine);
+  align-items: baseline;
+}
+
+.nf-sc-customer-demo > section h2 {
+  margin: 0;
+  font-family: var(--nf-font);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--nf-text);
+}
+
+.nf-sc-customer-demo > section > :not(h2) {
+  grid-column: 2;
+}
+
+.nf-sc-customer-demo > section .nf-sc-demo-why {
+  margin: 0;
+  font-size: 13px;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-customer-demo > section [data-testid$="-flags"] {
+  margin: 6px 0 0;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--nf-faint);
+}
+
+.nf-sc-customer-demo > section ul,
+.nf-sc-customer-demo > section ol {
+  margin: 6px 0 0;
+  font-size: 13px;
+}
+
+.nf-sc-customer-demo > section li {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.nf-sc-customer-demo > section [data-testid="sc-demo-owner-next-action"] {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-customer-demo > section h3,
+.nf-sc-customer-demo > section h4 {
+  margin: 10px 0 4px;
+  font-size: 14px;
+}
+
+/* Repeated per-opportunity detail — two up, hairline separated, no boxes. */
+.nf-sc-demo-nofo-card {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--nf-rule-fine);
+  padding-top: 20px;
+  border-radius: 0;
+  background: none;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--nf-muted);
+}
+
+.nf-sc-demo-nofo-card h3,
+.nf-sc-demo-nofo-card h4 {
+  margin: 0 0 6px;
+  font-family: var(--nf-font-display);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--nf-text);
+}
+
+/* Selector is scoped through .nf-sc-customer-demo > section so it outranks the
+   generated feature group, which otherwise forces these back to display:block.
+   Two-up at 20rem/32px measured best: three narrow columns made these
+   content-heavy cards taller than the row they saved (7,112px vs 5,574px). */
+.nf-sc-customer-demo > section:has(> .nf-sc-demo-nofo-card) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 32px 40px;
+  align-content: start;
+}
+
+.nf-sc-customer-demo
+  > section:has(> .nf-sc-demo-nofo-card)
+  > :not(.nf-sc-demo-nofo-card) {
+  grid-column: 1 / -1;
+}
+
+/* ───────────── Claim guardrails: say this / not this ───────────── */
+
+.nf-sc-demo-claim-grid,
+.nf-sc-demo-view-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.nf-sc-demo-trust-card {
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--nf-rule-fine);
+  padding-top: 16px;
+  border-radius: 0;
+  background: none;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.nf-sc-demo-trust-card h3,
+.nf-sc-demo-trust-card h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+[data-testid="sc-demo-allowed-claims"] li {
+  color: var(--nf-text);
+}
+
+[data-testid="sc-demo-forbidden-claims"] li {
+  color: var(--nf-text);
 }
 
 .nf-sc-demo-verbs {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.75rem;
+  gap: 12px 24px;
+  margin-top: 16px;
 }
 
 .nf-sc-demo-verbs span {
-  border: 1px solid var(--nf-border);
-  padding: 0.2rem 0.45rem;
-  font-size: 0.8rem;
-}
-
-.nf-sc-demo-claim-grid,
-.nf-sc-demo-view-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 0.85rem;
-}
-
-.nf-sc-demo-trust-card {
-  border: 1px solid var(--nf-border);
-  padding: 0.75rem;
-}
-
-.nf-sc-demo-section h2 {
-  margin: 0 0 0.35rem;
-}
-
-.nf-sc-demo-why {
-  margin: 0 0 0.65rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 400;
   color: var(--nf-muted);
-  font-size: 0.95rem;
+  white-space: nowrap;
 }
 
-.nf-sc-demo-nofo-card {
-  margin-top: 1rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--nf-border);
+/* Neutral, not sage. This row mixes allowed actions with held states
+   ("Owner Action Required", "Production Claim Blocked"); a green dot would
+   read those as passing. Nothing here is greened without evidence. */
+.nf-sc-demo-verbs span::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--nf-dot-neutral);
+  position: relative;
+  top: -1px;
 }
+
+.nf-sc-demo-nofo-card--nested,
+.nf-sc-demo-nofo-card {
+  break-inside: avoid;
+}
+
+/* ───────────── Tables ─────────────
+   Still self-scrolling (the 711px clipped-column defect), but ruled rather
+   than boxed. */
+.nf-sc-demo-section table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-collapse: collapse;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.nf-sc-demo-section th,
+.nf-sc-demo-section td {
+  padding: 10px 20px 10px 0;
+  border-bottom: 1px solid var(--nf-rule-fine);
+  text-align: left;
+  vertical-align: top;
+}
+
+.nf-sc-demo-section thead th {
+  position: sticky;
+  top: 0;
+  background: var(--nf-page);
+  font-family: var(--nf-font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nf-faint);
+  border-bottom: 1px solid var(--nf-rule);
+}
+
+.nf-sc-demo-section tbody tr:hover {
+  background: var(--nf-page-accent);
+}
+
+/* ───────────── Closing ───────────── */
 
 .nf-sc-demo-close {
-  margin-top: 0.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--nf-border);
+  order: 90;
+  margin: 0;
+  padding: 64px;
+  border: 0;
+  border-top: 1px solid var(--nf-rule);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-demo-close > :first-child {
+  font-family: var(--nf-font-display);
+  font-size: 17px;
+  color: var(--nf-text);
+}
+
+
+/* ═══════════ Tier I / III feature sections ═══════════
+   Generated selector group (see docs/operations/350). These sections opt OUT
+   of the one-line ledger row and get the full editorial treatment with room to
+   breathe. Everything not listed here stays a condensed gate row. */
+
+.nf-sc-customer-demo > [data-testid="sc-demo-operator-command-center"],
+.nf-sc-customer-demo > [data-testid="sc-demo-final-closeout"],
+.nf-sc-customer-demo > [data-testid="sc-demo-claim-guardrails"],
+.nf-sc-customer-demo > [data-testid="sc-demo-what-nf-did"],
+.nf-sc-customer-demo > [data-testid="sc-demo-why-matters"],
+.nf-sc-customer-demo > [data-testid="sc-demo-attention"],
+.nf-sc-customer-demo > [data-testid="sc-demo-next-actions"],
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunity-engine"],
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunities"],
+.nf-sc-customer-demo > [data-testid="sc-demo-review-table"],
+.nf-sc-customer-demo > [data-testid="sc-demo-combined-summary"],
+.nf-sc-customer-demo > [data-testid="sc-demo-profiles"],
+.nf-sc-customer-demo > [data-testid="sc-demo-nofo-showcase"],
+.nf-sc-customer-demo > [data-testid="sc-demo-applicant-authority"],
+.nf-sc-customer-demo > [data-testid="sc-demo-pursuit-workspace"],
+.nf-sc-customer-demo > [data-testid="sc-demo-application-checklist"],
+.nf-sc-customer-demo > [data-testid="sc-demo-readiness-queue"],
+.nf-sc-customer-demo > [data-testid="sc-demo-evidence-intake"],
+.nf-sc-customer-demo > [data-testid="sc-demo-feedback-loop"],
+.nf-sc-customer-demo > [data-testid="sc-demo-missing-data"],
+.nf-sc-customer-demo > [data-testid="sc-demo-provenance"],
+.nf-sc-customer-demo > [data-testid="sc-demo-customer-data-policy"],
+.nf-sc-customer-demo > [data-testid="sc-demo-buyer-trust-views"] {
+  display: block;
+  grid-template-columns: none;
+  padding: 0 0 40px;
+  margin: 0 64px 40px;
+  border-bottom: 1px solid var(--nf-rule-fine);
+  align-items: initial;
+}
+
+@media (min-width: 900px) {
+.nf-sc-customer-demo > [data-testid="sc-demo-operator-command-center"],
+.nf-sc-customer-demo > [data-testid="sc-demo-final-closeout"],
+.nf-sc-customer-demo > [data-testid="sc-demo-claim-guardrails"],
+.nf-sc-customer-demo > [data-testid="sc-demo-what-nf-did"],
+.nf-sc-customer-demo > [data-testid="sc-demo-why-matters"],
+.nf-sc-customer-demo > [data-testid="sc-demo-attention"],
+.nf-sc-customer-demo > [data-testid="sc-demo-next-actions"],
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunity-engine"],
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunities"],
+.nf-sc-customer-demo > [data-testid="sc-demo-review-table"],
+.nf-sc-customer-demo > [data-testid="sc-demo-combined-summary"],
+.nf-sc-customer-demo > [data-testid="sc-demo-profiles"],
+.nf-sc-customer-demo > [data-testid="sc-demo-nofo-showcase"],
+.nf-sc-customer-demo > [data-testid="sc-demo-applicant-authority"],
+.nf-sc-customer-demo > [data-testid="sc-demo-pursuit-workspace"],
+.nf-sc-customer-demo > [data-testid="sc-demo-application-checklist"],
+.nf-sc-customer-demo > [data-testid="sc-demo-readiness-queue"],
+.nf-sc-customer-demo > [data-testid="sc-demo-evidence-intake"],
+.nf-sc-customer-demo > [data-testid="sc-demo-feedback-loop"],
+.nf-sc-customer-demo > [data-testid="sc-demo-missing-data"],
+.nf-sc-customer-demo > [data-testid="sc-demo-provenance"],
+.nf-sc-customer-demo > [data-testid="sc-demo-customer-data-policy"],
+.nf-sc-customer-demo > [data-testid="sc-demo-buyer-trust-views"] {
+    margin-left: calc(64px + 220px + 48px);
+  }
+}
+
+/* Detail-grid sections drop the editorial rail offset and use the full
+   measure — at the indented width they fell to two columns and grew ~50%. */
+@media (min-width: 900px) {
+  .nf-sc-customer-demo > section:has(> .nf-sc-demo-nofo-card) {
+    margin-left: 64px;
+  }
+}
+
+@media (max-width: 900px) {
+.nf-sc-customer-demo > [data-testid="sc-demo-operator-command-center"],
+.nf-sc-customer-demo > [data-testid="sc-demo-final-closeout"],
+.nf-sc-customer-demo > [data-testid="sc-demo-claim-guardrails"],
+.nf-sc-customer-demo > [data-testid="sc-demo-what-nf-did"],
+.nf-sc-customer-demo > [data-testid="sc-demo-why-matters"],
+.nf-sc-customer-demo > [data-testid="sc-demo-attention"],
+.nf-sc-customer-demo > [data-testid="sc-demo-next-actions"],
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunity-engine"],
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunities"],
+.nf-sc-customer-demo > [data-testid="sc-demo-review-table"],
+.nf-sc-customer-demo > [data-testid="sc-demo-combined-summary"],
+.nf-sc-customer-demo > [data-testid="sc-demo-profiles"],
+.nf-sc-customer-demo > [data-testid="sc-demo-nofo-showcase"],
+.nf-sc-customer-demo > [data-testid="sc-demo-applicant-authority"],
+.nf-sc-customer-demo > [data-testid="sc-demo-pursuit-workspace"],
+.nf-sc-customer-demo > [data-testid="sc-demo-application-checklist"],
+.nf-sc-customer-demo > [data-testid="sc-demo-readiness-queue"],
+.nf-sc-customer-demo > [data-testid="sc-demo-evidence-intake"],
+.nf-sc-customer-demo > [data-testid="sc-demo-feedback-loop"],
+.nf-sc-customer-demo > [data-testid="sc-demo-missing-data"],
+.nf-sc-customer-demo > [data-testid="sc-demo-provenance"],
+.nf-sc-customer-demo > [data-testid="sc-demo-customer-data-policy"],
+.nf-sc-customer-demo > [data-testid="sc-demo-buyer-trust-views"] {
+    margin: 0 24px 28px;
+    padding-bottom: 28px;
+  }
+}
+
+.nf-sc-customer-demo > [data-testid="sc-demo-operator-command-center"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-final-closeout"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-claim-guardrails"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-what-nf-did"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-why-matters"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-attention"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-next-actions"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunity-engine"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunities"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-review-table"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-combined-summary"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-profiles"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-nofo-showcase"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-applicant-authority"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-pursuit-workspace"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-application-checklist"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-readiness-queue"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-evidence-intake"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-feedback-loop"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-missing-data"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-provenance"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-customer-data-policy"] > *,
+.nf-sc-customer-demo > [data-testid="sc-demo-buyer-trust-views"] > * {
+  grid-column: auto;
+}
+
+.nf-sc-customer-demo > [data-testid="sc-demo-operator-command-center"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-final-closeout"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-claim-guardrails"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-what-nf-did"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-why-matters"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-attention"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-next-actions"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunity-engine"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunities"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-review-table"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-combined-summary"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-profiles"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-nofo-showcase"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-applicant-authority"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-pursuit-workspace"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-application-checklist"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-readiness-queue"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-evidence-intake"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-feedback-loop"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-missing-data"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-provenance"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-customer-data-policy"] > h2,
+.nf-sc-customer-demo > [data-testid="sc-demo-buyer-trust-views"] > h2 {
+  margin: 0 0 10px;
+  font-family: var(--nf-font-display);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--nf-text);
+}
+
+.nf-sc-customer-demo > [data-testid="sc-demo-operator-command-center"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-final-closeout"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-claim-guardrails"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-what-nf-did"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-why-matters"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-attention"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-next-actions"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunity-engine"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunities"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-review-table"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-combined-summary"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-profiles"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-nofo-showcase"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-applicant-authority"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-pursuit-workspace"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-application-checklist"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-readiness-queue"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-evidence-intake"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-feedback-loop"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-missing-data"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-provenance"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-customer-data-policy"] .nf-sc-demo-why,
+.nf-sc-customer-demo > [data-testid="sc-demo-buyer-trust-views"] .nf-sc-demo-why {
+  margin: 0 0 22px;
+  max-width: 56ch;
+  font-size: 15px;
+  color: var(--nf-muted2);
+}
+
+.nf-sc-customer-demo > [data-testid="sc-demo-operator-command-center"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-final-closeout"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-claim-guardrails"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-what-nf-did"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-why-matters"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-attention"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-next-actions"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunity-engine"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunities"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-review-table"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-combined-summary"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-profiles"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-nofo-showcase"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-applicant-authority"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-pursuit-workspace"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-application-checklist"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-readiness-queue"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-evidence-intake"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-feedback-loop"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-missing-data"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-provenance"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-customer-data-policy"] [data-testid$="-flags"],
+.nf-sc-customer-demo > [data-testid="sc-demo-buyer-trust-views"] [data-testid$="-flags"] {
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--nf-muted2);
+}
+
+/* Tier ordering
+   Rendered order: I. Decision -> II. System state (gate ledger) -> III. Case
+   work. Delivered with CSS `order` so no pinned JSX moves. Default order 11
+   puts every non-hoisted section into the Tier II ledger. */
+
+.nf-sc-customer-demo > section {
+  order: 11;
+}
+
+.nf-tier--decision {
+  order: 0;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-operator-command-center"] {
+  order: 1;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-final-closeout"] {
+  order: 2;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-claim-guardrails"] {
+  order: 3;
+}
+
+.nf-tier--system {
+  order: 10;
+}
+
+.nf-tier--casework {
+  order: 20;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-what-nf-did"] {
+  order: 21;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-why-matters"] {
+  order: 22;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-attention"] {
+  order: 23;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-next-actions"] {
+  order: 24;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunity-engine"] {
+  order: 25;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-opportunities"] {
+  order: 26;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-review-table"] {
+  order: 27;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-combined-summary"] {
+  order: 28;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-profiles"] {
+  order: 29;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-nofo-showcase"] {
+  order: 30;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-applicant-authority"] {
+  order: 31;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-pursuit-workspace"] {
+  order: 32;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-application-checklist"] {
+  order: 33;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-readiness-queue"] {
+  order: 34;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-evidence-intake"] {
+  order: 35;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-feedback-loop"] {
+  order: 36;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-missing-data"] {
+  order: 37;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-provenance"] {
+  order: 38;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-customer-data-policy"] {
+  order: 39;
+}
+.nf-sc-customer-demo > [data-testid="sc-demo-buyer-trust-views"] {
+  order: 40;
+}
+
+/* ───────────── Responsive ───────────── */
+
+@media (max-width: 900px) {
+  .nf-sc-customer-demo-header {
+    padding: 56px 24px 44px;
+  }
+
+  .nf-tier {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 40px 24px 20px;
+  }
+
+  .nf-sc-demo-section {
+    margin: 0 24px;
+  }
+
+  .nf-sc-customer-demo > section {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 6px;
+  }
+
+  .nf-sc-customer-demo > section > :not(h2) {
+    grid-column: 1;
+  }
+
+  .nf-value-strip {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .nf-sc-demo-close {
+    padding: 44px 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  .nf-sc-demo-headline {
+    max-width: none;
+  }
+
+  .nf-sc-customer-demo > section:has(> .nf-sc-demo-nofo-card) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+}
+
+/* ───────── Operator chrome on the demo route ─────────
+   The masthead is operator navigation; on the buyer demo it should recede into
+   the editorial page rather than sit on it as a white slab. */
+.nf-app[data-surface="sc_customer_demo"] .nf-header-bar,
+.nf-app[data-surface="nm_wa_operator_demo"] .nf-header-bar {
+  border-bottom-color: var(--nf-rule);
+}
+
+.nf-app[data-surface="sc_customer_demo"] .nf-header-cluster,
+.nf-app[data-surface="nm_wa_operator_demo"] .nf-header-cluster {
+  opacity: 0.72;
+  transition: opacity 160ms ease;
+}
+
+.nf-app[data-surface="sc_customer_demo"] .nf-header-cluster:hover,
+.nf-app[data-surface="sc_customer_demo"] .nf-header-cluster:focus-within,
+.nf-app[data-surface="nm_wa_operator_demo"] .nf-header-cluster:hover,
+.nf-app[data-surface="nm_wa_operator_demo"] .nf-header-cluster:focus-within {
+  opacity: 1;
+}
+
+.nf-app[data-surface="sc_customer_demo"] .nf-segment,
+.nf-app[data-surface="nm_wa_operator_demo"] .nf-segment {
+  background: transparent;
+  box-shadow: none;
+  border-color: var(--nf-rule);
+}
+
+.nf-app[data-surface="sc_customer_demo"] .nf-cluster-pill,
+.nf-app[data-surface="nm_wa_operator_demo"] .nf-cluster-pill {
+  background: transparent;
+}
+
+/* The demo page carries its own footer line. */
+.nf-app[data-surface="sc_customer_demo"] > .nf-footnote {
+  display: none;
 }

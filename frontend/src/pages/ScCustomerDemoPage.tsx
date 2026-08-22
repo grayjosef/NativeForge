@@ -58,16 +58,52 @@ export function ScCustomerDemoPage({
   return (
     <main className="nf-sc-customer-demo" data-testid="sc-customer-demo-page">
       <header className="nf-sc-customer-demo-header">
-        <p className="nf-sc-demo-kicker" data-testid="sc-demo-kicker">
-          Monday buyer demo · South Carolina customer story
+        <nav className="nf-hero-nav" aria-label="Demo sections">
+          <a href="#nf-decision">Decision</a>
+          <a href="#nf-system-state">System state</a>
+          <a href="#nf-case-work">Case work</a>
+        </nav>
+
+        <p className="nf-sc-demo-brandline">
+          Grant intelligence &amp; pursuit — state &amp; federal buyer demo
         </p>
-        <h1 data-testid="sc-demo-title">{data.title}</h1>
-        <p className="nf-sc-demo-opening" data-testid="sc-demo-opening-line">
-          {opening}
+
+        <h1 className="nf-sc-demo-headline">
+          Find, qualify, and pursue the state and federal grants your
+          organization can actually win.
+        </h1>
+
+        <p className="nf-sc-demo-lede">
+          NativeForge screens opportunities against your organization&rsquo;s
+          recognition status and evidence, flags exactly what&rsquo;s missing,
+          and routes every application through human review before it moves —
+          so your team spends time pursuing, not searching.
         </p>
-        <p className="nf-muted" data-testid="sc-demo-banner">
-          {data.ui_flags.advisory_banner}
-        </p>
+
+        <div className="nf-value-strip">
+          <div>
+            <h2>Qualify faster</h2>
+            <p>
+              Recognition tier and evidence matched to each opportunity
+              automatically.
+            </p>
+          </div>
+          <div>
+            <h2>See what&rsquo;s missing</h2>
+            <p>
+              Exactly which documents or facts stand between you and a
+              submittable application.
+            </p>
+          </div>
+          <div>
+            <h2>Nothing goes out unreviewed</h2>
+            <p>
+              A human on your team confirms every application before it is
+              submitted.
+            </p>
+          </div>
+        </div>
+
         <div className="nf-sc-demo-trust-strip" data-testid="sc-demo-trust-strip">
           <span>curated-current</span>
           <span>not automated live ingest</span>
@@ -78,27 +114,76 @@ export function ScCustomerDemoPage({
           <span>NOFO PDF extraction not supported</span>
           <span>proposal drafting not supported</span>
         </div>
-        <p className="nf-muted" data-testid="sc-demo-claim-boundary">
-          Limited external demo · Dev-domain demo · Evidence-backed Native-relevant opportunity workflow · Customer pilot pending auth/storage/security gates · Production rollout blocked until gates pass
-        </p>
-        <p className="nf-muted" data-testid="sc-demo-buyer-talk-track">
-          Talk-track: limited external / Dev-domain demo of an Evidence-backed Native-relevant opportunity workflow. Customer pilot pending auth/storage/security gates. Production rollout blocked until gates pass.
-        </p>
-        <p className="nf-muted" data-testid="sc-demo-flags">
-          demo_dev_only={String(data.demo_dev_only)} offline_only=
-          {String(data.offline_only)} live_ingestion=
-          {String(data.live_ingestion)} source_activation=
-          {String(data.source_activation)} auth_required=
-          {String(data.auth_required)} final_eligibility_claim_allowed=
-          {String(data.final_eligibility_claim_allowed)} data_mode=curated_current{" "}
-          live_ingest_claimed=false automated_refresh_claimed=false pack_id=
-          {data.pack_id} capture_date={data.capture_date}
-        </p>
-        <p data-testid="sc-demo-nofo-proposal-honesty" className="nf-muted">
-          nofo_pdf_extraction=NOT_SUPPORTED proposal_drafting=NOT_SUPPORTED
-          application_plan=SKELETON_ONLY
-        </p>
+
+        <div className="nf-hero-scope">
+          <p className="nf-sc-demo-envline" data-testid="sc-demo-title">
+            {data.title}
+          </p>
+          <p className="nf-sc-demo-kicker" data-testid="sc-demo-kicker">
+            Buyer demo · curated state and federal pack
+          </p>
+          <p className="nf-sc-demo-boundary" data-testid="sc-demo-opening-line">
+            {opening}
+          </p>
+          <p className="nf-sc-demo-boundary" data-testid="sc-demo-claim-boundary">
+            <span className="nf-sc-demo-boundary-label">What this is, exactly</span>
+            Limited external demo · Dev-domain demo · Evidence-backed Native-relevant opportunity workflow · Customer pilot pending auth/storage/security gates · Production rollout blocked until gates pass
+          </p>
+          <p className="nf-sc-demo-boundary" data-testid="sc-demo-banner">
+            <span className="nf-sc-demo-boundary-label">Scope of this demo</span>
+            {data.ui_flags.advisory_banner}
+          </p>
+          <details className="nf-sc-demo-talktrack">
+            <summary>Presenter note</summary>
+            <p data-testid="sc-demo-buyer-talk-track">
+              Talk-track: limited external / Dev-domain demo of an Evidence-backed Native-relevant opportunity workflow. Customer pilot pending auth/storage/security gates. Production rollout blocked until gates pass.
+            </p>
+          </details>
+          <p data-testid="sc-demo-flags">
+            demo_dev_only={String(data.demo_dev_only)} offline_only=
+            {String(data.offline_only)} live_ingestion=
+            {String(data.live_ingestion)} source_activation=
+            {String(data.source_activation)} auth_required=
+            {String(data.auth_required)} final_eligibility_claim_allowed=
+            {String(data.final_eligibility_claim_allowed)} data_mode=curated_current{" "}
+            live_ingest_claimed=false automated_refresh_claimed=false pack_id=
+            {data.pack_id} capture_date={data.capture_date}
+          </p>
+          <p data-testid="sc-demo-nofo-proposal-honesty">
+            nofo_pdf_extraction=NOT_SUPPORTED proposal_drafting=NOT_SUPPORTED
+            application_plan=SKELETON_ONLY
+          </p>
+        </div>
       </header>
+
+      {/* Three tier bands. CSS `order` groups the 95 pinned sections beneath
+          them by decision weight; nothing is hidden, collapsed or removed. */}
+      <div className="nf-tier nf-tier--decision" id="nf-decision">
+        <p className="nf-tier-label">I. Decision</p>
+        <p className="nf-tier-lead">
+          Where the go / no-go stands today, and exactly which claims are
+          allowed to be made about it.
+        </p>
+      </div>
+
+      <div className="nf-tier nf-tier--system" id="nf-system-state">
+        <div>
+          <p className="nf-tier-label">II. System state</p>
+        </div>
+        <p className="nf-tier-note">
+          Each row is its own gate, kept fully visible — condensed to one line
+          of judgment rather than a repeated card. Held gates stay held and are
+          never shown as passing.
+        </p>
+      </div>
+
+      <div className="nf-tier nf-tier--casework" id="nf-case-work">
+        <p className="nf-tier-label">III. Case work</p>
+        <p className="nf-tier-lead">
+          The actual work product: opportunities screened, eligibility
+          evidenced, packages assembled, and what still needs a human.
+        </p>
+      </div>
 
       {data.buyer_trust ? (
         <section
@@ -137,7 +222,7 @@ export function ScCustomerDemoPage({
           data-testid="sc-demo-final-closeout"
           className="nf-sc-demo-section"
         >
-          <h2>Controlled pilot GO/NO-GO + 3000-sprint closeout</h2>
+          <h2>Controlled pilot GO / NO-GO</h2>
           <p className="nf-sc-demo-why">
             Authoritative packet: what is built, what is blocked, what can be
             claimed Monday vs customer pilot.
@@ -832,7 +917,11 @@ export function ScCustomerDemoPage({
       ) : null}
 
       {data.opportunity_engine ? (
-        <section data-testid="sc-demo-opportunity-engine" className="nf-sc-demo-section">
+        <section
+          id="nf-opportunity-intelligence"
+          data-testid="sc-demo-opportunity-engine"
+          className="nf-sc-demo-section"
+        >
           <h2>Durable opportunity engine foundation</h2>
           <p className="nf-sc-demo-why">
             Product spine behind the Monday demo: SC reference-state adapter + federal
@@ -869,7 +958,7 @@ export function ScCustomerDemoPage({
             ))}
           </ul>
           {data.opportunity_engine.combined_workflow.eligibility_evidence_handoff ? (
-            <div data-testid="sc-demo-eligibility-evidence">
+            <div id="nf-eligibility" data-testid="sc-demo-eligibility-evidence">
               <h3>Evidence-backed eligibility (recognition tier)</h3>
               <p className="nf-sc-demo-why">
                 What NativeForge explains: applicant category, recognition tier, evidence,
@@ -1396,6 +1485,7 @@ export function ScCustomerDemoPage({
 
       {data.package_readiness_queue ? (
         <section
+          id="nf-readiness"
           data-testid="sc-demo-readiness-queue"
           className="nf-sc-demo-section"
         >
@@ -1930,6 +2020,7 @@ export function ScCustomerDemoPage({
 
       {data.feedback_loop ? (
         <section
+          id="nf-feedback"
           data-testid="sc-demo-feedback-loop"
           className="nf-sc-demo-section"
         >
@@ -2511,6 +2602,7 @@ export function ScCustomerDemoPage({
 
       {data.applicant_authority ? (
         <section
+          id="nf-authority"
           data-testid="sc-demo-applicant-authority"
           className="nf-sc-demo-section"
         >

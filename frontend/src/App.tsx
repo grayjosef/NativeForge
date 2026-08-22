@@ -808,15 +808,23 @@ export default function App() {
     refreshTrustCenter,
   ]);
 
+  /* SC and NM/WA demos are offline static bridges — they never call the
+     workspace API, so workspace connectivity says nothing about them. Scoping
+     the banner to the surfaces it actually describes (it stays fully visible on
+     Workspace / Workbench / Activation). */
+  const offlineDemoSurface =
+    surface === "sc_customer_demo" || surface === "nm_wa_operator_demo";
+
   return (
-    <div className="nf-app">
+    <div className="nf-app" data-surface={surface}>
       <WorkspaceHeader
         plane={plane}
         orgId={orgId}
         onPlaneChange={setPlane}
         onOrgChange={setOrgId}
         backendOk={backendOk}
-        backendHint={backendHint}
+        backendHint={offlineDemoSurface ? "" : backendHint}
+        offlineDemo={offlineDemoSurface}
         trustVersion={trustVersion}
         trustErr={trustErr}
         onRefreshConnectivity={refreshConnectivity}

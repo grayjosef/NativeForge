@@ -15,6 +15,12 @@ export interface WorkspaceHeaderProps {
   /** When set, shows Workspace / Workbench / Activation / NM-WA demo toggle. */
   surface?: AppSurface;
   onSurfaceChange?: (s: AppSurface) => void;
+  /**
+   * True on the offline static demo bridges (SC / NM-WA). Those surfaces never
+   * call the workspace API, so workspace connectivity is not a fact about them —
+   * report the demo data mode instead of a backend reachability verdict.
+   */
+  offlineDemo?: boolean;
 }
 
 export function WorkspaceHeader({
@@ -29,6 +35,7 @@ export function WorkspaceHeader({
   onRefreshConnectivity,
   surface,
   onSurfaceChange,
+  offlineDemo = false,
 }: WorkspaceHeaderProps) {
   const [contextOpen, setContextOpen] = useState(false);
 
@@ -110,32 +117,44 @@ export function WorkspaceHeader({
           </div>
 
           <div className="nf-cluster-pills" aria-live="polite">
-            <span
-              className={`nf-cluster-pill ${backendOk === true ? "is-ok" : backendOk === false ? "is-bad" : "is-wait"}`}
-            >
-              {backendOk === null
-                ? "…"
-                : backendOk
-                  ? "Online"
-                  : "Offline"}
-            </span>
-            <span
-              className={`nf-cluster-pill nf-cluster-pill--trust ${trustErr ? "is-bad" : ""}`}
-            >
-              {trustOkShort}
-            </span>
+            {offlineDemo ? (
+              <span className="nf-cluster-pill nf-cluster-pill--demo">
+                Curated demo data · offline
+              </span>
+            ) : (
+              <>
+                <span
+                  className={`nf-cluster-pill ${backendOk === true ? "is-ok" : backendOk === false ? "is-bad" : "is-wait"}`}
+                >
+                  {backendOk === null
+                    ? "…"
+                    : backendOk
+                      ? "Online"
+                      : "Offline"}
+                </span>
+                <span
+                  className={`nf-cluster-pill nf-cluster-pill--trust ${trustErr ? "is-bad" : ""}`}
+                >
+                  {trustOkShort}
+                </span>
+              </>
+            )}
           </div>
 
-          <button
-            type="button"
-            className="nf-icon-action"
-            onClick={() => void onRefreshConnectivity()}
-            title="Refresh workspace"
-            aria-label="Refresh workspace"
-          >
-            <span className="nf-icon-refresh" aria-hidden="true" />
-            <span className="nf-icon-action-text nf-hide-mobile">Refresh workspace</span>
-          </button>
+          {offlineDemo ? null : (
+            <button
+              type="button"
+              className="nf-icon-action"
+              onClick={() => void onRefreshConnectivity()}
+              title="Refresh workspace"
+              aria-label="Refresh workspace"
+            >
+              <span className="nf-icon-refresh" aria-hidden="true" />
+              <span className="nf-icon-action-text nf-hide-mobile">
+                Refresh workspace
+              </span>
+            </button>
+          )}
 
           <button
             type="button"
