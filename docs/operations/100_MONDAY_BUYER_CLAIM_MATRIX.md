@@ -58,5 +58,9 @@
 | Healthchecks (Gate 33) | IMPLEMENTED / registry; alert sent=false; ops=false |
 | Non-prod restore (Gate 33) | IMPLEMENTED / model+evidence ref; prod restore=false |
 | Operator runbooks (Gate 33) | IMPLEMENTED / owner-gated stays owner-gated; GO=false |
+| Owner wait-state (Gate 34) | IMPLEMENTED / missing inputs are launch blockers |
+| Buyer talk-track (Gate 34) | IMPLEMENTED / forbidden phrases blocked; CTA safe |
+| Operator drill (Gate 34) | IMPLEMENTED / drill pass ≠ production pass |
+| Pre-owner closeout (Gate 34) | IMPLEMENTED / GO=false until owner+vendor inputs |
 | Full sovereignty deployment | NOT_CLAIMED |
 | Automated submission | NOT_CLAIMED |
