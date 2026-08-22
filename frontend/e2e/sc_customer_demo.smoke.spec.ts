@@ -595,6 +595,30 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(
       page.getByTestId("sc-demo-storage-security-real-input-flags"),
     ).toContainText("fake=false");
+    await expect(page.getByTestId("sc-demo-operator-command-center")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-operator-command-center-flags"),
+    ).toContainText("login_live=false");
+    await expect(
+      page.getByTestId("sc-demo-operator-command-center-flags"),
+    ).toContainText("fake_green=false");
+    await expect(
+      page.getByTestId("sc-demo-operator-command-center-flags"),
+    ).not.toContainText("CONTROLLED_CUSTOMER_GO");
+    await expect(page.getByTestId("sc-demo-owner-next-action")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-final-closeout")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-final-closeout-flags"),
+    ).toContainText("fake_prod=false");
+    await expect(page.getByTestId("sc-demo-final-allowed-claims")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-final-forbidden-claims")).toBeVisible();
+    await expect(page.getByTestId("sc-demo-buyer-trust-views")).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-trust-view-buyer_landing"),
+    ).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-trust-view-controlled_pilot_go_nogo"),
+    ).toBeVisible();
     await expect(page.getByTestId("sc-demo-nofo-proposal-honesty")).toContainText(
       "NOT_SUPPORTED",
     );

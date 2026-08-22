@@ -136,6 +136,9 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-dry-run-cutover");
     expect(html).toContain("sc-demo-auth0-real-input");
     expect(html).toContain("sc-demo-storage-security-real-input");
+    expect(html).toContain("sc-demo-operator-command-center");
+    expect(html).toContain("sc-demo-final-closeout");
+    expect(html).toContain("sc-demo-buyer-trust-views");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -381,6 +384,17 @@ describe("ScCustomerDemoPage", () => {
     );
     expect(payload.storage_security_real_input?.pen_test_pass_claimed).toBe(false);
     expect(payload.storage_security_real_input?.fake_pilot_ready).toBe(false);
+    expect(payload.final_closeout?.fake_production_ready).toBe(false);
+    expect(payload.final_closeout?.fake_pilot_ready).toBe(false);
+    expect(payload.final_closeout?.login_live_claimed).toBe(false);
+    expect(payload.buyer_trust?.fake_green_badge).toBe(false);
+    expect(payload.buyer_trust?.login_live_claimed).toBe(false);
+    expect(payload.buyer_trust?.pen_test_passed_claimed).toBe(false);
+    expect(payload.buyer_trust?.production_storage_claimed).toBe(false);
+    expect(payload.buyer_trust?.blockers_exposed).toBe(true);
+    expect(
+      payload.buyer_trust?.controlled_customer_pilot_status,
+    ).not.toBe("CONTROLLED_CUSTOMER_GO");
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

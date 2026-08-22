@@ -1938,6 +1938,37 @@ code,
   content: "· ";
 }
 
+.nf-sc-demo-cockpit {
+  border: 1px solid var(--nf-border);
+  padding: 1rem;
+  background: color-mix(in srgb, var(--nf-bg, #0b0f14) 92%, #1a2a3a);
+}
+
+.nf-sc-demo-verbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.nf-sc-demo-verbs span {
+  border: 1px solid var(--nf-border);
+  padding: 0.2rem 0.45rem;
+  font-size: 0.8rem;
+}
+
+.nf-sc-demo-claim-grid,
+.nf-sc-demo-view-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 0.85rem;
+}
+
+.nf-sc-demo-trust-card {
+  border: 1px solid var(--nf-border);
+  padding: 0.75rem;
+}
+
 .nf-sc-demo-section h2 {
   margin: 0 0 0.35rem;
 }

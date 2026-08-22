@@ -94,6 +94,121 @@ export function ScCustomerDemoPage({
         </p>
       </header>
 
+      {data.buyer_trust ? (
+        <section
+          data-testid="sc-demo-operator-command-center"
+          className="nf-sc-demo-section nf-sc-demo-cockpit"
+        >
+          <h2>Operator command center</h2>
+          <p className="nf-sc-demo-why">
+            Evidence confidence, guided next action, and claim freeze — not a
+            fake launch page.
+          </p>
+          <p data-testid="sc-demo-operator-command-center-flags" className="nf-muted">
+            demo=GO pilot={data.buyer_trust.controlled_customer_pilot_status}{" "}
+            rollout={data.buyer_trust.production_rollout_status} login_live=
+            {String(data.buyer_trust.login_live_claimed)} storage=
+            {String(data.buyer_trust.production_storage_claimed)} pentest=
+            {String(data.buyer_trust.pen_test_passed_claimed)} fake_green=
+            {String(data.buyer_trust.fake_green_badge)} fake_pilot=
+            {String(data.buyer_trust.fake_pilot_ready_banner)} freeze=
+            {String(data.buyer_trust.claim_freeze_visible)} demo_safe=
+            {String(data.buyer_trust.demo_safe)}
+          </p>
+          <p data-testid="sc-demo-owner-next-action">
+            Owner Action Required: {data.buyer_trust.next_owner_action}
+          </p>
+          <div data-testid="sc-demo-buyer-safe-verbs" className="nf-sc-demo-verbs">
+            {(data.buyer_trust.safe_verbs || []).map((verb) => (
+              <span key={verb}>{verb}</span>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {data.final_closeout ? (
+        <section
+          data-testid="sc-demo-final-closeout"
+          className="nf-sc-demo-section"
+        >
+          <h2>Controlled pilot GO/NO-GO + 3000-sprint closeout</h2>
+          <p className="nf-sc-demo-why">
+            Authoritative packet: what is built, what is blocked, what can be
+            claimed Monday vs customer pilot.
+          </p>
+          <p data-testid="sc-demo-final-closeout-flags" className="nf-muted">
+            pilot={data.final_closeout.controlled_customer_pilot_status} rollout=
+            {data.final_closeout.production_rollout_status} login=
+            {String(data.final_closeout.login_live_claimed)} storage=
+            {String(data.final_closeout.production_storage_claimed)} pentest=
+            {String(data.final_closeout.pen_test_passed_claimed)} executed=
+            {String(data.final_closeout.mode_b_executed_claimed)} fake_prod=
+            {String(data.final_closeout.fake_production_ready)} fake_pilot=
+            {String(data.final_closeout.fake_pilot_ready)}
+          </p>
+          <div className="nf-sc-demo-claim-grid">
+            <div data-testid="sc-demo-final-allowed-claims">
+              <h3>Allowed claims</h3>
+              <ul>
+                {(data.final_closeout.allowed_claims || []).map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            </div>
+            <div data-testid="sc-demo-final-forbidden-claims">
+              <h3>Forbidden claims</h3>
+              <ul>
+                {(data.final_closeout.forbidden_claims || []).map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <ul data-testid="sc-demo-final-closeout-summary">
+            {data.final_closeout.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.buyer_trust?.views ? (
+        <section
+          data-testid="sc-demo-buyer-trust-views"
+          className="nf-sc-demo-section"
+        >
+          <h2>Buyer-grade trust surfaces</h2>
+          <p className="nf-sc-demo-why">
+            Each view answers what this is, why it matters, what is missing, who
+            may act, and what cannot be claimed.
+          </p>
+          <div className="nf-sc-demo-view-grid">
+            {data.buyer_trust.views.map((view) => (
+              <article
+                key={view.view_id}
+                className="nf-sc-demo-trust-card"
+                data-testid={`sc-demo-trust-view-${view.view_id}`}
+              >
+                <h3>{view.title}</h3>
+                <ul>
+                  {Object.entries(view.answers).map(([k, v]) => (
+                    <li key={k}>
+                      {k}: {v}
+                    </li>
+                  ))}
+                </ul>
+                <p className="nf-muted">
+                  freeze allowed={(view.allowed_claims || []).length} forbidden=
+                  {(view.forbidden_claims || []).length} fake_green=
+                  {String(view.fake_green_badge)}
+                </p>
+                <p>Owner Action Required: {view.owner_next_action}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-what-nf-did" className="nf-sc-demo-section">
         <h2>What NativeForge found / did</h2>
         <p className="nf-sc-demo-why">Why this matters: structures discovery so your team reviews evidence, not raw noise.</p>

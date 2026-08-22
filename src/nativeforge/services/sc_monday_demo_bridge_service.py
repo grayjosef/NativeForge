@@ -138,6 +138,14 @@ from nativeforge.services.gate29_storage_security_assembler_service import (
     build_storage_security_real_input_demo_surface,
     storage_security_real_input_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate30_buyer_trust_assembler_service import (
+    build_buyer_trust_demo_surface,
+    buyer_trust_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate30_final_closeout_assembler_service import (
+    build_final_closeout_demo_surface,
+    final_closeout_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -863,6 +871,20 @@ def build_sc_customer_demo_bridge_payload(
             f"{storage_security_fails}"
         )
 
+    final_closeout_surface = build_final_closeout_demo_surface()
+    final_closeout_fails = final_closeout_demo_surface_invariant_failures(
+        final_closeout_surface
+    )
+    if final_closeout_fails:
+        raise ValueError(
+            f"Final closeout surface invariants failed: {final_closeout_fails}"
+        )
+
+    buyer_trust_surface = build_buyer_trust_demo_surface()
+    buyer_trust_fails = buyer_trust_demo_surface_invariant_failures(buyer_trust_surface)
+    if buyer_trust_fails:
+        raise ValueError(f"Buyer trust surface invariants failed: {buyer_trust_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -959,6 +981,8 @@ def build_sc_customer_demo_bridge_payload(
             "dry_run_cutover": dry_run_cutover_surface,
             "auth0_real_input": auth0_real_input_surface,
             "storage_security_real_input": storage_security_real_input_surface,
+            "final_closeout": final_closeout_surface,
+            "buyer_trust": buyer_trust_surface,
         }
     )
 
@@ -1384,4 +1408,14 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
                 storage_security_real_input
             )
         )
+    final_closeout = payload.get("final_closeout") or {}
+    if not final_closeout:
+        fails.append("final_closeout_missing")
+    else:
+        fails.extend(final_closeout_demo_surface_invariant_failures(final_closeout))
+    buyer_trust = payload.get("buyer_trust") or {}
+    if not buyer_trust:
+        fails.append("buyer_trust_missing")
+    else:
+        fails.extend(buyer_trust_demo_surface_invariant_failures(buyer_trust))
     return fails
