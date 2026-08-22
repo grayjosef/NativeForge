@@ -162,6 +162,24 @@ from nativeforge.services.gate31_support_triage_assembler_service import (
     build_support_triage_demo_surface,
     support_triage_demo_surface_invariant_failures,
 )
+from nativeforge.services.gate32_backup_restore_assembler_service import (
+    backup_restore_demo_surface_invariant_failures,
+    build_backup_restore_demo_surface,
+)
+from nativeforge.services.gate32_launch_packet_assembler_service import (
+    build_launch_packet_demo_surface,
+    launch_packet_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate32_observability_assembler_service import (
+    build_observability_demo_surface,
+    observability_demo_surface_invariant_failures,
+)
+from nativeforge.services.gate32_source_freshness_assembler_service import (
+    build_source_freshness_demo_surface as build_gate32_source_freshness_demo_surface,
+)
+from nativeforge.services.gate32_source_freshness_assembler_service import (
+    source_freshness_demo_surface_invariant_failures as gate32_source_freshness_demo_surface_invariant_failures,
+)
 from nativeforge.services.intake_approval_workspace_assembler_service import (
     build_intake_approval_demo_surface,
     intake_approval_demo_surface_invariant_failures,
@@ -935,6 +953,32 @@ def build_sc_customer_demo_bridge_payload(
     if support_fails:
         raise ValueError(f"Support triage surface invariants failed: {support_fails}")
 
+    source_freshness_surface = build_gate32_source_freshness_demo_surface()
+    freshness_fails = gate32_source_freshness_demo_surface_invariant_failures(
+        source_freshness_surface
+    )
+    if freshness_fails:
+        raise ValueError(
+            f"Source freshness surface invariants failed: {freshness_fails}"
+        )
+
+    observability_surface = build_observability_demo_surface()
+    obs_fails = observability_demo_surface_invariant_failures(observability_surface)
+    if obs_fails:
+        raise ValueError(f"Observability surface invariants failed: {obs_fails}")
+
+    backup_restore_surface = build_backup_restore_demo_surface()
+    backup_fails = backup_restore_demo_surface_invariant_failures(
+        backup_restore_surface
+    )
+    if backup_fails:
+        raise ValueError(f"Backup/restore surface invariants failed: {backup_fails}")
+
+    launch_packet_surface = build_launch_packet_demo_surface()
+    launch_fails = launch_packet_demo_surface_invariant_failures(launch_packet_surface)
+    if launch_fails:
+        raise ValueError(f"Launch packet surface invariants failed: {launch_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -1037,6 +1081,10 @@ def build_sc_customer_demo_bridge_payload(
             "live_source_coverage": live_source_coverage_surface,
             "pilot_org_onboarding": pilot_org_onboarding_surface,
             "support_triage": support_triage_surface,
+            "source_freshness": source_freshness_surface,
+            "observability": observability_surface,
+            "backup_restore": backup_restore_surface,
+            "launch_packet": launch_packet_surface,
         }
     )
 
@@ -1498,4 +1546,26 @@ def bridge_payload_invariant_failures(payload: dict[str, Any]) -> list[str]:
         fails.append("support_triage_missing")
     else:
         fails.extend(support_triage_demo_surface_invariant_failures(support_triage))
+    source_freshness = payload.get("source_freshness") or {}
+    if not source_freshness:
+        fails.append("source_freshness_missing")
+    else:
+        fails.extend(
+            gate32_source_freshness_demo_surface_invariant_failures(source_freshness)
+        )
+    observability = payload.get("observability") or {}
+    if not observability:
+        fails.append("observability_missing")
+    else:
+        fails.extend(observability_demo_surface_invariant_failures(observability))
+    backup_restore = payload.get("backup_restore") or {}
+    if not backup_restore:
+        fails.append("backup_restore_missing")
+    else:
+        fails.extend(backup_restore_demo_surface_invariant_failures(backup_restore))
+    launch_packet = payload.get("launch_packet") or {}
+    if not launch_packet:
+        fails.append("launch_packet_missing")
+    else:
+        fails.extend(launch_packet_demo_surface_invariant_failures(launch_packet))
     return fails

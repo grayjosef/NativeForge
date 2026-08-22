@@ -143,6 +143,10 @@ describe("ScCustomerDemoPage", () => {
     expect(html).toContain("sc-demo-live-source-coverage");
     expect(html).toContain("sc-demo-pilot-org-onboarding");
     expect(html).toContain("sc-demo-support-triage");
+    expect(html).toContain("sc-demo-gate32-source-freshness");
+    expect(html).toContain("sc-demo-gate32-observability");
+    expect(html).toContain("sc-demo-backup-restore");
+    expect(html).toContain("sc-demo-launch-packet");
     expect(html).toContain("Customer feedback / reporting");
     expect(html).toContain("slack_live_sent_claimed=false");
     expect(html).toContain("collaboration_feature_enabled=false");
@@ -406,6 +410,12 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.pilot_org_onboarding?.invite_sent_claimed).toBe(false);
     expect(payload.pilot_org_onboarding?.customer_access_claim).toBe(false);
     expect(payload.support_triage?.slack_sent_claimed).toBe(false);
+    expect(payload.source_freshness?.live_source_claim).toBe(false);
+    expect(payload.observability?.alert_sent_claimed).toBe(false);
+    expect(payload.backup_restore?.production_restore_claimed).toBe(false);
+    expect(payload.launch_packet?.controlled_customer_pilot_status).not.toBe(
+      "CONTROLLED_CUSTOMER_GO",
+    );
     expect(payload.opportunity_engine?.combined_workflow.counts.sc_state).toBeGreaterThanOrEqual(
       1,
     );

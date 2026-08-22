@@ -309,6 +309,105 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.source_freshness ? (
+        <section
+          data-testid="sc-demo-gate32-source-freshness"
+          className="nf-sc-demo-section"
+        >
+          <h2>Source health / freshness / dedupe</h2>
+          <p className="nf-sc-demo-why">
+            Packet-only is not live. Reachable is not fresh. One source is not
+            Top-15 live.
+          </p>
+          <p data-testid="sc-demo-gate32-source-freshness-flags" className="nf-muted">
+            probes={String(data.source_freshness.read_only_checks_attempted)} live=
+            {String(data.source_freshness.live_source_claim)} top15=
+            {String(data.source_freshness.top15_live_claimed)} broad=
+            {String(data.source_freshness.broad_coverage_claimed)}
+          </p>
+          <ul>
+            {data.source_freshness.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.observability ? (
+        <section
+          data-testid="sc-demo-gate32-observability"
+          className="nf-sc-demo-section"
+        >
+          <h2>Observability / workflow health</h2>
+          <p className="nf-sc-demo-why">
+            Smoke-only is not production monitoring. Alert sent stays false
+            unless actually sent.
+          </p>
+          <p data-testid="sc-demo-gate32-observability-flags" className="nf-muted">
+            health={String(data.observability.health_checks)} ops=
+            {String(data.observability.pilot_ops_readiness)} alert_sent=
+            {String(data.observability.alert_sent_claimed)} monitored=
+            {String(data.observability.production_monitoring_claimed)}
+          </p>
+          <ul>
+            {data.observability.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.backup_restore ? (
+        <section
+          data-testid="sc-demo-backup-restore"
+          className="nf-sc-demo-section"
+        >
+          <h2>Backup / restore / rollback (non-prod)</h2>
+          <p className="nf-sc-demo-why">
+            Non-prod proof is not production restore. Persistence stays false.
+          </p>
+          <p data-testid="sc-demo-backup-restore-flags" className="nf-muted">
+            prod_backup={String(data.backup_restore.production_backup_claimed)}{" "}
+            prod_restore={String(data.backup_restore.production_restore_claimed)}{" "}
+            persist={String(data.backup_restore.customer_persistence_claimed)}
+          </p>
+          <ul>
+            {data.backup_restore.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {data.launch_packet ? (
+        <section
+          data-testid="sc-demo-launch-packet"
+          className="nf-sc-demo-section"
+        >
+          <h2>Controlled-pilot launch packet</h2>
+          <p className="nf-sc-demo-why">
+            Owner vs non-owner blockers stay separate. Ready for owner review
+            is not customer pilot GO.
+          </p>
+          <p data-testid="sc-demo-launch-packet-flags" className="nf-muted">
+            status={String(data.launch_packet.launch_status)} pilot=
+            {data.launch_packet.controlled_customer_pilot_status} rollout=
+            {data.launch_packet.production_rollout_status}
+          </p>
+          <div data-testid="sc-demo-launch-allowed-claims">
+            allowed={(data.launch_packet.allowed_claims || []).join(", ")}
+          </div>
+          <div data-testid="sc-demo-launch-forbidden-claims">
+            forbidden={(data.launch_packet.forbidden_claims || []).join(", ")}
+          </div>
+          <ul>
+            {data.launch_packet.buyer_summary.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-what-nf-did" className="nf-sc-demo-section">
         <h2>What NativeForge found / did</h2>
         <p className="nf-sc-demo-why">Why this matters: structures discovery so your team reviews evidence, not raw noise.</p>
