@@ -31,11 +31,16 @@ ENV_KEYS: dict[str, tuple[str, ...]] = {
     "client_secret": ("OIDC_CLIENT_SECRET", "NATIVEFORGE_OIDC_CLIENT_SECRET"),
 }
 
-# Flip to True only when a real token verification path exists AND passes.
-# Strict readiness cannot succeed while this is False, because "ready for
-# live login" must mean a token can actually be verified — not merely that
-# config strings are present.
-TOKEN_VERIFICATION_IMPLEMENTED = False
+# Gate 60: a real RS256 verification path now exists
+# (oidc_token_verification_service) and is proven by local-keypair tests.
+# This flag says the *implementation* exists. It does NOT say a live Auth0
+# token has ever been verified — that is LIVE_AUTH0_TOKEN_PROVEN below.
+TOKEN_VERIFICATION_IMPLEMENTED = True
+
+# Flip to True only when a real Auth0/OIDC token has verified end to end
+# against real issuer/audience/JWKS. Local keypair tests prove the code, not
+# the integration, so this stays False until owner credentials are exercised.
+LIVE_AUTH0_TOKEN_PROVEN = False
 
 # Minimum set required before any token verification could be attempted.
 REQUIRED_FOR_VERIFICATION = ("issuer", "audience", "jwks_url", "client_id")
@@ -94,6 +99,8 @@ def build_oidc_readiness(*, strict: bool = False) -> dict[str, Any]:
     config_complete = not required_missing
     # Config presence is necessary but NOT sufficient.
     verification_possible = config_complete and TOKEN_VERIFICATION_IMPLEMENTED
+    # Live readiness is a strictly higher bar than 'the code exists'.
+    live_ready = verification_possible and LIVE_AUTH0_TOKEN_PROVEN
     blocked_reasons: list[str] = []
     if required_missing:
         blocked_reasons.append(
@@ -101,6 +108,8 @@ def build_oidc_readiness(*, strict: bool = False) -> dict[str, Any]:
         )
     if not TOKEN_VERIFICATION_IMPLEMENTED:
         blocked_reasons.append("token_verification_path_not_implemented")
+    if not LIVE_AUTH0_TOKEN_PROVEN:
+        blocked_reasons.append("live_auth0_token_not_proven")
 
     result = {
         "schema_version": SCHEMA_VERSION,
@@ -113,6 +122,8 @@ def build_oidc_readiness(*, strict: bool = False) -> dict[str, Any]:
         "required_missing": required_missing,
         "config_complete": config_complete,
         "token_verification_implemented": TOKEN_VERIFICATION_IMPLEMENTED,
+        "local_token_verification_passed": TOKEN_VERIFICATION_IMPLEMENTED,
+        "live_auth0_token_proven": LIVE_AUTH0_TOKEN_PROVEN,
         "verification_possible": verification_possible,
         "blocked_reasons": blocked_reasons,
         "network_access_attempted": False,
@@ -125,8 +136,9 @@ def build_oidc_readiness(*, strict: bool = False) -> dict[str, Any]:
     }
 
     # Strict mode fails closed unless verification is genuinely possible.
-    result["ok"] = bool(verification_possible) if strict else True
-    result["strict_failure"] = bool(strict and not verification_possible)
+    result["live_ready"] = live_ready
+    result["ok"] = bool(live_ready) if strict else True
+    result["strict_failure"] = bool(strict and not live_ready)
     return _json_safe(result)
 
 
@@ -165,5 +177,7 @@ def oidc_readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
             "token_verification_implemented"
         ):
             fails.append("strict_ok_without_verifier")
+        if readiness.get("ok") and not readiness.get("live_auth0_token_proven"):
+            fails.append("strict_ok_without_live_auth0_proof")
 
     return fails

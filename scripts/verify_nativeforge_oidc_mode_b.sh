@@ -51,6 +51,8 @@ for key, present in sorted(r["config_present"].items()):
 
 print(f"check=config_complete status={'PASS' if r['config_complete'] else 'NO'}")
 print(f"check=token_verification_implemented status={'YES' if r['token_verification_implemented'] else 'NO'}")
+print(f"check=local_token_verification_passed status={'YES' if r['local_token_verification_passed'] else 'NO'}")
+print(f"check=live_auth0_token_proven status={'YES' if r['live_auth0_token_proven'] else 'NO'}")
 print(f"check=verification_possible status={'PASS' if r['verification_possible'] else 'NO'}")
 print(f"check=network_access_attempted status={'NO' if not r['network_access_attempted'] else 'YES'}")
 print(f"check=jwks_fetched status={'NO' if not r['jwks_fetched'] else 'YES'}")
@@ -71,6 +73,7 @@ print("check=invariants status=PASS")
 
 print("note=cloudflare_access_is_not_customer_login")
 print("note=config_presence_is_not_verification")
+print("note=local_keypair_tests_prove_the_code_not_the_integration")
 
 if strict and not r["ok"]:
     print("RESULT=FAIL")

@@ -18,8 +18,12 @@ is not. The governing rules:
     nothing.
 
 Nothing here performs network I/O or token cryptography. Verification is an
-input to this contract, supplied by a real verifier once one exists;
-``oidc_readiness_service`` reports whether that is even possible yet.
+input to this contract, produced by ``oidc_token_verification_service``
+(Gate 60) and mapped in via ``identity_from_verified_token``.
+
+A verified signature establishes **who**. It does not establish which
+organization the subject may act for, nor what role they hold — those still
+require a trusted membership directory, which does not exist yet.
 """
 
 from __future__ import annotations
@@ -168,6 +172,50 @@ def build_request_identity(
             "production_storage_claimed": False,
             "customer_persistence_claimed": False,
         }
+    )
+
+
+def identity_from_verified_token(
+    *,
+    verification: dict[str, Any],
+    verified_org_id: str | None = None,
+    verified_role: str | None = None,
+    membership_source: str = "none",
+) -> dict[str, Any]:
+    """Map a token verification result (Gate 60) onto a request identity.
+
+    A verified signature establishes **who** — subject and optionally email. It
+    establishes nothing about which organization the subject may act for, nor
+    what role they hold. Membership and role must arrive from a trusted
+    directory; passing them here without ``membership_source="verified_directory"``
+    leaves them untrusted, which is the point.
+    """
+    verified = bool(verification.get("verified"))
+    if not verified:
+        # Distinguish "we tried and it failed" from "never configured".
+        state = "invalid" if verification.get("state") not in {
+            "missing_token",
+            "jwks_unavailable",
+        } else "oidc_configured_unverified"
+        return build_request_identity(
+            identity_state=state,
+            verification_source="none",
+            membership_source="none",
+            oidc_configured=True,
+        )
+
+    return build_request_identity(
+        identity_state="oidc_verified",
+        subject=verification.get("subject"),
+        email=verification.get("email"),
+        email_verified=bool(verification.get("email_verified")),
+        issuer=verification.get("issuer"),
+        audience=verification.get("audience"),
+        membership_source=membership_source,
+        verification_source="oidc_token_signature",
+        verified_org_id=verified_org_id,
+        verified_role=verified_role,
+        oidc_configured=True,
     )
 
 

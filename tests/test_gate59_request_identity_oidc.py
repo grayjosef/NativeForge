@@ -87,14 +87,21 @@ def test_strict_oidc_readiness_fails_closed_when_config_missing(
 
 
 def test_complete_config_is_still_not_verification(full_oidc_env: None) -> None:
-    """Config presence must never be mistaken for a working login."""
+    """Config presence must never be mistaken for a working login.
+
+    Gate 60 implemented the verifier, so the blocking reason MOVED rather than
+    disappearing: strict readiness now fails on missing live Auth0 proof instead
+    of on a missing verifier. The invariant this test protects is unchanged —
+    complete config alone never makes login live.
+    """
     r = build_oidc_readiness(strict=True)
     assert r["config_complete"] is True
-    assert r["token_verification_implemented"] is False
-    assert r["verification_possible"] is False
-    assert r["ok"] is False, "strict must fail while no verifier exists"
-    assert "token_verification_path_not_implemented" in r["blocked_reasons"]
+    assert r["token_verification_implemented"] is True, "Gate 60 implemented it"
+    assert r["live_auth0_token_proven"] is False
+    assert r["ok"] is False, "strict must fail while live Auth0 proof is absent"
+    assert "live_auth0_token_not_proven" in r["blocked_reasons"]
     assert r["login_live_claimed"] is False
+    assert r["customer_login_live_claimed"] is False
     assert r["readiness_state"] == "oidc_configured_unverified"
     assert oidc_readiness_invariant_failures(r) == []
 
