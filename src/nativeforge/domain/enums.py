@@ -74,6 +74,79 @@ class AuditAction(StrEnum):
     operator_action_dismissed = "operator_action_dismissed"
     operator_action_reopened = "operator_action_reopened"
 
+    # ── security-critical verbs (Gate 65, planned in doc 391) ───────────────
+    # Vocabulary only. Adding these is safe and migration-free: nf_audit_events
+    # .action is sa.String(64) with no CHECK constraint, and the longest verb
+    # here is 34 characters.
+    #
+    # Having a verb is not having persistence. Nothing writes these yet — no
+    # managed database is provisioned — and one of them cannot be written
+    # correctly even once there is one. See SECURITY_AUDIT_ACTIONS below and
+    # docs/operations/401_GATE65_AUDIT_ACTION_VOCABULARY_AND_0028_PLAN.md.
+    tenant_access_denied = "tenant_access_denied"
+    cross_org_access_attempt = "cross_org_access_attempt"
+    membership_created = "membership_created"
+    membership_revoked = "membership_revoked"
+    membership_expired = "membership_expired"
+    role_changed = "role_changed"
+    authority_proof_submitted = "authority_proof_submitted"
+    authority_proof_verified = "authority_proof_verified"
+    authority_sensitive_action_blocked = "authority_sensitive_action_blocked"
+    source_candidate_promoted = "source_candidate_promoted"
+    source_candidate_blocked = "source_candidate_blocked"
+    feedback_alert_attempted = "feedback_alert_attempted"
+    feedback_alert_failed = "feedback_alert_failed"
+
+
+# The security verbs, named as a set so callers can ask "is this a security
+# event?" without re-listing them and drifting.
+SECURITY_AUDIT_ACTIONS: frozenset[AuditAction] = frozenset(
+    {
+        AuditAction.tenant_access_denied,
+        AuditAction.cross_org_access_attempt,
+        AuditAction.membership_created,
+        AuditAction.membership_revoked,
+        AuditAction.membership_expired,
+        AuditAction.role_changed,
+        AuditAction.authority_proof_submitted,
+        AuditAction.authority_proof_verified,
+        AuditAction.authority_sensitive_action_blocked,
+        AuditAction.source_candidate_promoted,
+        AuditAction.source_candidate_blocked,
+        AuditAction.feedback_alert_attempted,
+        AuditAction.feedback_alert_failed,
+    }
+)
+
+# Verbs that the CURRENT nf_audit_events schema cannot represent correctly, and
+# which must therefore not be persisted even when a database exists.
+#
+# cross_org_access_attempt concerns two organizations: the one whose credentials
+# were used, and the one that was targeted. nf_audit_events.organization_id is
+# NOT NULL and is the RLS scoping column, so there is exactly one slot. Writing
+# the claimed org there would scope the event to the attacker's tenant and hide
+# it from the tenant actually attacked — the reader who most needs to see it.
+# Writing the target org there would attribute the action to the victim.
+#
+# Neither is acceptable, so this verb stays unpersistable until migration 0028
+# adds actor_org_id / target_org_id / claimed_org_id.
+UNPERSISTABLE_AUDIT_ACTIONS: frozenset[AuditAction] = frozenset(
+    {AuditAction.cross_org_access_attempt}
+)
+
+
+def audit_action_is_persistable(action: AuditAction | str) -> bool:
+    """Whether the current schema can store this verb without lying.
+
+    Deny-by-default on unknown input: a verb this code has never heard of is
+    not something to write into a security audit trail.
+    """
+    try:
+        resolved = AuditAction(action)
+    except ValueError:
+        return False
+    return resolved not in UNPERSISTABLE_AUDIT_ACTIONS
+
 
 class TribalEntityType(StrEnum):
     """Applicant organization classification for tribal grant pursuit."""

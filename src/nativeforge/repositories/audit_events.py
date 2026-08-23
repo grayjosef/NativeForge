@@ -8,7 +8,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from nativeforge.db.models import NfAuditEvent
-from nativeforge.domain.enums import AuditAction
+from nativeforge.domain.enums import UNPERSISTABLE_AUDIT_ACTIONS, AuditAction
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories.scoping import select_audit_events_for_org
 
@@ -59,6 +59,21 @@ def append_org_audit_event(
     payload: dict[str, Any] | None,
     actor_id: uuid.UUID | None,
 ) -> NfAuditEvent:
+    # Some security verbs cannot be represented correctly by this table yet.
+    # cross_org_access_attempt involves two organizations and this table has one
+    # NOT NULL, RLS-scoped organization_id column: writing it would either hide
+    # the event from the tenant that was attacked or attribute the attack to
+    # them. Refusing is the honest option until migration 0028 lands.
+    #
+    # This raises rather than silently dropping. A security event that vanishes
+    # is worse than a request that fails, because nobody finds out.
+    if action in UNPERSISTABLE_AUDIT_ACTIONS:
+        raise ValueError(
+            f"audit action {action.value!r} cannot be persisted by the current "
+            "nf_audit_events schema: it needs distinct actor/target organization "
+            "columns. See docs/operations/"
+            "401_GATE65_AUDIT_ACTION_VOCABULARY_AND_0028_PLAN.md"
+        )
     ev = NfAuditEvent(
         id=uuid.uuid4(),
         organization_id=organization_id,
