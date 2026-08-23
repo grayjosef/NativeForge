@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from nativeforge.api.deps_db import require_demo_org_db, require_real_org_db
 from nativeforge.api.org_context import OrgContext
+from nativeforge.api.tenant_guard import guard_same_org_404
 from nativeforge.services import operator_workbench_advisory_service as wb_adv
 
 demo_workbench_advisory_router = APIRouter(
@@ -22,8 +23,8 @@ real_workbench_advisory_router = APIRouter(
 
 
 def _same_org(org_id: uuid.UUID, ctx: OrgContext) -> None:
-    if org_id != ctx.org_id:
-        raise HTTPException(status_code=404, detail="organization not found")
+    """Delegates to the single tenant guard (Gate 58). 404 preserved."""
+    guard_same_org_404(org_id, ctx)
 
 
 def _require_workbench_flag(nf_workbench: bool) -> None:

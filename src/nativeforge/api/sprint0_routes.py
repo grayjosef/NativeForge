@@ -16,6 +16,7 @@ from nativeforge.api.deps_db import (
     require_real_org_db,
 )
 from nativeforge.api.org_context import OrgContext
+from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.repositories import review_artifacts as ra_repo
 
 
@@ -35,11 +36,8 @@ class AuditEventOut(BaseModel):
 
 
 def _same_org(path_org: uuid.UUID, ctx: OrgContext) -> None:
-    if path_org != ctx.org_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="path org_id does not match authenticated org",
-        )
+    """Delegates to the single tenant guard (Gate 58). 403 preserved."""
+    guard_same_org_403(path_org, ctx)
 
 
 def _artifact_out(art) -> ReviewArtifactOut:

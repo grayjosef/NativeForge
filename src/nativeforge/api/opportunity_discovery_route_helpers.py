@@ -13,6 +13,7 @@ from nativeforge.api.opportunity_discovery_schemas import (
     OpportunitySourceCreateBody,
 )
 from nativeforge.api.org_context import OrgContext
+from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.domain.enums import EvidencePackSubjectType
 from nativeforge.repositories import opportunity_sources as os_repo
 from nativeforge.repositories import organizations as org_repo
@@ -26,11 +27,8 @@ from nativeforge.services.opportunity_discovery_service import (
 
 
 def same_org(path_org: uuid.UUID, ctx: OrgContext) -> None:
-    if path_org != ctx.org_id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="path org_id does not match authenticated org",
-        )
+    """Delegates to the single tenant guard (Gate 58). 403 preserved."""
+    guard_same_org_403(path_org, ctx)
 
 
 def maybe_filter_coverage_intel(

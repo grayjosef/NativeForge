@@ -14,6 +14,7 @@ from nativeforge.api.deps_db import (
     require_real_org_db,
 )
 from nativeforge.api.org_context import OrgContext
+from nativeforge.api.tenant_guard import guard_same_org_404
 from nativeforge.repositories import organizations as org_repo
 from nativeforge.services import source_ingestion_orchestrator_service as orch
 from nativeforge.services.activation_publish_gate_service import (
@@ -79,8 +80,8 @@ real_source_ingestion_router = APIRouter(
 
 
 def _same_org(org_id: uuid.UUID, ctx: OrgContext) -> None:
-    if org_id != ctx.org_id:
-        raise HTTPException(status_code=404, detail="organization not found")
+    """Delegates to the single tenant guard (Gate 58). 404 preserved."""
+    guard_same_org_404(org_id, ctx)
 
 
 def _run_tier1_batch_live_pull(
