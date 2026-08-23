@@ -254,6 +254,15 @@ def test_service_has_no_scrape_http_llm_ledger_paths() -> None:
     assert "openai" not in src
 
 
+@pytest.mark.skip(
+    reason=(
+        "Gate 63: obsolete campaign freeze guard. Asserts no 0020_* migration exists; "
+        "revisions 0020-0022 (M7/M8) and 0023-0027 (approved Gate 62 storage path) now "
+        "exist for reasons outside this campaign. Replaced by "
+        "tests/test_gate63_migration_doctrine.py. See "
+        "docs/operations/395_GATE63_ACTIVE_SOURCE_TEST_CLEANUP.md"
+    )
+)
 def test_no_new_alembic_revision_file_added_for_sprint_53_chain() -> None:
     """Sprint 53 delivers verification code only; revision files stay at 0019 head."""
     assert (ALEMBIC_VERSIONS / "0019_nf_active_opportunity_sources.py").is_file()

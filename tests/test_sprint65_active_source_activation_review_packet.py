@@ -6,6 +6,8 @@ import ast
 import importlib
 from pathlib import Path
 
+import pytest
+
 from nativeforge.services.active_source_activation_readiness_gate_service import (
     ARTIFACT_TYPE as GATE_ARTIFACT_TYPE,
 )
@@ -408,6 +410,15 @@ def test_27_review_service_no_http_client_usage() -> None:
     assert "urllib.request" not in src
 
 
+@pytest.mark.skip(
+    reason=(
+        "Gate 63: obsolete campaign freeze guard. Asserts no 0020_* migration exists; "
+        "revisions 0020-0022 (M7/M8) and 0023-0027 (approved Gate 62 storage path) now "
+        "exist for reasons outside this campaign. Replaced by "
+        "tests/test_gate63_migration_doctrine.py. See "
+        "docs/operations/395_GATE63_ACTIVE_SOURCE_TEST_CLEANUP.md"
+    )
+)
 def test_28_no_new_alembic_revision_beyond_0019() -> None:
     assert not any(p.name.startswith("0020_") for p in ALEMBIC_VERSIONS.glob("*.py"))
 

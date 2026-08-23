@@ -8,6 +8,8 @@ import json
 import uuid
 from pathlib import Path
 
+import pytest
+
 from nativeforge.db.models import NfActiveOpportunitySource, Organization
 from nativeforge.db.session import SessionLocal
 from nativeforge.services.active_source_creation_execution_dry_run_service import (
@@ -383,6 +385,15 @@ def test_service_does_not_import_subprocess_or_alembic_command() -> None:
     assert "alembic.command" not in src
 
 
+@pytest.mark.skip(
+    reason=(
+        "Gate 63: obsolete campaign freeze guard. Asserts no 0020_* migration exists; "
+        "revisions 0020-0022 (M7/M8) and 0023-0027 (approved Gate 62 storage path) now "
+        "exist for reasons outside this campaign. Replaced by "
+        "tests/test_gate63_migration_doctrine.py. See "
+        "docs/operations/395_GATE63_ACTIVE_SOURCE_TEST_CLEANUP.md"
+    )
+)
 def test_no_new_alembic_revision_beyond_0019() -> None:
     assert not any(p.name.startswith("0020_") for p in ALEMBIC_VERSIONS.glob("*.py"))
 

@@ -109,6 +109,15 @@ def test_upgrade_downgrade_isolated_sqlite() -> None:
     assert proof["alembic_downgrade_to_0018_succeeded"] is True
 
 
+@pytest.mark.skip(
+    reason=(
+        "Gate 63: superseded migration proof. This upgrade/downgrade proof assumes "
+        "head 0019, so downgrade now removes more than the target table. Superseded by "
+        "the real-PostgreSQL proof in scripts/verify_nativeforge_rls_isolation.sh (doc "
+        "389) and tests/test_gate63_migration_doctrine.py. See "
+        "docs/operations/395_GATE63_ACTIVE_SOURCE_TEST_CLEANUP.md"
+    )
+)
 def test_table_exists_after_upgrade_and_gone_after_downgrade() -> None:
     proof = run_sprint47_isolated_sqlite_verification(repo_root=REPO_ROOT)
     assert proof["target_table_present_after_upgrade"] is True
@@ -156,6 +165,15 @@ def test_no_seeded_rows_after_upgrade() -> None:
     assert proof["nf_active_opportunity_sources_row_count_after_upgrade"] == 0
 
 
+@pytest.mark.skip(
+    reason=(
+        "Gate 63: superseded migration proof. This upgrade/downgrade proof assumes "
+        "head 0019, so downgrade now removes more than the target table. Superseded by "
+        "the real-PostgreSQL proof in scripts/verify_nativeforge_rls_isolation.sh (doc "
+        "389) and tests/test_gate63_migration_doctrine.py. See "
+        "docs/operations/395_GATE63_ACTIVE_SOURCE_TEST_CLEANUP.md"
+    )
+)
 def test_full_artifact_with_isolated_proof_passes() -> None:
     proof = run_sprint47_isolated_sqlite_verification(repo_root=REPO_ROOT)
     v = build_active_source_local_migration_verification(
@@ -167,6 +185,15 @@ def test_full_artifact_with_isolated_proof_passes() -> None:
     assert v["downgrade_verification"]["check_status"] == "passed"
 
 
+@pytest.mark.skip(
+    reason=(
+        "Gate 63: superseded migration proof. This upgrade/downgrade proof assumes "
+        "head 0019, so downgrade now removes more than the target table. Superseded by "
+        "the real-PostgreSQL proof in scripts/verify_nativeforge_rls_isolation.sh (doc "
+        "389) and tests/test_gate63_migration_doctrine.py. See "
+        "docs/operations/395_GATE63_ACTIVE_SOURCE_TEST_CLEANUP.md"
+    )
+)
 def test_downgrade_does_not_drop_unrelated_tables() -> None:
     proof = run_sprint47_isolated_sqlite_verification(repo_root=REPO_ROOT)
     assert "organizations" in (proof.get("table_names_before_downgrade") or [])

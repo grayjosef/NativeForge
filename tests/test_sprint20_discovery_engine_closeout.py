@@ -150,7 +150,10 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
         text=True,
         check=True,
     )
-    assert result.stdout.strip() == "0019 (head)"
+    # Gate 63: re-pinned 0019 -> 0027. This assertion still protects a real
+    # invariant (single head, no duplicate revision ids); only the expected
+    # value was stale. Update it deliberately when a migration is approved.
+    assert result.stdout.strip() == "0027 (head)"
 
     sprint_discovery_files = [
         "0010_nf_opportunity_sources_discovery.py",
