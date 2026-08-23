@@ -119,3 +119,33 @@ length lever design chose was ledger condensation and tiering, both of which are
 - Dark mode retuned to the ochre/ink palette but not visually reviewed.
 - Docs `346`–`349` describe the superseded card system; they are kept as the audit and
   measurement record, not as current visual direction.
+
+## Artifact ordering doctrine — stamped build LAST
+
+Recorded here because this trap was hit twice during this UX work.
+
+`frontend/playwright.config.ts` declares
+`webServer.command = "npm run build && npm run preview ..."`, so running
+`npx playwright test` **rebuilds `frontend/dist` as an UNSTAMPED artifact** —
+removing the `nativeforge-build-sha` meta and deleting `build-manifest.json`.
+
+Correct order, always:
+
+```text
+1. npm run typecheck / npm run build / vitest / Playwright   <- all tests FIRST
+2. ./scripts/build_frontend_stamped.sh                       <- stamped build LAST
+3. systemctl --user restart nativeforge-demo-preview.service
+4. ./scripts/verify_nativeforge_demo_deployment.sh           <- verifier LAST
+```
+
+**Do not trust `frontend/dist` after Playwright unless the stamped build is rerun.**
+
+A verifier `RESULT=PASS` recorded *before* a Playwright run does not describe the
+artifact being served *after* it. Re-stamp, restart, then re-verify.
+
+`build_frontend_stamped.sh` refuses a dirty tracked tree. `NF_ALLOW_DIRTY_BUILD=1`
+is for iteration only; the final build must come from a clean tree so the manifest
+records `source_dirty: false`.
+
+See `359_GATE50_CLOUDFLARED_USER_UNIT.md` for the tunnel-durability and verifier
+hardening that came out of the same incident.

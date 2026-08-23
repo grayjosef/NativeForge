@@ -1,0 +1,24 @@
+[Unit]
+Description=NativeForge Cloudflare Tunnel
+Documentation=docs/operations/359_GATE50_CLOUDFLARED_USER_UNIT.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/josefgray
+ExecStart=/usr/local/bin/cloudflared --no-autoupdate --config /home/josefgray/.cloudflared/config.yml --metrics 127.0.0.1:20241 tunnel run
+Restart=on-failure
+RestartSec=5
+# Tunnel config and credentials live outside the repo in ~/.cloudflared/.
+# No tunnel UUID, token, or credential path beyond the config file appears here.
+# Logs go to the user journal: journalctl --user -u nativeforge-cloudflared.service
+#
+# Why this unit exists: cloudflared previously ran as a bare foreground process.
+# config.yml was edited 23 minutes after that process started, cloudflared does
+# not hot-reload, and the stale ingress served HTTP 404 to every authenticated
+# request for ~5.5 hours while the loopback verifier still reported PASS.
+# A unit gives restart-on-failure and makes "edit config -> restart" explicit.
+
+[Install]
+WantedBy=default.target
