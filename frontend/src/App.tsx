@@ -134,6 +134,14 @@ export default function App() {
 
   const [surface, setSurfaceState] = useState<AppSurface>(() => readSurface());
 
+  /* SC and NM/WA are offline static demo bridges: they render entirely from
+     bundled JSON and never need the workspace API. Firing these requests from
+     the public demo means the viewer's browser probes http://127.0.0.1:8000 on
+     THEIR OWN machine — which can never succeed, is mixed content on an https
+     page, and puts eight red errors in front of a buyer who opens DevTools. */
+  const offlineDemoSurface =
+    surface === "sc_customer_demo" || surface === "nm_wa_operator_demo";
+
   const setSurface = useCallback((s: AppSurface) => {
     setSurfaceState(s);
     try {
@@ -238,8 +246,9 @@ export default function App() {
   }, [base, orgOk, plane, o]);
 
   useEffect(() => {
+    if (offlineDemoSurface) return;
     void refreshConnectivity();
-  }, [refreshConnectivity]);
+  }, [refreshConnectivity, offlineDemoSurface]);
 
   const loadProfile = useCallback(async () => {
     if (!orgOk) {
@@ -260,8 +269,9 @@ export default function App() {
   }, [base, orgOk, plane, o]);
 
   useEffect(() => {
+    if (offlineDemoSurface) return;
     void loadProfile();
-  }, [loadProfile]);
+  }, [loadProfile, offlineDemoSurface]);
 
   const profileFields = useMemo(() => {
     if (!profileRecord) {
@@ -338,8 +348,9 @@ export default function App() {
   }, [base, orgOk, plane, o, sparkId]);
 
   useEffect(() => {
+    if (offlineDemoSurface) return;
     void loadSparksAndDetail();
-  }, [loadSparksAndDetail]);
+  }, [loadSparksAndDetail, offlineDemoSurface]);
 
   useEffect(() => {
     setRequirements([]);
@@ -616,8 +627,9 @@ export default function App() {
   }, [base, orgOk, o, plane]);
 
   useEffect(() => {
+    if (offlineDemoSurface) return;
     void refreshTrustCenter();
-  }, [refreshTrustCenter]);
+  }, [refreshTrustCenter, offlineDemoSurface]);
 
   const onExportDownload = useCallback(async () => {
     if (!orgOk || !actorId) {
@@ -807,13 +819,6 @@ export default function App() {
     onExportDownload,
     refreshTrustCenter,
   ]);
-
-  /* SC and NM/WA demos are offline static bridges — they never call the
-     workspace API, so workspace connectivity says nothing about them. Scoping
-     the banner to the surfaces it actually describes (it stays fully visible on
-     Workspace / Workbench / Activation). */
-  const offlineDemoSurface =
-    surface === "sc_customer_demo" || surface === "nm_wa_operator_demo";
 
   return (
     <div className="nf-app" data-surface={surface}>
