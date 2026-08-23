@@ -64,9 +64,28 @@ def evaluate_same_org(
     actor_id: str | None = None,
 ) -> dict[str, Any]:
     """Evaluate org-scoped access and record any denial. Never raises."""
+    # Gate 59: if a request identity was resolved, use it so the denial event
+    # names a real actor instead of the org id placeholder. Falls back to the
+    # previous behaviour when no identity is present, so nothing depends on it.
+    identity: dict[str, Any] | None = None
+    try:  # local import avoids a circular import at module load
+        from nativeforge.api.request_identity import get_current_identity
+
+        identity = get_current_identity()
+    except Exception:  # pragma: no cover - defensive
+        identity = None
+
+    resolved_actor = actor_id
+    if not resolved_actor and identity:
+        resolved_actor = (
+            identity.get("subject")
+            or identity.get("email")
+            or f"identity:{identity.get('identity_state')}"
+        )
+
     context = build_request_enforcement_context(
         requesting_org_id=str(ctx.org_id),
-        actor_id=actor_id or str(ctx.org_id),
+        actor_id=resolved_actor or str(ctx.org_id),
         plane=getattr(ctx, "org_type", "unknown") or "unknown",
     )
     decision = enforce_tenant_access(
