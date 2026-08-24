@@ -83,7 +83,17 @@ for dir in "${WATCHED[@]}"; do
     say "watched_dir_present:${dir}" SKIP "not present"
     continue
   fi
-  dirty="$(git status --porcelain=v1 -- "$dir" 2>/dev/null | grep -v '^??' || true)"
+  # Flag MUTATION of committed evidence: modifications, deletions, renames.
+  #
+  # Excluded, deliberately:
+  #   ??  untracked — a suite-created scratch file is not a rewrite of evidence
+  #   A   staged addition — a deliberately added new fixture is not a mutation,
+  #       and a test run cannot `git add`, so this opens no hole. A suite that
+  #       created a file under a watched directory would show as ?? instead.
+  #
+  # Everything else (" M", "M ", "MM", " D", "D ", "R ") still fails, which is
+  # the case that matters: a tracked evidence file changed underneath us.
+  dirty="$(git status --porcelain=v1 -- "$dir" 2>/dev/null | grep -vE '^(\?\?|A )' || true)"
   if [[ -z "$dirty" ]]; then
     say "fixtures_clean:${dir}" PASS
   else

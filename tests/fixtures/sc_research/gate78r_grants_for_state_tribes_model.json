@@ -1,0 +1,198 @@
+{
+  "_meta": {
+    "schema_version": "nf_sc_research_model_v1",
+    "modelled_by": "Gate 79D",
+    "derived_from": "Gate 78R research pass (docs/operations/439_GATE78R_SC_SOURCE_IDENTIFICATION_RESEARCH.md)",
+    "provenance": "research-derived model, NOT live coverage and NOT an opportunity feed",
+    "captured_on": "2026-08-24",
+    "caveats": [
+      "This models a RESEARCH FINDING about a page, not a set of live opportunity records.",
+      "No individual opportunity record is invented: there are no posted dates, close dates, opportunity numbers, award amounts or application URLs here, because none were captured.",
+      "Eligibility strings below are as captured by the Gate 78R read of the page. They were reported in quotes by that read but have NOT been re-verified against each programme's primary notice.",
+      "Therefore every eligibility string must be treated as a research lead requiring primary-source confirmation before any eligibility or exclusion conclusion is published to a customer.",
+      "Programme currency is unknown. Federal programmes open and close; this is a snapshot of a page as read on the capture date, not a claim that any programme is currently accepting applications.",
+      "The page is titled for state tribes but every programme on it is federal. That mismatch is the finding."
+    ],
+    "source_is_real": "yes",
+    "source_is_grant_source": "yes",
+    "source_is_native_relevant": "yes",
+    "monitoring_allowed": false,
+    "coverage_claimed": false,
+    "freshness_claimed": false,
+    "eligibility_proven": false
+  },
+  "source": {
+    "source_id": "sc-013-advance-grants-state-tribes",
+    "source_name": "SC Native American Affairs — Grants for State Tribes",
+    "source_url": "https://advance.sc.gov/grants-state-tribes",
+    "source_owner": "SC Commission for Community Advancement and Engagement",
+    "source_family": "sc_agency_program_page",
+    "host_state": "SC",
+    "source_lane": "sc_state",
+    "opportunity_funding_lane_default": "federal_sc_relevant",
+    "note": "Host page is an SC state domain; every programme listed is federally funded. Lane must be assigned per programme, not inherited from the host.",
+    "robots_terms_status": "unresolved",
+    "access_method": "html_page_scheduled_check",
+    "promotion_status": "discovered",
+    "last_checked_at": null,
+    "recognition_context": {
+      "sc_federally_recognized_tribes": 1,
+      "sc_state_recognized_tribes": 10,
+      "sc_indian_groups": 3,
+      "sc_special_interest_organizations": 3,
+      "recognition_source": "https://advance.sc.gov/south-carolinas-recognized-native-american-indian-entities",
+      "note": "A secondary source reported nine state-recognized tribes; the agency page enumerates ten. The agency page is treated as authoritative and the discrepancy is recorded, not resolved."
+    }
+  },
+  "programmes": [
+    {
+      "programme_name": "Career and Technical Education — Grants to Native Americans and Alaska Natives (NACTEP)",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "ED",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "Federally recognized Indian tribes, tribal organizations, Alaska Native entities, and eligible BIE-funded schools",
+      "eligibility_verified": false,
+      "expected_exclusion_signal": "state_recognized_tribe",
+      "note": "The clearest exclusion case found in Gate 78R: an exclusive enumerated list that state-recognized tribes are not on."
+    },
+    {
+      "programme_name": "Direct Home Loans for Native Americans",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "VA",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "Eligible Native American Veterans who wish to purchase, construct, or improve a home on Federal Trust land",
+      "eligibility_verified": false,
+      "expected_restriction_signal": "federal_trust_land",
+      "note": "A restriction on how an award may be used, not a class exclusion. Must be represented as a restriction."
+    },
+    {
+      "programme_name": "Environmental Regulatory Enhancement (ERE)",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "HHS",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": null,
+      "eligibility_verified": false,
+      "note": "Eligibility not stated on the page as captured. Remains unknown."
+    },
+    {
+      "programme_name": "Indian Health Service (IHS) Pre-Graduate Scholarship",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "HHS/IHS",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "Qualified American Indian and Alaska Native undergraduate students",
+      "eligibility_verified": false,
+      "note": "Individual applicant class, not an organizational one."
+    },
+    {
+      "programme_name": "Indian Arts and Crafts Development",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "DOI",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": null,
+      "eligibility_verified": false,
+      "note": "Eligibility not stated on the page as captured."
+    },
+    {
+      "programme_name": "Indian Community Development Block Grant",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "HUD",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "Eligible grantees for use in developing viable Indian and Alaska Native communities",
+      "eligibility_verified": false,
+      "note": "\"Eligible grantees\" is circular as captured; the operative definition is in the primary notice."
+    },
+    {
+      "programme_name": "Indian Education — Demonstration Grants",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "ED",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "Designed to prepare and train Indians to serve as teachers and school administrators",
+      "eligibility_verified": false,
+      "note": "Describes purpose rather than applicant class."
+    },
+    {
+      "programme_name": "Indian Home Loan Guarantee Program",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "HUD",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "Lower-income families through an authorized local Public Housing Agency",
+      "eligibility_verified": false,
+      "note": "Routes through a Public Housing Agency, which is an intermediary rather than a direct tribal applicant path."
+    },
+    {
+      "programme_name": "Native American Congressional Internships",
+      "funding_origin": "unknown",
+      "federal_agency": null,
+      "funding_lane": "unknown",
+      "eligibility_text_as_captured": "Native American and Alaska Native students",
+      "eligibility_verified": false,
+      "note": "Funder not identified on the page as captured; may be non-federal. Lane unknown."
+    },
+    {
+      "programme_name": "State Tribal Education Partnership (STEP)",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "ED",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "Requires collaboration between tribal, state, and local education agencies",
+      "eligibility_verified": false,
+      "note": "Only programme on the page whose description implies a state partnership role."
+    },
+    {
+      "programme_name": "Title VII Formula Program for Indian Children",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "ED",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "American Indian and Alaska Native students, including preschool children",
+      "eligibility_verified": false,
+      "note": "Beneficiary class, not applicant class. Formula programmes typically run through LEAs."
+    },
+    {
+      "programme_name": "Workforce Innovation and Opportunity Act, Section 166",
+      "funding_origin": "federal_appropriation",
+      "federal_agency": "DOL",
+      "funding_lane": "federal_sc_relevant",
+      "eligibility_text_as_captured": "Native American, Alaska Native, and Native Hawaiian individuals",
+      "eligibility_verified": false,
+      "note": "Names beneficiary individuals; the grantee class is defined in the primary notice."
+    }
+  ],
+  "pass_through_examples": [
+    {
+      "source_name": "SCEMD — Mitigation (HMGP)",
+      "source_url": "https://www.scemd.org/recover/mitigation/",
+      "state_agency": "SCEMD",
+      "federal_agency": "FEMA",
+      "funding_origin": "federal_pass_through_to_state",
+      "expected_funding_lane": "federal_pass_through",
+      "evidence_as_captured": "SCEMD administers Hazard Mitigation Grant Program (HMGP) projects funded on a 75% federal, 25% non-federal cost share basis"
+    },
+    {
+      "source_name": "SC Office of Resilience — CDBG-MIT",
+      "source_url": "https://scor.sc.gov/resilience-main/sc-disaster-relief-resilience-act",
+      "state_agency": "SCOR",
+      "federal_agency": "HUD",
+      "funding_origin": "federal_pass_through_to_state",
+      "expected_funding_lane": "federal_pass_through",
+      "evidence_as_captured": "SCOR manages the Community Development Block Grant – Mitigation, a Federal HUD grant"
+    },
+    {
+      "source_name": "SC DES — Section 319 Nonpoint Source",
+      "source_url": "https://des.sc.gov/business/businesses-and-communities-go-green/environmental-loans-grants-businesses-communities",
+      "state_agency": "SCDES",
+      "federal_agency": "EPA",
+      "funding_origin": "federal_pass_through_to_state",
+      "expected_funding_lane": "federal_pass_through",
+      "evidence_as_captured": "319 Nonpoint Source Pollution Grants listed among SC DES environmental loans and grants"
+    }
+  ],
+  "state_funded_example": {
+    "source_name": "SC Housing — Housing Trust Fund",
+    "source_url": "https://schousing.sc.gov/development/south-carolina-housing-trust-fund-htf",
+    "state_agency": "SC Housing",
+    "federal_agency": null,
+    "funding_origin": "state_trust_fund",
+    "expected_funding_lane": "sc_state",
+    "evidence_as_captured": "SC Housing Trust Fund described as a state trust fund providing state funds for affordable housing",
+    "note": "The clearest sc_state candidate found. Still requires a cited primary reference before the lane may be assigned, per the Gate 79 rule that sc_state alone cannot be inferred."
+  }
+}
