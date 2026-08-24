@@ -33,9 +33,16 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def build_nf15_corrected_corpus() -> list[dict[str, Any]]:
-    """Mixed corpus with NF-13 placeholder grants re-ingested."""
-    reingest = reingest_nf13_placeholder_grants()
+def build_nf15_corrected_corpus(
+    *, http_post: Any | None = None
+) -> list[dict[str, Any]]:
+    """Mixed corpus with NF-13 placeholder grants re-ingested.
+
+    ``http_post`` is threaded through so a caller can supply a recorded
+    transport. Without one the live path is reached and refused by the Gate 77B
+    network guard.
+    """
+    reingest = reingest_nf13_placeholder_grants(http_post=http_post)
     by_id = {g["grant_id"]: g for g in reingest["updated_grants"]}
     corpus: list[dict[str, Any]] = []
     for grant in build_mixed_real_corpus():
@@ -44,8 +51,8 @@ def build_nf15_corrected_corpus() -> list[dict[str, Any]]:
     return corpus
 
 
-def classify_nf15_corrected_corpus() -> dict[str, Any]:
-    corpus = build_nf15_corrected_corpus()
+def classify_nf15_corrected_corpus(*, http_post: Any | None = None) -> dict[str, Any]:
+    corpus = build_nf15_corrected_corpus(http_post=http_post)
     classifications: list[dict[str, Any]] = []
     tribal_in_irrelevant: list[str] = []
     insufficient_labeled_irrelevant: list[str] = []
@@ -59,7 +66,10 @@ def classify_nf15_corrected_corpus() -> dict[str, Any]:
             classification_label=cls["classification_label"],
             eligibility_evidence_status=status,
         )
-        if cls["classification_label"] == "irrelevant" and grant.get("corpus_segment") == "tribal_federal":
+        if (
+            cls["classification_label"] == "irrelevant"
+            and grant.get("corpus_segment") == "tribal_federal"
+        ):
             tribal_in_irrelevant.append(str(grant.get("grant_id")))
         if (
             cls["classification_label"] == "irrelevant"
@@ -68,7 +78,9 @@ def classify_nf15_corrected_corpus() -> dict[str, Any]:
             insufficient_labeled_irrelevant.append(str(grant.get("grant_id")))
         classifications.append(record)
 
-    label_dist = Counter(c["classification"]["classification_label"] for c in classifications)
+    label_dist = Counter(
+        c["classification"]["classification_label"] for c in classifications
+    )
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,

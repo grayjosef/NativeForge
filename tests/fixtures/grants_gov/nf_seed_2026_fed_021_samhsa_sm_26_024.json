@@ -1,0 +1,81 @@
+{
+  "_meta": {
+    "schema_version": "nf_recorded_grants_gov_transport_v1",
+    "recorded_by": "Gate 77B",
+    "provenance": "repo-recorded, NOT live-fetched",
+    "seed_id": "nf-seed-2026-fed-021",
+    "expected_grant_id": "nf13-real-fed-021",
+    "recorded_opportunity_number": "SM-26-024",
+    "recorded_opportunity_id": "361976",
+    "recorded_agency": "SAMHSA / HHS",
+    "source_of_values": [
+      "fixtures/real_grants_corpus/nf13_real_ingested_grants.json",
+      "fixtures/real_grants_corpus/nf15_eligibility_reingest_pulls.json"
+    ],
+    "notes": [
+      "Every field below is transcribed from committed corpus evidence for",
+      "grant nf13-real-fed-021. Nothing here was fetched live and no agency,",
+      "eligibility statement or applicant type was invented.",
+      "This fixture reconstructs the Grants.gov transport responses that would",
+      "produce the already-recorded corpus row, so the re-ingest path can be",
+      "exercised without calling a third party.",
+      "It is a record of what the repo already asserts, not a claim about what",
+      "api.grants.gov returns today. As of Gate 77 the live search for this",
+      "seed returns HHS-2027-IHS-SPIP-0001 from HHS-IHS, which the",
+      "cross-program ownership guard correctly refuses."
+    ]
+  },
+  "responses": {
+    "https://api.grants.gov/v1/api/search2": {
+      "errorcode": 0,
+      "msg": "recorded",
+      "data": {
+        "hitCount": 1,
+        "oppHits": [
+          {
+            "id": "361976",
+            "number": "SM-26-024",
+            "title": "Tribal Behavioral Health: Suicide Prevention",
+            "agencyCode": "HHS-SAMHSA",
+            "agency": "SAMHSA / HHS",
+            "openDate": "",
+            "closeDate": "12/31/2026",
+            "cfdaList": []
+          }
+        ]
+      }
+    },
+    "https://api.grants.gov/v1/api/fetchOpportunity": {
+      "errorcode": 0,
+      "msg": "recorded",
+      "data": {
+        "id": "361976",
+        "opportunityNumber": "SM-26-024",
+        "opportunityTitle": "Tribal Behavioral Health: Suicide Prevention",
+        "agencyCode": "HHS-SAMHSA",
+        "agencyName": "SAMHSA / HHS",
+        "synopsis": {
+          "agencyName": "SAMHSA / HHS",
+          "agencyCode": "HHS-SAMHSA",
+          "responseDate": "12/31/2026",
+          "synopsisDesc": "<p>The purpose of this program is for the prevention of suicide, suicide attempts, and deaths by suicide among American Indian/Alaska Native youth and young adults through age 24 in Tribal communities.</p>",
+          "applicantEligibilityDesc": "Eligibility is limited to federally recognized American Indian/Alaska Native (AI/AN) tribes, tribal organizations, Urban Indian Organizations, or consortia of tribes or tribal organizations.",
+          "applicantTypes": [
+            {
+              "id": "11",
+              "description": "Native American tribal organizations (other than Federally recognized tribal governments)"
+            },
+            {
+              "id": "25",
+              "description": "Others (see text field entitled \"Additional Information on Eligibility\" for clarification)"
+            },
+            {
+              "id": "07",
+              "description": "Native American tribal governments (Federally recognized)"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

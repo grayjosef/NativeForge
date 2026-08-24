@@ -12,6 +12,7 @@ from nativeforge.services.fed_program_activation_binding_service import (
 from nativeforge.services.grants_gov_seed_search_refinement_service import (
     fetch_refined_grants_gov_for_seed,
 )
+from nativeforge.services.hermetic_test_guard_service import hermetic_status
 from nativeforge.services.no_live_nofo_state_service import build_no_live_nofo_grant
 from nativeforge.services.source_program_ownership_guard_service import (
     assert_source_program_ownership,
@@ -92,6 +93,8 @@ def _payload_to_grant_update(
 
 def reingest_tribal_grant_eligibility(
     grant: dict[str, Any],
+    *,
+    http_post: Any | None = None,
 ) -> dict[str, Any]:
     """Re-fetch Grants.gov eligibility; no_live_nofo when no matching posted NOFO."""
     seed_id = str(grant.get("source_seed_id") or "")
@@ -105,7 +108,7 @@ def reingest_tribal_grant_eligibility(
             }
         )
     source = load_seed_candidate(seed_id)
-    fetch_result = fetch_refined_grants_gov_for_seed(source)
+    fetch_result = fetch_refined_grants_gov_for_seed(source, http_post=http_post)
     payloads = list(fetch_result.get("payloads") or [])
 
     if not payloads:
@@ -124,7 +127,9 @@ def reingest_tribal_grant_eligibility(
                 "no_live_nofo": True,
                 "diagnosis": diagnosis,
                 "updated_grant": nofo_grant,
-                "prior_placeholder": nofo_grant.get("prior_eligibility_was_placeholder"),
+                "prior_placeholder": nofo_grant.get(
+                    "prior_eligibility_was_placeholder"
+                ),
             }
         )
 
@@ -151,7 +156,16 @@ def reingest_tribal_grant_eligibility(
 
 def reingest_nf13_placeholder_grants(
     grants: list[dict[str, Any]] | None = None,
+    *,
+    http_post: Any | None = None,
 ) -> dict[str, Any]:
+    """Re-ingest the NF-13 placeholder grants.
+
+    ``http_post`` is threaded through so callers can supply a recorded
+    transport. Without one, the live path is reached and refused by the Gate 77B
+    network guard — deliberately, so a test cannot silently depend on
+    api.grants.gov.
+    """
     from nativeforge.services.real_grants_corpus_loader_service import (
         load_nf13_real_ingested_grants,
     )
@@ -163,7 +177,7 @@ def reingest_nf13_placeholder_grants(
         grant = by_id.get(grant_id)
         if not grant:
             continue
-        results.append(reingest_tribal_grant_eligibility(grant))
+        results.append(reingest_tribal_grant_eligibility(grant, http_post=http_post))
 
     pulls = {
         "schema_version": "nf16_eligibility_reingest_pulls_v1",
@@ -171,7 +185,18 @@ def reingest_nf13_placeholder_grants(
         "results": results,
         "no_proxy_substitution": True,
     }
-    FIXTURE_PATH.write_text(json.dumps(pulls, indent=2), encoding="utf-8")
+    # Gate 77B: FIXTURE_PATH is committed evidence for a real grant. Writing it
+    # as a side effect of running the suite destroyed the recorded SAMHSA
+    # SM-26-024 record once already, and an online run would have written a
+    # live HHS-IHS response over it as though it were fact. The write is now
+    # redirected under artifacts/ unless two explicit flags permit otherwise,
+    # and the decision is returned so a caller cannot mistake a redirect for a
+    # fixture update. See doc 430.
+    from nativeforge.services.hermetic_test_guard_service import guarded_write_json
+
+    writeback = guarded_write_json(
+        FIXTURE_PATH, pulls, label="nf15_eligibility_reingest"
+    )
 
     updated_grants = []
     for g in corpus:
@@ -191,7 +216,14 @@ def reingest_nf13_placeholder_grants(
             "proxy_substitution_count": 0,
             "results": results,
             "updated_grants": updated_grants,
+            # The path actually written, which is a redirect under artifacts/
+            # unless both overwrite flags were set. `fixture_path` keeps naming
+            # the intended target so the difference is visible.
             "fixture_path": str(FIXTURE_PATH),
+            "writeback": writeback,
+            "writeback_redirected": bool(writeback.get("redirected")),
+            "written_path": writeback.get("path"),
+            "hermetic_status": hermetic_status(),
             "honest_labeling": True,
             "never_synthesized": True,
         }

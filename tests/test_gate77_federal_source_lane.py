@@ -489,18 +489,25 @@ def test_all_seed_families_are_recognised() -> None:
         assert r["source_family"] != "unknown"
 
 
-# ── quarantined corpus test and claim boundaries ────────────────────────────
+# ── corpus test hermeticity and claim boundaries ────────────────────────────
 
 
-def test_the_corpus_tests_are_quarantined_with_a_stated_reason() -> None:
-    """Quarantine must be visible and explained, not silent."""
+def test_the_corpus_tests_are_hermetic_and_unquarantined() -> None:
+    """Gate 77 quarantined these two; Gate 77B fixed the cause and freed them.
+
+    This assertion moved rather than disappeared. It used to require that the
+    quarantine be visible and explained; it now requires the replacement — a
+    recorded transport and no live call — because that is what makes the tests
+    trustworthy. Re-introduce a live fetch here and this fails.
+    """
     src = (ROOT / "tests" / "test_sprint345_nf15_corrected_corpus.py").read_text(
         encoding="utf-8"
     )
-    assert src.count("@pytest.mark.skip(reason=_QUARANTINE_REASON)") == 2
-    assert "api.grants.gov" in src
-    assert "is NOT weakened" in src
-    assert "423_GATE77_FEDERAL_CORPUS_TRIAGE" in src
+    assert "@pytest.mark.skip" not in src
+    assert "load_recorded_transport" in src
+    assert src.count("http_post=recorded_transport") == 2
+    # The recorded agency is asserted in-test, so a live leak fails loudly.
+    assert '"SAMHSA / HHS"' in src
 
 
 def test_readiness_doc_states_the_boundaries() -> None:

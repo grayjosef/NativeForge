@@ -27,9 +27,7 @@ FetchMode = Literal["live", "fixture"]
 HttpPostJson = Callable[[str, dict[str, Any]], dict[str, Any]]
 
 _ALN_RE = re.compile(r"(\d{2}\.\d{3})")
-_FIXTURES_DIR = (
-    Path(__file__).resolve().parents[3] / "fixtures" / "source_ingestion"
-)
+_FIXTURES_DIR = Path(__file__).resolve().parents[3] / "fixtures" / "source_ingestion"
 
 
 def _json_safe(x: Any) -> Any:
@@ -38,6 +36,16 @@ def _json_safe(x: Any) -> Any:
 
 
 def default_grants_gov_http_post(url: str, body: dict[str, Any]) -> dict[str, Any]:
+    # Single choke point for every live Grants.gov call in the codebase.
+    # Gate 77B: live HTTP is opt-in. Tests must inject a recorded transport
+    # instead — a suite whose result depends on a third party's search ranking
+    # is not testing this product. See doc 429.
+    from nativeforge.services.hermetic_test_guard_service import (
+        assert_live_network_allowed,
+    )
+
+    assert_live_network_allowed(url=url, caller="default_grants_gov_http_post")
+
     import httpx
 
     with httpx.Client(timeout=20.0) as client:
