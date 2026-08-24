@@ -10,6 +10,7 @@ from typing import Any
 from nativeforge.services.fed_program_activation_binding_service import (
     load_seed_candidate,
 )
+from nativeforge.services.hermetic_test_guard_service import guarded_write_text
 from nativeforge.services.no_live_nofo_state_service import build_no_live_nofo_grant
 from nativeforge.services.real_grants_corpus_loader_service import (
     CORPUS_PATH as NF13_CORPUS_PATH,
@@ -126,9 +127,7 @@ def persist_tier2_batch_to_corpus(
 ) -> dict[str, Any]:
     target = corpus_path or TIER2_CORPUS_PATH
     existing = load_tier2_state_corpus(path=target)
-    by_key: dict[str, dict[str, Any]] = {
-        build_grant_dedup_key(g): g for g in existing
-    }
+    by_key: dict[str, dict[str, Any]] = {build_grant_dedup_key(g): g for g in existing}
     inserted = 0
     skipped = 0
     no_live_nofo_count = 0
@@ -189,8 +188,11 @@ def persist_tier2_batch_to_corpus(
         "grants": merged,
         "updated_at": datetime.now(tz=UTC).isoformat(),
     }
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(artifact, indent=2) + "\n", encoding="utf-8")
+    # Gate 78E: committed corpus evidence by default. Guarded — see doc 437.
+    _wb = guarded_write_text(
+        target, json.dumps(artifact, indent=2) + "\n", label="tier2_state_corpus"
+    )
+    target = Path(_wb["path"])
 
     federal = load_scaled_federal_corpus()
     if not federal and NF13_CORPUS_PATH.is_file():
@@ -207,9 +209,14 @@ def persist_tier2_batch_to_corpus(
         "grants": mixed,
         "updated_at": datetime.now(tz=UTC).isoformat(),
     }
-    mixed_target.write_text(
-        json.dumps(mixed_artifact, indent=2) + "\n", encoding="utf-8"
+    # ta_mixed_tier13_grants.json is written by two services and also carries
+    # the nf13-real-fed-021 SAMHSA record. Guarded — see doc 437.
+    _wb_mixed = guarded_write_text(
+        mixed_target,
+        json.dumps(mixed_artifact, indent=2) + "\n",
+        label="tier2_mixed_corpus",
     )
+    mixed_target = Path(_wb_mixed["path"])
 
     return _json_safe(
         {

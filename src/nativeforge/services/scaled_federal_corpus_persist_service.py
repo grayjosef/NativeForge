@@ -10,6 +10,7 @@ from typing import Any
 from nativeforge.services.fed_program_activation_binding_service import (
     load_seed_candidate,
 )
+from nativeforge.services.hermetic_test_guard_service import guarded_write_text
 from nativeforge.services.no_live_nofo_state_service import build_no_live_nofo_grant
 from nativeforge.services.real_grants_corpus_loader_service import (
     CORPUS_PATH as NF13_CORPUS_PATH,
@@ -59,7 +60,9 @@ def payload_to_grant_record(
             "eligibility_text_source": payload.get("eligibility_text_source"),
             "eligibility_provenance": payload.get("eligibility_provenance"),
             "grants_gov_doc_type": payload.get("grants_gov_doc_type"),
-            "grants_gov_attachment_inventory": payload.get("grants_gov_attachment_inventory"),
+            "grants_gov_attachment_inventory": payload.get(
+                "grants_gov_attachment_inventory"
+            ),
             "synopsis": payload.get("synopsis"),
             "tribal_eligible": payload.get("tribal_eligible"),
             "applicant_type_ids": payload.get("applicant_type_ids") or [],
@@ -169,12 +172,20 @@ def persist_batch_fetch_to_scaled_corpus(
             "updated_at": datetime.now(tz=UTC).isoformat(),
         }
     )
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(json.dumps(artifact, indent=2) + "\n", encoding="utf-8")
+    # Gate 78E: this default targets committed corpus evidence. Route it
+    # through the write-back guard so a caller omitting `path` redirects under
+    # artifacts/ rather than rewriting the record. See doc 437.
+    _wb = guarded_write_text(
+        target,
+        json.dumps(artifact, indent=2) + "\n",
+        label="scaled_federal_corpus",
+    )
+    target = Path(_wb["path"])
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
             "corpus_path": str(target),
+            "writeback_redirected": bool(_wb.get("redirected")),
             "grant_count": len(merged),
             "inserted_count": inserted,
             "updated_count": updated,

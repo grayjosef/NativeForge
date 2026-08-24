@@ -254,6 +254,24 @@ def recorded_transport_metadata(name: str) -> dict[str, Any]:
     return dict(json.loads(path.read_text(encoding="utf-8")).get("_meta") or {})
 
 
+def guarded_write_text(
+    target: Path | str, text: str, *, label: str = "corpus_writeback"
+) -> dict[str, Any]:
+    """Write text to the resolved path, creating parents.
+
+    The text-shaped sibling of ``guarded_write_json``, for callers that already
+    have a serialized payload (the corpus persist services append a trailing
+    newline). Same redirect rules; never clobbers committed evidence unless both
+    flags are set.
+    """
+    decision = resolve_writeback_path(target, label=label)
+    path = Path(decision["path"])
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    decision["written"] = True
+    return decision
+
+
 def hermetic_status() -> dict[str, Any]:
     """Report the current mode, so a run can say what it was allowed to do."""
     live = live_network_allowed()
