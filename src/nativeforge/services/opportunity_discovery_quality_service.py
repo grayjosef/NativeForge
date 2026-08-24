@@ -108,12 +108,36 @@ def build_discovery_quality_score(
     *,
     opportunities: list[dict[str, Any]],
     coverage: dict[str, Any],
+    applicant_class: str | None = None,
 ) -> dict[str, Any]:
-    """Compute the weighted discovery quality score from evidence, not volume."""
+    """Compute the weighted discovery quality score from evidence, not volume.
+
+    Gate 79B: ``applicant_class`` makes coverage **class-aware**. Exclusion is
+    per applicant class — the NACTEP case is eligible for a federally recognized
+    tribe and excluded for a state-recognized one — so an opportunity scored
+    without naming the class would count as eligible coverage for a customer it
+    excludes.
+
+    When a class is supplied, an opportunity whose ``excluded_classes`` contains
+    it is removed from eligible coverage and counted separately as **negative
+    intelligence**: still found, still visible, still worth telling the customer
+    about, but not coverage *for them*.
+
+    Omitting the parameter preserves the previous behaviour exactly.
+    """
     total = len(opportunities)
 
     duplicates = sum(1 for o in opportunities if o.get("duplicate_of"))
     unique = total - duplicates
+
+    def _excluded_for_class(o: dict[str, Any]) -> bool:
+        if not applicant_class:
+            return False
+        return applicant_class in (o.get("excluded_classes") or [])
+
+    excluded_for_class = sum(
+        1 for o in opportunities if _excluded_for_class(o) and not o.get("duplicate_of")
+    )
 
     native_evidenced = sum(
         1
@@ -126,6 +150,9 @@ def build_discovery_quality_score(
         if o.get("eligibility_evidence")
         and o.get("eligibility_state") in {"eligible", "possibly_eligible"}
         and not o.get("duplicate_of")
+        # Gate 79B: an opportunity that excludes this applicant class is not
+        # eligible coverage for them, whatever its own eligibility_state says.
+        and not _excluded_for_class(o)
     )
     provenance_complete = sum(
         1
@@ -201,6 +228,13 @@ def build_discovery_quality_score(
             "components": components,
             "weights": dict(SCORE_WEIGHTS),
             "discovery_quality_score": score,
+            # Gate 79B: class-aware coverage.
+            "scored_for_applicant_class": applicant_class,
+            "excluded_for_class_count": excluded_for_class,
+            # Negative intelligence: found, visible, and worth telling the
+            # customer about — just not eligible coverage for them.
+            "negative_intelligence_count": excluded_for_class,
+            "excluded_counted_as_eligible_coverage": False,
             # Honest boundaries.
             "raw_count_counted_as_quality": False,
             "unknown_eligibility_counted_as_eligible": False,
@@ -228,9 +262,21 @@ def discovery_quality_invariant_failures(score: dict[str, Any]) -> list[str]:
     if round(sum(SCORE_WEIGHTS.values()), 6) != 1.0:
         fails.append("weights_do_not_sum_to_one")
 
+    # Gate 79B: a class-scored result must account for its exclusions.
+    if score.get("scored_for_applicant_class"):
+        excluded = score.get("excluded_for_class_count")
+        if not isinstance(excluded, int) or excluded < 0:
+            fails.append("excluded_for_class_count_invalid")
+        if score.get("negative_intelligence_count") != excluded:
+            fails.append("negative_intelligence_count_disagrees_with_exclusions")
+    elif score.get("excluded_for_class_count"):
+        # No class named, so nothing can be excluded for one.
+        fails.append("exclusions_counted_without_an_applicant_class")
+
     for forbidden in (
         "raw_count_counted_as_quality",
         "unknown_eligibility_counted_as_eligible",
+        "excluded_counted_as_eligible_coverage",
         "live_ingest_claimed",
         "broad_coverage_claimed",
     ):

@@ -220,6 +220,8 @@ def build_native_opportunity_record(
     duplicate_group_id: str | None = None,
     source_can_monitor: bool | None = None,
     provenance_url: str | None = None,
+    canonical_funding_lane: str | None = None,
+    exclusion_result: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build one routed, evidence-backed opportunity record.
 
@@ -229,6 +231,31 @@ def build_native_opportunity_record(
     """
     blocked: list[str] = []
     review_reasons: list[str] = []
+
+    # Gate 79B: a canonical lane from opportunity_funding_lane_service overrides
+    # the caller's `lane`, because a lane derived from funding-origin evidence
+    # outranks one passed in. The projection into this module's five-value
+    # vocabulary is lossy — federal_pass_through lands on `federal` — but it
+    # never lands on `state`, which is the property that matters.
+    lane_projection: dict[str, Any] | None = None
+    if canonical_funding_lane is not None:
+        from nativeforge.services.opportunity_funding_lane_service import (
+            FUNDING_LANES as CANONICAL_FUNDING_LANES,
+        )
+        from nativeforge.services.opportunity_funding_lane_service import (
+            discovery_lane,
+        )
+
+        if canonical_funding_lane in CANONICAL_FUNDING_LANES:
+            projected = discovery_lane(canonical_funding_lane)
+            lane_projection = {
+                "canonical_funding_lane": canonical_funding_lane,
+                "projected_lane": projected,
+                "lossy": projected != canonical_funding_lane,
+            }
+            lane = projected
+        else:
+            lane = "unknown"
 
     normalized_lane = lane if lane in LANES else "unknown"
     geography = (
@@ -324,6 +351,22 @@ def build_native_opportunity_record(
         not blocked and relevance_credited and counts_as_current and not is_duplicate
     )
 
+    # ── Gate 79B: applicant-class exclusion evidence ─────────────────────
+    # Exclusion is per applicant class. An opportunity excluded for a
+    # state-recognized tribe may be perfectly open to a federally recognized
+    # one, so the classes are carried separately and neither is collapsed into
+    # a single eligibility_state. The record stays visible either way: an
+    # excluded opportunity is useful negative intelligence, not noise.
+    excluded_classes: list[str] = []
+    eligible_classes: list[str] = []
+    if isinstance(exclusion_result, dict):
+        excluded_classes = sorted(exclusion_result.get("excluded_classes") or [])
+        eligible_classes = sorted(exclusion_result.get("eligible_classes") or [])
+        if excluded_classes:
+            review_reasons.append(
+                "excluded_by_evidence_for:" + ",".join(excluded_classes)
+            )
+
     human_review_required = bool(review_reasons) or eligibility_state != "eligible"
 
     return _json_safe(
@@ -334,6 +377,12 @@ def build_native_opportunity_record(
             "title": title,
             "agency_or_funder": agency_or_funder,
             "lane": normalized_lane,
+            "canonical_funding_lane": canonical_funding_lane,
+            "lane_projection": lane_projection,
+            "lane_projection_lossy": bool(lane_projection and lane_projection["lossy"]),
+            "excluded_classes": excluded_classes,
+            "eligible_classes": eligible_classes,
+            "has_exclusion_evidence": bool(excluded_classes),
             "state": state,
             "federal_agency": federal_agency,
             "funding_geography": geography,
@@ -403,6 +452,27 @@ def opportunity_record_invariant_failures(record: dict[str, Any]) -> list[str]:
     # Lanes stay distinct.
     if record.get("lane") == "state" and record.get("federal_agency"):
         fails.append("state_lane_carries_a_federal_agency")
+
+    # Gate 79B: a canonical federal lane must never project onto `state`.
+    canonical = record.get("canonical_funding_lane")
+    if canonical:
+        from nativeforge.services.opportunity_funding_lane_service import (
+            FEDERALLY_FUNDED_LANES,
+        )
+
+        if canonical in FEDERALLY_FUNDED_LANES and record.get("lane") == "state":
+            fails.append("federal_canonical_lane_projected_onto_state")
+
+    # An excluded class may never also be reported eligible.
+    overlap = set(record.get("excluded_classes") or []) & set(
+        record.get("eligible_classes") or []
+    )
+    if overlap:
+        fails.append(f"class_both_eligible_and_excluded:{sorted(overlap)}")
+
+    # Exclusion must never hide the record.
+    if record.get("has_exclusion_evidence") and not record.get("visible"):
+        fails.append("excluded_opportunity_hidden_instead_of_marked")
 
     # Quality credit requires the full chain.
     if record.get("counts_toward_quality"):

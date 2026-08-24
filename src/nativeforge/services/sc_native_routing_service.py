@@ -164,10 +164,52 @@ def route_sc_opportunity(
     native_relevance_evidenced: bool = False,
     eligibility_evidence: list[dict[str, Any]] | None = None,
     eligibility_text_present: bool = False,
+    canonical_funding_lane: str | None = None,
 ) -> dict[str, Any]:
-    """Route one opportunity, keeping lane, recognition and eligibility apart."""
+    """Route one opportunity, keeping lane, recognition and eligibility apart.
+
+    Gate 79B: ``canonical_funding_lane`` accepts a lane from
+    ``opportunity_funding_lane_service``, which assigns lane per opportunity
+    from funding-origin evidence. When supplied it **overrides** the caller's
+    ``funding_lane``, because a lane derived from evidence outranks one passed
+    in — that is the whole point of the Gate 79 correction.
+
+    The projection into this module's five-value vocabulary is lossy:
+    ``federal_pass_through`` has no member here and lands on
+    ``federal_sc_relevant``. It never lands on a state value, which is the
+    property that matters. The loss is recorded in ``lane_projection`` so a
+    reader is not misled into thinking this view retains the distinction.
+    """
+    from nativeforge.services.opportunity_funding_lane_service import (
+        FUNDING_LANES as CANONICAL_FUNDING_LANES,
+    )
+    from nativeforge.services.opportunity_funding_lane_service import (
+        sc_routing_lane,
+    )
+
     blocked: list[str] = []
     review: list[str] = []
+
+    lane_projection: dict[str, Any] | None = None
+    if canonical_funding_lane is not None:
+        if canonical_funding_lane not in CANONICAL_FUNDING_LANES:
+            review.append(
+                f"unrecognised_canonical_funding_lane:{canonical_funding_lane}"
+            )
+            funding_lane = "unknown"
+        else:
+            projected = sc_routing_lane(canonical_funding_lane)
+            lane_projection = {
+                "canonical_funding_lane": canonical_funding_lane,
+                "projected_lane": projected,
+                "lossy": projected != canonical_funding_lane,
+            }
+            if lane_projection["lossy"]:
+                review.append(
+                    "lossy_lane_projection:"
+                    f"{canonical_funding_lane}->{projected}"
+                )
+            funding_lane = projected
 
     lane = funding_lane if funding_lane in FUNDING_LANES else "unknown"
     if lane == "unknown":
@@ -245,6 +287,11 @@ def route_sc_opportunity(
             "schema_version": SCHEMA_VERSION,
             "opportunity_id": opportunity_id,
             "funding_lane": lane,
+            "canonical_funding_lane": canonical_funding_lane,
+            "lane_projection": lane_projection,
+            "lane_projection_lossy": bool(
+                lane_projection and lane_projection["lossy"]
+            ),
             "is_federal_lane": lane in FEDERAL_LANES,
             "is_state_lane": lane in STATE_LANES,
             "sc_relevant": bool(sc_location_relevant or lane in STATE_LANES),
@@ -293,6 +340,20 @@ def sc_routing_invariant_failures(result: dict[str, Any]) -> list[str]:
     for tier in result.get("recognition_tiers") or []:
         if tier not in RECOGNITION_TIERS:
             fails.append(f"recognition_tier_invalid:{tier}")
+
+    # Gate 79B: a canonical federal lane must never project onto a state lane.
+    canonical = result.get("canonical_funding_lane")
+    if canonical:
+        from nativeforge.services.opportunity_funding_lane_service import (
+            FEDERALLY_FUNDED_LANES,
+        )
+
+        if canonical in FEDERALLY_FUNDED_LANES and result.get("is_state_lane"):
+            fails.append("federal_canonical_lane_projected_onto_a_state_lane")
+        if canonical == "federal_pass_through" and result.get("funding_lane") == (
+            "sc_state"
+        ):
+            fails.append("federal_pass_through_projected_to_sc_state")
 
     # Lanes cannot be both, and a state lane cannot be federally owned.
     if result.get("is_federal_lane") and result.get("is_state_lane"):
