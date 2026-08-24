@@ -192,12 +192,24 @@ def evaluate_applicant_class(
     eligibility_text: str | None = None,
     evidence_reference: str | None = None,
     additional_expanding_evidence: list[dict[str, Any]] | None = None,
+    additional_named_classes: list[str] | None = None,
+    negated_classes: list[str] | None = None,
 ) -> dict[str, Any]:
     """Decide one applicant class's standing against one programme's cited text.
 
     ``evidence_reference`` is required for any exclusion. An exclusion without a
     citation is an accusation, and it would discourage a real applicant on our
     say-so.
+
+    Gate 81: ``additional_named_classes`` carries classes found by a richer
+    vocabulary than ``CLASS_PHRASES`` knows - typically the non-Native classes
+    the Gate 81 parser adds. A notice reading "only units of local government
+    may apply" names nobody this module recognises, so without them the list
+    would not register as exclusive and a tribe would come back
+    ``not_supported_by_evidence`` when the text plainly excludes it.
+
+    They can only ever make a list **exclusive**. They are never treated as
+    naming *this* class, so they cannot manufacture eligibility.
     """
     reasons: list[str] = []
     cls = applicant_class if applicant_class in APPLICANT_CLASSES else "unknown"
@@ -205,6 +217,19 @@ def evaluate_applicant_class(
         reasons.append(f"unrecognised_applicant_class:{applicant_class}")
 
     analysis = analyse_eligibility_text(eligibility_text)
+    extra_named = sorted(
+        {
+            str(c)
+            for c in (additional_named_classes or [])
+            if str(c) and str(c) != cls
+        }
+    )
+    if extra_named and analysis["exclusivity_markers"]:
+        # Markers were present but nothing this module knows was named. The
+        # richer vocabulary supplies the missing half of "exclusive list".
+        analysis = dict(analysis)
+        analysis["is_exclusive_list"] = True
+
     has_citation = bool(str(evidence_reference or "").strip())
 
     # Evidence that widens eligibility beyond the primary text. Needs its own
@@ -217,12 +242,28 @@ def evaluate_applicant_class(
         and cls in (item.get("expands_classes") or [])
     ]
 
+    # Gate 81: the class is named, but named as *excluded* - "federally
+    # recognized tribes are not eligible under this program". Without this the
+    # naming alone reads as eligibility, which is the worst direction to be
+    # wrong in: it would tell a tribe to spend weeks on a programme that has
+    # already ruled them out in writing.
+    negated = cls != "unknown" and cls in {
+        str(c) for c in (negated_classes or [])
+    }
+
     state = "unknown"
 
     if cls == "unknown":
         reasons.append("applicant_class_unknown")
     elif not analysis["text_present"]:
         reasons.append("no_eligibility_text")
+    elif negated:
+        if has_citation:
+            state = "excluded_by_evidence"
+            reasons.append("applicant_class_named_as_excluded_in_eligibility_text")
+        else:
+            state = "human_review_required"
+            reasons.append("negation_indicated_but_no_citation_supplied")
     elif cls in analysis["named_classes"]:
         state = "eligible"
         reasons.append("applicant_class_named_in_eligibility_text")
@@ -262,6 +303,11 @@ def evaluate_applicant_class(
             "evidence_reference": evidence_reference if has_citation else None,
             "has_citation": has_citation,
             "named_classes": analysis["named_classes"],
+            # Kept separate from named_classes: these come from a vocabulary
+            # this module does not own, and merging them would make it look as
+            # though CLASS_PHRASES had grown.
+            "additional_named_classes": extra_named,
+            "negated": negated,
             "exclusivity_markers": analysis["exclusivity_markers"],
             "is_exclusive_list": analysis["is_exclusive_list"],
             "restrictions": analysis["restrictions"],
@@ -282,6 +328,8 @@ def evaluate_all_applicant_classes(
     eligibility_text: str | None = None,
     evidence_reference: str | None = None,
     additional_expanding_evidence: list[dict[str, Any]] | None = None,
+    additional_named_classes: list[str] | None = None,
+    negated_classes: list[str] | None = None,
 ) -> dict[str, Any]:
     """Evaluate every applicant class against one programme.
 
@@ -296,6 +344,8 @@ def evaluate_all_applicant_classes(
             eligibility_text=eligibility_text,
             evidence_reference=evidence_reference,
             additional_expanding_evidence=additional_expanding_evidence,
+            additional_named_classes=additional_named_classes,
+            negated_classes=negated_classes,
         )
         for cls in sorted(APPLICANT_CLASSES - {"unknown"})
     }
@@ -332,13 +382,20 @@ def exclusion_invariant_failures(result: dict[str, Any]) -> list[str]:
 
     state = result.get("result_state")
 
-    # An exclusion must be cited and must rest on an exclusive list.
+    # An exclusion must be cited, and must rest on either an exclusive list or
+    # an explicit negation of this class.
     if state == "excluded_by_evidence":
+        negated = bool(result.get("negated"))
         if not result.get("has_citation"):
             fails.append("exclusion_without_citation")
-        if not result.get("is_exclusive_list"):
+        if not result.get("is_exclusive_list") and not negated:
             fails.append("exclusion_without_an_exclusive_eligibility_list")
-        if result.get("applicant_class") in (result.get("named_classes") or []):
+        # Being named is only evidence of eligibility when the naming is not a
+        # negation. "Tribes are not eligible" names the class and excludes it.
+        if (
+            not negated
+            and result.get("applicant_class") in (result.get("named_classes") or [])
+        ):
             fails.append("excluded_a_class_the_text_names_as_eligible")
     if result.get("excluded") and state != "excluded_by_evidence":
         fails.append("excluded_flag_without_exclusion_state")

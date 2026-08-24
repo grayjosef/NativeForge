@@ -1,0 +1,19 @@
+SYNTHETIC TEST FIXTURE - NOT A REAL NOTICE
+This text was written for NativeForge Gate 81 parser tests. It describes no real
+funding opportunity, no real agency programme, and no real deadline. Do not use
+it as evidence about any actual grant. No opportunity number is claimed.
+
+SYNTHETIC PROGRAM: EXAMPLE BROADBAND PLANNING NOTICE
+
+NOTICE OF CANCELLATION
+
+This notice is cancelled. The synthetic funding opportunity described below will
+not be awarded, and no applications will be accepted.
+
+ELIGIBILITY INFORMATION
+
+Eligible applicants were federally recognized tribes and tribal organizations.
+
+APPLICATION DEADLINE
+
+The original closing date was February 1, 2027.

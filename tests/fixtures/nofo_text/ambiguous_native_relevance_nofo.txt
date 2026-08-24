@@ -1,0 +1,22 @@
+SYNTHETIC TEST FIXTURE - NOT A REAL NOTICE
+This text was written for NativeForge Gate 81 parser tests. It describes no real
+funding opportunity, no real agency programme, and no real deadline. Do not use
+it as evidence about any actual grant. No opportunity number is claimed.
+
+SYNTHETIC PROGRAM: EXAMPLE REGIONAL RESILIENCE GRANT
+
+PROGRAM PURPOSE
+
+This synthetic programme serves communities across the region, including tribal
+communities and Native households. Prior planning efforts engaged American
+Indian and Alaska Native residents. Nothing in this paragraph states who may
+apply.
+
+ELIGIBILITY INFORMATION
+
+Eligible applicants are units of local government. Eligibility is limited to
+those entities under this synthetic announcement.
+
+APPLICATION DEADLINE
+
+Applications are due August 3, 2027.
