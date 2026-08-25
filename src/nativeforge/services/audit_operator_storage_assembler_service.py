@@ -89,12 +89,18 @@ def build_audit_operator_storage_demo_surface() -> dict[str, Any]:
                 "Production storage owner decision path is explicit — claims remain false",
                 "Controlled customer pilot and production rollout remain NO_GO",
             ],
+            # dict.fromkeys, not a set literal: set iteration order for strings
+            # is randomised per process, so `list({...})` reordered this list on
+            # every run. Order-preserving dedupe keeps the required action first
+            # and makes the payload reproducible.
             "next_safe_actions": list(
-                {
-                    storage.get("required_next_action"),
-                    "Keep RBAC denial audits operator-visible",
-                    "Do not claim customer data persistence",
-                }
+                dict.fromkeys(
+                    [
+                        storage.get("required_next_action"),
+                        "Keep RBAC denial audits operator-visible",
+                        "Do not claim customer data persistence",
+                    ]
+                )
             ),
             "human_review_required": True,
             "login_live_claimed": False,

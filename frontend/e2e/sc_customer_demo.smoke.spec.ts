@@ -790,4 +790,69 @@ test.describe("SC customer demo Playwright smoke", () => {
     await expect(firstCard).toContainText("Evidence / provenance");
     await expect(firstCard).toContainText("not_supported");
   });
+
+  test("renders applicant-class negative intelligence with cited evidence", async ({
+    page,
+  }) => {
+    await openDemo(page);
+
+    const section = page.getByTestId("sc-demo-negative-intelligence");
+    await section.scrollIntoViewIfNeeded();
+    await expect(section).toBeVisible();
+
+    // Relevance and eligibility are different questions.
+    await expect(page.getByTestId("sc-demo-ni-headline")).toContainText(
+      "Relevant does not mean eligible",
+    );
+
+    // The excluded applicant class, and the sentence the exclusion rests on.
+    const excluded = page.getByTestId("sc-demo-ni-row-state_recognized_tribe");
+    await expect(excluded).toBeVisible();
+    await expect(excluded).toContainText("State-recognized tribe");
+    await expect(
+      page.getByTestId("sc-demo-ni-status-state_recognized_tribe"),
+    ).toContainText("excluded_by_evidence");
+    await expect(
+      page.getByTestId("sc-demo-ni-quote-state_recognized_tribe"),
+    ).toContainText("federally recognized Indian tribes");
+
+    // The same notice answers differently for the other recognition tier.
+    const eligible = page.getByTestId("sc-demo-ni-row-federally_recognized_tribe");
+    await expect(eligible).toBeVisible();
+    await expect(
+      page.getByTestId("sc-demo-ni-status-federally_recognized_tribe"),
+    ).toContainText("eligible");
+    await expect(page.getByTestId("sc-demo-ni-class-contrast")).toContainText(
+      "applicant_class_changes_the_answer=true",
+    );
+
+    // Excluded stays on screen rather than being filtered away.
+    await expect(page.getByTestId("sc-demo-ni-visibility-note")).toContainText(
+      "remain visible",
+    );
+    await expect(excluded).toContainText("remains_visible=true");
+
+    // Demo boundaries are shown to the viewer, not just carried in the payload.
+    await expect(page.getByTestId("sc-demo-ni-synthetic-label")).toContainText(
+      "synthetic_demo=true",
+    );
+    await expect(page.getByTestId("sc-demo-ni-no-live-coverage")).toContainText(
+      "live_coverage_claimed=false",
+    );
+    await expect(page.getByTestId("sc-demo-ni-no-live-coverage")).toContainText(
+      "source_monitored=false",
+    );
+  });
+
+  test("never tells the customer they are legally ineligible", async ({ page }) => {
+    await openDemo(page);
+    await page.getByTestId("sc-demo-negative-intelligence").scrollIntoViewIfNeeded();
+
+    const body = (await page.locator("body").innerText()).toLowerCase();
+    expect(body).not.toContain("you are not eligible");
+    expect(body).not.toContain("you are ineligible");
+    expect(body).not.toContain("legally ineligible");
+    // The product reports what a cited sentence says and asks a human.
+    expect(body).toContain("not a legal determination");
+  });
 });

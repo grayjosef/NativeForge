@@ -58,6 +58,9 @@ from nativeforge.services.customer_pilot_auth_assembler_service import (
     build_customer_pilot_auth_demo_surface,
     customer_pilot_auth_demo_surface_invariant_failures,
 )
+from nativeforge.services.demo_payload_determinism_service import (
+    deterministic_demo_generation,
+)
 from nativeforge.services.draft_workspace_assembler_service import (
     build_draft_workspace_demo_surface,
     draft_workspace_demo_surface_invariant_failures,
@@ -1227,8 +1230,25 @@ def write_sc_customer_demo_bridge_json(
     payload: dict[str, Any] | None = None,
     *,
     path: Path | None = None,
+    deterministic: bool = True,
 ) -> Path:
-    doc = payload if payload is not None else build_sc_customer_demo_bridge_payload()
+    """Write the committed demo payload.
+
+    Gate 83B: the default path is **deterministic** — the payload is built
+    inside :func:`deterministic_demo_generation`, so the same HEAD produces the
+    same bytes and a diff of this file shows what a change actually did.
+
+    ``deterministic=False`` builds against the real clock and real entropy. It
+    exists for callers who want a live snapshot; it must not be used to produce
+    the committed JSON, and the determinism verifier would catch it if it were.
+    """
+    if payload is None and deterministic:
+        with deterministic_demo_generation():
+            doc = build_sc_customer_demo_bridge_payload()
+    elif payload is None:
+        doc = build_sc_customer_demo_bridge_payload()
+    else:
+        doc = payload
     out = path or DEFAULT_FRONTEND_JSON
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(doc, indent=2, sort_keys=True) + "\n", encoding="utf-8")

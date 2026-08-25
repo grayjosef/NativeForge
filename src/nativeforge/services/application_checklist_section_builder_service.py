@@ -5,6 +5,7 @@ Does not invent NOFO requirements. Unsupported sections are labeled explicitly.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from typing import Any
 
@@ -36,6 +37,19 @@ SECTION_SPECS: tuple[tuple[str, str], ...] = (
     ("human_approvals", "Human approvals"),
     ("unsupported_later_capability", "Unsupported / later capability"),
 )
+
+
+def _stable_suffix(value: Any, *, length: int = 4) -> str:
+    """Short, stable id suffix for a label.
+
+    Uses a digest rather than ``hash()``. Python randomises string hashing per
+    process, so the previous ``hash(gate) & 0xFFFF`` produced a different id for
+    the same gate on every run - which made ids unusable as a cross-process key
+    and was the last source of demo payload churn after the clock and identity
+    were frozen (Gate 83B).
+    """
+    digest = hashlib.sha256(str(value).encode("utf-8")).hexdigest()
+    return digest[:length]
 
 
 def _json_safe(x: Any) -> Any:
@@ -411,7 +425,7 @@ def build_checklist_sections_from_evidence(
     ]:
         items.append(
             make_checklist_item(
-                item_id=f"{oid}:{pid}:approval:{hash(gate) & 0xFFFF:x}",
+                item_id=f"{oid}:{pid}:approval:{_stable_suffix(gate)}",
                 section_id="human_approvals",
                 label=str(gate),
                 item_source="application_plan",
