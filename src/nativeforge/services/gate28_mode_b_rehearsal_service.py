@@ -8,6 +8,10 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate27_cutover_claim_freeze_service import (
     build_claim_freeze_matrix,
 )
@@ -22,16 +26,15 @@ _SECRET_KEY_RE = re.compile(
     re.IGNORECASE,
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def build_synthetic_non_secret_fixture() -> dict[str, Any]:
@@ -105,7 +108,9 @@ def run_mode_b_rehearsal(
     auth0_real: bool = False,
     storage_real: bool = False,
     pen_test_real: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     run_id = (
         f"nf_modeb_rehearsal_"
         f"{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}"
@@ -194,8 +199,7 @@ def run_mode_b_rehearsal(
         result["secrets_in_output"] = True
         result["no_secret_validation"] = False
 
-    _emit_audit(
-        "mode_b_rehearsal",
+    _emit_audit(collector, "mode_b_rehearsal",
         {
             "run_id": run_id,
             "mode": mode,
@@ -226,11 +230,3 @@ def mode_b_rehearsal_invariant_failures(result: dict[str, Any]) -> list[str]:
     if result.get("controlled_customer_pilot_status") == "CONTROLLED_CUSTOMER_GO":
         fails.append("pilot_go")
     return fails
-
-
-def get_mode_b_rehearsal_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_mode_b_rehearsal_audit_for_tests() -> None:
-    _AUDIT.clear()

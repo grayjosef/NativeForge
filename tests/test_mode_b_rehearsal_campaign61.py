@@ -9,7 +9,6 @@ from nativeforge.services.gate28_mode_b_rehearsal_assembler_service import (
     mode_b_rehearsal_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate28_mode_b_rehearsal_service import (
-    clear_mode_b_rehearsal_audit_for_tests,
     mode_b_rehearsal_invariant_failures,
     run_mode_b_rehearsal,
 )
@@ -20,7 +19,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_synthetic_does_not_unlock_live_claims() -> None:
-    clear_mode_b_rehearsal_audit_for_tests()
     result = run_mode_b_rehearsal(use_synthetic=True)
     assert result["synthetic_fixture_used"] is True
     assert result["real_owner_inputs_present"] is False

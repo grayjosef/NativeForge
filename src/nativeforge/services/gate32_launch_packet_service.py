@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate32_launch_packet_v1"
 
 LAUNCH_STATUSES = (
@@ -22,9 +27,6 @@ LAUNCH_STATUSES = (
     "unknown",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -37,7 +39,9 @@ def build_launch_packet(
     production_storage: bool = False,
     pen_test_passed: bool = False,
     ready_for_owner_review: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     owner = [
         "Auth0/OIDC OOB + live validation",
         "storage approval + production config",
@@ -104,7 +108,7 @@ def build_launch_packet(
         "invite_sent",
         "top15_live",
     ]
-    _AUDIT.append({"event": "launch_packet"})
+    collector.add({"event": "launch_packet"})
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,

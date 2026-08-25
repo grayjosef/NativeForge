@@ -7,6 +7,10 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate26_controlled_pilot_master_service import (
     build_mode_a_pilot_master_packet,
 )
@@ -57,16 +61,15 @@ CUTOVER_STEPS = (
     "final_claim_freeze",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def _step(
@@ -95,8 +98,10 @@ def run_production_dry_run_cutover(
     login_live: bool = False,
     storage_approval_present: bool = False,
     pen_test_report_present: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
     """Walk cutover sequence; stop at first hard blocker; skip downstream."""
+    collector = new_collector(collector)
     run_id = (
         f"nf_dryrun_cutover_"
         f"{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}"
@@ -409,8 +414,7 @@ def run_production_dry_run_cutover(
         if s["status"].startswith("blocked_") and not s.get("owner_action"):
             s["owner_action"] = "owner_input_required"
 
-    _emit_audit(
-        "dry_run_cutover",
+    _emit_audit(collector, "dry_run_cutover",
         {
             "run_id": run_id,
             "first_hard_blocker": first_hard_blocker,
@@ -448,11 +452,3 @@ def dry_run_cutover_invariant_failures(result: dict[str, Any]) -> list[str]:
         if s.get("status", "").startswith("blocked_") and not s.get("owner_action"):
             fails.append(f"blocker_missing_owner_action:{s.get('name')}")
     return fails
-
-
-def get_dry_run_cutover_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_dry_run_cutover_audit_for_tests() -> None:
-    _AUDIT.clear()

@@ -7,22 +7,26 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.auth0_mode_detector_service import detect_auth0_execution_mode
 from nativeforge.services.auth0_preflight_service import run_auth0_preflight
 from nativeforge.services.rbac_enforcement_service import enforce_rbac_access
 
 SCHEMA_VERSION = "nf_auth0_login_rbac_validation_v1"
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append(
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    # Keeps the `at` stamp this service has always recorded.
+    collector.add(
         {
             "event": event,
             "at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
@@ -41,8 +45,10 @@ def run_auth0_login_rbac_validation(
     audit_event_emitted: bool = True,
     force_mode_b: bool = False,
     role_for_sensitive_check: str = "unknown",
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
     """Mode A default: dry-run; Mode B only if detector + force and all gates."""
+    collector = new_collector(collector)
     run_id = (
         f"nf_auth_val_g24_"
         f"{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}"
@@ -125,8 +131,7 @@ def run_auth0_login_rbac_validation(
         context_kind="customer",
     )
     if not rbac.get("allowed"):
-        _emit_audit(
-            "rbac_deny",
+        _emit_audit(collector, "rbac_deny",
             {
                 "reason": rbac.get("reason"),
                 "role": role_for_sensitive_check,
@@ -161,8 +166,7 @@ def run_auth0_login_rbac_validation(
         production_auth_claimed = False
         controlled_pilot_auth_ready = False
 
-    _emit_audit(
-        "auth_validation_run",
+    _emit_audit(collector, "auth_validation_run",
         {
             "auth_validation_run_id": run_id,
             "mode": mode,
@@ -257,11 +261,3 @@ def auth0_login_rbac_validation_invariant_failures(result: dict[str, Any]) -> li
         if not result.get("session_validated"):
             fails.append("secret_alone_unlocked_login")
     return fails
-
-
-def get_auth0_login_rbac_audit_events() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_auth0_login_rbac_audit_for_tests() -> None:
-    _AUDIT.clear()

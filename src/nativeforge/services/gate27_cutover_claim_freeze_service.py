@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate26_controlled_pilot_master_service import (
     build_mode_a_pilot_master_packet,
 )
@@ -26,16 +30,15 @@ CHECKLIST_STATUSES = (
     "production_rollout_ready_for_review",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def _item(name: str, status: str, evidence: str, unlocks: str) -> dict[str, Any]:
@@ -216,7 +219,9 @@ def build_claim_freeze_matrix(
     *,
     unlock: dict[str, Any] | None = None,
     checklist: dict[str, Any] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     u = unlock or build_owner_unlock_packet()
     c = checklist or build_production_cutover_checklist(unlock=u)
 
@@ -347,8 +352,7 @@ def build_claim_freeze_matrix(
         },
     ]
 
-    _emit_audit(
-        "claim_freeze_resolve",
+    _emit_audit(collector, "claim_freeze_resolve",
         {
             "allowed": len(allowed),
             "forbidden": len(forbidden),
@@ -416,11 +420,3 @@ def cutover_claim_freeze_invariant_failures(result: dict[str, Any]) -> list[str]
         if not f.get("missing_evidence"):
             fails.append(f"forbidden_missing_evidence:{f.get('claim')}")
     return fails
-
-
-def get_cutover_claim_freeze_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_cutover_claim_freeze_audit_for_tests() -> None:
-    _AUDIT.clear()

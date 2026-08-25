@@ -8,7 +8,6 @@ from nativeforge.services.gate27_owner_unlock_assembler_service import (
 )
 from nativeforge.services.gate27_owner_unlock_packet_service import (
     build_owner_unlock_packet,
-    clear_owner_unlock_audit_for_tests,
     owner_unlock_packet_invariant_failures,
 )
 from nativeforge.services.sc_monday_demo_bridge_service import (
@@ -18,7 +17,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_prompt_and_secrets_rejected() -> None:
-    clear_owner_unlock_audit_for_tests()
     packet = build_owner_unlock_packet()
     assert packet["prompt_alone_is_not_approval"] is True
     assert packet["mode"] == "A"

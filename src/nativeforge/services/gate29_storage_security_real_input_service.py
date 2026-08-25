@@ -7,6 +7,10 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate26_controlled_pilot_master_service import (
     build_mode_a_pilot_master_packet,
     resolve_controlled_pilot_master,
@@ -24,16 +28,15 @@ from nativeforge.services.gate29_auth0_real_input_service import (
 
 SCHEMA_VERSION = "nf_gate29_storage_security_real_input_v1"
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def run_storage_security_real_input_ingest(
@@ -59,7 +62,9 @@ def run_storage_security_real_input_ingest(
     customer_data_policy_approved: bool = False,
     tenant_ok: bool = False,
     audit_ok: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     run_id = (
         f"nf_storage_sec_real_input_"
         f"{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}"
@@ -265,8 +270,7 @@ def run_storage_security_real_input_ingest(
         if result["missing_gates"]:
             result["controlled_customer_pilot_status"] = "CONDITIONAL_INTERNAL_ONLY"
 
-    _emit_audit(
-        "storage_security_real_input",
+    _emit_audit(collector, "storage_security_real_input",
         {
             "run_id": run_id,
             "production_storage_claimed": result["production_storage_claimed"],
@@ -298,11 +302,3 @@ def storage_security_real_input_invariant_failures(result: dict[str, Any]) -> li
         if not result.get("claim_freeze_verified"):
             fails.append("freeze_not_verified")
     return fails
-
-
-def get_storage_security_real_input_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_storage_security_real_input_audit_for_tests() -> None:
-    _AUDIT.clear()

@@ -5,7 +5,6 @@ from nativeforge.services.gate31_support_triage_assembler_service import (
     support_triage_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate31_support_triage_service import (
-    clear_support_audit_for_tests,
     resolve_support_triage,
 )
 from nativeforge.services.sc_monday_demo_bridge_service import (
@@ -15,7 +14,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_severity_and_readiness() -> None:
-    clear_support_audit_for_tests()
     sev0 = resolve_support_triage(
         severity="sev0_security_or_data_exposure", status="triaged", owner_assigned=True
     )

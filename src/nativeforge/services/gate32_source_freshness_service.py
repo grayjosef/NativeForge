@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate31_live_source_coverage_service import (
     detect_duplicate_opportunities,
 )
@@ -27,9 +31,6 @@ HEALTH_STATUSES = (
     "blocked",
     "unknown",
 )
-
-_AUDIT: list[dict[str, Any]] = []
-
 
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
@@ -58,7 +59,9 @@ def resolve_source_health(
     last_checked_at: str | None = None,
     last_seen_opportunity_at: str | None = None,
     duplicate_count: int = 0,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     missing: list[str] = []
     status = "packet_only" if packet_only else "not_started"
     if probe_available and not probe_attempted:
@@ -88,7 +91,7 @@ def resolve_source_health(
     freshness = "stale" if (stale or packet_only or not reachable) else "fresh"
     if error:
         freshness = "error"
-    _AUDIT.append({"event": "source_freshness_check", "source_id": source_id})
+    collector.add({"event": "source_freshness_check", "source_id": source_id})
     return _json_safe(
         {
             "source_id": source_id,
@@ -115,9 +118,12 @@ def run_source_freshness_bundle(
     *,
     rows: list[dict[str, Any]] | None = None,
     opportunity_fixtures: list[dict[str, Any]] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     mapped = rows or [
         resolve_source_health(
+            collector=collector,
             source_id=f"pkt-{st}",
             state=st,
             source_name=f"{st}_packet",
@@ -170,7 +176,7 @@ def run_source_freshness_bundle(
             "top15_live_claimed": False,
             "broad_coverage_claimed": False,
             "audit_events": True,
-            "audit_refs": [a["event"] for a in _AUDIT[-5:]],
+            "audit_refs": collector.event_names(5),
             "missing_gates": ["probes_not_run_mode_a", "top15_not_live"],
         }
     )
@@ -182,7 +188,3 @@ def source_freshness_invariant_failures(result: dict[str, Any]) -> list[str]:
         if result.get(key) is True:
             fails.append(key)
     return fails
-
-
-def clear_source_freshness_audit_for_tests() -> None:
-    _AUDIT.clear()

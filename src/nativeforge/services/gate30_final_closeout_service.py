@@ -7,6 +7,10 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate26_controlled_pilot_master_service import (
     STATUS_CONDITIONAL_INTERNAL,
     STATUS_CONTROLLED_GO,
@@ -23,16 +27,15 @@ from nativeforge.services.gate27_cutover_claim_freeze_service import (
 
 SCHEMA_VERSION = "nf_gate30_final_closeout_v1"
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def resolve_final_pilot_packet(
@@ -316,7 +319,8 @@ def resolve_final_pilot_packet(
     )
 
 
-def build_3000_sprint_closeout() -> dict[str, Any]:
+def build_3000_sprint_closeout(*, collector: AuditEventCollector | None = None) -> dict[str, Any]:
+    collector = new_collector(collector)
     run_id = (
         f"nf_gate30_closeout_"
         f"{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}"
@@ -399,7 +403,7 @@ def build_3000_sprint_closeout() -> dict[str, Any]:
         "human_review_required": True,
         "prompt_alone_is_not_approval": True,
     }
-    _emit_audit("gate30_closeout", {"run_id": run_id, "mode": "A"})
+    _emit_audit(collector, "gate30_closeout", {"run_id": run_id, "mode": "A"})
     return _json_safe(result)
 
 
@@ -438,11 +442,3 @@ def final_closeout_invariant_failures(result: dict[str, Any]) -> list[str]:
     if any(not (x.get("reason") or x.get("missing_evidence")) for x in forbidden):
         fails.append("forbidden_without_reason")
     return fails
-
-
-def get_final_closeout_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_final_closeout_audit_for_tests() -> None:
-    _AUDIT.clear()

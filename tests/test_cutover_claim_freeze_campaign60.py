@@ -9,7 +9,6 @@ from nativeforge.services.gate27_cutover_assembler_service import (
 from nativeforge.services.gate27_cutover_claim_freeze_service import (
     build_claim_freeze_matrix,
     build_production_cutover_checklist,
-    clear_cutover_claim_freeze_audit_for_tests,
     cutover_claim_freeze_invariant_failures,
 )
 from nativeforge.services.sc_monday_demo_bridge_service import (
@@ -19,7 +18,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_claim_freeze_blocks_hard_claims() -> None:
-    clear_cutover_claim_freeze_audit_for_tests()
     freeze = build_claim_freeze_matrix()
     assert freeze["frozen_claim_booleans"]["login_live"] is False
     assert freeze["frozen_claim_booleans"]["production_storage"] is False

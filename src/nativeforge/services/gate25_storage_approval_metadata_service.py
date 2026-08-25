@@ -6,6 +6,10 @@ import json
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.production_metadata_adapter_service import (
     production_metadata_config_present,
     production_metadata_write_attempt,
@@ -28,16 +32,15 @@ APPROVAL_SCOPES = (
     "production_rollout",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def build_gate25_approval_token_model(
@@ -151,8 +154,10 @@ def validate_production_metadata_live_path(
     customer_policy_ok: bool = False,
     login_live: bool = False,
     attempt_write: bool = True,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
     """Mode A default: no token → blocked. Prompt text is never approval."""
+    collector = new_collector(collector)
     ingest = ingest_storage_owner_approval_token()
     t = token or build_gate25_approval_token_model(present=False)
 
@@ -243,8 +248,7 @@ def validate_production_metadata_live_path(
         if t.get("customer_persistence_approved") and not login_live:
             missing.append("approval_alone_cannot_unlock_customer_persistence")
 
-    _emit_audit(
-        "metadata_live_path_validation",
+    _emit_audit(collector, "metadata_live_path_validation",
         {
             "approval_scope": t.get("approval_scope"),
             "metadata_writes_allowed": metadata_writes_allowed,
@@ -340,11 +344,3 @@ def storage_approval_metadata_invariant_failures(result: dict[str, Any]) -> list
     if result.get("controlled_customer_pilot_status") == "GO":
         fails.append("pilot_go")
     return fails
-
-
-def get_storage_approval_metadata_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_storage_approval_metadata_audit_for_tests() -> None:
-    _AUDIT.clear()

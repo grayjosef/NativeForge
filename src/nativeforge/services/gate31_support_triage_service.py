@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate31_support_triage_v1"
 
 SEVERITIES = (
@@ -30,9 +35,6 @@ SUPPORT_STATUSES = (
     "unknown",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -48,7 +50,9 @@ def resolve_support_triage(
     customer_notified: bool = False,
     route_context: str | None = "/?view=sc_customer_demo",
     unresolved_security: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     sev = severity if severity in SEVERITIES else "unknown"
     st = status if status in SUPPORT_STATUSES else "unknown"
     missing: list[str] = []
@@ -80,7 +84,7 @@ def resolve_support_triage(
         blocks_expansion = False
 
     blocks_rollout = bool(unresolved_security or blocks_expansion)
-    _AUDIT.append({"event": "incident_triage", "severity": sev, "status": st})
+    collector.add({"event": "incident_triage", "severity": sev, "status": st})
 
     return _json_safe(
         {
@@ -105,7 +109,7 @@ def resolve_support_triage(
             "blocks_controlled_pilot_go": blocks_pilot_go,
             "blocks_production_rollout": blocks_rollout,
             "missing_gates": missing,
-            "audit_refs": [a["event"] for a in _AUDIT[-3:]],
+            "audit_refs": collector.event_names(3),
         }
     )
 
@@ -120,7 +124,3 @@ def support_triage_invariant_failures(result: dict[str, Any]) -> list[str]:
     if not result.get("incident_audit_events"):
         fails.append("audit_missing")
     return fails
-
-
-def clear_support_audit_for_tests() -> None:
-    _AUDIT.clear()

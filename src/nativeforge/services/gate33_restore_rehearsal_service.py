@@ -7,10 +7,12 @@ import uuid
 from pathlib import Path
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate33_restore_rehearsal_v1"
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -23,7 +25,9 @@ def run_restore_rehearsal(
     restore_evidence_ref: str | None = "nf://gate33/non-prod-restore-rehearsal",
     backup_manifest_evidence_ref: str | None = "nf://gate33/non-prod-backup-manifest",
     write_artifact: Path | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     run_id = f"nf_restore_{uuid.uuid4().hex[:10]}"
     missing: list[str] = []
     if not restore_evidence_ref:
@@ -40,7 +44,7 @@ def run_restore_rehearsal(
             json.dumps({"run_id": run_id, "scope": "non_prod"}, indent=2) + "\n",
             encoding="utf-8",
         )
-    _AUDIT.append({"event": "restore_rehearsal", "run_id": run_id})
+    collector.add({"event": "restore_rehearsal", "run_id": run_id})
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -68,7 +72,7 @@ def run_restore_rehearsal(
             "production_restore_claimed": False,
             "customer_persistence_claimed": False,
             "missing_gates": missing,
-            "audit_refs": [a["event"] for a in _AUDIT[-5:]],
+            "audit_refs": collector.event_names(5),
         }
     )
 
@@ -85,7 +89,3 @@ def restore_rehearsal_invariant_failures(result: dict[str, Any]) -> list[str]:
     if result.get("restore_proof") and not result.get("restore_evidence_ref"):
         fails.append("proof_without_evidence")
     return fails
-
-
-def clear_restore_audit_for_tests() -> None:
-    _AUDIT.clear()

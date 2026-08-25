@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+)
 from nativeforge.services.customer_data_policy_assembler_service import (
     build_customer_data_policy_demo_surface,
     customer_data_policy_demo_surface_invariant_failures,
@@ -9,9 +12,7 @@ from nativeforge.services.customer_data_policy_assembler_service import (
 from nativeforge.services.customer_data_policy_service import (
     build_customer_data_policy_contract,
     classify_data_item,
-    clear_customer_data_policy_audit_for_tests,
     customer_data_policy_invariant_failures,
-    get_customer_data_policy_audit_events,
     resolve_customer_persistence,
 )
 from nativeforge.services.sc_monday_demo_bridge_service import (
@@ -21,23 +22,23 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_unknown_and_ai_training_defaults() -> None:
-    clear_customer_data_policy_audit_for_tests()
+    collector = AuditEventCollector()
     policy = build_customer_data_policy_contract()
     assert policy["ai_training_consent"] is False
     assert policy["ai_training_consent_default"] is False
     unknown = classify_data_item(
-        classification="unknown", proposed_storage_mode="local_dev_only"
+        classification="unknown",
+        proposed_storage_mode="local_dev_only",
+        collector=collector,
     )
     assert unknown["blocked"] is True
     legal = classify_data_item(
         classification="legal_or_governance_document",
         proposed_storage_mode="production_object_storage",
+        collector=collector,
     )
     assert legal["blocked"] is True
-    assert any(
-        e["event"] == "customer_data_policy_violation"
-        for e in get_customer_data_policy_audit_events()
-    )
+    assert collector.has_event("customer_data_policy_violation")
 
 
 def test_persistence_false_without_gates() -> None:

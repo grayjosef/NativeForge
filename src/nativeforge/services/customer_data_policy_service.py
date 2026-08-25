@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_customer_data_policy_v1"
 
 DATA_CLASSIFICATIONS = (
@@ -59,16 +64,15 @@ STRICT_CLASSIFICATIONS = frozenset(
     }
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def build_customer_data_policy_contract(
@@ -127,7 +131,9 @@ def classify_data_item(
     *,
     classification: str,
     proposed_storage_mode: str = "local_dev_only",
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     cls = classification if classification in DATA_CLASSIFICATIONS else "unknown"
     mode = (
         proposed_storage_mode if proposed_storage_mode in STORAGE_MODES else "unknown"
@@ -153,8 +159,7 @@ def classify_data_item(
         blocked = True
         reasons.append("strict_classification_requires_elevated_handling")
     if blocked:
-        _emit_audit(
-            "customer_data_policy_violation",
+        _emit_audit(collector, "customer_data_policy_violation",
             {
                 "classification": cls,
                 "proposed_storage_mode": mode,
@@ -239,11 +244,3 @@ def customer_data_policy_invariant_failures(result: dict[str, Any]) -> list[str]
     if result.get("ai_training_consent_default") is not False:
         fails.append("ai_training_default_not_false")
     return fails
-
-
-def get_customer_data_policy_audit_events() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_customer_data_policy_audit_for_tests() -> None:
-    _AUDIT.clear()

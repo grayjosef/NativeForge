@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+)
 from nativeforge.services.gate25_object_storage_assembler_service import (
     build_object_storage_unlock_demo_surface,
     object_storage_unlock_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate25_object_storage_unlock_service import (
-    clear_object_storage_unlock_audit_for_tests,
-    get_object_storage_unlock_audit,
     object_storage_unlock_invariant_failures,
     run_object_storage_signed_url_unlock,
     validate_object_key_policy,
@@ -23,8 +24,8 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_missing_approval_config_sse_malware_block() -> None:
-    clear_object_storage_unlock_audit_for_tests()
-    result = run_object_storage_signed_url_unlock()
+    collector = AuditEventCollector()
+    result = run_object_storage_signed_url_unlock(collector=collector)
     assert "object_storage_approval_missing" in result["missing_gates"]
     assert "object_config_missing" in result["missing_gates"]
     assert "sse_encryption_missing" in result["missing_gates"]
@@ -34,7 +35,7 @@ def test_missing_approval_config_sse_malware_block() -> None:
     assert result["customer_persistence_claimed"] is False
     assert result["cross_org_download_denied"] is True
     assert object_storage_unlock_invariant_failures(result) == []
-    assert any(e["event"] == "object_access" for e in get_object_storage_unlock_audit())
+    assert collector.has_event("object_access")
 
 
 def test_path_traversal_and_archive_blocked() -> None:

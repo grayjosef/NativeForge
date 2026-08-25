@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.pen_test_evidence_capture_service import (
     capture_pen_test_evidence,
 )
@@ -47,16 +51,15 @@ SECURITY_EVIDENCE_STATUSES = (
     "unknown",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def build_security_attestation_contract(
@@ -68,8 +71,10 @@ def build_security_attestation_contract(
     scope: str = "unknown",
     findings: list[dict[str, Any]] | None = None,
     owner_accepted_risk: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
     """Prompt text is not pen-test evidence. No report => no pass."""
+    collector = new_collector(collector)
     findings = list(findings or [])
     by_sev = {s: 0 for s in FINDING_SEVERITIES}
     open_critical = 0
@@ -165,8 +170,7 @@ def build_security_attestation_contract(
     pilot_impact = "blocks_controlled_customer_pilot" if not pen_test_passed else "none"
     production_impact = "blocks_production_rollout"
 
-    _emit_audit(
-        "security_attestation_resolve",
+    _emit_audit(collector, "security_attestation_resolve",
         {
             "evidence_status": evidence_status,
             "pen_test_passed": pen_test_passed,
@@ -258,11 +262,3 @@ def security_attestation_invariant_failures(result: dict[str, Any]) -> list[str]
     if not result.get("report_present") and result.get("pen_test_passed"):
         fails.append("pass_without_report")
     return fails
-
-
-def get_security_attestation_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_security_attestation_audit_for_tests() -> None:
-    _AUDIT.clear()

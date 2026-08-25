@@ -5,7 +5,6 @@ from nativeforge.services.gate31_live_authority_assembler_service import (
     live_authority_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate31_live_authority_service import (
-    clear_authority_audit_for_tests,
     resolve_live_authority,
 )
 from nativeforge.services.sc_monday_demo_bridge_service import (
@@ -15,7 +14,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_self_attestation_and_state_cannot_submit() -> None:
-    clear_authority_audit_for_tests()
     att = resolve_live_authority(self_attestation=True, federally_recognized=True)
     assert att["can_submit"] is False
     state = resolve_live_authority(state_recognized=True, federally_recognized=False)

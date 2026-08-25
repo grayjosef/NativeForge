@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate31_live_source_coverage_v1"
 
 TOP15 = (
@@ -40,9 +45,6 @@ SOURCE_STATUSES = (
     "blocked",
     "unknown",
 )
-
-_AUDIT: list[dict[str, Any]] = []
-
 
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
@@ -114,7 +116,9 @@ def resolve_live_source_coverage(
     *,
     rows: list[dict[str, Any]] | None = None,
     opportunity_fixtures: list[dict[str, Any]] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     mapped = rows or [
         resolve_source_row(
             state=st,
@@ -130,7 +134,7 @@ def resolve_live_source_coverage(
     )
     dups = detect_duplicate_opportunities(opportunity_fixtures or [])
     sc = next((r for r in mapped if r["state"] == "SC"), {})
-    _AUDIT.append({"event": "source_coverage_resolve", "live_states": live_states})
+    collector.add({"event": "source_coverage_resolve", "live_states": live_states})
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -153,7 +157,7 @@ def resolve_live_source_coverage(
             "broad_coverage_claimed": False,
             "missing_gates": ["top15_not_all_live", "packet_only_majority"],
             "live_states": live_states,
-            "audit_refs": [a["event"] for a in _AUDIT[-3:]],
+            "audit_refs": collector.event_names(3),
         }
     )
 
@@ -167,7 +171,3 @@ def live_source_coverage_invariant_failures(result: dict[str, Any]) -> list[str]
     if result.get("live_coverage_claimed") is True and result.get("mode") == "A":
         fails.append("live_coverage_mode_a")
     return fails
-
-
-def clear_source_coverage_audit_for_tests() -> None:
-    _AUDIT.clear()

@@ -11,7 +11,6 @@ from nativeforge.services.gate26_controlled_pilot_master_service import (
     STATUS_CONTROLLED_GO,
     STATUS_PROD_ROLLOUT_NO_GO,
     STATUS_READY_OWNER_REVIEW,
-    clear_controlled_pilot_master_audit_for_tests,
     controlled_pilot_master_invariant_failures,
     resolve_controlled_pilot_master,
 )
@@ -22,7 +21,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_hard_gates_block_pilot_go() -> None:
-    clear_controlled_pilot_master_audit_for_tests()
     base = resolve_controlled_pilot_master()
     assert base["controlled_customer_pilot_status"] == STATUS_CONDITIONAL_INTERNAL
     assert base["production_rollout_status"] == STATUS_PROD_ROLLOUT_NO_GO

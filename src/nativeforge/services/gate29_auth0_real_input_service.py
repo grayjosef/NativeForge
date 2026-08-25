@@ -12,6 +12,10 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.auth0_preflight_service import run_auth0_preflight
 from nativeforge.services.gate28_mode_b_rehearsal_service import (
     build_synthetic_non_secret_fixture,
@@ -30,16 +34,15 @@ _PRESENCE_FLAG_ALLOW = {
 }
 
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def is_synthetic_rehearsal_artifact(payload: dict[str, Any] | None) -> bool:
@@ -126,7 +129,9 @@ def run_auth0_real_input_ingest(
     rbac_handoff_passed: bool = False,
     tenant_boundary_passed: bool = False,
     audit_event_emitted: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     run_id = (
         f"nf_auth_real_input_"
         f"{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}_{uuid.uuid4().hex[:8]}"
@@ -271,8 +276,7 @@ def run_auth0_real_input_ingest(
         result["secrets_in_output"] = True
         result["no_secret_validation"] = False
 
-    _emit_audit(
-        "auth0_real_input_ingest",
+    _emit_audit(collector, "auth0_real_input_ingest",
         {
             "run_id": run_id,
             "mode": result["mode"],
@@ -307,11 +311,3 @@ def auth0_real_input_invariant_failures(result: dict[str, Any]) -> list[str]:
     ):
         fails.append("login_live_without_real_inputs")
     return fails
-
-
-def get_auth0_real_input_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_auth0_real_input_audit_for_tests() -> None:
-    _AUDIT.clear()

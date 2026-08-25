@@ -6,6 +6,11 @@ import json
 import re
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate27_owner_unlock_packet_v1"
 
 INPUT_KINDS = (
@@ -24,16 +29,15 @@ _SECRET_KEY_RE = re.compile(
     re.IGNORECASE,
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def _reject_secret_keys(payload: dict[str, Any]) -> list[str]:
@@ -50,8 +54,10 @@ def build_owner_unlock_packet(
     storage_inputs: dict[str, Any] | None = None,
     security_inputs: dict[str, Any] | None = None,
     repo_safe_artifact: dict[str, Any] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
     """Prompt alone is never approval; secrets stay out of repo-safe artifacts."""
+    collector = new_collector(collector)
     auth0 = auth0_inputs or {}
     storage = storage_inputs or {}
     security = security_inputs or {}
@@ -209,8 +215,7 @@ def build_owner_unlock_packet(
         result["secrets_in_output"] = True
         result["no_secret_validation"] = False
 
-    _emit_audit(
-        "owner_unlock_packet_resolve",
+    _emit_audit(collector, "owner_unlock_packet_resolve",
         {"mode": mode, "missing_count": len(missing), "mode_b_ready": mode_b_ready},
     )
     return _json_safe(result)
@@ -235,11 +240,3 @@ def owner_unlock_packet_invariant_failures(result: dict[str, Any]) -> list[str]:
     if result.get("controlled_customer_pilot_status") == "CONTROLLED_CUSTOMER_GO":
         fails.append("pilot_go")
     return fails
-
-
-def get_owner_unlock_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_owner_unlock_audit_for_tests() -> None:
-    _AUDIT.clear()

@@ -13,13 +13,14 @@ snapshotting every mutable module global around a build:
 2. **Randomness.** ``uuid.uuid4().hex[:8]`` supplies nonces, event ids and id
    suffixes across 37 loaded modules. (``secrets``, ``random`` and ``time`` are
    not used on this path at all.)
-3. **Module-global accumulators.** Thirty services hold a module-level
-   ``_AUDIT`` list that is appended to on every call and sliced into the payload
-   as ``audit_refs``. Every one of them *doubles* per build, so the payload
-   depended on how many times the process had already built one — and the lists
-   grow without bound in any long-running process.
+3. **Module-global accumulators.** Thirty services held a module-level
+   ``_AUDIT`` list that was appended to on every call and sliced into the
+   payload as ``audit_refs``. Every one of them *doubled* per build, so the
+   payload depended on how many times the process had already built one.
 
-The third is why freezing the clock alone would not have worked.
+The third is why freezing the clock alone would not have worked. Gate 84 has
+since retired those lists entirely in favour of request-scoped collectors, so
+this module no longer resets anything — see ``ACCUMULATOR_ATTRS``.
 
 ## How determinism works
 
@@ -30,8 +31,8 @@ duration of one generation:
   ``nativeforge.`` module where that attribute is the real class;
 * replaces ``mod.uuid`` with a shim whose ``uuid4()`` is derived from the seed
   and a call counter rather than from entropy;
-* clears every module-level ``_AUDIT`` list so a generation depends on its
-  inputs and not on process history;
+* clears any module-level accumulator named in ``ACCUMULATOR_ATTRS`` (empty
+  since Gate 84 retired the ``_AUDIT`` lists);
 * restores all three exactly on exit, including on exception.
 
 Patching module attributes in a scoped context was chosen over threading a
@@ -96,9 +97,19 @@ SCRATCH_DIR_NAME = "nativeforge-demo-determinism"
 # modules keep their real primitives.
 PATCH_PREFIX = "nativeforge."
 
-# Module-level accumulator names reset per generation. Discovered empirically:
-# thirty services use `_AUDIT` and every one of them doubles across a build.
-ACCUMULATOR_ATTRS: tuple[str, ...] = ("_AUDIT",)
+# Module-level accumulator names reset per generation.
+#
+# Gate 83B needed this for `_AUDIT`: thirty services kept a module-level audit
+# list that doubled on every build, so a generation depended on process history.
+# That was a workaround. Gate 84 retired those lists in favour of request-scoped
+# collectors (`audit_event_collector_service`), so there is nothing left to
+# reset and the tuple is empty.
+#
+# The mechanism is kept rather than deleted: it is the seam that catches the
+# next module-level accumulator, and a Gate 84 test fails if `_AUDIT` ever
+# reappears. An empty tuple is a claim - "no accumulator needs resetting" - and
+# a test checks it stays true.
+ACCUMULATOR_ATTRS: tuple[str, ...] = ()
 
 # Path constants redirected to a fresh temporary directory for the duration of
 # a generation.

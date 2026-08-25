@@ -13,7 +13,6 @@ from nativeforge.services.gate30_final_closeout_assembler_service import (
     final_closeout_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate30_final_closeout_service import (
-    clear_final_closeout_audit_for_tests,
     final_closeout_invariant_failures,
     resolve_final_pilot_packet,
 )
@@ -29,7 +28,6 @@ def _assert_not_go(packet: dict) -> None:
 
 
 def test_hard_gates_block_customer_go() -> None:
-    clear_final_closeout_audit_for_tests()
     for kwargs in (
         {
             "login_live": False,

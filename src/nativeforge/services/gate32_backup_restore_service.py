@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate32_backup_restore_v1"
 
 STATUSES = (
@@ -21,9 +26,6 @@ STATUSES = (
     "unknown",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -36,7 +38,9 @@ def resolve_backup_restore(
     storage_config: bool = False,
     non_prod_rehearsed: bool = False,
     restore_evidence_ref: str | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     missing: list[str] = []
     backup_status = "planned"
     restore_status = "planned"
@@ -59,7 +63,7 @@ def resolve_backup_restore(
             missing.append("restore_evidence_ref")
     prod_backup = bool(production_storage and storage_approval and storage_config)
     prod_restore = False
-    _AUDIT.append({"event": "restore_rehearsal", "non_prod": non_prod_rehearsed})
+    collector.add({"event": "restore_rehearsal", "non_prod": non_prod_rehearsed})
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -80,7 +84,7 @@ def resolve_backup_restore(
             "customer_persistence_claimed": False,
             "rpo_rto_targets": {"rpo": "unvalidated", "rto": "unvalidated"},
             "audit_events": True,
-            "audit_refs": [a["event"] for a in _AUDIT[-3:]],
+            "audit_refs": collector.event_names(3),
             "missing_gates": missing,
         }
     )

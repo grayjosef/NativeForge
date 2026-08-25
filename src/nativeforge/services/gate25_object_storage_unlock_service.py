@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate25_storage_approval_metadata_service import (
     build_gate25_approval_token_model,
 )
@@ -21,16 +25,15 @@ from nativeforge.services.object_storage_signed_url_service import (
 
 SCHEMA_VERSION = "nf_gate25_object_storage_unlock_v1"
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def validate_object_key_policy(
@@ -41,8 +44,10 @@ def validate_object_key_policy(
     evidence_id: str,
     content_hash: str,
     filename: str,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
     # Reject / normalize path traversal
+    collector = new_collector(collector)
     unsafe = ".." in filename or "/" in filename or "\\" in filename
     key = build_org_scoped_object_key(
         environment_scope=environment_scope,
@@ -53,8 +58,7 @@ def validate_object_key_policy(
         normalized_filename=filename,
     )
     org_ok = assert_object_key_org_scoped(key, organization_profile_id)
-    _emit_audit(
-        "object_key_policy",
+    _emit_audit(collector, "object_key_policy",
         {
             "organization_profile_id": organization_profile_id,
             "object_key": key,
@@ -105,7 +109,9 @@ def run_object_storage_signed_url_unlock(
     resource_org_id: str = "org_a",
     sse_configured: bool = False,
     malware_satisfied: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     t = token or build_gate25_approval_token_model(present=False)
     approval = resolve_object_storage_approval(t)
     config_present = production_object_config_present()
@@ -163,8 +169,7 @@ def run_object_storage_signed_url_unlock(
         object_key=key_policy["object_key"], satisfied=malware_satisfied
     )
 
-    _emit_audit(
-        "object_access",
+    _emit_audit(collector, "object_access",
         {
             "upload_status": upload.get("status"),
             "download_status": cross_download.get("status"),
@@ -255,11 +260,3 @@ def object_storage_unlock_invariant_failures(result: dict[str, Any]) -> list[str
     if not result.get("cross_org_download_denied"):
         fails.append("cross_org_not_denied")
     return fails
-
-
-def get_object_storage_unlock_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_object_storage_unlock_audit_for_tests() -> None:
-    _AUDIT.clear()

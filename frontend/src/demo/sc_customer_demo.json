@@ -38366,7 +38366,7 @@
       ],
       "collaboration_matching_claimed": false,
       "collaboration_status": "dark_off",
-      "current_head": "7be4e9f",
+      "current_head": "fb6687b",
       "customer_data_persistence_claimed": false,
       "customer_next_actions": [
         "Provide missing org evidence when durable upload path is approved",
@@ -38587,7 +38587,7 @@
         "Review evidence intake storage proposal before any migration",
         "Keep collaboration and final export OFF"
       ],
-      "operator_readiness_id": "or_79bb361751890d52",
+      "operator_readiness_id": "or_95692e73e276bda8",
       "package_readiness_reference": "package_readiness_queue",
       "pen_test_passed_claimed": false,
       "pen_test_readiness_reference": "docs/operations/152_PEN_TEST_READINESS_REPORT.md",

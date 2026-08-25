@@ -8,7 +8,6 @@ from nativeforge.services.gate25_storage_approval_assembler_service import (
 )
 from nativeforge.services.gate25_storage_approval_metadata_service import (
     build_gate25_approval_token_model,
-    clear_storage_approval_metadata_audit_for_tests,
     storage_approval_metadata_invariant_failures,
     validate_production_metadata_live_path,
 )
@@ -19,7 +18,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_prompt_and_missing_token_block() -> None:
-    clear_storage_approval_metadata_audit_for_tests()
     result = validate_production_metadata_live_path()
     assert result["prompt_alone_is_not_approval"] is True
     assert result["approval_token_present"] is False

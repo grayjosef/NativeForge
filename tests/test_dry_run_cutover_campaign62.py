@@ -7,7 +7,6 @@ from nativeforge.services.gate28_dry_run_cutover_assembler_service import (
     dry_run_cutover_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate28_dry_run_cutover_service import (
-    clear_dry_run_cutover_audit_for_tests,
     dry_run_cutover_invariant_failures,
     run_production_dry_run_cutover,
 )
@@ -18,7 +17,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_stops_at_auth0_and_skips_downstream() -> None:
-    clear_dry_run_cutover_audit_for_tests()
     result = run_production_dry_run_cutover()
     assert result["first_hard_blocker"] == "auth0_oidc_preflight"
     assert result["skipped_after_blocker_count"] >= 1

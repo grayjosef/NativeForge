@@ -7,6 +7,10 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate31_live_source_coverage_service import (
     detect_duplicate_opportunities,
 )
@@ -16,9 +20,6 @@ from nativeforge.services.gate32_source_freshness_service import (
 
 SCHEMA_VERSION = "nf_gate33_source_probe_v1"
 SAFE_PROBE_ALLOWLIST = frozenset({"pkt-SC", "local-fixture-sc"})
-
-_AUDIT: list[dict[str, Any]] = []
-
 
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
@@ -38,7 +39,9 @@ def run_safe_probe(
     stale: bool = True,
     evidence_ref: str | None = None,
     network_used: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     allowed_set = allowlist if allowlist is not None else SAFE_PROBE_ALLOWLIST
     probe_allowed = source_id in allowed_set
     probe_attempted = bool(attempt and probe_allowed and not network_used)
@@ -74,7 +77,7 @@ def run_safe_probe(
         and freshness == "fresh"
     )
     run_id = f"nf_probe_{uuid.uuid4().hex[:10]}"
-    _AUDIT.append({"event": "safe_source_probe", "source_id": source_id})
+    collector.add({"event": "safe_source_probe", "source_id": source_id})
     return _json_safe(
         {
             "probe_run_id": run_id,
@@ -105,9 +108,12 @@ def run_source_probe_bundle(
     *,
     rows: list[dict[str, Any]] | None = None,
     opportunity_fixtures: list[dict[str, Any]] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     mapped = rows or [
         run_safe_probe(
+            collector=collector,
             source_id="pkt-SC",
             state="SC",
             source_name="SC packet allowlist",
@@ -119,6 +125,7 @@ def run_source_probe_bundle(
         ),
         *[
             run_safe_probe(
+            collector=collector,
                 source_id=f"pkt-{st}",
                 state=st,
                 source_name=f"{st}_packet",
@@ -172,7 +179,7 @@ def run_source_probe_bundle(
             "packet_only_remaining": [
                 r["source_id"] for r in mapped if not r.get("probe_attempted")
             ],
-            "audit_refs": [a["event"] for a in _AUDIT[-8:]],
+            "audit_refs": collector.event_names(8),
         }
     )
 
@@ -183,7 +190,3 @@ def source_probe_invariant_failures(result: dict[str, Any]) -> list[str]:
         if result.get(key) is True:
             fails.append(key)
     return fails
-
-
-def clear_source_probe_audit_for_tests() -> None:
-    _AUDIT.clear()

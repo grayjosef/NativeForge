@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate32_observability_v1"
 
 WORKFLOW_FAMILIES = (
@@ -39,9 +44,6 @@ OBS_STATUSES = (
     "unknown",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -56,7 +58,9 @@ def resolve_observability(
     sev0_trigger: bool = False,
     workflow_failures: list[str] | None = None,
     default_status: str = "smoke_only",
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     missing: list[str] = []
     if not healthcheck_ready:
         missing.append("healthcheck")
@@ -82,7 +86,7 @@ def resolve_observability(
         and incident_escalation_ready
         and not sev0_trigger
     )
-    _AUDIT.append({"event": "observability_resolve", "ready": ops_ready})
+    collector.add({"event": "observability_resolve", "ready": ops_ready})
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,

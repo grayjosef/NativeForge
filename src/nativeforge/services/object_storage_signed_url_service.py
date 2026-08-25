@@ -8,6 +8,10 @@ import os
 import re
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.storage_feature_flag_service import (
     build_storage_feature_flag_contract,
 )
@@ -16,8 +20,6 @@ from nativeforge.services.storage_owner_approval_token_service import (
 )
 
 SCHEMA_VERSION = "nf_object_storage_signed_url_v1"
-_AUDIT: list[dict[str, Any]] = []
-
 _SAFE_NAME = re.compile(r"[^a-zA-Z0-9._-]+")
 
 
@@ -26,8 +28,10 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def production_object_config_present() -> bool:
@@ -97,10 +101,10 @@ def _gates(
     }
 
 
-def malware_scan_hook(*, object_key: str, satisfied: bool = False) -> dict[str, Any]:
+def malware_scan_hook(*, object_key: str, satisfied: bool = False, collector: AuditEventCollector | None = None) -> dict[str, Any]:
+    collector = new_collector(collector)
     status = "passed" if satisfied else "required_not_satisfied"
-    _emit_audit(
-        "malware_scan_hook",
+    _emit_audit(collector, "malware_scan_hook",
         {"object_key": object_key, "status": status},
     )
     return {
@@ -128,7 +132,9 @@ def generate_signed_upload_url(
     content_hash: str,
     flags: dict[str, Any] | None = None,
     approval: dict[str, Any] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     g = _gates(flags=flags, approval=approval)
     key = build_org_scoped_object_key(
         environment_scope="production",
@@ -138,8 +144,7 @@ def generate_signed_upload_url(
         content_hash=content_hash or hashlib.sha256(b"empty").hexdigest(),
     )
     if not g["signed_url_generation_allowed"]:
-        _emit_audit(
-            "signed_upload_url_blocked",
+        _emit_audit(collector, "signed_upload_url_blocked",
             {"organization_profile_id": organization_profile_id, "object_key": key},
         )
         return _json_safe(
@@ -182,11 +187,12 @@ def generate_signed_download_url(
     object_key: str,
     flags: dict[str, Any] | None = None,
     approval: dict[str, Any] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     g = _gates(flags=flags, approval=approval)
     if not assert_object_key_org_scoped(object_key, organization_profile_id):
-        _emit_audit(
-            "signed_download_cross_org_denied",
+        _emit_audit(collector, "signed_download_cross_org_denied",
             {
                 "organization_profile_id": organization_profile_id,
                 "object_key": object_key,
@@ -201,8 +207,7 @@ def generate_signed_download_url(
             **g,
         }
     if not g["signed_url_generation_allowed"]:
-        _emit_audit(
-            "signed_download_url_blocked",
+        _emit_audit(collector, "signed_download_url_blocked",
             {"organization_profile_id": organization_profile_id},
         )
         return {
@@ -230,11 +235,12 @@ def archive_or_delete_object(
     action: str = "archive",
     flags: dict[str, Any] | None = None,
     approval: dict[str, Any] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     g = _gates(flags=flags, approval=approval)
     if not assert_object_key_org_scoped(object_key, organization_profile_id):
-        _emit_audit(
-            "object_delete_cross_org_denied",
+        _emit_audit(collector, "object_delete_cross_org_denied",
             {
                 "organization_profile_id": organization_profile_id,
                 "object_key": object_key,
@@ -242,8 +248,7 @@ def archive_or_delete_object(
         )
         return {"status": "denied_cross_org", "action": action, **g}
     if not g["production_writes_allowed"]:
-        _emit_audit(
-            f"object_{action}_blocked",
+        _emit_audit(collector, f"object_{action}_blocked",
             {
                 "organization_profile_id": organization_profile_id,
                 "object_key": object_key,
@@ -256,8 +261,7 @@ def archive_or_delete_object(
             "production_storage_claimed": False,
             **g,
         }
-    _emit_audit(
-        f"object_{action}_not_executed",
+    _emit_audit(collector, f"object_{action}_not_executed",
         {"organization_profile_id": organization_profile_id, "object_key": object_key},
     )
     return {
@@ -273,7 +277,9 @@ def build_object_storage_adapter_status(
     *,
     flags: dict[str, Any] | None = None,
     approval: dict[str, Any] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     g = _gates(flags=flags, approval=approval)
     return _json_safe(
         {
@@ -290,7 +296,7 @@ def build_object_storage_adapter_status(
             "production_writes_allowed": g["production_writes_allowed"],
             "production_storage_claimed": False,
             "customer_data_persistence_claimed": False,
-            "audit_events_emitted": len(_AUDIT),
+            "audit_events_emitted": len(collector),
             **g,
             "next_safe_action": (
                 "Owner approval + NF_OBJECT_STORAGE_BUCKET/ENDPOINT + malware scan "
@@ -313,11 +319,3 @@ def object_storage_adapter_invariant_failures(result: dict[str, Any]) -> list[st
         if result.get(key) is True:
             fails.append(key)
     return fails
-
-
-def clear_object_storage_audit_for_tests() -> None:
-    _AUDIT.clear()
-
-
-def get_object_storage_audit_events() -> list[dict[str, Any]]:
-    return list(_AUDIT)

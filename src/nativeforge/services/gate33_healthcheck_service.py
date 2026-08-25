@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate33_healthcheck_v1"
 
 HC_STATUSES = (
@@ -30,9 +35,6 @@ WORKFLOWS = (
     "service_dependency",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -47,7 +49,9 @@ def resolve_healthchecks(
     alert_sent: bool = False,
     error_budget_breached: bool = False,
     critical_failures: list[str] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     checks: dict[str, str] = {
         "auth_gate": "healthcheck_passed" if login_live else "blocked_missing_config",
         "storage_gate": (
@@ -85,7 +89,7 @@ def resolve_healthchecks(
         and not error_budget_breached
         and support_owner_assigned
     )
-    _AUDIT.append({"event": "healthcheck_resolve", "ops": ops_ready})
+    collector.add({"event": "healthcheck_resolve", "ops": ops_ready})
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,

@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate31_live_authority_v1"
 
 AUTHORITY_STATUSES = (
@@ -23,9 +28,6 @@ AUTHORITY_STATUSES = (
     "blocked_not_supported",
     "unknown",
 )
-
-_AUDIT: list[dict[str, Any]] = []
-
 
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
@@ -47,7 +49,9 @@ def resolve_live_authority(
     human_review_passed: bool = False,
     live_check_attempted: bool = False,
     live_check_passed: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     missing: list[str] = []
     sam_status = "modeled_only"
     aor_status = "modeled_only"
@@ -123,7 +127,7 @@ def resolve_live_authority(
 
     can_submit = bool(federal_submit_ok)
     final_authority = can_submit
-    _AUDIT.append({"event": "authority_resolve", "can_submit": can_submit})
+    collector.add({"event": "authority_resolve", "can_submit": can_submit})
 
     return _json_safe(
         {
@@ -148,7 +152,7 @@ def resolve_live_authority(
             "submission_ready_claim": False,
             "missing_evidence": missing,
             "missing_gates": missing,
-            "audit_refs": [a["event"] for a in _AUDIT[-3:]],
+            "audit_refs": collector.event_names(3),
             "state_recognized_is_not_federal": True,
             "self_attestation_cannot_submit": True,
         }
@@ -164,7 +168,3 @@ def live_authority_invariant_failures(result: dict[str, Any]) -> list[str]:
     if result.get("can_submit") and not result.get("final_authority_claim"):
         fails.append("submit_without_final_authority")
     return fails
-
-
-def clear_authority_audit_for_tests() -> None:
-    _AUDIT.clear()

@@ -5,7 +5,6 @@ from nativeforge.services.gate31_live_source_coverage_assembler_service import (
     live_source_coverage_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate31_live_source_coverage_service import (
-    clear_source_coverage_audit_for_tests,
     detect_duplicate_opportunities,
     resolve_live_source_coverage,
     resolve_source_row,
@@ -17,7 +16,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_packet_stale_error_and_top15() -> None:
-    clear_source_coverage_audit_for_tests()
     packet = resolve_source_row(
         state="SC", source_name="sc", packet_only=True, evidence_ref="p"
     )

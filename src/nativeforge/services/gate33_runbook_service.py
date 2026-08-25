@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate33_runbooks_v1"
 
 CHECK_STATUSES = (
@@ -18,9 +23,6 @@ CHECK_STATUSES = (
     "unknown",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -31,7 +33,9 @@ def resolve_runbooks_and_checklist(
     login_live: bool = False,
     production_storage: bool = False,
     pen_test_passed: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     runbooks = {
         "index": True,
         "controlled_pilot": True,
@@ -97,7 +101,7 @@ def resolve_runbooks_and_checklist(
         if item["status"] == "complete" and not item.get("evidence_ref"):
             item["status"] = "partially_complete"
     hard_blocked = not (login_live and production_storage and pen_test_passed)
-    _AUDIT.append({"event": "runbook_resolve"})
+    collector.add({"event": "runbook_resolve"})
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,

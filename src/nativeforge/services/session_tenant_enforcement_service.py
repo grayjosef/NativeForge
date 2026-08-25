@@ -7,6 +7,10 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.rbac_enforcement_service import enforce_rbac_access
 from nativeforge.services.tenant_boundary_enforcement_service import (
     assert_tenant_access,
@@ -79,16 +83,16 @@ OPERATOR_ONLY_FAMILIES = frozenset(
     }
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append(
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    # Keeps the `at` stamp this service has always recorded.
+    collector.add(
         {
             "event": event,
             "at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
@@ -104,7 +108,9 @@ def build_session_context(
     role: str = "customer_user",
     context_kind: str = "customer",
     stale: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     st = status if status in SESSION_STATUSES else "unknown"
     live_access_claimed = False
     if st == "live_validated":
@@ -126,12 +132,10 @@ def build_session_context(
     if stale and st not in {"expired", "invalid"}:
         st = "expired"
         access_allowed = False
-        _emit_audit(
-            "session_expire", {"organization_profile_id": organization_profile_id}
+        _emit_audit(collector, "session_expire", {"organization_profile_id": organization_profile_id}
         )
 
-    _emit_audit(
-        "session_resolve",
+    _emit_audit(collector, "session_resolve",
         {
             "session_status": st,
             "organization_profile_id": organization_profile_id,
@@ -163,15 +167,16 @@ def enforce_session_object_access(
     object_family: str,
     action: str = "view",
     resource_org_id: str,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     status = session.get("session_status") or "unknown"
     requesting_org = str(session.get("organization_profile_id") or "")
     role = str(session.get("role") or "viewer")
     context_kind = str(session.get("context_kind") or "customer")
 
     if status in {"expired", "invalid", "blocked", "not_started", "unknown"}:
-        _emit_audit(
-            "session_deny",
+        _emit_audit(collector, "session_deny",
             {
                 "reason": f"session_{status}",
                 "object_family": object_family,
@@ -199,8 +204,7 @@ def enforce_session_object_access(
         )
 
     if object_family in OPERATOR_ONLY_FAMILIES and context_kind != "operator":
-        _emit_audit(
-            "session_deny",
+        _emit_audit(collector, "session_deny",
             {
                 "reason": "operator_only_route",
                 "object_family": object_family,
@@ -224,8 +228,7 @@ def enforce_session_object_access(
         action=action,
     )
     if not tenant.get("allowed"):
-        _emit_audit(
-            "cross_org_deny",
+        _emit_audit(collector, "cross_org_deny",
             {
                 "requesting_org_id": requesting_org,
                 "resource_org_id": resource_org_id,
@@ -256,8 +259,7 @@ def enforce_session_object_access(
         context_kind=context_kind,
     )
     if not rbac.get("allowed"):
-        _emit_audit(
-            "session_deny",
+        _emit_audit(collector, "session_deny",
             {
                 "reason": rbac.get("reason"),
                 "object_family": object_family,
@@ -273,8 +275,7 @@ def enforce_session_object_access(
             }
         )
 
-    _emit_audit(
-        "session_allow",
+    _emit_audit(collector, "session_allow",
         {
             "object_family": object_family,
             "organization_profile_id": requesting_org,
@@ -311,11 +312,15 @@ def resolve_controlled_pilot_access(*, login_live: bool = False) -> dict[str, An
     )
 
 
-def run_session_tenant_enforcement_suite() -> dict[str, Any]:
-    dry = build_session_context(status="dry_run", organization_profile_id="org_a")
-    expired = build_session_context(status="expired", organization_profile_id="org_a")
-    invalid = build_session_context(status="invalid", organization_profile_id="org_a")
+def run_session_tenant_enforcement_suite(
+    *, collector: AuditEventCollector | None = None
+) -> dict[str, Any]:
+    collector = new_collector(collector)
+    dry = build_session_context(status="dry_run", organization_profile_id="org_a", collector=collector)
+    expired = build_session_context(status="expired", organization_profile_id="org_a", collector=collector)
+    invalid = build_session_context(status="invalid", organization_profile_id="org_a", collector=collector)
     customer = build_session_context(
+        collector=collector,
         status="dry_run",
         organization_profile_id="org_a",
         role="customer_user",
@@ -326,6 +331,7 @@ def run_session_tenant_enforcement_suite() -> dict[str, Any]:
     fails: list[str] = []
 
     e = enforce_session_object_access(
+        collector=collector,
         session=expired,
         object_family="evidence_intake_lifecycle",
         resource_org_id="org_a",
@@ -335,6 +341,7 @@ def run_session_tenant_enforcement_suite() -> dict[str, Any]:
     cases.append(e)
 
     i = enforce_session_object_access(
+        collector=collector,
         session=invalid, object_family="package_workspace", resource_org_id="org_a"
     )
     if i["allowed"]:
@@ -345,6 +352,7 @@ def run_session_tenant_enforcement_suite() -> dict[str, Any]:
         fails.append("dry_run_live_claim")
 
     op = enforce_session_object_access(
+        collector=collector,
         session=customer,
         object_family="operator_readiness",
         resource_org_id="org_a",
@@ -361,6 +369,7 @@ def run_session_tenant_enforcement_suite() -> dict[str, Any]:
     )
     for fam in cross_families:
         cross = enforce_session_object_access(
+            collector=collector,
             session=customer, object_family=fam, resource_org_id="org_b", action="view"
         )
         if cross["allowed"]:
@@ -368,6 +377,7 @@ def run_session_tenant_enforcement_suite() -> dict[str, Any]:
         cases.append(cross)
 
     collab = enforce_session_object_access(
+        collector=collector,
         session=customer,
         object_family="collaboration_settings",
         resource_org_id="org_a",
@@ -388,7 +398,7 @@ def run_session_tenant_enforcement_suite() -> dict[str, Any]:
             "session_statuses": list(SESSION_STATUSES),
             "cases_run": len(cases),
             "denial_audit_events_present": any(
-                e.get("event") in {"session_deny", "cross_org_deny"} for e in _AUDIT
+                e.get("event") in {"session_deny", "cross_org_deny"} for e in collector
             ),
             "controlled_pilot_access": pilot,
             "production_multi_tenant_claimed": False,
@@ -413,11 +423,3 @@ def session_tenant_enforcement_invariant_failures(result: dict[str, Any]) -> lis
     if result.get("suite_status") == "FAIL":
         fails.extend(result.get("fails") or ["suite_fail"])
     return fails
-
-
-def get_session_tenant_audit_events() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_session_tenant_audit_for_tests() -> None:
-    _AUDIT.clear()

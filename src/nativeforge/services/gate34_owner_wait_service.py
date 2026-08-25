@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate34_owner_wait_v1"
 
 OWNER_CATEGORIES = (
@@ -51,9 +56,6 @@ EXTERNAL = {
 POLICY = {"limited_external_validation_policy"}
 CUSTOMER = {"customer_pilot_approval"}
 OWNER = set(OWNER_CATEGORIES) - EXTERNAL - POLICY - CUSTOMER
-
-_AUDIT: list[dict[str, Any]] = []
-
 
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
@@ -120,7 +122,9 @@ def resolve_category(
 def resolve_owner_wait_state(
     *,
     inputs: dict[str, str | None] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     supplied = inputs or {}
     rows = [resolve_category(cat, value=supplied.get(cat)) for cat in OWNER_CATEGORIES]
     owner_blockers = [
@@ -138,7 +142,7 @@ def resolve_owner_wait_state(
     validated = [r["category"] for r in rows if r["status"] == "validated"]
     no_progress = bool(owner_blockers or external_blockers or policy_blockers)
     live_unlocked = False
-    _AUDIT.append({"event": "owner_wait_resolve", "no_progress": no_progress})
+    collector.add({"event": "owner_wait_resolve", "no_progress": no_progress})
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,

@@ -5,6 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
+
 SCHEMA_VERSION = "nf_gate31_pilot_onboarding_v1"
 
 ORG_STATUSES = (
@@ -34,9 +39,6 @@ BLOCKED_ROUTES = (
     "/collaboration-match",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -57,7 +59,9 @@ def resolve_invite_readiness(
     operator_approval: bool = False,
     claim_freeze_verified: bool = True,
     role: str = "customer",
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     missing: list[str] = []
     if not login_live:
         missing.append("auth_ready")
@@ -104,7 +108,7 @@ def resolve_invite_readiness(
         status = "needs_owner_review"
 
     customer_cannot_operator = role != "operator"
-    _AUDIT.append({"event": "pilot_onboarding_resolve", "invite_ok": invite_ok})
+    collector.add({"event": "pilot_onboarding_resolve", "invite_ok": invite_ok})
 
     return _json_safe(
         {
@@ -149,7 +153,3 @@ def pilot_onboarding_invariant_failures(result: dict[str, Any]) -> list[str]:
     ):
         fails.append("customer_on_operator")
     return fails
-
-
-def clear_onboarding_audit_for_tests() -> None:
-    _AUDIT.clear()

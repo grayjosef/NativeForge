@@ -8,7 +8,6 @@ from nativeforge.services.gate26_security_attestation_assembler_service import (
 )
 from nativeforge.services.gate26_security_attestation_service import (
     build_security_attestation_contract,
-    clear_security_attestation_audit_for_tests,
     security_attestation_invariant_failures,
 )
 from nativeforge.services.sc_monday_demo_bridge_service import (
@@ -18,7 +17,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_no_report_and_unknown_scope_block_pass() -> None:
-    clear_security_attestation_audit_for_tests()
     none = build_security_attestation_contract()
     assert none["evidence_status"] == "no_report"
     assert none["pen_test_passed"] is False

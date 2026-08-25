@@ -207,19 +207,41 @@ def test_this_module_is_not_patched_by_itself() -> None:
         assert det._REAL_DATETIME is datetime
 
 
-def test_accumulators_are_restored_after_the_context() -> None:
+def test_accumulator_reset_mechanism_still_works(monkeypatch) -> None:
+    """Gate 84 removed the `_AUDIT` lists, so nothing is reset today.
+
+    The mechanism is kept as the seam that catches the next module-level
+    accumulator, so it is exercised against a stand-in rather than deleted
+    along with its last real user.
+    """
+    import nativeforge.services.demo_payload_determinism_service as det
     import nativeforge.services.gate32_backup_restore_service as target
 
-    target._AUDIT.clear()
-    target._AUDIT.append({"event": "sentinel"})
+    monkeypatch.setattr(det, "ACCUMULATOR_ATTRS", ("_STANDIN",), raising=False)
+    monkeypatch.setattr(target, "_STANDIN", [{"event": "sentinel"}], raising=False)
+
     with deterministic_demo_generation():
-        assert target._AUDIT == []
-        target._AUDIT.append({"event": "inside"})
-    assert target._AUDIT == [{"event": "sentinel"}]
+        assert target._STANDIN == []
+        target._STANDIN.append({"event": "inside"})
+    assert target._STANDIN == [{"event": "sentinel"}]
+
+
+def test_no_service_still_keeps_a_module_level_audit_list() -> None:
+    """The reason the reset tuple is now empty."""
+    import re
+
+    services = ROOT / "src" / "nativeforge" / "services"
+    offenders = [
+        p.name
+        for p in services.glob("*.py")
+        if re.search(r"^_AUDIT\s*:?[^=]*=\s*\[\]", p.read_text(encoding="utf-8"), re.M)
+    ]
+    assert offenders == [], offenders
 
 
 def test_accumulator_attrs_and_redirects_are_declared() -> None:
-    assert "_AUDIT" in ACCUMULATOR_ATTRS
+    # Gate 84 retired the _AUDIT lists, so nothing needs resetting any more.
+    assert ACCUMULATOR_ATTRS == ()
     assert REDIRECTED_PATH_ATTRS
     for module_name, attr in REDIRECTED_PATH_ATTRS:
         assert module_name.startswith("nativeforge.services.")

@@ -13,7 +13,6 @@ from nativeforge.services.gate29_auth0_real_input_assembler_service import (
 )
 from nativeforge.services.gate29_auth0_real_input_service import (
     auth0_real_input_invariant_failures,
-    clear_auth0_real_input_audit_for_tests,
     run_auth0_real_input_ingest,
 )
 from nativeforge.services.sc_monday_demo_bridge_service import (
@@ -38,7 +37,6 @@ _ALL_LIVE = {
 
 
 def test_synthetic_fixture_cannot_unlock_mode_b() -> None:
-    clear_auth0_real_input_audit_for_tests()
     fixture = build_synthetic_non_secret_fixture()
     result = run_auth0_real_input_ingest(
         owner_inputs=fixture,

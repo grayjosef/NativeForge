@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.gate26_security_attestation_service import (
     build_security_attestation_contract,
 )
@@ -29,16 +33,15 @@ ALLOWED_STATUSES = (
     STATUS_PROD_ROLLOUT_OWNER_REVIEW,
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def resolve_controlled_pilot_master(
@@ -79,7 +82,9 @@ def resolve_controlled_pilot_master(
     ux_readiness_status: str = "monday_demo_go",
     customer_feedback_path_status: str = "modeled",
     persistence_required_for_pilot: bool = True,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     missing: list[str] = []
     forbidden: list[str] = []
     allowed: list[str] = []
@@ -249,8 +254,7 @@ def resolve_controlled_pilot_master(
     forbidden = sorted(set(forbidden))
     allowed = sorted(set(allowed))
 
-    _emit_audit(
-        "controlled_pilot_master_resolve",
+    _emit_audit(collector, "controlled_pilot_master_resolve",
         {
             "pilot_status": pilot_status,
             "production_rollout_status": production_rollout_status,
@@ -385,11 +389,3 @@ def controlled_pilot_master_invariant_failures(result: dict[str, Any]) -> list[s
         if result.get("production_rollout_status") == "GO":
             fails.append("rollout_go")
     return fails
-
-
-def get_controlled_pilot_master_audit() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_controlled_pilot_master_audit_for_tests() -> None:
-    _AUDIT.clear()

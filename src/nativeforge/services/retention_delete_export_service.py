@@ -5,6 +5,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.customer_data_policy_service import (
     build_customer_data_policy_contract,
     resolve_customer_persistence,
@@ -54,16 +58,15 @@ EXPORT_STATUSES = (
     "not_supported",
 )
 
-_AUDIT: list[dict[str, Any]] = []
-
-
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def build_retention_policy_contract(
@@ -92,7 +95,9 @@ def request_deletion(
     policy_approved: bool = False,
     production_configured: bool = False,
     operator_approved: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     if not policy_approved:
         status = "blocked_missing_policy"
     elif environment_scope == "production" and not production_configured:
@@ -114,8 +119,7 @@ def request_deletion(
     if environment_scope == "production":
         status = "blocked_production_not_configured"
 
-    _emit_audit(
-        "deletion_request",
+    _emit_audit(collector, "deletion_request",
         {
             "evidence_id": evidence_id,
             "status": status,
@@ -145,7 +149,9 @@ def request_export(
     human_review_passed: bool = False,
     production_configured: bool = False,
     for_customer: bool = False,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     if not policy_approved:
         status = "blocked_missing_policy"
     elif not authority_verified:
@@ -159,8 +165,7 @@ def request_export(
     else:
         status = "blocked_production_not_configured"
 
-    _emit_audit(
-        "export_request",
+    _emit_audit(collector, "export_request",
         {
             "package_workspace_id": package_workspace_id,
             "status": status,
@@ -247,11 +252,3 @@ def retention_delete_export_invariant_failures(result: dict[str, Any]) -> list[s
         if result.get(key) is True:
             fails.append(key)
     return fails
-
-
-def get_retention_delete_export_audit_events() -> list[dict[str, Any]]:
-    return list(_AUDIT)
-
-
-def clear_retention_delete_export_audit_for_tests() -> None:
-    _AUDIT.clear()

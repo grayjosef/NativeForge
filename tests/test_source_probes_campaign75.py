@@ -5,7 +5,6 @@ from nativeforge.services.gate33_source_probe_assembler_service import (
     source_probe_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate33_source_probe_service import (
-    clear_source_probe_audit_for_tests,
     run_safe_probe,
     run_source_probe_bundle,
 )
@@ -16,7 +15,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_source_probe_gates() -> None:
-    clear_source_probe_audit_for_tests()
     denied = run_safe_probe(
         source_id="pkt-OK",
         state="OK",

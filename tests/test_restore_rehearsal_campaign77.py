@@ -5,7 +5,6 @@ from nativeforge.services.gate33_restore_rehearsal_assembler_service import (
     restore_rehearsal_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate33_restore_rehearsal_service import (
-    clear_restore_audit_for_tests,
     run_restore_rehearsal,
 )
 from nativeforge.services.sc_monday_demo_bridge_service import (
@@ -15,7 +14,6 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_restore_rehearsal_gates() -> None:
-    clear_restore_audit_for_tests()
     missing = run_restore_rehearsal(restore_evidence_ref=None)
     assert missing["restore_proof"] is False
     assert "restore_evidence_ref" in missing["missing_gates"]

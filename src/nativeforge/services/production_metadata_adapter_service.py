@@ -6,6 +6,10 @@ import json
 import os
 from typing import Any
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+    new_collector,
+)
 from nativeforge.services.evidence_metadata_model_service import (
     build_evidence_metadata_record,
 )
@@ -20,7 +24,6 @@ SCHEMA_VERSION = "nf_production_metadata_adapter_v1"
 
 # In-memory local/dev store only (never production)
 _LOCAL_DEV_STORE: dict[str, dict[str, Any]] = {}
-_AUDIT: list[dict[str, Any]] = []
 
 
 def _json_safe(x: Any) -> Any:
@@ -28,8 +31,10 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def _emit_audit(event: str, detail: dict[str, Any]) -> None:
-    _AUDIT.append({"event": event, **detail})
+def _emit_audit(
+    collector: AuditEventCollector, event: str, detail: dict[str, Any]
+) -> None:
+    collector.record(event, detail)
 
 
 def production_metadata_config_present() -> bool:
@@ -70,7 +75,9 @@ def local_dev_metadata_write(
     organization_profile_id: str,
     package_workspace_id: str = "ws_default",
     original_filename: str = "evidence.pdf",
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     rec = build_evidence_metadata_record(
         organization_profile_id=organization_profile_id,
         package_workspace_id=package_workspace_id,
@@ -81,6 +88,7 @@ def local_dev_metadata_write(
     rec["storage_backend"] = "local_dev_validated_persistent"
     _LOCAL_DEV_STORE[rec["evidence_id"]] = rec
     _emit_audit(
+        collector,
         "local_dev_metadata_write",
         {
             "evidence_id": rec["evidence_id"],
@@ -92,13 +100,18 @@ def local_dev_metadata_write(
 
 
 def local_dev_metadata_read(
-    *, evidence_id: str, requesting_org_id: str
+    *,
+    evidence_id: str,
+    requesting_org_id: str,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     rec = _LOCAL_DEV_STORE.get(evidence_id)
     if not rec:
         return {"status": "not_found", "record": None}
     if rec.get("organization_profile_id") != requesting_org_id:
         _emit_audit(
+            collector,
             "local_dev_metadata_cross_org_denied",
             {
                 "evidence_id": evidence_id,
@@ -115,7 +128,9 @@ def production_metadata_write_attempt(
     organization_profile_id: str,
     flags: dict[str, Any] | None = None,
     approval: dict[str, Any] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     g = _gates(flags=flags, approval=approval)
     if not g["production_metadata_writes_allowed"]:
         reasons = []
@@ -126,6 +141,7 @@ def production_metadata_write_attempt(
         if not g["production_storage_enabled"]:
             reasons.append("production_storage_flag_off")
         _emit_audit(
+            collector,
             "production_metadata_write_blocked",
             {
                 "organization_profile_id": organization_profile_id,
@@ -146,6 +162,7 @@ def production_metadata_write_attempt(
         )
     # Even if gates modeled green, Gate 22 does not perform real production writes
     _emit_audit(
+        collector,
         "production_metadata_write_not_executed",
         {"organization_profile_id": organization_profile_id},
     )
@@ -167,7 +184,9 @@ def build_production_metadata_adapter_status(
     *,
     flags: dict[str, Any] | None = None,
     approval: dict[str, Any] | None = None,
+    collector: AuditEventCollector | None = None,
 ) -> dict[str, Any]:
+    collector = new_collector(collector)
     g = _gates(flags=flags, approval=approval)
     return _json_safe(
         {
@@ -182,7 +201,7 @@ def build_production_metadata_adapter_status(
             "retention_delete_linkage": True,
             "production_storage_claimed": False,
             "customer_data_persistence_claimed": False,
-            "audit_events_emitted": len(_AUDIT),
+            "audit_events_emitted": len(collector),
             **g,
             "next_safe_action": (
                 "Obtain owner approval + set NF_PRODUCTION_METADATA_DATABASE_URL "
@@ -210,8 +229,3 @@ def production_metadata_adapter_invariant_failures(
 
 def clear_local_dev_metadata_store_for_tests() -> None:
     _LOCAL_DEV_STORE.clear()
-    _AUDIT.clear()
-
-
-def get_metadata_audit_events() -> list[dict[str, Any]]:
-    return list(_AUDIT)

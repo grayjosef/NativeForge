@@ -10,7 +10,6 @@ from nativeforge.services.gate29_storage_security_assembler_service import (
     storage_security_real_input_demo_surface_invariant_failures,
 )
 from nativeforge.services.gate29_storage_security_real_input_service import (
-    clear_storage_security_real_input_audit_for_tests,
     run_storage_security_real_input_ingest,
     storage_security_real_input_invariant_failures,
 )
@@ -33,7 +32,6 @@ _FULL_STORAGE = {
 
 
 def test_synthetic_storage_cannot_unlock() -> None:
-    clear_storage_security_real_input_audit_for_tests()
     fixture = build_synthetic_non_secret_fixture()
     result = run_storage_security_real_input_ingest(
         owner_storage=fixture,

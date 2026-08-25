@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
+from nativeforge.services.audit_event_collector_service import (
+    AuditEventCollector,
+)
 from nativeforge.services.auth0_login_rbac_validation_assembler_service import (
     auth0_login_rbac_demo_surface_invariant_failures,
     build_auth0_login_rbac_demo_surface,
 )
 from nativeforge.services.auth0_login_rbac_validation_service import (
     auth0_login_rbac_validation_invariant_failures,
-    clear_auth0_login_rbac_audit_for_tests,
-    get_auth0_login_rbac_audit_events,
     resolve_controlled_pilot_auth_readiness,
     resolve_production_auth_claim,
     run_auth0_login_rbac_validation,
@@ -21,8 +22,10 @@ from nativeforge.services.sc_monday_demo_bridge_service import (
 
 
 def test_mode_a_and_secret_cannot_unlock_login() -> None:
-    clear_auth0_login_rbac_audit_for_tests()
-    result = run_auth0_login_rbac_validation(role_for_sensitive_check="unknown")
+    collector = AuditEventCollector()
+    result = run_auth0_login_rbac_validation(
+        role_for_sensitive_check="unknown", collector=collector
+    )
     assert result["mode"] == "A"
     assert result["login_live_claimed"] is False
     assert result["production_auth_claimed"] is False
@@ -30,7 +33,7 @@ def test_mode_a_and_secret_cannot_unlock_login() -> None:
     # secret_present may be true or false from env — alone must not unlock
     assert result["login_live_claimed"] is False
     assert result["rbac_sensitive_denied"] is True
-    assert any(e["event"] == "rbac_deny" for e in get_auth0_login_rbac_audit_events())
+    assert collector.has_event("rbac_deny")
     assert auth0_login_rbac_validation_invariant_failures(result) == []
 
 
