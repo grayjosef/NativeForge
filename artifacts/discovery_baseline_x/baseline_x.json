@@ -1,0 +1,5521 @@
+{
+  "applicant_class_summary": {
+    "bie_funded_school": {
+      "eligible_count": 0,
+      "excluded_by_evidence_count": 11,
+      "human_review_required_count": 1,
+      "negative_intelligence_count": 11,
+      "not_supported_by_evidence_count": 96,
+      "possibly_eligible_count": 0,
+      "unknown_count": 77
+    },
+    "federally_recognized_tribe": {
+      "eligible_count": 19,
+      "excluded_by_evidence_count": 0,
+      "human_review_required_count": 0,
+      "negative_intelligence_count": 0,
+      "not_supported_by_evidence_count": 89,
+      "possibly_eligible_count": 0,
+      "unknown_count": 77
+    },
+    "native_business": {
+      "eligible_count": 1,
+      "excluded_by_evidence_count": 11,
+      "human_review_required_count": 1,
+      "negative_intelligence_count": 11,
+      "not_supported_by_evidence_count": 95,
+      "possibly_eligible_count": 0,
+      "unknown_count": 77
+    },
+    "native_individual": {
+      "eligible_count": 0,
+      "excluded_by_evidence_count": 11,
+      "human_review_required_count": 1,
+      "negative_intelligence_count": 11,
+      "not_supported_by_evidence_count": 96,
+      "possibly_eligible_count": 0,
+      "unknown_count": 77
+    },
+    "native_nonprofit": {
+      "eligible_count": 0,
+      "excluded_by_evidence_count": 11,
+      "human_review_required_count": 1,
+      "negative_intelligence_count": 11,
+      "not_supported_by_evidence_count": 96,
+      "possibly_eligible_count": 0,
+      "unknown_count": 77
+    },
+    "state_recognized_tribe": {
+      "eligible_count": 0,
+      "excluded_by_evidence_count": 11,
+      "human_review_required_count": 1,
+      "negative_intelligence_count": 11,
+      "not_supported_by_evidence_count": 96,
+      "possibly_eligible_count": 0,
+      "unknown_count": 77
+    },
+    "tribal_organization": {
+      "eligible_count": 23,
+      "excluded_by_evidence_count": 1,
+      "human_review_required_count": 0,
+      "negative_intelligence_count": 1,
+      "not_supported_by_evidence_count": 84,
+      "possibly_eligible_count": 0,
+      "unknown_count": 77
+    }
+  },
+  "baseline_name": "Discovery Baseline X",
+  "baseline_version": "x1",
+  "confidence_level": "recorded_pre_live",
+  "contract": {
+    "applicant_classes": [
+      "bie_funded_school",
+      "federally_recognized_tribe",
+      "native_business",
+      "native_individual",
+      "native_nonprofit",
+      "state_recognized_tribe",
+      "tribal_organization",
+      "unknown"
+    ],
+    "baseline_name": "Discovery Baseline X",
+    "baseline_version": "x1",
+    "confidence_levels": [
+      "none",
+      "synthetic_only",
+      "recorded_pre_live",
+      "live_partial",
+      "live_verified"
+    ],
+    "default_confidence_level": "recorded_pre_live",
+    "fixture_mutation_performed": false,
+    "forbidden_claims": [
+      "improvement_claim_allowed",
+      "live_coverage_claimed",
+      "source_monitoring_claimed",
+      "fixture_mutation_performed"
+    ],
+    "freshness_states": [
+      "amended",
+      "expired",
+      "fresh",
+      "stale",
+      "superseded",
+      "unknown"
+    ],
+    "funding_lanes": [
+      "corporate",
+      "federal",
+      "federal_pass_through",
+      "federal_sc_relevant",
+      "foundation",
+      "local_regional",
+      "sc_state",
+      "unknown"
+    ],
+    "improvement_claim_allowed": false,
+    "live_coverage_claimed": false,
+    "metric_groups": {
+      "applicant_class": [
+        "eligible_count",
+        "excluded_by_evidence_count",
+        "possibly_eligible_count",
+        "not_supported_by_evidence_count",
+        "unknown_count",
+        "human_review_required_count",
+        "negative_intelligence_count"
+      ],
+      "corpus_composition": [
+        "total_records",
+        "synthetic_records",
+        "recorded_records",
+        "live_records",
+        "unknown_source_records"
+      ],
+      "opportunity_quality": [
+        "evidence_backed_records",
+        "records_with_source_url",
+        "records_with_notice_text",
+        "records_with_cited_eligibility",
+        "records_with_cited_exclusion",
+        "records_with_deadline",
+        "records_with_uncertain_deadline",
+        "records_with_unparseable_deadline",
+        "records_never_checked",
+        "records_with_resolvable_freshness",
+        "records_with_amendment_evidence",
+        "duplicate_candidates",
+        "spam_or_low_quality_candidates",
+        "honest_empty_records"
+      ],
+      "readiness": [
+        "baseline_quality_score",
+        "confidence_level",
+        "production_usable",
+        "customer_demo_usable",
+        "controlled_pilot_usable",
+        "improvement_claim_allowed"
+      ],
+      "source_coverage": [
+        "total_sources",
+        "monitorable_sources",
+        "monitored_sources",
+        "terms_cleared_sources",
+        "robots_cleared_sources",
+        "stale_sources",
+        "retired_sources",
+        "blocked_terms_sources"
+      ]
+    },
+    "notice_statuses": [
+      "amended",
+      "cancelled",
+      "corrected",
+      "extended",
+      "original",
+      "superseded",
+      "supplemented",
+      "unknown",
+      "withdrawn"
+    ],
+    "provenance_kinds": [
+      "synthetic",
+      "recorded",
+      "live",
+      "unknown"
+    ],
+    "result_states": [
+      "eligible",
+      "excluded_by_evidence",
+      "human_review_required",
+      "not_supported_by_evidence",
+      "possibly_eligible",
+      "unknown"
+    ],
+    "schema_version": "nf_discovery_baseline_metric_contract_v1",
+    "source_monitoring_claimed": false
+  },
+  "corpus_summary": {
+    "live_records": 0,
+    "per_file": [
+      {
+        "contributed": 168,
+        "file": "fixtures/real_grants_corpus/ta_mixed_tier13_grants.json",
+        "present": true,
+        "records": 168
+      },
+      {
+        "contributed": 17,
+        "file": "fixtures/real_grants_corpus/nf14_mixed_corpus.json",
+        "present": true,
+        "records": 57
+      },
+      {
+        "contributed": 0,
+        "file": "fixtures/real_grants_corpus/nf13_real_ingested_grants.json",
+        "present": true,
+        "records": 40
+      }
+    ],
+    "recorded_records": 162,
+    "synthetic_records": 0,
+    "total_records": 185,
+    "unknown_source_records": 23
+  },
+  "fixture_mutation_performed": false,
+  "freshness_summary": {
+    "amended": 0,
+    "expired": 0,
+    "fresh": 0,
+    "stale": 0,
+    "superseded": 0,
+    "unknown": 185
+  },
+  "funding_lane_summary": {
+    "corporate": 0,
+    "federal": 112,
+    "federal_pass_through": 0,
+    "federal_sc_relevant": 0,
+    "foundation": 2,
+    "local_regional": 0,
+    "sc_state": 0,
+    "unknown": 71
+  },
+  "improvement_claim_allowed": false,
+  "live_coverage_claimed": false,
+  "measured_at": "2026-08-25T00:00:00Z",
+  "measurement_only": true,
+  "network_access_performed": false,
+  "opportunity_quality": {
+    "duplicate_candidates": 0,
+    "evidence_backed_records": 53,
+    "honest_empty_records": 23,
+    "records_never_checked": 79,
+    "records_with_amendment_evidence": 0,
+    "records_with_cited_eligibility": 16,
+    "records_with_cited_exclusion": 11,
+    "records_with_deadline": 59,
+    "records_with_notice_text": 108,
+    "records_with_resolvable_freshness": 0,
+    "records_with_source_url": 129,
+    "records_with_uncertain_deadline": 126,
+    "records_with_unparseable_deadline": 19,
+    "spam_or_low_quality_candidates": null
+  },
+  "per_record": [
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-002",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-006",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-007",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-009",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-010",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-011",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-012",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-013",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-014",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-015",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-016",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-017",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-018",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-019",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-020",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-021",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-022",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-025",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-029",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-030",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-031",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe",
+        "tribal_organization"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-032",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "excluded_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-033",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-035",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-039",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-045",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-046",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-047",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-048",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-050",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-052",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [
+        "bie_funded_school",
+        "native_business",
+        "native_individual",
+        "native_nonprofit",
+        "state_recognized_tribe"
+      ],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-053",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": true,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "excluded_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "excluded_by_evidence",
+        "native_individual": "excluded_by_evidence",
+        "native_nonprofit": "excluded_by_evidence",
+        "state_recognized_tribe": "excluded_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "close_date_or_now_unparseable"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "la-real-054",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-057",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-060",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "la-real-061",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-001",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-002",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-003",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-004",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-005",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-006",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-007",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-008",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-009",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-010",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-011",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-012",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-013",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-014",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-015",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-016",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-017",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-018",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-019",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-020",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-021",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "human_review_required",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "human_review_required",
+        "native_individual": "human_review_required",
+        "native_nonprofit": "human_review_required",
+        "state_recognized_tribe": "human_review_required",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-022",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-024",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "nf13-real-fed-025",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-026",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-027",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-028",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-029",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-030",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-031",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-032",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-033",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-034",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-035",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-036",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-037",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-038",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-039",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-040",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf13-real-fed-041",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": true,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-005-5-44263f7689",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-005-5-624f2e159b",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "foundation",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-005-5-c60a95d918",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-006-6-7cdbd61f04",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-006-6-d260585d07",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-006-6-f42ee0d517",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-007-7-1672e0ccf9",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-007-7-1a8e60d288",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-007-7-3c4789c108",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-007-7-564c7f60fd",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-007-7-7cdbd61f04",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-007-7-9055c16826",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-007-7-cf93c604e2",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-008-8-1672e0ccf9",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-008-8-1a8e60d288",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-008-8-3c4789c108",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-009-9-1654a0f4cb",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-009-9-d13482b860",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-010-0-112ab66bf6",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-010-0-1672e0ccf9",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-010-0-1a8e60d288",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-010-0-3c4789c108",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-011-1-1672e0ccf9",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-011-1-1a8e60d288",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-011-1-3c4789c108",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-012",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-012-2-22b97b5197",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-012-2-5e0cc901a1",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-012-2-99c5c73c61",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-013-3-5e0cc901a1",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-014-4-b25b20a07f",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-015-5-18a70777d8",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-015-5-39fe1a176b",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-015-5-763467e004",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-015-5-d1db17c960",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-015-5-ecbdd6d729",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-018-8-952ea1f982",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-019",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-020-0-16b4990f82",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-021-1-16b4990f82",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-022-2-2b9877b68b",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-022-2-75f231431f",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-022-2-8deb5e0328",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-022-2-d26c9b8f62",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-022-2-e22d3fdff1",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-024",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-025-5-4027c575d9",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-026-6-d6366e67ae",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-026-6-f0ef126b7b",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-027",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-030",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-034",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "foundation",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-035",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-036",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-037-7-39f19cf88f",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-044",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-047-7-be00297988",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-053",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta3-real-054-4-16b4990f82",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-055",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-056-6-115bc724e2",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-056-6-424c50a7d2",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-059",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-062",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-063",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta3-real-065",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-056a5f80d3",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-091de546e3",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-4306e43c0f",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-63f2dd2ef6",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-7f60e4a3cc",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-8014977096",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-8409ee10a3",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-8fbb00e814",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-90446fba54",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-906beb6837",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-9b4895d30b",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-d3d428091f",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-d67d45d1cd",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-012-2-e223bf7df0",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta2-real-027-7-4d8e7d46de",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta2-real-027-7-68229eaa85",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta2-real-027-7-7eb0ab8f91",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta2-real-027-7-8b0000a019",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "native_business"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta2-real-027-7-bfb4f509ca",
+      "has_cited_eligibility": true,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "eligible",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "ta2-real-027-7-f5a22d4bad",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-035",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-035-5-18438965de",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-035-5-328ca4c526",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "no_close_date"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-035-5-fe65fc774b",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-037",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": false,
+      "grant_id": "ta2-real-048",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": true,
+      "honest_empty": true,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "unknown"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-broad-01",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-broad-02",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-broad-03",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-broad-04",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-broad-05",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-broad-06",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-edge-07",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-edge-08",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-edge-09",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-edge-10",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-broad-11",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-label_spread-12",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-label_spread-13",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-label_spread-14",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-label_spread-15",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "not_supported_by_evidence",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "not_supported_by_evidence"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "unknown",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-label_spread-16",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": false,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "unknown",
+        "federally_recognized_tribe": "unknown",
+        "native_business": "unknown",
+        "native_individual": "unknown",
+        "native_nonprofit": "unknown",
+        "state_recognized_tribe": "unknown",
+        "tribal_organization": "unknown"
+      },
+      "provenance_kind": "recorded"
+    },
+    {
+      "eligible_classes": [
+        "federally_recognized_tribe",
+        "tribal_organization"
+      ],
+      "excluded_classes": [],
+      "freshness_reasons": [
+        "never_checked"
+      ],
+      "freshness_state": "unknown",
+      "funding_lane": "federal",
+      "funding_lane_human_review": true,
+      "grant_id": "nf14-mixed-label_spread-17",
+      "has_cited_eligibility": false,
+      "has_cited_exclusion": false,
+      "has_deadline": false,
+      "has_notice_text": true,
+      "has_source_url": false,
+      "honest_empty": false,
+      "per_class_states": {
+        "bie_funded_school": "not_supported_by_evidence",
+        "federally_recognized_tribe": "eligible",
+        "native_business": "not_supported_by_evidence",
+        "native_individual": "not_supported_by_evidence",
+        "native_nonprofit": "not_supported_by_evidence",
+        "state_recognized_tribe": "not_supported_by_evidence",
+        "tribal_organization": "eligible"
+      },
+      "provenance_kind": "recorded"
+    }
+  ],
+  "readiness_summary": {
+    "baseline_quality_score": 0.0865,
+    "cited_record_count": 16,
+    "confidence_level": "recorded_pre_live",
+    "controlled_pilot_usable": false,
+    "customer_demo_usable": true,
+    "improvement_claim_allowed": false,
+    "production_usable": false,
+    "quality_score_by_applicant_class": {
+      "bie_funded_school": {
+        "components": {
+          "duplicate_penalty": 1.0,
+          "eligibility_evidence": 0.0,
+          "native_relevance_evidence": 0.4973,
+          "provenance_completeness": 0.573,
+          "recognition_routing_completeness": 0.0,
+          "source_freshness": 0.0
+        },
+        "discovery_quality_score": 0.3354,
+        "eligibility_evidence_score": 0.0,
+        "native_relevance_score": 0.4973,
+        "negative_intelligence_count": 11
+      },
+      "federally_recognized_tribe": {
+        "components": {
+          "duplicate_penalty": 1.0,
+          "eligibility_evidence": 0.0757,
+          "native_relevance_evidence": 0.4973,
+          "provenance_completeness": 0.573,
+          "recognition_routing_completeness": 0.0,
+          "source_freshness": 0.0
+        },
+        "discovery_quality_score": 0.3505,
+        "eligibility_evidence_score": 0.0757,
+        "native_relevance_score": 0.4973,
+        "negative_intelligence_count": 0
+      },
+      "native_business": {
+        "components": {
+          "duplicate_penalty": 1.0,
+          "eligibility_evidence": 0.0054,
+          "native_relevance_evidence": 0.4973,
+          "provenance_completeness": 0.573,
+          "recognition_routing_completeness": 0.0,
+          "source_freshness": 0.0
+        },
+        "discovery_quality_score": 0.3365,
+        "eligibility_evidence_score": 0.0054,
+        "native_relevance_score": 0.4973,
+        "negative_intelligence_count": 11
+      },
+      "native_individual": {
+        "components": {
+          "duplicate_penalty": 1.0,
+          "eligibility_evidence": 0.0,
+          "native_relevance_evidence": 0.4973,
+          "provenance_completeness": 0.573,
+          "recognition_routing_completeness": 0.0,
+          "source_freshness": 0.0
+        },
+        "discovery_quality_score": 0.3354,
+        "eligibility_evidence_score": 0.0,
+        "native_relevance_score": 0.4973,
+        "negative_intelligence_count": 11
+      },
+      "native_nonprofit": {
+        "components": {
+          "duplicate_penalty": 1.0,
+          "eligibility_evidence": 0.0,
+          "native_relevance_evidence": 0.4973,
+          "provenance_completeness": 0.573,
+          "recognition_routing_completeness": 0.0,
+          "source_freshness": 0.0
+        },
+        "discovery_quality_score": 0.3354,
+        "eligibility_evidence_score": 0.0,
+        "native_relevance_score": 0.4973,
+        "negative_intelligence_count": 11
+      },
+      "state_recognized_tribe": {
+        "components": {
+          "duplicate_penalty": 1.0,
+          "eligibility_evidence": 0.0,
+          "native_relevance_evidence": 0.4973,
+          "provenance_completeness": 0.573,
+          "recognition_routing_completeness": 0.0,
+          "source_freshness": 0.0
+        },
+        "discovery_quality_score": 0.3354,
+        "eligibility_evidence_score": 0.0,
+        "native_relevance_score": 0.4973,
+        "negative_intelligence_count": 11
+      },
+      "tribal_organization": {
+        "components": {
+          "duplicate_penalty": 1.0,
+          "eligibility_evidence": 0.0757,
+          "native_relevance_evidence": 0.4973,
+          "provenance_completeness": 0.573,
+          "recognition_routing_completeness": 0.0,
+          "source_freshness": 0.0
+        },
+        "discovery_quality_score": 0.3505,
+        "eligibility_evidence_score": 0.0757,
+        "native_relevance_score": 0.4973,
+        "negative_intelligence_count": 1
+      }
+    }
+  },
+  "schema_version": "nf_discovery_baseline_x_v1",
+  "source_coverage": {
+    "blocked_terms_sources": 0,
+    "monitorable_sources": 5,
+    "monitored_sources": 0,
+    "retired_sources": 0,
+    "robots_cleared_sources": 0,
+    "source_type_coverage_count": 2,
+    "source_type_coverage_possible": 9,
+    "sources_without_url": 22,
+    "stale_sources": 0,
+    "terms_cleared_sources": 0,
+    "total_sources": 27
+  },
+  "source_monitoring_claimed": false
+}

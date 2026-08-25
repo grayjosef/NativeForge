@@ -40,9 +40,17 @@ BASE="${BASE_ARG:-${NF_VERIFY_BASE_URL:-http://127.0.0.1:5175}}"
 PUBLIC_URL="${NF_PUBLIC_URL:-https://nf-dev.mayhem-nc.dev}"
 EXPECT_HOSTNAME="${NF_EXPECT_HOSTNAME:-nf-dev.mayhem-nc.dev}"
 EXPECT_ORIGIN="${NF_EXPECT_ORIGIN:-http://127.0.0.1:5175}"
-CF_CONFIG="${HOME}/.cloudflared/config.yml"
-# Pinned by ops/systemd/nativeforge-cloudflared.service (--metrics).
-CF_METRICS="${NF_CF_METRICS:-127.0.0.1:20241}"
+# Tunnel topology. Repointed when nf-dev moved off the shared contractiq-dev
+# tunnel onto its own nativeforge-mayhem tunnel: the old connector was disabled,
+# its ~/.cloudflared/config.yml quarantined, and its metrics port retired. This
+# verifier still asserted all three, so it reported FAIL on a correctly migrated
+# host while every check that reflects real health passed.
+#
+# The checks themselves are unchanged in strength - they now assert the tunnel
+# that actually serves nf-dev.
+CF_CONFIG="${NF_CF_CONFIG:-${HOME}/.cloudflared/nativeforge-mayhem.yml}"
+CF_METRICS="${NF_CF_METRICS:-127.0.0.1:20242}"
+CF_UNIT="${NF_CF_UNIT:-nativeforge-mayhem-tunnel.service}"
 
 FAIL=0
 BODY="/tmp/nf-gate36b-body"
@@ -186,9 +194,9 @@ else
   fi
 
   # Tracked user unit, if installed.
-  if systemctl --user cat nativeforge-cloudflared.service >/dev/null 2>&1; then
-    if systemctl --user is-active --quiet nativeforge-cloudflared.service; then
-      echo "check=cloudflared_unit_active status=PASS"
+  if systemctl --user cat "$CF_UNIT" >/dev/null 2>&1; then
+    if systemctl --user is-active --quiet "$CF_UNIT"; then
+      echo "check=cloudflared_unit_active status=PASS ${CF_UNIT}"
     else
       soft_check cloudflared_unit_active 0 "unit installed but not active"
     fi
@@ -225,10 +233,17 @@ else
 
     # Drift: config edited after the running process started means the live
     # ingress is stale. This is the exact 2026-08-22 outage.
-    CF_PID="$(pgrep -x cloudflared | head -1 || true)"
+    # Pick the connector actually using THIS config, not an arbitrary
+    # cloudflared: during a tunnel migration more than one runs at once.
+    CF_PID="$(pgrep -f -- "--config ${CF_CONFIG}" | head -1 || true)"
+    [[ -z "$CF_PID" ]] && CF_PID="$(pgrep -x cloudflared | head -1 || true)"
     if [[ -n "$CF_PID" ]]; then
       CFG_MTIME="$(stat -c %Y "$CF_CONFIG" 2>/dev/null || echo 0)"
-      PROC_START="$(date -d "$(ps -o lstart= -p "$CF_PID" 2>/dev/null)" +%s 2>/dev/null || echo 0)"
+      # /proc/<pid> mtime is the process start. `ps -o lstart=` derives it from
+      # kernel btime + jiffies, which under WSL2 reported 650s earlier than the
+      # truth and made this check fire on a config that predated the process.
+      # /proc agrees with systemd's ActiveEnterTimestamp to the second.
+      PROC_START="$(stat -c %Y "/proc/${CF_PID}" 2>/dev/null || echo 0)"
       if [[ "$CFG_MTIME" -gt 0 && "$PROC_START" -gt 0 && "$CFG_MTIME" -gt "$PROC_START" ]]; then
         soft_check ingress_config_not_stale 0 \
           "config.yml modified $((CFG_MTIME - PROC_START))s AFTER cloudflared started — restart the tunnel"

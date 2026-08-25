@@ -26,8 +26,9 @@ source .venv/bin/activate
 # precisely how those tests failed unnoticed for several gates.
 GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo'
 
-# Tests that have already rotted invisibly once. Every one is a node id, so a
-# rename shows up here as a failure rather than as silent loss of coverage.
+# Tests that have already rotted invisibly once, plus the few whose silent loss
+# would be worst. Every one is a node id, so a rename shows up here as a failure
+# rather than as silent loss of coverage.
 CRITICAL=(
   "tests/test_recognition_requirement_coverage_expansion.py::test_unknown_count_drops_ac1"
   "tests/test_sprint348_nf15_closeout.py::test_nf15_gate_and_closeout"
@@ -35,6 +36,12 @@ CRITICAL=(
   "tests/test_sprint222_matching_readiness_readiness_evaluator.py::test_incomplete_profile_blocked_readiness"
   "tests/test_sprint4202_gate37_production_grade_hardening.py::test_busy_preview_port_blocks_serve"
   "tests/test_sprint4202_gate37_production_grade_hardening.py::test_verifier_fail_when_server_down"
+  # Gate 85. Not yet rotted, but these are the two whose quiet disappearance
+  # would be hardest to notice and most expensive: one holds the federally
+  # recognized / state recognized split apart, the other keeps the baseline
+  # from claiming a source is monitored.
+  "tests/test_gate85_discovery_baseline_x.py::test_recognition_tiers_are_not_collapsed_into_one_answer"
+  "tests/test_gate85_discovery_baseline_x.py::test_no_source_is_monitored"
 )
 
 FAIL=0
