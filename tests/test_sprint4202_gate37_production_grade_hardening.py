@@ -74,17 +74,48 @@ def test_duplicate_stamp_blocks_serve(tmp_path: Path) -> None:
         require_stamped_dist(dist)
 
 
-def test_5175_collision_blocks_serve() -> None:
+def _free_port() -> int:
+    """An ephemeral loopback port, released before it is returned."""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.bind(("127.0.0.1", 0))
+        return int(probe.getsockname()[1])
+
+
+def test_busy_preview_port_blocks_serve() -> None:
+    """A listener on the preview port must block serving.
+
+    Was `test_5175_collision_blocks_serve`, which bound port 5175 directly. The
+    demo preview service owns 127.0.0.1:5175 by design, so that bind failed with
+    `Address already in use` on any machine where the preview is running - and
+    stopping the service to satisfy a test is not acceptable.
+
+    The behaviour under test is the collision check, not the specific number, so
+    it now runs against an ephemeral port. `require_preview_port_free` already
+    takes host and port, so no product change was needed.
+    """
+    port = _free_port()
     srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    srv.bind(("127.0.0.1", 5175))
+    srv.bind(("127.0.0.1", port))
     srv.listen(1)
     try:
         with pytest.raises(DistNotReady, match="already in use"):
-            require_preview_port_free()
+            require_preview_port_free(port=port)
     finally:
         srv.close()
-    require_preview_port_free()
+    # Free again once the listener is gone.
+    require_preview_port_free(port=port)
+
+
+def test_preview_port_default_is_5175() -> None:
+    """The default the product actually serves on is still pinned."""
+    from nativeforge.services.gate37_production_grade_hardening_service import (
+        PREVIEW_HOST,
+        PREVIEW_PORT,
+    )
+
+    assert PREVIEW_PORT == 5175
+    assert PREVIEW_HOST == "127.0.0.1"
 
 
 def test_loopback_only_contract() -> None:
@@ -93,9 +124,23 @@ def test_loopback_only_contract() -> None:
 
 
 def test_verifier_fail_when_server_down() -> None:
-    require_preview_port_free()
+    """The verifier must fail against a base URL where nothing is listening.
+
+    Was calling `require_preview_port_free()` first, which asserted 5175 was
+    free. The demo preview owns that port by design, so the test could only pass
+    on a machine with the service stopped.
+
+    The property under test is "verifier fails when the server it checks is
+    down", which is expressible without touching 5175: point it at an ephemeral
+    port nobody is serving. The verifier takes the base URL as a positional
+    argument.
+    """
+    port = _free_port()
     proc = subprocess.run(
-        [str(ROOT / "scripts/verify_nativeforge_demo_deployment.sh")],
+        [
+            str(ROOT / "scripts/verify_nativeforge_demo_deployment.sh"),
+            f"http://127.0.0.1:{port}",
+        ],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -103,6 +148,8 @@ def test_verifier_fail_when_server_down() -> None:
     )
     assert proc.returncode != 0
     assert parse_verifier_output(proc.stdout) == "FAIL"
+    # It failed for the right reason: the loopback checks, not something else.
+    assert "loopback_home_200 status=FAIL" in proc.stdout
 
 
 def test_verifier_pass_when_stamped_server_up() -> None:
@@ -111,7 +158,23 @@ def test_verifier_pass_when_stamped_server_up() -> None:
         require_stamped_dist(dist)
     except DistNotReady:
         pytest.skip("stamped frontend/dist not present")
-    require_preview_port_free()
+    # A stamped preview may already be serving 5175 - the demo preview service
+    # owns that port by design, and stopping it to run a test is not acceptable.
+    # When it is up, verify against it; only start one when the port is free.
+    try:
+        require_preview_port_free()
+    except DistNotReady:
+        proc = subprocess.run(
+            [str(ROOT / "scripts/verify_nativeforge_demo_deployment.sh")],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert parse_verifier_output(proc.stdout) == "PASS", proc.stdout[-2000:]
+        assert proc.returncode == 0
+        return
+
     serve = subprocess.Popen(
         [str(ROOT / "scripts/serve_frontend_preview_5175.sh")],
         cwd=ROOT,
