@@ -56,6 +56,7 @@ no I/O.
 
 from __future__ import annotations
 
+import fcntl
 import hashlib
 import shutil
 import sys
@@ -299,8 +300,18 @@ def deterministic_demo_generation(
     # A *fixed* scratch root, not mkdtemp: one of these redirected paths is
     # embedded in the payload (`no_secret_log_path`), so a random directory name
     # would reintroduce the very churn this context exists to remove.
-    # Generation is sequential, so a stable shared name is safe here.
+    #
+    # A fixed name is shared, though, and Gate 83B assumed generation is always
+    # sequential. It is not: running the determinism verifier while a full test
+    # suite is in progress had both processes in this directory at once, and one
+    # wiping it mid-generation surfaced as a UNIQUE constraint failure in the
+    # lifecycle SQLite database. An exclusive lock serialises concurrent
+    # generations instead, which keeps the directory name stable *and* makes
+    # concurrent use safe.
     scratch = Path(tempfile.gettempdir()) / SCRATCH_DIR_NAME
+    lock_path = Path(tempfile.gettempdir()) / f"{SCRATCH_DIR_NAME}.lock"
+    lock_file = lock_path.open("w")
+    fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
     shutil.rmtree(scratch, ignore_errors=True)
     scratch.mkdir(parents=True, exist_ok=True)
     tmpdir = str(scratch)
@@ -344,6 +355,8 @@ def deterministic_demo_generation(
         for mod, attr, original_path in saved_paths:
             setattr(mod, attr, original_path)
         shutil.rmtree(tmpdir, ignore_errors=True)
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+        lock_file.close()
 
 
 def determinism_invariant_failures(described: dict[str, Any]) -> list[str]:

@@ -28,8 +28,15 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def verify_nf15_no_evidence_honesty_gates() -> dict[str, Any]:
-    result = run_nf15_no_evidence_honesty_block()
+def verify_nf15_no_evidence_honesty_gates(
+    *, http_post: Any | None = None
+) -> dict[str, Any]:
+    """Verify the NF-15 gates.
+
+    ``http_post`` is passed to the block so a caller can supply a recorded
+    transport instead of the refused live path (doc 472).
+    """
+    result = run_nf15_no_evidence_honesty_block(http_post=http_post)
     classification = result["classification"]
     reingest = result["eligibility_reingest"]
 

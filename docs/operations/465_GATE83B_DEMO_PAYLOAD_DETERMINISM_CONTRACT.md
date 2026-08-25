@@ -109,7 +109,17 @@ excluding this module from the scan. A test pins both.
 
 One redirected path is embedded in the payload (`no_secret_log_path`), so a
 `mkdtemp()` name would have reintroduced exactly the churn being removed.
-Generation is sequential, so a stable shared name is safe.
+
+**Corrected in Gate 84B.** This originally read "generation is sequential, so a
+stable shared name is safe". That assumption was wrong. Running the determinism
+verifier while a full test suite was in progress put two processes in the same
+scratch directory, and one wiping it at context entry surfaced as a UNIQUE
+constraint failure in the lifecycle SQLite database.
+
+The directory name is still fixed — it has to be — but the context now takes an
+exclusive `flock` for its duration, so concurrent generations serialise rather
+than corrupt each other. Stable name and concurrency safety, at the cost of one
+waiting on the other.
 
 ## Which dynamic mode remains opt-in
 

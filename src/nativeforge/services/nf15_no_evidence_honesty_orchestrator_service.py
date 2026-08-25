@@ -30,12 +30,21 @@ def run_nf15_no_evidence_honesty_block(
     org_id: uuid.UUID | None = None,
     nf_live_source_ingestion: bool = True,
     nf_real_resolver_validation: bool = True,
+    http_post: Any | None = None,
 ) -> dict[str, Any]:
+    """Run the NF-15 block.
+
+    ``http_post`` is threaded to the eligibility re-ingest so a caller can
+    supply a recorded transport. Gate 77B made live Grants.gov calls opt-in but
+    left this path with no way to inject one, so the re-ingest always reached
+    the refused live path and ``fed021_reingested`` was permanently false. See
+    doc 472.
+    """
     require_real_resolver_validation_gate(
         nf_live_source_ingestion=nf_live_source_ingestion,
         nf_real_resolver_validation=nf_real_resolver_validation,
     )
-    reingest = reingest_nf13_placeholder_grants()
+    reingest = reingest_nf13_placeholder_grants(http_post=http_post)
     classification = classify_nf15_corrected_corpus()
     return _json_safe(
         {

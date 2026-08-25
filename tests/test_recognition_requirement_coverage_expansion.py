@@ -33,8 +33,12 @@ from nativeforge.services.recognition_tier_eligibility_gate_service import (
 from nativeforge.services.sc_pilot_fixture_loader_service import (
     load_sc_eligibility_rules,
 )
+from nativeforge.services.tier2_state_corpus_persist_service import (
+    load_tier2_state_corpus,
+)
 from nativeforge.services.tier3_foundation_corpus_persist_service import (
     load_mixed_tier13_corpus,
+    load_tier3_foundation_corpus,
 )
 
 _SNAPSHOT_PATH = (
@@ -216,13 +220,52 @@ def test_no_applicant_types_prefix_regression_snapshot() -> None:
         assert enriched["recognition_requirement"] == expected, grant_id
 
 
+def _tier1_federal_corpus() -> list[dict]:
+    """The federal corpus AC1 was calibrated against.
+
+    ``load_mixed_tier13_corpus`` later grew to include tier-2 state and tier-3
+    foundation grants. Those sources mostly do not state a tribal recognition
+    requirement at all, so ``unknown`` is the correct answer for them, and
+    counting them in AC1 measured corpus growth rather than derivation quality.
+    """
+    later_layers = {g["grant_id"] for g in load_tier3_foundation_corpus()} | {
+        g["grant_id"] for g in load_tier2_state_corpus()
+    }
+    return [g for g in load_mixed_tier13_corpus() if g["grant_id"] not in later_layers]
+
+
 def test_unknown_count_drops_ac1() -> None:
+    """AC1: recognition derivation leaves few unknowns in the federal corpus."""
     rules = load_sc_eligibility_rules(require_files=False)
-    corpus = load_mixed_tier13_corpus()
+    corpus = _tier1_federal_corpus()
     enriched = [enrich_grant_with_eligibility_metadata(g, rules=rules) for g in corpus]
     unknowns = [g for g in enriched if g["recognition_requirement"] == "unknown"]
     assert len(unknowns) <= 45
     assert len(unknowns) < 57
+
+
+def test_every_extra_unknown_is_attributable_to_a_later_corpus_layer() -> None:
+    """Scoping AC1 must not become a place for a tier-1 regression to hide.
+
+    Structural rather than a hard-coded count, so it does not rot the next time
+    the corpus grows: every unknown outside the tier-1 federal corpus has to
+    come from tier-2 or tier-3.
+    """
+    rules = load_sc_eligibility_rules(require_files=False)
+    later_ids = {g["grant_id"] for g in load_tier3_foundation_corpus()} | {
+        g["grant_id"] for g in load_tier2_state_corpus()
+    }
+    tier1_ids = {g["grant_id"] for g in _tier1_federal_corpus()}
+
+    unknown_ids = {
+        g["grant_id"]
+        for g in (
+            enrich_grant_with_eligibility_metadata(g, rules=rules)
+            for g in load_mixed_tier13_corpus()
+        )
+        if g["recognition_requirement"] == "unknown"
+    }
+    assert unknown_ids - tier1_ids <= later_ids
 
 
 def test_corpus_derived_regression_snapshot() -> None:

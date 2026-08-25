@@ -277,22 +277,37 @@ def test_generator_output_is_byte_stable(tmp_path: Path) -> None:
     assert first.read_bytes() == second.read_bytes()
 
 
-def test_generation_does_not_write_into_artifacts(tmp_path: Path) -> None:
+def test_generation_redirects_artifact_writes_away_from_the_repo() -> None:
     """Generation used to leave a file in artifacts/ on every run - one such
-    directory had accumulated thousands."""
-    from nativeforge.services.sc_monday_demo_bridge_service import (
-        write_sc_customer_demo_bridge_json,
+    directory had accumulated 4,379.
+
+    Asserts the redirect itself rather than counting files under artifacts/.
+    The earlier count-based version compared a shared directory's size before
+    and after, which any concurrently running process could change - it failed
+    exactly that way when a full-suite run was in progress. A test must not
+    depend on state it does not own (Gate 84B).
+    """
+    from nativeforge.services.demo_payload_determinism_service import (
+        REDIRECTED_PATH_ATTRS,
+        SCRATCH_DIR_NAME,
+        deterministic_demo_generation,
     )
 
-    artifacts = ROOT / "artifacts"
-    watched = [
-        artifacts / "auth0_mode_b_no_secret_logs",
-        artifacts / "auth0_validation_smoke",
-    ]
-    before = {d: len(list(d.glob("*"))) if d.is_dir() else 0 for d in watched}
-    write_sc_customer_demo_bridge_json(path=tmp_path / "out.json")
-    after = {d: len(list(d.glob("*"))) if d.is_dir() else 0 for d in watched}
-    assert before == after
+    assert REDIRECTED_PATH_ATTRS, "nothing is being redirected"
+
+    with deterministic_demo_generation():
+        for module_name, attr in REDIRECTED_PATH_ATTRS:
+            mod = sys.modules.get(module_name)
+            assert mod is not None, module_name
+            target = Path(str(getattr(mod, attr)))
+            assert SCRATCH_DIR_NAME in target.parts, target
+            assert ROOT not in target.parents, target
+
+    # Restored to their real locations afterwards.
+    for module_name, attr in REDIRECTED_PATH_ATTRS:
+        mod = sys.modules.get(module_name)
+        assert mod is not None
+        assert SCRATCH_DIR_NAME not in Path(str(getattr(mod, attr))).parts
 
 
 # The payload embeds the current git HEAD. Committing it changes HEAD, which
