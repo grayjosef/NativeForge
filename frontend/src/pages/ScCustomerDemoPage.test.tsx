@@ -471,6 +471,92 @@ describe("ScCustomerDemoPage", () => {
     expect(payload.opportunities.federal_count).toBeGreaterThanOrEqual(1);
   });
 
+  it("renders the negative intelligence section with a cited evidence quote", () => {
+    const payload = loadScCustomerDemoPayload();
+    const html = renderToStaticMarkup(<ScCustomerDemoPage payload={payload} />);
+
+    // The section renders at all.
+    expect(html).toContain("sc-demo-negative-intelligence");
+    expect(html).toContain("Applicant-class fit / negative intelligence");
+
+    // The evidence quote is on screen, and it is the excluding sentence.
+    expect(html).toContain("sc-demo-ni-quote-state_recognized_tribe");
+    expect(html).toContain("limited to federally recognized Indian tribes");
+    expect(html).toContain("Evidence quote from the notice text");
+
+    // Applicant class is shown and it changes the answer.
+    expect(html).toContain("sc-demo-ni-row-state_recognized_tribe");
+    expect(html).toContain("sc-demo-ni-row-federally_recognized_tribe");
+    expect(html).toContain("State-recognized tribe");
+    expect(html).toContain("Federally recognized tribe");
+    expect(html).toContain("applicant_class_changes_the_answer=true");
+
+    // Excluded is visible, not hidden.
+    expect(html).toContain("Excluded opportunities remain visible");
+    expect(html).toContain("remains_visible=true");
+
+    // Required copy concepts.
+    expect(html).toContain("Relevant does not mean eligible");
+    expect(html).toContain("Applicant class matters");
+
+    // Synthetic / demo-only and no-live-coverage labels.
+    expect(html).toContain("sc-demo-ni-synthetic-label");
+    expect(html).toContain("synthetic_demo=true");
+    expect(html).toContain("demo_only=true");
+    expect(html).toContain("sc-demo-ni-no-live-coverage");
+    expect(html).toContain("live_coverage_claimed=false");
+    expect(html).toContain("source_monitored=false");
+    expect(html).toContain("freshness_claimed=false");
+    expect(html).toContain("final_eligibility_claimed=false");
+
+    // Provenance is shown alongside the quote.
+    expect(html).toContain("artifact_type=html");
+    expect(html).toContain("spans_relative_to=adapter_text");
+    expect(html).toContain("has_citation=true");
+  });
+
+  it("never tells the customer they are legally ineligible", () => {
+    const payload = loadScCustomerDemoPayload();
+    const html = renderToStaticMarkup(
+      <ScCustomerDemoPage payload={payload} />,
+    ).toLowerCase();
+
+    expect(html).not.toContain("you are not eligible");
+    expect(html).not.toContain("you are ineligible");
+    expect(html).not.toContain("legally ineligible");
+    expect(html).toContain("not_eligible_asserted=false");
+    expect(html).toContain("asks a");
+  });
+
+  it("carries the negative intelligence payload boundaries", () => {
+    const payload = loadScCustomerDemoPayload();
+    const ni = payload.negative_intelligence;
+    expect(ni).toBeTruthy();
+    expect(ni?.synthetic_demo).toBe(true);
+    expect(ni?.demo_only).toBe(true);
+    expect(ni?.live_coverage_claimed).toBe(false);
+    expect(ni?.source_monitored).toBe(false);
+    expect(ni?.freshness_claimed).toBe(false);
+    expect(ni?.url_fetch_performed).toBe(false);
+    expect(ni?.excluded_hidden).toBe(false);
+    expect(ni?.final_eligibility_claimed).toBe(false);
+    expect(ni?.not_eligible_asserted).toBe(false);
+    expect(ni?.applicant_class_changes_the_answer).toBe(true);
+    expect(ni?.rows).toHaveLength(2);
+
+    const state = ni?.rows.find(
+      (r) => r.applicant_class === "state_recognized_tribe",
+    );
+    const federal = ni?.rows.find(
+      (r) => r.applicant_class === "federally_recognized_tribe",
+    );
+    expect(state?.exclusion_status).toBe("excluded_by_evidence");
+    expect(federal?.exclusion_status).not.toBe("excluded_by_evidence");
+    expect(state?.remains_visible).toBe(true);
+    expect(state?.has_citation).toBe(true);
+    expect((state?.evidence_quote ?? "").length).toBeGreaterThan(0);
+  });
+
   it("renders loading empty and error states", () => {
     expect(renderToStaticMarkup(<ScCustomerDemoPage loading />)).toContain(
       "sc-demo-loading",

@@ -2004,6 +2004,66 @@ export type ScCustomerDemoPayload = {
     next_owner_action?: string;
     next_safe_actions: string[];
   };
+  /**
+   * Gate 83 — applicant-class fit / negative intelligence.
+   *
+   * Produced by running the real Gate 82 ingestion pipeline over the committed
+   * synthetic notice fixture, so `evidence_quote` is the sentence the parser
+   * cited rather than demo copy. Synthetic throughout; claims no live coverage.
+   */
+  negative_intelligence?: {
+    schema_version: string;
+    surface_version: string;
+    title: string;
+    headline: string;
+    why_it_matters: string;
+    copy_concepts: string[];
+    rows: Array<{
+      demo_id: string;
+      source_label: string;
+      opportunity_title: string;
+      funding_lane: string;
+      applicant_class: string;
+      applicant_class_label: string;
+      relevance_status: string;
+      eligibility_status: string;
+      exclusion_status: string;
+      exclusion_status_label: string;
+      exclusion_reason: string;
+      evidence_quote: string;
+      evidence_span: number[] | null;
+      evidence_reference?: string | null;
+      has_citation: boolean;
+      artifact_hash?: string | null;
+      artifact_type?: string | null;
+      text_extraction_method?: string | null;
+      notice_status?: string | null;
+      deadline_status: string;
+      remains_visible: boolean;
+      human_review_required: boolean;
+      not_eligible_asserted: boolean;
+    }>;
+    excluded_class_count: number;
+    eligible_class_count: number;
+    applicant_class_changes_the_answer: boolean;
+    artifact_hash?: string | null;
+    artifact_type?: string | null;
+    artifact_is_recorded_fixture: boolean;
+    pipeline_status: string;
+    adapter_confidence?: string | null;
+    parser_confidence?: string | null;
+    eligibility_confidence?: string | null;
+    evidence_spans_relative_to?: string | null;
+    synthetic_demo: boolean;
+    demo_only: boolean;
+    live_coverage_claimed: boolean;
+    source_monitored: boolean;
+    freshness_claimed: boolean;
+    url_fetch_performed: boolean;
+    excluded_hidden: boolean;
+    final_eligibility_claimed: boolean;
+    not_eligible_asserted: boolean;
+  };
   pilot_resolver?: {
     schema_version: string;
     campaign_block: number;

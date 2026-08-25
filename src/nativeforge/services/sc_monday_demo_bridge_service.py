@@ -306,6 +306,10 @@ from nativeforge.services.retention_delete_export_assembler_service import (
     build_retention_delete_export_demo_surface,
     retention_delete_export_demo_surface_invariant_failures,
 )
+from nativeforge.services.sc_demo_negative_intelligence_service import (
+    build_sc_demo_negative_intelligence_surface,
+    sc_demo_negative_intelligence_invariant_failures,
+)
 from nativeforge.services.sc_monday_demo_assembler_service import (
     build_sc_monday_demo_artifact,
     demo_artifact_invariant_failures,
@@ -1087,6 +1091,15 @@ def build_sc_customer_demo_bridge_payload(
     if pr_fails:
         raise ValueError(f"Pilot resolver surface invariants failed: {pr_fails}")
 
+    # Gate 83: runs the real Gate 82 pipeline over the committed synthetic
+    # notice, so the quote on the demo screen is the one the parser cited.
+    negative_intelligence_surface = build_sc_demo_negative_intelligence_surface()
+    ni_fails = sc_demo_negative_intelligence_invariant_failures(
+        negative_intelligence_surface
+    )
+    if ni_fails:
+        raise ValueError(f"Negative intelligence surface invariants failed: {ni_fails}")
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -1205,6 +1218,7 @@ def build_sc_customer_demo_bridge_payload(
             "storage_ingest": storage_ingest_surface,
             "pentest_ingest": pentest_ingest_surface,
             "pilot_resolver": pilot_resolver_surface,
+            "negative_intelligence": negative_intelligence_surface,
         }
     )
 

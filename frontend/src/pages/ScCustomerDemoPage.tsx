@@ -3704,6 +3704,116 @@ export function ScCustomerDemoPage({
         </section>
       ) : null}
 
+      {data.negative_intelligence ? (
+        <section
+          data-testid="sc-demo-negative-intelligence"
+          className="nf-sc-demo-section"
+        >
+          <h2>{data.negative_intelligence.title}</h2>
+          <p data-testid="sc-demo-ni-headline" className="nf-sc-demo-why">
+            {data.negative_intelligence.headline}
+          </p>
+
+          <p data-testid="sc-demo-ni-synthetic-label" className="nf-muted">
+            Synthetic demo only — this notice is a committed test fixture, not a
+            real funding opportunity. synthetic_demo=
+            {String(data.negative_intelligence.synthetic_demo)} demo_only=
+            {String(data.negative_intelligence.demo_only)}
+          </p>
+          <p data-testid="sc-demo-ni-no-live-coverage" className="nf-muted">
+            No live coverage is claimed. live_coverage_claimed=
+            {String(data.negative_intelligence.live_coverage_claimed)}{" "}
+            source_monitored=
+            {String(data.negative_intelligence.source_monitored)}{" "}
+            freshness_claimed=
+            {String(data.negative_intelligence.freshness_claimed)}{" "}
+            final_eligibility_claimed=
+            {String(data.negative_intelligence.final_eligibility_claimed)}
+          </p>
+
+          <p data-testid="sc-demo-ni-visibility-note">
+            Excluded opportunities remain visible because they are useful
+            negative intelligence. Nothing below is hidden from you.
+          </p>
+
+          {data.negative_intelligence.rows.map((row) => (
+            <article
+              key={row.demo_id}
+              data-testid={`sc-demo-ni-row-${row.applicant_class}`}
+              className="nf-sc-demo-ni-row"
+            >
+              <h3>
+                Applicant class: {row.applicant_class_label}
+              </h3>
+              <p data-testid={`sc-demo-ni-status-${row.applicant_class}`}>
+                Status: {row.exclusion_status_label} (
+                {row.exclusion_status})
+              </p>
+              <p data-testid={`sc-demo-ni-relevance-${row.applicant_class}`}>
+                Relevant does not mean eligible. This opportunity is
+                Native-relevant, and relevance alone does not decide who may
+                apply.
+              </p>
+              <blockquote
+                data-testid={`sc-demo-ni-quote-${row.applicant_class}`}
+                className="nf-sc-demo-ni-quote"
+              >
+                “{row.evidence_quote}”
+              </blockquote>
+              <p
+                data-testid={`sc-demo-ni-evidence-${row.applicant_class}`}
+                className="nf-muted"
+              >
+                Evidence quote from the notice text. span=
+                {JSON.stringify(row.evidence_span)} spans_relative_to=
+                {String(
+                  data.negative_intelligence?.evidence_spans_relative_to ?? "",
+                )}{" "}
+                has_citation={String(row.has_citation)} artifact_type=
+                {String(row.artifact_type ?? "")} artifact_hash=
+                {String(row.artifact_hash ?? "").slice(0, 16)} extraction=
+                {String(row.text_extraction_method ?? "")}
+              </p>
+              <p data-testid={`sc-demo-ni-reason-${row.applicant_class}`} className="nf-muted">
+                parser_reason={row.exclusion_reason} notice_status=
+                {String(row.notice_status ?? "")} deadline_status=
+                {row.deadline_status} human_review_required=
+                {String(row.human_review_required)} remains_visible=
+                {String(row.remains_visible)} not_eligible_asserted=
+                {String(row.not_eligible_asserted)}
+              </p>
+            </article>
+          ))}
+
+          <p data-testid="sc-demo-ni-why-it-matters">
+            Why it matters: {data.negative_intelligence.why_it_matters}
+          </p>
+
+          <p data-testid="sc-demo-ni-class-contrast">
+            Applicant class matters. The same notice gives different answers to
+            different applicants: applicant_class_changes_the_answer=
+            {String(
+              data.negative_intelligence.applicant_class_changes_the_answer,
+            )}{" "}
+            excluded_classes=
+            {data.negative_intelligence.excluded_class_count} eligible_classes=
+            {data.negative_intelligence.eligible_class_count}
+          </p>
+
+          <ul data-testid="sc-demo-ni-copy-concepts">
+            {data.negative_intelligence.copy_concepts.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+
+          <p data-testid="sc-demo-ni-review-note" className="nf-muted">
+            NativeForge reports what a cited sentence appears to say, and asks a
+            human on your team to confirm it against the primary notice. This is
+            not a legal determination and not a final eligibility decision.
+          </p>
+        </section>
+      ) : null}
+
       <section data-testid="sc-demo-review-table" className="nf-sc-demo-section">
         <h2>Sample org × opportunity rows</h2>
         <p className="nf-muted">{data.row_sample_note}</p>
