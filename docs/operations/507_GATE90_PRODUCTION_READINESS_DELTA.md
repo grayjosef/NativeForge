@@ -2,6 +2,15 @@
 
 Supersedes doc 501 (Gate 89) as the current readiness position.
 
+> **Superseded by Gate 91 (doc 515)** as the current readiness position.
+> Nothing on this page changed: Gate 91 added the awarded-vs-pursuit lane
+> contracts and the reporting parser seams, and moved no registry or corpus
+> figure. 55 sources, 0 monitored, 0 URLs fetched; Baseline X still 185/18/0.
+>
+> Gate 91 added a third tracked thread: seven lifecycle contracts, none live,
+> blocked on persistence and a UI rather than on a human decision. See docs
+> 510-515.
+
 ## Readiness is unchanged
 
 | Gate | Gate 89 | Gate 90 |

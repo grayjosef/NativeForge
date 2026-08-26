@@ -29,7 +29,13 @@ source .venv/bin/activate
 # tests landed in a module whose name shares no keyword with this expression,
 # so only 6 of them were selected - the same failure this guard exists to catch,
 # caught here by the guard rather than several gates later by accident.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness'
+#
+# `awarded`, `pursuit`, `reporting`, `lifecycle`, `attachment` and `extraction`
+# were added by Gate 91, for the same reason and caught the same way: 3 of its
+# 67 tests were selected. Twice now the guard has caught a new module falling
+# outside the expression on the gate that introduced it, which is the intended
+# cadence.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -52,6 +58,12 @@ CRITICAL=(
   # other keeps the raw deadline count from moving.
   "tests/test_gate86_deadline_normalization.py::test_freshness_requires_both_a_normalized_date_and_a_check"
   "tests/test_gate86_deadline_normalization.py::test_raw_deadline_count_is_preserved"
+  # Gate 91. The rule that a grant may not become an awarded record by
+  # backend assignment - GrantPipelineStage.awarded is still an assignable
+  # enum member, so this is the test most likely to matter and most likely
+  # to be quietly lost in a refactor.
+  "tests/test_gate91_awarded_vs_pursuit_reporting_parser.py::test_backend_enum_assignment_alone_is_not_a_valid_transition"
+  "tests/test_gate91_awarded_vs_pursuit_reporting_parser.py::test_projected_and_active_are_structurally_distinct"
 )
 
 FAIL=0
