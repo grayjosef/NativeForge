@@ -154,6 +154,21 @@
         "deadline_verification_rate",
         "placeholder_suspicion_rate",
         "raw_deadline_count_overstated_by",
+        "recorded_verified_records",
+        "recorded_asserted_records",
+        "recorded_circular_records",
+        "synthetic_declared_records",
+        "demo_synthetic_records",
+        "unknown_provenance_records",
+        "missing_provenance_records",
+        "verified_recorded_rate",
+        "asserted_recorded_rate",
+        "circular_recorded_rate",
+        "provenance_confidence_level",
+        "flags_only_records",
+        "recorded_count_overstated_by",
+        "corpus_summary_recorded_records",
+        "corpus_summary_recorded_overstated_by",
         "records_never_checked",
         "records_with_resolvable_freshness",
         "records_with_amendment_evidence",
@@ -207,6 +222,45 @@
     ],
     "schema_version": "nf_discovery_baseline_metric_contract_v1",
     "source_monitoring_claimed": false
+  },
+  "corpus_provenance_summary": {
+    "asserted_recorded_rate": 0.8973,
+    "by_evidence_level": {
+      "checked_metadata": 74,
+      "circular_artifact": 1,
+      "flags_only": 38,
+      "independent_artifact": 18,
+      "metadata": 23,
+      "none": 0,
+      "upstream_identified": 31
+    },
+    "by_provenance_status": {
+      "demo_synthetic": 0,
+      "missing_provenance": 0,
+      "recorded_asserted": 166,
+      "recorded_circular": 1,
+      "recorded_verified": 18,
+      "synthetic_declared": 0,
+      "unknown_provenance": 0
+    },
+    "circular_recorded_rate": 0.0054,
+    "demo_synthetic_records": 0,
+    "fabricated": false,
+    "flags_only_records": 38,
+    "live_records": 0,
+    "missing_provenance_records": 0,
+    "recorded_asserted_records": 166,
+    "recorded_circular_records": 1,
+    "recorded_count_overstated_by": 167,
+    "recorded_verified_records": 18,
+    "records_counted_as_recorded": 185,
+    "records_hidden": 0,
+    "records_removed": 0,
+    "schema_version": "nf_corpus_provenance_evidence_v1",
+    "synthetic_declared_records": 0,
+    "total": 185,
+    "unknown_provenance_records": 0,
+    "verified_recorded_rate": 0.0973
   },
   "corpus_summary": {
     "live_records": 0,
@@ -310,15 +364,27 @@
   "measurement_only": true,
   "network_access_performed": false,
   "opportunity_quality": {
+    "asserted_recorded_rate": 0.8973,
+    "circular_recorded_rate": 0.0054,
+    "corpus_summary_recorded_overstated_by": 144,
+    "corpus_summary_recorded_records": 162,
     "deadline_normalization_rate": 1.0,
     "deadline_verification_rate": 0.322,
+    "demo_synthetic_records": 0,
     "duplicate_candidates": 0,
     "evidence_backed_records": 53,
+    "flags_only_records": 38,
     "freshness_blocked_by_deadline_provenance": 40,
     "honest_empty_records": 23,
     "missing_deadlines": 126,
+    "missing_provenance_records": 0,
     "placeholder_suspicion_rate": 0.678,
+    "provenance_confidence_level": "predominantly_asserted",
     "raw_deadline_count_overstated_by": 40,
+    "recorded_asserted_records": 166,
+    "recorded_circular_records": 1,
+    "recorded_count_overstated_by": 167,
+    "recorded_verified_records": 18,
     "records_never_checked": 79,
     "records_with_ambiguous_deadline": 0,
     "records_with_amendment_evidence": 0,
@@ -334,12 +400,29 @@
     "records_with_unparseable_deadline": 0,
     "spam_or_low_quality_candidates": null,
     "suspected_placeholder_deadlines": 40,
+    "synthetic_declared_records": 0,
     "unknown_deadlines": 0,
+    "unknown_provenance_records": 0,
     "unverified_deadlines": 0,
-    "verified_deadlines": 19
+    "verified_deadlines": 19,
+    "verified_recorded_rate": 0.0973
   },
   "per_record": [
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -390,9 +473,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/24/2026"
+      "raw_deadline": "07/24/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -443,9 +542,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/16/2026"
+      "raw_deadline": "07/16/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -496,9 +611,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "08/07/2026"
+      "raw_deadline": "08/07/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -535,9 +666,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -582,9 +729,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "08/03/2026"
+      "raw_deadline": "08/03/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -621,9 +784,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -665,9 +844,25 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "08/31/2026"
+      "raw_deadline": "08/31/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -704,9 +899,26 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -743,9 +955,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -782,9 +1010,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -821,9 +1065,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -860,9 +1120,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -913,9 +1189,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/15/2026"
+      "raw_deadline": "07/15/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -966,9 +1258,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/16/2026"
+      "raw_deadline": "07/16/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1019,9 +1327,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/17/2026"
+      "raw_deadline": "07/17/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1058,9 +1382,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1104,9 +1444,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/27/2026"
+      "raw_deadline": "07/27/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1148,9 +1504,25 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/01/2026"
+      "raw_deadline": "07/01/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1201,9 +1573,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/14/2026"
+      "raw_deadline": "07/14/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1254,9 +1642,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "09/01/2026"
+      "raw_deadline": "09/01/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1298,9 +1702,25 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/22/2026"
+      "raw_deadline": "07/22/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1351,9 +1771,25 @@
         "tribal_organization": "excluded_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/07/2026"
+      "raw_deadline": "07/07/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1390,9 +1826,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1429,9 +1881,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1473,9 +1941,25 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "09/01/2026"
+      "raw_deadline": "09/01/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1520,9 +2004,20 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/24/2026"
+      "raw_deadline": "07/24/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1559,9 +2054,20 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1598,9 +2104,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1651,9 +2173,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/27/2026"
+      "raw_deadline": "07/27/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1690,9 +2228,20 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1729,9 +2278,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1782,9 +2347,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "08/14/2026"
+      "raw_deadline": "08/14/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": true,
       "deadline_evidence_level": "corroborated",
       "deadline_evidence_reasons": [
@@ -1829,9 +2410,25 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "07/23/2026"
+      "raw_deadline": "07/23/2026",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1868,9 +2465,20 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1907,9 +2515,25 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "upstream_identified",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "upstream_identifier_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -1946,9 +2570,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -1991,9 +2627,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2036,9 +2684,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2081,9 +2741,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2126,9 +2798,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2171,9 +2855,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2216,9 +2912,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2261,9 +2969,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2306,9 +3026,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2353,9 +3085,21 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2400,9 +3144,21 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2447,9 +3203,21 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2492,9 +3260,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2537,9 +3317,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2582,9 +3374,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2627,9 +3431,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2672,9 +3488,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2717,9 +3545,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2764,9 +3604,21 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2809,9 +3661,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2854,9 +3718,23 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "circular_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present"
+      ],
+      "corpus_provenance_status": "recorded_circular",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "artifact_derived_from_this_record:tests/fixtures/grants_gov/nf_seed_2026_fed_021_samhsa_sm_26_024.json"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [
@@ -2903,9 +3781,21 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2948,9 +3838,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -2993,9 +3895,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [
@@ -3039,9 +3952,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3084,9 +4009,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3129,9 +4066,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3174,9 +4123,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3219,9 +4180,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3264,9 +4237,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3309,9 +4294,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3354,9 +4351,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3399,9 +4408,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3444,9 +4465,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3489,9 +4522,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3534,9 +4579,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3579,9 +4636,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3624,9 +4693,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3669,9 +4750,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3714,9 +4807,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "flags_only",
+      "corpus_provenance_evidence_reasons": [],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "asserts_search_live",
+        "asserts_detail_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter",
+        "fetch_asserted_without_any_fetch_artefact"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "self_asserted",
       "deadline_evidence_reasons": [],
@@ -3759,9 +4864,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": "2026-12-31"
+      "raw_deadline": "2026-12-31",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -3798,9 +4916,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -3837,9 +4968,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -3876,9 +5020,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -3915,9 +5072,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -3954,9 +5124,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -3993,9 +5176,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4032,9 +5228,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4071,9 +5280,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4110,9 +5332,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4149,9 +5384,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4188,9 +5436,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4227,9 +5488,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4266,9 +5540,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4305,9 +5592,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4344,9 +5644,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4383,9 +5696,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4422,9 +5748,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4461,9 +5800,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4500,9 +5852,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4539,9 +5904,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4578,9 +5956,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4617,9 +6008,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4656,9 +6060,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4695,9 +6112,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4734,9 +6164,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4773,9 +6215,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4812,9 +6267,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4851,9 +6319,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4890,9 +6371,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4929,9 +6423,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -4968,9 +6475,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5007,9 +6527,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5046,9 +6579,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5085,9 +6631,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5124,9 +6683,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5163,9 +6735,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5202,9 +6787,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5241,9 +6838,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5280,9 +6890,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5319,9 +6942,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5358,9 +6994,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5397,9 +7046,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5436,9 +7098,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5475,9 +7150,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5514,9 +7202,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5553,9 +7253,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5592,9 +7305,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5631,9 +7357,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5670,9 +7409,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5709,9 +7460,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5748,9 +7511,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5787,9 +7562,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5826,9 +7613,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5865,9 +7664,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5904,9 +7716,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5943,9 +7767,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -5982,9 +7819,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6021,9 +7870,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6060,9 +7922,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6099,9 +7973,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6138,9 +8025,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6177,9 +8077,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6216,9 +8128,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6255,9 +8179,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6294,9 +8230,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6333,9 +8281,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6372,9 +8333,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6411,9 +8385,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6450,9 +8437,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6489,9 +8489,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6528,9 +8541,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6567,9 +8593,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6606,9 +8645,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6645,9 +8697,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6684,9 +8749,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6723,9 +8801,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6762,9 +8853,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6801,9 +8905,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6840,9 +8957,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6879,9 +9009,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6918,9 +9061,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6957,9 +9113,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -6996,9 +9165,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7035,9 +9217,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7076,9 +9271,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7115,9 +9323,21 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7154,9 +9374,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7193,9 +9426,22 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7232,9 +9478,22 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "checked_metadata",
+      "corpus_provenance_evidence_reasons": [
+        "checked_at_present",
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_real_fetch",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7271,9 +9530,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7310,9 +9581,21 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "metadata",
+      "corpus_provenance_evidence_reasons": [
+        "provenance_block_present",
+        "source_url_present"
+      ],
+      "corpus_provenance_status": "recorded_asserted",
+      "corpus_provenance_warning_reasons": [
+        "asserts_search_live",
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7349,9 +9632,20 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "unknown",
-      "raw_deadline": null
+      "raw_deadline": null,
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": false
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7388,9 +9682,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7427,9 +9732,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7466,9 +9782,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7505,9 +9832,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7544,9 +9882,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7583,9 +9932,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7625,9 +9985,20 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7667,9 +10038,20 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7709,9 +10091,20 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7748,9 +10141,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7787,9 +10191,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7826,9 +10241,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7865,9 +10291,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7904,9 +10341,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7943,9 +10391,20 @@
         "tribal_organization": "not_supported_by_evidence"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -7982,9 +10441,20 @@
         "tribal_organization": "unknown"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     },
     {
+      "corpus_provenance_evidence_level": "independent_artifact",
+      "corpus_provenance_evidence_reasons": [
+        "upstream_identifier_present",
+        "independent_artifact:fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+      ],
+      "corpus_provenance_status": "recorded_verified",
+      "corpus_provenance_warning_reasons": [
+        "never_synthesized_is_set_unconditionally_by_the_adapter"
+      ],
       "deadline_counts_as_verified": false,
       "deadline_evidence_level": "none",
       "deadline_evidence_reasons": [],
@@ -8024,7 +10494,9 @@
         "tribal_organization": "eligible"
       },
       "provenance_kind": "recorded",
-      "raw_deadline": ""
+      "raw_deadline": "",
+      "record_counts_as_recorded": true,
+      "record_counts_as_verified_recorded": true
     }
   ],
   "readiness_summary": {

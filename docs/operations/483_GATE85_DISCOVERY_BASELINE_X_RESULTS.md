@@ -24,6 +24,13 @@ Artifacts land in `artifacts/discovery_baseline_x/` as `baseline_x.json`,
 > be verified; the other 40 are `suspected_placeholder`. No record was
 > removed and no date was rewritten. See docs 489, 490, 491.
 >
+> **Also superseded in part by Gate 88.** The corpus composition figures on
+> this page (162 recorded / 23 unknown / 0 synthetic / 0 live) classify
+> records by the flags they carry, and are unchanged. Gate 88 audited what
+> evidence backs them: 18 records have an independent recording artifact,
+> 166 rest on assertion, 1 is circular. No record was removed, hidden, or
+> declared fake. See docs 493, 494, 495.
+>
 > Every other number on this page still stands. Gate 86 changed nothing about
 > corpus composition, source coverage, eligibility, funding lanes, or the
 > quality score, which remains 0.0865.

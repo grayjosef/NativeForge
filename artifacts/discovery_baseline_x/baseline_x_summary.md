@@ -31,6 +31,32 @@ Deduplicated union of the committed corpora: **185 records**.
 
 `recorded` means a fetch happened during an earlier gate and the result was committed. It does not mean current. Nothing has been refreshed since, and nothing is monitored, so no record is current by evidence.
 
+### What backs that classification?
+
+The table above classifies records by the flags they carry. This one asks what committed evidence survives to support them.
+
+| Provenance | Records | Evidence |
+| --- | --- | --- |
+| `recorded_verified` | 18 | an independent recorded transport |
+| `recorded_asserted` | 166 | flags, and in most cases metadata |
+| `recorded_circular` | 1 | an artifact derived from the record it would corroborate |
+| `synthetic_declared` | 0 | the record declares synthesis |
+
+Inside the asserted group, the evidence is far from uniform:
+
+| Evidence level | Records |
+| --- | --- |
+| `upstream_identified` | 31 |
+| `checked_metadata` | 74 |
+| `metadata` | 23 |
+| `flags_only` | 38 |
+
+**38 records rest on a boolean and nothing else** - no ingestion timestamp, no provenance block, no upstream identifier, no source URL. `never_synthesized: true` is set on every record in the corpus by a hardcoded literal in the fetch adapter, so it distinguishes nothing.
+
+`recorded_records` above reads 162. An independent artifact backs 18 of them, so that figure overstates artifact-backed provenance by **144**. Both numbers stay: the first answers how a record was produced, the second what evidence survives to show it, and neither is edited to match the other.
+
+None of this says any record is fake. Nothing in the corpus declares itself synthetic, and no evidence contradicts any record's content. `recorded_asserted` means the claim has not been corroborated, not that it has been refuted.
+
 | Source file | Records | Contributed after dedupe |
 | --- | --- | --- |
 | `fixtures/real_grants_corpus/ta_mixed_tier13_grants.json` | 168 | 168 |

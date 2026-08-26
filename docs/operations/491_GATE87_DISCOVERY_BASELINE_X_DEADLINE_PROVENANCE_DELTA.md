@@ -1,5 +1,22 @@
 # 491 — Gate 87C/87D: Discovery Baseline X deadline provenance delta
 
+
+> **Superseded in part by Gate 88.** This page is preserved as the deadline
+> provenance baseline. Its numbers are not edited and all still stand: 59 raw
+> deadlines, 19 verified, 40 suspected placeholder, 19 resolvable freshness
+> states.
+>
+> Gate 88 applied the same question to the records themselves rather than their
+> deadlines, and found the same shape: 18 of 185 records have an independent
+> recording artifact, 166 rest on assertion, and 38 of those rest on booleans
+> alone. `corpus_summary.recorded_records` stays at 162 and is unchanged; the
+> gap between it and the 18 is reported as its own metric. See docs 493, 494,
+> 495.
+>
+> The reading order across the sequence: 483 is the original baseline, 487 the
+> post-normalization one, 491 (this page) the deadline provenance one, and 495
+> carries the current corpus provenance picture.
+
 ## The delta
 
 | Metric | Gate 86 | Gate 87 | Note |

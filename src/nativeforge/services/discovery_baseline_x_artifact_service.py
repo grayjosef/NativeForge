@@ -94,6 +94,10 @@ def _rows_for_csv(baseline: dict[str, Any]) -> list[dict[str, str]]:
     add("deadline_provenance", prov)
     add("deadline_provenance_status", prov.get("by_provenance_status") or {})
     add("deadline_evidence_level", prov.get("by_evidence_level") or {})
+    corpus_prov = baseline.get("corpus_provenance_summary") or {}
+    add("corpus_provenance", corpus_prov)
+    add("corpus_provenance_status", corpus_prov.get("by_provenance_status") or {})
+    add("corpus_provenance_evidence", corpus_prov.get("by_evidence_level") or {})
     add("freshness", baseline.get("freshness_summary") or {})
     add("readiness", baseline.get("readiness_summary") or {})
 
@@ -185,6 +189,69 @@ def render_baseline_x_summary(baseline: dict[str, Any]) -> str:
         "result was committed. It does not mean current. Nothing has been "
         "refreshed since, and nothing is monitored, so no record is current by "
         "evidence."
+    )
+    add("")
+
+    corpus_prov = baseline.get("corpus_provenance_summary") or {}
+    by_evidence = corpus_prov.get("by_evidence_level") or {}
+    add("### What backs that classification?")
+    add("")
+    add(
+        "The table above classifies records by the flags they carry. This one "
+        "asks what committed evidence survives to support them."
+    )
+    add("")
+    add("| Provenance | Records | Evidence |")
+    add("| --- | --- | --- |")
+    add(
+        f"| `recorded_verified` | {quality.get('recorded_verified_records')} | an "
+        "independent recorded transport |"
+    )
+    add(
+        f"| `recorded_asserted` | {quality.get('recorded_asserted_records')} | "
+        "flags, and in most cases metadata |"
+    )
+    add(
+        f"| `recorded_circular` | {quality.get('recorded_circular_records')} | an "
+        "artifact derived from the record it would corroborate |"
+    )
+    add(
+        f"| `synthetic_declared` | {quality.get('synthetic_declared_records')} | "
+        "the record declares synthesis |"
+    )
+    add("")
+    add("Inside the asserted group, the evidence is far from uniform:")
+    add("")
+    add("| Evidence level | Records |")
+    add("| --- | --- |")
+    for level in ("upstream_identified", "checked_metadata", "metadata",
+                  "flags_only"):
+        add(f"| `{level}` | {by_evidence.get(level)} |")
+    add("")
+    add(
+        f"**{quality.get('flags_only_records')} records rest on a boolean and "
+        "nothing else** - no ingestion timestamp, no provenance block, no "
+        "upstream identifier, no source URL. `never_synthesized: true` is set "
+        "on every record in the corpus by a hardcoded literal in the fetch "
+        "adapter, so it distinguishes nothing."
+    )
+    add("")
+    add(
+        f"`recorded_records` above reads "
+        f"{quality.get('corpus_summary_recorded_records')}. An independent "
+        f"artifact backs {quality.get('recorded_verified_records')} of them, so "
+        "that figure overstates artifact-backed provenance by "
+        f"**{quality.get('corpus_summary_recorded_overstated_by')}**. Both "
+        "numbers stay: the first answers how a record was produced, the second "
+        "what evidence survives to show it, and neither is edited to match the "
+        "other."
+    )
+    add("")
+    add(
+        "None of this says any record is fake. Nothing in the corpus declares "
+        "itself synthetic, and no evidence contradicts any record's content. "
+        "`recorded_asserted` means the claim has not been corroborated, not "
+        "that it has been refuted."
     )
     add("")
     add("| Source file | Records | Contributed after dedupe |")

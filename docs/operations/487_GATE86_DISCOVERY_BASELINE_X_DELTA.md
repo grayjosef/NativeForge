@@ -15,6 +15,10 @@ What changed in the baseline, and what did not.
 > because those 40 never produced a freshness state to begin with. Nothing was
 > deleted, hidden, or rewritten. See docs 489, 490, 491.
 >
+> **Also superseded in part by Gate 88**, which audited corpus provenance
+> rather than deadlines. Nothing on this page changes: 59 raw deadlines,
+> 59 normalized, 19 resolvable freshness states. See docs 493, 494, 495.
+>
 > The sequence to read these in: 483 is the pre-normalization baseline, 487
 > (this page) is the post-normalization one, and 491 carries the current
 > deadline picture.

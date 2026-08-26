@@ -51,6 +51,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.corpus_provenance_evidence_service import (
+    classify_corpus_provenance,
+    provenance_confidence_level,
+    summarise_corpus_provenance,
+)
 from nativeforge.services.deadline_normalization_service import (
     normalize_deadline,
     summarise_normalization,
@@ -270,6 +275,53 @@ def classify_record_provenance(record: dict[str, Any]) -> str:
     return "unknown"
 
 
+# Recorded transport artifacts, and what each one is worth.
+#
+# A transport is INDEPENDENT when it carries information the corpus row could
+# not have supplied - a row cannot be the source of data it does not contain.
+# nf14_grants_gov_broad_edge_pulls.json carries 33 fields absent from its rows,
+# including revision, publisherUid and a modifiedComments narrative, so
+# derivation provably runs transport -> row.
+INDEPENDENT_TRANSPORT_FILE = (
+    "fixtures/real_grants_corpus/nf14_grants_gov_broad_edge_pulls.json"
+)
+
+# A transport that names the row as its own source cannot corroborate it. This
+# one says so in its _meta, which is the only reason the circle is visible.
+CIRCULAR_TRANSPORT_FILE = (
+    "tests/fixtures/grants_gov/nf_seed_2026_fed_021_samhsa_sm_26_024.json"
+)
+CIRCULAR_TRANSPORT_RECORD_IDS: frozenset[str] = frozenset({"nf13-real-fed-021"})
+
+
+def load_independent_transport_ids(*, repo_root: Any = None) -> frozenset[str]:
+    """Upstream ids covered by an independent recorded transport.
+
+    Read-only. Deciding whether an artifact is independent means reading it, and
+    the classifier does no I/O - so the reading happens here and the verdict is
+    passed down.
+    """
+    from pathlib import Path
+
+    root = Path(repo_root) if repo_root else Path(__file__).resolve().parents[3]
+    path = root / INDEPENDENT_TRANSPORT_FILE
+    if not path.exists():
+        return frozenset()
+
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    # A transport that declares itself derived from the corpus is not
+    # independent, whatever its filename. Checked rather than assumed.
+    if "source_of_values" in json.dumps(payload.get("_meta") or {}):
+        return frozenset()
+
+    ids = {
+        str(pull.get("grants_gov_opportunity_id"))
+        for pull in (payload.get("pulls") or [])
+        if pull.get("grants_gov_opportunity_id") is not None
+    }
+    return frozenset(ids)
+
+
 def deadline_convention_for_record(record: dict[str, Any]) -> str:
     """Which slash-date convention this record's source is known to use.
 
@@ -295,11 +347,54 @@ def deadline_convention_for_record(record: dict[str, Any]) -> str:
     return "unknown"
 
 
+def classify_record_corpus_provenance(
+    *,
+    record: dict[str, Any],
+    independent_transport_ids: frozenset[str] = frozenset(),
+) -> dict[str, Any]:
+    """Provenance evidence for one record, with artifact lookup resolved here."""
+    record_id = str(record.get("grant_id") or "unknown")
+    upstream_id = record.get("grants_gov_opportunity_id")
+
+    independent = None
+    if upstream_id and str(upstream_id) in independent_transport_ids:
+        independent = INDEPENDENT_TRANSPORT_FILE
+
+    circular = None
+    if record_id in CIRCULAR_TRANSPORT_RECORD_IDS:
+        circular = CIRCULAR_TRANSPORT_FILE
+
+    return classify_corpus_provenance(
+        record_id=record_id,
+        source_file=record.get("source_seed_id"),
+        # Passed so the assertion is visible in the result, never as support.
+        fetch_assertion_flags={
+            "real_fetch": record.get("real_fetch"),
+            "search_live": record.get("search_live"),
+            "detail_live": record.get("detail_live"),
+            "never_synthesized": record.get("never_synthesized"),
+        },
+        checked_at=record.get("ingested_at"),
+        provenance_block=record.get("provenance"),
+        upstream_id=upstream_id,
+        source_url=record.get("source_url"),
+        independent_artifact=independent,
+        circular_artifact=circular,
+        # No committed record declares itself synthetic. `fixture: true` on the
+        # nf14 rows means derived from a recorded pull, which is honest
+        # labelling of a recording rather than of a synthesis - so it is
+        # deliberately not wired to declared_synthetic.
+        declared_synthetic=record.get("never_synthesized") is False,
+        declared_demo=bool(record.get("demo_record")),
+    )
+
+
 def measure_record(
     *,
     record: dict[str, Any],
     now: str = DEFAULT_NOW,
     cluster_context: dict[str, Any] | None = None,
+    independent_transport_ids: frozenset[str] = frozenset(),
 ) -> dict[str, Any]:
     """Run the existing evaluators over one corpus record.
 
@@ -365,6 +460,11 @@ def measure_record(
         normalized_deadline if provenance["freshness_allowed"] else None
     )
 
+    corpus_provenance = classify_record_corpus_provenance(
+        record=record,
+        independent_transport_ids=independent_transport_ids,
+    )
+
     freshness = evaluate_opportunity_freshness(
         opportunity_id=grant_id,
         close_date=trusted_deadline,
@@ -406,6 +506,23 @@ def measure_record(
             "deadline_warning_reasons": provenance["warning_reasons"],
             "deadline_freshness_allowed": provenance["freshness_allowed"],
             "deadline_counts_as_verified": provenance["deadline_counts_as_verified"],
+            # Gate 88 corpus provenance. Separate axis from the fetch-mode
+            # composition above: that one asks how a record was produced, this
+            # one asks what evidence survives to show it.
+            "corpus_provenance_status": corpus_provenance["provenance_status"],
+            "corpus_provenance_evidence_level": corpus_provenance["evidence_level"],
+            "corpus_provenance_evidence_reasons": corpus_provenance[
+                "evidence_reasons"
+            ],
+            "corpus_provenance_warning_reasons": corpus_provenance[
+                "warning_reasons"
+            ],
+            "record_counts_as_verified_recorded": corpus_provenance[
+                "record_counts_as_verified_recorded"
+            ],
+            "record_counts_as_recorded": corpus_provenance[
+                "record_counts_as_recorded"
+            ],
             "has_cited_eligibility": cited_eligibility,
             "has_cited_exclusion": cited_exclusion,
             "eligible_classes": exclusion.get("eligible_classes") or [],
@@ -510,11 +627,29 @@ def build_discovery_baseline_x(
     # from the corpus already in hand, and passed down.
     cluster_context = build_deadline_cluster_context(records=records)
 
+    # Gate 88: which upstream ids an independent transport actually covers.
+    # Read once, here, because the classifier does no I/O.
+    independent_transport_ids = load_independent_transport_ids(repo_root=repo_root)
+
     measured = [
-        measure_record(record=r, now=now, cluster_context=cluster_context)
+        measure_record(
+            record=r,
+            now=now,
+            cluster_context=cluster_context,
+            independent_transport_ids=independent_transport_ids,
+        )
         for r in records
     ]
     total = len(measured)
+
+    corpus_provenance_summary = summarise_corpus_provenance(
+        [
+            classify_record_corpus_provenance(
+                record=r, independent_transport_ids=independent_transport_ids
+            )
+            for r in records
+        ]
+    )
 
     # -- corpus composition ------------------------------------------------
     provenance_counts = {k: 0 for k in ("synthetic", "recorded", "live", "unknown")}
@@ -675,6 +810,53 @@ def build_discovery_baseline_x(
             provenance_summary["raw_deadlines"]
             - provenance_summary["verified_deadlines"]
         ),
+        # Gate 88. The same separation applied to the records themselves:
+        # `recorded_records` in corpus_summary counts what the flags say, these
+        # count what an artifact backs.
+        "recorded_verified_records": corpus_provenance_summary[
+            "recorded_verified_records"
+        ],
+        "recorded_asserted_records": corpus_provenance_summary[
+            "recorded_asserted_records"
+        ],
+        "recorded_circular_records": corpus_provenance_summary[
+            "recorded_circular_records"
+        ],
+        "synthetic_declared_records": corpus_provenance_summary[
+            "synthetic_declared_records"
+        ],
+        "demo_synthetic_records": corpus_provenance_summary["demo_synthetic_records"],
+        "unknown_provenance_records": corpus_provenance_summary[
+            "unknown_provenance_records"
+        ],
+        "missing_provenance_records": corpus_provenance_summary[
+            "missing_provenance_records"
+        ],
+        "verified_recorded_rate": corpus_provenance_summary["verified_recorded_rate"],
+        "asserted_recorded_rate": corpus_provenance_summary["asserted_recorded_rate"],
+        "circular_recorded_rate": corpus_provenance_summary["circular_recorded_rate"],
+        "provenance_confidence_level": provenance_confidence_level(
+            corpus_provenance_summary
+        ),
+        # Two overstatement figures, because they answer two questions and
+        # conflating them would be its own small dishonesty.
+        #
+        # This one is internal to the evidence axis: every record classified as
+        # recorded in some form, minus those an artifact backs.
+        "recorded_count_overstated_by": corpus_provenance_summary[
+            "recorded_count_overstated_by"
+        ],
+        # This one answers the question the gate actually asked - by how much
+        # `corpus_summary.recorded_records`, the figure Baseline X has been
+        # publishing since Gate 85, exceeds what an artifact backs.
+        "corpus_summary_recorded_records": corpus_summary["recorded_records"],
+        "corpus_summary_recorded_overstated_by": (
+            int(corpus_summary["recorded_records"])
+            - corpus_provenance_summary["recorded_verified_records"]
+        ),
+        # The weakest tier, named: records supported by a boolean and nothing
+        # else. This is the Gate 88A finding as a single metric.
+        "flags_only_records": corpus_provenance_summary["flags_only_records"],
         "records_never_checked": sum(
             1 for m in measured if "never_checked" in m["freshness_reasons"]
         ),
@@ -790,6 +972,7 @@ def build_discovery_baseline_x(
             "funding_lane_summary": funding_lane_summary,
             "deadline_summary": deadline_summary,
             "deadline_provenance_summary": provenance_summary,
+            "corpus_provenance_summary": corpus_provenance_summary,
             "freshness_summary": freshness_summary,
             "readiness_summary": readiness_summary,
             "confidence_level": DEFAULT_CONFIDENCE_LEVEL,
@@ -901,5 +1084,45 @@ def baseline_x_invariant_failures(baseline: dict[str, Any]) -> list[str]:
     raw_deadlines = int(quality.get("records_with_raw_deadline") or 0)
     if verified > raw_deadlines:
         fails.append("verified_deadlines_exceed_raw_deadlines")
+
+    # Gate 88: verification of a record is a claim, and flags cannot make it.
+    corpus_provenance = baseline.get("corpus_provenance_summary") or {}
+    if corpus_provenance.get("fabricated") is not False:
+        fails.append("corpus_provenance_fabricated")
+    if corpus_provenance.get("live_records"):
+        fails.append("corpus_provenance_claimed_a_live_record")
+    for field in ("records_removed", "records_hidden"):
+        if corpus_provenance.get(field):
+            fails.append(f"provenance_audit_altered_the_corpus:{field}")
+
+    total_records = int(corpus.get("total_records") or 0)
+    verified_recorded = int(quality.get("recorded_verified_records") or 0)
+    if verified_recorded > total_records:
+        fails.append("verified_recorded_exceeds_total_records")
+
+    # Every record must land somewhere. A status set that does not cover the
+    # corpus means a record was dropped by classification.
+    status_total = sum(
+        int(v or 0)
+        for v in (corpus_provenance.get("by_provenance_status") or {}).values()
+    )
+    if status_total != total_records:
+        fails.append("corpus_provenance_statuses_do_not_cover_every_record")
+
+    for m in per_record:
+        status = m.get("corpus_provenance_status")
+        level = m.get("corpus_provenance_evidence_level")
+        if m.get("record_counts_as_verified_recorded"):
+            if status != "recorded_verified":
+                fails.append(
+                    f"verified_recorded_flag_without_status:{m.get('grant_id')}"
+                )
+            if level != "independent_artifact":
+                fails.append(
+                    f"verified_recorded_without_artifact:{m.get('grant_id')}"
+                )
+        # The rule this gate exists for.
+        if level == "flags_only" and status == "recorded_verified":
+            fails.append(f"flags_only_verified:{m.get('grant_id')}")
 
     return fails

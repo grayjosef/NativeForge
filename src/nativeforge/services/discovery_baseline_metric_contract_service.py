@@ -114,6 +114,29 @@ OPPORTUNITY_QUALITY_METRICS: tuple[str, ...] = (
     # Stated as its own metric so the overstatement is a number somebody has to
     # read, not an inference from two other numbers.
     "raw_deadline_count_overstated_by",
+    # Gate 88. The same separation, applied to the records themselves.
+    # `corpus_summary.recorded_records` counts what a record's flags say about
+    # how it was produced; these count what committed evidence survives to show
+    # it. A boolean can never reach the verified column - by rule, and by
+    # invariant.
+    "recorded_verified_records",
+    "recorded_asserted_records",
+    "recorded_circular_records",
+    "synthetic_declared_records",
+    "demo_synthetic_records",
+    "unknown_provenance_records",
+    "missing_provenance_records",
+    "verified_recorded_rate",
+    "asserted_recorded_rate",
+    "circular_recorded_rate",
+    "provenance_confidence_level",
+    # The weakest tier, named: supported by a boolean and nothing else.
+    "flags_only_records",
+    # Two overstatement figures answering two different questions - see the
+    # comments at their assignment in discovery_baseline_x_service.
+    "recorded_count_overstated_by",
+    "corpus_summary_recorded_records",
+    "corpus_summary_recorded_overstated_by",
     "records_never_checked",
     "records_with_resolvable_freshness",
     "records_with_amendment_evidence",
@@ -314,6 +337,21 @@ def baseline_result_invariant_failures(result: dict[str, Any]) -> list[str]:
         fails.append("deadline_provenance_counts_exceed_raw_deadlines")
     if resolvable > verified + int(quality.get("unverified_deadlines") or 0):
         fails.append("resolvable_freshness_exceeds_trusted_deadlines")
+
+    # Gate 88: a record verified by artifact cannot outnumber the records that
+    # exist, nor the records the corpus even claims were recorded.
+    verified_recorded = int(quality.get("recorded_verified_records") or 0)
+    total_records = int(corpus.get("total_records") or 0)
+    if verified_recorded > total_records:
+        fails.append("verified_recorded_records_exceed_total_records")
+    if verified_recorded > int(corpus.get("recorded_records") or 0) + int(
+        corpus.get("synthetic_records") or 0
+    ):
+        fails.append("verified_recorded_records_exceed_claimed_recorded")
+    if quality.get("provenance_confidence_level") == "artifact_backed" and (
+        verified_recorded < total_records * 0.9
+    ):
+        fails.append("provenance_confidence_overstated")
 
     if result.get("confidence_level") not in CONFIDENCE_LEVELS:
         fails.append("confidence_level_out_of_vocabulary")
