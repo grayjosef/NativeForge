@@ -1,0 +1,13 @@
+# Grants.gov API attribution - required verbatim
+
+This product uses the Grants.gov API but is not endorsed or certified by the U.S. Department of Health and Human Services.
+
+# Status
+attribution_status: present_and_verbatim
+customer_visible_surfaces: runtime_payload
+
+# Declarations
+collectors_active: false
+monitors_active: false
+live_fetch_performed: false
+live_source_coverage: false

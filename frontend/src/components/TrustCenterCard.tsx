@@ -38,6 +38,15 @@ export function TrustCenterCard({
       : null;
   const reviewRequired =
     reviewGate?.generated_form_previews_are_non_final !== false;
+  // Gate 93C: the Grants.gov API terms require this notice to be displayed
+  // prominently within the application. Rendered verbatim from the manifest —
+  // never a hardcoded copy here, so there is exactly one source of the string.
+  const sourceAttribution =
+    manifest?.source_attribution &&
+    typeof manifest.source_attribution === "object"
+      ? (manifest.source_attribution as Record<string, unknown>)
+      : null;
+  const grantsGovNotice = str(sourceAttribution?.grants_gov_notice);
 
   return (
     <section
@@ -117,6 +126,12 @@ export function TrustCenterCard({
           </dd>
         </div>
       </dl>
+
+      {grantsGovNotice ? (
+        <p className="nf-trust-attribution" data-testid="nf-grants-gov-attribution">
+          {grantsGovNotice}
+        </p>
+      ) : null}
 
       {exportHint ? (
         <p className="nf-callout nf-callout--success">{exportHint}</p>

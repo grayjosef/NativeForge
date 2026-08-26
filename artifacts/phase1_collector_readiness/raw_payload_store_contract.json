@@ -1,0 +1,80 @@
+{
+  "collectors_active": false,
+  "evidence_critical_fields": [
+    "payload_id",
+    "source_id",
+    "retrieved_at",
+    "raw_payload_hash"
+  ],
+  "fabricated": false,
+  "fetch_performed": false,
+  "guarantees": [
+    "a raw payload is written before its parsed form is trusted",
+    "raw_payload_hash is SHA-256 hex and is required",
+    "retrieved_at is required and is not inferred from a filename",
+    "source_id is required; an orphan payload is not evidence",
+    "response headers are stored as a hash, never verbatim",
+    "secret scan must read clean before storage promotion",
+    "retention policy is explicit per payload, never a default",
+    "attribution requirement travels with the payload"
+  ],
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "monitors_active": false,
+  "network_access_performed": false,
+  "payloads_stored": 0,
+  "required_fields": [
+    "payload_id",
+    "source_id",
+    "retrieved_at",
+    "retrieval_method",
+    "request_fingerprint",
+    "response_status",
+    "response_headers_hash",
+    "raw_payload_hash",
+    "raw_payload_size_bytes",
+    "canonical_url",
+    "attribution_required",
+    "terms_status",
+    "parser_status",
+    "retention_policy",
+    "redaction_status",
+    "secret_scan_status"
+  ],
+  "schema_version": "nf_raw_payload_store_contract_v1",
+  "store_implemented": false,
+  "vocabularies": {
+    "parser_status": [
+      "not_parsed",
+      "parse_failed",
+      "parsed_ok",
+      "parsed_with_errors"
+    ],
+    "redaction_status": [
+      "not_required",
+      "pending",
+      "redacted",
+      "unknown"
+    ],
+    "retention_policy": [
+      "retain_1_year",
+      "retain_7_days",
+      "retain_90_days",
+      "retain_indefinite"
+    ],
+    "retrieval_method": [
+      "bulk_extract",
+      "feed",
+      "html_get",
+      "manual",
+      "public_api",
+      "public_api_with_key"
+    ],
+    "secret_scan_status": [
+      "clean",
+      "findings",
+      "pending",
+      "unknown"
+    ]
+  }
+}

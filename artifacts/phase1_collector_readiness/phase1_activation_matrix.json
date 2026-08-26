@@ -1,0 +1,416 @@
+{
+  "attribution": {
+    "attribution_is_customer_visible": true,
+    "attribution_satisfied": true,
+    "attribution_status": "present_and_verbatim",
+    "blocked_reasons": [],
+    "customer_visible_surfaces": [
+      "runtime_payload"
+    ],
+    "fabricated": false,
+    "gated_source_ids": [
+      "GRANTS-GOV-EXTRACT",
+      "GRANTS-GOV-SEARCH2",
+      "grants_gov_daily_extract",
+      "grants_gov_search2_fetch"
+    ],
+    "manifest_check": {
+      "candidate_present": true,
+      "difference": null,
+      "fabricated": false,
+      "matches_verbatim": true,
+      "result": "present_and_verbatim",
+      "schema_version": "nf_grants_gov_attribution_v1"
+    },
+    "rendered_ui_check": null,
+    "required_text": "This product uses the Grants.gov API but is not endorsed or certified by the U.S. Department of Health and Human Services.",
+    "schema_version": "nf_grants_gov_attribution_v1",
+    "surfaces_verified": [
+      "runtime_payload"
+    ]
+  },
+  "collectors_active": false,
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "matrix": {
+    "collectors_active": 0,
+    "fabricated": false,
+    "live_fetch_performed": false,
+    "live_source_coverage": false,
+    "monitors_active": 0,
+    "phase": 1,
+    "schema_version": "nf_phase1_collector_activation_policy_v1",
+    "source_count": 5,
+    "sources": [
+      {
+        "activation_status": "activation_blocked",
+        "attribution_required": true,
+        "collector_status": "not_active",
+        "fabricated": false,
+        "fetch_performed": false,
+        "may_fetch_live_now": false,
+        "may_schedule_monitor": false,
+        "may_surface_customer_data": false,
+        "missing_preconditions": [
+          "activation_preflight_pass",
+          "grants_gov_attribution",
+          "raw_payload_store",
+          "retention_alert_policy"
+        ],
+        "preflight_passed": false,
+        "preflight_present": true,
+        "prior_award_only": false,
+        "required_preconditions": [
+          "activation_preflight_pass",
+          "grants_gov_attribution",
+          "raw_payload_store",
+          "retention_alert_policy"
+        ],
+        "satisfied_preconditions": [],
+        "schema_version": "nf_phase1_collector_activation_policy_v1",
+        "scraping_prohibited": false,
+        "source_id": "grants_gov_daily_extract",
+        "unrecognised_preconditions": []
+      },
+      {
+        "activation_status": "activation_blocked",
+        "attribution_required": true,
+        "collector_status": "not_active",
+        "fabricated": false,
+        "fetch_performed": false,
+        "may_fetch_live_now": false,
+        "may_schedule_monitor": false,
+        "may_surface_customer_data": false,
+        "missing_preconditions": [
+          "activation_preflight_pass",
+          "grants_gov_attribution",
+          "raw_payload_store",
+          "amendment_materiality_policy"
+        ],
+        "preflight_passed": false,
+        "preflight_present": true,
+        "prior_award_only": false,
+        "required_preconditions": [
+          "activation_preflight_pass",
+          "grants_gov_attribution",
+          "raw_payload_store",
+          "amendment_materiality_policy"
+        ],
+        "satisfied_preconditions": [],
+        "schema_version": "nf_phase1_collector_activation_policy_v1",
+        "scraping_prohibited": false,
+        "source_id": "grants_gov_search2_fetch",
+        "unrecognised_preconditions": []
+      },
+      {
+        "activation_status": "activation_blocked",
+        "attribution_required": false,
+        "collector_status": "not_active",
+        "fabricated": false,
+        "fetch_performed": false,
+        "may_fetch_live_now": false,
+        "may_schedule_monitor": false,
+        "may_surface_customer_data": false,
+        "missing_preconditions": [
+          "activation_preflight_pass",
+          "raw_payload_store",
+          "polling_cadence_policy",
+          "public_inspection_handling"
+        ],
+        "preflight_passed": false,
+        "preflight_present": true,
+        "prior_award_only": false,
+        "required_preconditions": [
+          "activation_preflight_pass",
+          "raw_payload_store",
+          "polling_cadence_policy",
+          "public_inspection_handling"
+        ],
+        "satisfied_preconditions": [],
+        "schema_version": "nf_phase1_collector_activation_policy_v1",
+        "scraping_prohibited": false,
+        "source_id": "federal_register_api",
+        "unrecognised_preconditions": []
+      },
+      {
+        "activation_status": "activation_blocked",
+        "attribution_required": false,
+        "collector_status": "not_active",
+        "fabricated": false,
+        "fetch_performed": false,
+        "may_fetch_live_now": false,
+        "may_schedule_monitor": false,
+        "may_surface_customer_data": false,
+        "missing_preconditions": [
+          "activation_preflight_pass",
+          "raw_payload_store",
+          "api_key",
+          "role_and_rate_limit_policy",
+          "no_scraping_ack"
+        ],
+        "preflight_passed": false,
+        "preflight_present": true,
+        "prior_award_only": false,
+        "required_preconditions": [
+          "activation_preflight_pass",
+          "raw_payload_store",
+          "api_key",
+          "role_and_rate_limit_policy",
+          "no_scraping_ack"
+        ],
+        "satisfied_preconditions": [],
+        "schema_version": "nf_phase1_collector_activation_policy_v1",
+        "scraping_prohibited": true,
+        "source_id": "sam_assistance_listings_api",
+        "unrecognised_preconditions": []
+      },
+      {
+        "activation_status": "activation_blocked",
+        "attribution_required": false,
+        "collector_status": "not_active",
+        "fabricated": false,
+        "fetch_performed": false,
+        "may_fetch_live_now": false,
+        "may_schedule_monitor": false,
+        "may_surface_customer_data": false,
+        "missing_preconditions": [
+          "activation_preflight_pass",
+          "raw_payload_store",
+          "prior_award_only_classification"
+        ],
+        "preflight_passed": false,
+        "preflight_present": true,
+        "prior_award_only": true,
+        "required_preconditions": [
+          "activation_preflight_pass",
+          "raw_payload_store",
+          "prior_award_only_classification"
+        ],
+        "satisfied_preconditions": [],
+        "schema_version": "nf_phase1_collector_activation_policy_v1",
+        "scraping_prohibited": false,
+        "source_id": "usaspending_api_v2",
+        "unrecognised_preconditions": []
+      }
+    ],
+    "sources_may_fetch_live_now": 0,
+    "sources_may_schedule_monitor": 0,
+    "sources_may_surface_customer_data": 0
+  },
+  "monitors_active": false,
+  "preflights": {
+    "federal_register_api": {
+      "activation_allowed": false,
+      "activation_performed": false,
+      "activation_status": "activation_blocked",
+      "blocked_reasons": [
+        "raw_payload_store_contract_unsatisfied:missing",
+        "scheduler_policy_missing:missing"
+      ],
+      "collector_type": "public_api",
+      "fabricated": false,
+      "fetch_performed": false,
+      "human_review_required": false,
+      "requirements_missing": [
+        "raw_payload_storage",
+        "scheduler_policy"
+      ],
+      "requirements_satisfied": [
+        "attribution",
+        "credential",
+        "legal_review",
+        "rate_limit_policy",
+        "terms_cleared",
+        "user_agent_policy"
+      ],
+      "resolved_inputs": {
+        "attribution_status": "not_required",
+        "credential_status": "not_required",
+        "legal_review_status": "not_required",
+        "monitoring_status": "not_started",
+        "rate_limit_status": "policy_declared",
+        "scheduler_status": "missing",
+        "storage_status": "missing",
+        "terms_status": "NO_REVIEW_REQUIRED",
+        "user_agent_status": "not_required"
+      },
+      "safe_to_fetch_now": false,
+      "safe_to_schedule": false,
+      "schema_version": "nf_source_activation_preflight_v1",
+      "source_id": "federal_register_api",
+      "source_name": "Federal Register API",
+      "source_role": "notice_feed"
+    },
+    "grants_gov_daily_extract": {
+      "activation_allowed": false,
+      "activation_performed": false,
+      "activation_status": "activation_blocked",
+      "blocked_reasons": [
+        "raw_payload_store_contract_unsatisfied:missing",
+        "scheduler_policy_missing:missing"
+      ],
+      "collector_type": "bulk_extract",
+      "fabricated": false,
+      "fetch_performed": false,
+      "human_review_required": false,
+      "requirements_missing": [
+        "raw_payload_storage",
+        "scheduler_policy"
+      ],
+      "requirements_satisfied": [
+        "attribution",
+        "credential",
+        "legal_review",
+        "rate_limit_policy",
+        "terms_cleared",
+        "user_agent_policy"
+      ],
+      "resolved_inputs": {
+        "attribution_status": "present_and_verbatim",
+        "credential_status": "not_required",
+        "legal_review_status": "not_required",
+        "monitoring_status": "not_started",
+        "rate_limit_status": "policy_declared",
+        "scheduler_status": "missing",
+        "storage_status": "missing",
+        "terms_status": "ATTRIBUTION_REQUIRED",
+        "user_agent_status": "not_required"
+      },
+      "safe_to_fetch_now": false,
+      "safe_to_schedule": false,
+      "schema_version": "nf_source_activation_preflight_v1",
+      "source_id": "grants_gov_daily_extract",
+      "source_name": "Grants.gov daily XML extract",
+      "source_role": "corpus_of_record"
+    },
+    "grants_gov_search2_fetch": {
+      "activation_allowed": false,
+      "activation_performed": false,
+      "activation_status": "activation_blocked",
+      "blocked_reasons": [
+        "raw_payload_store_contract_unsatisfied:missing",
+        "scheduler_policy_missing:missing"
+      ],
+      "collector_type": "public_api",
+      "fabricated": false,
+      "fetch_performed": false,
+      "human_review_required": false,
+      "requirements_missing": [
+        "raw_payload_storage",
+        "scheduler_policy"
+      ],
+      "requirements_satisfied": [
+        "attribution",
+        "credential",
+        "legal_review",
+        "rate_limit_policy",
+        "terms_cleared",
+        "user_agent_policy"
+      ],
+      "resolved_inputs": {
+        "attribution_status": "present_and_verbatim",
+        "credential_status": "not_required",
+        "legal_review_status": "not_required",
+        "monitoring_status": "not_started",
+        "rate_limit_status": "policy_declared",
+        "scheduler_status": "missing",
+        "storage_status": "missing",
+        "terms_status": "ATTRIBUTION_REQUIRED",
+        "user_agent_status": "not_required"
+      },
+      "safe_to_fetch_now": false,
+      "safe_to_schedule": false,
+      "schema_version": "nf_source_activation_preflight_v1",
+      "source_id": "grants_gov_search2_fetch",
+      "source_name": "Grants.gov Search2 + fetchOpportunity",
+      "source_role": "delta_accelerator"
+    },
+    "sam_assistance_listings_api": {
+      "activation_allowed": false,
+      "activation_performed": false,
+      "activation_status": "activation_blocked",
+      "blocked_reasons": [
+        "credential_missing_for_credentialed_collector:missing",
+        "raw_payload_store_contract_unsatisfied:missing",
+        "scheduler_policy_missing:missing",
+        "terms_status_blocks_activation:TERMS_REVIEW_REQUIRED"
+      ],
+      "collector_type": "public_api_with_key",
+      "fabricated": false,
+      "fetch_performed": false,
+      "human_review_required": false,
+      "requirements_missing": [
+        "credential",
+        "raw_payload_storage",
+        "scheduler_policy",
+        "terms_cleared"
+      ],
+      "requirements_satisfied": [
+        "attribution",
+        "legal_review",
+        "rate_limit_policy",
+        "user_agent_policy"
+      ],
+      "resolved_inputs": {
+        "attribution_status": "not_required",
+        "credential_status": "missing",
+        "legal_review_status": "not_required",
+        "monitoring_status": "not_started",
+        "rate_limit_status": "policy_declared",
+        "scheduler_status": "missing",
+        "storage_status": "missing",
+        "terms_status": "TERMS_REVIEW_REQUIRED",
+        "user_agent_status": "not_required"
+      },
+      "safe_to_fetch_now": false,
+      "safe_to_schedule": false,
+      "schema_version": "nf_source_activation_preflight_v1",
+      "source_id": "sam_assistance_listings_api",
+      "source_name": "SAM.gov Assistance Listings API",
+      "source_role": "program_catalog"
+    },
+    "usaspending_api_v2": {
+      "activation_allowed": false,
+      "activation_performed": false,
+      "activation_status": "activation_blocked",
+      "blocked_reasons": [
+        "raw_payload_store_contract_unsatisfied:missing",
+        "scheduler_policy_missing:missing"
+      ],
+      "collector_type": "public_api",
+      "fabricated": false,
+      "fetch_performed": false,
+      "human_review_required": false,
+      "requirements_missing": [
+        "raw_payload_storage",
+        "scheduler_policy"
+      ],
+      "requirements_satisfied": [
+        "attribution",
+        "credential",
+        "legal_review",
+        "rate_limit_policy",
+        "terms_cleared",
+        "user_agent_policy"
+      ],
+      "resolved_inputs": {
+        "attribution_status": "not_required",
+        "credential_status": "not_required",
+        "legal_review_status": "not_required",
+        "monitoring_status": "not_started",
+        "rate_limit_status": "policy_declared",
+        "scheduler_status": "missing",
+        "storage_status": "missing",
+        "terms_status": "NO_REVIEW_REQUIRED",
+        "user_agent_status": "not_required"
+      },
+      "safe_to_fetch_now": false,
+      "safe_to_schedule": false,
+      "schema_version": "nf_source_activation_preflight_v1",
+      "source_id": "usaspending_api_v2",
+      "source_name": "USAspending API v2",
+      "source_role": "prior_award_intelligence"
+    }
+  },
+  "schema_version": "nf_phase1_readiness_artifact_v1"
+}

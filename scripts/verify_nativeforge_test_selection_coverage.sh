@@ -73,6 +73,13 @@ CRITICAL=(
   "tests/test_gate92_v2_source_registry_spine.py::test_unrestricted_and_others_stay_in_the_recall_set"
   "tests/test_gate92_v2_source_registry_spine.py::test_grants_gov_attribution_is_verbatim"
   "tests/test_gate92_v2_source_registry_spine.py::test_geography_gate_denies_by_default"
+  # Gate 93. The three that keep Phase 1 activation blocked: the preflight
+  # default, the rule that attribution in a docs file does not count, and
+  # the check that the notice actually reaches the runtime payload a
+  # customer receives.
+  "tests/test_gate93_phase1_collector_readiness.py::test_preflight_defaults_to_blocked"
+  "tests/test_gate93_phase1_collector_readiness.py::test_attribution_in_docs_only_does_not_satisfy"
+  "tests/test_gate93_phase1_collector_readiness.py::test_attribution_is_present_in_the_live_trust_manifest"
 )
 
 FAIL=0

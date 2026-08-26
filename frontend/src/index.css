@@ -919,6 +919,17 @@ code,
   margin-bottom: 0.85rem;
 }
 
+/* Gate 93C: required Grants.gov API attribution. The terms ask for it to be
+   displayed prominently, so it is legible body text — not fine print. */
+.nf-trust-attribution {
+  margin: 0.9rem 0 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--nf-line, rgba(128, 128, 128, 0.35));
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--nf-muted2);
+}
+
 .nf-next-headline {
   margin: 0.65rem 0 0;
   font-size: 1.02rem;

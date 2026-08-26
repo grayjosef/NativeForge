@@ -38,6 +38,9 @@ from nativeforge.services import operator_action_service as oa_svc
 from nativeforge.services import pursuit_service as psvc
 from nativeforge.services import source_freshness_service as sfs
 from nativeforge.services import tribal_profile_service as tps
+from nativeforge.services.grants_gov_attribution_service import (
+    ATTRIBUTION_TEXT as GRANTS_GOV_ATTRIBUTION_TEXT,
+)
 
 MANIFEST_SCHEMA_VERSION = "m0_trust_v1"
 ORG_DATA_SNAPSHOT_VERSION = "org_data_snapshot_v1"
@@ -96,6 +99,23 @@ def build_trust_manifest(*, org_type: OrgType) -> dict[str, Any]:
                 "Review artifacts remain in draft until your team transitions "
                 "them through the review workflow; autofilled SF-424 previews "
                 "are not submission-ready PDFs."
+            ),
+        },
+        # Gate 93C. The Grants.gov API terms require this notice to appear
+        # "prominently within the application". Until Gate 93 it existed only as
+        # a Python constant and three markdown files, which no customer could
+        # ever see. The manifest is the runtime payload a browser actually
+        # receives, so the notice lives here and TrustCenterCard renders it.
+        #
+        # It is stated as a standing attribution, not as a claim that anything
+        # is being collected: no Grants.gov collector is active.
+        "source_attribution": {
+            "grants_gov_notice": GRANTS_GOV_ATTRIBUTION_TEXT,
+            "grants_gov_collector_active": False,
+            "statement": (
+                "NativeForge displays the Grants.gov API attribution required "
+                "by its terms of use. No Grants.gov collector is active and no "
+                "Grants.gov API data is currently surfaced."
             ),
         },
         "ai_training_policy": {
