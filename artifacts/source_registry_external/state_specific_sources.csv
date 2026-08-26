@@ -1,0 +1,11 @@
+source_id,source_name,state_if_applicable,priority_tier,source_type,federal_recognition_required,state_recognition_supported,notes,url
+SC-BEAD,South Carolina Broadband Office BEAD,SC,Tier 1,state_program_page,No,UNKNOWN,Do not infer tribal eligibility,https://ors.sc.gov/broadband/office/investments/state/bead
+SC-EMD-HMGP,SCEMD Hazard Mitigation Grant Program,SC,Tier 1,state_pass_through,No,UNKNOWN,Live rules and recognition definition control,https://www.scemd.org/recover/hazard-mitigation/
+SC-EMD-PA,SCEMD Public Agency Assistance,SC,Tier 1,state_pass_through,No,UNKNOWN,,https://www.scemd.org/recover/get-help/help-for-public-agencies/
+SC-ED,SC Department of Education Grant Opportunities,SC,Tier 1,state_agency_grants,No,UNKNOWN,,https://www.ed.sc.gov/finance/grants/office-of-grant-services/scde-grant-opportunities/
+SC-DHHS,SCDHHS Grants,SC,Tier 1,state_agency_grants,No,UNKNOWN,Strong data/EHR watch channel,https://www.scdhhs.gov/resources/grants
+SC-COMMERCE,SC Commerce Grants and Incentives,SC,Tier 2,state_agency_grants,No,UNKNOWN,,https://www.sccommerce.com/communities/grants-incentives
+SC-DES-WATER,SC DES Grants and Loans,SC,Tier 2,state_agency_grants,No,UNKNOWN,,https://des.sc.gov/programs/bureau-water/grants-loans
+SC-ENERGY,South Carolina Energy Office,SC,Tier 2,state_agency_page,No,UNKNOWN,,https://energy.sc.gov/
+SC-DEW,SC Department of Employment and Workforce,SC,Tier 2,state_agency_page,No,UNKNOWN,,https://dew.sc.gov/
+SC-SCORF,SCORF Grant Management System,SC,Tier 4,authenticated_portal,No,UNKNOWN,Do not automate without authorization and terms review,https://scorf.sc.gov/gms

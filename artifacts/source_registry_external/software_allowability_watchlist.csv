@@ -1,0 +1,56 @@
+source_id,source_name,priority_tier,allowability_class,raw_allowability_value,on_watchlist
+FED-GRANTS,Grants.gov,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+FED-SIMPLER,Simpler.Grants.gov API,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+FED-SAM-AL,SAM.gov Assistance Listings,Tier 1,unclear,Unclear,False
+FED-FR,Federal Register,Tier 1,unclear,Unclear,False
+FED-USA,USAspending,Tier 2,unlikely_allowable,Not applicable,False
+NAT-ATC,Access to Capital Clearinghouse,Tier 1,unclear,Varies,False
+DOI-BIA-GRANTS,Indian Affairs Grants,Tier 1,unclear,Varies,False
+DOI-BIE,Bureau of Indian Education,Tier 2,unclear,Varies,False
+DOI-NPS-THG,Tribal Heritage Grants,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOI-NPS-NAGPRA,NAGPRA Grants,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOI-FWS-TWG,Tribal Wildlife Grants,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOI-BOR,Nature-Based Solutions and Native American Affairs,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HHS-ANA,ANA Funding Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HHS-IHS,IHS Funding Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HHS-SAMHSA,SAMHSA Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HHS-CDC,CDC Grants and Funding,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HHS-HRSA,HRSA Find Funding,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HHS-ACL,ACL Funding Opportunities,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NIH-GUIDE,NIH Guide for Grants and Contracts,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NIH-REPORTER,NIH RePORTER,Tier 2,unlikely_allowable,Not applicable,False
+USDA-RD,USDA Rural Development Funding,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+USDA-RECONNECT,ReConnect Program,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+USDA-NIFA,NIFA Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+USDA-NRCS,NRCS Tribal Assistance,Tier 2,sometimes_allowable,Sometimes allowable depending on program,False
+HUD-ONAP,HUD Office of Native American Programs,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HUD-IHBG,Indian Housing Block Grant,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOC-EDA,EDA Funding Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOC-NTIA,Internet for All Funding Programs,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOC-NOAA,NOAA Funding Opportunities,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOE-INDIAN,Office of Indian Energy Funding,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+EPA-TRIBAL,EPA Tribal Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+EPA-GAP,Indian Environmental General Assistance Program,Tier 1,likely_allowable,Likely allowable,True
+EPA-EN,Exchange Network Grant Program,Tier 1,likely_allowable,Likely allowable,True
+DOJ-TRIBAL,DOJ Tribal Open Solicitations,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOJ-OVW,OVW Open Solicitations,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+FEMA-THSGP,Tribal Homeland Security Grant Program,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+CISA-SLCGP,State and Local Cybersecurity Grant Program,Tier 1,likely_allowable,Likely allowable,True
+DOT-GRANTS,DOT Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOT-FTA-TRIBAL,Tribal Transit Program,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+ED-OIE,Office of Indian Education,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOL-DINAP,Division of Indian and Native American Programs,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NSF-FUNDING,NSF Funding Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NASA-NSPIRES,NSPIRES,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-BEAD,South Carolina Broadband Office BEAD,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-EMD-HMGP,SCEMD Hazard Mitigation Grant Program,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-EMD-PA,SCEMD Public Agency Assistance,Tier 1,sometimes_allowable,Sometimes allowable depending on incident/category,False
+SC-ED,SC Department of Education Grant Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-DHHS,SCDHHS Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-COMMERCE,SC Commerce Grants and Incentives,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-DES-WATER,SC DES Grants and Loans,Tier 2,sometimes_allowable,Sometimes allowable depending on program,False
+SC-ENERGY,South Carolina Energy Office,Tier 2,sometimes_allowable,Sometimes allowable depending on program,False
+SC-DEW,SC Department of Employment and Workforce,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-SCORF,SCORF Grant Management System,Tier 4,sometimes_allowable,Sometimes allowable depending on program,False
+PRIV-NDN,NDN Collective grantmaking,Tier 3,unclear,Unclear,False
+PRIV-FNT,First Nations Development Institute Grants,Tier 3,sometimes_allowable,Sometimes allowable depending on call,False

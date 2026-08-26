@@ -1,5 +1,13 @@
 # 501 — Gate 89: production readiness delta
 
+> **Superseded by Gate 90 (doc 507)** as the current readiness position.
+> Nothing on this page changed: Gate 90 imported an external source registry
+> seed and moved no corpus figure. 18 verified / 166 asserted / 1 circular,
+> 0 monitored sources, 0 live records, score 0.0865 - all still stand.
+>
+> Gate 90 added a second, separately tracked thread: 55 candidate sources,
+> none monitored, 13 blocked on terms review. See docs 503-507.
+
 ## Nothing changed
 
 | Metric | Gate 88 | Gate 89 |

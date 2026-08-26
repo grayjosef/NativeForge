@@ -1,0 +1,14 @@
+source_id,source_name,priority_tier,robots_or_terms_risk,terms_status,requires_login,monitoring_method,url,activation_blocked_reasons
+FED-GRANTS,Grants.gov,Tier 1,API_TERMS,ATTRIBUTION_REQUIRED,No,API monitor,https://www.grants.gov/api/api-guide,robots_or_terms_risk:API_TERMS;monitoring_not_started
+FED-SIMPLER,Simpler.Grants.gov API,Tier 2,API_TERMS,TERMS_REVIEW_REQUIRED,API key,API monitor,https://simpler.grants.gov/developers,robots_or_terms_risk:API_TERMS;requires_login:API key;monitoring_not_started
+FED-SAM-AL,SAM.gov Assistance Listings,Tier 1,TERMS_REVIEW_REQUIRED,TERMS_REVIEW_REQUIRED,No,search endpoint monitor,https://sam.gov/content/assistance-listings,robots_or_terms_risk:TERMS_REVIEW_REQUIRED;monitoring_not_started
+FED-USA,USAspending,Tier 2,API_TERMS,ATTRIBUTION_REQUIRED,No,API monitor,https://api.usaspending.gov/,robots_or_terms_risk:API_TERMS;monitoring_not_started
+NAT-ATC,Access to Capital Clearinghouse,Tier 1,TERMS_REVIEW_REQUIRED,TERMS_REVIEW_REQUIRED,No,search endpoint monitor,https://www.bia.gov/atc,robots_or_terms_risk:TERMS_REVIEW_REQUIRED;monitoring_not_started
+DOI-BIE,Bureau of Indian Education,Tier 2,TERMS_REVIEW_REQUIRED,TERMS_REVIEW_REQUIRED,No,static HTML page monitor,https://www.bie.edu/topic-page/grants,robots_or_terms_risk:TERMS_REVIEW_REQUIRED;monitoring_not_started
+HHS-HRSA,HRSA Find Funding,Tier 2,TERMS_REVIEW_REQUIRED,TERMS_REVIEW_REQUIRED,No,search endpoint monitor,https://www.hrsa.gov/grants/find-funding,robots_or_terms_risk:TERMS_REVIEW_REQUIRED;monitoring_not_started
+NIH-REPORTER,NIH RePORTER,Tier 2,API_TERMS,ATTRIBUTION_REQUIRED,No,API monitor,https://api.reporter.nih.gov/,robots_or_terms_risk:API_TERMS;monitoring_not_started
+NSF-FUNDING,NSF Funding Opportunities,Tier 1,TERMS_REVIEW_REQUIRED,TERMS_REVIEW_REQUIRED,No,search endpoint monitor,https://www.nsf.gov/funding,robots_or_terms_risk:TERMS_REVIEW_REQUIRED;monitoring_not_started
+NASA-NSPIRES,NSPIRES,Tier 2,TERMS_REVIEW_REQUIRED,TERMS_REVIEW_REQUIRED,Varies,search endpoint monitor,https://nspires.nasaprs.com/,robots_or_terms_risk:TERMS_REVIEW_REQUIRED;requires_login:Varies;monitoring_not_started
+SC-SCORF,SCORF Grant Management System,Tier 4,HUMAN_REVIEW_ONLY,HUMAN_REVIEW_ONLY,Yes,human review only,https://scorf.sc.gov/gms,robots_or_terms_risk:HUMAN_REVIEW_ONLY;requires_login:Yes;monitoring_method:human_review_only;monitoring_not_started
+PRIV-NDN,NDN Collective grantmaking,Tier 3,TERMS_REVIEW_REQUIRED,TERMS_REVIEW_REQUIRED,Varies,email bulletin/manual intake,https://ndncollective.org/grantmaking/,robots_or_terms_risk:TERMS_REVIEW_REQUIRED;requires_login:Varies;monitoring_not_started
+PRIV-FNT,First Nations Development Institute Grants,Tier 3,TERMS_REVIEW_REQUIRED,TERMS_REVIEW_REQUIRED,Varies,email bulletin/manual intake,https://www.firstnations.org/grantmaking/,robots_or_terms_risk:TERMS_REVIEW_REQUIRED;requires_login:Varies;monitoring_not_started
