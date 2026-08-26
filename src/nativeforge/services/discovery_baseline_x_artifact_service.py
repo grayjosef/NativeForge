@@ -90,6 +90,10 @@ def _rows_for_csv(baseline: dict[str, Any]) -> list[dict[str, str]]:
     add("deadline_normalization", deadlines)
     add("deadline_parse_status", deadlines.get("by_parse_status") or {})
     add("deadline_parse_confidence", deadlines.get("by_parse_confidence") or {})
+    prov = baseline.get("deadline_provenance_summary") or {}
+    add("deadline_provenance", prov)
+    add("deadline_provenance_status", prov.get("by_provenance_status") or {})
+    add("deadline_evidence_level", prov.get("by_evidence_level") or {})
     add("freshness", baseline.get("freshness_summary") or {})
     add("readiness", baseline.get("readiness_summary") or {})
 
@@ -272,6 +276,54 @@ def render_baseline_x_summary(baseline: dict[str, Any]) -> str:
         "rearranges digits that are already in the committed record; it cannot "
         "give a record a deadline it does not have, and an invariant fails if "
         "the normalized count ever exceeds the raw one."
+    )
+    add("")
+
+    provenance = baseline.get("deadline_provenance_summary") or {}
+    by_status = provenance.get("by_provenance_status") or {}
+    add("### Can those deadlines be trusted?")
+    add("")
+    add(
+        "Parsing a date and trusting it are different questions. Of the "
+        f"{quality.get('records_with_raw_deadline')} deadlines the corpus "
+        "carries:"
+    )
+    add("")
+    add("| Provenance | Records | Meaning |")
+    add("| --- | --- | --- |")
+    add(
+        f"| `verified_deadline` | {by_status.get('verified_deadline')} | checked, "
+        "and pointing at a source |"
+    )
+    add(
+        f"| `unverified_deadline` | {by_status.get('unverified_deadline')} | "
+        "parsed, evidence incomplete |"
+    )
+    add(
+        f"| `suspected_placeholder` | {by_status.get('suspected_placeholder')} | "
+        "does not behave like a fetched deadline |"
+    )
+    add(
+        f"| `unknown_deadline` | {by_status.get('unknown_deadline')} | a value "
+        "that does not resolve to a date |"
+    )
+    add("")
+    add(
+        f"**The raw deadline count overstates the trustworthy one by "
+        f"{quality.get('raw_deadline_count_overstated_by')}.** "
+        f"{quality.get('suspected_placeholder_deadlines')} records share a "
+        "single identical date, and not one of them has ever been checked - "
+        "while a comparable batch in the same corpus shows fifteen distinct "
+        "dates across nineteen records, every one with a fetch timestamp."
+    )
+    add("")
+    add(
+        "`suspected_placeholder` is a suspicion, not a finding. Nothing says "
+        "these dates are wrong - no local source establishes what the real "
+        "deadline is, which is exactly why none of them can be called "
+        "verified either. Every record stays visible, keeps its raw value "
+        "unchanged, and carries its reasons. What the status blocks is a "
+        "freshness state, not the record."
     )
     add("")
     add(

@@ -82,6 +82,21 @@ Deduplicated union of the committed corpora: **185 records**.
 
 Raw and normalized are counted separately on purpose. Normalization rearranges digits that are already in the committed record; it cannot give a record a deadline it does not have, and an invariant fails if the normalized count ever exceeds the raw one.
 
+### Can those deadlines be trusted?
+
+Parsing a date and trusting it are different questions. Of the 59 deadlines the corpus carries:
+
+| Provenance | Records | Meaning |
+| --- | --- | --- |
+| `verified_deadline` | 19 | checked, and pointing at a source |
+| `unverified_deadline` | 0 | parsed, evidence incomplete |
+| `suspected_placeholder` | 40 | does not behave like a fetched deadline |
+| `unknown_deadline` | 0 | a value that does not resolve to a date |
+
+**The raw deadline count overstates the trustworthy one by 40.** 40 records share a single identical date, and not one of them has ever been checked - while a comparable batch in the same corpus shows fifteen distinct dates across nineteen records, every one with a fetch timestamp.
+
+`suspected_placeholder` is a suspicion, not a finding. Nothing says these dates are wrong - no local source establishes what the real deadline is, which is exactly why none of them can be called verified either. Every record stays visible, keeps its raw value unchanged, and carries its reasons. What the status blocks is a freshness state, not the record.
+
 **19 of 185 records resolve to a freshness state.** A record earns one only by having both a normalized deadline and a timestamp saying somebody looked. 79 have never been checked, and no amount of parsing changes that.
 
 Of the 19 that do resolve: **16 expired, 3 stale, 0 fresh.** Recovering these states did not make the corpus look better - it showed that the only deadlines anyone can check have all passed or gone stale. Those records stay visible and counted.

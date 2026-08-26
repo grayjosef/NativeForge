@@ -145,6 +145,15 @@
         "records_with_unparseable_deadline",
         "records_with_ambiguous_deadline",
         "deadline_normalization_rate",
+        "verified_deadlines",
+        "unverified_deadlines",
+        "suspected_placeholder_deadlines",
+        "missing_deadlines",
+        "unknown_deadlines",
+        "freshness_blocked_by_deadline_provenance",
+        "deadline_verification_rate",
+        "placeholder_suspicion_rate",
+        "raw_deadline_count_overstated_by",
         "records_never_checked",
         "records_with_resolvable_freshness",
         "records_with_amendment_evidence",
@@ -226,6 +235,33 @@
     "total_records": 185,
     "unknown_source_records": 23
   },
+  "deadline_provenance_summary": {
+    "by_evidence_level": {
+      "checked": 0,
+      "corroborated": 19,
+      "none": 126,
+      "self_asserted": 40
+    },
+    "by_provenance_status": {
+      "missing_deadline": 126,
+      "suspected_placeholder": 40,
+      "unknown_deadline": 0,
+      "unverified_deadline": 0,
+      "verified_deadline": 19
+    },
+    "deadline_verification_rate": 0.322,
+    "deadlines_rewritten": 0,
+    "fabricated": false,
+    "freshness_blocked_by_deadline_provenance": 40,
+    "placeholder_suspicion_rate": 0.678,
+    "raw_deadlines": 59,
+    "records_hidden": 0,
+    "records_removed": 0,
+    "schema_version": "nf_deadline_provenance_v1",
+    "suspected_placeholder_deadlines": 40,
+    "total": 185,
+    "verified_deadlines": 19
+  },
   "deadline_summary": {
     "by_parse_confidence": {
       "convention_declared": 6,
@@ -275,9 +311,14 @@
   "network_access_performed": false,
   "opportunity_quality": {
     "deadline_normalization_rate": 1.0,
+    "deadline_verification_rate": 0.322,
     "duplicate_candidates": 0,
     "evidence_backed_records": 53,
+    "freshness_blocked_by_deadline_provenance": 40,
     "honest_empty_records": 23,
+    "missing_deadlines": 126,
+    "placeholder_suspicion_rate": 0.678,
+    "raw_deadline_count_overstated_by": 40,
     "records_never_checked": 79,
     "records_with_ambiguous_deadline": 0,
     "records_with_amendment_evidence": 0,
@@ -291,13 +332,28 @@
     "records_with_source_url": 129,
     "records_with_uncertain_deadline": 126,
     "records_with_unparseable_deadline": 0,
-    "spam_or_low_quality_candidates": null
+    "spam_or_low_quality_candidates": null,
+    "suspected_placeholder_deadlines": 40,
+    "unknown_deadlines": 0,
+    "unverified_deadlines": 0,
+    "verified_deadlines": 19
   },
   "per_record": [
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -337,9 +393,20 @@
       "raw_deadline": "07/24/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -379,9 +446,20 @@
       "raw_deadline": "07/16/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "convention_declared",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -421,9 +499,15 @@
       "raw_deadline": "08/07/2026"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -454,9 +538,20 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "convention_declared",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -490,9 +585,15 @@
       "raw_deadline": "08/03/2026"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -523,9 +624,20 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -556,9 +668,15 @@
       "raw_deadline": "08/31/2026"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -589,9 +707,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -622,9 +746,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -655,9 +785,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -688,9 +824,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -721,9 +863,20 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -763,9 +916,20 @@
       "raw_deadline": "07/15/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -805,9 +969,20 @@
       "raw_deadline": "07/16/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -847,9 +1022,15 @@
       "raw_deadline": "07/17/2026"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -880,9 +1061,20 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -915,9 +1107,20 @@
       "raw_deadline": "07/27/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "convention_declared",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -948,9 +1151,20 @@
       "raw_deadline": "07/01/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -990,9 +1204,20 @@
       "raw_deadline": "07/14/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "convention_declared",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -1032,9 +1257,20 @@
       "raw_deadline": "09/01/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1065,9 +1301,20 @@
       "raw_deadline": "07/22/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "convention_declared",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe"
       ],
@@ -1107,9 +1354,15 @@
       "raw_deadline": "07/07/2026"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1140,9 +1393,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1173,9 +1432,20 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "convention_declared",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1206,9 +1476,20 @@
       "raw_deadline": "09/01/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -1242,9 +1523,15 @@
       "raw_deadline": "07/24/2026"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1275,9 +1562,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1308,9 +1601,20 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -1350,9 +1654,15 @@
       "raw_deadline": "07/27/2026"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1383,9 +1693,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1416,9 +1732,20 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -1458,9 +1785,20 @@
       "raw_deadline": "08/14/2026"
     },
     {
+      "deadline_counts_as_verified": true,
+      "deadline_evidence_level": "corroborated",
+      "deadline_evidence_reasons": [
+        "checked_at_present",
+        "source_url_present",
+        "upstream_identifier_present",
+        "checked_and_pointed_at_a_source"
+      ],
+      "deadline_freshness_allowed": true,
       "deadline_parse_confidence": "structural",
       "deadline_parse_status": "normalized",
+      "deadline_provenance_status": "verified_deadline",
       "deadline_source_format": "slash_numeric",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -1494,9 +1832,15 @@
       "raw_deadline": "07/23/2026"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1527,9 +1871,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1560,9 +1910,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1593,9 +1949,21 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1626,9 +1994,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1659,9 +2039,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1692,9 +2084,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1725,9 +2129,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1758,9 +2174,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1791,9 +2219,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1824,9 +2264,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1857,9 +2309,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -1892,9 +2356,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -1927,9 +2403,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -1962,9 +2450,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1995,9 +2495,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2028,9 +2540,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2061,9 +2585,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2094,9 +2630,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2127,9 +2675,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2160,9 +2720,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -2195,9 +2767,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2228,9 +2812,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2261,9 +2857,22 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [
+        "upstream_identifier_present"
+      ],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -2297,9 +2906,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2330,9 +2951,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2363,9 +2996,22 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [
+        "source_url_present"
+      ],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2396,9 +3042,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2429,9 +3087,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2462,9 +3132,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2495,9 +3177,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2528,9 +3222,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2561,9 +3267,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2594,9 +3312,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2627,9 +3357,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2660,9 +3402,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2693,9 +3447,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2726,9 +3492,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2759,9 +3537,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2792,9 +3582,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2825,9 +3627,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2858,9 +3672,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2891,9 +3717,21 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "self_asserted",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "exact",
       "deadline_parse_status": "already_iso",
+      "deadline_provenance_status": "suspected_placeholder",
       "deadline_source_format": "iso_8601_date",
+      "deadline_warning_reasons": [
+        "never_checked",
+        "fetch_asserted_without_fetch_artefacts",
+        "shared_by_40_records",
+        "no_record_sharing_this_value_has_been_checked",
+        "value_is_a_conventional_sentinel_date"
+      ],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2924,9 +3762,15 @@
       "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2957,9 +3801,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2990,9 +3840,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3023,9 +3879,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3056,9 +3918,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3089,9 +3957,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3122,9 +3996,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3155,9 +4035,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3188,9 +4074,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3221,9 +4113,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3254,9 +4152,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3287,9 +4191,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3320,9 +4230,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3353,9 +4269,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3386,9 +4308,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3419,9 +4347,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3452,9 +4386,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3485,9 +4425,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3518,9 +4464,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3551,9 +4503,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3584,9 +4542,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3617,9 +4581,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3650,9 +4620,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3683,9 +4659,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3716,9 +4698,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3749,9 +4737,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3782,9 +4776,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3815,9 +4815,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3848,9 +4854,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3881,9 +4893,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3914,9 +4932,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3947,9 +4971,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3980,9 +5010,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4013,9 +5049,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4046,9 +5088,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4079,9 +5127,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4112,9 +5166,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4145,9 +5205,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4178,9 +5244,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4211,9 +5283,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4244,9 +5322,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4277,9 +5361,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4310,9 +5400,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4343,9 +5439,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4376,9 +5478,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4409,9 +5517,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4442,9 +5556,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4475,9 +5595,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4508,9 +5634,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4541,9 +5673,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4574,9 +5712,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4607,9 +5751,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4640,9 +5790,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4673,9 +5829,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4706,9 +5868,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4739,9 +5907,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4772,9 +5946,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4805,9 +5985,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4838,9 +6024,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4871,9 +6063,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4904,9 +6102,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4937,9 +6141,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4970,9 +6180,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5003,9 +6219,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5036,9 +6258,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5069,9 +6297,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5102,9 +6336,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5135,9 +6375,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5168,9 +6414,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5201,9 +6453,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5234,9 +6492,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5267,9 +6531,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5300,9 +6570,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5333,9 +6609,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5366,9 +6648,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5399,9 +6687,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5432,9 +6726,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5465,9 +6765,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5498,9 +6804,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5531,9 +6843,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5564,9 +6882,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5597,9 +6921,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5630,9 +6960,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5663,9 +6999,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5696,9 +7038,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "native_business"
       ],
@@ -5731,9 +7079,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5764,9 +7118,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5797,9 +7157,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5830,9 +7196,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5863,9 +7235,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5896,9 +7274,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5929,9 +7313,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5962,9 +7352,15 @@
       "raw_deadline": null
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5995,9 +7391,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6028,9 +7430,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6061,9 +7469,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6094,9 +7508,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6127,9 +7547,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6160,9 +7586,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -6196,9 +7628,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -6232,9 +7670,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -6268,9 +7712,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6301,9 +7751,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6334,9 +7790,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6367,9 +7829,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6400,9 +7868,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6433,9 +7907,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6466,9 +7946,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -6499,9 +7985,15 @@
       "raw_deadline": ""
     },
     {
+      "deadline_counts_as_verified": false,
+      "deadline_evidence_level": "none",
+      "deadline_evidence_reasons": [],
+      "deadline_freshness_allowed": false,
       "deadline_parse_confidence": "none",
       "deadline_parse_status": "absent",
+      "deadline_provenance_status": "missing_deadline",
       "deadline_source_format": "absent",
+      "deadline_warning_reasons": [],
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"

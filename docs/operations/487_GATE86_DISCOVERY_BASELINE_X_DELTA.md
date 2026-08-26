@@ -2,6 +2,23 @@
 
 What changed in the baseline, and what did not.
 
+
+> **Superseded in part by Gate 87.** This page is preserved as the
+> post-normalization freshness-recovery baseline. Its numbers are not edited.
+>
+> Gate 86 established that all 59 deadlines normalize. Gate 87 asked the
+> next question - whether they can be *trusted* - and found that only 19 can.
+> The other 40 are `suspected_placeholder`: a single identical date across a
+> whole batch, with no record in it ever having been checked.
+>
+> Freshness is unaffected and still reads 19 (16 expired, 3 stale, 0 fresh),
+> because those 40 never produced a freshness state to begin with. Nothing was
+> deleted, hidden, or rewritten. See docs 489, 490, 491.
+>
+> The sequence to read these in: 483 is the pre-normalization baseline, 487
+> (this page) is the post-normalization one, and 491 carries the current
+> deadline picture.
+
 ## The delta
 
 | Metric | Gate 85 | Gate 86 | Note |

@@ -97,6 +97,23 @@ OPPORTUNITY_QUALITY_METRICS: tuple[str, ...] = (
     "records_with_unparseable_deadline",
     "records_with_ambiguous_deadline",
     "deadline_normalization_rate",
+    # Gate 87. Parsing a deadline and trusting it are different questions, and
+    # answering them with one number is how 40 records carrying an identical
+    # year-end sentinel came to be counted alongside 19 fetched deadlines.
+    #
+    # `records_with_raw_deadline` above is untouched and still counts what the
+    # corpus carries. These say how much of it stands up.
+    "verified_deadlines",
+    "unverified_deadlines",
+    "suspected_placeholder_deadlines",
+    "missing_deadlines",
+    "unknown_deadlines",
+    "freshness_blocked_by_deadline_provenance",
+    "deadline_verification_rate",
+    "placeholder_suspicion_rate",
+    # Stated as its own metric so the overstatement is a number somebody has to
+    # read, not an inference from two other numbers.
+    "raw_deadline_count_overstated_by",
     "records_never_checked",
     "records_with_resolvable_freshness",
     "records_with_amendment_evidence",
@@ -285,6 +302,18 @@ def baseline_result_invariant_failures(result: dict[str, Any]) -> list[str]:
         fails.append("normalized_deadlines_exceed_raw_deadlines")
     if resolvable > normalized_deadlines:
         fails.append("resolvable_freshness_exceeds_normalized_deadlines")
+
+    # Gate 87: verification is the narrowest claim of the three, so it must sit
+    # inside both. And freshness may not outrun the deadlines that survived the
+    # provenance audit.
+    verified = int(quality.get("verified_deadlines") or 0)
+    suspected = int(quality.get("suspected_placeholder_deadlines") or 0)
+    if verified > normalized_deadlines:
+        fails.append("verified_deadlines_exceed_normalized_deadlines")
+    if verified + suspected > raw_deadlines:
+        fails.append("deadline_provenance_counts_exceed_raw_deadlines")
+    if resolvable > verified + int(quality.get("unverified_deadlines") or 0):
+        fails.append("resolvable_freshness_exceeds_trusted_deadlines")
 
     if result.get("confidence_level") not in CONFIDENCE_LEVELS:
         fails.append("confidence_level_out_of_vocabulary")

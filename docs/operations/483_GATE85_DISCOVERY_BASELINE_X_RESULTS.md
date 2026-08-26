@@ -19,6 +19,11 @@ Artifacts land in `artifacts/discovery_baseline_x/` as `baseline_x.json`,
 > Current figures: 59 raw deadlines, 59 normalized, 19 records resolving to a
 > freshness state (16 expired, 3 stale, 0 fresh). See docs 485, 486, 487.
 >
+> **Also superseded in part by Gate 87.** The deadline counts on this page
+> treat all 59 deadlines alike. Gate 87 audited them and found only 19 can
+> be verified; the other 40 are `suspected_placeholder`. No record was
+> removed and no date was rewritten. See docs 489, 490, 491.
+>
 > Every other number on this page still stands. Gate 86 changed nothing about
 > corpus composition, source coverage, eligibility, funding lanes, or the
 > quality score, which remains 0.0865.

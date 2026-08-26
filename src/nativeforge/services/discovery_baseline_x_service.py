@@ -55,6 +55,11 @@ from nativeforge.services.deadline_normalization_service import (
     normalize_deadline,
     summarise_normalization,
 )
+from nativeforge.services.deadline_provenance_service import (
+    build_deadline_cluster_context,
+    classify_deadline_provenance,
+    summarise_provenance,
+)
 from nativeforge.services.discovery_baseline_metric_contract_service import (
     BASELINE_NAME,
     BASELINE_VERSION,
@@ -291,7 +296,10 @@ def deadline_convention_for_record(record: dict[str, Any]) -> str:
 
 
 def measure_record(
-    *, record: dict[str, Any], now: str = DEFAULT_NOW
+    *,
+    record: dict[str, Any],
+    now: str = DEFAULT_NOW,
+    cluster_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run the existing evaluators over one corpus record.
 
@@ -338,9 +346,28 @@ def measure_record(
     # than in a guess.
     normalized_deadline = deadline["normalized_date"]
 
+    # Gate 87: parsing a date is not the same as trusting it. A deadline that
+    # looks like a batch default must not become a freshness state, so the
+    # provenance verdict gates what the evaluator is allowed to see.
+    provenance = classify_deadline_provenance(
+        raw_deadline=raw_deadline,
+        normalized_deadline=normalized_deadline,
+        checked_at=record.get("ingested_at"),
+        source_url=source_url,
+        upstream_id=record.get("grants_gov_opportunity_id"),
+        fetch_asserted=bool(record.get("real_fetch") or record.get("detail_live")),
+        cluster_context=cluster_context,
+    )
+    # The date the evaluator is allowed to act on. A suspected placeholder or an
+    # unresolved value passes None - the record lands in `no_close_date` rather
+    # than being given a freshness state it has not earned.
+    trusted_deadline = (
+        normalized_deadline if provenance["freshness_allowed"] else None
+    )
+
     freshness = evaluate_opportunity_freshness(
         opportunity_id=grant_id,
-        close_date=normalized_deadline,
+        close_date=trusted_deadline,
         posted_date=record.get("ingested_at"),
         last_checked_at=record.get("ingested_at"),
         now=now,
@@ -371,6 +398,14 @@ def measure_record(
             "deadline_parse_confidence": deadline["parse_confidence"],
             "deadline_source_format": deadline["source_format"],
             "has_checked_at": bool(record.get("ingested_at")),
+            # Gate 87 provenance. The record stays visible with its raw value
+            # intact whatever the verdict; only its standing changes.
+            "deadline_provenance_status": provenance["provenance_status"],
+            "deadline_evidence_level": provenance["evidence_level"],
+            "deadline_evidence_reasons": provenance["evidence_reasons"],
+            "deadline_warning_reasons": provenance["warning_reasons"],
+            "deadline_freshness_allowed": provenance["freshness_allowed"],
+            "deadline_counts_as_verified": provenance["deadline_counts_as_verified"],
             "has_cited_eligibility": cited_eligibility,
             "has_cited_exclusion": cited_exclusion,
             "eligible_classes": exclusion.get("eligible_classes") or [],
@@ -469,7 +504,16 @@ def build_discovery_baseline_x(
     records = corpus["records"]
     sources = load_baseline_sources()
 
-    measured = [measure_record(record=r, now=now) for r in records]
+    # Gate 87: placeholder detection cannot work one record at a time. One date
+    # of 2026-12-31 says nothing; forty identical ones in a batch where nobody
+    # has been checked say a great deal. The cluster picture is computed once,
+    # from the corpus already in hand, and passed down.
+    cluster_context = build_deadline_cluster_context(records=records)
+
+    measured = [
+        measure_record(record=r, now=now, cluster_context=cluster_context)
+        for r in records
+    ]
     total = len(measured)
 
     # -- corpus composition ------------------------------------------------
@@ -543,6 +587,24 @@ def build_discovery_baseline_x(
         ]
     )
 
+    provenance_summary = summarise_provenance(
+        [
+            classify_deadline_provenance(
+                raw_deadline=r.get("application_deadline"),
+                normalized_deadline=normalize_deadline(
+                    raw_value=r.get("application_deadline"),
+                    source_convention=deadline_convention_for_record(r),
+                )["normalized_date"],
+                checked_at=r.get("ingested_at"),
+                source_url=r.get("source_url"),
+                upstream_id=r.get("grants_gov_opportunity_id"),
+                fetch_asserted=bool(r.get("real_fetch") or r.get("detail_live")),
+                cluster_context=cluster_context,
+            )
+            for r in records
+        ]
+    )
+
     quality_summary = {
         "evidence_backed_records": sum(
             1
@@ -582,6 +644,37 @@ def build_discovery_baseline_x(
             1 for m in measured if m["deadline_parse_status"] == "ambiguous"
         ),
         "deadline_normalization_rate": deadline_summary["normalization_rate"],
+        # Gate 87. Parsing and trusting are different questions, so they get
+        # different numbers. `records_with_raw_deadline` above is unchanged and
+        # stays the count of what the corpus carries.
+        "verified_deadlines": provenance_summary["verified_deadlines"],
+        "unverified_deadlines": provenance_summary["by_provenance_status"][
+            "unverified_deadline"
+        ],
+        "suspected_placeholder_deadlines": provenance_summary[
+            "suspected_placeholder_deadlines"
+        ],
+        "missing_deadlines": provenance_summary["by_provenance_status"][
+            "missing_deadline"
+        ],
+        "unknown_deadlines": provenance_summary["by_provenance_status"][
+            "unknown_deadline"
+        ],
+        "freshness_blocked_by_deadline_provenance": provenance_summary[
+            "freshness_blocked_by_deadline_provenance"
+        ],
+        "deadline_verification_rate": provenance_summary[
+            "deadline_verification_rate"
+        ],
+        "placeholder_suspicion_rate": provenance_summary[
+            "placeholder_suspicion_rate"
+        ],
+        # The honest headline of this gate: the raw deadline count is real, but
+        # it overstates what can be trusted, and by exactly this much.
+        "raw_deadline_count_overstated_by": (
+            provenance_summary["raw_deadlines"]
+            - provenance_summary["verified_deadlines"]
+        ),
         "records_never_checked": sum(
             1 for m in measured if "never_checked" in m["freshness_reasons"]
         ),
@@ -696,6 +789,7 @@ def build_discovery_baseline_x(
             "applicant_class_summary": applicant_class_summary,
             "funding_lane_summary": funding_lane_summary,
             "deadline_summary": deadline_summary,
+            "deadline_provenance_summary": provenance_summary,
             "freshness_summary": freshness_summary,
             "readiness_summary": readiness_summary,
             "confidence_level": DEFAULT_CONFIDENCE_LEVEL,
@@ -775,5 +869,37 @@ def baseline_x_invariant_failures(baseline: dict[str, Any]) -> list[str]:
 
     if (baseline.get("deadline_summary") or {}).get("fabricated") is not False:
         fails.append("deadline_normalization_fabricated")
+
+    # Gate 87: a freshness state may never rest on a deadline the audit refused
+    # to trust, and no record may be dropped or blanked by a verdict.
+    provenance = baseline.get("deadline_provenance_summary") or {}
+    if provenance.get("fabricated") is not False:
+        fails.append("deadline_provenance_fabricated")
+    for field in ("records_removed", "records_hidden", "deadlines_rewritten"):
+        if provenance.get(field):
+            fails.append(f"audit_altered_the_corpus:{field}")
+
+    for m in per_record:
+        status = m.get("deadline_provenance_status")
+        if m.get("freshness_state") not in (None, "unknown"):
+            if not m.get("deadline_freshness_allowed"):
+                fails.append(f"freshness_from_untrusted_deadline:{m.get('grant_id')}")
+            if status in {"suspected_placeholder", "unknown_deadline",
+                          "missing_deadline"}:
+                fails.append(
+                    f"freshness_under_blocking_provenance:{m.get('grant_id')}"
+                )
+        # Verification is a claim; only the verified status may carry it.
+        if m.get("deadline_counts_as_verified") and status != "verified_deadline":
+            fails.append(f"verified_flag_without_status:{m.get('grant_id')}")
+        # A suspicion must never cost a record its raw value or its visibility.
+        if status == "suspected_placeholder" and not m.get("raw_deadline"):
+            fails.append(f"suspicion_erased_raw_deadline:{m.get('grant_id')}")
+
+    quality = baseline.get("opportunity_quality") or {}
+    verified = int(quality.get("verified_deadlines") or 0)
+    raw_deadlines = int(quality.get("records_with_raw_deadline") or 0)
+    if verified > raw_deadlines:
+        fails.append("verified_deadlines_exceed_raw_deadlines")
 
     return fails
