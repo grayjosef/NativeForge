@@ -24,7 +24,12 @@ source .venv/bin/activate
 # `fit_dimension`, `readiness` and `gate37` were added by Gate 84C. Without them
 # the expression did not reach four of the six critical tests below - which is
 # precisely how those tests failed unnoticed for several gates.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo'
+#
+# `deadline`, `normalization` and `freshness` were added by Gate 86. Its 71 new
+# tests landed in a module whose name shares no keyword with this expression,
+# so only 6 of them were selected - the same failure this guard exists to catch,
+# caught here by the guard rather than several gates later by accident.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -42,6 +47,11 @@ CRITICAL=(
   # from claiming a source is monitored.
   "tests/test_gate85_discovery_baseline_x.py::test_recognition_tiers_are_not_collapsed_into_one_answer"
   "tests/test_gate85_discovery_baseline_x.py::test_no_source_is_monitored"
+  # Gate 86. The two that keep normalization from turning into fabrication:
+  # one bounds freshness to records that have both a date and a check, the
+  # other keeps the raw deadline count from moving.
+  "tests/test_gate86_deadline_normalization.py::test_freshness_requires_both_a_normalized_date_and_a_check"
+  "tests/test_gate86_deadline_normalization.py::test_raw_deadline_count_is_preserved"
 )
 
 FAIL=0
