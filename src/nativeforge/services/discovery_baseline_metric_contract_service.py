@@ -78,10 +78,25 @@ OPPORTUNITY_QUALITY_METRICS: tuple[str, ...] = (
     "records_with_cited_exclusion",
     "records_with_deadline",
     "records_with_uncertain_deadline",
-    # Split out because the reasons are different problems with different
-    # fixes: a missing date, a date nobody has ever checked, and a date that is
-    # present but in a format the freshness evaluator cannot read.
+    # Gate 86. The deadline story needs five numbers, not one, because the
+    # causes have different fixes: no date at all, a date in a format nobody
+    # parses, a date whose format is genuinely ambiguous, and a date that
+    # normalized fine but belongs to a record nobody has ever checked.
+    #
+    # `records_with_raw_deadline` counts what the corpus carries.
+    # `records_with_normalized_deadline` counts what a parser could resolve.
+    # The two are reported separately so normalization can never be mistaken
+    # for the corpus having gained a deadline it did not have.
+    "records_with_raw_deadline",
+    "records_with_normalized_deadline",
+    # Gate 86 redefines this. Through Gate 85 it counted a freshness-evaluator
+    # reason (`close_date_or_now_unparseable`); it now counts a parser verdict
+    # of unparseable or impossible. The old reading conflated "the evaluator
+    # cannot read this" with "this is not a date", and Gate 86 can tell them
+    # apart.
     "records_with_unparseable_deadline",
+    "records_with_ambiguous_deadline",
+    "deadline_normalization_rate",
     "records_never_checked",
     "records_with_resolvable_freshness",
     "records_with_amendment_evidence",
@@ -253,6 +268,23 @@ def baseline_result_invariant_failures(result: dict[str, Any]) -> list[str]:
     sources = result.get("source_coverage") or {}
     if sources.get("monitored_sources"):
         fails.append("monitored_sources_claimed_without_proof")
+
+    # Gate 86: freshness must stay bounded by what could support it.
+    #
+    # A record earns a freshness state only by having both a normalized deadline
+    # and a timestamp saying somebody looked. Neither count may exceed the
+    # other's precondition, and a normalized deadline may never outnumber the
+    # raw deadlines it was derived from - that would mean a date was produced
+    # for a record that has none.
+    quality = result.get("opportunity_quality") or {}
+    raw_deadlines = int(quality.get("records_with_raw_deadline") or 0)
+    normalized_deadlines = int(quality.get("records_with_normalized_deadline") or 0)
+    resolvable = int(quality.get("records_with_resolvable_freshness") or 0)
+
+    if normalized_deadlines > raw_deadlines:
+        fails.append("normalized_deadlines_exceed_raw_deadlines")
+    if resolvable > normalized_deadlines:
+        fails.append("resolvable_freshness_exceeds_normalized_deadlines")
 
     if result.get("confidence_level") not in CONFIDENCE_LEVELS:
         fails.append("confidence_level_out_of_vocabulary")

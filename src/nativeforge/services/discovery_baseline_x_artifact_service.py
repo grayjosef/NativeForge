@@ -86,6 +86,10 @@ def _rows_for_csv(baseline: dict[str, Any]) -> list[dict[str, str]]:
     add("source_coverage", baseline.get("source_coverage") or {})
     add("opportunity_quality", baseline.get("opportunity_quality") or {})
     add("funding_lane", baseline.get("funding_lane_summary") or {})
+    deadlines = baseline.get("deadline_summary") or {}
+    add("deadline_normalization", deadlines)
+    add("deadline_parse_status", deadlines.get("by_parse_status") or {})
+    add("deadline_parse_confidence", deadlines.get("by_parse_confidence") or {})
     add("freshness", baseline.get("freshness_summary") or {})
     add("readiness", baseline.get("readiness_summary") or {})
 
@@ -221,8 +225,10 @@ def render_baseline_x_summary(baseline: dict[str, Any]) -> str:
         "evidence_backed_records",
         "records_with_cited_eligibility",
         "records_with_cited_exclusion",
-        "records_with_deadline",
+        "records_with_raw_deadline",
+        "records_with_normalized_deadline",
         "records_with_unparseable_deadline",
+        "records_with_ambiguous_deadline",
         "records_never_checked",
         "records_with_resolvable_freshness",
         "records_with_amendment_evidence",
@@ -235,15 +241,56 @@ def render_baseline_x_summary(baseline: dict[str, Any]) -> str:
         "zero. No classifier for it exists, and a zero would imply one ran."
     )
     add("")
+
+    deadlines = baseline.get("deadline_summary") or {}
+    by_confidence = deadlines.get("by_parse_confidence") or {}
+    add("## Deadlines and freshness")
+    add("")
+    add(
+        f"{quality.get('records_with_raw_deadline')} of {total} records carry a "
+        "deadline. Every one of them normalizes to an ISO date, by one of three "
+        "routes:"
+    )
+    add("")
+    add("| Route | Records | What settled the format |")
+    add("| --- | --- | --- |")
+    add(
+        f"| `exact` | {by_confidence.get('exact')} | already ISO; nothing to "
+        "decide |"
+    )
+    add(
+        f"| `structural` | {by_confidence.get('structural')} | a field over 12 "
+        "cannot be a month |"
+    )
+    add(
+        f"| `convention_declared` | {by_confidence.get('convention_declared')} | "
+        "the source's convention, asserted by the caller |"
+    )
+    add("")
+    add(
+        "Raw and normalized are counted separately on purpose. Normalization "
+        "rearranges digits that are already in the committed record; it cannot "
+        "give a record a deadline it does not have, and an invariant fails if "
+        "the normalized count ever exceeds the raw one."
+    )
+    add("")
     add(
         f"**{quality.get('records_with_resolvable_freshness')} of {total} "
-        "records have a resolvable freshness state.** The reasons split three "
-        f"ways: {quality.get('records_never_checked')} have never been checked, "
-        f"{quality.get('records_with_unparseable_deadline')} carry a deadline "
-        "in a format the freshness evaluator cannot parse, and the rest have no "
-        "close date at all. The deadlines were left as committed - normalising "
-        "them here would manufacture freshness the pipeline cannot actually "
-        "produce."
+        "records resolve to a freshness state.** A record earns one only by "
+        "having both a normalized deadline and a timestamp saying somebody "
+        f"looked. {quality.get('records_never_checked')} have never been "
+        "checked, and no amount of parsing changes that."
+    )
+    add("")
+    add(
+        f"Of the {quality.get('records_with_resolvable_freshness')} that do "
+        f"resolve: **{(baseline.get('freshness_summary') or {}).get('expired')} "
+        "expired, "
+        f"{(baseline.get('freshness_summary') or {}).get('stale')} stale, "
+        f"{(baseline.get('freshness_summary') or {}).get('fresh')} fresh.** "
+        "Recovering these states did not make the corpus look better - it "
+        "showed that the only deadlines anyone can check have all passed or "
+        "gone stale. Those records stay visible and counted."
     )
     add("")
 

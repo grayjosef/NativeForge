@@ -51,6 +51,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.deadline_normalization_service import (
+    normalize_deadline,
+    summarise_normalization,
+)
 from nativeforge.services.discovery_baseline_metric_contract_service import (
     BASELINE_NAME,
     BASELINE_VERSION,
@@ -261,6 +265,31 @@ def classify_record_provenance(record: dict[str, Any]) -> str:
     return "unknown"
 
 
+def deadline_convention_for_record(record: dict[str, Any]) -> str:
+    """Which slash-date convention this record's source is known to use.
+
+    Only ever consulted for a slash date whose own digits do not settle the
+    question - ``07/24`` proves itself, ``07/01`` does not.
+
+    ``month_first`` is asserted only for Grants.gov-derived records, and the
+    corpus earns that rather than being assumed into it. All 19 slash-format
+    deadlines carry a ``grants_gov_opportunity_id`` and come from the one
+    ``la_scale_federal`` batch, and 10 of that batch's distinct values have a
+    second field over 12 - a number that cannot be a month. The same field, in
+    the same batch, from the same source, is month-first for the rest.
+
+    Everything else returns ``unknown``, so an ambiguous date from a source
+    whose convention nobody has established stays unnormalized. Gate 86A
+    records the evidence in full.
+    """
+    if record.get("grants_gov_opportunity_id"):
+        return "month_first"
+    provenance = record.get("provenance") or {}
+    if provenance.get("grants_gov_opportunity_id"):
+        return "month_first"
+    return "unknown"
+
+
 def measure_record(
     *, record: dict[str, Any], now: str = DEFAULT_NOW
 ) -> dict[str, Any]:
@@ -296,9 +325,22 @@ def measure_record(
         evidence_url=source_url,
     )
 
+    # Gate 86: normalize before evaluating. The freshness evaluator takes ISO
+    # strings and deliberately owns no locale policy, so the slash-date decision
+    # is made here, upstream, where the evidence for it can be stated.
+    raw_deadline = record.get("application_deadline")
+    deadline = normalize_deadline(
+        raw_value=raw_deadline,
+        source_convention=deadline_convention_for_record(record),
+    )
+    # Only a normalized date reaches the evaluator. An ambiguous or unparseable
+    # deadline passes None, which lands the record in `no_close_date` rather
+    # than in a guess.
+    normalized_deadline = deadline["normalized_date"]
+
     freshness = evaluate_opportunity_freshness(
         opportunity_id=grant_id,
-        close_date=record.get("application_deadline"),
+        close_date=normalized_deadline,
         posted_date=record.get("ingested_at"),
         last_checked_at=record.get("ingested_at"),
         now=now,
@@ -320,7 +362,15 @@ def measure_record(
             "honest_empty": record.get("fetch_mode") == "no_live_nofo",
             "has_source_url": bool(source_url),
             "has_notice_text": bool(eligibility_text),
-            "has_deadline": bool(record.get("application_deadline")),
+            # Raw presence, deliberately. Normalization must never be able to
+            # make the corpus look as though it gained a deadline.
+            "has_deadline": bool(raw_deadline),
+            "raw_deadline": raw_deadline,
+            "normalized_deadline": normalized_deadline,
+            "deadline_parse_status": deadline["parse_status"],
+            "deadline_parse_confidence": deadline["parse_confidence"],
+            "deadline_source_format": deadline["source_format"],
+            "has_checked_at": bool(record.get("ingested_at")),
             "has_cited_eligibility": cited_eligibility,
             "has_cited_exclusion": cited_exclusion,
             "eligible_classes": exclusion.get("eligible_classes") or [],
@@ -480,6 +530,19 @@ def build_discovery_baseline_x(
     }
 
     # -- opportunity quality ----------------------------------------------
+    # Re-normalizing the raw values here rather than reusing the per-record
+    # results keeps the batch summary derived from one place, and gives the
+    # parse-status breakdown that goes into the artifact.
+    deadline_summary = summarise_normalization(
+        [
+            normalize_deadline(
+                raw_value=r.get("application_deadline"),
+                source_convention=deadline_convention_for_record(r),
+            )
+            for r in records
+        ]
+    )
+
     quality_summary = {
         "evidence_backed_records": sum(
             1
@@ -498,13 +561,27 @@ def build_discovery_baseline_x(
         "records_with_uncertain_deadline": sum(
             1 for m in measured if not m["has_deadline"]
         ),
-        # A deadline the freshness evaluator cannot parse is not a deadline it
-        # can act on. Counted separately because the fix is a parser, not data.
+        # Gate 86. Raw and normalized are counted separately and from different
+        # sources: raw from the committed field, normalized from the parser.
+        # They can never be conflated into "the corpus has N deadlines".
+        "records_with_raw_deadline": sum(1 for m in measured if m["has_deadline"]),
+        "records_with_normalized_deadline": sum(
+            1 for m in measured if m["normalized_deadline"]
+        ),
+        # Now a parser verdict rather than a freshness-evaluator reason. See the
+        # note on this metric in the contract: the old reading could not tell
+        # "the evaluator cannot read this" apart from "this is not a date".
         "records_with_unparseable_deadline": sum(
             1
             for m in measured
-            if "close_date_or_now_unparseable" in m["freshness_reasons"]
+            if m["deadline_parse_status"] in {"unparseable", "impossible"}
         ),
+        # A date whose format the digits do not settle and whose source has no
+        # established convention. Left unnormalized on purpose.
+        "records_with_ambiguous_deadline": sum(
+            1 for m in measured if m["deadline_parse_status"] == "ambiguous"
+        ),
+        "deadline_normalization_rate": deadline_summary["normalization_rate"],
         "records_never_checked": sum(
             1 for m in measured if "never_checked" in m["freshness_reasons"]
         ),
@@ -618,6 +695,7 @@ def build_discovery_baseline_x(
             "opportunity_quality": quality_summary,
             "applicant_class_summary": applicant_class_summary,
             "funding_lane_summary": funding_lane_summary,
+            "deadline_summary": deadline_summary,
             "freshness_summary": freshness_summary,
             "readiness_summary": readiness_summary,
             "confidence_level": DEFAULT_CONFIDENCE_LEVEL,
@@ -675,5 +753,27 @@ def baseline_x_invariant_failures(baseline: dict[str, Any]) -> list[str]:
     readiness = baseline.get("readiness_summary") or {}
     if readiness.get("improvement_claim_allowed") is not False:
         fails.append("improvement_claim_allowed_in_readiness")
+
+    # Gate 86: no record may hold a freshness state it cannot support.
+    #
+    # Checked per record rather than only in aggregate, because the aggregate
+    # bound in the contract would still pass if one record borrowed another's
+    # entitlement. A state requires both a normalized deadline and somebody
+    # having looked.
+    for m in per_record:
+        if m.get("freshness_state") in (None, "unknown"):
+            continue
+        if not m.get("normalized_deadline"):
+            fails.append(f"freshness_without_normalized_deadline:{m.get('grant_id')}")
+        if not m.get("has_checked_at"):
+            fails.append(f"freshness_without_checked_at:{m.get('grant_id')}")
+
+    # And no normalized date may exist where no raw one does.
+    for m in per_record:
+        if m.get("normalized_deadline") and not m.get("raw_deadline"):
+            fails.append(f"normalized_deadline_without_raw:{m.get('grant_id')}")
+
+    if (baseline.get("deadline_summary") or {}).get("fabricated") is not False:
+        fails.append("deadline_normalization_fabricated")
 
     return fails

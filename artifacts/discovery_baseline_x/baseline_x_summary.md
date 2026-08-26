@@ -59,16 +59,32 @@ Deduplicated union of the committed corpora: **185 records**.
 | `evidence_backed_records` | 53 (28.6%) |
 | `records_with_cited_eligibility` | 16 (8.6%) |
 | `records_with_cited_exclusion` | 11 (5.9%) |
-| `records_with_deadline` | 59 (31.9%) |
-| `records_with_unparseable_deadline` | 19 (10.3%) |
+| `records_with_raw_deadline` | 59 (31.9%) |
+| `records_with_normalized_deadline` | 59 (31.9%) |
+| `records_with_unparseable_deadline` | 0 (0.0%) |
+| `records_with_ambiguous_deadline` | 0 (0.0%) |
 | `records_never_checked` | 79 (42.7%) |
-| `records_with_resolvable_freshness` | 0 (0.0%) |
+| `records_with_resolvable_freshness` | 19 (10.3%) |
 | `records_with_amendment_evidence` | 0 (0.0%) |
 | `honest_empty_records` | 23 (12.4%) |
 
 `spam_or_low_quality_candidates` is reported as empty rather than zero. No classifier for it exists, and a zero would imply one ran.
 
-**0 of 185 records have a resolvable freshness state.** The reasons split three ways: 79 have never been checked, 19 carry a deadline in a format the freshness evaluator cannot parse, and the rest have no close date at all. The deadlines were left as committed - normalising them here would manufacture freshness the pipeline cannot actually produce.
+## Deadlines and freshness
+
+59 of 185 records carry a deadline. Every one of them normalizes to an ISO date, by one of three routes:
+
+| Route | Records | What settled the format |
+| --- | --- | --- |
+| `exact` | 40 | already ISO; nothing to decide |
+| `structural` | 13 | a field over 12 cannot be a month |
+| `convention_declared` | 6 | the source's convention, asserted by the caller |
+
+Raw and normalized are counted separately on purpose. Normalization rearranges digits that are already in the committed record; it cannot give a record a deadline it does not have, and an invariant fails if the normalized count ever exceeds the raw one.
+
+**19 of 185 records resolve to a freshness state.** A record earns one only by having both a normalized deadline and a timestamp saying somebody looked. 79 have never been checked, and no amount of parsing changes that.
+
+Of the 19 that do resolve: **16 expired, 3 stale, 0 fresh.** Recovering these states did not make the corpus look better - it showed that the only deadlines anyone can check have all passed or gone stale. Those records stay visible and counted.
 
 ## Eligibility by applicant class
 

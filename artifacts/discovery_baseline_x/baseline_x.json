@@ -140,7 +140,11 @@
         "records_with_cited_exclusion",
         "records_with_deadline",
         "records_with_uncertain_deadline",
+        "records_with_raw_deadline",
+        "records_with_normalized_deadline",
         "records_with_unparseable_deadline",
+        "records_with_ambiguous_deadline",
+        "deadline_normalization_rate",
         "records_never_checked",
         "records_with_resolvable_freshness",
         "records_with_amendment_evidence",
@@ -222,14 +226,37 @@
     "total_records": 185,
     "unknown_source_records": 23
   },
+  "deadline_summary": {
+    "by_parse_confidence": {
+      "convention_declared": 6,
+      "exact": 40,
+      "none": 126,
+      "structural": 13
+    },
+    "by_parse_status": {
+      "absent": 126,
+      "already_iso": 40,
+      "ambiguous": 0,
+      "impossible": 0,
+      "insufficient_precision": 0,
+      "normalized": 19,
+      "unparseable": 0
+    },
+    "fabricated": false,
+    "normalization_rate": 1.0,
+    "normalized": 59,
+    "schema_version": "nf_deadline_normalization_v1",
+    "total": 185,
+    "with_raw_value": 59
+  },
   "fixture_mutation_performed": false,
   "freshness_summary": {
     "amended": 0,
-    "expired": 0,
+    "expired": 16,
     "fresh": 0,
-    "stale": 0,
+    "stale": 3,
     "superseded": 0,
-    "unknown": 185
+    "unknown": 166
   },
   "funding_lane_summary": {
     "corporate": 0,
@@ -247,23 +274,30 @@
   "measurement_only": true,
   "network_access_performed": false,
   "opportunity_quality": {
+    "deadline_normalization_rate": 1.0,
     "duplicate_candidates": 0,
     "evidence_backed_records": 53,
     "honest_empty_records": 23,
     "records_never_checked": 79,
+    "records_with_ambiguous_deadline": 0,
     "records_with_amendment_evidence": 0,
     "records_with_cited_eligibility": 16,
     "records_with_cited_exclusion": 11,
     "records_with_deadline": 59,
+    "records_with_normalized_deadline": 59,
     "records_with_notice_text": 108,
-    "records_with_resolvable_freshness": 0,
+    "records_with_raw_deadline": 59,
+    "records_with_resolvable_freshness": 19,
     "records_with_source_url": 129,
     "records_with_uncertain_deadline": 126,
-    "records_with_unparseable_deadline": 19,
+    "records_with_unparseable_deadline": 0,
     "spam_or_low_quality_candidates": null
   },
   "per_record": [
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -276,18 +310,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_32_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-002",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-24",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -297,9 +333,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/24/2026"
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -312,18 +352,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_40_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-006",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-16",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -333,9 +375,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/16/2026"
     },
     {
+      "deadline_parse_confidence": "convention_declared",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -348,18 +394,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_18_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-007",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-08-07",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -369,9 +417,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "08/07/2026"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -381,12 +433,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-009",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -396,27 +450,33 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "convention_declared",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
       ],
       "excluded_classes": [],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_22_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-010",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-08-03",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -426,9 +486,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "08/03/2026"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -438,12 +502,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-011",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -453,24 +519,30 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "not_checked_for_57_days"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "stale",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-012",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-08-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -480,9 +552,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "08/31/2026"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -492,12 +568,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-013",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -507,9 +585,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -519,12 +601,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-014",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -534,9 +618,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -546,12 +634,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-015",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -561,9 +651,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -573,12 +667,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-016",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -588,9 +684,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -600,12 +700,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-017",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -615,9 +717,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -630,18 +736,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_41_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-018",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-15",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -651,9 +759,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/15/2026"
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -666,18 +778,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_40_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-019",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-16",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -687,9 +801,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/16/2026"
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -702,18 +820,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_39_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-020",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-17",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -723,9 +843,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/17/2026"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -735,12 +859,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-021",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -750,26 +876,32 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "tribal_organization"
       ],
       "excluded_classes": [],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_29_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-022",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-27",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -779,24 +911,30 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/27/2026"
     },
     {
+      "deadline_parse_confidence": "convention_declared",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_55_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-025",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-01",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -806,9 +944,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/01/2026"
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -821,18 +963,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_42_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-029",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-14",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -842,9 +986,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/14/2026"
     },
     {
+      "deadline_parse_confidence": "convention_declared",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -857,18 +1005,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "not_checked_for_57_days"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "stale",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-030",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-09-01",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -878,24 +1028,30 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "09/01/2026"
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_34_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-031",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-22",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -905,9 +1061,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/22/2026"
     },
     {
+      "deadline_parse_confidence": "convention_declared",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe"
       ],
@@ -920,18 +1080,20 @@
         "tribal_organization"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_49_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-032",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-07",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -941,9 +1103,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "excluded_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/07/2026"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -953,12 +1119,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-033",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -968,9 +1136,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -980,12 +1152,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-035",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -995,24 +1169,30 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "convention_declared",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "not_checked_for_57_days"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "stale",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-039",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-09-01",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1022,27 +1202,33 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "09/01/2026"
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
       ],
       "excluded_classes": [],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_32_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-045",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-24",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -1052,9 +1238,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/24/2026"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1064,12 +1254,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-046",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -1079,9 +1271,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1091,12 +1287,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-047",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -1106,9 +1304,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -1121,18 +1323,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_29_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-048",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-27",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -1142,9 +1346,13 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/27/2026"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1154,12 +1362,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-050",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -1169,9 +1379,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1181,12 +1395,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-052",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -1196,9 +1412,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -1211,18 +1431,20 @@
         "state_recognized_tribe"
       ],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_11_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-053",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": true,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-08-14",
       "per_class_states": {
         "bie_funded_school": "excluded_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -1232,27 +1454,33 @@
         "state_recognized_tribe": "excluded_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "08/14/2026"
     },
     {
+      "deadline_parse_confidence": "structural",
+      "deadline_parse_status": "normalized",
+      "deadline_source_format": "slash_numeric",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
       ],
       "excluded_classes": [],
       "freshness_reasons": [
-        "close_date_or_now_unparseable"
+        "close_date_passed_33_days_ago"
       ],
-      "freshness_state": "unknown",
+      "freshness_state": "expired",
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "la-real-054",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": "2026-07-23",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -1262,9 +1490,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "07/23/2026"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1274,12 +1506,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-057",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -1289,9 +1523,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1301,12 +1539,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-060",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -1316,9 +1556,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1328,12 +1572,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "la-real-061",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -1343,9 +1589,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1355,12 +1605,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-001",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1370,9 +1622,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1382,12 +1638,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-002",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1397,9 +1655,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1409,12 +1671,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-003",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1424,9 +1688,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1436,12 +1704,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-004",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1451,9 +1721,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1463,12 +1737,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-005",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1478,9 +1754,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1490,12 +1770,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-006",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1505,9 +1787,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1517,12 +1803,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-007",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1532,9 +1820,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1544,12 +1836,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-008",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1559,9 +1853,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -1573,12 +1871,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-009",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1588,9 +1888,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -1602,12 +1906,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-010",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1617,9 +1923,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -1631,12 +1941,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-011",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1646,9 +1958,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1658,12 +1974,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-012",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1673,9 +1991,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1685,12 +2007,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-013",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1700,9 +2024,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1712,12 +2040,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-014",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1727,9 +2057,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1739,12 +2073,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-015",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1754,9 +2090,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1766,12 +2106,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-016",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1781,9 +2123,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1793,12 +2139,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-017",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1808,9 +2156,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [
         "tribal_organization"
       ],
@@ -1822,12 +2174,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-018",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1837,9 +2191,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1849,12 +2207,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-019",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1864,9 +2224,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1876,12 +2240,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-020",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1891,9 +2257,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -1906,12 +2276,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-021",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "human_review_required",
         "federally_recognized_tribe": "eligible",
@@ -1921,9 +2293,13 @@
         "state_recognized_tribe": "human_review_required",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1933,12 +2309,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-022",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1948,9 +2326,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1960,12 +2342,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-024",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -1975,9 +2359,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -1987,12 +2375,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "nf13-real-fed-025",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2002,9 +2392,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2014,12 +2408,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-026",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2029,9 +2425,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2041,12 +2441,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-027",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2056,9 +2458,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2068,12 +2474,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-028",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2083,9 +2491,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2095,12 +2507,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-029",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2110,9 +2524,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2122,12 +2540,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-030",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2137,9 +2557,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2149,12 +2573,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-031",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2164,9 +2590,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2176,12 +2606,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-032",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2191,9 +2623,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2203,12 +2639,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-033",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2218,9 +2656,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2230,12 +2672,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-034",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2245,9 +2689,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2257,12 +2705,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-035",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2272,9 +2722,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2284,12 +2738,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-036",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2299,9 +2755,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2311,12 +2771,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-037",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2326,9 +2788,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2338,12 +2804,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-038",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2353,9 +2821,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2365,12 +2837,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-039",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2380,9 +2854,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2392,12 +2870,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-040",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2407,9 +2887,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "exact",
+      "deadline_parse_status": "already_iso",
+      "deadline_source_format": "iso_8601_date",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2419,12 +2903,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf13-real-fed-041",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": true,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": "2026-12-31",
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2434,9 +2920,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": "2026-12-31"
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2446,12 +2936,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-005-5-44263f7689",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2461,9 +2953,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2473,12 +2969,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-005-5-624f2e159b",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2488,9 +2986,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2500,12 +3002,14 @@
       "funding_lane": "foundation",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-005-5-c60a95d918",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2515,9 +3019,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2527,12 +3035,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-006-6-7cdbd61f04",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2542,9 +3052,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2554,12 +3068,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-006-6-d260585d07",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2569,9 +3085,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2581,12 +3101,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-006-6-f42ee0d517",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2596,9 +3118,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2608,12 +3134,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-007-7-1672e0ccf9",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2623,9 +3151,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2635,12 +3167,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-007-7-1a8e60d288",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2650,9 +3184,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2662,12 +3200,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-007-7-3c4789c108",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2677,9 +3217,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2689,12 +3233,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-007-7-564c7f60fd",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2704,9 +3250,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2716,12 +3266,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-007-7-7cdbd61f04",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2731,9 +3283,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2743,12 +3299,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-007-7-9055c16826",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2758,9 +3316,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2770,12 +3332,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-007-7-cf93c604e2",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2785,9 +3349,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2797,12 +3365,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-008-8-1672e0ccf9",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2812,9 +3382,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2824,12 +3398,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-008-8-1a8e60d288",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2839,9 +3415,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2851,12 +3431,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-008-8-3c4789c108",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2866,9 +3448,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2878,12 +3464,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-009-9-1654a0f4cb",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2893,9 +3481,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2905,12 +3497,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-009-9-d13482b860",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2920,9 +3514,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2932,12 +3530,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-010-0-112ab66bf6",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -2947,9 +3547,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2959,12 +3563,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-010-0-1672e0ccf9",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -2974,9 +3580,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -2986,12 +3596,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-010-0-1a8e60d288",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3001,9 +3613,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3013,12 +3629,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-010-0-3c4789c108",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3028,9 +3646,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3040,12 +3662,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-011-1-1672e0ccf9",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3055,9 +3679,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3067,12 +3695,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-011-1-1a8e60d288",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3082,9 +3712,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3094,12 +3728,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-011-1-3c4789c108",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3109,9 +3745,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3121,12 +3761,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-012",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3136,9 +3778,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3148,12 +3794,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-012-2-22b97b5197",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3163,9 +3811,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3175,12 +3827,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-012-2-5e0cc901a1",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3190,9 +3844,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3202,12 +3860,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-012-2-99c5c73c61",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3217,9 +3877,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3229,12 +3893,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-013-3-5e0cc901a1",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3244,9 +3910,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3256,12 +3926,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-014-4-b25b20a07f",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3271,9 +3943,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3283,12 +3959,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-015-5-18a70777d8",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3298,9 +3976,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3310,12 +3992,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-015-5-39fe1a176b",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3325,9 +4009,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3337,12 +4025,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-015-5-763467e004",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3352,9 +4042,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3364,12 +4058,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-015-5-d1db17c960",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3379,9 +4075,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3391,12 +4091,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-015-5-ecbdd6d729",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3406,9 +4108,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3418,12 +4124,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-018-8-952ea1f982",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3433,9 +4141,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3445,12 +4157,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-019",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3460,9 +4174,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3472,12 +4190,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-020-0-16b4990f82",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3487,9 +4207,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3499,12 +4223,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-021-1-16b4990f82",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3514,9 +4240,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3526,12 +4256,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-022-2-2b9877b68b",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3541,9 +4273,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3553,12 +4289,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-022-2-75f231431f",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3568,9 +4306,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3580,12 +4322,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-022-2-8deb5e0328",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3595,9 +4339,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3607,12 +4355,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-022-2-d26c9b8f62",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -3622,9 +4372,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3634,12 +4388,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-022-2-e22d3fdff1",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3649,9 +4405,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3661,12 +4421,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-024",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3676,9 +4438,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3688,12 +4454,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-025-5-4027c575d9",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3703,9 +4471,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3715,12 +4487,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-026-6-d6366e67ae",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3730,9 +4504,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3742,12 +4520,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-026-6-f0ef126b7b",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3757,9 +4537,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3769,12 +4553,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-027",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3784,9 +4570,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3796,12 +4586,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-030",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3811,9 +4603,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3823,12 +4619,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-034",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3838,9 +4636,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3850,12 +4652,14 @@
       "funding_lane": "foundation",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-035",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3865,9 +4669,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3877,12 +4685,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-036",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3892,9 +4702,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3904,12 +4718,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-037-7-39f19cf88f",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3919,9 +4735,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3931,12 +4751,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-044",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3946,9 +4768,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3958,12 +4784,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-047-7-be00297988",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -3973,9 +4801,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -3985,12 +4817,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-053",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4000,9 +4834,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4012,12 +4850,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta3-real-054-4-16b4990f82",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4027,9 +4867,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4039,12 +4883,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-055",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4054,9 +4900,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4066,12 +4916,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-056-6-115bc724e2",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4081,9 +4933,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4093,12 +4949,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-056-6-424c50a7d2",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4108,9 +4966,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4120,12 +4982,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-059",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4135,9 +4999,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4147,12 +5015,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-062",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4162,9 +5032,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4174,12 +5048,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-063",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4189,9 +5065,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4201,12 +5081,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta3-real-065",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4216,9 +5098,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4228,12 +5114,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-056a5f80d3",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4243,9 +5131,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4255,12 +5147,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-091de546e3",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4270,9 +5164,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4282,12 +5180,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-4306e43c0f",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4297,9 +5197,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4309,12 +5213,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-63f2dd2ef6",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4324,9 +5230,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4336,12 +5246,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-7f60e4a3cc",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4351,9 +5263,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4363,12 +5279,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-8014977096",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4378,9 +5296,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4390,12 +5312,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-8409ee10a3",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4405,9 +5329,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4417,12 +5345,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-8fbb00e814",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4432,9 +5362,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4444,12 +5378,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-90446fba54",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4459,9 +5395,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4471,12 +5411,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-906beb6837",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4486,9 +5428,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4498,12 +5444,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-9b4895d30b",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4513,9 +5461,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4525,12 +5477,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-d3d428091f",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4540,9 +5494,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4552,12 +5510,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-d67d45d1cd",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4567,9 +5527,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4579,12 +5543,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-012-2-e223bf7df0",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4594,9 +5560,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4606,12 +5576,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta2-real-027-7-4d8e7d46de",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4621,9 +5593,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4633,12 +5609,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta2-real-027-7-68229eaa85",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4648,9 +5626,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4660,12 +5642,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta2-real-027-7-7eb0ab8f91",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4675,9 +5659,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4687,12 +5675,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta2-real-027-7-8b0000a019",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4702,9 +5692,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [
         "native_business"
       ],
@@ -4716,12 +5710,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta2-real-027-7-bfb4f509ca",
+      "has_checked_at": true,
       "has_cited_eligibility": true,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4731,9 +5727,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4743,12 +5743,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "ta2-real-027-7-f5a22d4bad",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4758,9 +5760,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4770,12 +5776,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-035",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4785,9 +5793,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4797,12 +5809,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-035-5-18438965de",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4812,9 +5826,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4824,12 +5842,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-035-5-328ca4c526",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4839,9 +5859,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4851,12 +5875,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-035-5-fe65fc774b",
+      "has_checked_at": true,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4866,9 +5892,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4878,12 +5908,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-037",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4893,9 +5925,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4905,12 +5941,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": false,
       "grant_id": "ta2-real-048",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": true,
       "honest_empty": true,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -4920,9 +5958,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "unknown"
+      "provenance_kind": "unknown",
+      "raw_deadline": null
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4932,12 +5974,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-broad-01",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4947,9 +5991,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4959,12 +6007,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-broad-02",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -4974,9 +6024,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -4986,12 +6040,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-broad-03",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5001,9 +6057,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5013,12 +6073,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-broad-04",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5028,9 +6090,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5040,12 +6106,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-broad-05",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5055,9 +6123,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5067,12 +6139,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-broad-06",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5082,9 +6156,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -5097,12 +6175,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-edge-07",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -5112,9 +6192,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -5127,12 +6211,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-edge-08",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -5142,9 +6228,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -5157,12 +6247,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-edge-09",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -5172,9 +6264,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5184,12 +6280,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-edge-10",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5199,9 +6297,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5211,12 +6313,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-broad-11",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5226,9 +6330,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5238,12 +6346,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-label_spread-12",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5253,9 +6363,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5265,12 +6379,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-label_spread-13",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5280,9 +6396,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5292,12 +6412,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-label_spread-14",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5307,9 +6429,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5319,12 +6445,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-label_spread-15",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "not_supported_by_evidence",
@@ -5334,9 +6462,13 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "not_supported_by_evidence"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [],
       "excluded_classes": [],
       "freshness_reasons": [
@@ -5346,12 +6478,14 @@
       "funding_lane": "unknown",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-label_spread-16",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": false,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "unknown",
         "federally_recognized_tribe": "unknown",
@@ -5361,9 +6495,13 @@
         "state_recognized_tribe": "unknown",
         "tribal_organization": "unknown"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     },
     {
+      "deadline_parse_confidence": "none",
+      "deadline_parse_status": "absent",
+      "deadline_source_format": "absent",
       "eligible_classes": [
         "federally_recognized_tribe",
         "tribal_organization"
@@ -5376,12 +6514,14 @@
       "funding_lane": "federal",
       "funding_lane_human_review": true,
       "grant_id": "nf14-mixed-label_spread-17",
+      "has_checked_at": false,
       "has_cited_eligibility": false,
       "has_cited_exclusion": false,
       "has_deadline": false,
       "has_notice_text": true,
       "has_source_url": false,
       "honest_empty": false,
+      "normalized_deadline": null,
       "per_class_states": {
         "bie_funded_school": "not_supported_by_evidence",
         "federally_recognized_tribe": "eligible",
@@ -5391,7 +6531,8 @@
         "state_recognized_tribe": "not_supported_by_evidence",
         "tribal_organization": "eligible"
       },
-      "provenance_kind": "recorded"
+      "provenance_kind": "recorded",
+      "raw_deadline": ""
     }
   ],
   "readiness_summary": {

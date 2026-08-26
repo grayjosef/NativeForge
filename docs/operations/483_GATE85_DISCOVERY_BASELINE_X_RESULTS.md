@@ -10,6 +10,19 @@ earlier state. Regenerate with:
 Artifacts land in `artifacts/discovery_baseline_x/` as `baseline_x.json`,
 `baseline_x_summary.md` and `baseline_x_metrics.csv`.
 
+
+> **Superseded in part by Gate 86.** The freshness and deadline subsection below
+> records the state *before* deadline normalization and is preserved as the
+> pre-normalization baseline. Do not update it - a baseline that gets edited
+> to match later numbers stops being a baseline.
+>
+> Current figures: 59 raw deadlines, 59 normalized, 19 records resolving to a
+> freshness state (16 expired, 3 stale, 0 fresh). See docs 485, 486, 487.
+>
+> Every other number on this page still stands. Gate 86 changed nothing about
+> corpus composition, source coverage, eligibility, funding lanes, or the
+> quality score, which remains 0.0865.
+
 ## The denominator
 
 The committed corpora overlap, so the measured population is the deduplicated
@@ -79,7 +92,7 @@ carries none because no SC source was terms-cleared.
 | records_with_amendment_evidence | 0 (0.0%) |
 | honest_empty_records | 23 (12.4%) |
 
-### The freshness result is zero, and it is a real finding
+### The freshness result is zero, and it is a real finding (pre-Gate 86)
 
 Not one of the 185 records resolves to a freshness state. Three distinct causes:
 

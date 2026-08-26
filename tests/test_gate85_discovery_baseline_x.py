@@ -279,21 +279,41 @@ def test_absence_of_exclusion_is_not_eligibility(baseline: dict) -> None:
 
 
 def test_freshness_gap_is_reported_not_papered_over(baseline: dict) -> None:
-    """No record has a resolvable freshness state, and that is the finding.
+    """The freshness gap is still reported honestly - the shape just changed.
 
-    Normalising the corpus dates here would have produced freshness numbers the
-    pipeline cannot actually produce. The measurement reports the three distinct
-    causes instead.
+    Gate 85 wrote this asserting zero resolvable freshness and a nonzero count
+    of unparseable deadlines. Gate 86 fixed the parsing half, so both of those
+    numbers moved: 19 records now resolve and none is unparseable.
+
+    The assertions were rewritten rather than deleted or relaxed. The property
+    under test was never "the number is zero" - it was "the gap is reported
+    rather than papered over", and that property outlived the fix. What remains
+    unresolved is now the larger and more honest half of the finding: most of
+    the corpus has never been checked, and parsing cannot help that.
+
+    See tests/test_gate86_deadline_normalization.py for the parsing side.
     """
     quality = baseline["opportunity_quality"]
-    assert quality["records_with_resolvable_freshness"] == 0
+    freshness = baseline["freshness_summary"]
+    total = baseline["corpus_summary"]["total_records"]
+
+    # The gap that remains, and its cause.
     assert quality["records_never_checked"] > 0
-    assert quality["records_with_unparseable_deadline"] > 0
-    assert baseline["freshness_summary"]["fresh"] == 0
-    assert (
-        baseline["freshness_summary"]["unknown"]
-        == baseline["corpus_summary"]["total_records"]
+    assert freshness["unknown"] > total / 2, (
+        "most of the corpus should still be unresolved; if it is not, check "
+        "what started filling it in"
     )
+
+    # Nothing is fresh, and nothing can be: a fresh record needs a future
+    # deadline and a recent check, and this corpus has neither.
+    assert freshness["fresh"] == 0
+
+    # Resolved freshness must stay bounded by what could support it.
+    assert (
+        quality["records_with_resolvable_freshness"]
+        <= quality["records_with_normalized_deadline"]
+    )
+    assert sum(freshness.values()) == total
 
 
 def test_unmeasured_metrics_are_null_not_zero(baseline: dict) -> None:
