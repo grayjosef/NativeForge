@@ -83,7 +83,11 @@ REQUIRED_NON_BLANK: tuple[str, ...] = (
     "priority_tier",
 )
 
-PRIORITY_TIERS = frozenset({"Tier 1", "Tier 2", "Tier 3", "Tier 4"})
+# Gate 92: v2 adds Tier 5. Extended rather than replaced - v1 rows still
+# import unchanged, and a tier outside the set is still refused.
+PRIORITY_TIERS = frozenset(
+    {"Tier 1", "Tier 2", "Tier 3", "Tier 4", "Tier 5"}
+)
 
 JURISDICTION_CLASSES = frozenset({"federal", "state", "private"})
 
@@ -100,21 +104,74 @@ MONITORING_METHODS = frozenset(
 )
 
 # Risk buckets. UNKNOWN is a member, not an error.
+#
+# Gate 92: the v2 research registry writes `OK` where v1 wrote `low`. Both are
+# accepted and both mean the same thing - no terms blocker found. The v1
+# spelling is kept so v1 still imports byte-identically.
 ROBOTS_TERMS_RISKS = frozenset(
-    {"low", "API_TERMS", "TERMS_REVIEW_REQUIRED", "HUMAN_REVIEW_ONLY", "UNKNOWN"}
+    {
+        "low",
+        "OK",
+        "API_TERMS",
+        "TERMS_REVIEW_REQUIRED",
+        "HUMAN_REVIEW_ONLY",
+        "UNKNOWN",
+    }
 )
 
 # Risks that block activation outright. Derived as the complement of the
 # permitted set, so a bucket added later blocks until someone permits it.
-NON_BLOCKING_RISKS = frozenset({"low"})
+NON_BLOCKING_RISKS = frozenset({"low", "OK"})
 BLOCKING_RISKS = ROBOTS_TERMS_RISKS - NON_BLOCKING_RISKS
 
-# Tri-state. The CSV uses several spellings for "it depends"; all of them mean
-# not-a-plain-yes and are kept distinct from a plain No.
+# Tri-state resolution for `has_api`, `has_rss_or_email` and `requires_login`.
+#
+# Gate 92: v2 writes free text in these columns - 60 distinct values for
+# `requires_login` alone, e.g. "yes - API key and paid contract",
+# "no (opportunity API does not exist)", "no for listings; Fluxx login to
+# apply". That detail is worth keeping, so the raw string is preserved verbatim
+# and a tri-state is *derived* alongside it rather than replacing it.
+#
+# Deriving deny-by-default: anything that does not clearly read as "no" is
+# treated as not-a-plain-no, because a source that might need a login is a
+# source somebody has to look at.
 TRISTATE_YES = frozenset({"Yes"})
 TRISTATE_NO = frozenset({"No"})
 TRISTATE_OTHER = frozenset({"UNKNOWN", "Varies", "API key"})
 TRISTATE_VALUES = TRISTATE_YES | TRISTATE_NO | TRISTATE_OTHER
+
+TRISTATE_RESOLVED = frozenset({"yes", "no", "unknown", "conditional"})
+
+# Literal spellings that mean a plain no, lowercased.
+_PLAIN_NO = frozenset({"no", "none", "no - not login-gated", "not required"})
+# Leading tokens that mean "no, but there is a caveat".
+_QUALIFIED_NO_PREFIXES = ("no ", "no(", "no,", "no;", "no_")
+_UNKNOWN_TOKENS = frozenset({"", "unknown", "tbd", "n/a"})
+
+
+def resolve_tristate(raw: Any) -> str:
+    """Derive yes/no/conditional/unknown from a free-text registry cell.
+
+    The raw string is never discarded - this only adds a machine-readable
+    reading beside it. Deny by default: an unrecognised value is `conditional`,
+    not `no`, because "we could not read this" and "this is not required" are
+    different answers.
+    """
+    text = str(raw or "").strip()
+    lowered = text.lower()
+    if lowered in _UNKNOWN_TOKENS or lowered.startswith("unknown"):
+        return "unknown"
+    if lowered in _PLAIN_NO:
+        return "no"
+    if lowered.startswith(_QUALIFIED_NO_PREFIXES):
+        # "no (for search)", "no for listings; Fluxx login to apply" - a no with
+        # a condition attached is not a plain no.
+        return "conditional"
+    if lowered in {"yes", "y"}:
+        return "yes"
+    if lowered.startswith("yes"):
+        return "conditional"
+    return "conditional"
 
 REGISTRY_STATUS = "seed_imported"
 MONITORING_STATUS = "not_started"
@@ -158,9 +215,9 @@ def _terms_status_for(risk: str, requires_login: str) -> str:
     `robots_or_terms_risk: API_TERMS`) read as attribution-only and clear for
     automation, which it is not.
     """
-    if risk == "HUMAN_REVIEW_ONLY" or requires_login == "Yes":
+    if risk == "HUMAN_REVIEW_ONLY" or requires_login == "yes":
         return "HUMAN_REVIEW_ONLY"
-    if requires_login in {"Varies", "API key"}:
+    if requires_login == "conditional":
         return "TERMS_REVIEW_REQUIRED"
     if risk == "TERMS_REVIEW_REQUIRED":
         return "TERMS_REVIEW_REQUIRED"
@@ -247,12 +304,15 @@ def import_external_source_registry(
                 f"row {index}: robots_or_terms_risk {risk!r} not a known bucket"
             )
 
-        for field in ("has_api", "has_rss_or_email", "requires_login"):
-            value = row[field]
-            if value and value not in TRISTATE_VALUES:
-                raise SourceRegistryImportError(
-                    f"row {index}: {field}={value!r} is not a tri-state value"
-                )
+        # Gate 92: the raw cell is preserved verbatim and a tri-state reading is
+        # derived beside it. v1's strict validation would refuse every v2 row,
+        # and coercing the text to a bare yes/no would throw away detail like
+        # "yes - API key and paid contract" that decides whether a source is
+        # buildable at all.
+        tristate = {
+            field: resolve_tristate(row[field])
+            for field in ("has_api", "has_rss_or_email", "requires_login")
+        }
 
         state = row["state_if_applicable"]
 
@@ -274,11 +334,11 @@ def import_external_source_registry(
             )
 
         blocked: list[str] = []
-        terms_status = _terms_status_for(risk, row["requires_login"])
+        terms_status = _terms_status_for(risk, tristate["requires_login"])
         if risk in BLOCKING_RISKS:
             blocked.append(f"robots_or_terms_risk:{risk}")
-        if row["requires_login"] in {"Yes", "Varies", "API key"}:
-            blocked.append(f"requires_login:{row['requires_login']}")
+        if tristate["requires_login"] in {"yes", "conditional"}:
+            blocked.append(f"requires_login:{row['requires_login'][:60]}")
         if method == "human review only":
             blocked.append("monitoring_method:human_review_only")
         # Nothing is monitored, so every row carries this. Stated per row rather
@@ -288,6 +348,10 @@ def import_external_source_registry(
         entry = dict(row)
         entry.update(
             {
+                # Derived readings, beside the preserved raw cells.
+                "has_api_resolved": tristate["has_api"],
+                "has_rss_or_email_resolved": tristate["has_rss_or_email"],
+                "requires_login_resolved": tristate["requires_login"],
                 "registry_status": REGISTRY_STATUS,
                 "monitoring_status": MONITORING_STATUS,
                 "terms_status": terms_status,
@@ -358,7 +422,22 @@ def summarise_import(result: dict[str, Any]) -> dict[str, Any]:
             ),
             # An API existing is not an API approved. Both counted so the gap is
             # visible rather than inferred.
-            "api_capable_count": sum(1 for s in sources if s.get("has_api") == "Yes"),
+            #
+            # Gate 92: counted off the derived tri-state, not the raw cell. v2
+            # writes "YES", "yes - keyed", "yes (public API)" and similar, and a
+            # raw == "Yes" comparison read 381 rows as four APIs. v1 rows all
+            # say exactly "Yes" and resolve to "yes", so its count is unchanged.
+            "api_capable_count": sum(
+                1 for s in sources if s.get("has_api_resolved") == "yes"
+            ),
+            # A qualified answer is neither a capability nor its absence, so it
+            # is reported rather than rounded into either count.
+            "api_conditional_count": sum(
+                1 for s in sources if s.get("has_api_resolved") == "conditional"
+            ),
+            "feed_capable_count": sum(
+                1 for s in sources if s.get("has_rss_or_email_resolved") == "yes"
+            ),
             "api_approved_count": 0,
             "monitored_count": 0,
             "unknown_cells_preserved": sum(

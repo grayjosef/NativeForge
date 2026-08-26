@@ -1,0 +1,382 @@
+source_id,source_name,priority_tier,allowability_class,raw_allowability_value,on_watchlist
+24-CFR-1003-206-ICDBG-PROGRA-43357E,24 CFR 1003.206 ICDBG Program Administration Costs,Tier 1,clearly_allowable,clearly-allowable,True
+NAT-ATC,Access to Capital Clearinghouse,Tier 1,unclear,Varies,False
+HHS-ANA,ANA Funding Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+BIA-INDIAN-AFFAIRS-NEWS-8D3977,BIA / Indian Affairs news,Tier 1,unknown,n/a,False
+BIA-ACCESS-TO-CAPITAL-CLEARI-B5C49A,BIA Access to Capital Clearinghouse,Tier 1,unknown,UNKNOWN (varies),False
+BIA-BRANCH-OF-TRIBAL-COMMUNI-3E3D51,BIA Branch of Tribal Community Resilience,Tier 1,likely_allowable,likely-allowable,True
+BIA-ENERGY-AND-MINERAL-DEVEL-57996E,BIA Energy and Mineral Development Program (EMDP),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+BIA-INDIAN-AFFAIRS-GRANTS-IN-EE5C3A,BIA Indian Affairs Grants index,Tier 1,likely_allowable,likely-allowable,True
+BIA-TCR-ANNUAL-AWARDS-PROGRA-1C5286,BIA TCR Annual Awards Program,Tier 1,likely_allowable,likely-allowable,True
+CDFI-FUND-NACA-APPLICATION-M-482BA0,CDFI Fund NACA application materials,Tier 1,likely_allowable,likely-allowable - CONFIRM in the FY TA Application Guidance PDF,True
+CDFI-FUND-NATIVE-INITIATIVES-032595,CDFI Fund Native Initiatives (NACA Program),Tier 1,likely_allowable,likely-allowable - Technical Assistance is expressly capacity funding including technology,True
+COORDINATED-TRIBAL-ASSISTANC-9DA903,Coordinated Tribal Assistance Solicitation (CTAS) FY26,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+COPS-OFFICE-GRANTS-16E0B8,COPS Office Grants,Tier 1,unclear,unclear,False
+CTAS-PURPOSE-AREA-1-TRIBAL-R-DB3628,CTAS Purpose Area 1 - Tribal Resources Grant Program,Tier 1,clearly_allowable,clearly-allowable,True
+CTAS-PURPOSE-AREA-2-TRIBAL-J-BFDFEA,CTAS Purpose Area 2 - Tribal Justice Systems Strategic Planning,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+CTAS-PURPOSE-AREA-5-ADULT-TR-5C068E,CTAS Purpose Area 5 - Adult Tribal Treatment Courts,Tier 1,clearly_allowable,clearly-allowable,True
+CWA-SECTION-106-TRIBAL-GRANT-1C85BD,CWA Section 106 Tribal Grants,Tier 1,clearly_allowable,clearly-allowable,True
+CWA-SECTION-319-TRIBAL-BASE-1C68B9,CWA Section 319 Tribal Base Grants,Tier 1,likely_allowable,likely-allowable,True
+CWA-SECTION-319-TRIBAL-COMPE-9B12AC,CWA Section 319 Tribal Competitive Grants (FY26 NOFO OPEN),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+DOL-DINAP,Division of Indian and Native American Programs,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOE-IE-EXCHANGE-OFFICE-OF-IN-B11146,DOE IE-Exchange (Office of Indian Energy application portal),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+DOE-INDIAN-ENERGY-GOVDELIVER-7050A9,DOE Indian Energy GovDelivery bulletins,Tier 1,unknown,UNKNOWN,False
+DOE-OFFICE-OF-INDIAN-ENERGY-3D42B9,DOE Office of Indian Energy funding page,Tier 1,unknown,UNKNOWN,False
+DOE-OFFICE-OF-INDIAN-ENERGY-9700C5,DOE Office of Indian Energy — Current Funding & TA Opportunities,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+DOJ-OJP-CURRENT-FUNDING-OPPO-1CD04D,DOJ OJP Current Funding Opportunities,Tier 1,unknown,UNKNOWN,False
+DOJ-TRIBAL,DOJ Tribal Open Solicitations,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOL-ETA-DIVISION-OF-INDIAN-A-99917B,DOL ETA Division of Indian and Native American Programs (DINAP),Tier 1,unclear,unclear,False
+DOT-GRANTS,DOT Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+ED-AVAILABLE-GRANTS-FUNDING-E6CE73,ED Available Grants (Funding Forecast),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+ED-GRANTS-FOR-NATIVE-AMERICA-7AE2EB,"ED Grants for Native Americans, Alaskan Natives, and Pacific Islanders",Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+ED-OFFICE-OF-INDIAN-EDUCATIO-C44818,ED Office of Indian Education (OIE),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+DOC-EDA,EDA Funding Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+EDA-OPEN-FUNDING-SEARCH-ENDP-517E71,EDA Open Funding Search Endpoint,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+EDA-PLANNING-PROGRAM-CEDS-00B949,EDA Planning Program (CEDS),Tier 1,likely_allowable,likely-allowable - planning IS the program purpose,True
+EDA-PROGRAM-LIST-4ED231,EDA Program List,Tier 1,likely_allowable,likely-allowable,True
+EDA-PUBLIC-WORKS-ECONOMIC-AD-ACD229,EDA Public Works & Economic Adjustment Assistance (PWEAA),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+EDA-TRIBAL-ECONOMIC-DEVELOPM-3596B7,EDA Tribal Economic Development Resources,Tier 1,likely_allowable,likely-allowable (CEDS/planning is the program purpose; see also /resources/indirect-costs),True
+EPA-TRIBAL,EPA Tribal Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+EPA-EN,Exchange Network Grant Program,Tier 1,likely_allowable,Likely allowable,True
+FED-FR,Federal Register,Tier 1,unclear,Unclear,False
+FEDERAL-REGISTER-INDIAN-AFFA-0B2B7B,Federal Register - Indian Affairs Bureau slice,Tier 1,unknown,UNKNOWN,False
+FEDERAL-REGISTER-API-V1-737DD0,Federal Register API v1,Tier 1,unknown,n/a,False
+FEDERAL-REGISTER-INDIAN-ENTI-2B8DCF,Federal Register Indian Entities Recognized notice,Tier 1,unknown,n/a,False
+FEDERAL-REGISTER-PUBLIC-INSP-52593C,Federal Register Public Inspection API,Tier 1,unknown,UNKNOWN,False
+FHWA-OFFICE-OF-TRIBAL-TRANSP-6BBDFE,FHWA Office of Tribal Transportation — GovDelivery topic,Tier 1,unknown,n/a,False
+FHWA-TRIBAL-TRANSPORTATION-P-E0C316,FHWA Tribal Transportation Program (TTP) formula,Tier 1,likely_allowable,likely-allowable,True
+FTA-NOTICES-OF-FUNDING-INDEX-64580B,FTA Notices of Funding index,Tier 1,likely_allowable,likely-allowable,True
+FTA-TRIBAL-GOVERNMENTS-HUB-5025A2,FTA Tribal Governments hub,Tier 1,likely_allowable,likely-allowable,True
+FTA-TRIBAL-TRANSIT-COMPETITI-6A8E78,FTA Tribal Transit Competitive Program (5311(c)(1)(A)),Tier 1,likely_allowable,likely-allowable,True
+FTA-TRIBAL-TRANSIT-FORMULA-P-5B93C7,FTA Tribal Transit Formula Program (5311(c)(1)(B)),Tier 1,likely_allowable,likely-allowable,True
+FWS-TRIBAL-WILDLIFE-GRANTS-317EAA,FWS Tribal Wildlife Grants,Tier 1,likely_allowable,likely-allowable,True
+FY2026-GAP-NATIONAL-NOFA-PDF-B0F5D3,FY2026 GAP National NOFA (PDF),Tier 1,clearly_allowable,clearly-allowable,True
+FED-GRANTS,Grants.gov,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+GRANTS-GOV-SIMPLER-GRANTS-GO-F58A17,Grants.gov / Simpler.Grants.gov,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+GRANTS-GOV-DAILY-XML-EXTRACT-0F4A39,Grants.gov Daily XML Extract,Tier 1,likely_allowable,likely-allowable,True
+GRANTS-GOV-FETCHOPPORTUNITY-33AA88,Grants.gov fetchOpportunity API,Tier 1,unknown,UNKNOWN,False
+GRANTS-GOV-SAVED-SEARCH-EMAI-324B7D,Grants.gov saved-search email alerts,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+GRANTS-GOV-SEARCH2-API-2C1391,Grants.gov Search2 API,Tier 1,unknown,UNKNOWN,False
+GRANTS-GOV-SEARCH2-REST-API-D3C9B4,Grants.gov Search2 REST API,Tier 1,likely_allowable,likely-allowable,True
+GRANTS-GOV-XML-EXTRACT-V2-B4C8A6,Grants.gov XML Extract (v2),Tier 1,unknown,UNKNOWN,False
+HAZARD-MITIGATION-GRANT-PROG-FD574C,Hazard Mitigation Grant Program (HMGP),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+HHS-HRSA,HRSA Find Funding,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HRSA-FIND-GRANT-FUNDING-SEAR-7B9C92,HRSA Find Grant Funding search,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+HRSA-WHO-CAN-APPLY-ELIGIBILI-4CBD11,HRSA Who Can Apply (eligibility policy),Tier 1,unknown,n/a,False
+HUD-IHBG-COMPETITIVE-IHBG-CO-AB76ED,HUD IHBG-Competitive (IHBG-COMP),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO (HUD-426 Indirect Costs form + HUD-4123 Cost Summary in package),False
+HUD-INDIAN-COMMUNITY-DEVELOP-905C41,HUD Indian Community Development Block Grant (ICDBG),Tier 1,clearly_allowable,clearly-allowable,True
+HUD-INDIAN-HOUSING-BLOCK-GRA-9A8B5E,HUD Indian Housing Block Grant (IHBG),Tier 1,likely_allowable,likely-allowable (inferred from mandatory GEMS IHP/APR reporting; NO direct cost-principle language verified),True
+HUD-ONAP,HUD Office of Native American Programs,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+HUD-ONAP-CODETALK-HUB-5CA7C5,HUD ONAP Codetalk Hub,Tier 1,clearly_allowable,clearly-allowable (ICDBG cites 24 CFR 1003.206),True
+HUD-ONAP-DEAR-TRIBAL-LEADER-162C81,HUD ONAP Dear Tribal Leader Letters,Tier 1,unclear,unclear,False
+IHS-DGM-FUNDING-OPPORTUNITIE-5927B7,IHS DGM Funding Opportunities index,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+HHS-IHS,IHS Funding Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+IHS-SPECIAL-DIABETES-PROGRAM-7383FC,IHS Special Diabetes Program for Indians,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+IHS-TRIBAL-LEADER-LETTERS-DT-621AC4,IHS Tribal Leader Letters (DTLL/DUIOLL),Tier 1,unclear,unclear,False
+DOI-BIA-GRANTS,Indian Affairs Grants,Tier 1,unclear,Varies,False
+INDIAN-EDUCATION-FORMULA-GRA-465BFA,Indian Education Formula Grants (Title VI),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+EPA-GAP,Indian Environmental General Assistance Program,Tier 1,likely_allowable,Likely allowable,True
+INDIAN-ENVIRONMENTAL-GENERAL-101276,Indian Environmental General Assistance Program (GAP),Tier 1,clearly_allowable,clearly-allowable,True
+HUD-IHBG,Indian Housing Block Grant,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOC-NTIA,Internet for All Funding Programs,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+USDA-NIFA,NIFA Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NIH-GUIDE,NIH Guide for Grants and Contracts,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NIH-GUIDE-WEEKLY-INDEX-6F7889,NIH Guide Weekly Index,Tier 1,clearly_allowable,clearly-allowable,True
+NIH-NARCH-HEALTH-RESEARCH-PR-7CF645,NIH NARCH / Health Research Programs for Federally-Recognized Tribes,Tier 1,clearly_allowable,clearly-allowable,True
+NIH-NARCH-TRIBAL-HEALTH-RESE-5244EE,NIH NARCH / Tribal Health Research Programs,Tier 1,clearly_allowable,clearly-allowable,True
+NIH-THRO-CURATED-AI-AN-NOFO-BCF6F2,NIH THRO Curated AI/AN NOFO Index,Tier 1,clearly_allowable,clearly-allowable,True
+NIH-TRIBAL-HEALTH-RESEARCH-O-26023A,NIH Tribal Health Research Office curated NOFO index,Tier 1,clearly_allowable,clearly-allowable,True
+NPS-TRIBAL-HERITAGE-GRANTS-5AA482,NPS Tribal Heritage Grants,Tier 1,likely_allowable,likely-allowable,True
+NSF-FUNDING,NSF Funding Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NSF-PROGRAM-ANNOUNCEMENTS-RS-2B3EFD,NSF Program Announcements RSS,Tier 1,likely_allowable,likely-allowable,True
+NSF-TCUP-0C2ADB,NSF TCUP,Tier 1,likely_allowable,likely-allowable,True
+ED-OIE,Office of Indian Education,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOE-INDIAN,Office of Indian Energy Funding,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+OPENFEMA-API-1BE851,OpenFEMA API,Tier 1,unknown,n/a,False
+OVC-TRIBAL-VICTIM-SERVICES-S-C7D514,OVC Tribal Victim Services Set-Aside (TVSSA),Tier 1,likely_allowable,likely-allowable,True
+OVW-FUNDING-OPPORTUNITIES-0F5CA2,OVW Funding Opportunities,Tier 1,unclear,unclear,False
+DOJ-OVW,OVW Open Solicitations,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+OVW-TRIBAL-GOVERNMENTS-PROGR-65321B,OVW Tribal Governments Program,Tier 1,unclear,unclear,False
+OVW-TRIBAL-SEXUAL-ASSAULT-SE-21385B,OVW Tribal Sexual Assault Services Program (TSASP),Tier 1,unclear,unclear,False
+RECLAMATION-NATIVE-AMERICAN-73C846,Reclamation Native American Affairs Technical Assistance Program,Tier 1,likely_allowable,likely-allowable,True
+USDA-RECONNECT,ReConnect Program,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+FED-SAM-AL,SAM.gov Assistance Listings,Tier 1,unclear,Unclear,False
+SAM-GOV-ASSISTANCE-LISTINGS-BA260C,SAM.gov Assistance Listings and bulk data,Tier 1,unknown,UNKNOWN,False
+SAM-GOV-ASSISTANCE-LISTINGS-4DBA70,SAM.gov Assistance Listings API,Tier 1,unknown,n/a,False
+HHS-SAMHSA,SAMHSA Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SIMPLER-GRANTS-GOV-API-485D8E,Simpler.Grants.gov API,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SIMPLER-GRANTS-GOV-EXTRACTS-92CF68,Simpler.Grants.gov Extracts,Tier 1,unknown,UNKNOWN,False
+CISA-SLCGP,State and Local Cybersecurity Grant Program,Tier 1,likely_allowable,Likely allowable,True
+FEMA-THSGP,Tribal Homeland Security Grant Program,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+TRIBAL-HOMELAND-SECURITY-GRA-C7317E,Tribal Homeland Security Grant Program (THSGP),Tier 1,unclear,unclear,False
+TTP-SAFETY-FUND-TTPSF-D21956,TTP Safety Fund (TTPSF),Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+USDA-FNA-FORMERLY-FNS-FDPIR-9B6D21,USDA FNA (formerly FNS) FDPIR,Tier 1,likely_allowable,"likely-allowable - VERIFIED ""USDA distributes both food and administrative funds to participating Indian Tribal Organizations and state agencies""",True
+USDA-FNA-FDPIR-SELF-DETERMIN-69D5C6,USDA FNA FDPIR Self-Determination Demonstration Project,Tier 1,unclear,unclear,False
+USDA-FNA-RSS-FEEDS-8-FEEDS-I-89D82C,USDA FNA RSS Feeds (8 feeds incl. FDPIR policy memos),Tier 1,unclear,unclear,False
+USDA-NIFA-NOFO-LIST-RFA-LIST-0689AF,USDA NIFA NOFO List (RFA List),Tier 1,unclear,varies,False
+USDA-NIFA-RFA-LIST-201A26,USDA NIFA RFA List,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+USDA-NIFA-TRIBAL-COLLEGES-RE-DEB1E1,USDA NIFA Tribal Colleges Research Grants Program (TCRGP),Tier 1,likely_allowable,likely-allowable,True
+USDA-NIFA-TRIBAL-PROGRAMS-8F4CAD,USDA NIFA Tribal Programs,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+USDA-NIFA-TRIBAL-PROGRAMS-HU-43CE05,USDA NIFA Tribal Programs Hub,Tier 1,likely_allowable,likely-allowable,True
+USDA-RD-ALL-PROGRAMS-DIRECTO-43D843,USDA RD All Programs Directory,Tier 1,unclear,unclear,False
+USDA-RD-FEDERAL-FUNDING-OPPO-9761D9,USDA RD Federal Funding Opportunities,Tier 1,unclear,unclear,False
+USDA-RD-TRIBAL-GOVDELIVERY-T-B85B07,USDA RD Tribal GovDelivery (Tribal Updates),Tier 1,unclear,unclear,False
+USDA-RD-TRIBAL-RELATIONS-E1F93D,USDA RD Tribal Relations,Tier 1,unclear,unclear,False
+USDA-RD,USDA Rural Development Funding,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+WIOA-SECTION-166-INA-PROGRAM-FCAFB6,WIOA Section 166 INA Programs (FOA-ETA-26-20),Tier 1,unclear,unclear,False
+BUSH-FOUNDATION-COMMUNITY-IN-6BF0E6,Bush Foundation Community Innovation grants and PRIs,Tier 1,likely_allowable,likely-allowable - flexible and uncapped,True
+FIRST-NATIONS-DEVELOPMENT-IN-FD2A9C,First Nations Development Institute Grantmaking,Tier 1,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+NATIVE-AMERICANS-IN-PHILANTH-34379B,Native Americans in Philanthropy Grantwatch,Tier 1,unclear,varies by listing,False
+ADVANCE-SC-NATIVE-AMERICAN-A-2D8EF3,Advance SC Native American Affairs,Tier 1,unknown,n/a,False
+CATAWBA-NATION-A16252,Catawba Nation,Tier 1,unknown,UNKNOWN,False
+SC-ABSENCE-OF-A-CENTRAL-GRAN-772EF9,SC absence of a central grants portal,Tier 1,unknown,n/a,False
+SC-DEPARTMENT-OF-ARCHIVES-AN-36C8D8,SC Department of Archives and History grants,Tier 1,unknown,UNKNOWN,False
+SC-ED,SC Department of Education Grant Opportunities,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-HOUSING-CHDO-CERTIFICATIO-C55EDF,SC Housing CHDO Certification,Tier 1,unknown,UNKNOWN,False
+SC-OFFICE-OF-RESILIENCE-GRAN-E9A64E,SC Office of Resilience Grants Activities,Tier 1,unknown,not stated,False
+SC-RECOGNIZED-NATIVE-AMERICA-1D4C73,SC Recognized Native American Indian Entities List,Tier 1,unknown,n/a,False
+SC-DHHS,SCDHHS Grants,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SCDHHS-GRANTS-RURAL-HEALTH-T-8E046C,SCDHHS Grants - Rural Health Transformation Program,Tier 1,unknown,"YES - electronic health records, remote patient monitoring, telehealth services and a statewide resource database platform are explicitly funded",False
+SCDOT-GRANTS-AND-PUBLIC-TRAN-B221C6,SCDOT grants and public transit,Tier 1,likely_allowable,"likely-allowable (FTA allows capital, operating, planning and administrative expenses)",True
+SC-EMD-HMGP,SCEMD Hazard Mitigation Grant Program,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SCEMD-MITIGATION-HMGP-56206E,SCEMD Mitigation / HMGP,Tier 1,unknown,not stated,False
+SC-EMD-PA,SCEMD Public Agency Assistance,Tier 1,sometimes_allowable,Sometimes allowable depending on incident/category,False
+SCRA-TECH-CATALYST-FUND-72514E,SCRA Tech Catalyst Fund,Tier 1,likely_allowable,likely-allowable - explicitly a health technology fund,True
+SC-BEAD,South Carolina Broadband Office BEAD,Tier 1,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+ACF-ADMINISTRATION-FOR-NATIV-D1050C,ACF Administration for Native Americans,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+HHS-ACL,ACL Funding Opportunities,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+ALASKA-NATIVE-EDUCATION-PROG-721C38,Alaska Native Education Program (84.356A),Tier 2,unclear,unclear,False
+BIA-ACCESS-TO-CAPITAL-CLEARI-84B5EF,BIA Access to Capital Clearinghouse (cross-agency lead),Tier 2,unclear,unclear,False
+BIA-INDIAN-BUSINESS-INCUBATO-7B7776,BIA Indian Business Incubators Program,Tier 2,unclear,unclear,False
+BIA-LIVING-LANGUAGES-GRANT-P-A99235,BIA Living Languages Grant Program,Tier 2,unclear,unclear,False
+BIA-NATIONAL-TRIBAL-BROADBAN-C5C1FD,BIA National Tribal Broadband Grant,Tier 2,unclear,unclear,False
+BIA-NATIVE-AMERICAN-BUSINESS-E2D500,BIA Native American Business Development Institute (NABDI),Tier 2,likely_allowable,likely-allowable,True
+BIA-SITEMAP-XML-9E37D6,BIA sitemap.xml,Tier 2,unknown,n/a,False
+BIA-TRIBAL-ENERGY-DEVELOPMEN-409BC6,BIA Tribal Energy Development Capacity (TEDC),Tier 2,unclear,unclear,False
+BIA-TRIBAL-TOURISM-GRANT-PRO-4C08D0,BIA Tribal Tourism Grant Program,Tier 2,likely_allowable,likely-allowable,True
+DOI-BIE,Bureau of Indian Education,Tier 2,unclear,Varies,False
+HHS-CDC,CDC Grants and Funding,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+CDC-HEALTHY-TRIBES-C6B4C6,CDC Healthy Tribes,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+CDC-TRIBAL-HEALTH-PROGRAMS-23E223,CDC tribal health programs,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+CDC-ATSDR-TRIBAL-ADVISORY-CO-81690E,CDC/ATSDR Tribal Advisory Committee,Tier 2,unknown,n/a,False
+CLEAN-WATER-INDIAN-SET-ASIDE-628155,Clean Water Indian Set-Aside (CWISA),Tier 2,unknown,unlikely-allowable,False
+DOE-OFFICE-OF-STATE-AND-COMM-8B2B66,DOE Office of State and Community Energy Programs (SCEP),Tier 2,unknown,UNKNOWN,False
+DOE-TRIBAL-ENERGY-LOAN-GUARA-F214D5,DOE Tribal Energy Loan Guarantee Program,Tier 2,unknown,unlikely-allowable,False
+DOJ-GOVDELIVERY-EMAIL-BULLET-7ABC99,DOJ GovDelivery email bulletins,Tier 2,unknown,n/a,False
+DOJ-TRIBAL-ACCESS-PROGRAM-TA-E075AC,DOJ Tribal Access Program (TAP),Tier 2,unknown,unlikely-allowable,False
+DOL-ETA-FUNDING-OPPORTUNITIE-F32B5A,DOL ETA Funding Opportunities (Office of Grants Management),Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+DOT-PROGRAMS-WITH-UNVERIFIED-384004,"DOT programs with unverified tribal terms (RAISE, Bridge Investment, Rural Surface Transportation, PROTECT, FAA AIP, Thriving Communities, state HSIP pass-through)",Tier 2,unknown,UNKNOWN,False
+DRINKING-WATER-INFRASTRUCTUR-6BCBF4,Drinking Water Infrastructure Grants — Tribal Set-Aside (DWIG-TSA),Tier 2,unknown,unlikely-allowable,False
+ED-AVAILABLE-GRANTS-FORMER-F-BC5FB2,ED Available Grants (former Forecast),Tier 2,unknown,UNKNOWN,False
+EPA-BROWNFIELDS-GRANTS-AND-F-644929,EPA Brownfields Grants and Funding,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+EPA-SPECIFIC-GRANT-PROGRAMS-41B5BD,EPA Specific Grant Programs index,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+EPA-TRIBAL-AIR-AND-CLIMATE-R-3076D6,EPA Tribal Air and Climate Resources,Tier 2,unknown,UNKNOWN,False
+EPA-TRIBAL-PORTAL-ENVIRONMEN-E9621E,EPA Tribal Portal (Environmental Protection in Indian Country),Tier 2,unknown,n/a,False
+EPA-TRIBAL-WATER-FUNDING-OPP-05217A,EPA Tribal Water Funding Opportunities (CWA + SDWA hubs),Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+FEMA-OPENFEMA-API-395C7C,FEMA OpenFEMA API,Tier 2,unknown,UNKNOWN,False
+FHWA-TRIBAL-TRANSPORTATION-F-E9902D,FHWA Tribal Transportation Finance (tribal shares PDFs),Tier 2,likely_allowable,likely-allowable,True
+GRANTS-GOV-MODIFIED-OPPS-RSS-AAA645,Grants.gov Modified-Opps RSS,Tier 2,unknown,UNKNOWN,False
+HOMELAND-SECURITY-GRANT-PROG-078B2B,Homeland Security Grant Program (HSGP: SHSP/UASI/OPSG),Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+HUD-EXCHANGE-TRIBAL-HOUSING-534C1A,HUD Exchange - Tribal Housing Priority Page,Tier 2,unclear,unclear,False
+HUD-EXCHANGE-MAILING-LIST-068F1D,HUD Exchange Mailing List,Tier 2,unclear,unclear,False
+HUD-EXCHANGE-NEWS-DAFB2D,HUD Exchange News,Tier 2,unknown,UNKNOWN,False
+HUD-EXCHANGE-PROGRAM-INDEX-A-4C60C5,HUD Exchange Program Index (A-Z),Tier 2,unclear,unclear,False
+HUD-EXCHANGE-PROGRAM-SUPPORT-628324,HUD Exchange Program Support / Community Compass TA,Tier 2,unclear,unclear,False
+HUD-IHBG-FORMULA-IHBGFORMULA-AAD744,HUD IHBG Formula / ihbgformula.com,Tier 2,unclear,unclear,False
+HUD-NATIVE-HAWAIIAN-PROGRAMS-830D0B,HUD Native Hawaiian Programs (incl. NHHBG),Tier 2,unclear,unclear,False
+HUD-ONAP-NOTICES-PIH-NATIVE-B47208,HUD ONAP Notices (PIH - Native American Programs),Tier 2,unclear,unclear,False
+HUD-TRIBAL-HUD-VASH-572F23,HUD Tribal HUD-VASH,Tier 2,unclear,unclear,False
+IHS-DGM-CURRENT-NEWS-E66373,IHS DGM Current News,Tier 2,unknown,n/a,False
+IHS-LISTSERV-EMAIL-GROUPS-70F349,IHS LISTSERV email groups,Tier 2,unknown,n/a,False
+IHS-OFFICE-OF-TRIBAL-SELF-GO-82C768,IHS Office of Tribal Self-Governance,Tier 2,unclear,unclear,False
+IHS-OFFICE-OF-URBAN-INDIAN-H-F6AE73,IHS Office of Urban Indian Health Programs,Tier 2,unclear,unclear,False
+IHS-URBAN-LEADER-LETTERS-54C796,IHS Urban Leader Letters,Tier 2,unclear,unclear,False
+IMLS-CURRENT-FY-NOFO-LIST-E050CD,IMLS Current-FY NOFO List,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+DOI-NPS-NAGPRA,NAGPRA Grants,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NATIVE-AMERICAN-SERVING-NONT-937C0F,"Native American-Serving Nontribal Institutions (NASNTI, Title III-F)",Tier 2,unclear,unclear,False
+NATIVE-HAWAIIAN-EDUCATION-PR-D023C8,Native Hawaiian Education Program (84.362A),Tier 2,unclear,unclear,False
+DOI-BOR,Nature-Based Solutions and Native American Affairs,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NIH-GUIDE-RSS-BC9C03,NIH Guide RSS,Tier 2,unknown,UNKNOWN,False
+NIH-REPORTER,NIH RePORTER,Tier 2,unlikely_allowable,Not applicable,False
+NIH-REPORTER-API-E82D6A,NIH RePORTER API,Tier 2,unknown,n/a,False
+DOC-NOAA,NOAA Funding Opportunities,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+NOAA-SEA-GRANT-FUNDING-876BE6,NOAA Sea Grant Funding,Tier 2,unclear,unclear,False
+NPS-HISTORIC-PRESERVATION-FU-703D44,NPS Historic Preservation Fund hub,Tier 2,unclear,unclear,False
+NPS-HPF-GRANTS-EMAIL-BULLETI-12A869,NPS HPF grants email bulletin,Tier 2,unknown,n/a,False
+NPS-NAGPRA-GRANTS-2C9DC5,NPS NAGPRA Grants,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+NPS-THPO-FORMULA-GRANTS-DEF9EE,NPS THPO Formula Grants,Tier 2,unclear,unclear,False
+USDA-NRCS,NRCS Tribal Assistance,Tier 2,sometimes_allowable,Sometimes allowable depending on program,False
+NSF-AISL-ARCHIVED-81FB4A,NSF AISL (archived),Tier 2,likely_allowable,likely-allowable,True
+NSF-UPCOMING-DUE-DATES-RSS-59C55A,NSF Upcoming Due Dates RSS,Tier 2,likely_allowable,likely-allowable,True
+NASA-NSPIRES,NSPIRES,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+OVW-TRIBAL-JURISDICTION-PROG-1BEE70,OVW Tribal Jurisdiction Program (STCJ),Tier 2,unclear,unclear,False
+RECLAMATION-NATIVE-AMERICAN-530214,Reclamation Native American Affairs hub,Tier 2,likely_allowable,likely-allowable,True
+RECLAMATION-RSS-FEED-INDEX-3E37EE,Reclamation RSS feed index,Tier 2,unknown,n/a,False
+REGULATIONS-GOV-API-V4-EC2949,Regulations.gov API v4,Tier 2,unknown,UNKNOWN,False
+SAFE-STREETS-AND-ROADS-FOR-A-A7DBA0,Safe Streets and Roads for All (SS4A),Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SAMHSA-NATIVE-CONNECTIONS-2DA23D,SAMHSA Native Connections,Tier 2,unclear,unclear,False
+SAMHSA-TRIBAL-AFFAIRS-HUB-17336B,SAMHSA Tribal Affairs hub,Tier 2,unclear,unclear,False
+SAMHSA-TRIBAL-OPIOID-RESPONS-D7833A,SAMHSA Tribal Opioid Response Grants,Tier 2,unclear,unclear,False
+SBA-8-A-BUSINESS-DEVELOPMENT-4A0E16,SBA 8(a) Business Development Program,Tier 2,unknown,n/a,False
+SBA-GRANTS-AGENCY-GRANTS-PAG-26DE95,SBA Grants (agency grants page),Tier 2,unclear,unclear,False
+SBA-OFFICE-OF-NATIVE-AMERICA-42DCEB,SBA Office of Native American Affairs (ONAA),Tier 2,unknown,unlikely-allowable,False
+SBA-PRIME-PROGRAM-FOR-INVEST-1FD46C,SBA PRIME (Program for Investors in Microentrepreneurs),Tier 2,unclear,unclear,False
+STRENGTHENING-AMERICAN-INDIA-348DE5,Strengthening American Indian Tribally Controlled Colleges and Universities (Title III-A),Tier 2,unclear,unclear,False
+DOI-NPS-THG,Tribal Heritage Grants,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOT-FTA-TRIBAL,Tribal Transit Program,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+DOI-FWS-TWG,Tribal Wildlife Grants,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+TTP-BRIDGE-PROGRAM-385C3B,TTP Bridge Program,Tier 2,unknown,UNKNOWN,False
+FED-USA,USAspending,Tier 2,unlikely_allowable,Not applicable,False
+USASPENDING-API-V2-3C97C3,USAspending API v2,Tier 2,unknown,n/a,False
+USDA-FNA-FUNDING-GRANTS-INDE-AEC1F6,USDA FNA Funding / Grants Index,Tier 2,unclear,unclear,False
+USDA-NIFA-FEDERALLY-RECOGNIZ-E11F8B,USDA NIFA Federally-Recognized Tribes Extension Program (FRTEP),Tier 2,unclear,unclear,False
+USDA-NIFA-NEW-BEGINNING-FOR-A30EDF,USDA NIFA New Beginning for Tribal Students (NBTS),Tier 2,likely_allowable,likely-allowable,True
+USDA-NIFA-TRIBAL-COLLEGES-ED-8A43AF,USDA NIFA Tribal Colleges Education Equity Grants (TCEG),Tier 2,likely_allowable,likely-allowable,True
+USDA-NIFA-TRIBAL-COLLEGES-EX-21FB2B,USDA NIFA Tribal Colleges Extension Program (TCEP-CA and TCEP-SE),Tier 2,unclear,unclear,False
+USDA-OFFICE-OF-TRIBAL-RELATI-CECF64,USDA Office of Tribal Relations,Tier 2,unclear,unclear,False
+USDA-RD-DISTANCE-LEARNING-TE-93354E,USDA RD Distance Learning & Telemedicine (DLT),Tier 2,likely_allowable,likely-allowable (telecom/equipment purpose),True
+USDA-RD-GRANTS-FOR-RURAL-AND-C4576C,USDA RD Grants for Rural and Native Alaskan Villages,Tier 2,unclear,unclear,False
+USDA-RD-NATIVE-CDFI-RELENDIN-13D91B,USDA RD Native CDFI Relending Demonstration Program,Tier 2,unclear,unclear,False
+USDA-RD-RECONNECT-PROGRAM-4E55AA,USDA RD ReConnect Program,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+USDA-RD-RURAL-BUSINESS-DEVEL-B448DB,USDA RD Rural Business Development Grants (RBDG),Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+USDA-RD-RURAL-COMMUNITY-DEVE-3C5301,USDA RD Rural Community Development Initiative (RCDI),Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+USDA-RD-SITE-WIDE-RSS-FEED-17C90C,USDA RD Site-wide RSS Feed,Tier 2,unclear,unclear,False
+USDA-RD-SUBSTANTIALLY-UNDERS-8A06DB,USDA RD Substantially Underserved Trust Area (SUTA),Tier 2,unclear,unclear,False
+USDA-RD-TRIBAL-COLLEGE-INITI-3AFA02,USDA RD Tribal College Initiative Grants,Tier 2,unclear,unclear,False
+USDA-RD-WATER-WASTE-LOANS-GR-233E8E,USDA RD Water & Waste Loans/Grants - Tribal Lands,Tier 2,unclear,unclear,False
+USDA-RURAL-DEVELOPMENT-PROGR-B1D80F,USDA Rural Development programs,Tier 2,unknown,UNKNOWN,False
+AMERICAN-INDIAN-COLLEGE-FUND-06CAB1,American Indian College Fund,Tier 2,unknown,unlikely-allowable,False
+BUSH-FOUNDATION-BUSH-PRIZE-39D52B,Bush Foundation Bush Prize,Tier 2,likely_allowable,likely-allowable - funds are explicitly flexible,True
+BUSH-FOUNDATION-GOOD-RELATIV-613BAC,Bush Foundation Good Relatives Collaborative Grants,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+CHEROKEE-PRESERVATION-FOUNDA-BAD75E,Cherokee Preservation Foundation,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+NATIVE-AMERICANS-IN-PHILANTH-B617AD,Native Americans in Philanthropy Indigenous Tomorrows Fund,Tier 2,unclear,unclear,False
+NDN-COLLECTIVE-GRANT-OPPORTU-495CC7,NDN Collective Grant Opportunities,Tier 2,unknown,unlikely-allowable - artist and organizer directed,False
+OWEESTA-CORPORATION-16328B,Oweesta Corporation,Tier 2,unclear,"unclear - TA is delivered as services, not cash for software",False
+POTLATCH-FUND-48BDCA,Potlatch Fund,Tier 2,likely_allowable,"likely-allowable via unrestricted general operating support, but excludes research, publications, conferences and classes",True
+SC-ATTORNEY-GENERAL-CRIME-VI-6C989A,SC Attorney General Crime Victim Services Division,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SC-BEHAVIORAL-HEALTH-AND-DEV-B2AD83,SC Behavioral Health and Developmental Disabilities grants,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SC-BROADBAND-GRANT-NOTIFICAT-F56BC2,SC Broadband Grant Notifications list,Tier 2,unknown,n/a,False
+SC-CDBG-CONSOLIDATED-PLAN-AN-0F6E6C,SC CDBG Consolidated Plan and Program Description,Tier 2,unknown,UNKNOWN,False
+SC-CDBG-ELIGIBILITY-098BA5,SC CDBG Eligibility,Tier 2,unknown,planning is eligible; software not addressed,False
+SC-CDBG-IMPLEMENTATION-MANUA-09173F,SC CDBG Implementation Manual and Policy Memos,Tier 2,unknown,UNKNOWN,False
+SC-COMMERCE-COMMUNITY-AND-RU-41AAA4,SC Commerce community and rural development,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SC-COMMERCE,SC Commerce Grants and Incentives,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-DEPARTMENT-OF-AGRICULTURE-FF7852,SC Department of Agriculture grants,Tier 2,unknown,UNKNOWN,False
+SC-DEW,SC Department of Employment and Workforce,Tier 2,sometimes_allowable,Sometimes allowable depending on NOFO/budget category,False
+SC-DEPARTMENT-OF-EMPLOYMENT-FD4C95,SC Department of Employment and Workforce WIOA,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SC-DEPARTMENT-OF-NATURAL-RES-7A9BC2,SC Department of Natural Resources Flood Mitigation Assistance,Tier 2,unknown,UNKNOWN,False
+SC-DEPARTMENT-OF-PUBLIC-HEAL-8DADC1,SC Department of Public Health grants and subawards,Tier 2,unknown,UNKNOWN,False
+SC-DEPARTMENT-OF-PUBLIC-SAFE-D82212,SC Department of Public Safety Office of Highway Safety and Justice Programs,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SC-DEPARTMENT-ON-AGING-GRANT-E70E14,SC Department on Aging grants,Tier 2,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SC-DES-WATER,SC DES Grants and Loans,Tier 2,sometimes_allowable,Sometimes allowable depending on program,False
+SC-DES-SECTION-319-NONPOINT-1174F0,SC DES Section 319 Nonpoint Source and SRF,Tier 2,unknown,UNKNOWN,False
+SC-HOUSING-DEVELOPMENT-PROGR-46B25C,SC Housing Development programs,Tier 2,unknown,UNKNOWN,False
+SC-HUMANITIES-GRANTS-37C3E7,SC Humanities grants,Tier 2,unknown,unlikely-allowable,False
+SC-OPIOID-RECOVERY-FUND-BOAR-245B6F,SC Opioid Recovery Fund Board,Tier 2,unknown,UNKNOWN,False
+SCDAH-FEDERAL-AND-STATE-RECO-DE7401,SCDAH Federal and State Recognized Native American Indian Tribes,Tier 2,unknown,n/a,False
+SCDES-DAM-REPAIR-ASSISTANCE-AC197D,SCDES Dam Repair Assistance Grant,Tier 2,unknown,no,False
+SC-ENERGY,South Carolina Energy Office,Tier 2,sometimes_allowable,Sometimes allowable depending on program,False
+ACF-GRANTS-AND-FUNDING-HUB-FF81A5,ACF Grants and Funding hub,Tier 3,unclear,unclear,False
+ACL-SERVICES-FOR-NATIVE-AMER-CABB28,ACL Services for Native Americans (OAA Title VI),Tier 3,unclear,unclear,False
+ASSISTANCE-TO-FIREFIGHTERS-G-5EC54E,Assistance to Firefighters Grants (AFG),Tier 3,unclear,unclear,False
+BIA-BRANCH-OF-INDIGENOUS-CON-61EA90,BIA Branch of Indigenous Connectivity and Technology,Tier 3,unclear,unclear,False
+BIA-DIVISION-OF-SELF-DETERMI-0C1E37,BIA Division of Self-Determination,Tier 3,unclear,unclear,False
+BIA-JUSTICE-SERVICES-1F6956,BIA Justice Services,Tier 3,unclear,unclear,False
+BIA-SOCIAL-SERVICES-AND-ICWA-367756,BIA Social Services and ICWA,Tier 3,unclear,unclear,False
+BIA-VOLUNTARY-COMMUNITY-DRIV-9790D7,BIA Voluntary Community-Driven Relocation Program,Tier 3,unclear,unclear,False
+BIA-WATER-AND-POWER-736444,BIA Water and Power,Tier 3,unclear,unclear,False
+BIE-GREAT-AMERICAN-OUTDOORS-2FFD1F,BIE Great American Outdoors Act program,Tier 3,unknown,unlikely-allowable,False
+BIE-JOHNSON-O-MALLEY-PROGRAM-140089,BIE Johnson O'Malley Program,Tier 3,unclear,unclear,False
+BIE-NEWSROOM-3E4FE6,BIE newsroom,Tier 3,unknown,n/a,False
+DOT-GRANTS-INDEX-368328,DOT Grants index,Tier 3,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+DOT-NAVIGATOR-D0D06B,DOT Navigator,Tier 3,unknown,n/a,False
+EPA-CLIMATE-POLLUTION-REDUCT-A1D745,EPA Climate Pollution Reduction Grants (CPRG),Tier 3,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+EPA-GRANTS-BC17D1,EPA Grants,Tier 3,unknown,UNKNOWN,False
+EPA-TRIBAL-LANDS-OLEM-TRIBAL-FC0F48,EPA Tribal Lands (OLEM) / Tribal Waste Management,Tier 3,unknown,UNKNOWN,False
+EPA-TRIBAL-PARTNERSHIP-GROUP-A95E9D,EPA Tribal Partnership Groups / RTOC / NTOC,Tier 3,unknown,n/a,False
+FEMA-GO-GRANTS-OUTCOMES-PORT-3B6FEC,FEMA GO (Grants Outcomes) portal,Tier 3,unknown,n/a,False
+HUD-GEMS-GRANTS-EVALUATION-A-F70DCC,HUD GEMS (Grants Evaluation and Management System),Tier 3,likely_allowable,likely-allowable,True
+NAGPRA-GRANT-AWARDS-DATABASE-349011,NAGPRA grant awards database,Tier 3,unknown,n/a,False
+NASA-OSTEM-FUNDING-FORECAST-869C9C,NASA OSTEM Funding Forecast,Tier 3,unclear,unclear,False
+NEA-GRANTS-FOR-ARTS-PROJECTS-260391,NEA Grants for Arts Projects,Tier 3,unclear,unclear,False
+NEA-NATIVE-ARTS-AND-CULTURE-51D1C6,NEA Native Arts and Culture Hub,Tier 3,unknown,n/a,False
+NEH-GRANTS-3B51BD,NEH Grants,Tier 3,unclear,unclear,False
+NIH-REPORTER-API-V2-8C39C5,NIH RePORTER API v2,Tier 3,unknown,UNKNOWN,False
+NOAA-CLIMATE-PROGRAM-OFFICE-28DB4F,NOAA Climate Program Office,Tier 3,unclear,unclear,False
+NSF-AWARD-API-66155B,NSF Award API,Tier 3,unknown,UNKNOWN,False
+NSF-AWARDS-API-BB69CE,NSF Awards API,Tier 3,unknown,n/a,False
+NTIA-FUNDING-PROGRAMS-INDEX-2423F5,NTIA Funding Programs Index,Tier 3,unclear,unclear,False
+NTIA-TRIBAL-BROADBAND-CONNEC-9BAAC8,NTIA Tribal Broadband Connectivity Program (TBCP),Tier 3,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+PERKINS-CTE-TRIBAL-BIE-SET-A-6C68A1,Perkins CTE tribal / BIE set-aside,Tier 3,unclear,unclear,False
+REGISTERED-APPRENTICESHIP-ET-2A3B6E,Registered Apprenticeship (ETA),Tier 3,unclear,unclear,False
+SAM-GOV-ENTITY-MANAGEMENT-AP-0BFE5E,SAM.gov Entity Management API,Tier 3,unknown,UNKNOWN,False
+SAM-GOV-FEDERAL-HIERARCHY-PU-102D41,SAM.gov Federal Hierarchy Public API,Tier 3,unknown,UNKNOWN,False
+STATE-WIOA-TITLE-I-PASS-THRO-AFEA36,State WIOA Title I pass-through (Adult / Youth / Dislocated Worker),Tier 3,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+TRIBAL-HIGH-PRIORITY-PROJECT-E774EB,Tribal High Priority Projects (TTP HPP),Tier 3,unknown,UNKNOWN,False
+USDA-RD-UNNUMBERED-LETTERS-D-C7E2ED,USDA RD Unnumbered Letters / Directives,Tier 3,unclear,unclear,False
+PRIV-FNT,First Nations Development Institute Grants,Tier 3,sometimes_allowable,Sometimes allowable depending on call,False
+INDIAN-LAND-TENURE-FOUNDATIO-A153F0,Indian Land Tenure Foundation,Tier 3,unknown,unlikely-allowable,False
+NATIONAL-CONGRESS-OF-AMERICA-E4CCE8,National Congress of American Indians,Tier 3,unknown,n/a,False
+NATIVE-ARTS-AND-CULTURES-FOU-499891,Native Arts and Cultures Foundation,Tier 3,unknown,unlikely-allowable,False
+NATIVE-CDFI-NETWORK-47714C,Native CDFI Network,Tier 3,unknown,n/a,False
+PRIV-NDN,NDN Collective grantmaking,Tier 3,unclear,Unclear,False
+ADVANCE-SC-GRANTS-FOR-STATE-06645F,Advance SC Grants for State Tribes,Tier 3,unknown,not stated,False
+CENTRAL-CAROLINA-COMMUNITY-F-9B055A,Central Carolina Community Foundation,Tier 3,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+COASTAL-COMMUNITY-FOUNDATION-A3C252,Coastal Community Foundation of South Carolina,Tier 3,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SC-ARTS-COMMISSION-GRANTS-6AF86B,SC Arts Commission grants,Tier 3,unknown,unlikely-allowable,False
+SC-BUSINESS-OPPORTUNITIES-SC-51904C,SC Business Opportunities (SCBO),Tier 3,unknown,IT solicitations are in scope,False
+SC-COMMISSION-ON-HIGHER-EDUC-FA95E9,SC Commission on Higher Education grants,Tier 3,unknown,UNKNOWN,False
+SC-CONSERVATION-BANK-41950D,SC Conservation Bank,Tier 3,unknown,unlikely-allowable,False
+SC-DEPARTMENT-OF-INSURANCE-S-82AE60,SC Department of Insurance SC Safe Home,Tier 3,unknown,no,False
+SC-DEPT-OF-ADMINISTRATION-MA-69CAE3,SC Dept of Administration Managing Grants,Tier 3,unknown,n/a,False
+SC-FIRST-STEPS-GRANTS-533156,SC First Steps grants,Tier 3,unknown,UNKNOWN,False
+SC-FORESTRY-COMMISSION-GRANT-300D89,SC Forestry Commission grants,Tier 3,unknown,UNKNOWN,False
+SC-OFFICE-OF-THE-STATE-AUDIT-EC9455,SC Office of the State Auditor,Tier 3,unknown,n/a,False
+SC-RURAL-INFRASTRUCTURE-AUTH-485AB5,SC Rural Infrastructure Authority,Tier 3,unknown,UNKNOWN,False
+SC-STATE-CLEARINGHOUSE-INTER-EBF26A,SC State Clearinghouse Intergovernmental Review,Tier 3,unknown,n/a,False
+APEX-ACCELERATORS-EC80CE,APEX Accelerators,Tier 4,unclear,unclear,False
+BUILDING-RESILIENT-INFRASTRU-5525F1,Building Resilient Infrastructure and Communities (BRIC),Tier 4,unclear,unclear,False
+CMS-TRIBAL-AFFAIRS-8AC2C9,CMS tribal affairs,Tier 4,unclear,unclear,False
+COMMERCE-MBDA-NOAA-NATIVE-PR-4EDDDF,Commerce MBDA + NOAA Native programs,Tier 4,unclear,unclear,False
+DOE-GRID-DEPLOYMENT-OFFICE-B45579,DOE Grid Deployment Office,Tier 4,unknown,UNKNOWN,False
+DOI-BUREAU-OF-TRUST-FUNDS-AD-BBF582,DOI Bureau of Trust Funds Administration,Tier 4,unknown,unlikely-allowable,False
+DOJ-TRIBAL-FUNDING-DIRECTORY-BE8B52,DOJ Tribal Funding Directory,Tier 4,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+DOJ-TRIBAL-JUSTICE-AND-SAFET-4F1E15,DOJ Tribal Justice and Safety,Tier 4,unclear,unclear,False
+DOT-RESOURCES-FOR-TRIBES-AND-B17823,DOT Resources for Tribes and Tribal Governments,Tier 4,unknown,n/a,False
+ELECTRONIC-TRIBAL-TRANSPORTA-987047,Electronic Tribal Transportation Improvement Program (e-TTIP),Tier 4,unknown,n/a,False
+EPA-ENVIRONMENTAL-JUSTICE-GR-0380CA,EPA Environmental Justice grants,Tier 4,unclear,unclear,False
+EPA-TRIBAL-AIR-ANNOUNCEMENTS-979F65,EPA Tribal Air Announcements/Funding page,Tier 4,unclear,unclear,False
+FEMA-GRANTS-ROOT-8EBB51,FEMA Grants (root),Tier 4,unclear,unclear,False
+FLOOD-MITIGATION-ASSISTANCE-AC5C7F,Flood Mitigation Assistance (FMA),Tier 4,unclear,unclear,False
+GRANTS-GOV-SYSTEM-TO-SYSTEM-AB3A7C,Grants.gov System-to-System (SOAP),Tier 4,unknown,UNKNOWN,False
+HHS-ANA-PROGRAMS-A641B0,HHS ANA Programs,Tier 4,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+HUD-DEAD-LEGACY-PATHS-NEGATI-F77A25,HUD dead legacy paths (negative control),Tier 4,unclear,unclear,False
+HUD-ONAP-CODETALK-660255,HUD ONAP / Codetalk,Tier 4,unknown,UNKNOWN,False
+IHS-HEALTH-IT-MODERNIZATION-35151C,IHS Health IT Modernization Program,Tier 4,unknown,unlikely-allowable,False
+NASA-MUREP-1AA690,NASA MUREP,Tier 4,unclear,unclear,False
+NASA-NSPIRES-4CE005,NASA NSPIRES,Tier 4,unclear,unclear,False
+NSF-EPSCOR-581817,NSF EPSCoR,Tier 4,likely_allowable,likely-allowable,True
+NSF-FUNDING-OPPORTUNITIES-PA-998D8E,NSF Funding Opportunities page,Tier 4,unknown,UNKNOWN,False
+NTIA-BEAD-PROGRAM-ED271A,NTIA BEAD Program,Tier 4,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+NTIA-DIGITAL-EQUITY-ACT-NATI-8F3DB2,NTIA Digital Equity Act - Native Entity Capacity & Planning,Tier 4,unclear,unclear,False
+OJP-CURRENT-FUNDING-OPPORTUN-6978DC,OJP Current Funding Opportunities,Tier 4,sometimes_allowable,sometimes-allowable-depends-on-NOFO,False
+SAM-GOV-DATA-SERVICES-PORTAL-2A4BE2,SAM.gov Data Services portal,Tier 4,unknown,UNKNOWN,False
+SBA-7-J-MANAGEMENT-AND-TECHN-A084FA,SBA 7(j) Management and Technical Assistance,Tier 4,unclear,unclear,False
+STATE-AND-LOCAL-CYBERSECURIT-17C7B2,State and Local Cybersecurity Grant Program (SLCGP),Tier 4,unclear,unclear,False
+TRIBAL-CYBERSECURITY-GRANT-P-0C67C6,Tribal Cybersecurity Grant Program,Tier 4,unclear,unclear,False
+USDA-FNA-SUMMER-EBT-TRIBAL-A-B8B108,USDA FNA Summer EBT (tribal administration),Tier 4,unclear,unclear,False
+USDA-NRCS-FSA-FOREST-SERVICE-A176C4,USDA NRCS / FSA / Forest Service tribal programs,Tier 4,unclear,unclear,False
+USGS-CLIMATE-ADAPTATION-SCIE-7EAB44,USGS Climate Adaptation Science Centers,Tier 4,unclear,unclear,False
+USGS-OFFICE-OF-TRIBAL-RELATI-36C6DC,USGS Office of Tribal Relations,Tier 4,unknown,n/a,False
+USGS-TRIBAL-FUNDING-A2DBD3,USGS tribal funding,Tier 4,unclear,unclear,False
+CANDID-APIS-AND-FOUNDATION-D-2A3F6E,Candid APIs and Foundation Directory,Tier 4,unknown,n/a,False
+MARGARET-A-CARGILL-PHILANTHR-C88CAA,Margaret A. Cargill Philanthropies,Tier 4,unclear,unclear,False
+NORTHWEST-AREA-FOUNDATION-C6FFBC,Northwest Area Foundation,Tier 4,unclear,unclear,False
+SC-BROADBAND-OFFICE-BEAD-16E0C9,SC Broadband Office BEAD,Tier 4,unknown,infrastructure only,False
+SC-BROADBAND-STATE-MANAGED-P-4973AD,SC Broadband State Managed Programs,Tier 4,unknown,infrastructure only,False
+SCEMD-MAIN-SITE-HSGP-SHSP-EM-4F8683,SCEMD main site - HSGP/SHSP/EMPG absence,Tier 4,unknown,UNKNOWN,False
+SC-SCORF,SCORF Grant Management System,Tier 4,sometimes_allowable,Sometimes allowable depending on program,False
+GRANTS-GOV-RSS-FEEDS-514B05,Grants.gov RSS feeds,Tier 5,unknown,n/a,False
+NIH-ERA-COMMONS-18D770,NIH eRA Commons,Tier 5,unknown,n/a,False
+USGS-COOPERATIVE-RESEARCH-UN-0C1B71,USGS Cooperative Research Units,Tier 5,unknown,n/a,False
+THIRD-PARTY-GRANT-AGGREGATOR-EA29BD,Third-party grant aggregators,Tier 5,unknown,UNKNOWN,False

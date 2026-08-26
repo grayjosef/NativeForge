@@ -74,12 +74,27 @@ def build_source_registry_seed(*, imported_source: dict[str, Any]) -> dict[str, 
     method = s.get("monitoring_method") or ""
     requires_login = s.get("requires_login") or ""
 
+    # Gate 92: read the derived tri-state rather than the raw cell. v2 writes
+    # free text here - "YES", "yes to apply", "yes - API key and paid contract"
+    # - and a raw == "Yes" comparison silently missed all of them.
+    login_resolved = s.get("requires_login_resolved") or (
+        "yes" if requires_login == "Yes" else "no"
+    )
+
     human_review_only = (
         terms_status == "HUMAN_REVIEW_ONLY"
         or method in HUMAN_ONLY_METHODS
-        or requires_login == "Yes"
+        or login_resolved == "yes"
     )
-    legal_terms_review_required = terms_status not in AUTOMATABLE_AFTER_REVIEW
+
+    # A source only a human can handle necessarily needs review. Deriving the
+    # review flag *from* human_review_only rather than from terms_status alone
+    # closes a case the Gate 90 invariant caught on the v2 import: a row whose
+    # human-only signal came from its monitoring method or its login could read
+    # human_review_only=True with legal_terms_review_required=False.
+    legal_terms_review_required = (
+        human_review_only or terms_status not in AUTOMATABLE_AFTER_REVIEW
+    )
 
     blocked = list(s.get("activation_blocked_reasons") or [])
     if human_review_only and "human_review_only" not in blocked:
@@ -87,7 +102,18 @@ def build_source_registry_seed(*, imported_source: dict[str, Any]) -> dict[str, 
 
     # `has_api` describes the source. It says nothing about our permission to
     # call it, so the two are reported side by side and never merged.
-    api_capable = s.get("has_api") == "Yes"
+    #
+    # Gate 92: read off the derived tri-state for the same reason the login
+    # check does. A qualified "yes - API key and paid contract" is a capability
+    # with a condition attached, and it is carried as `api_conditional` rather
+    # than being rounded up into `api_capable` or lost entirely.
+    api_resolved = s.get("has_api_resolved") or (
+        "yes" if s.get("has_api") == "Yes" else "no"
+    )
+    feed_resolved = s.get("has_rss_or_email_resolved") or (
+        "yes" if s.get("has_rss_or_email") == "Yes" else "no"
+    )
+    api_capable = api_resolved == "yes"
 
     return _json_safe(
         {
@@ -114,8 +140,10 @@ def build_source_registry_seed(*, imported_source: dict[str, Any]) -> dict[str, 
             "human_review_only": human_review_only,
             # --- capability vs approval ----------------------------------
             "api_capable": api_capable,
+            "api_conditional": api_resolved == "conditional",
             "api_approved": False,
-            "feed_capable": s.get("has_rss_or_email") == "Yes",
+            "feed_capable": feed_resolved == "yes",
+            "feed_conditional": feed_resolved == "conditional",
             "requires_login": requires_login,
             "activation_blocked_reasons": blocked,
             # --- bridge to Gate 76, at its weakest members ---------------

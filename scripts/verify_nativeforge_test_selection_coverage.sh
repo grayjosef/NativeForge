@@ -64,6 +64,15 @@ CRITICAL=(
   # to be quietly lost in a refactor.
   "tests/test_gate91_awarded_vs_pursuit_reporting_parser.py::test_backend_enum_assignment_alone_is_not_a_valid_transition"
   "tests/test_gate91_awarded_vs_pursuit_reporting_parser.py::test_projected_and_active_are_structurally_distinct"
+  # Gate 92. Three whose quiet loss would each be expensive in a different
+  # way: the recall set is the product's whole reason for existing (a filter
+  # on 07|11 alone looks clean and silently drops tribally-eligible money);
+  # the Grants.gov attribution is a legal build requirement that must survive
+  # verbatim; and the geography gate is the one place where "unknown" must
+  # mean withheld rather than shown.
+  "tests/test_gate92_v2_source_registry_spine.py::test_unrestricted_and_others_stay_in_the_recall_set"
+  "tests/test_gate92_v2_source_registry_spine.py::test_grants_gov_attribution_is_verbatim"
+  "tests/test_gate92_v2_source_registry_spine.py::test_geography_gate_denies_by_default"
 )
 
 FAIL=0
