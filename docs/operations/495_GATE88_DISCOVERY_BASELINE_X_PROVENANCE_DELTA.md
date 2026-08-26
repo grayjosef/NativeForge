@@ -1,5 +1,20 @@
 # 495 — Gate 88C/88D: Discovery Baseline X corpus provenance delta
 
+
+> **Gate 89 note.** Gate 89 created the attestation mechanism
+> (`corpus_provenance_attestation_service`), the blank packet (doc 498) and a
+> stub recording that none has been supplied (doc 499). **It did not change any
+> classification on this page** — no completed operator attestation exists, so
+> there was nothing to change them with.
+>
+> Every figure below still stands: 18 verified, 166 asserted, 1 circular, 38
+> flags-only, `recorded_records` 162, overstated by 144.
+>
+> When an attestation does arrive it can only move records it names, and only by
+> pointing at raw transport that exists. It can never create live coverage,
+> source monitoring, or an improvement claim — those are hardcoded `False` in the
+> validator. See docs 497, 498, 499, 500.
+
 ## The delta
 
 | Metric | Gate 87 | Gate 88 | Note |
