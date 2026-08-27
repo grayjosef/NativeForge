@@ -1,0 +1,12 @@
+scenario,secret_scan_status,redaction_status,terms_status,parser_status,created_from_fixture,activation_preflight_present,can_promote,promotion_status,human_review_required,blocked_reasons,local_raw_payload_store_available,production_raw_payload_store_available,live_fetch_performed,collectors_active,source_monitoring_active,live_source_coverage
+clean fixture payload,clean,not_required,NO_REVIEW_REQUIRED,not_started,True,False,True,evidence_ready,False,,True,False,False,False,False,False
+secret scan pending,pending,not_required,NO_REVIEW_REQUIRED,not_started,True,False,False,quarantine,False,secret_scan_not_clean:pending,True,False,False,False,False,False
+secret findings,findings_blocked,not_required,NO_REVIEW_REQUIRED,not_started,True,False,False,quarantine,False,secret_scan_not_clean:findings_blocked,True,False,False,False,False,False
+redaction pending,clean,pending,NO_REVIEW_REQUIRED,not_started,True,False,False,quarantine,False,redaction_not_resolved:pending,True,False,False,False,False,False
+redaction failed,clean,failed,NO_REVIEW_REQUIRED,not_started,True,False,False,quarantine,False,redaction_not_resolved:failed,True,False,False,False,False,False
+terms review required,clean,not_required,TERMS_REVIEW_REQUIRED,not_started,True,False,False,quarantine,False,terms_status_blocks:TERMS_REVIEW_REQUIRED,True,False,False,False,False,False
+human review only,clean,not_required,HUMAN_REVIEW_ONLY,not_started,True,False,False,quarantine,True,terms_status_blocks:HUMAN_REVIEW_ONLY,True,False,False,False,False,False
+terms unknown,clean,not_required,UNKNOWN,not_started,True,False,False,quarantine,False,terms_status_blocks:UNKNOWN,True,False,False,False,False,False
+parse failed,clean,not_required,NO_REVIEW_REQUIRED,parse_failed,True,False,False,quarantine,False,parser_status_blocks:parse_failed,True,False,False,False,False,False
+parser unavailable,clean,not_required,NO_REVIEW_REQUIRED,parser_unavailable,True,False,False,quarantine,False,parser_status_blocks:parser_unavailable,True,False,False,False,False,False
+"live payload, no preflight",clean,not_required,NO_REVIEW_REQUIRED,not_started,False,False,False,quarantine,False,activation_preflight_absent,True,False,False,False,False,False

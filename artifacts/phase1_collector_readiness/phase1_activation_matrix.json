@@ -37,8 +37,11 @@
     "fabricated": false,
     "live_fetch_performed": false,
     "live_source_coverage": false,
+    "local_raw_payload_store_available": true,
     "monitors_active": 0,
     "phase": 1,
+    "production_raw_payload_store_available": false,
+    "raw_payload_store_contract_available": true,
     "schema_version": "nf_phase1_collector_activation_policy_v1",
     "source_count": 5,
     "sources": [
@@ -211,6 +214,10 @@
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "local_raw_payload_store_available": true,
+      "production_raw_payload_store_available": false,
+      "raw_payload_store_contract_available": true,
+      "raw_payload_store_implementation": "local_only",
       "requirements_missing": [
         "raw_payload_storage",
         "scheduler_policy"
@@ -220,6 +227,7 @@
         "credential",
         "legal_review",
         "rate_limit_policy",
+        "raw_payload_store_implementation",
         "terms_cleared",
         "user_agent_policy"
       ],
@@ -253,6 +261,10 @@
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "local_raw_payload_store_available": true,
+      "production_raw_payload_store_available": false,
+      "raw_payload_store_contract_available": true,
+      "raw_payload_store_implementation": "local_only",
       "requirements_missing": [
         "raw_payload_storage",
         "scheduler_policy"
@@ -262,6 +274,7 @@
         "credential",
         "legal_review",
         "rate_limit_policy",
+        "raw_payload_store_implementation",
         "terms_cleared",
         "user_agent_policy"
       ],
@@ -295,6 +308,10 @@
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "local_raw_payload_store_available": true,
+      "production_raw_payload_store_available": false,
+      "raw_payload_store_contract_available": true,
+      "raw_payload_store_implementation": "local_only",
       "requirements_missing": [
         "raw_payload_storage",
         "scheduler_policy"
@@ -304,6 +321,7 @@
         "credential",
         "legal_review",
         "rate_limit_policy",
+        "raw_payload_store_implementation",
         "terms_cleared",
         "user_agent_policy"
       ],
@@ -339,6 +357,10 @@
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "local_raw_payload_store_available": true,
+      "production_raw_payload_store_available": false,
+      "raw_payload_store_contract_available": true,
+      "raw_payload_store_implementation": "local_only",
       "requirements_missing": [
         "credential",
         "raw_payload_storage",
@@ -349,6 +371,7 @@
         "attribution",
         "legal_review",
         "rate_limit_policy",
+        "raw_payload_store_implementation",
         "user_agent_policy"
       ],
       "resolved_inputs": {
@@ -381,6 +404,10 @@
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "local_raw_payload_store_available": true,
+      "production_raw_payload_store_available": false,
+      "raw_payload_store_contract_available": true,
+      "raw_payload_store_implementation": "local_only",
       "requirements_missing": [
         "raw_payload_storage",
         "scheduler_policy"
@@ -390,6 +417,7 @@
         "credential",
         "legal_review",
         "rate_limit_policy",
+        "raw_payload_store_implementation",
         "terms_cleared",
         "user_agent_policy"
       ],

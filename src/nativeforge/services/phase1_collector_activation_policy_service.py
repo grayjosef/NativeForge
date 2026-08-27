@@ -43,7 +43,9 @@ import json
 from typing import Any
 
 from nativeforge.services.source_activation_preflight_service import (
+    STORE_IMPLEMENTATION_SATISFYING,
     build_activation_preflight,
+    detect_store_implementation,
     preflight_invariant_failures,
 )
 
@@ -214,6 +216,13 @@ def build_phase1_activation_matrix(
             "monitors_active": 0,
             "live_fetch_performed": False,
             "live_source_coverage": False,
+            # Gate 95. Three separate facts. The local store exists and is
+            # usable for fixtures and dry-runs; production storage does not
+            # exist, and a local store is not a step toward claiming it does.
+            "raw_payload_store_contract_available": True,
+            "local_raw_payload_store_available": detect_store_implementation()
+            in STORE_IMPLEMENTATION_SATISFYING,
+            "production_raw_payload_store_available": False,
             "sources_may_fetch_live_now": 0,
             "sources_may_schedule_monitor": 0,
             "sources_may_surface_customer_data": 0,
@@ -318,6 +327,10 @@ def policy_invariant_failures(matrix: dict[str, Any]) -> list[str]:
     ):
         if matrix.get(counter):
             fails.append(f"matrix_reported_nonzero:{counter}")
+
+    # Gate 95: a local store is not a production store.
+    if matrix.get("production_raw_payload_store_available") is not False:
+        fails.append("matrix_claimed_production_payload_storage")
 
     seen = [s.get("source_id") for s in matrix.get("sources") or []]
     if seen != list(PHASE1_SOURCE_IDS):

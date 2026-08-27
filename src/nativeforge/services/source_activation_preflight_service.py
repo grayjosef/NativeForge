@@ -95,8 +95,28 @@ USER_AGENT_SATISFYING = frozenset({"policy_declared", "not_required"})
 RATE_LIMIT_STATUSES = frozenset({"policy_declared", "missing", "unknown"})
 RATE_LIMIT_SATISFYING = frozenset({"policy_declared"})
 
-STORAGE_STATUSES = frozenset({"contract_satisfied", "missing", "partial", "unknown"})
-STORAGE_SATISFYING = frozenset({"contract_satisfied"})
+STORAGE_STATUSES = frozenset(
+    {
+        "contract_satisfied",
+        "local_implementation_available",
+        "production_available",
+        "missing",
+        "partial",
+        "unknown",
+    }
+)
+STORAGE_SATISFYING = frozenset(
+    {"contract_satisfied", "local_implementation_available", "production_available"}
+)
+
+# Gate 95: a contract is not an implementation. This is a separate
+# requirement from the per-source `raw_payload_storage` status above,
+# because a source can be configured correctly against a store that does not
+# exist - which is what "contract satisfied" meant for all of Gate 93.
+STORE_IMPLEMENTATION_STATUSES = frozenset(
+    {"none", "local_only", "production", "unknown"}
+)
+STORE_IMPLEMENTATION_SATISFYING = frozenset({"local_only", "production"})
 
 SCHEDULER_STATUSES = frozenset({"policy_declared", "missing", "unknown"})
 SCHEDULER_SATISFYING = frozenset({"policy_declared"})
@@ -123,6 +143,7 @@ REQUIREMENT_KEYS: tuple[str, ...] = (
     "attribution",
     "credential",
     "raw_payload_storage",
+    "raw_payload_store_implementation",
     "rate_limit_policy",
     "user_agent_policy",
     "scheduler_policy",
@@ -132,6 +153,23 @@ REQUIREMENT_KEYS: tuple[str, ...] = (
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
+
+
+def detect_store_implementation() -> str:
+    """Which raw payload store actually exists in this checkout.
+
+    Detected, not declared. A caller-supplied flag saying "the store exists"
+    is the same shape as the corpus flags Gates 87-89 unpicked: a claim about
+    a claim. This imports the module and reports what it finds.
+    """
+    try:
+        from nativeforge.services import local_raw_payload_store_service as store
+    except ImportError:
+        return "none"
+    if not hasattr(store, "store_raw_payload"):
+        return "none"
+    # Production storage is not live; when it is, this reports "production".
+    return "local_only"
 
 
 def _norm(value: Any, vocabulary: frozenset[str], *, fallback: str) -> str:
@@ -240,6 +278,15 @@ def build_activation_preflight(
         f"raw_payload_store_contract_unsatisfied:{storage}",
     )
 
+    # 5b. Gate 95: the store must actually exist. A source configured against a
+    #     store nobody built is configured against nothing.
+    store_implementation = detect_store_implementation()
+    record(
+        "raw_payload_store_implementation",
+        store_implementation in STORE_IMPLEMENTATION_SATISFYING,
+        f"raw_payload_store_implementation_missing:{store_implementation}",
+    )
+
     # 6. Rate limit policy. Also required for every collector.
     record(
         "rate_limit_policy",
@@ -321,6 +368,14 @@ def build_activation_preflight(
             # Constant for this gate. Nothing fetches, so nothing may say it is
             # safe to fetch right now.
             "safe_to_fetch_now": False,
+            # Gate 95. Three distinct facts, never collapsed into one:
+            # the contract exists, a local store exists, production does not.
+            "raw_payload_store_contract_available": True,
+            "local_raw_payload_store_available": store_implementation
+            in STORE_IMPLEMENTATION_SATISFYING,
+            "production_raw_payload_store_available": store_implementation
+            == "production",
+            "raw_payload_store_implementation": store_implementation,
             "resolved_inputs": {
                 "terms_status": terms,
                 "legal_review_status": legal,
@@ -452,6 +507,19 @@ def preflight_invariant_failures(result: dict[str, Any]) -> list[str]:
             and resolved.get("user_agent_status") != "policy_declared"
         ):
             fails.append("crawler_allowed_without_a_user_agent_policy")
+
+    # Gate 95: a local store is not a production store, and no result may
+    # imply otherwise.
+    if result.get("production_raw_payload_store_available") is not False:
+        fails.append("preflight_claimed_production_payload_storage")
+    if result.get("raw_payload_store_implementation") not in (
+        STORE_IMPLEMENTATION_STATUSES
+    ):
+        fails.append("store_implementation_out_of_vocabulary")
+    if result.get("activation_allowed") and result.get(
+        "raw_payload_store_implementation"
+    ) not in STORE_IMPLEMENTATION_SATISFYING:
+        fails.append("activation_allowed_without_a_payload_store_implementation")
 
     # An AI-crawler UA is never a satisfied policy, whatever the collector type.
     if resolved.get("user_agent_status") == "forbidden_ai_crawler" and result.get(

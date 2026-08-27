@@ -29,3 +29,12 @@ frontend/dist/
 # Playwright local artifacts
 frontend/playwright-report/
 frontend/test-results/
+
+# Gate 95: raw payload store bodies never enter git.
+# `artifacts/` is not ignored wholesale — a dozen artifact directories are
+# committed deliberately — so the payload store would otherwise be one
+# `git add artifacts/...` away from putting agency response bodies, and any
+# credentials inside them, into history. That is the Gate 89 JWT finding with a
+# new directory name. The readiness artifacts live in a separate, committed
+# directory: artifacts/raw_payload_store_readiness/.
+artifacts/raw_payload_store/

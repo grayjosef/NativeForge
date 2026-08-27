@@ -1,0 +1,85 @@
+{
+  "collectors_active": false,
+  "evidence_critical_fields": [
+    "source_id",
+    "retrieved_at",
+    "response_body_hash",
+    "raw_payload_ref"
+  ],
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "local_raw_payload_store_available": true,
+  "production_raw_payload_store_available": false,
+  "promotion_requirements": [
+    "source_id",
+    "retrieved_at",
+    "response_body_hash",
+    "raw_payload_ref",
+    "secret_scan_clean",
+    "redaction_resolved",
+    "terms_cleared",
+    "parser_status_ok",
+    "activation_permits_storage"
+  ],
+  "required_fields": [
+    "payload_id",
+    "source_id",
+    "source_name",
+    "source_type",
+    "collector_id",
+    "retrieved_at",
+    "retrieval_method",
+    "request_method",
+    "request_url",
+    "request_fingerprint",
+    "canonical_url",
+    "response_status",
+    "response_headers_hash",
+    "response_body_hash",
+    "response_body_size_bytes",
+    "content_type",
+    "raw_payload_ref",
+    "redaction_status",
+    "secret_scan_status",
+    "terms_status",
+    "attribution_required",
+    "parser_status",
+    "promotion_status",
+    "retention_policy",
+    "created_from_live_fetch",
+    "created_from_fixture",
+    "blocked_reasons"
+  ],
+  "schema_version": "nf_raw_payload_store_readiness_artifact_v1",
+  "source_monitoring_active": false,
+  "storage_mode": "local_dev_only",
+  "storage_root": "artifacts/raw_payload_store",
+  "store_root_is_gitignored": true,
+  "vocabularies": {
+    "parser_status": [
+      "human_review_required",
+      "not_started",
+      "parse_failed",
+      "parsed",
+      "parser_unavailable"
+    ],
+    "promotion_status": [
+      "evidence_ready",
+      "quarantine",
+      "rejected",
+      "superseded"
+    ],
+    "redaction_status": [
+      "completed",
+      "failed",
+      "not_required",
+      "pending"
+    ],
+    "secret_scan_status": [
+      "clean",
+      "failed",
+      "findings_blocked",
+      "pending"
+    ]
+  }
+}
