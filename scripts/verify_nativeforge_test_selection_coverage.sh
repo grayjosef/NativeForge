@@ -62,7 +62,12 @@ source .venv/bin/activate
 # facts this gate holds - no runtime, no worker, nothing monitoring, not
 # ready - live in tests whose names are about scheduling rather than sources,
 # and a rename inside the file would have dropped them silently.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run'
+#
+# `job`, `queue`, `dry_run`, `idempotency` and `runtime` were added by Gate 99.
+# Its critical tests are about a job queue and a runtime mode; `scheduler`
+# reaches the module but not the test names, and the one test that holds
+# `live_jobs_created` at zero is named for the queue rather than the scheduler.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -139,11 +144,22 @@ CRITICAL=(
   # a declared scheduler policy does not buy scheduling, an unrecognised
   # manual override blocks instead of permitting, and a missing schedule is a
   # question for a person rather than a licence to run now.
-  "tests/test_gate98_scheduler_circuit_breaker.py::test_the_four_required_facts_are_all_false"
+  "tests/test_gate98_scheduler_circuit_breaker.py::test_the_three_facts_that_must_stay_false_are_false"
   "tests/test_gate98_scheduler_circuit_breaker.py::test_the_runtime_detection_is_live_not_a_hardcoded_false"
   "tests/test_gate98_scheduler_circuit_breaker.py::test_a_cleared_source_may_activate_but_may_not_be_scheduled"
   "tests/test_gate98_scheduler_circuit_breaker.py::test_an_unrecognised_override_blocks_rather_than_reads_as_no_override"
   "tests/test_gate98_scheduler_circuit_breaker.py::test_a_missing_due_date_is_unknown_not_immediate"
+
+  # Gate 99. Five that hold the dry-run boundary: no live job is ever created,
+  # live collection stays refused even with every precondition satisfied, a
+  # dry-run runtime is not monitoring, the CLI refuses rather than does live
+  # work, and Gate 98F is unaffected - a dry-run runtime makes no source
+  # schedulable.
+  "tests/test_gate99_scheduler_runtime_dry_run.py::test_live_jobs_created_is_zero"
+  "tests/test_gate99_scheduler_runtime_dry_run.py::test_live_collection_is_blocked_by_default"
+  "tests/test_gate99_scheduler_runtime_dry_run.py::test_the_three_facts_gate_99_may_not_change_remain_false"
+  "tests/test_gate99_scheduler_runtime_dry_run.py::test_the_cli_refuses_when_a_live_job_appears"
+  "tests/test_gate99_scheduler_runtime_dry_run.py::test_a_dry_run_runtime_does_not_make_any_source_schedulable"
 )
 
 FAIL=0

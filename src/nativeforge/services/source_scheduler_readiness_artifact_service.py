@@ -64,6 +64,7 @@ from nativeforge.services.source_schedule_decision_service import (
 )
 from nativeforge.services.source_scheduler_readiness_service import (
     COMPONENT_KEYS,
+    RUNTIME_COMPONENT_KEYS,
     build_scheduler_readiness,
     scheduler_readiness_invariant_failures,
 )
@@ -86,9 +87,24 @@ ARTIFACT_NAMES: tuple[str, ...] = (
     SUMMARY_NAME,
 )
 
-# The four facts every file states, in this order.
+# The facts every file states, in this order.
+#
+# Gate 99D added `runtime_mode`. It has to travel with
+# `scheduler_runtime_available`, which is now true: that line read on its own -
+# in a copied CSV row, on a status page - would be taken for a production
+# scheduler, and the mode is the only thing that says otherwise.
 DECLARATION_KEYS: tuple[str, ...] = (
+    "runtime_mode",
     "scheduler_runtime_available",
+    "background_worker_available",
+    "source_monitoring_live",
+    "ready_to_start_monitoring",
+)
+
+# The declarations that are booleans and must be False. `runtime_mode` is a
+# string and `scheduler_runtime_available` is legitimately True from Gate 99
+# onward, so neither belongs in a "must be false" check.
+FALSE_DECLARATION_KEYS: tuple[str, ...] = (
     "background_worker_available",
     "source_monitoring_live",
     "ready_to_start_monitoring",
@@ -265,12 +281,7 @@ def build_readiness_bundle(*, repo_root: Path | None = None) -> dict[str, Any]:
     """Everything the five artifacts are rendered from."""
     readiness = build_scheduler_readiness(repo_root=repo_root)
 
-    declarations = {
-        "scheduler_runtime_available": readiness["scheduler_runtime_available"],
-        "background_worker_available": readiness["background_worker_available"],
-        "source_monitoring_live": readiness["source_monitoring_live"],
-        "ready_to_start_monitoring": readiness["ready_to_start_monitoring"],
-    }
+    declarations = {key: readiness[key] for key in DECLARATION_KEYS}
 
     component_rows = []
     for key in COMPONENT_KEYS:
@@ -279,8 +290,11 @@ def build_readiness_bundle(*, repo_root: Path | None = None) -> dict[str, Any]:
             {
                 "component": key,
                 "available": record["available"],
+                # `dry_run_runtime` is a runtime in the narrow sense that code
+                # runs, and Gate 99 labels it as one here so a reader is not
+                # left wondering why a contract made `runtime_mode` move.
                 "kind": "runtime"
-                if key in {"scheduler_runtime", "background_worker", "periodic_trigger"}
+                if key in RUNTIME_COMPONENT_KEYS | {"dry_run_runtime"}
                 else "contract",
                 "detection_method": record["detection_method"],
                 **declarations,
@@ -374,8 +388,21 @@ def render_readiness_summary(bundle: dict[str, Any]) -> str:
     lines.append("")
     lines.append("```text")
     for key in DECLARATION_KEYS:
-        lines.append(f"{key:<32}{str(bool(declarations[key])).lower()}")
+        value = declarations[key]
+        # `runtime_mode` is a string. Coercing it through bool() would print
+        # "true" for every mode including `none`, which is exactly the kind of
+        # collapse this whole block exists to prevent.
+        rendered = str(value).lower() if isinstance(value, bool) else str(value)
+        lines.append(f"{key:<32}{rendered}")
     lines.append("```")
+    lines.append("")
+    lines.append(
+        "`scheduler_runtime_available` is true because `runtime_mode` is "
+        f"`{readiness['runtime_mode']}` - an in-process queue builder that "
+        "executes nothing. It is not a background worker, and it is not "
+        "monitoring. `scheduler_package_installed` is "
+        f"{str(readiness['scheduler_package_installed']).lower()}."
+    )
     lines.append("")
     lines.append("## Components")
     lines.append("")

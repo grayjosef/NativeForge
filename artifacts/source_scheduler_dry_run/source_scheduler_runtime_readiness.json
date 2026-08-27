@@ -1,5 +1,10 @@
 {
-  "background_worker_available": false,
+  "collectors_executed": false,
+  "dry_run_only": true,
+  "live_fetch_performed": false,
+  "live_jobs_created": 0,
+  "live_source_coverage": false,
+  "raw_payloads_written": false,
   "readiness": {
     "background_worker_available": false,
     "blocked_reasons": [
@@ -143,136 +148,7 @@
     "schema_version": "nf_source_scheduler_readiness_v1",
     "source_monitoring_live": false
   },
-  "ready_to_start_monitoring": false,
   "runtime_mode": "dry_run_in_process",
-  "schedule": {
-    "enqueue_permitted_statuses": [
-      "due_and_safe_to_enqueue"
-    ],
-    "reference_now": "2026-01-01T12:00:00+00:00",
-    "requirement_keys": [
-      "collector_active",
-      "activation_allowed",
-      "monitoring_enabled",
-      "terms_cleared",
-      "human_review_cleared",
-      "circuit_permits",
-      "production_payload_store"
-    ],
-    "scenarios": [
-      {
-        "blocked_reasons": [
-          "activation_not_allowed:activation_unknown",
-          "circuit_does_not_permit:unknown",
-          "collector_not_active:not_active",
-          "human_review_not_cleared:unknown",
-          "monitoring_not_enabled:unknown",
-          "next_check_due_at_absent",
-          "production_raw_payload_store_unavailable",
-          "terms_status_blocks:UNKNOWN"
-        ],
-        "due_for_check": false,
-        "invariant_failures": [],
-        "safe_to_enqueue": false,
-        "safe_to_execute_now": false,
-        "scenario": "nothing_supplied",
-        "schedule_status": "unknown"
-      },
-      {
-        "blocked_reasons": [],
-        "due_for_check": true,
-        "invariant_failures": [],
-        "safe_to_enqueue": true,
-        "safe_to_execute_now": false,
-        "scenario": "due_and_cleared",
-        "schedule_status": "due_and_safe_to_enqueue"
-      },
-      {
-        "blocked_reasons": [],
-        "due_for_check": false,
-        "invariant_failures": [],
-        "safe_to_enqueue": false,
-        "safe_to_execute_now": false,
-        "scenario": "not_yet_due",
-        "schedule_status": "not_due"
-      },
-      {
-        "blocked_reasons": [
-          "next_check_due_at_absent"
-        ],
-        "due_for_check": false,
-        "invariant_failures": [],
-        "safe_to_enqueue": false,
-        "safe_to_execute_now": false,
-        "scenario": "no_schedule_recorded",
-        "schedule_status": "unknown"
-      },
-      {
-        "blocked_reasons": [
-          "monitoring_not_enabled:disabled"
-        ],
-        "due_for_check": true,
-        "invariant_failures": [],
-        "safe_to_enqueue": false,
-        "safe_to_execute_now": false,
-        "scenario": "monitoring_disabled",
-        "schedule_status": "disabled"
-      },
-      {
-        "blocked_reasons": [
-          "terms_status_blocks:TERMS_REVIEW_REQUIRED"
-        ],
-        "due_for_check": true,
-        "invariant_failures": [],
-        "safe_to_enqueue": false,
-        "safe_to_execute_now": false,
-        "scenario": "terms_review_required",
-        "schedule_status": "due_but_blocked"
-      },
-      {
-        "blocked_reasons": [
-          "human_review_not_cleared:not_required",
-          "terms_status_blocks:HUMAN_REVIEW_ONLY"
-        ],
-        "due_for_check": true,
-        "invariant_failures": [],
-        "safe_to_enqueue": false,
-        "safe_to_execute_now": false,
-        "scenario": "human_review_only",
-        "schedule_status": "due_but_blocked"
-      },
-      {
-        "blocked_reasons": [
-          "circuit_does_not_permit:open"
-        ],
-        "due_for_check": true,
-        "invariant_failures": [],
-        "safe_to_enqueue": false,
-        "safe_to_execute_now": false,
-        "scenario": "circuit_open",
-        "schedule_status": "due_but_blocked"
-      },
-      {
-        "blocked_reasons": [
-          "production_raw_payload_store_unavailable"
-        ],
-        "due_for_check": true,
-        "invariant_failures": [],
-        "safe_to_enqueue": false,
-        "safe_to_execute_now": false,
-        "scenario": "no_production_payload_store",
-        "schedule_status": "due_but_blocked"
-      }
-    ],
-    "schedule_statuses": [
-      "disabled",
-      "due_and_safe_to_enqueue",
-      "due_but_blocked",
-      "not_due",
-      "unknown"
-    ]
-  },
-  "scheduler_runtime_available": true,
-  "schema_version": "nf_source_scheduler_readiness_artifact_v1",
+  "schema_version": "nf_source_scheduler_dry_run_artifact_v1",
   "source_monitoring_live": false
 }

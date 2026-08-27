@@ -20,6 +20,7 @@
   "probe_performed": false,
   "ready_to_start_monitoring": false,
   "reference_now": "2026-01-01T12:00:00+00:00",
+  "runtime_mode": "dry_run_in_process",
   "scenarios": [
     {
       "blocked_reasons": [],
@@ -88,7 +89,7 @@
       "single_probe_only": false
     }
   ],
-  "scheduler_runtime_available": false,
+  "scheduler_runtime_available": true,
   "scheduling_permitted_statuses": [
     "closed",
     "half_open"

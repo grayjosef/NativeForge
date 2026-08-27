@@ -50,6 +50,7 @@ from nativeforge.services.source_scheduler_readiness_artifact_service import (
     ARTIFACT_DIR,
     ARTIFACT_NAMES,
     DECLARATION_KEYS,
+    FALSE_DECLARATION_KEYS,
     SchedulerReadinessArtifactError,
     artifact_claim_failures,
     build_readiness_bundle,
@@ -615,13 +616,27 @@ def test_every_count_field_appears_in_the_contract() -> None:
 # --------------------------------------------------------------------------
 
 
-def test_the_four_required_facts_are_all_false() -> None:
+def test_the_three_facts_that_must_stay_false_are_false() -> None:
+    """Gate 99D changed the fourth.
+
+    `scheduler_runtime_available` was False here and meant "no scheduler
+    package is installed". Gate 99 built an in-process dry-run queue, so the
+    honest answer became neither plain yes nor plain no; `runtime_mode` carries
+    it, and Gate 99's own tests hold that. These three are the ones a dry-run
+    runtime must never move, and they are asserted here as well as there
+    because this file is what a reader comes to for the Gate 98 boundary.
+    """
     readiness = build_scheduler_readiness()
-    assert readiness["scheduler_runtime_available"] is False
     assert readiness["background_worker_available"] is False
     assert readiness["source_monitoring_live"] is False
     assert readiness["ready_to_start_monitoring"] is False
     assert not scheduler_readiness_invariant_failures(readiness)
+
+
+def test_no_scheduler_package_is_installed_which_was_gate_98s_question() -> None:
+    readiness = build_scheduler_readiness()
+    assert readiness["scheduler_package_installed"] is False
+    assert readiness["runtime_mode"] == "dry_run_in_process"
 
 
 def test_no_scheduler_runtime_is_installed() -> None:
@@ -674,7 +689,9 @@ def test_the_runtime_detection_is_live_not_a_hardcoded_false(monkeypatch) -> Non
 def test_the_decision_layer_is_present_and_is_not_a_scheduler() -> None:
     readiness = build_scheduler_readiness()
     assert readiness["decision_layer_available"] is True
-    assert readiness["scheduler_runtime_available"] is False
+    # Gate 99 added a dry-run runtime, which still is not a worker and still
+    # cannot monitor anything.
+    assert readiness["background_worker_available"] is False
     assert readiness["ready_to_start_monitoring"] is False
 
 
@@ -887,7 +904,10 @@ def test_the_csv_stamps_declarations_on_every_row() -> None:
     lines = path.read_text(encoding="utf-8").strip().splitlines()
     assert len(lines) == len(COMPONENT_KEYS) + 1
     for line in lines[1:]:
-        assert line.endswith("False,False,False,False")
+        # runtime_mode, then the four booleans. Gate 99D made the first boolean
+        # True and put the mode in front of it, because `True` on its own in a
+        # copied row would be read as a production scheduler.
+        assert line.endswith("dry_run_in_process,True,False,False,False"), line
 
 
 def test_the_writer_refuses_a_bundle_whose_declarations_are_wrong(
@@ -919,8 +939,12 @@ def test_the_readiness_json_is_parseable_and_declares_the_facts() -> None:
     if not path.exists():
         pytest.skip("scheduler readiness artifacts not generated in this tree")
     payload = json.loads(path.read_text(encoding="utf-8"))
-    for key in DECLARATION_KEYS:
+    # Gate 99D: `runtime_mode` is a string and `scheduler_runtime_available` is
+    # legitimately true. These three are the ones that must stay false.
+    for key in FALSE_DECLARATION_KEYS:
         assert payload[key] is False
+    assert payload["runtime_mode"] == "dry_run_in_process"
+    assert set(FALSE_DECLARATION_KEYS) <= set(DECLARATION_KEYS)
 
 
 def test_no_artifact_contains_a_response_body_or_a_secret() -> None:

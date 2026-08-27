@@ -73,7 +73,8 @@
   "ready_to_start_monitoring": false,
   "redaction_placeholder": "[REDACTED]",
   "response_body_stored": false,
-  "scheduler_runtime_available": false,
+  "runtime_mode": "dry_run_in_process",
+  "scheduler_runtime_available": true,
   "schema_version": "nf_source_check_run_contract_v1",
   "source_monitoring_live": false,
   "table": "nf_source_check_runs"
