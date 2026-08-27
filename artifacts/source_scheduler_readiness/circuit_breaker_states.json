@@ -1,0 +1,101 @@
+{
+  "background_worker_available": false,
+  "breaker_threshold": 5,
+  "circuit_statuses": [
+    "closed",
+    "half_open",
+    "manual_hold",
+    "open",
+    "unknown"
+  ],
+  "cooldown_seconds": 3600,
+  "fabricated": false,
+  "fetch_performed": false,
+  "manual_override_statuses": [
+    "force_closed",
+    "hold",
+    "none",
+    "unknown"
+  ],
+  "probe_performed": false,
+  "ready_to_start_monitoring": false,
+  "reference_now": "2026-01-01T12:00:00+00:00",
+  "scenarios": [
+    {
+      "blocked_reasons": [],
+      "circuit_status": "closed",
+      "permits_scheduling": true,
+      "scenario": "closed",
+      "single_probe_only": false
+    },
+    {
+      "blocked_reasons": [],
+      "circuit_status": "closed",
+      "permits_scheduling": true,
+      "scenario": "closed_below_threshold",
+      "single_probe_only": false
+    },
+    {
+      "blocked_reasons": [
+        "cooldown_not_elapsed:2700s_remaining"
+      ],
+      "circuit_status": "open",
+      "permits_scheduling": false,
+      "scenario": "open_cooldown_running",
+      "single_probe_only": false
+    },
+    {
+      "blocked_reasons": [],
+      "circuit_status": "half_open",
+      "permits_scheduling": true,
+      "scenario": "half_open_cooldown_elapsed",
+      "single_probe_only": true
+    },
+    {
+      "blocked_reasons": [
+        "cooldown_not_derivable"
+      ],
+      "circuit_status": "open",
+      "permits_scheduling": false,
+      "scenario": "open_cooldown_not_derivable",
+      "single_probe_only": false
+    },
+    {
+      "blocked_reasons": [
+        "manual_hold"
+      ],
+      "circuit_status": "manual_hold",
+      "permits_scheduling": false,
+      "scenario": "manual_hold",
+      "single_probe_only": false
+    },
+    {
+      "blocked_reasons": [
+        "consecutive_failure_count_unknown"
+      ],
+      "circuit_status": "unknown",
+      "permits_scheduling": false,
+      "scenario": "unknown_failure_count_absent",
+      "single_probe_only": false
+    },
+    {
+      "blocked_reasons": [
+        "manual_override_status_unrecognised"
+      ],
+      "circuit_status": "unknown",
+      "permits_scheduling": false,
+      "scenario": "unknown_override_unrecognised",
+      "single_probe_only": false
+    }
+  ],
+  "scheduler_runtime_available": false,
+  "scheduling_permitted_statuses": [
+    "closed",
+    "half_open"
+  ],
+  "schema_version": "nf_source_scheduler_readiness_artifact_v1",
+  "single_probe_statuses": [
+    "half_open"
+  ],
+  "source_monitoring_live": false
+}

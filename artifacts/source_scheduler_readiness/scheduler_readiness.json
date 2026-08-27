@@ -1,0 +1,256 @@
+{
+  "background_worker_available": false,
+  "readiness": {
+    "background_worker_available": false,
+    "blocked_reasons": [
+      "component_missing:background_worker",
+      "component_missing:periodic_trigger",
+      "component_missing:production_raw_payload_store",
+      "component_missing:scheduler_runtime"
+    ],
+    "checks_executed": 0,
+    "collectors_active": false,
+    "component_keys": [
+      "schedule_decision_service",
+      "circuit_breaker_service",
+      "check_run_contract_service",
+      "production_raw_payload_store",
+      "scheduler_runtime",
+      "background_worker",
+      "periodic_trigger"
+    ],
+    "components": {
+      "background_worker": {
+        "available": false,
+        "detection_method": "find_spec + console_scripts entry points",
+        "modules_considered": [
+          "nativeforge.workers",
+          "nativeforge.worker",
+          "nativeforge.scheduler",
+          "nativeforge.tasks",
+          "nativeforge.jobs"
+        ],
+        "worker_entry_points": [],
+        "worker_modules": []
+      },
+      "check_run_contract_service": {
+        "available": true,
+        "detection_method": "import + callable check",
+        "entry_point": "build_check_run_record",
+        "module": "nativeforge.services.source_check_run_contract_service",
+        "reason": null
+      },
+      "circuit_breaker_service": {
+        "available": true,
+        "detection_method": "import + callable check",
+        "entry_point": "evaluate_circuit",
+        "module": "nativeforge.services.source_circuit_breaker_service",
+        "reason": null
+      },
+      "periodic_trigger": {
+        "available": false,
+        "detection_method": "repo file scan",
+        "host_schedulers_inspected": false,
+        "searched_directories": [
+          "deploy",
+          "systemd",
+          "ops",
+          "infra",
+          "scripts"
+        ],
+        "searched_suffixes": [
+          ".timer",
+          ".cron"
+        ],
+        "trigger_files": []
+      },
+      "production_raw_payload_store": {
+        "available": false,
+        "detection_method": "gate 96/97 readiness derivation",
+        "reason": null
+      },
+      "schedule_decision_service": {
+        "available": true,
+        "detection_method": "import + callable check",
+        "entry_point": "evaluate_schedule",
+        "module": "nativeforge.services.source_schedule_decision_service",
+        "reason": null
+      },
+      "scheduler_runtime": {
+        "available": false,
+        "detection_method": "importlib.util.find_spec",
+        "packages_considered": [
+          "apscheduler",
+          "arq",
+          "celery",
+          "croniter",
+          "dramatiq",
+          "huey",
+          "procrastinate",
+          "rq",
+          "schedule",
+          "taskiq"
+        ],
+        "packages_found": []
+      }
+    },
+    "components_missing": [
+      "background_worker",
+      "periodic_trigger",
+      "production_raw_payload_store",
+      "scheduler_runtime"
+    ],
+    "components_present": [
+      "check_run_contract_service",
+      "circuit_breaker_service",
+      "schedule_decision_service"
+    ],
+    "decision_layer_available": true,
+    "fabricated": false,
+    "live_fetch_performed": false,
+    "live_source_coverage": false,
+    "periodic_trigger_available": false,
+    "production_raw_payload_store_available": false,
+    "ready_to_start_monitoring": false,
+    "remaining_work": [
+      "background_worker",
+      "periodic_trigger",
+      "scheduler_runtime"
+    ],
+    "scheduled_jobs_started": 0,
+    "scheduler_runtime_available": false,
+    "schema_version": "nf_source_scheduler_readiness_v1",
+    "source_monitoring_live": false
+  },
+  "ready_to_start_monitoring": false,
+  "schedule": {
+    "enqueue_permitted_statuses": [
+      "due_and_safe_to_enqueue"
+    ],
+    "reference_now": "2026-01-01T12:00:00+00:00",
+    "requirement_keys": [
+      "collector_active",
+      "activation_allowed",
+      "monitoring_enabled",
+      "terms_cleared",
+      "human_review_cleared",
+      "circuit_permits",
+      "production_payload_store"
+    ],
+    "scenarios": [
+      {
+        "blocked_reasons": [
+          "activation_not_allowed:activation_unknown",
+          "circuit_does_not_permit:unknown",
+          "collector_not_active:not_active",
+          "human_review_not_cleared:unknown",
+          "monitoring_not_enabled:unknown",
+          "next_check_due_at_absent",
+          "production_raw_payload_store_unavailable",
+          "terms_status_blocks:UNKNOWN"
+        ],
+        "due_for_check": false,
+        "invariant_failures": [],
+        "safe_to_enqueue": false,
+        "safe_to_execute_now": false,
+        "scenario": "nothing_supplied",
+        "schedule_status": "unknown"
+      },
+      {
+        "blocked_reasons": [],
+        "due_for_check": true,
+        "invariant_failures": [],
+        "safe_to_enqueue": true,
+        "safe_to_execute_now": false,
+        "scenario": "due_and_cleared",
+        "schedule_status": "due_and_safe_to_enqueue"
+      },
+      {
+        "blocked_reasons": [],
+        "due_for_check": false,
+        "invariant_failures": [],
+        "safe_to_enqueue": false,
+        "safe_to_execute_now": false,
+        "scenario": "not_yet_due",
+        "schedule_status": "not_due"
+      },
+      {
+        "blocked_reasons": [
+          "next_check_due_at_absent"
+        ],
+        "due_for_check": false,
+        "invariant_failures": [],
+        "safe_to_enqueue": false,
+        "safe_to_execute_now": false,
+        "scenario": "no_schedule_recorded",
+        "schedule_status": "unknown"
+      },
+      {
+        "blocked_reasons": [
+          "monitoring_not_enabled:disabled"
+        ],
+        "due_for_check": true,
+        "invariant_failures": [],
+        "safe_to_enqueue": false,
+        "safe_to_execute_now": false,
+        "scenario": "monitoring_disabled",
+        "schedule_status": "disabled"
+      },
+      {
+        "blocked_reasons": [
+          "terms_status_blocks:TERMS_REVIEW_REQUIRED"
+        ],
+        "due_for_check": true,
+        "invariant_failures": [],
+        "safe_to_enqueue": false,
+        "safe_to_execute_now": false,
+        "scenario": "terms_review_required",
+        "schedule_status": "due_but_blocked"
+      },
+      {
+        "blocked_reasons": [
+          "human_review_not_cleared:not_required",
+          "terms_status_blocks:HUMAN_REVIEW_ONLY"
+        ],
+        "due_for_check": true,
+        "invariant_failures": [],
+        "safe_to_enqueue": false,
+        "safe_to_execute_now": false,
+        "scenario": "human_review_only",
+        "schedule_status": "due_but_blocked"
+      },
+      {
+        "blocked_reasons": [
+          "circuit_does_not_permit:open"
+        ],
+        "due_for_check": true,
+        "invariant_failures": [],
+        "safe_to_enqueue": false,
+        "safe_to_execute_now": false,
+        "scenario": "circuit_open",
+        "schedule_status": "due_but_blocked"
+      },
+      {
+        "blocked_reasons": [
+          "production_raw_payload_store_unavailable"
+        ],
+        "due_for_check": true,
+        "invariant_failures": [],
+        "safe_to_enqueue": false,
+        "safe_to_execute_now": false,
+        "scenario": "no_production_payload_store",
+        "schedule_status": "due_but_blocked"
+      }
+    ],
+    "schedule_statuses": [
+      "disabled",
+      "due_and_safe_to_enqueue",
+      "due_but_blocked",
+      "not_due",
+      "unknown"
+    ]
+  },
+  "scheduler_runtime_available": false,
+  "schema_version": "nf_source_scheduler_readiness_artifact_v1",
+  "source_monitoring_live": false
+}

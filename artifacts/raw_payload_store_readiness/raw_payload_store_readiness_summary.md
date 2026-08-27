@@ -41,5 +41,5 @@ The store root is gitignored. These readiness artifacts live in a different dire
 
 ## Secret scanning
 
-10 finding kinds. Gate 89 found a committed JWT inside a recorded API response; a store that keeps bodies without scanning them is a machine for repeating that. Findings report kind, location and an 8-hex fingerprint - never the value.
+11 finding kinds. Gate 89 found a committed JWT inside a recorded API response; a store that keeps bodies without scanning them is a machine for repeating that. Findings report kind, location and an 8-hex fingerprint - never the value.
 

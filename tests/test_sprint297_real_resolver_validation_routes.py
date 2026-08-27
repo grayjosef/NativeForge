@@ -11,6 +11,9 @@ from nativeforge.db.models import Organization
 from nativeforge.db.session import SessionLocal
 from nativeforge.lib.settings import get_settings
 from nativeforge.main import create_app
+from nativeforge.services.real_tier1_live_fetch_service import (
+    reset_real_tier1_fetch_rate_limit,
+)
 
 _DEMO_ORG = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
 _CONFIRM = {
@@ -32,6 +35,13 @@ def client_nf9(monkeypatch: pytest.MonkeyPatch) -> TestClient:
     monkeypatch.setenv("NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED", "true")
     monkeypatch.setenv("NF_REAL_RESOLVER_VALIDATION_PLAN_APPROVED", "true")
     get_settings.cache_clear()
+    # The tier-1 fetch rate limiter is a module global with a 1-second window,
+    # and this test reaches it through the route, which cannot override the
+    # interval. Sprints 292 and 294 already reset it for exactly this reason;
+    # 296 and 297 did not, so a preceding fetch inside the window failed this
+    # test with `rate limited - wait 0.02s`. Order-dependent, not a real
+    # rate-limit violation.
+    reset_real_tier1_fetch_rate_limit()
     with SessionLocal() as s:
         if s.get(Organization, _DEMO_ORG) is None:
             s.add(Organization(id=_DEMO_ORG, org_type="demo"))

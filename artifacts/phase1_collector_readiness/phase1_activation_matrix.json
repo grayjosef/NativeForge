@@ -46,10 +46,13 @@
     "phase": 1,
     "production_raw_payload_store_available": false,
     "raw_payload_store_contract_available": true,
+    "scheduler_runtime_available": false,
     "schema_version": "nf_phase1_collector_activation_policy_v1",
     "source_count": 5,
+    "source_monitoring_live": false,
     "sources": [
       {
+        "activation_is_not_scheduler_readiness": true,
         "activation_status": "activation_blocked",
         "attribution_required": true,
         "collector_status": "not_active",
@@ -74,12 +77,14 @@
           "retention_alert_policy"
         ],
         "satisfied_preconditions": [],
+        "scheduler_runtime_available": false,
         "schema_version": "nf_phase1_collector_activation_policy_v1",
         "scraping_prohibited": false,
         "source_id": "grants_gov_daily_extract",
         "unrecognised_preconditions": []
       },
       {
+        "activation_is_not_scheduler_readiness": true,
         "activation_status": "activation_blocked",
         "attribution_required": true,
         "collector_status": "not_active",
@@ -104,12 +109,14 @@
           "amendment_materiality_policy"
         ],
         "satisfied_preconditions": [],
+        "scheduler_runtime_available": false,
         "schema_version": "nf_phase1_collector_activation_policy_v1",
         "scraping_prohibited": false,
         "source_id": "grants_gov_search2_fetch",
         "unrecognised_preconditions": []
       },
       {
+        "activation_is_not_scheduler_readiness": true,
         "activation_status": "activation_blocked",
         "attribution_required": false,
         "collector_status": "not_active",
@@ -134,12 +141,14 @@
           "public_inspection_handling"
         ],
         "satisfied_preconditions": [],
+        "scheduler_runtime_available": false,
         "schema_version": "nf_phase1_collector_activation_policy_v1",
         "scraping_prohibited": false,
         "source_id": "federal_register_api",
         "unrecognised_preconditions": []
       },
       {
+        "activation_is_not_scheduler_readiness": true,
         "activation_status": "activation_blocked",
         "attribution_required": false,
         "collector_status": "not_active",
@@ -166,12 +175,14 @@
           "no_scraping_ack"
         ],
         "satisfied_preconditions": [],
+        "scheduler_runtime_available": false,
         "schema_version": "nf_phase1_collector_activation_policy_v1",
         "scraping_prohibited": true,
         "source_id": "sam_assistance_listings_api",
         "unrecognised_preconditions": []
       },
       {
+        "activation_is_not_scheduler_readiness": true,
         "activation_status": "activation_blocked",
         "attribution_required": false,
         "collector_status": "not_active",
@@ -194,6 +205,7 @@
           "prior_award_only_classification"
         ],
         "satisfied_preconditions": [],
+        "scheduler_runtime_available": false,
         "schema_version": "nf_phase1_collector_activation_policy_v1",
         "scraping_prohibited": false,
         "source_id": "usaspending_api_v2",
@@ -208,6 +220,7 @@
   "preflights": {
     "federal_register_api": {
       "activation_allowed": false,
+      "activation_is_not_scheduler_readiness": true,
       "activation_performed": false,
       "activation_status": "activation_blocked",
       "blocked_reasons": [
@@ -256,6 +269,12 @@
       },
       "safe_to_fetch_now": false,
       "safe_to_schedule": false,
+      "scheduler_policy_declared": false,
+      "scheduler_runtime_available": false,
+      "scheduling_blocked_reasons": [
+        "scheduler_policy_missing:missing",
+        "scheduler_runtime_unavailable"
+      ],
       "schema_version": "nf_source_activation_preflight_v1",
       "source_id": "federal_register_api",
       "source_name": "Federal Register API",
@@ -263,6 +282,7 @@
     },
     "grants_gov_daily_extract": {
       "activation_allowed": false,
+      "activation_is_not_scheduler_readiness": true,
       "activation_performed": false,
       "activation_status": "activation_blocked",
       "blocked_reasons": [
@@ -311,6 +331,12 @@
       },
       "safe_to_fetch_now": false,
       "safe_to_schedule": false,
+      "scheduler_policy_declared": false,
+      "scheduler_runtime_available": false,
+      "scheduling_blocked_reasons": [
+        "scheduler_policy_missing:missing",
+        "scheduler_runtime_unavailable"
+      ],
       "schema_version": "nf_source_activation_preflight_v1",
       "source_id": "grants_gov_daily_extract",
       "source_name": "Grants.gov daily XML extract",
@@ -318,6 +344,7 @@
     },
     "grants_gov_search2_fetch": {
       "activation_allowed": false,
+      "activation_is_not_scheduler_readiness": true,
       "activation_performed": false,
       "activation_status": "activation_blocked",
       "blocked_reasons": [
@@ -366,6 +393,12 @@
       },
       "safe_to_fetch_now": false,
       "safe_to_schedule": false,
+      "scheduler_policy_declared": false,
+      "scheduler_runtime_available": false,
+      "scheduling_blocked_reasons": [
+        "scheduler_policy_missing:missing",
+        "scheduler_runtime_unavailable"
+      ],
       "schema_version": "nf_source_activation_preflight_v1",
       "source_id": "grants_gov_search2_fetch",
       "source_name": "Grants.gov Search2 + fetchOpportunity",
@@ -373,6 +406,7 @@
     },
     "sam_assistance_listings_api": {
       "activation_allowed": false,
+      "activation_is_not_scheduler_readiness": true,
       "activation_performed": false,
       "activation_status": "activation_blocked",
       "blocked_reasons": [
@@ -423,6 +457,12 @@
       },
       "safe_to_fetch_now": false,
       "safe_to_schedule": false,
+      "scheduler_policy_declared": false,
+      "scheduler_runtime_available": false,
+      "scheduling_blocked_reasons": [
+        "scheduler_policy_missing:missing",
+        "scheduler_runtime_unavailable"
+      ],
       "schema_version": "nf_source_activation_preflight_v1",
       "source_id": "sam_assistance_listings_api",
       "source_name": "SAM.gov Assistance Listings API",
@@ -430,6 +470,7 @@
     },
     "usaspending_api_v2": {
       "activation_allowed": false,
+      "activation_is_not_scheduler_readiness": true,
       "activation_performed": false,
       "activation_status": "activation_blocked",
       "blocked_reasons": [
@@ -478,6 +519,12 @@
       },
       "safe_to_fetch_now": false,
       "safe_to_schedule": false,
+      "scheduler_policy_declared": false,
+      "scheduler_runtime_available": false,
+      "scheduling_blocked_reasons": [
+        "scheduler_policy_missing:missing",
+        "scheduler_runtime_unavailable"
+      ],
       "schema_version": "nf_source_activation_preflight_v1",
       "source_id": "usaspending_api_v2",
       "source_name": "USAspending API v2",

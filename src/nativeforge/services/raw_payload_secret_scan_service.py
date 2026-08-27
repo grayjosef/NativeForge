@@ -67,6 +67,7 @@ FINDING_KINDS = frozenset(
         "password",
         "private_key",
         "session_cookie",
+        "url_query_credential",
     }
 )
 
@@ -82,6 +83,30 @@ SECRET_KEY_PATTERNS: tuple[tuple[str, str], ...] = (
     ("session_cookie", r"(?:set-cookie|session[_-]?id|sessionid|jsessionid|phpsessid)"),
     ("authorization_header", r"authorization"),
 )
+
+# Query-parameter names that are credentials *in a URL* and nowhere else.
+#
+# Gate 98D found the hole these close: an error message reading
+# `GET https://host/v1/x?api_key=... failed` kept its key, because the
+# `key=value` form below is anchored `^...$` and only ever matched a whole line.
+# A URL sits mid-sentence, so it never matched.
+#
+# These are deliberately *not* in SECRET_KEY_PATTERNS. `token` and `sig` as JSON
+# field names are usually pagination cursors - Grants.gov returns one on every
+# page - and treating those as secrets would set `findings_blocked` on every
+# payload and stop promotion entirely. As a URL query parameter the same name is
+# a credential. The distinction is the position, so the pattern carries it.
+URL_QUERY_SECRET_PATTERNS: tuple[tuple[str, str], ...] = (
+    (
+        "url_query_credential",
+        r"(?:x-amz-signature|x-amz-credential|x-amz-security-token|"
+        r"signature|sig|sas|token|api[_-]?token|auth|access[_-]?key|secret)",
+    ),
+)
+
+# Value characters permitted in a query-string credential: everything up to the
+# next parameter, whitespace, or a quote/bracket that would end the URL.
+_URL_QUERY_VALUE = r"[^&\s\"'<>\\\]})]{4,}"
 
 # A JWT: three base64url segments, and a header segment that starts `eyJ`
 # because `{"` base64url-encodes to `eyJ`.
@@ -115,6 +140,27 @@ def _key_value_regexes() -> list[tuple[str, re.Pattern[str]]]:
                 re.compile(
                     rf"^((?:{key_pattern})\s*[:=]\s*)(\S{{4,}})$",
                     re.IGNORECASE | re.MULTILINE,
+                ),
+            )
+        )
+        # The same key name inside a URL query string, which the anchored form
+        # above cannot reach.
+        out.append(
+            (
+                kind,
+                re.compile(
+                    rf"([?&](?:{key_pattern})=)({_URL_QUERY_VALUE})",
+                    re.IGNORECASE,
+                ),
+            )
+        )
+    for kind, key_pattern in URL_QUERY_SECRET_PATTERNS:
+        out.append(
+            (
+                kind,
+                re.compile(
+                    rf"([?&](?:{key_pattern})=)({_URL_QUERY_VALUE})",
+                    re.IGNORECASE,
                 ),
             )
         )

@@ -1,0 +1,8 @@
+component,available,kind,detection_method,scheduler_runtime_available,background_worker_available,source_monitoring_live,ready_to_start_monitoring
+schedule_decision_service,True,contract,import + callable check,False,False,False,False
+circuit_breaker_service,True,contract,import + callable check,False,False,False,False
+check_run_contract_service,True,contract,import + callable check,False,False,False,False
+production_raw_payload_store,False,contract,gate 96/97 readiness derivation,False,False,False,False
+scheduler_runtime,False,runtime,importlib.util.find_spec,False,False,False,False
+background_worker,False,runtime,find_spec + console_scripts entry points,False,False,False,False
+periodic_trigger,False,runtime,repo file scan,False,False,False,False

@@ -219,6 +219,28 @@ def detect_store_implementation() -> str:
     return "local_only"
 
 
+def _scheduler_runtime_available() -> bool:
+    """Gate 98F: is there a scheduler, as opposed to a policy describing one?
+
+    Detected via Gate 98E, which detects each of its own components. The
+    `scheduler_status` argument to this function is a *policy* declaration - a
+    caller saying a cadence has been decided. That is not a runtime, and before
+    this bridge existed a caller passing `scheduler_status="policy_declared"`
+    got `safe_to_schedule=True` on a system with no scheduler at all.
+    """
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    readiness = build_scheduler_readiness()
+    return bool(
+        readiness["scheduler_runtime_available"]
+        and readiness["background_worker_available"]
+    )
+
+
 def _norm(value: Any, vocabulary: frozenset[str], *, fallback: str) -> str:
     """Deny by default: anything outside the vocabulary becomes the fallback."""
     if value is None:
@@ -383,6 +405,26 @@ def build_activation_preflight(
     if not monitoring_schedulable:
         blocked_reasons.append(f"monitoring_state_not_schedulable:{monitoring}")
 
+    # Gate 98F: detected, not declared - and kept in its own list.
+    #
+    # `blocked_reasons` is scoped to activation, and an invariant below fails
+    # any allowed result carrying one. A missing worker is not an activation
+    # blocker: the source is not at fault for the platform having no scheduler,
+    # and a source may legitimately be activated for operator-triggered checks
+    # with no scheduler in existence. Folding the two lists together would
+    # block activation on a platform fact, which is the opposite of the
+    # separation this gate is drawing.
+    scheduler_runtime_available = _scheduler_runtime_available()
+    scheduling_blocked_reasons: list[str] = []
+    if not scheduler_runtime_available:
+        scheduling_blocked_reasons.append("scheduler_runtime_unavailable")
+    if not monitoring_schedulable:
+        scheduling_blocked_reasons.append(
+            f"monitoring_state_not_schedulable:{monitoring}"
+        )
+    if scheduler not in SCHEDULER_SATISFYING:
+        scheduling_blocked_reasons.append(f"scheduler_policy_missing:{scheduler}")
+
     # Decide. Human review first: it is a refusal a checklist cannot lift.
     if human_review_required:
         status = "activation_requires_human_review"
@@ -424,7 +466,25 @@ def build_activation_preflight(
             "human_review_required": human_review_required,
             "requirements_satisfied": sorted(satisfied),
             "requirements_missing": sorted(missing),
-            "safe_to_schedule": bool(allowed and monitoring_schedulable),
+            # Gate 98F. Three separate questions that used to be two.
+            #
+            # `activation_allowed`  may this collector be activated at all
+            # `safe_to_schedule`    may a *scheduler* be pointed at it
+            #
+            # Activation is a property of the source: its terms, credential,
+            # attribution and storage. Scheduling additionally needs something
+            # that can run. A declared scheduler policy is a decision about
+            # cadence; it is not a process. Before this, a caller supplying
+            # `scheduler_status="policy_declared"` got `safe_to_schedule=True`
+            # on a system with no worker and no queue - a flag standing in for
+            # the thing it describes.
+            "safe_to_schedule": bool(
+                allowed and monitoring_schedulable and scheduler_runtime_available
+            ),
+            "scheduler_policy_declared": scheduler in SCHEDULER_SATISFYING,
+            "scheduler_runtime_available": scheduler_runtime_available,
+            "scheduling_blocked_reasons": sorted(set(scheduling_blocked_reasons)),
+            "activation_is_not_scheduler_readiness": True,
             # Constant for this gate. Nothing fetches, so nothing may say it is
             # safe to fetch right now.
             "safe_to_fetch_now": False,
@@ -535,6 +595,20 @@ def preflight_invariant_failures(result: dict[str, Any]) -> list[str]:
 
     if result.get("safe_to_schedule") and not result.get("activation_allowed"):
         fails.append("safe_to_schedule_without_activation_allowed")
+
+    # Gate 98F. Scheduling needs a scheduler, and a policy is not one.
+    if result.get("safe_to_schedule"):
+        if not result.get("scheduler_runtime_available"):
+            fails.append("safe_to_schedule_without_a_scheduler_runtime")
+        if result.get("scheduling_blocked_reasons"):
+            fails.append("safe_to_schedule_with_scheduling_blocked_reasons")
+    if not result.get("safe_to_schedule") and not result.get(
+        "scheduling_blocked_reasons"
+    ):
+        # An allowed source that cannot be scheduled must say why. A source
+        # blocked from activation is already accounted for above.
+        if result.get("activation_allowed"):
+            fails.append("scheduling_refused_without_a_reason")
 
     # Every requirement is accounted for exactly once.
     satisfied = set(result.get("requirements_satisfied") or [])

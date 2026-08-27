@@ -173,6 +173,38 @@ def _metadata_table_available() -> bool:
     return bool(detect_metadata_table())
 
 
+def _scheduler_runtime_available() -> bool:
+    """Gate 98F: is there a scheduler, detected via Gate 98E?
+
+    Activating a collector and scheduling one are different questions. A
+    collector can be activated for operator-triggered checks on a platform with
+    no worker at all; a *monitor* cannot. This is the second half, and it is
+    detected rather than declared.
+    """
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    readiness = build_scheduler_readiness()
+    return bool(
+        readiness["scheduler_runtime_available"]
+        and readiness["background_worker_available"]
+    )
+
+
+def _monitoring_live() -> bool:
+    """Whether anything is actually monitoring, detected via Gate 98E."""
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(build_scheduler_readiness()["source_monitoring_live"])
+
+
 def evaluate_phase1_source(
     *,
     source_id: str,
@@ -202,6 +234,8 @@ def evaluate_phase1_source(
 
     missing = [p for p in required if p not in satisfied]
 
+    scheduler_runtime_available = _scheduler_runtime_available()
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -217,10 +251,23 @@ def evaluate_phase1_source(
             "unrecognised_preconditions": unrecognised,
             "preflight_present": preflight is not None,
             "preflight_passed": preflight_passed,
-            # All three constants for this gate, held by invariants.
+            # Constants for this gate, held by invariants.
             "may_fetch_live_now": False,
-            "may_schedule_monitor": False,
             "may_surface_customer_data": False,
+            # Gate 98F: derived, not asserted.
+            #
+            # This was `False` outright. Gate 97 found two guards of exactly
+            # that shape and had to convert them: a constant that is correct
+            # today encodes one moment as a permanent law, and it would go on
+            # reading False after somebody deployed a worker. Scheduling a
+            # monitor needs the source cleared for activation *and* something
+            # that can run it, so it is now the conjunction of the two - which
+            # still reads False today, on its own.
+            "may_schedule_monitor": bool(
+                preflight_passed and scheduler_runtime_available
+            ),
+            "scheduler_runtime_available": scheduler_runtime_available,
+            "activation_is_not_scheduler_readiness": True,
             # Source-specific facts that do not change with configuration.
             "attribution_required": source_id in ATTRIBUTION_GATED_SOURCES,
             "scraping_prohibited": source_id in SCRAPING_PROHIBITED_SOURCES,
@@ -256,7 +303,13 @@ def build_phase1_activation_matrix(
             "source_count": len(rows),
             "sources": rows,
             "collectors_active": 0,
-            "monitors_active": 0,
+            # Gate 98F: derived. Nothing can be monitoring without a runtime to
+            # run it, and Gate 98E detects whether one exists.
+            "monitors_active": sum(1 for r in rows if r["may_schedule_monitor"])
+            if _monitoring_live()
+            else 0,
+            "scheduler_runtime_available": _scheduler_runtime_available(),
+            "source_monitoring_live": _monitoring_live(),
             "live_fetch_performed": False,
             "live_source_coverage": False,
             # Gate 95. Three separate facts. The local store exists and is
@@ -279,7 +332,10 @@ def build_phase1_activation_matrix(
             # may use the local store.
             "live_collection_requires_production_store": True,
             "sources_may_fetch_live_now": 0,
-            "sources_may_schedule_monitor": 0,
+            # Gate 98F: derived from the rows rather than restated beside them.
+            "sources_may_schedule_monitor": sum(
+                1 for r in rows if r["may_schedule_monitor"]
+            ),
             "sources_may_surface_customer_data": 0,
             "fabricated": False,
         }
@@ -375,13 +431,33 @@ def policy_invariant_failures(matrix: dict[str, Any]) -> list[str]:
             fails.append(f"matrix_claimed:{constant}")
     for counter in (
         "collectors_active",
-        "monitors_active",
         "sources_may_fetch_live_now",
-        "sources_may_schedule_monitor",
         "sources_may_surface_customer_data",
     ):
         if matrix.get(counter):
             fails.append(f"matrix_reported_nonzero:{counter}")
+
+    # Gate 98F: the two monitoring counters were in the list above, asserted at
+    # zero. That is the constant-versus-derivation defect Gate 97 corrected for
+    # the payload store, and it would have kept reading zero after a worker was
+    # deployed. They are now checked for *agreement* with the rows they
+    # summarise, which holds them at zero today and keeps holding them honest
+    # after that stops being true.
+    rows = matrix.get("sources") or []
+    schedulable = sum(1 for r in rows if r.get("may_schedule_monitor"))
+    if matrix.get("sources_may_schedule_monitor") != schedulable:
+        fails.append("schedulable_count_disagrees_with_the_rows")
+
+    monitors = matrix.get("monitors_active")
+    if not matrix.get("source_monitoring_live") and monitors:
+        fails.append("monitors_active_without_live_monitoring")
+    if isinstance(monitors, int) and monitors > schedulable:
+        fails.append("more_monitors_active_than_sources_may_schedule")
+
+    if matrix.get("sources_may_schedule_monitor") and not matrix.get(
+        "scheduler_runtime_available"
+    ):
+        fails.append("sources_schedulable_without_a_scheduler_runtime")
 
     # Gate 95/96/97: a local store is not a production store, a metadata table
     # alone is not production storage, and an implementation is not a
@@ -422,12 +498,19 @@ def policy_invariant_failures(matrix: dict[str, Any]) -> list[str]:
             fails.append(f"collector_marked_active:{sid}")
         for constant in (
             "may_fetch_live_now",
-            "may_schedule_monitor",
             "may_surface_customer_data",
             "fetch_performed",
         ):
             if source.get(constant) is not False:
                 fails.append(f"source_claimed:{sid}:{constant}")
+
+        # Gate 98F: a derivation, checked as one. Scheduling a monitor needs
+        # both halves - the source cleared, and something to run it.
+        if source.get("may_schedule_monitor"):
+            if not source.get("preflight_passed"):
+                fails.append(f"schedulable_without_a_preflight_pass:{sid}")
+            if not source.get("scheduler_runtime_available"):
+                fails.append(f"schedulable_without_a_scheduler_runtime:{sid}")
 
         required = set(source.get("required_preconditions") or [])
         if required - PRECONDITIONS:

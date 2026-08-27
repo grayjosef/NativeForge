@@ -17,6 +17,9 @@ from nativeforge.services.real_resolver_validation_closeout_packet_service impor
 from nativeforge.services.real_resolver_validation_gate_verification_service import (
     verify_real_resolver_validation_gates,
 )
+from nativeforge.services.real_tier1_live_fetch_service import (
+    reset_real_tier1_fetch_rate_limit,
+)
 
 _DEMO_ORG = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
 
@@ -27,6 +30,10 @@ def staging_gates(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("NF_LIVE_SOURCE_INGESTION_PLAN_APPROVED", "true")
     monkeypatch.setenv("NF_REAL_RESOLVER_VALIDATION_PLAN_APPROVED", "true")
     get_settings.cache_clear()
+    # Matches sprints 292 and 294: the tier-1 rate limiter is a module global
+    # that no fixture here reset, so this test both inherited a stale timestamp
+    # and left one behind for sprint 297.
+    reset_real_tier1_fetch_rate_limit()
     with SessionLocal() as s:
         if s.get(Organization, _DEMO_ORG) is None:
             s.add(Organization(id=_DEMO_ORG, org_type="demo"))
