@@ -180,6 +180,7 @@ COMPONENT_KEYS: tuple[str, ...] = (
     "production_raw_payload_store",
     "dry_run_runtime",
     "dry_run_worker",
+    "persistent_backend",
     "scheduler_runtime",
     "background_worker",
     "periodic_trigger",
@@ -193,8 +194,16 @@ COMPONENT_KEYS: tuple[str, ...] = (
 # things whose absence stops monitoring - and listing them here would make
 # `remaining_work` shrink for a reason that does not move the system any closer
 # to monitoring.
+# Gate 101E adds `persistent_backend`. Unlike the dry-run components, this one
+# genuinely blocks monitoring: an in-process scheduler needs a process to be in,
+# and Gate 101A found there is none.
 RUNTIME_COMPONENT_KEYS = frozenset(
-    {"scheduler_runtime", "background_worker", "periodic_trigger"}
+    {
+        "scheduler_runtime",
+        "background_worker",
+        "periodic_trigger",
+        "persistent_backend",
+    }
 )
 
 # Components that are dry-run capability. Named so a reader - and an invariant -
@@ -274,6 +283,45 @@ def detect_dry_run_worker() -> dict[str, Any]:
             "is_a_background_worker": False,
             "executes_jobs": False,
             "fetches": False,
+        }
+    )
+
+
+def detect_persistent_backend(*, repo_root: Path | None = None) -> dict[str, Any]:
+    """Whether a persistent backend process exists, via Gate 101B.
+
+    An in-process scheduler or worker needs a process to live in. Gate 101A
+    found the API is started only by smoke scripts that kill it on exit, so this
+    is absent - and its absence is what stops an in-process runtime ever being
+    more than a dry run.
+    """
+    try:
+        from nativeforge.services.backend_runtime_contract_service import (
+            build_backend_runtime_contract,
+        )
+    except ImportError:
+        return _json_safe(
+            {
+                "available": False,
+                "detection_method": "gate 101B backend runtime contract",
+                "reason": "backend_runtime_contract_unavailable",
+            }
+        )
+
+    contract = build_backend_runtime_contract(repo_root=repo_root)
+    return _json_safe(
+        {
+            # A *contract* is not a process. Only a proven live backend counts.
+            "available": bool(contract["persistent_backend_live"]),
+            "backend_runtime_mode": contract["runtime_mode"],
+            "backend_runtime_contract_available": bool(
+                contract["backend_runtime_contract_available"]
+            ),
+            "loopback_only": bool(contract["loopback_only"]),
+            "detection_method": "gate 101B backend runtime contract",
+            "reason": None
+            if contract["persistent_backend_live"]
+            else "no_persistent_backend_process",
         }
     )
 
@@ -453,6 +501,7 @@ def build_scheduler_readiness(*, repo_root: Path | None = None) -> dict[str, Any
         "production_raw_payload_store": _detect_production_store(),
         "dry_run_runtime": detect_dry_run_runtime(),
         "dry_run_worker": detect_dry_run_worker(),
+        "persistent_backend": detect_persistent_backend(repo_root=repo_root),
         "scheduler_runtime": detect_scheduler_runtime(),
         "background_worker": detect_background_worker(),
         "periodic_trigger": detect_periodic_trigger(repo_root=repo_root),
@@ -495,10 +544,15 @@ def build_scheduler_readiness(*, repo_root: Path | None = None) -> dict[str, Any
     # test has to be on the *mode*: a dry-run runtime must never be able to
     # contribute to a claim that monitoring is live, however many other
     # components appear alongside it.
+    # Gate 101E adds the fourth conjunct. A scheduler with nowhere to run is not
+    # monitoring, however live the other three look - and Gate 101A found there
+    # is nowhere to run.
+    persistent_backend_live = bool(components["persistent_backend"]["available"])
     source_monitoring_live = (
         runtime_mode in LIVE_RUNTIME_MODES
         and background_worker_available
         and periodic_trigger_available
+        and persistent_backend_live
     )
 
     # Readiness is every component, contracts and runtime alike. A missing
@@ -533,6 +587,17 @@ def build_scheduler_readiness(*, repo_root: Path | None = None) -> dict[str, Any
             # `background_worker_available` - marking jobs is not running them.
             "dry_run_worker_available": bool(
                 components["dry_run_worker"]["available"]
+            ),
+            # Gate 101E. A contract exists; a process does not. Reported apart
+            # so the first cannot be read as the second.
+            "persistent_backend_live": persistent_backend_live,
+            "backend_runtime_contract_available": bool(
+                components["persistent_backend"].get(
+                    "backend_runtime_contract_available"
+                )
+            ),
+            "backend_runtime_mode": components["persistent_backend"].get(
+                "backend_runtime_mode", "none"
             ),
             # Kept distinct from `scheduler_runtime_available`, which changed
             # meaning in Gate 99D. This is still the narrow question Gate 98
@@ -622,10 +687,25 @@ def scheduler_readiness_invariant_failures(result: dict[str, Any]) -> list[str]:
         if result.get("source_monitoring_live"):
             fails.append("dry_run_runtime_read_as_live_monitoring")
 
+    backend_ok = bool(result.get("persistent_backend_live"))
+
     if result.get("source_monitoring_live") != (
-        mode in LIVE_RUNTIME_MODES and worker_ok and trigger_ok
+        mode in LIVE_RUNTIME_MODES and worker_ok and trigger_ok and backend_ok
     ):
         fails.append("monitoring_live_disagrees_with_the_runtime_components")
+
+    # Gate 101E. A backend contract is not a backend process, and monitoring
+    # needs the process. The contract being available may never contribute here.
+    if result.get("source_monitoring_live") and not backend_ok:
+        fails.append("monitoring_live_without_a_persistent_backend")
+    if backend_ok:
+        record = components.get("persistent_backend") or {}
+        if not record.get("available"):
+            fails.append("persistent_backend_flag_disagrees_with_its_detection")
+    if result.get("backend_runtime_contract_available") and backend_ok:
+        record = components.get("persistent_backend") or {}
+        if record.get("backend_runtime_mode") != "persistent_backend_live":
+            fails.append("backend_contract_read_as_a_persistent_backend")
 
     # Gate 100D. A dry-run worker is not a background worker, and no component
     # in the dry-run set may contribute to the worker answer. `background_worker`

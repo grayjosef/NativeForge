@@ -205,6 +205,23 @@ def _monitoring_live() -> bool:
     return bool(build_scheduler_readiness()["source_monitoring_live"])
 
 
+def _persistent_backend_live() -> bool:
+    """Gate 101E: is there a backend process for a scheduler to live in?
+
+    Detected via Gate 101B. Reported on the matrix and load-bearing for nothing
+    today, because `_scheduler_runtime_available()` already requires a detected
+    background worker - but an invariant below fails if a future edit ever lets
+    a backend *contract* stand in for a backend *process*.
+    """
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(build_scheduler_readiness().get("persistent_backend_live"))
+
+
 def _dry_run_worker_available() -> bool:
     """Gate 100D: a dry-run worker exists and buys nothing here.
 
@@ -329,6 +346,8 @@ def build_phase1_activation_matrix(
             "source_monitoring_live": _monitoring_live(),
             # Gate 100D. On the record, and load-bearing for nothing.
             "dry_run_worker_available": _dry_run_worker_available(),
+            # Gate 101E. Same: on the record, guarded, permits nothing.
+            "persistent_backend_live": _persistent_backend_live(),
             "live_fetch_performed": False,
             "live_source_coverage": False,
             # Gate 95. Three separate facts. The local store exists and is
@@ -482,6 +501,17 @@ def policy_invariant_failures(matrix: dict[str, Any]) -> list[str]:
     # schedulable or a collector fetchable. `scheduler_runtime_available` here
     # already requires a detected background worker; this fails loudly if a
     # future edit ever lets the dry-run answer stand in for it.
+    # Gate 101E. Nothing may be scheduled or fetched without a backend process
+    # for the scheduler to live in. A backend contract is not a backend.
+    if not matrix.get("persistent_backend_live"):
+        if matrix.get("sources_may_schedule_monitor") or matrix.get("monitors_active"):
+            fails.append("scheduling_without_a_persistent_backend")
+        for source in matrix.get("sources") or []:
+            if source.get("may_fetch_live_now"):
+                fails.append(
+                    f"live_fetch_without_a_persistent_backend:{source.get('source_id')}"
+                )
+
     if matrix.get("dry_run_worker_available") and not matrix.get(
         "scheduler_runtime_available"
     ):

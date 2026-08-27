@@ -24,6 +24,7 @@ ready_to_start_monitoring       false
 | `production_raw_payload_store` | contract | no | gate 96/97 readiness derivation |
 | `dry_run_runtime` | runtime | yes | import + callable check |
 | `dry_run_worker` | runtime | yes | import + callable check |
+| `persistent_backend` | runtime | no | gate 101B backend runtime contract |
 | `scheduler_runtime` | runtime | no | importlib.util.find_spec |
 | `background_worker` | runtime | no | find_spec + console_scripts entry points |
 | `periodic_trigger` | runtime | no | repo file scan |
@@ -32,6 +33,7 @@ ready_to_start_monitoring       false
 
 - `background_worker`
 - `periodic_trigger`
+- `persistent_backend`
 - `production_raw_payload_store`
 - `scheduler_runtime`
 

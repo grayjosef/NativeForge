@@ -1,0 +1,58 @@
+{
+  "backend_runtime_contract_available": true,
+  "carries_secrets": false,
+  "collectors_live": 0,
+  "customer_auth_live": false,
+  "distinct_from_static_stamp": true,
+  "example": {
+    "backend_runtime_mode": "loopback_backend_contract",
+    "fabricated": false,
+    "git_sha": "0000000000000000000000000000000000000000",
+    "health_path": "/backend/health",
+    "production_ready": false,
+    "readiness_path": "/backend/readiness",
+    "schema_version": "nf_backend_health_readiness_v1",
+    "service": "nativeforge",
+    "source_dirty": false,
+    "status": "ok",
+    "timestamp": "2026-01-01T12:00:00+00:00"
+  },
+  "example_git_sha_is_a_placeholder": true,
+  "example_only": true,
+  "fabricated": false,
+  "fields": [
+    "status",
+    "service",
+    "git_sha",
+    "source_dirty",
+    "backend_runtime_mode",
+    "timestamp"
+  ],
+  "health_claims_production_readiness": false,
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "path": "/backend/health",
+  "persistent_backend_live": false,
+  "readiness_fields": [
+    "backend_runtime_available",
+    "persistent_backend_live",
+    "database_ready",
+    "production_raw_payload_store_available",
+    "scheduler_runtime",
+    "background_worker_available",
+    "source_monitoring_live",
+    "collectors_live",
+    "blocked_reasons"
+  ],
+  "readiness_path": "/backend/readiness",
+  "runtime_mode": "loopback_backend_contract",
+  "schema_version": "nf_backend_runtime_readiness_artifact_v1",
+  "service": "nativeforge",
+  "source_monitoring_live": false,
+  "static_stamp_note": "the Vite preview serves a static /health from the build stamp that answers ok whether or not a backend exists",
+  "statuses": [
+    "degraded",
+    "ok",
+    "unknown"
+  ]
+}

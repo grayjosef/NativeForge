@@ -63,5 +63,5 @@ jobs_skipped                0
 
 It is the shape a worker would have, exercised against jobs that cannot run. Processing a job here means reading it, checking it is a kind this worker may touch, and recording an outcome — everything a worker does *around* the work. The work itself is absent, and after this gate it is still absent.
 
-The remaining components are `background_worker`, `periodic_trigger`, `scheduler_runtime`, and the production worker decision remains open.
+The remaining components are `background_worker`, `periodic_trigger`, `persistent_backend`, `scheduler_runtime`, and the production worker decision remains open.
 

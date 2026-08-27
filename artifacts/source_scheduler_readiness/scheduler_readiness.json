@@ -1,10 +1,13 @@
 {
   "background_worker_available": false,
   "readiness": {
+    "backend_runtime_contract_available": true,
+    "backend_runtime_mode": "loopback_backend_contract",
     "background_worker_available": false,
     "blocked_reasons": [
       "component_missing:background_worker",
       "component_missing:periodic_trigger",
+      "component_missing:persistent_backend",
       "component_missing:production_raw_payload_store",
       "component_missing:scheduler_runtime"
     ],
@@ -17,6 +20,7 @@
       "production_raw_payload_store",
       "dry_run_runtime",
       "dry_run_worker",
+      "persistent_backend",
       "scheduler_runtime",
       "background_worker",
       "periodic_trigger"
@@ -93,6 +97,14 @@
         ],
         "trigger_files": []
       },
+      "persistent_backend": {
+        "available": false,
+        "backend_runtime_contract_available": true,
+        "backend_runtime_mode": "loopback_backend_contract",
+        "detection_method": "gate 101B backend runtime contract",
+        "loopback_only": true,
+        "reason": "no_persistent_backend_process"
+      },
       "production_raw_payload_store": {
         "available": false,
         "detection_method": "gate 96/97 readiness derivation",
@@ -126,6 +138,7 @@
     "components_missing": [
       "background_worker",
       "periodic_trigger",
+      "persistent_backend",
       "production_raw_payload_store",
       "scheduler_runtime"
     ],
@@ -143,11 +156,13 @@
     "live_fetch_performed": false,
     "live_source_coverage": false,
     "periodic_trigger_available": false,
+    "persistent_backend_live": false,
     "production_raw_payload_store_available": false,
     "ready_to_start_monitoring": false,
     "remaining_work": [
       "background_worker",
       "periodic_trigger",
+      "persistent_backend",
       "scheduler_runtime"
     ],
     "runtime_executes_jobs": false,

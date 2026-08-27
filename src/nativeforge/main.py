@@ -6,6 +6,7 @@ from nativeforge.api.activation_routes import (
     demo_activation_router,
     real_activation_router,
 )
+from nativeforge.api.backend_runtime_routes import router as backend_runtime_router
 from nativeforge.api.form_package_routes import (
     demo_form_pkg_router,
     real_form_pkg_router,
@@ -55,6 +56,7 @@ def create_app() -> FastAPI:
     settings = get_settings()
     app = FastAPI(title=settings.app_name)
     app.include_router(health_router)
+    app.include_router(backend_runtime_router)
     app.include_router(isolation_router)
     app.include_router(demo_router)
     app.include_router(real_router)

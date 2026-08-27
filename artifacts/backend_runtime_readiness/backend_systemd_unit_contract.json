@@ -1,0 +1,32 @@
+{
+  "backend_runtime_contract_available": true,
+  "binds_loopback_only": true,
+  "carries_secrets": false,
+  "collectors_live": 0,
+  "customer_auth_live": false,
+  "enabled": false,
+  "enabled_by_this_gate": false,
+  "environment_file_optional": true,
+  "exec_start_lines": [
+    "ExecStart=/home/josefgray/projects/nativeforge/.venv/bin/uvicorn nativeforge.main:app --host 127.0.0.1 --port 8000 --no-access-log"
+  ],
+  "fabricated": false,
+  "healthcheck_path": "/backend/health",
+  "installed": false,
+  "installed_by_this_gate": false,
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "loopback_hosts": [
+    "127.0.0.1",
+    "::1",
+    "localhost"
+  ],
+  "path": "deploy/systemd/nativeforge-backend.service",
+  "persistent_backend_live": false,
+  "readiness_path": "/backend/readiness",
+  "restart_policy": "on-failure, RestartSec=5, StartLimitBurst=5/300s",
+  "runtime_mode": "loopback_backend_contract",
+  "schema_version": "nf_backend_runtime_readiness_artifact_v1",
+  "source_monitoring_live": false,
+  "template_present": true
+}

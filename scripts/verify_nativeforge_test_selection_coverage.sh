@@ -73,7 +73,13 @@ source .venv/bin/activate
 # has chosen; `dry_run` and `runtime` reach the module, but the tests holding
 # `production_worker_live` and `background_worker_available` at false are named
 # for the worker, which no earlier keyword reached.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency'
+#
+# `backend`, `persistent`, `systemd`, `loopback` and `lifespan` were added by
+# Gate 101. Its critical tests are about a backend process that does not run
+# and a unit template that must bind loopback only; `runtime` and `health`
+# reach the module, but the test proving the template never binds a public
+# interface is named for systemd and loopback, which nothing else reached.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -175,6 +181,16 @@ CRITICAL=(
   "tests/test_gate100_background_worker_runtime.py::test_the_worker_refuses_live_collection_jobs"
   "tests/test_gate100_background_worker_runtime.py::test_the_worker_executes_nothing"
   "tests/test_gate100_background_worker_runtime.py::test_the_cli_exits_nonzero_for_a_live_job"
+
+  # Gate 101. Five that hold the backend boundary: the unit template never
+  # binds a public interface (the one mistake here that would reach the running
+  # tunnel), a smoke script is not a backend, live needs process proof, health
+  # never claims production readiness, and readiness keeps every NO_GO.
+  "tests/test_gate101_persistent_backend_process.py::test_the_unit_template_binds_loopback_only"
+  "tests/test_gate101_persistent_backend_process.py::test_smoke_script_only_does_not_count_as_a_persistent_backend"
+  "tests/test_gate101_persistent_backend_process.py::test_persistent_backend_live_remains_false_without_process_proof"
+  "tests/test_gate101_persistent_backend_process.py::test_health_never_claims_production_readiness"
+  "tests/test_gate101_persistent_backend_process.py::test_readiness_preserves_the_no_go_statuses"
 )
 
 FAIL=0

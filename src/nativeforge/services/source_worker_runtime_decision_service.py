@@ -216,7 +216,18 @@ def build_worker_runtime_decision(
     dependency_required = broker_required and broker_selected
     dependency_selected = None
 
+    # Gate 101E. An in-process worker needs a process to be in, and Gate 101A
+    # found there is none - the API is started only by smoke scripts that kill
+    # it on exit. This is why `choose_worker_topology` sits behind
+    # `deploy_backend_process` in the sequence below rather than beside it.
+    persistent_backend_live = bool(readiness.get("persistent_backend_live"))
+    backend_runtime_contract_available = bool(
+        readiness.get("backend_runtime_contract_available")
+    )
+
     blocked_reasons: list[str] = []
+    if not persistent_backend_live:
+        blocked_reasons.append("persistent_backend_not_live")
     if not background_worker_available:
         blocked_reasons.append("background_worker_not_detected")
     if external_worker_required and not broker_selected:
@@ -242,6 +253,11 @@ def build_worker_runtime_decision(
             "production_worker_live": production_worker_live,
             "dry_run_worker_available": dry_run_runtime_available,
             "external_worker_required": external_worker_required,
+            # Gate 101E. Reported so the ordering is visible on the record: an
+            # in-process topology is not selectable until a backend exists.
+            "persistent_backend_live": persistent_backend_live,
+            "backend_runtime_contract_available": backend_runtime_contract_available,
+            "in_process_worker_possible": persistent_backend_live,
             "dependency_required": dependency_required,
             "dependency_selected": dependency_selected,
             "broker_required": broker_required,
@@ -315,6 +331,22 @@ def worker_runtime_invariant_failures(decision: dict[str, Any]) -> list[str]:
         "external_worker_required"
     ):
         fails.append("worker_available_but_mode_says_required")
+
+    # Gate 101E. An in-process worker needs a persistent backend, and a backend
+    # *contract* is not one.
+    if decision.get("in_process_worker_possible") != decision.get(
+        "persistent_backend_live"
+    ):
+        fails.append("in_process_possibility_disagrees_with_the_backend")
+    if decision.get("backend_runtime_contract_available") and decision.get(
+        "in_process_worker_possible"
+    ):
+        if not decision.get("persistent_backend_live"):
+            fails.append("backend_contract_read_as_a_persistent_backend")
+    if decision.get("production_worker_live") and not decision.get(
+        "persistent_backend_live"
+    ):
+        fails.append("production_worker_live_without_a_persistent_backend")
 
     # A dry-run runtime may never be read as a background worker.
     if decision.get("dry_run_worker_available") and mode == "dry_run_in_process":

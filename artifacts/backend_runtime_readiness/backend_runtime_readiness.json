@@ -1,0 +1,99 @@
+{
+  "backend_runtime_contract_available": true,
+  "collectors_live": 0,
+  "contract": {
+    "app_factory_available": true,
+    "backend_runtime_available": true,
+    "backend_runtime_contract_available": true,
+    "backend_started": false,
+    "blocked_reasons": [
+      "api_started_only_by_smoke_scripts",
+      "no_lifespan_hook_in_main",
+      "no_long_running_process_proof",
+      "systemd_unit_not_enabled",
+      "systemd_unit_not_installed"
+    ],
+    "collectors_live": 0,
+    "customer_auth_live": false,
+    "fabricated": false,
+    "healthcheck_path": "/backend/health",
+    "host": "127.0.0.1",
+    "lifespan_hook_available": false,
+    "live_fetch_performed": false,
+    "live_source_coverage": false,
+    "loopback_only": true,
+    "next_required_actions": [
+      {
+        "action": "install_backend_systemd_unit",
+        "why": "the template at deploy/systemd/ is not installed and not enabled; installing it is a host decision, not a repository change"
+      },
+      {
+        "action": "prove_a_long_running_process",
+        "why": "persistent_backend_live requires an observed process, not a file that describes one"
+      },
+      {
+        "action": "add_a_lifespan_hook",
+        "why": "main.py has none, so an in-process scheduler or worker still has nowhere to attach"
+      },
+      {
+        "action": "configure_production_object_store",
+        "why": "Gate 97's seam, deployed and round-tripped, before any check may run"
+      }
+    ],
+    "persistent_backend_live": false,
+    "port": 8000,
+    "process_proof_supplied": false,
+    "readiness_path": "/backend/readiness",
+    "runtime_mode": "loopback_backend_contract",
+    "scheduler_live": false,
+    "schema_version": "nf_backend_runtime_contract_v1",
+    "smoke_script_startup": {
+      "available": true,
+      "counts_as_persistent_backend": false,
+      "detection_method": "repo file scan",
+      "scripts": [
+        "scripts/la_scale_federal_staging_verify.sh",
+        "scripts/m0_demo_up.sh",
+        "scripts/m8_close_gate_staging_smoke.sh",
+        "scripts/seed_hygiene_staging_verify.sh"
+      ]
+    },
+    "source_monitoring_live": false,
+    "systemd_unit_available": true,
+    "systemd_unit_binds_loopback_only": true,
+    "systemd_unit_enabled": false,
+    "systemd_unit_installed": false,
+    "trust_endpoint_available": false
+  },
+  "customer_auth_live": false,
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "persistent_backend_live": false,
+  "readiness": {
+    "backend_runtime_available": true,
+    "background_worker_available": false,
+    "blocked_reasons": [
+      "background_worker_unavailable",
+      "not_ready_to_start_monitoring",
+      "persistent_backend_not_live",
+      "production_raw_payload_store_unavailable"
+    ],
+    "collectors_live": 0,
+    "controlled_customer_pilot": false,
+    "customer_auth_live": false,
+    "fabricated": false,
+    "live_fetch_performed": false,
+    "live_source_coverage": false,
+    "persistent_backend_live": false,
+    "production_raw_payload_store_available": false,
+    "production_rollout": false,
+    "readiness_path": "/backend/readiness",
+    "ready_to_start_monitoring": false,
+    "scheduler_runtime": "dry_run_in_process",
+    "schema_version": "nf_backend_health_readiness_v1",
+    "source_monitoring_live": false
+  },
+  "runtime_mode": "loopback_backend_contract",
+  "schema_version": "nf_backend_runtime_readiness_artifact_v1",
+  "source_monitoring_live": false
+}

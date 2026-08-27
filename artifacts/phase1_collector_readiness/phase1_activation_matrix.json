@@ -44,6 +44,7 @@
     "local_raw_payload_store_available": true,
     "metadata_table_available": true,
     "monitors_active": 0,
+    "persistent_backend_live": false,
     "phase": 1,
     "production_raw_payload_store_available": false,
     "raw_payload_store_contract_available": true,
@@ -242,6 +243,7 @@
         "production"
       ],
       "local_raw_payload_store_available": true,
+      "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
       "raw_payload_store_implementation": "local_only",
@@ -306,6 +308,7 @@
         "production"
       ],
       "local_raw_payload_store_available": true,
+      "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
       "raw_payload_store_implementation": "local_only",
@@ -370,6 +373,7 @@
         "production"
       ],
       "local_raw_payload_store_available": true,
+      "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
       "raw_payload_store_implementation": "local_only",
@@ -436,6 +440,7 @@
         "production"
       ],
       "local_raw_payload_store_available": true,
+      "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
       "raw_payload_store_implementation": "local_only",
@@ -500,6 +505,7 @@
         "production"
       ],
       "local_raw_payload_store_available": true,
+      "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
       "raw_payload_store_implementation": "local_only",

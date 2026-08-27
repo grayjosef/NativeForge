@@ -381,11 +381,20 @@ def render_worker_summary(bundle: dict[str, Any]) -> str:
 def write_worker_artifacts(
     *,
     repo_root: Any = None,
+    detect_root: Any = None,
     artifact_dir: str = ARTIFACT_DIR,
 ) -> dict[str, Any]:
-    """Write all four files, or refuse and write none."""
+    """Write all four files, or refuse and write none.
+
+    `repo_root` is where the files go; `detect_root` is what gets inspected and
+    defaults to the real repository. See Gate 101's note in the scheduler
+    readiness artifact service.
+    """
     root = Path(repo_root) if repo_root else Path(__file__).resolve().parents[3]
-    bundle = build_worker_bundle(repo_root=root)
+    inspect_root = (
+        Path(detect_root) if detect_root else Path(__file__).resolve().parents[3]
+    )
+    bundle = build_worker_bundle(repo_root=inspect_root)
     summary_text = render_worker_summary(bundle)
 
     failures = artifact_claim_failures(bundle, summary_text)

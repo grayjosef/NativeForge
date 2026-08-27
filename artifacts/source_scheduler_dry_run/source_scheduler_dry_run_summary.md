@@ -25,7 +25,7 @@ runtime_mode              dry_run_in_process
 | `source_monitoring_live` | false |
 | `ready_to_start_monitoring` | false |
 
-`scheduler_runtime_available` is true because `runtime_mode` is `dry_run_in_process` - an in-process queue builder that executes nothing. It is not a background worker and it is not monitoring. The remaining work is `background_worker`, `periodic_trigger`, `scheduler_runtime`.
+`scheduler_runtime_available` is true because `runtime_mode` is `dry_run_in_process` - an in-process queue builder that executes nothing. It is not a background worker and it is not monitoring. The remaining work is `background_worker`, `periodic_trigger`, `persistent_backend`, `scheduler_runtime`.
 
 ## Queue
 

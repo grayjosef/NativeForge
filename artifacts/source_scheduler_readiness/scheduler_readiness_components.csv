@@ -5,6 +5,7 @@ check_run_contract_service,True,contract,import + callable check,dry_run_in_proc
 production_raw_payload_store,False,contract,gate 96/97 readiness derivation,dry_run_in_process,True,False,False,False
 dry_run_runtime,True,runtime,import + callable check,dry_run_in_process,True,False,False,False
 dry_run_worker,True,runtime,import + callable check,dry_run_in_process,True,False,False,False
+persistent_backend,False,runtime,gate 101B backend runtime contract,dry_run_in_process,True,False,False,False
 scheduler_runtime,False,runtime,importlib.util.find_spec,dry_run_in_process,True,False,False,False
 background_worker,False,runtime,find_spec + console_scripts entry points,dry_run_in_process,True,False,False,False
 periodic_trigger,False,runtime,repo file scan,dry_run_in_process,True,False,False,False

@@ -485,11 +485,25 @@ def render_readiness_summary(bundle: dict[str, Any]) -> str:
 def write_scheduler_readiness_artifacts(
     *,
     repo_root: Any = None,
+    detect_root: Any = None,
     artifact_dir: str = ARTIFACT_DIR,
 ) -> dict[str, Any]:
-    """Write all five files, or refuse and write none."""
+    """Write all five files, or refuse and write none.
+
+    `repo_root` is where the files go. `detect_root` is what gets inspected and
+    defaults to the real repository.
+
+    Gate 101 made the difference matter. Detection now reaches the backend unit
+    template, and passing an output directory as the inspection root made a
+    determinism check describe an empty temp directory instead of this
+    repository - the artifacts then differed from a fresh generation for a
+    reason that had nothing to do with their content.
+    """
     root = Path(repo_root) if repo_root else Path(__file__).resolve().parents[3]
-    bundle = build_readiness_bundle(repo_root=root)
+    inspect_root = (
+        Path(detect_root) if detect_root else Path(__file__).resolve().parents[3]
+    )
+    bundle = build_readiness_bundle(repo_root=inspect_root)
     summary_text = render_readiness_summary(bundle)
 
     failures = artifact_claim_failures(bundle, summary_text)

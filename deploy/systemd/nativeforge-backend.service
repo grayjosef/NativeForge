@@ -1,0 +1,50 @@
+[Unit]
+# NativeForge backend API — TEMPLATE. Not installed, not enabled by any gate.
+#
+# Installing this is a host decision. Nothing in the repository installs it, and
+# `systemctl --user enable` is deliberately not run by any script here.
+#
+# Loopback only. The Cloudflare tunnel on this host is already running and
+# already reachable; a backend bound to 0.0.0.0 would be published through it.
+# Every ExecStart below binds 127.0.0.1 and a test parses this file to prove it.
+#
+# Health:    curl -s http://127.0.0.1:8000/backend/health
+# Readiness: curl -s http://127.0.0.1:8000/backend/readiness
+#
+# `/backend/health` is deliberately NOT `/health`. The Vite preview on :5175
+# serves a static stamped `/health` that answers `ok` whether or not this
+# service is running, and one question must not have two answers.
+Description=NativeForge backend API (loopback 127.0.0.1:8000)
+Documentation=file:///home/josefgray/projects/nativeforge/docs/operations/563_GATE101_BACKEND_RUNTIME_CONTRACT.md
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/josefgray/projects/nativeforge
+
+# No secrets in this unit. Configuration comes from the environment file below,
+# which is NOT in the repository and NOT created by any gate. `-` means the
+# service still starts if it is absent, which is the correct behaviour for a
+# local backend with no credentials to hold.
+EnvironmentFile=-/home/josefgray/projects/nativeforge/.env
+
+ExecStart=/home/josefgray/projects/nativeforge/.venv/bin/uvicorn nativeforge.main:app --host 127.0.0.1 --port 8000 --no-access-log
+
+# Restart policy: restart on failure, back off, and give up rather than loop.
+# A backend that cannot start should stop and be visible, not thrash quietly.
+Restart=on-failure
+RestartSec=5
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+# The API is loopback-only and holds no credentials, but there is no reason for
+# it to be able to write outside its own tree or gain privileges.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths=/home/josefgray/projects/nativeforge/artifacts
+
+[Install]
+# Present so the unit is installable by hand. Nothing here enables it.
+WantedBy=default.target

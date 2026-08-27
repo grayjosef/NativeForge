@@ -793,8 +793,11 @@ def test_scheduling_becomes_possible_when_a_runtime_exists(monkeypatch) -> None:
     # world with a worker in it - and the result now records that fact
     # separately, which makes an inconsistent simulation fail an invariant
     # rather than pass quietly.
+    # Gate 101E adds a third: a scheduler needs a process to live in, so a
+    # world with a running scheduler is a world with a backend in it.
     monkeypatch.setattr(mod, "_scheduler_runtime_available", lambda: True)
     monkeypatch.setattr(mod, "_background_worker_present", lambda: True)
+    monkeypatch.setattr(mod, "_persistent_backend_live", lambda: True)
     result = _cleared_preflight()
     assert result["safe_to_schedule"] is True
     assert not mod.preflight_invariant_failures(result)
@@ -833,6 +836,8 @@ def test_phase1_schedulability_is_live_not_a_constant(monkeypatch) -> None:
 
     monkeypatch.setattr(mod, "_scheduler_runtime_available", lambda: True)
     monkeypatch.setattr(mod, "_monitoring_live", lambda: True)
+    # Gate 101E: a scheduler that is running is running somewhere.
+    monkeypatch.setattr(mod, "_persistent_backend_live", lambda: True)
     matrix = mod.build_phase1_activation_matrix(
         preflight_by_source={
             sid: {"activation_allowed": True} for sid in mod.PHASE1_SOURCE_IDS

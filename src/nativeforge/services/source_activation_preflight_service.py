@@ -259,6 +259,17 @@ def _dry_run_worker_available() -> bool:
     return bool(build_scheduler_readiness().get("dry_run_worker_available"))
 
 
+def _persistent_backend_live() -> bool:
+    """Gate 101E: a backend process for a scheduler to live in. Detected."""
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(build_scheduler_readiness().get("persistent_backend_live"))
+
+
 def _background_worker_present() -> bool:
     """Gate 100D: a real worker, detected. The only thing that permits work."""
     try:
@@ -521,6 +532,9 @@ def build_activation_preflight(
             # validates the machine it is running on, not the record it was
             # handed - and it disagrees with a caller who simulated one.
             "background_worker_available": _background_worker_present(),
+            # Gate 101E: recorded for the same reason - the invariant below
+            # reads the record rather than re-querying the world.
+            "persistent_backend_live": _persistent_backend_live(),
             "scheduling_blocked_reasons": sorted(set(scheduling_blocked_reasons)),
             "activation_is_not_scheduler_readiness": True,
             # Constant for this gate. Nothing fetches, so nothing may say it is
@@ -643,6 +657,9 @@ def preflight_invariant_failures(result: dict[str, Any]) -> list[str]:
             "background_worker_available"
         ):
             fails.append("safe_to_schedule_on_a_dry_run_worker")
+        # Gate 101E. A scheduler needs a process to live in.
+        if not result.get("persistent_backend_live"):
+            fails.append("safe_to_schedule_without_a_persistent_backend")
         if result.get("scheduling_blocked_reasons"):
             fails.append("safe_to_schedule_with_scheduling_blocked_reasons")
     if not result.get("safe_to_schedule") and not result.get(
