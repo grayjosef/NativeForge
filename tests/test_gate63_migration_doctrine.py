@@ -31,7 +31,13 @@ VERSIONS = ROOT / "alembic" / "versions"
 DOCS = ROOT / "docs" / "operations"
 
 # The current documented head. Update deliberately, with a docs/operations entry.
-CURRENT_HEAD = "0027"
+#
+# Gate 96 re-pinned 0027 -> 0028 for nf_raw_source_payloads (source-response
+# evidence metadata). Documented in docs/operations/541_GATE96_NF_RAW_SOURCE_
+# PAYLOADS_SCHEMA.md. The migration adds a metadata table only; it is not a
+# production storage claim, and doc 544 records that production raw payload
+# storage remains unavailable because no body store is configured.
+CURRENT_HEAD = "0028"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

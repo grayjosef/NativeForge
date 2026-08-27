@@ -1,0 +1,56 @@
+{
+  "blocked_reasons": [
+    "no_object_store_client_installed",
+    "object_store_settings_missing:raw_payload_object_store_endpoint,raw_payload_object_store_bucket,raw_payload_object_store_credential",
+    "mode_not_production_capable:unconfigured"
+  ],
+  "bodies_stored": 0,
+  "body_store_configured": false,
+  "collectors_active": false,
+  "database_mode_allowed_for_production": false,
+  "declared_mode": null,
+  "detected_mode": "unconfigured",
+  "fabricated": false,
+  "fetch_performed": false,
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "local_dev_counts_as_production": false,
+  "metadata_table_available": true,
+  "modes": [
+    "database_small_payload_only",
+    "local_dev_ignored",
+    "object_store_required",
+    "unconfigured"
+  ],
+  "non_production_modes": {
+    "database_small_payload_only": "'small' is a property of the responses seen so far, not of the source; a 78 MB Grants.gov extract is not a database row",
+    "local_dev_ignored": "per-checkout directory, gitignored, no durability or cross-process retrieval",
+    "unconfigured": "no body store exists"
+  },
+  "object_store_clients_installed": [],
+  "object_store_required_for_collection": true,
+  "production_capable_modes": [
+    "object_store_required"
+  ],
+  "production_raw_payload_store_available": false,
+  "production_storage_live": false,
+  "required_guarantees": [
+    "content_addressed",
+    "hash_preserving",
+    "secret_scan_clean_before_promotion",
+    "no_body_values_in_logs"
+  ],
+  "required_settings": [
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_bucket",
+    "raw_payload_object_store_credential"
+  ],
+  "schema_version": "nf_raw_payload_body_store_contract_v1",
+  "settings_missing": [
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_bucket",
+    "raw_payload_object_store_credential"
+  ],
+  "settings_present": [],
+  "source_monitoring_active": false
+}

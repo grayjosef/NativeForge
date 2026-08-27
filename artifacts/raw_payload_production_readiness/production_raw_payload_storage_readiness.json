@@ -1,0 +1,58 @@
+{
+  "body_store_configured": false,
+  "collectors_active": false,
+  "component_detection": {
+    "body_store_configured": "importlib.util.find_spec for boto3/minio/google.cloud.storage/azure.storage.blob AND all three object-store settings on the Settings model",
+    "metadata_table_available": "alembic/versions/0028_nf_raw_source_payloads.py present, or the table found by SQLAlchemy inspection when a session is supplied",
+    "promotion_gate_available": "raw_payload_promotion_gate_service.evaluate_payload_promotion importable and callable",
+    "secret_scan_available": "raw_payload_secret_scan_service.scan_payload_for_secrets importable and callable"
+  },
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "metadata_table_available": true,
+  "production_raw_payload_store_available": false,
+  "production_storage_live": false,
+  "readiness": {
+    "blocked_reasons": [
+      "component_missing:body_store_configured",
+      "mode_not_production_capable:unconfigured",
+      "no_object_store_client_installed",
+      "object_store_settings_missing:raw_payload_object_store_endpoint,raw_payload_object_store_bucket,raw_payload_object_store_credential"
+    ],
+    "body_store_configured": false,
+    "body_store_mode": "unconfigured",
+    "collectors_active": 0,
+    "components_missing": [
+      "body_store_configured"
+    ],
+    "components_present": [
+      "metadata_table_available",
+      "promotion_gate_available",
+      "secret_scan_available"
+    ],
+    "fabricated": false,
+    "live_fetch_performed": false,
+    "live_source_coverage": false,
+    "local_raw_payload_store_available": true,
+    "metadata_table_available": true,
+    "next_required_actions": [
+      "choose an object store, add its client to the dependency set, and add endpoint/bucket/credential settings",
+      "implement the body store against the four required guarantees: content-addressed, hash-preserving, secret-scan-clean before promotion, no body values in logs"
+    ],
+    "object_store_required": true,
+    "production_raw_payload_store_available": false,
+    "production_storage_live": false,
+    "promotion_gate_available": true,
+    "required_components": [
+      "metadata_table_available",
+      "body_store_configured",
+      "secret_scan_available",
+      "promotion_gate_available"
+    ],
+    "schema_version": "nf_raw_payload_production_readiness_v1",
+    "secret_scan_available": true,
+    "source_monitoring_active": false
+  },
+  "schema_version": "nf_raw_payload_production_readiness_artifact_v1",
+  "source_monitoring_active": false
+}

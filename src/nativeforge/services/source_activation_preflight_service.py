@@ -118,6 +118,19 @@ STORE_IMPLEMENTATION_STATUSES = frozenset(
 )
 STORE_IMPLEMENTATION_SATISFYING = frozenset({"local_only", "production"})
 
+# Gate 96: a dry-run and a live collection need different stores. A local,
+# per-checkout store is enough to scaffold a collector against; it is not
+# enough to run one, because a live payload whose bytes live only in one
+# developer's checkout is not evidence anyone else can retrieve.
+COLLECTION_INTENTS = frozenset({"dry_run", "live_collection"})
+
+# Which store each intent requires. Named per intent rather than derived,
+# so widening one does not silently widen the other.
+INTENT_STORE_REQUIREMENT: dict[str, frozenset[str]] = {
+    "dry_run": frozenset({"local_only", "production"}),
+    "live_collection": frozenset({"production"}),
+}
+
 SCHEDULER_STATUSES = frozenset({"policy_declared", "missing", "unknown"})
 SCHEDULER_SATISFYING = frozenset({"policy_declared"})
 
@@ -144,6 +157,7 @@ REQUIREMENT_KEYS: tuple[str, ...] = (
     "credential",
     "raw_payload_storage",
     "raw_payload_store_implementation",
+    "store_supports_collection_intent",
     "rate_limit_policy",
     "user_agent_policy",
     "scheduler_policy",
@@ -168,7 +182,18 @@ def detect_store_implementation() -> str:
         return "none"
     if not hasattr(store, "store_raw_payload"):
         return "none"
-    # Production storage is not live; when it is, this reports "production".
+    # Gate 96: production requires BOTH the metadata table and a configured
+    # body store. Detected, not declared - the readiness service establishes
+    # each by importing and inspecting, never by reading a caller flag.
+    try:
+        from nativeforge.services.raw_payload_production_readiness_service import (
+            build_production_readiness,
+        )
+
+        if build_production_readiness()["production_raw_payload_store_available"]:
+            return "production"
+    except ImportError:
+        pass
     return "local_only"
 
 
@@ -195,6 +220,7 @@ def build_activation_preflight(
     storage_status: Any = None,
     scheduler_status: Any = None,
     monitoring_status: Any = None,
+    collection_intent: Any = None,
 ) -> dict[str, Any]:
     """One source in, one activation decision out. Nothing is activated."""
     ctype = _norm(collector_type, COLLECTOR_TYPES, fallback="unknown")
@@ -287,6 +313,18 @@ def build_activation_preflight(
         f"raw_payload_store_implementation_missing:{store_implementation}",
     )
 
+    # 5c. Gate 96: the store must support what this source intends to do.
+    #     A dry-run may scaffold against the local store; a live collection
+    #     needs production storage, because a payload retrievable only from one
+    #     checkout is not evidence.
+    intent = _norm(collection_intent, COLLECTION_INTENTS, fallback="dry_run")
+    accepted_stores = INTENT_STORE_REQUIREMENT[intent]
+    record(
+        "store_supports_collection_intent",
+        store_implementation in accepted_stores,
+        f"store_does_not_support_intent:{intent}:{store_implementation}",
+    )
+
     # 6. Rate limit policy. Also required for every collector.
     record(
         "rate_limit_policy",
@@ -376,6 +414,8 @@ def build_activation_preflight(
             "production_raw_payload_store_available": store_implementation
             == "production",
             "raw_payload_store_implementation": store_implementation,
+            "collection_intent": intent,
+            "intent_accepts_store_implementations": sorted(accepted_stores),
             "resolved_inputs": {
                 "terms_status": terms,
                 "legal_review_status": legal,
@@ -520,6 +560,16 @@ def preflight_invariant_failures(result: dict[str, Any]) -> list[str]:
         "raw_payload_store_implementation"
     ) not in STORE_IMPLEMENTATION_SATISFYING:
         fails.append("activation_allowed_without_a_payload_store_implementation")
+
+    # Gate 96: a live collection may never be allowed on a local-only store.
+    if result.get("collection_intent") not in COLLECTION_INTENTS:
+        fails.append("collection_intent_out_of_vocabulary")
+    if (
+        result.get("activation_allowed")
+        and result.get("collection_intent") == "live_collection"
+        and result.get("raw_payload_store_implementation") != "production"
+    ):
+        fails.append("live_collection_allowed_on_a_non_production_store")
 
     # An AI-crawler UA is never a satisfied policy, whatever the collector type.
     if resolved.get("user_agent_status") == "forbidden_ai_crawler" and result.get(

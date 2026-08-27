@@ -1,0 +1,5 @@
+component,available,required_for_production,detected_how,metadata_table_available,body_store_configured,production_raw_payload_store_available,production_storage_live,live_fetch_performed,collectors_active,source_monitoring_active,live_source_coverage
+metadata_table_available,True,True,"alembic/versions/0028_nf_raw_source_payloads.py present, or the table found by SQLAlchemy inspection when a session is supplied",True,False,False,False,False,False,False,False
+body_store_configured,False,True,importlib.util.find_spec for boto3/minio/google.cloud.storage/azure.storage.blob AND all three object-store settings on the Settings model,True,False,False,False,False,False,False,False
+secret_scan_available,True,True,raw_payload_secret_scan_service.scan_payload_for_secrets importable and callable,True,False,False,False,False,False,False,False
+promotion_gate_available,True,True,raw_payload_promotion_gate_service.evaluate_payload_promotion importable and callable,True,False,False,False,False,False,False,False

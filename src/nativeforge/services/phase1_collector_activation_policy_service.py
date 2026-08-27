@@ -130,6 +130,29 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
+def _production_store_available() -> bool:
+    """Detected via the readiness service, which detects each component."""
+    try:
+        from nativeforge.services.raw_payload_production_readiness_service import (
+            build_production_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(
+        build_production_readiness()["production_raw_payload_store_available"]
+    )
+
+
+def _metadata_table_available() -> bool:
+    try:
+        from nativeforge.services.production_raw_payload_repository_service import (
+            detect_metadata_table,
+        )
+    except ImportError:
+        return False
+    return bool(detect_metadata_table())
+
+
 def evaluate_phase1_source(
     *,
     source_id: str,
@@ -222,7 +245,15 @@ def build_phase1_activation_matrix(
             "raw_payload_store_contract_available": True,
             "local_raw_payload_store_available": detect_store_implementation()
             in STORE_IMPLEMENTATION_SATISFYING,
-            "production_raw_payload_store_available": False,
+            # Gate 96: detected, not hardcoded. It reads False today because
+            # no body store is configured - but it reads False by *derivation*
+            # rather than by assertion, so it will change on its own when a
+            # body store exists rather than needing someone to remember.
+            "production_raw_payload_store_available": _production_store_available(),
+            "metadata_table_available": _metadata_table_available(),
+            # A live collection needs production storage. Dry-run scaffolding
+            # may use the local store.
+            "live_collection_requires_production_store": True,
             "sources_may_fetch_live_now": 0,
             "sources_may_schedule_monitor": 0,
             "sources_may_surface_customer_data": 0,
@@ -328,9 +359,18 @@ def policy_invariant_failures(matrix: dict[str, Any]) -> list[str]:
         if matrix.get(counter):
             fails.append(f"matrix_reported_nonzero:{counter}")
 
-    # Gate 95: a local store is not a production store.
+    # Gate 95/96: a local store is not a production store, and a metadata
+    # table alone is not production storage either. The second check is the one
+    # this gate adds: Alembic 0028 makes the table exist, and that must not be
+    # allowed to read as "production storage is ready".
     if matrix.get("production_raw_payload_store_available") is not False:
         fails.append("matrix_claimed_production_payload_storage")
+    if matrix.get("metadata_table_available") and matrix.get(
+        "production_raw_payload_store_available"
+    ):
+        fails.append("metadata_table_treated_as_production_storage")
+    if matrix.get("live_collection_requires_production_store") is not True:
+        fails.append("live_collection_production_requirement_dropped")
 
     seen = [s.get("source_id") for s in matrix.get("sources") or []]
     if seen != list(PHASE1_SOURCE_IDS):

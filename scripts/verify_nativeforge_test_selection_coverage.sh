@@ -47,7 +47,11 @@ source .venv/bin/activate
 # `raw_payload` with anything here, and the pattern is now established
 # enough to widen the expression when a gate lands rather than after it
 # fails.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store'
+#
+# `migration`, `alembic`, `schema` and `repository` were added by Gate 96,
+# also pre-emptively. Its critical tests are about a DB migration, and no
+# keyword here reached that vocabulary before.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -106,6 +110,12 @@ CRITICAL=(
   "tests/test_gate95_raw_payload_store.py::test_local_store_refuses_writes_by_default"
   "tests/test_gate95_raw_payload_store.py::test_jwt_is_detected_without_printing_the_value"
   "tests/test_gate95_raw_payload_store.py::test_preflight_never_claims_production_storage"
+  # Gate 96. The three that hold the gate's whole distinction: a metadata
+  # table is not production storage, the derived availability flag cannot
+  # be faked, and a live collection may not run on a local-only store.
+  "tests/test_gate96_production_raw_payload_storage.py::test_a_metadata_table_alone_is_not_production_storage"
+  "tests/test_gate96_production_raw_payload_storage.py::test_local_store_does_not_count_toward_production"
+  "tests/test_gate96_production_raw_payload_storage.py::test_live_collection_requires_the_production_store"
 )
 
 FAIL=0

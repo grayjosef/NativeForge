@@ -35,9 +35,11 @@
   "matrix": {
     "collectors_active": 0,
     "fabricated": false,
+    "live_collection_requires_production_store": true,
     "live_fetch_performed": false,
     "live_source_coverage": false,
     "local_raw_payload_store_available": true,
+    "metadata_table_available": true,
     "monitors_active": 0,
     "phase": 1,
     "production_raw_payload_store_available": false,
@@ -210,10 +212,15 @@
         "raw_payload_store_contract_unsatisfied:missing",
         "scheduler_policy_missing:missing"
       ],
+      "collection_intent": "dry_run",
       "collector_type": "public_api",
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "intent_accepts_store_implementations": [
+        "local_only",
+        "production"
+      ],
       "local_raw_payload_store_available": true,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
@@ -228,6 +235,7 @@
         "legal_review",
         "rate_limit_policy",
         "raw_payload_store_implementation",
+        "store_supports_collection_intent",
         "terms_cleared",
         "user_agent_policy"
       ],
@@ -257,10 +265,15 @@
         "raw_payload_store_contract_unsatisfied:missing",
         "scheduler_policy_missing:missing"
       ],
+      "collection_intent": "dry_run",
       "collector_type": "bulk_extract",
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "intent_accepts_store_implementations": [
+        "local_only",
+        "production"
+      ],
       "local_raw_payload_store_available": true,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
@@ -275,6 +288,7 @@
         "legal_review",
         "rate_limit_policy",
         "raw_payload_store_implementation",
+        "store_supports_collection_intent",
         "terms_cleared",
         "user_agent_policy"
       ],
@@ -304,10 +318,15 @@
         "raw_payload_store_contract_unsatisfied:missing",
         "scheduler_policy_missing:missing"
       ],
+      "collection_intent": "dry_run",
       "collector_type": "public_api",
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "intent_accepts_store_implementations": [
+        "local_only",
+        "production"
+      ],
       "local_raw_payload_store_available": true,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
@@ -322,6 +341,7 @@
         "legal_review",
         "rate_limit_policy",
         "raw_payload_store_implementation",
+        "store_supports_collection_intent",
         "terms_cleared",
         "user_agent_policy"
       ],
@@ -353,10 +373,15 @@
         "scheduler_policy_missing:missing",
         "terms_status_blocks_activation:TERMS_REVIEW_REQUIRED"
       ],
+      "collection_intent": "dry_run",
       "collector_type": "public_api_with_key",
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "intent_accepts_store_implementations": [
+        "local_only",
+        "production"
+      ],
       "local_raw_payload_store_available": true,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
@@ -372,6 +397,7 @@
         "legal_review",
         "rate_limit_policy",
         "raw_payload_store_implementation",
+        "store_supports_collection_intent",
         "user_agent_policy"
       ],
       "resolved_inputs": {
@@ -400,10 +426,15 @@
         "raw_payload_store_contract_unsatisfied:missing",
         "scheduler_policy_missing:missing"
       ],
+      "collection_intent": "dry_run",
       "collector_type": "public_api",
       "fabricated": false,
       "fetch_performed": false,
       "human_review_required": false,
+      "intent_accepts_store_implementations": [
+        "local_only",
+        "production"
+      ],
       "local_raw_payload_store_available": true,
       "production_raw_payload_store_available": false,
       "raw_payload_store_contract_available": true,
@@ -418,6 +449,7 @@
         "legal_review",
         "rate_limit_policy",
         "raw_payload_store_implementation",
+        "store_supports_collection_intent",
         "terms_cleared",
         "user_agent_policy"
       ],

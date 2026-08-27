@@ -57,7 +57,14 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # different revision has a schema this code was never reviewed for, so the
 # adapter declines rather than guessing — the same doctrine the active-source
 # services use with TARGET_REVISION_ID.
-EXPECTED_MIGRATION_HEAD = "0027"
+#
+# Gate 96 moved this 0027 -> 0028, and the move is a claim that the adapter was
+# reviewed against the new schema rather than merely re-pinned to unblock a
+# test. The review: 0028's upgrade() performs exactly one create_table
+# (nf_raw_source_payloads) and five create_index calls on that same table. It
+# touches neither nf_identities nor nf_org_memberships — the only two tables
+# this adapter reads — nor organizations. The adapter's schema is unchanged.
+EXPECTED_MIGRATION_HEAD = "0028"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.
