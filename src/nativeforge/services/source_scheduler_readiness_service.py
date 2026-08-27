@@ -131,6 +131,18 @@ DRY_RUN_RUNTIME_MODULES = (
     ("nativeforge.services.source_scheduler_queue_service", "build_dry_run_queue"),
 )
 
+# Gate 100C: the dry-run *worker*. Kept separate from the dry-run *runtime*
+# above because they are different capabilities - one builds a queue, the other
+# consumes one - and a system could plausibly have either without the other.
+# Neither is a background worker, and `background_worker_available` is derived
+# from neither.
+DRY_RUN_WORKER_MODULES = (
+    (
+        "nativeforge.services.source_scheduler_dry_run_worker_service",
+        "run_dry_run_worker",
+    ),
+)
+
 # Gate 99D. Four modes, ordered by how much they permit.
 #
 # `none`                        nothing at all
@@ -167,6 +179,7 @@ COMPONENT_KEYS: tuple[str, ...] = (
     "check_run_contract_service",
     "production_raw_payload_store",
     "dry_run_runtime",
+    "dry_run_worker",
     "scheduler_runtime",
     "background_worker",
     "periodic_trigger",
@@ -175,13 +188,18 @@ COMPONENT_KEYS: tuple[str, ...] = (
 # The components that are a *runtime*, as opposed to a contract. Separated so a
 # full set of contracts cannot be mistaken for the ability to run anything.
 #
-# `dry_run_runtime` is deliberately NOT in this set. It is a runtime in the
-# narrow sense that code runs, but it is not one of the things whose absence
-# stops monitoring - and listing it here would make `remaining_work` shrink for
-# a reason that does not move the system any closer to monitoring.
+# `dry_run_runtime` and `dry_run_worker` are deliberately NOT in this set. They
+# are runtimes in the narrow sense that code runs, but neither is one of the
+# things whose absence stops monitoring - and listing them here would make
+# `remaining_work` shrink for a reason that does not move the system any closer
+# to monitoring.
 RUNTIME_COMPONENT_KEYS = frozenset(
     {"scheduler_runtime", "background_worker", "periodic_trigger"}
 )
+
+# Components that are dry-run capability. Named so a reader - and an invariant -
+# can tell at a glance which side of the boundary each one sits on.
+DRY_RUN_COMPONENT_KEYS = frozenset({"dry_run_runtime", "dry_run_worker"})
 
 
 def _json_safe(x: Any) -> Any:
@@ -221,6 +239,39 @@ def detect_dry_run_runtime() -> dict[str, Any]:
             "modules_found": sorted(found),
             "modules_required": [m for m, _ in DRY_RUN_RUNTIME_MODULES],
             "detection_method": "import + callable check",
+            "executes_jobs": False,
+            "fetches": False,
+        }
+    )
+
+
+def detect_dry_run_worker() -> dict[str, Any]:
+    """Whether the in-process dry-run worker can consume a queue here.
+
+    Import and callable, the same standard every other component is held to.
+
+    This is *not* `background_worker_available`. A dry-run worker marks jobs; a
+    background worker runs them. Nothing in this function feeds the background
+    worker answer, and an invariant fails any result where the two agree.
+    """
+    found: list[str] = []
+    for module, symbol in DRY_RUN_WORKER_MODULES:
+        if not _module_importable(module):
+            continue
+        try:
+            imported = importlib.import_module(module)
+        except Exception:  # noqa: BLE001 - a worker that cannot import is absent
+            continue
+        if callable(getattr(imported, symbol, None)):
+            found.append(module)
+
+    return _json_safe(
+        {
+            "available": len(found) == len(DRY_RUN_WORKER_MODULES),
+            "modules_found": sorted(found),
+            "modules_required": [m for m, _ in DRY_RUN_WORKER_MODULES],
+            "detection_method": "import + callable check",
+            "is_a_background_worker": False,
             "executes_jobs": False,
             "fetches": False,
         }
@@ -401,6 +452,7 @@ def build_scheduler_readiness(*, repo_root: Path | None = None) -> dict[str, Any
         ),
         "production_raw_payload_store": _detect_production_store(),
         "dry_run_runtime": detect_dry_run_runtime(),
+        "dry_run_worker": detect_dry_run_worker(),
         "scheduler_runtime": detect_scheduler_runtime(),
         "background_worker": detect_background_worker(),
         "periodic_trigger": detect_periodic_trigger(repo_root=repo_root),
@@ -476,6 +528,11 @@ def build_scheduler_readiness(*, repo_root: Path | None = None) -> dict[str, Any
             "runtime_executes_jobs": runtime["executes_jobs"],
             "dry_run_runtime_available": bool(
                 components["dry_run_runtime"]["available"]
+            ),
+            # Gate 100C. Reported beside the runtime, and never folded into
+            # `background_worker_available` - marking jobs is not running them.
+            "dry_run_worker_available": bool(
+                components["dry_run_worker"]["available"]
             ),
             # Kept distinct from `scheduler_runtime_available`, which changed
             # meaning in Gate 99D. This is still the narrow question Gate 98
@@ -569,6 +626,31 @@ def scheduler_readiness_invariant_failures(result: dict[str, Any]) -> list[str]:
         mode in LIVE_RUNTIME_MODES and worker_ok and trigger_ok
     ):
         fails.append("monitoring_live_disagrees_with_the_runtime_components")
+
+    # Gate 100D. A dry-run worker is not a background worker, and no component
+    # in the dry-run set may contribute to the worker answer. `background_worker`
+    # has its own detection - a worker module or a console entry point - and that
+    # is the only thing allowed to make this true.
+    dry_run_worker_ok = bool(result.get("dry_run_worker_available"))
+    if dry_run_worker_ok and worker_ok:
+        worker_record = components.get("background_worker") or {}
+        if not (
+            worker_record.get("worker_modules")
+            or worker_record.get("worker_entry_points")
+        ):
+            fails.append("dry_run_worker_read_as_a_background_worker")
+    if dry_run_worker_ok:
+        record = components.get("dry_run_worker") or {}
+        if record.get("is_a_background_worker"):
+            fails.append("dry_run_worker_declared_itself_a_background_worker")
+        if record.get("executes_jobs") or record.get("fetches"):
+            fails.append("dry_run_worker_claimed_execution_or_fetching")
+
+    # Dry-run components may never appear as remaining work: having them does
+    # not move the system closer to monitoring, so their absence is not what is
+    # holding it back.
+    if set(result.get("remaining_work") or []) & DRY_RUN_COMPONENT_KEYS:
+        fails.append("dry_run_component_counted_as_remaining_work")
 
     # A mode stronger than dry-run must have the evidence behind it.
     if mode in {"external_worker_configured", "production_worker_live"}:

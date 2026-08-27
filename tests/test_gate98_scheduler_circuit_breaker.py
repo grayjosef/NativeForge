@@ -788,7 +788,13 @@ def test_scheduling_blockers_do_not_block_activation() -> None:
 def test_scheduling_becomes_possible_when_a_runtime_exists(monkeypatch) -> None:
     import nativeforge.services.source_activation_preflight_service as mod
 
+    # Gate 100D: both halves must be simulated. `_scheduler_runtime_available`
+    # is itself `runtime and worker`, so a world where it returns True is a
+    # world with a worker in it - and the result now records that fact
+    # separately, which makes an inconsistent simulation fail an invariant
+    # rather than pass quietly.
     monkeypatch.setattr(mod, "_scheduler_runtime_available", lambda: True)
+    monkeypatch.setattr(mod, "_background_worker_present", lambda: True)
     result = _cleared_preflight()
     assert result["safe_to_schedule"] is True
     assert not mod.preflight_invariant_failures(result)

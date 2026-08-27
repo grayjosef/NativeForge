@@ -64,6 +64,7 @@ from nativeforge.services.source_schedule_decision_service import (
 )
 from nativeforge.services.source_scheduler_readiness_service import (
     COMPONENT_KEYS,
+    DRY_RUN_COMPONENT_KEYS,
     RUNTIME_COMPONENT_KEYS,
     build_scheduler_readiness,
     scheduler_readiness_invariant_failures,
@@ -290,11 +291,14 @@ def build_readiness_bundle(*, repo_root: Path | None = None) -> dict[str, Any]:
             {
                 "component": key,
                 "available": record["available"],
-                # `dry_run_runtime` is a runtime in the narrow sense that code
-                # runs, and Gate 99 labels it as one here so a reader is not
-                # left wondering why a contract made `runtime_mode` move.
+                # `dry_run_runtime` and `dry_run_worker` are runtimes in the
+                # narrow sense that code runs, and are labelled as such so a
+                # reader is not left wondering why a contract made
+                # `runtime_mode` move. They are still not what monitoring is
+                # waiting on - `RUNTIME_COMPONENT_KEYS` is that set, and
+                # neither is in it.
                 "kind": "runtime"
-                if key in RUNTIME_COMPONENT_KEYS | {"dry_run_runtime"}
+                if key in RUNTIME_COMPONENT_KEYS | DRY_RUN_COMPONENT_KEYS
                 else "contract",
                 "detection_method": record["detection_method"],
                 **declarations,

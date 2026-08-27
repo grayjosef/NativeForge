@@ -16,6 +16,7 @@
       "check_run_contract_service",
       "production_raw_payload_store",
       "dry_run_runtime",
+      "dry_run_worker",
       "scheduler_runtime",
       "background_worker",
       "periodic_trigger"
@@ -60,6 +61,19 @@
         "modules_required": [
           "nativeforge.services.source_scheduler_job_model_service",
           "nativeforge.services.source_scheduler_queue_service"
+        ]
+      },
+      "dry_run_worker": {
+        "available": true,
+        "detection_method": "import + callable check",
+        "executes_jobs": false,
+        "fetches": false,
+        "is_a_background_worker": false,
+        "modules_found": [
+          "nativeforge.services.source_scheduler_dry_run_worker_service"
+        ],
+        "modules_required": [
+          "nativeforge.services.source_scheduler_dry_run_worker_service"
         ]
       },
       "periodic_trigger": {
@@ -119,10 +133,12 @@
       "check_run_contract_service",
       "circuit_breaker_service",
       "dry_run_runtime",
+      "dry_run_worker",
       "schedule_decision_service"
     ],
     "decision_layer_available": true,
     "dry_run_runtime_available": true,
+    "dry_run_worker_available": true,
     "fabricated": false,
     "live_fetch_performed": false,
     "live_source_coverage": false,

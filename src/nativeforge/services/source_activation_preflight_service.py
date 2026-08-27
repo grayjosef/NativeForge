@@ -227,6 +227,13 @@ def _scheduler_runtime_available() -> bool:
     caller saying a cadence has been decided. That is not a runtime, and before
     this bridge existed a caller passing `scheduler_status="policy_declared"`
     got `safe_to_schedule=True` on a system with no scheduler at all.
+
+    Gate 100D made the second half explicit rather than incidental. A dry-run
+    runtime (Gate 99) and a dry-run worker (Gate 100) both now exist and report
+    available, and neither may contribute here: `background_worker_available` is
+    the only thing that can, and it is detected from a worker module or a console
+    entry point, of which there are none. Scheduling a source needs something
+    that will actually run the check, not something that can describe running it.
     """
     try:
         from nativeforge.services.source_scheduler_readiness_service import (
@@ -239,6 +246,28 @@ def _scheduler_runtime_available() -> bool:
         readiness["scheduler_runtime_available"]
         and readiness["background_worker_available"]
     )
+
+
+def _dry_run_worker_available() -> bool:
+    """Gate 100D: reported so the distinction is visible, never acted on."""
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(build_scheduler_readiness().get("dry_run_worker_available"))
+
+
+def _background_worker_present() -> bool:
+    """Gate 100D: a real worker, detected. The only thing that permits work."""
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(build_scheduler_readiness().get("background_worker_available"))
 
 
 def _norm(value: Any, vocabulary: frozenset[str], *, fallback: str) -> str:
@@ -483,6 +512,15 @@ def build_activation_preflight(
             ),
             "scheduler_policy_declared": scheduler in SCHEDULER_SATISFYING,
             "scheduler_runtime_available": scheduler_runtime_available,
+            # Gate 100D: reported so a reader can see that a dry-run worker
+            # exists and still buys nothing here. Silence would leave the
+            # question open; this answers it in the negative, in writing.
+            "dry_run_worker_available": _dry_run_worker_available(),
+            # Recorded, so the invariant below can check the result rather than
+            # re-query the world. An invariant that does its own detection
+            # validates the machine it is running on, not the record it was
+            # handed - and it disagrees with a caller who simulated one.
+            "background_worker_available": _background_worker_present(),
             "scheduling_blocked_reasons": sorted(set(scheduling_blocked_reasons)),
             "activation_is_not_scheduler_readiness": True,
             # Constant for this gate. Nothing fetches, so nothing may say it is
@@ -597,9 +635,14 @@ def preflight_invariant_failures(result: dict[str, Any]) -> list[str]:
         fails.append("safe_to_schedule_without_activation_allowed")
 
     # Gate 98F. Scheduling needs a scheduler, and a policy is not one.
+    # Gate 100D. It also needs a worker, and a dry-run worker is not one.
     if result.get("safe_to_schedule"):
         if not result.get("scheduler_runtime_available"):
             fails.append("safe_to_schedule_without_a_scheduler_runtime")
+        if result.get("dry_run_worker_available") and not result.get(
+            "background_worker_available"
+        ):
+            fails.append("safe_to_schedule_on_a_dry_run_worker")
         if result.get("scheduling_blocked_reasons"):
             fails.append("safe_to_schedule_with_scheduling_blocked_reasons")
     if not result.get("safe_to_schedule") and not result.get(

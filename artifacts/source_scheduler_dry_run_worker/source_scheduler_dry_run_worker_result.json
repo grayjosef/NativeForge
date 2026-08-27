@@ -1,0 +1,163 @@
+{
+  "background_worker_available": false,
+  "collectors_executed": false,
+  "dry_run_worker_available": true,
+  "live_source_coverage": false,
+  "production_worker_live": false,
+  "raw_payloads_written": false,
+  "reference_now": "2026-01-01T12:00:00+00:00",
+  "result": {
+    "background_worker_available": false,
+    "blocked_reasons": [
+      "activation_not_allowed:activation_blocked",
+      "circuit_does_not_permit:unknown",
+      "production_payload_store_unavailable:unavailable",
+      "schedule_does_not_permit_enqueue:unknown"
+    ],
+    "collectors_executed": false,
+    "dry_run_only": true,
+    "fabricated": false,
+    "jobs_blocked_dry_run": 5,
+    "jobs_completed_dry_run": 0,
+    "jobs_processed": 5,
+    "jobs_refused": 0,
+    "jobs_seen": 5,
+    "jobs_skipped": 0,
+    "live_jobs_refused": 0,
+    "live_source_coverage": false,
+    "production_worker_live": false,
+    "queue_id": "be7751e8cf509c19470c06a6ea7c8201033640a5408c6f8f6fe3cb82151ab02e",
+    "raw_payloads_written": false,
+    "results": [
+      {
+        "blocked_reasons": [
+          "activation_not_allowed:activation_blocked",
+          "circuit_does_not_permit:unknown",
+          "production_payload_store_unavailable:unavailable",
+          "schedule_does_not_permit_enqueue:unknown"
+        ],
+        "collector_invoked": false,
+        "idempotency_key": "6c8b69d0526cf94ec6dda93815d255fc41e970e515f0e0039b70c1bed659bea4",
+        "input_execution_mode": "dry_run",
+        "input_job_status": "blocked",
+        "job_id": "0040f8fe3f23013acb2c030bfe63cf0cfd772613f3e0a9f0fb94459410435455",
+        "job_type": "source_check",
+        "outcome": "blocked_dry_run",
+        "raw_payload_written": false,
+        "source_id": "grants_gov_search2_fetch",
+        "url_fetched": false
+      },
+      {
+        "blocked_reasons": [
+          "activation_not_allowed:activation_blocked",
+          "circuit_does_not_permit:unknown",
+          "production_payload_store_unavailable:unavailable",
+          "schedule_does_not_permit_enqueue:unknown"
+        ],
+        "collector_invoked": false,
+        "idempotency_key": "693889299aed60c8b4d5cf3218e2f8aeaea8ea21ef03126fcd9aa40a3573977c",
+        "input_execution_mode": "dry_run",
+        "input_job_status": "blocked",
+        "job_id": "674d60b3106d2eb0a4dcb461845a400c393b1b491d4bafff8861376275292403",
+        "job_type": "source_check",
+        "outcome": "blocked_dry_run",
+        "raw_payload_written": false,
+        "source_id": "usaspending_api_v2",
+        "url_fetched": false
+      },
+      {
+        "blocked_reasons": [
+          "activation_not_allowed:activation_blocked",
+          "circuit_does_not_permit:unknown",
+          "production_payload_store_unavailable:unavailable",
+          "schedule_does_not_permit_enqueue:unknown"
+        ],
+        "collector_invoked": false,
+        "idempotency_key": "0dfb5f530d1f15853c6f0324200640a2cb8ef8ebbd8a35e5c234ef6c4f0c7575",
+        "input_execution_mode": "dry_run",
+        "input_job_status": "blocked",
+        "job_id": "996cb1d4d9adadce6ddd6dff8afda5285c37751f7341a6addaedaa394126f737",
+        "job_type": "source_check",
+        "outcome": "blocked_dry_run",
+        "raw_payload_written": false,
+        "source_id": "sam_assistance_listings_api",
+        "url_fetched": false
+      },
+      {
+        "blocked_reasons": [
+          "activation_not_allowed:activation_blocked",
+          "circuit_does_not_permit:unknown",
+          "production_payload_store_unavailable:unavailable",
+          "schedule_does_not_permit_enqueue:unknown"
+        ],
+        "collector_invoked": false,
+        "idempotency_key": "5df6ff795911997e8a722e5176ecf7276d12a2e8f94eedef692aa00a2d9bd130",
+        "input_execution_mode": "dry_run",
+        "input_job_status": "blocked",
+        "job_id": "b235c90098d3e8f60c5b02114bec7f1be4aa62829f7b5143b4604700f446958e",
+        "job_type": "source_check",
+        "outcome": "blocked_dry_run",
+        "raw_payload_written": false,
+        "source_id": "federal_register_api",
+        "url_fetched": false
+      },
+      {
+        "blocked_reasons": [
+          "activation_not_allowed:activation_blocked",
+          "circuit_does_not_permit:unknown",
+          "production_payload_store_unavailable:unavailable",
+          "schedule_does_not_permit_enqueue:unknown"
+        ],
+        "collector_invoked": false,
+        "idempotency_key": "de515c03d046249d33748ec514de63ed4dcdc70ad29e8bd33c9951b99a950aa0",
+        "input_execution_mode": "dry_run",
+        "input_job_status": "blocked",
+        "job_id": "ee9871cbc4314fdf9e10eb7ef1e8443bce293793794767ff4777c12ee69ed6f3",
+        "job_type": "source_check",
+        "outcome": "blocked_dry_run",
+        "raw_payload_written": false,
+        "source_id": "grants_gov_daily_extract",
+        "url_fetched": false
+      }
+    ],
+    "schema_version": "nf_source_scheduler_dry_run_worker_v1",
+    "source_monitoring_live": false,
+    "urls_fetched": false,
+    "worker_run_id": "cf4f7155e9f268580a0f10fae5e8ace80addb410975e6eca578b49db211b00a5"
+  },
+  "result_summary": {
+    "blocked_reasons": [
+      "activation_not_allowed:activation_blocked",
+      "circuit_does_not_permit:unknown",
+      "production_payload_store_unavailable:unavailable",
+      "schedule_does_not_permit_enqueue:unknown"
+    ],
+    "by_outcome": {
+      "blocked_dry_run": 5,
+      "completed_dry_run": 0,
+      "refused_invalid_status": 0,
+      "refused_live": 0,
+      "refused_unknown_mode": 0,
+      "skipped_not_processable": 0
+    },
+    "collectors_executed": false,
+    "dry_run_only": true,
+    "fabricated": false,
+    "jobs_blocked_dry_run": 5,
+    "jobs_completed_dry_run": 0,
+    "jobs_processed": 5,
+    "jobs_seen": 5,
+    "live_jobs_refused": 0,
+    "live_source_coverage": false,
+    "queue_id": "be7751e8cf509c19470c06a6ea7c8201033640a5408c6f8f6fe3cb82151ab02e",
+    "raw_payloads_written": false,
+    "schema_version": "nf_source_scheduler_dry_run_worker_v1",
+    "source_monitoring_live": false,
+    "urls_fetched": false,
+    "worker_run_id": "cf4f7155e9f268580a0f10fae5e8ace80addb410975e6eca578b49db211b00a5"
+  },
+  "runtime_mode": "dry_run_in_process",
+  "schema_version": "nf_source_scheduler_dry_run_worker_artifact_v1",
+  "source_monitoring_live": false,
+  "urls_fetched": false
+}

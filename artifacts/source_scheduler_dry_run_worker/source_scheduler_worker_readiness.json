@@ -1,9 +1,69 @@
 {
+  "background_worker_available": false,
   "collectors_executed": false,
-  "dry_run_only": true,
-  "live_fetch_performed": false,
-  "live_jobs_created": 0,
+  "decision": {
+    "background_worker_available": false,
+    "blocked_reasons": [
+      "background_worker_not_detected",
+      "broker_not_selected",
+      "periodic_trigger_not_configured",
+      "production_raw_payload_store_unavailable",
+      "systemd_unit_not_configured"
+    ],
+    "broker_candidates": [
+      "redis",
+      "rabbitmq",
+      "postgres_queue",
+      "sqs",
+      "none_systemd_timer"
+    ],
+    "broker_required": true,
+    "broker_selected": null,
+    "collectors_executed": false,
+    "dependency_required": false,
+    "dependency_selected": null,
+    "detected_runtime_mode": "dry_run_in_process",
+    "dry_run_worker_available": true,
+    "dry_run_worker_requires_dependency": false,
+    "external_worker_required": true,
+    "fabricated": false,
+    "live_source_coverage": false,
+    "next_required_actions": [
+      {
+        "action": "deploy_backend_process",
+        "why": "no long-running backend process exists; the API is started only by smoke scripts and no systemd unit serves it"
+      },
+      {
+        "action": "choose_worker_topology",
+        "why": "in-process (FastAPI lifespan) or external worker; main.py has no lifespan hook today"
+      },
+      {
+        "action": "select_broker_if_external",
+        "why": "only if the topology is external; an in-process or systemd-timer worker needs no broker and no dependency"
+      },
+      {
+        "action": "add_periodic_trigger",
+        "why": "a systemd .timer checked into the repo is detected by Gate 98E"
+      },
+      {
+        "action": "configure_production_object_store",
+        "why": "Gate 97's seam, deployed and round-tripped; a check with nowhere to put its bytes produces a number nobody can verify"
+      }
+    ],
+    "production_worker_live": false,
+    "raw_payloads_written": false,
+    "runtime_mode": "dry_run_in_process",
+    "schema_version": "nf_source_worker_runtime_decision_v1",
+    "source_monitoring_live": false,
+    "systemd_unit_configured": false,
+    "systemd_unit_required": true,
+    "urls_fetched": false,
+    "worker_runtime_available": true,
+    "worker_started": false
+  },
+  "dry_run_worker_available": true,
   "live_source_coverage": false,
+  "production_worker_live": false,
   "raw_payloads_written": false,
   "readiness": {
     "background_worker_available": false,
@@ -165,6 +225,7 @@
     "source_monitoring_live": false
   },
   "runtime_mode": "dry_run_in_process",
-  "schema_version": "nf_source_scheduler_dry_run_artifact_v1",
-  "source_monitoring_live": false
+  "schema_version": "nf_source_scheduler_dry_run_worker_artifact_v1",
+  "source_monitoring_live": false,
+  "urls_fetched": false
 }

@@ -205,6 +205,23 @@ def _monitoring_live() -> bool:
     return bool(build_scheduler_readiness()["source_monitoring_live"])
 
 
+def _dry_run_worker_available() -> bool:
+    """Gate 100D: a dry-run worker exists and buys nothing here.
+
+    Reported on the matrix so the distinction is on the record. A worker that
+    marks jobs is not a worker that runs them, and `may_schedule_monitor`
+    continues to require `_scheduler_runtime_available()`, which requires a
+    detected background worker - of which there is none.
+    """
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(build_scheduler_readiness().get("dry_run_worker_available"))
+
+
 def evaluate_phase1_source(
     *,
     source_id: str,
@@ -310,6 +327,8 @@ def build_phase1_activation_matrix(
             else 0,
             "scheduler_runtime_available": _scheduler_runtime_available(),
             "source_monitoring_live": _monitoring_live(),
+            # Gate 100D. On the record, and load-bearing for nothing.
+            "dry_run_worker_available": _dry_run_worker_available(),
             "live_fetch_performed": False,
             "live_source_coverage": False,
             # Gate 95. Three separate facts. The local store exists and is
@@ -458,6 +477,21 @@ def policy_invariant_failures(matrix: dict[str, Any]) -> list[str]:
         "scheduler_runtime_available"
     ):
         fails.append("sources_schedulable_without_a_scheduler_runtime")
+
+    # Gate 100D. A dry-run worker may never be the thing that makes a source
+    # schedulable or a collector fetchable. `scheduler_runtime_available` here
+    # already requires a detected background worker; this fails loudly if a
+    # future edit ever lets the dry-run answer stand in for it.
+    if matrix.get("dry_run_worker_available") and not matrix.get(
+        "scheduler_runtime_available"
+    ):
+        if matrix.get("sources_may_schedule_monitor") or matrix.get("monitors_active"):
+            fails.append("dry_run_worker_read_as_a_production_worker")
+        for source in matrix.get("sources") or []:
+            if source.get("may_schedule_monitor") or source.get("may_fetch_live_now"):
+                fails.append(
+                    f"dry_run_worker_permitted_live_work:{source.get('source_id')}"
+                )
 
     # Gate 95/96/97: a local store is not a production store, a metadata table
     # alone is not production storage, and an implementation is not a
