@@ -189,6 +189,27 @@ def send_feedback_slack_alert(
             },
         )
 
+    # Gate 94B: the global choke point. `mode == "live"` and a configured
+    # webhook already gate this, but every egress decision belongs in one place.
+    from nativeforge.services.live_network_guard_service import (
+        build_live_network_decision,
+    )
+
+    decision = build_live_network_decision(
+        purpose="operational_alert",
+        target_url=webhook,
+        caller="feedback_slack_alert_service.send_feedback_slack_alert",
+        method="POST",
+        allow_live_fetch=True,
+        endpoint_configured=bool(webhook),
+    )
+    if not decision["allowed"]:
+        return _result(
+            "failed",
+            False,
+            {"error": "live_network_refused"},
+        )
+
     try:
         import urllib.request
 

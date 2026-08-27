@@ -355,22 +355,55 @@ def fetch_jwks(
             }
         )
 
+    # Gate 94A: this scheme check used to sit INSIDE the `with`, after the
+    # request had already gone out - the old comment read "https enforced
+    # below", and below was too late. An http:// JWKS URL was contacted in
+    # plaintext and only then rejected. Checked before the call now.
+    if not str(jwks_url).lower().startswith("https://"):
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "ok": False,
+                "jwks": None,
+                "reason": "insecure_scheme",
+                "network_access_attempted": False,
+            }
+        )
+
+    # Gate 94B: the global choke point. This path already denied by default via
+    # `allow_network`, but a private gate is not the shared one - the whole
+    # point of the choke point is that every egress decision is visible in one
+    # place and carries a caller name.
+    from nativeforge.services.live_network_guard_service import (
+        build_live_network_decision,
+    )
+
+    decision = build_live_network_decision(
+        purpose="identity_verification",
+        target_url=jwks_url,
+        caller="oidc_token_verification_service.fetch_jwks",
+        method="GET",
+        allow_live_fetch=bool(allow_network),
+        issuer_configured=bool(jwks_url),
+    )
+    if not decision["allowed"]:
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "ok": False,
+                "jwks": None,
+                "reason": "live_network_refused",
+                "blocked_reasons": decision["blocked_reasons"],
+                "network_access_attempted": False,
+            }
+        )
+
     import urllib.request
 
     try:
-        with urllib.request.urlopen(  # noqa: S310 - https enforced below
+        with urllib.request.urlopen(  # noqa: S310 - https enforced above
             jwks_url, timeout=float(timeout_seconds)
         ) as resp:
-            if not str(jwks_url).lower().startswith("https://"):
-                return _json_safe(
-                    {
-                        "schema_version": SCHEMA_VERSION,
-                        "ok": False,
-                        "jwks": None,
-                        "reason": "insecure_scheme",
-                        "network_access_attempted": True,
-                    }
-                )
             body = resp.read(1_000_000)
         doc = json.loads(body)
         if not isinstance(doc, dict) or not doc.get("keys"):

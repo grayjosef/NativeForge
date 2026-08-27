@@ -35,7 +35,13 @@ source .venv/bin/activate
 # 67 tests were selected. Twice now the guard has caught a new module falling
 # outside the expression on the gate that introduced it, which is the intended
 # cadence.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction'
+#
+# `network`, `http`, `robots`, `chokepoint`, `user_agent` and `guard` were added
+# by Gate 94 — the fourth time. Two of its critical tests
+# (robots-fails-closed, does-not-route-around-gate77b) shared no keyword with
+# the expression, so the guard failed on the gate that introduced them rather
+# than several gates later by accident.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -80,6 +86,13 @@ CRITICAL=(
   "tests/test_gate93_phase1_collector_readiness.py::test_preflight_defaults_to_blocked"
   "tests/test_gate93_phase1_collector_readiness.py::test_attribution_in_docs_only_does_not_satisfy"
   "tests/test_gate93_phase1_collector_readiness.py::test_attribution_is_present_in_the_live_trust_manifest"
+  # Gate 94. The three that keep the codebase-wide claim true: the scan
+  # that fails when a seventh network call site appears, the robots
+  # fail-closed behaviour that was fail-open until this gate, and the
+  # proof that the new guard does not route around Gate 77B.
+  "tests/test_gate94_global_http_chokepoint.py::test_source_scan_has_zero_unapproved_call_sites"
+  "tests/test_gate94_global_http_chokepoint.py::test_polite_http_get_robots_fails_closed_on_timeout"
+  "tests/test_gate94_global_http_chokepoint.py::test_gate94_guard_does_not_route_around_gate77b"
 )
 
 FAIL=0

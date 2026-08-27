@@ -9,6 +9,12 @@ from collections.abc import Callable
 from typing import Any
 from urllib.parse import urlparse
 
+from nativeforge.services.live_network_guard_service import (
+    build_live_network_decision,
+)
+from nativeforge.services.nativeforge_user_agent_service import (
+    NATIVEFORGE_USER_AGENT,
+)
 from nativeforge.services.source_ingestion_seed_loader_service import (
     ACCESS_LOGIN,
     ACCESS_MEMBERS,
@@ -82,6 +88,7 @@ def default_real_http_fetch(url: str, method: str = "HEAD") -> dict[str, Any]:
     with httpx.Client(
         follow_redirects=True,
         timeout=DEFAULT_TIMEOUT_SECONDS,
+        headers={"User-Agent": NATIVEFORGE_USER_AGENT},
     ) as client:
         if method.upper() == "HEAD":
             try:
@@ -104,8 +111,19 @@ def resolve_url_real(
     hint: str = ACCESS_PUBLIC,
     fetcher: HttpFetcher | None = None,
     min_interval_seconds: float = DEFAULT_MIN_INTERVAL_SECONDS,
+    allow_live_fetch: bool = False,
+    caller: str = "resolve_url_real",
+    source_id: Any = None,
+    terms_status: Any = None,
 ) -> dict[str, Any]:
-    """Resolve one URL with rate limiting; public-only, no credential bypass."""
+    """Resolve one URL with rate limiting; public-only, no credential bypass.
+
+    Gate 94: `allow_live_fetch` defaults to False and every live resolution
+    passes the global guard first. An injected `fetcher` is a test seam and is
+    exempt from the guard - it reaches no network, and requiring permission to
+    call a recorded transport would only push tests into setting the live flag,
+    which is the opposite of what this gate is for.
+    """
     parsed = urlparse(url)
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         return _json_safe(
@@ -121,6 +139,41 @@ def resolve_url_real(
                 "error": "invalid_url",
             }
         )
+    # A live resolution needs permission. An injected fetcher does not: it is
+    # a recorded transport that never leaves the process.
+    if fetcher is None:
+        decision = build_live_network_decision(
+            purpose="source_discovery",
+            target_url=url,
+            caller=caller,
+            source_id=source_id,
+            method="HEAD",
+            allow_live_fetch=allow_live_fetch,
+            terms_status=terms_status,
+            # The resolver checks whether a URL is alive; it does not crawl a
+            # site's content, so robots is not consulted per-path here. The
+            # host-level blacklist and disallowed-path rules still apply
+            # through the guard's host_permitted requirement.
+            robots_status="absent",
+            rate_limit_status="policy_declared",
+            user_agent_status="canonical",
+        )
+        if not decision["allowed"]:
+            return _json_safe(
+                {
+                    "schema_version": SCHEMA_VERSION,
+                    "url": url,
+                    "resolved": False,
+                    "http_status": 0,
+                    "detected_posture": hint,
+                    "url_status": "unknown",
+                    "synthetic": False,
+                    "real": False,
+                    "error": "live_network_refused",
+                    "blocked_reasons": decision["blocked_reasons"],
+                }
+            )
+
     _enforce_rate_limit(min_interval_seconds=min_interval_seconds)
     do_fetch = fetcher or default_real_http_fetch
     try:

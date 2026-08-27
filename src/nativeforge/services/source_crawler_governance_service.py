@@ -58,34 +58,25 @@ import re
 from typing import Any
 from urllib.parse import urlsplit
 
+from nativeforge.services.nativeforge_user_agent_service import (
+    FORBIDDEN_USER_AGENT_TOKENS as _FORBIDDEN_TOKENS,
+)
+from nativeforge.services.nativeforge_user_agent_service import (
+    NATIVEFORGE_USER_AGENT as _CANONICAL_USER_AGENT,
+)
+
 SCHEMA_VERSION = "nf_source_crawler_governance_v1"
 
-# The only sanctioned UA family. A contact URL is part of the string.
-NATIVEFORGE_USER_AGENT = (
-    "NativeForgeBot/1.0 (+https://nativeforge.example/bot; grant discovery "
-    "for tribal organizations)"
-)
-
-# Matched as case-insensitive substrings, so NativeForgeBot/2.0 stays valid
-# while any variant carrying one of these tokens is refused.
-FORBIDDEN_USER_AGENT_TOKENS = frozenset(
-    {
-        "claudebot",
-        "claude-web",
-        "gptbot",
-        "chatgpt-user",
-        "ccbot",
-        "anthropic-ai",
-        "amazonbot",
-        "applebot-extended",
-        "bytespider",
-        "google-extended",
-        "meta-externalagent",
-        "perplexitybot",
-        "diffbot",
-        "omgili",
-    }
-)
+# Gate 94C: the canonical user-agent and the forbidden-token list moved to
+# `nativeforge_user_agent_service`, which now owns user-agent facts outright.
+# While this module owned the string, a second one lived in the polite fetcher
+# without governance knowing - and the contact in the string it did own pointed
+# at `nativeforge.example`, a reserved domain nobody can reach.
+#
+# Re-exported here so every existing importer, including Gate 92's tests, keeps
+# working against one definition rather than a copy.
+NATIVEFORGE_USER_AGENT = _CANONICAL_USER_AGENT
+FORBIDDEN_USER_AGENT_TOKENS = _FORBIDDEN_TOKENS
 
 # Self-imposed floors. No host in the set declares a Crawl-delay.
 PER_HOST_CONCURRENCY = 1

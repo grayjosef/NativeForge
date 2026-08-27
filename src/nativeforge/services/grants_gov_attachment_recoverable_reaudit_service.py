@@ -85,7 +85,10 @@ def _is_attachment_only_recoverable(
 def run_attachment_recoverable_reaudit(
     *,
     grants: list[dict[str, Any]] | None = None,
-    allow_live_fetch: bool = True,
+    # Gate 94: was `True`. A caller who forgot the argument opted INTO live
+    # fetching. The Gate 77B guard still stood behind it, but a default-open
+    # network parameter is the wrong shape regardless.
+    allow_live_fetch: bool = False,
 ) -> dict[str, Any]:
     rules = load_sc_eligibility_rules(require_files=False)
     corpus = grants if grants is not None else load_mixed_tier13_corpus()
