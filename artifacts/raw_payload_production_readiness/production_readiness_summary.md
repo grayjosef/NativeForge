@@ -18,11 +18,12 @@ live_source_coverage: false
 | Component | Available | How it is established |
 | --- | --- | --- |
 | `metadata_table_available` | yes | alembic/versions/0028_nf_raw_source_payloads.py present, or the table found by SQLAlchemy inspection when a session is supplied |
-| `body_store_configured` | **no** | importlib.util.find_spec for boto3/minio/google.cloud.storage/azure.storage.blob AND all three object-store settings on the Settings model |
+| `body_store_implementation_available` | yes | s3_raw_payload_body_store_service.store_body importable and callable; the seam takes an injected client, so no SDK is required |
+| `body_store_configured` | **no** | all five RAW_PAYLOAD_OBJECT_STORE_* settings hold real, non-blank, non-placeholder values - read by value, never by field existence, and no credential value is rendered |
 | `secret_scan_available` | yes | raw_payload_secret_scan_service.scan_payload_for_secrets importable and callable |
 | `promotion_gate_available` | yes | raw_payload_promotion_gate_service.evaluate_payload_promotion importable and callable |
 
-3 of 4 present. `production_raw_payload_store_available` is derived from all four, never set beside them, so it cannot read true while one is missing.
+4 of 5 present. `production_raw_payload_store_available` is derived from all four, never set beside them, so it cannot read true while one is missing.
 
 ## Why the body store is missing
 
@@ -36,6 +37,6 @@ It stores a content-addressed reference and the hashes needed to verify what it 
 
 ## Next required actions
 
-- choose an object store, add its client to the dependency set, and add endpoint/bucket/credential settings
-- implement the body store against the four required guarantees: content-addressed, hash-preserving, secret-scan-clean before promotion, no body values in logs
+- configure the S3-compatible object store: set RAW_PAYLOAD_OBJECT_STORE_ENDPOINT / _BUCKET / _REGION / _ACCESS_KEY_ID / _SECRET_ACCESS_KEY to real values in the environment (never in the repo); placeholders do not count
+- prove a round trip against the configured bucket in staging - settings being present is not the same as a write succeeding
 

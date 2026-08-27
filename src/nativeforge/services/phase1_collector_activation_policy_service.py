@@ -143,6 +143,26 @@ def _production_store_available() -> bool:
     )
 
 
+def _body_store_implementation() -> bool:
+    try:
+        from nativeforge.services.raw_payload_body_store_contract_service import (
+            detect_body_store_implementation,
+        )
+    except ImportError:
+        return False
+    return bool(detect_body_store_implementation())
+
+
+def _body_store_configured() -> bool:
+    try:
+        from nativeforge.services.raw_payload_body_store_contract_service import (
+            build_body_store_contract,
+        )
+    except ImportError:
+        return False
+    return bool(build_body_store_contract()["body_store_configured"])
+
+
 def _metadata_table_available() -> bool:
     try:
         from nativeforge.services.production_raw_payload_repository_service import (
@@ -251,6 +271,10 @@ def build_phase1_activation_matrix(
             # body store exists rather than needing someone to remember.
             "production_raw_payload_store_available": _production_store_available(),
             "metadata_table_available": _metadata_table_available(),
+            # Gate 97: the two halves of the body-store question, reported
+            # apart so neither can stand in for the other.
+            "body_store_implementation_available": _body_store_implementation(),
+            "body_store_configured": _body_store_configured(),
             # A live collection needs production storage. Dry-run scaffolding
             # may use the local store.
             "live_collection_requires_production_store": True,
@@ -359,16 +383,30 @@ def policy_invariant_failures(matrix: dict[str, Any]) -> list[str]:
         if matrix.get(counter):
             fails.append(f"matrix_reported_nonzero:{counter}")
 
-    # Gate 95/96: a local store is not a production store, and a metadata
-    # table alone is not production storage either. The second check is the one
-    # this gate adds: Alembic 0028 makes the table exist, and that must not be
-    # allowed to read as "production storage is ready".
-    if matrix.get("production_raw_payload_store_available") is not False:
-        fails.append("matrix_claimed_production_payload_storage")
-    if matrix.get("metadata_table_available") and matrix.get(
-        "production_raw_payload_store_available"
-    ):
+    # Gate 95/96/97: a local store is not a production store, a metadata table
+    # alone is not production storage, and an implementation is not a
+    # configuration.
+    #
+    # Gate 96 wrote these as `is not False` - a constant, correct at the time
+    # because nothing could configure a body store. Gate 97 makes configuration
+    # possible, and a constant that was true of one moment is not a law. These
+    # are now checks on the *derivation*: production availability must follow
+    # from its components, and no single component may stand in for the whole.
+    available = matrix.get("production_raw_payload_store_available")
+    metadata = matrix.get("metadata_table_available")
+    implementation = matrix.get("body_store_implementation_available")
+    configured = matrix.get("body_store_configured")
+
+    if available and not configured:
         fails.append("metadata_table_treated_as_production_storage")
+        fails.append("implementation_treated_as_a_configured_body_store")
+    if available and not metadata:
+        fails.append("available_without_a_metadata_table")
+    if available and not implementation:
+        fails.append("available_without_a_body_store_implementation")
+    if configured and not implementation:
+        fails.append("configured_without_an_implementation")
+
     if matrix.get("live_collection_requires_production_store") is not True:
         fails.append("live_collection_production_requirement_dropped")
 

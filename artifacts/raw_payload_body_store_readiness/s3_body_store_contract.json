@@ -1,0 +1,43 @@
+{
+  "body_store_configured": false,
+  "body_store_implementation_available": true,
+  "collectors_active": false,
+  "default_write_refused": true,
+  "example_object_key": "raw_payloads/00/00/0000000000000000000000000000000000000000000000000000000000000000.bin",
+  "injected_client_seam": true,
+  "key_namespace": "raw_payloads",
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "modes": [
+    "database_small_payload_only",
+    "local_dev_ignored",
+    "s3_compatible_configured",
+    "unconfigured"
+  ],
+  "non_production_modes": {
+    "database_small_payload_only": "'small' is a property of the responses seen so far, not of the source; a 78 MB Grants.gov extract is not a database row",
+    "local_dev_ignored": "per-checkout directory, gitignored, no durability or cross-process retrieval",
+    "unconfigured": "no body store exists"
+  },
+  "object_store_contacted": false,
+  "object_store_sdk_required": false,
+  "production_capable_modes": [
+    "s3_compatible_configured"
+  ],
+  "production_raw_payload_store_available": false,
+  "production_storage_live": false,
+  "required_guarantees": [
+    "content_addressed",
+    "hash_preserving",
+    "secret_scan_clean_before_promotion",
+    "no_body_values_in_logs"
+  ],
+  "sample_refusal_reasons": [
+    "bucket_not_configured",
+    "no_object_store_client_supplied",
+    "secret_scan_not_clean:pending",
+    "write_not_opted_in"
+  ],
+  "schema_version": "nf_raw_payload_body_store_readiness_artifact_v1",
+  "source_monitoring_active": false
+}

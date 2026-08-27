@@ -2,7 +2,8 @@
   "body_store_configured": false,
   "collectors_active": false,
   "component_detection": {
-    "body_store_configured": "importlib.util.find_spec for boto3/minio/google.cloud.storage/azure.storage.blob AND all three object-store settings on the Settings model",
+    "body_store_configured": "all five RAW_PAYLOAD_OBJECT_STORE_* settings hold real, non-blank, non-placeholder values - read by value, never by field existence, and no credential value is rendered",
+    "body_store_implementation_available": "s3_raw_payload_body_store_service.store_body importable and callable; the seam takes an injected client, so no SDK is required",
     "metadata_table_available": "alembic/versions/0028_nf_raw_source_payloads.py present, or the table found by SQLAlchemy inspection when a session is supplied",
     "promotion_gate_available": "raw_payload_promotion_gate_service.evaluate_payload_promotion importable and callable",
     "secret_scan_available": "raw_payload_secret_scan_service.scan_payload_for_secrets importable and callable"
@@ -16,16 +17,25 @@
     "blocked_reasons": [
       "component_missing:body_store_configured",
       "mode_not_production_capable:unconfigured",
-      "no_object_store_client_installed",
-      "object_store_settings_missing:raw_payload_object_store_endpoint,raw_payload_object_store_bucket,raw_payload_object_store_credential"
+      "object_store_settings_missing:raw_payload_object_store_access_key_id,raw_payload_object_store_bucket,raw_payload_object_store_endpoint,raw_payload_object_store_region,raw_payload_object_store_secret_access_key"
     ],
     "body_store_configured": false,
+    "body_store_implementation_available": true,
     "body_store_mode": "unconfigured",
+    "body_store_placeholder_settings": [],
+    "body_store_settings_missing": [
+      "raw_payload_object_store_access_key_id",
+      "raw_payload_object_store_bucket",
+      "raw_payload_object_store_endpoint",
+      "raw_payload_object_store_region",
+      "raw_payload_object_store_secret_access_key"
+    ],
     "collectors_active": 0,
     "components_missing": [
       "body_store_configured"
     ],
     "components_present": [
+      "body_store_implementation_available",
       "metadata_table_available",
       "promotion_gate_available",
       "secret_scan_available"
@@ -36,15 +46,17 @@
     "local_raw_payload_store_available": true,
     "metadata_table_available": true,
     "next_required_actions": [
-      "choose an object store, add its client to the dependency set, and add endpoint/bucket/credential settings",
-      "implement the body store against the four required guarantees: content-addressed, hash-preserving, secret-scan-clean before promotion, no body values in logs"
+      "configure the S3-compatible object store: set RAW_PAYLOAD_OBJECT_STORE_ENDPOINT / _BUCKET / _REGION / _ACCESS_KEY_ID / _SECRET_ACCESS_KEY to real values in the environment (never in the repo); placeholders do not count",
+      "prove a round trip against the configured bucket in staging - settings being present is not the same as a write succeeding"
     ],
     "object_store_required": true,
+    "object_store_sdk_required": false,
     "production_raw_payload_store_available": false,
     "production_storage_live": false,
     "promotion_gate_available": true,
     "required_components": [
       "metadata_table_available",
+      "body_store_implementation_available",
       "body_store_configured",
       "secret_scan_available",
       "promotion_gate_available"

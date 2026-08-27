@@ -97,10 +97,14 @@ COMPONENT_DETECTION: dict[str, str] = {
         "alembic/versions/0028_nf_raw_source_payloads.py present, or the table "
         "found by SQLAlchemy inspection when a session is supplied"
     ),
+    "body_store_implementation_available": (
+        "s3_raw_payload_body_store_service.store_body importable and callable; "
+        "the seam takes an injected client, so no SDK is required"
+    ),
     "body_store_configured": (
-        "importlib.util.find_spec for boto3/minio/google.cloud.storage/"
-        "azure.storage.blob AND all three object-store settings on the "
-        "Settings model"
+        "all five RAW_PAYLOAD_OBJECT_STORE_* settings hold real, non-blank, "
+        "non-placeholder values - read by value, never by field existence, and "
+        "no credential value is rendered"
     ),
     "secret_scan_available": (
         "raw_payload_secret_scan_service.scan_payload_for_secrets importable "

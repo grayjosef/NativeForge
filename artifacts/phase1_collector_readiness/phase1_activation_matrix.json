@@ -33,6 +33,8 @@
   "live_fetch_performed": false,
   "live_source_coverage": false,
   "matrix": {
+    "body_store_configured": false,
+    "body_store_implementation_available": true,
     "collectors_active": 0,
     "fabricated": false,
     "live_collection_requires_production_store": true,
@@ -212,6 +214,8 @@
         "raw_payload_store_contract_unsatisfied:missing",
         "scheduler_policy_missing:missing"
       ],
+      "body_store_configured": false,
+      "body_store_implementation_available": true,
       "collection_intent": "dry_run",
       "collector_type": "public_api",
       "fabricated": false,
@@ -265,6 +269,8 @@
         "raw_payload_store_contract_unsatisfied:missing",
         "scheduler_policy_missing:missing"
       ],
+      "body_store_configured": false,
+      "body_store_implementation_available": true,
       "collection_intent": "dry_run",
       "collector_type": "bulk_extract",
       "fabricated": false,
@@ -318,6 +324,8 @@
         "raw_payload_store_contract_unsatisfied:missing",
         "scheduler_policy_missing:missing"
       ],
+      "body_store_configured": false,
+      "body_store_implementation_available": true,
       "collection_intent": "dry_run",
       "collector_type": "public_api",
       "fabricated": false,
@@ -373,6 +381,8 @@
         "scheduler_policy_missing:missing",
         "terms_status_blocks_activation:TERMS_REVIEW_REQUIRED"
       ],
+      "body_store_configured": false,
+      "body_store_implementation_available": true,
       "collection_intent": "dry_run",
       "collector_type": "public_api_with_key",
       "fabricated": false,
@@ -426,6 +436,8 @@
         "raw_payload_store_contract_unsatisfied:missing",
         "scheduler_policy_missing:missing"
       ],
+      "body_store_configured": false,
+      "body_store_implementation_available": true,
       "collection_intent": "dry_run",
       "collector_type": "public_api",
       "fabricated": false,

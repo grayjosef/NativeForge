@@ -832,11 +832,20 @@ def test_phase1_matrix_reports_local_store_but_not_production() -> None:
 
 
 def test_phase1_matrix_may_not_claim_production_storage() -> None:
+    """The protection is unchanged; Gate 97 renamed the failures.
+
+    Gate 96 asserted `production_raw_payload_store_available is not False` - a
+    constant, correct while nothing could configure a body store. Gate 97 makes
+    configuration possible, so the invariant became a check on the derivation
+    instead, and a faked flag is now caught by the component it lacks rather
+    than by a blanket rule.
+    """
     matrix = build_phase1_activation_matrix()
     lying = dict(matrix, production_raw_payload_store_available=True)
-    assert "matrix_claimed_production_payload_storage" in (
-        policy_invariant_failures(lying)
-    )
+    failures = policy_invariant_failures(lying)
+    assert failures, "a faked production flag must still be caught"
+    assert "metadata_table_treated_as_production_storage" in failures
+    assert "implementation_treated_as_a_configured_body_store" in failures
 
 
 # --------------------------------------------------------------------------

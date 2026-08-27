@@ -5,11 +5,15 @@ this module reports that by looking rather than by being told.
 
 ## Four modes, one of which is production-capable
 
-``object_store_required``        the only mode a real collector may activate on
+``s3_compatible_configured``     the only mode a real collector may activate on
 ``database_small_payload_only``  tests and tiny fixtures. Never production
                                  source ingestion.
 ``local_dev_ignored``            Gate 95's per-checkout store. Never production.
 ``unconfigured``                 the default, and the current state
+
+Gate 97 renamed the first from ``object_store_required``. A mode should say
+what *is*, not what is *needed* - reading "mode: object_store_required" told you
+nothing about whether one existed, which is the only thing a mode is asked.
 
 ## Why database_small_payload_only is not a production option
 
@@ -22,15 +26,30 @@ from the start.
 
 ## Detected, not declared
 
-``detect_body_store_mode`` inspects settings and the installed environment. It
-does not read a caller-supplied flag, because a flag saying "the body store is
-configured" is the same shape as the corpus flags Gates 87-89 unpicked: a claim
-about a claim.
+``detect_body_store_mode`` reads the actual **values** of the five required
+settings. It does not read a caller-supplied flag, because a flag saying "the
+body store is configured" is the same shape as the corpus flags Gates 87-89
+unpicked: a claim about a claim.
 
-As of Gate 96 there is no object-store client in the dependency set, no bucket
-setting, no endpoint and no credential. The detector therefore returns
-``unconfigured``, and no argument to any function in this module can change
-that.
+Gate 96 checked whether the *fields existed on the Settings model*, which was
+correct only while no such fields existed. Gate 97 added them with empty
+defaults, at which point the old check would have reported a credential-free
+checkout as fully configured. Values, not declarations.
+
+A blank value is unconfigured. So is a placeholder: ``AKIAIOSFODNN7EXAMPLE`` is
+AWS's own documentation key, and a checkout that pasted it from a tutorial is
+not a production environment.
+
+## Two facts, not one
+
+``body_store_implementation_available``  the write seam exists
+``body_store_configured``                an environment supplies real settings
+
+Gate 96 folded these together by requiring an *installed* SDK. With Gate 97's
+injected-client seam the client arrives at call time, so requiring it to be
+importable would mean ``body_store_configured`` could never be true however
+correctly an operator configured their environment. Production availability
+requires both halves; splitting them makes each checkable.
 
 ## Requirements a body store must meet before it counts
 
@@ -51,14 +70,20 @@ BODY_STORE_MODES = frozenset(
     {
         "local_dev_ignored",
         "database_small_payload_only",
-        "object_store_required",
+        "s3_compatible_configured",
         "unconfigured",
     }
 )
 
+# Gate 97 renamed `object_store_required` -> `s3_compatible_configured`. The old
+# name described what was *needed*; a mode should describe what *is*. Reading
+# "mode: object_store_required" told you nothing about whether one existed,
+# which is the only question the mode is asked.
+RENAMED_MODES: dict[str, str] = {"object_store_required": "s3_compatible_configured"}
+
 # The single mode a live collector may run on. Derived affirmatively: the
 # permitted set is named, never computed by removing the ones that are not.
-PRODUCTION_CAPABLE_MODES = frozenset({"object_store_required"})
+PRODUCTION_CAPABLE_MODES = frozenset({"s3_compatible_configured"})
 
 # Modes that exist for tests and local work and must never be mistaken for
 # production, each with the reason it is disqualified.
@@ -82,21 +107,30 @@ REQUIRED_GUARANTEES: tuple[str, ...] = (
     "no_body_values_in_logs",
 )
 
-# Settings names a configured object store would have to provide. None of these
-# exist as of Gate 96; they are listed so the gap is legible rather than vague.
+# Settings a configured S3-compatible store must provide, with real values.
+# Gate 96 named three, folding the credential into one opaque field. Gate 97
+# splits it: an access key id is safe to report present, a secret key is not,
+# and one field cannot carry two different handling rules.
 REQUIRED_SETTINGS: tuple[str, ...] = (
     "raw_payload_object_store_endpoint",
     "raw_payload_object_store_bucket",
-    "raw_payload_object_store_credential",
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_secret_access_key",
 )
 
-# Client libraries whose presence would indicate an object store integration.
-OBJECT_STORE_CLIENT_MODULES: tuple[str, ...] = (
-    "boto3",
-    "minio",
-    "google.cloud.storage",
-    "azure.storage.blob",
+# Optional: MinIO and most self-hosted S3-compatible stores need path-style
+# URLs, but a store that does not is still configured.
+OPTIONAL_SETTINGS: tuple[str, ...] = (
+    "raw_payload_object_store_force_path_style",
 )
+
+# The module that implements the write path. Gate 97 uses an injected client,
+# so no SDK is imported and none is required - what must exist is the seam.
+BODY_STORE_IMPLEMENTATION_MODULE = (
+    "nativeforge.services.s3_raw_payload_body_store_service"
+)
+BODY_STORE_IMPLEMENTATION_CALLABLE = "store_body"
 
 
 def _json_safe(x: Any) -> Any:
@@ -104,36 +138,69 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def _installed_object_store_clients() -> list[str]:
-    """Which object-store clients are importable. Import, do not assume."""
-    import importlib.util
-
-    found: list[str] = []
-    for module in OBJECT_STORE_CLIENT_MODULES:
-        try:
-            if importlib.util.find_spec(module) is not None:
-                found.append(module)
-        except (ImportError, ModuleNotFoundError, ValueError):
-            continue
-    return found
-
-
-def _configured_settings() -> list[str]:
-    """Which required settings actually exist on the Settings model."""
+def detect_body_store_implementation() -> bool:
+    """Whether the write path exists. Imported and checked, not assumed."""
     try:
-        from nativeforge.lib.settings import Settings
+        import importlib
+
+        module = importlib.import_module(BODY_STORE_IMPLEMENTATION_MODULE)
     except ImportError:
-        return []
-    fields = set(getattr(Settings, "model_fields", {}) or {})
-    return [name for name in REQUIRED_SETTINGS if name in fields]
+        return False
+    return callable(getattr(module, BODY_STORE_IMPLEMENTATION_CALLABLE, None))
+
+
+def _setting_value(settings: Any, name: str) -> str:
+    """Read one setting as text without rendering a secret.
+
+    A SecretStr's `str()` is `**********`, so a naive read would treat every
+    configured secret as a placeholder. `get_secret_value()` is called here and
+    only here, and its result is measured (empty or not) rather than returned.
+    """
+    value = getattr(settings, name, "")
+    getter = getattr(value, "get_secret_value", None)
+    if callable(getter):
+        return str(getter() or "")
+    return str(value or "")
+
+
+def _configured_settings() -> tuple[list[str], list[str]]:
+    """(present-with-real-values, present-but-placeholder).
+
+    Gate 96 checked whether the *field existed on the model*, which was
+    harmless only while no such fields existed. With the fields added, that
+    check would report a credential-free checkout as fully configured - a check
+    that reads a declaration rather than the thing declared, which is the exact
+    failure this campaign keeps finding.
+    """
+    try:
+        from nativeforge.lib.settings import get_settings
+        from nativeforge.services.s3_raw_payload_body_store_service import (
+            is_placeholder_value,
+        )
+    except ImportError:
+        return [], []
+
+    settings = get_settings()
+    real: list[str] = []
+    placeholder: list[str] = []
+    for name in REQUIRED_SETTINGS:
+        raw = _setting_value(settings, name).strip()
+        if not raw:
+            continue
+        if is_placeholder_value(raw):
+            placeholder.append(name)
+        else:
+            real.append(name)
+    return real, placeholder
 
 
 def detect_body_store_mode() -> str:
     """The mode this checkout actually supports. Deny by default."""
-    clients = _installed_object_store_clients()
-    settings_present = _configured_settings()
-    if clients and len(settings_present) == len(REQUIRED_SETTINGS):
-        return "object_store_required"
+    real, placeholder = _configured_settings()
+    if placeholder:
+        return "unconfigured"
+    if len(real) == len(REQUIRED_SETTINGS) and detect_body_store_implementation():
+        return "s3_compatible_configured"
     return "unconfigured"
 
 
@@ -148,18 +215,27 @@ def build_body_store_contract(*, declared_mode: Any = None) -> dict[str, Any]:
     if declared is not None and declared not in BODY_STORE_MODES:
         declared = "unconfigured"
 
-    clients = _installed_object_store_clients()
-    settings_present = _configured_settings()
-    missing_settings = [s for s in REQUIRED_SETTINGS if s not in settings_present]
+    settings_present, placeholder_settings = _configured_settings()
+    missing_settings = [
+        s
+        for s in REQUIRED_SETTINGS
+        if s not in settings_present and s not in placeholder_settings
+    ]
+    implementation_available = detect_body_store_implementation()
 
     configured = detected in PRODUCTION_CAPABLE_MODES
 
     blocked: list[str] = []
-    if not clients:
-        blocked.append("no_object_store_client_installed")
+    if not implementation_available:
+        blocked.append("body_store_implementation_missing")
     if missing_settings:
         blocked.append(
-            "object_store_settings_missing:" + ",".join(missing_settings)
+            "object_store_settings_missing:" + ",".join(sorted(missing_settings))
+        )
+    if placeholder_settings:
+        blocked.append(
+            "object_store_settings_are_placeholders:"
+            + ",".join(sorted(placeholder_settings))
         )
     if detected in NON_PRODUCTION_MODES:
         blocked.append(f"mode_not_production_capable:{detected}")
@@ -176,9 +252,15 @@ def build_body_store_contract(*, declared_mode: Any = None) -> dict[str, Any]:
             "non_production_modes": dict(sorted(NON_PRODUCTION_MODES.items())),
             "required_guarantees": list(REQUIRED_GUARANTEES),
             "required_settings": list(REQUIRED_SETTINGS),
-            "settings_present": settings_present,
-            "settings_missing": missing_settings,
-            "object_store_clients_installed": clients,
+            "optional_settings": list(OPTIONAL_SETTINGS),
+            "settings_present": sorted(settings_present),
+            "settings_missing": sorted(missing_settings),
+            "placeholder_settings": sorted(placeholder_settings),
+            # Gate 97: two distinct facts. The seam exists; an environment
+            # configuring it is a separate question.
+            "body_store_implementation_available": implementation_available,
+            "injected_client_seam": True,
+            "object_store_sdk_required": False,
             # The three facts, kept apart.
             "body_store_configured": configured,
             "object_store_required_for_collection": True,
@@ -244,5 +326,25 @@ def body_store_invariant_failures(contract: dict[str, Any]) -> list[str]:
         "blocked_reasons"
     ):
         fails.append("unconfigured_body_store_without_a_reason")
+
+    # Gate 97: a placeholder is not configuration, and an implementation is not
+    # a configuration either.
+    if contract.get("body_store_configured") and contract.get(
+        "placeholder_settings"
+    ):
+        fails.append("configured_with_placeholder_settings")
+    if contract.get("body_store_configured") and not contract.get(
+        "body_store_implementation_available"
+    ):
+        fails.append("configured_without_an_implementation")
+    # No credential value may appear anywhere in a contract.
+    for forbidden in (
+        "secret_access_key",
+        "access_key_id",
+        "credential",
+        "secret",
+    ):
+        if forbidden in contract:
+            fails.append(f"contract_rendered_a_credential_field:{forbidden}")
 
     return fails

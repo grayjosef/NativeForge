@@ -169,6 +169,28 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
+def _body_store_implementation() -> bool:
+    """Whether the S3 write seam exists. Detected, not declared."""
+    try:
+        from nativeforge.services.raw_payload_body_store_contract_service import (
+            detect_body_store_implementation,
+        )
+    except ImportError:
+        return False
+    return bool(detect_body_store_implementation())
+
+
+def _body_store_configured() -> bool:
+    """Whether an environment supplies real, non-placeholder settings."""
+    try:
+        from nativeforge.services.raw_payload_body_store_contract_service import (
+            build_body_store_contract,
+        )
+    except ImportError:
+        return False
+    return bool(build_body_store_contract()["body_store_configured"])
+
+
 def detect_store_implementation() -> str:
     """Which raw payload store actually exists in this checkout.
 
@@ -409,6 +431,10 @@ def build_activation_preflight(
             # Gate 95. Three distinct facts, never collapsed into one:
             # the contract exists, a local store exists, production does not.
             "raw_payload_store_contract_available": True,
+            # Gate 97: the write seam exists; an environment configuring it is
+            # a separate question, and only the pair makes production possible.
+            "body_store_implementation_available": _body_store_implementation(),
+            "body_store_configured": _body_store_configured(),
             "local_raw_payload_store_available": store_implementation
             in STORE_IMPLEMENTATION_SATISFYING,
             "production_raw_payload_store_available": store_implementation
@@ -560,6 +586,19 @@ def preflight_invariant_failures(result: dict[str, Any]) -> list[str]:
         "raw_payload_store_implementation"
     ) not in STORE_IMPLEMENTATION_SATISFYING:
         fails.append("activation_allowed_without_a_payload_store_implementation")
+
+    # Gate 97: an implementation is not a configuration. A preflight reporting
+    # a configured body store while the readiness layer says production storage
+    # is unavailable would be the two disagreeing about the same fact.
+    if result.get("body_store_configured") and not result.get(
+        "body_store_implementation_available"
+    ):
+        fails.append("body_store_configured_without_an_implementation")
+    if (
+        result.get("raw_payload_store_implementation") == "production"
+        and not result.get("body_store_configured")
+    ):
+        fails.append("production_store_reported_without_a_configured_body_store")
 
     # Gate 96: a live collection may never be allowed on a local-only store.
     if result.get("collection_intent") not in COLLECTION_INTENTS:

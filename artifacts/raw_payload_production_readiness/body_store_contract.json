@@ -1,17 +1,18 @@
 {
   "blocked_reasons": [
-    "no_object_store_client_installed",
-    "object_store_settings_missing:raw_payload_object_store_endpoint,raw_payload_object_store_bucket,raw_payload_object_store_credential",
+    "object_store_settings_missing:raw_payload_object_store_access_key_id,raw_payload_object_store_bucket,raw_payload_object_store_endpoint,raw_payload_object_store_region,raw_payload_object_store_secret_access_key",
     "mode_not_production_capable:unconfigured"
   ],
   "bodies_stored": 0,
   "body_store_configured": false,
+  "body_store_implementation_available": true,
   "collectors_active": false,
   "database_mode_allowed_for_production": false,
   "declared_mode": null,
   "detected_mode": "unconfigured",
   "fabricated": false,
   "fetch_performed": false,
+  "injected_client_seam": true,
   "live_fetch_performed": false,
   "live_source_coverage": false,
   "local_dev_counts_as_production": false,
@@ -19,7 +20,7 @@
   "modes": [
     "database_small_payload_only",
     "local_dev_ignored",
-    "object_store_required",
+    "s3_compatible_configured",
     "unconfigured"
   ],
   "non_production_modes": {
@@ -27,10 +28,14 @@
     "local_dev_ignored": "per-checkout directory, gitignored, no durability or cross-process retrieval",
     "unconfigured": "no body store exists"
   },
-  "object_store_clients_installed": [],
   "object_store_required_for_collection": true,
+  "object_store_sdk_required": false,
+  "optional_settings": [
+    "raw_payload_object_store_force_path_style"
+  ],
+  "placeholder_settings": [],
   "production_capable_modes": [
-    "object_store_required"
+    "s3_compatible_configured"
   ],
   "production_raw_payload_store_available": false,
   "production_storage_live": false,
@@ -43,13 +48,17 @@
   "required_settings": [
     "raw_payload_object_store_endpoint",
     "raw_payload_object_store_bucket",
-    "raw_payload_object_store_credential"
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_secret_access_key"
   ],
   "schema_version": "nf_raw_payload_body_store_contract_v1",
   "settings_missing": [
-    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_access_key_id",
     "raw_payload_object_store_bucket",
-    "raw_payload_object_store_credential"
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_secret_access_key"
   ],
   "settings_present": [],
   "source_monitoring_active": false

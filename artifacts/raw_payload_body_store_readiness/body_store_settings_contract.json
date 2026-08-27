@@ -1,0 +1,78 @@
+{
+  "body_store_configured": false,
+  "body_store_implementation_available": true,
+  "collectors_active": false,
+  "credential_values_rendered": false,
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "note": "Names and presence only. No value appears in this file, masked or otherwise.",
+  "optional_settings": [
+    "raw_payload_object_store_force_path_style"
+  ],
+  "placeholder_settings": [],
+  "production_raw_payload_store_available": false,
+  "production_storage_live": false,
+  "required_settings": [
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_bucket",
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_secret_access_key"
+  ],
+  "schema_version": "nf_raw_payload_body_store_readiness_artifact_v1",
+  "secret_settings": [
+    "raw_payload_object_store_secret_access_key"
+  ],
+  "settings": [
+    {
+      "env_var": "RAW_PAYLOAD_OBJECT_STORE_ENDPOINT",
+      "is_secret": false,
+      "required": true,
+      "setting": "raw_payload_object_store_endpoint",
+      "value_present": false
+    },
+    {
+      "env_var": "RAW_PAYLOAD_OBJECT_STORE_BUCKET",
+      "is_secret": false,
+      "required": true,
+      "setting": "raw_payload_object_store_bucket",
+      "value_present": false
+    },
+    {
+      "env_var": "RAW_PAYLOAD_OBJECT_STORE_REGION",
+      "is_secret": false,
+      "required": true,
+      "setting": "raw_payload_object_store_region",
+      "value_present": false
+    },
+    {
+      "env_var": "RAW_PAYLOAD_OBJECT_STORE_ACCESS_KEY_ID",
+      "is_secret": false,
+      "required": true,
+      "setting": "raw_payload_object_store_access_key_id",
+      "value_present": false
+    },
+    {
+      "env_var": "RAW_PAYLOAD_OBJECT_STORE_SECRET_ACCESS_KEY",
+      "is_secret": true,
+      "required": true,
+      "setting": "raw_payload_object_store_secret_access_key",
+      "value_present": false
+    },
+    {
+      "env_var": "RAW_PAYLOAD_OBJECT_STORE_FORCE_PATH_STYLE",
+      "is_secret": false,
+      "required": false,
+      "setting": "raw_payload_object_store_force_path_style",
+      "value_present": false
+    }
+  ],
+  "settings_missing": [
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_bucket",
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_secret_access_key"
+  ],
+  "source_monitoring_active": false
+}

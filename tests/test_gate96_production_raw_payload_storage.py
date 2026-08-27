@@ -408,19 +408,27 @@ def test_body_store_defaults_to_unconfigured() -> None:
 
 
 def test_body_store_modes_are_the_declared_four() -> None:
+    """Gate 97 renamed object_store_required -> s3_compatible_configured.
+
+    A mode should say what *is*, not what is *needed*: reading
+    "mode: object_store_required" told you nothing about whether one existed.
+    """
     assert BODY_STORE_MODES == frozenset(
         {
             "local_dev_ignored",
             "database_small_payload_only",
-            "object_store_required",
+            "s3_compatible_configured",
             "unconfigured",
         }
     )
+    assert "object_store_required" not in BODY_STORE_MODES
 
 
-def test_only_object_store_required_is_production_capable() -> None:
-    assert PRODUCTION_CAPABLE_MODES == frozenset({"object_store_required"})
-    assert mode_is_production_capable("object_store_required") is True
+def test_only_s3_compatible_configured_is_production_capable() -> None:
+    assert PRODUCTION_CAPABLE_MODES == frozenset({"s3_compatible_configured"})
+    assert mode_is_production_capable("s3_compatible_configured") is True
+    # The retired name must not still be production-capable by accident.
+    assert mode_is_production_capable("object_store_required") is False
     for mode in NON_PRODUCTION_MODES:
         assert mode_is_production_capable(mode) is False
 
@@ -440,7 +448,7 @@ def test_database_mode_is_not_allowed_for_production() -> None:
 
 def test_a_declared_mode_cannot_override_detection() -> None:
     """The caller says what it believes; the detector says what is true."""
-    contract = build_body_store_contract(declared_mode="object_store_required")
+    contract = build_body_store_contract(declared_mode="s3_compatible_configured")
     assert contract["detected_mode"] == "unconfigured"
     assert contract["body_store_configured"] is False
     assert any(
@@ -460,10 +468,21 @@ def test_object_store_is_required_for_collection() -> None:
 
 
 def test_body_store_names_what_is_missing() -> None:
+    """Gate 97 replaced the installed-SDK check with a settings-value check.
+
+    With an injected-client seam the client arrives at call time, so requiring
+    one to be importable would mean body_store_configured could never be true
+    however correctly an environment was configured.
+    """
     contract = build_body_store_contract()
-    assert contract["object_store_clients_installed"] == []
     assert set(contract["settings_missing"]) == set(REQUIRED_SETTINGS)
-    assert "no_object_store_client_installed" in contract["blocked_reasons"]
+    assert contract["placeholder_settings"] == []
+    assert contract["body_store_implementation_available"] is True
+    assert contract["object_store_sdk_required"] is False
+    assert any(
+        r.startswith("object_store_settings_missing:")
+        for r in contract["blocked_reasons"]
+    )
 
 
 def test_required_guarantees_are_all_four() -> None:

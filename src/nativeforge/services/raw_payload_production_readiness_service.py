@@ -63,6 +63,10 @@ SCHEMA_VERSION = "nf_raw_payload_production_readiness_v1"
 # a set membership check rather than a chain of ands nobody can audit.
 REQUIRED_COMPONENTS: tuple[str, ...] = (
     "metadata_table_available",
+    # Gate 97 split Gate 96's single body-store fact in two. The seam existing
+    # and an environment configuring it are different questions, and folding
+    # them together is what made Gate 96's detector unable to ever say yes.
+    "body_store_implementation_available",
     "body_store_configured",
     "secret_scan_available",
     "promotion_gate_available",
@@ -114,6 +118,9 @@ def build_production_readiness(
 
     components = {
         "metadata_table_available": detect_metadata_table(session),
+        "body_store_implementation_available": bool(
+            body_store.get("body_store_implementation_available")
+        ),
         "body_store_configured": bool(body_store.get("body_store_configured")),
         "secret_scan_available": detect_secret_scan_available(),
         "promotion_gate_available": detect_promotion_gate_available(),
@@ -130,15 +137,21 @@ def build_production_readiness(
     blocked.extend(body_store.get("blocked_reasons") or [])
 
     actions: list[str] = []
+    if not components["body_store_implementation_available"]:
+        actions.append(
+            "restore s3_raw_payload_body_store_service.store_body - the write "
+            "seam is missing"
+        )
     if not components["body_store_configured"]:
         actions.append(
-            "choose an object store, add its client to the dependency set, and "
-            "add endpoint/bucket/credential settings"
+            "configure the S3-compatible object store: set "
+            "RAW_PAYLOAD_OBJECT_STORE_ENDPOINT / _BUCKET / _REGION / "
+            "_ACCESS_KEY_ID / _SECRET_ACCESS_KEY to real values in the "
+            "environment (never in the repo); placeholders do not count"
         )
         actions.append(
-            "implement the body store against the four required guarantees: "
-            "content-addressed, hash-preserving, secret-scan-clean before "
-            "promotion, no body values in logs"
+            "prove a round trip against the configured bucket in staging - "
+            "settings being present is not the same as a write succeeding"
         )
     if not components["metadata_table_available"]:
         actions.append("run Alembic migrations to head so 0028 applies")
@@ -154,6 +167,15 @@ def build_production_readiness(
             **components,
             "object_store_required": True,
             "body_store_mode": body_store.get("detected_mode"),
+            # Reported so the gap is legible. No credential value is ever
+            # rendered here or anywhere downstream of it.
+            "body_store_settings_missing": list(
+                body_store.get("settings_missing") or []
+            ),
+            "body_store_placeholder_settings": list(
+                body_store.get("placeholder_settings") or []
+            ),
+            "object_store_sdk_required": False,
             "local_raw_payload_store_available": detect_local_store_available(),
             # The two derived verdicts.
             "production_raw_payload_store_available": available,
@@ -213,6 +235,19 @@ def production_readiness_invariant_failures(report: dict[str, Any]) -> list[str]
 
     if report.get("object_store_required") is not True:
         fails.append("object_store_requirement_dropped")
+
+    # Gate 97: an implementation is not a configuration, and neither alone is
+    # production availability.
+    if available and not report.get("body_store_implementation_available"):
+        fails.append("available_without_a_body_store_implementation")
+    if report.get("body_store_configured") and report.get(
+        "body_store_placeholder_settings"
+    ):
+        fails.append("configured_with_placeholder_settings")
+    # No credential value may reach a readiness report.
+    for forbidden in ("secret_access_key", "access_key_id", "credential", "secret"):
+        if forbidden in report:
+            fails.append(f"readiness_rendered_a_credential_field:{forbidden}")
 
     # A local store is a different thing and must never satisfy production.
     if report.get("local_raw_payload_store_available") and available and not (

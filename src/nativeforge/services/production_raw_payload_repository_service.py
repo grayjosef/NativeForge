@@ -109,6 +109,7 @@ def build_repository_decision(
     session: Any = None,
     store_body: bool = False,
     body_store_contract: dict[str, Any] | None = None,
+    body_store_ref: Any = None,
 ) -> dict[str, Any]:
     """May this payload's metadata be persisted, and at what promotion status?"""
     record = payload if isinstance(payload, dict) else {}
@@ -151,10 +152,28 @@ def build_repository_decision(
     if not table_available:
         blocked.append("metadata_table_unavailable")
 
+    # Gate 97: a live payload must name where its body actually landed. The
+    # body store returns a raw_payload_ref only after a successful write, so a
+    # ref is the nearest thing to proof the bytes exist - and a live payload
+    # without one is asserting retrievability it cannot back.
+    #
+    # A fixture payload needs no ref: Gate 95's local store holds it, nothing
+    # was fetched, and requiring an object-store write to build test evidence
+    # would mean pretending a body store exists.
+    from_live = bool(record.get("created_from_live_fetch"))
+    supplied_ref = str(body_store_ref or "").strip()
+    effective_ref = supplied_ref or str(record.get("raw_payload_ref") or "").strip()
+    live_ref_missing = bool(from_live and not supplied_ref)
+    if live_ref_missing:
+        blocked.append("live_payload_missing_body_store_ref")
+
     # A row that says `evidence_ready` asserts the bytes are retrievable.
     # Without a body store they are not.
     promotion_allowed = bool(
-        promotion["can_promote"] and body_store_configured and not blocked
+        promotion["can_promote"]
+        and body_store_configured
+        and not live_ref_missing
+        and not blocked
     )
     if promotion["can_promote"] and not body_store_configured:
         blocked.append("evidence_ready_requires_a_configured_body_store")
@@ -177,6 +196,10 @@ def build_repository_decision(
             "repository_status": status,
             "production_metadata_table_available": table_available,
             "production_body_store_available": body_store_configured,
+            # Gate 97: the body lives elsewhere; this records only where.
+            "body_store_ref": effective_ref or None,
+            "body_store_ref_supplied": bool(supplied_ref),
+            "live_payload_missing_body_store_ref": live_ref_missing,
             "metadata_write_allowed": metadata_write_allowed,
             # Never. This repository does not hold bodies.
             "body_write_allowed": False,
@@ -205,6 +228,7 @@ def persist_payload_metadata(
     session: Any = None,
     activation_preflight: dict[str, Any] | None = None,
     store_body: bool = False,
+    body_store_ref: Any = None,
     dry_run: bool = True,
 ) -> dict[str, Any]:
     """Persist metadata. Dry-run by default; a session is required to write."""
@@ -213,6 +237,7 @@ def persist_payload_metadata(
         activation_preflight=activation_preflight,
         session=session,
         store_body=store_body,
+        body_store_ref=body_store_ref,
     )
 
     if store_body:
@@ -249,7 +274,10 @@ def persist_payload_metadata(
         "response_body_hash": payload["response_body_hash"],
         "response_body_size_bytes": payload.get("response_body_size_bytes"),
         "content_type": payload.get("content_type"),
-        "raw_payload_ref": payload["raw_payload_ref"],
+        # The body-store ref wins when supplied: it names where the bytes
+        # actually landed, which the evidence record could only predict.
+        "raw_payload_ref": decision.get("body_store_ref")
+        or payload["raw_payload_ref"],
         "redaction_status": payload["redaction_status"],
         "secret_scan_status": payload["secret_scan_status"],
         "terms_status": payload["terms_status"],
@@ -334,5 +362,11 @@ def repository_invariant_failures(decision: dict[str, Any]) -> list[str]:
     # Human review can never reach a promoted row.
     if decision.get("human_review_required") and decision.get("promotion_allowed"):
         fails.append("human_review_payload_promoted")
+
+    # Gate 97: a live payload may not be promoted without a body-store ref.
+    if decision.get("promotion_allowed") and decision.get(
+        "live_payload_missing_body_store_ref"
+    ):
+        fails.append("live_payload_promoted_without_a_body_store_ref")
 
     return fails
