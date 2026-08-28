@@ -1,0 +1,29 @@
+canonical_phrase,detection_path,canonical_detected,mixed_corpus_detected,aligned,under_detection_owner,fabricated_eligibility
+Eligible: any Indian tribe,eligibility_text,true,true,true,,false
+Eligible: any Indian tribe,structured_applicant_type,true,true,true,,false
+Open to tribal governments,eligibility_text,true,true,true,,false
+Open to tribal governments,structured_applicant_type,true,true,true,,false
+Federally recognized tribe only,eligibility_text,true,true,true,,false
+Federally recognized tribe only,structured_applicant_type,true,true,true,,false
+Indian Tribes,eligibility_text,true,true,true,,false
+Indian Tribes,structured_applicant_type,true,true,true,,false
+Tribal governments,eligibility_text,true,true,true,,false
+Tribal governments,structured_applicant_type,true,true,true,,false
+federally recognized Indian Tribe,eligibility_text,true,true,true,,false
+federally recognized Indian Tribe,structured_applicant_type,true,true,true,,false
+Native American tribal organization,eligibility_text,true,false,false,grants_gov_eligibility_parser_service.tribal_eligible,false
+Native American tribal organization,structured_applicant_type,true,true,true,,false
+Native American tribal governments (Federally recognized),eligibility_text,true,true,true,,false
+Native American tribal governments (Federally recognized),structured_applicant_type,true,true,true,,false
+Open to state governments and universities,eligibility_text,false,false,true,,false
+Open to state governments and universities,structured_applicant_type,false,false,true,,false
+Nonprofits having a 501(c)(3) status,eligibility_text,false,false,true,,false
+Nonprofits having a 501(c)(3) status,structured_applicant_type,false,false,true,,false
+City or township governments,eligibility_text,false,false,true,,false
+City or township governments,structured_applicant_type,false,false,true,,false
+Public and State controlled institutions of higher education,eligibility_text,false,false,true,,false
+Public and State controlled institutions of higher education,structured_applicant_type,false,false,true,,false
+This program funds rural broadband deployment.,eligibility_text,false,false,true,,false
+This program funds rural broadband deployment.,structured_applicant_type,false,false,true,,false
+,eligibility_text,false,false,true,,false
+,structured_applicant_type,false,false,true,,false

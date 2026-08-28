@@ -99,7 +99,15 @@ source .venv/bin/activate
 # deadline changes gated on provenance - are named for the digest, the
 # snapshot and the suppression, which nothing earlier reached. `nofo` also
 # picks up the older notice tests, which is a bonus rather than the reason.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo'
+#
+# `bridge`, `shadow` and `classification` were added by Gate 105. `tribal`,
+# `eligibility` and `corpus` already reach the module, but the tests that
+# matter here are about a canonical name being re-shadowed and a classifier
+# under-detecting against it - named for the bridge and the shadow, which
+# nothing else reached. Under-detection is the failure this gate fixed, so the
+# test that proves the fix is load-bearing is selected explicitly rather than
+# left to a keyword.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -240,6 +248,16 @@ CRITICAL=(
   "tests/test_gate104_tenant_nofo_digest_suppression.py::test_suppression_is_tenant_specific"
   "tests/test_gate104_tenant_nofo_digest_suppression.py::test_no_previous_snapshot_means_first_seen_not_new"
   "tests/test_gate104_tenant_nofo_digest_suppression.py::test_deadline_changed_requires_verified_provenance_on_both_sides"
+
+  # Gate 105. Five that keep the Tribal eligibility bridge honest: the shadow
+  # cannot come back, the fix is load-bearing rather than incidental, the
+  # guard fires on real drift, and widening detection never becomes licence to
+  # invent eligibility.
+  "tests/test_gate105_tribal_eligibility_classification_bridge.py::test_mixed_corpus_does_not_define_a_local_shadow"
+  "tests/test_gate105_tribal_eligibility_classification_bridge.py::test_mixed_corpus_uses_the_canonical_pattern_object_itself"
+  "tests/test_gate105_tribal_eligibility_classification_bridge.py::test_the_free_text_probe_would_have_failed_before_the_fix"
+  "tests/test_gate105_tribal_eligibility_classification_bridge.py::test_guard_catches_drift_when_the_shadow_is_restored"
+  "tests/test_gate105_tribal_eligibility_classification_bridge.py::test_guard_catches_an_over_claim"
 )
 
 FAIL=0

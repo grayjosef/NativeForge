@@ -21,11 +21,17 @@ _PRIORITY_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 _UNRESTRICTED_RE = re.compile(r"unrestricted|open to any type", re.IGNORECASE)
-_TRIBAL_TYPE_RE = re.compile(
-    r"native american tribal|federally recognized tribe",
-    re.IGNORECASE,
-)
 _NATIVE_SERVING_RE = re.compile(r"native[- ]serving", re.IGNORECASE)
+
+# Tribal applicant-type detection is deliberately NOT defined here. It is the
+# classification lane's canonical vocabulary, imported above from
+# real_grant_classification_input_adapter_service.
+#
+# A local copy stood at this spot until Gate 105. It shadowed the import on
+# line 13 - same name, two fewer alternatives - so this module read as bridged
+# while silently missing "indian tribe" and "tribal government". The failure
+# was under-detection: a strict subset can only find less, never invent more.
+# See docs/operations/583 and 584. Do not redefine the name here.
 
 
 def _json_safe(x: Any) -> Any:
