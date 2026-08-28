@@ -1,0 +1,152 @@
+{
+  "blocked_reasons": [
+    "fabricated_eligibility_risk:2",
+    "unresolved_preexisting_drift:2"
+  ],
+  "cached_manifest_hash": "3296b2a94eb2a1fe5610bd651cce9b3d18a62dafefa199dd88b17af4530a2493",
+  "changed_row_ids": [
+    "nf13-real-fed-025",
+    "nf14-mixed-edge-10",
+    "nf14-mixed-label_spread-14",
+    "nf14-mixed-label_spread-15"
+  ],
+  "diff_rows": [
+    {
+      "cached_value": null,
+      "change_class": "preexisting_fixture_drift",
+      "evidence_status": "unknown_narrowed_to_negative",
+      "expected_reason": "unknown narrowed to an affirmative negative, which asserts more than the source says",
+      "field": "applicant_types_include_tribal",
+      "fresh_value": false,
+      "human_review_required": true,
+      "row_id": "nf13-real-fed-025"
+    },
+    {
+      "cached_value": "",
+      "change_class": "preexisting_fixture_drift",
+      "evidence_status": "honest_absence_overwritten",
+      "expected_reason": "derivation would populate an evidence field on a row that marked its own emptiness deliberate",
+      "field": "eligibility_text",
+      "fresh_value": "Federal grant program: EPA — General Assistance Program (GAP). No posted NOFO on Grants.gov at ingest (no_live_nofo).",
+      "human_review_required": true,
+      "row_id": "nf13-real-fed-025"
+    },
+    {
+      "cached_value": false,
+      "change_class": "gate105_tribal_bridge_correction",
+      "evidence_status": "evidence_backed",
+      "expected_reason": "canonical Tribal classifier now recognises the applicant type this row already carried in its source text",
+      "field": "applicant_types_include_tribal",
+      "fresh_value": true,
+      "human_review_required": false,
+      "row_id": "nf14-mixed-edge-10"
+    },
+    {
+      "cached_value": false,
+      "change_class": "gate105_tribal_bridge_correction",
+      "evidence_status": "evidence_backed",
+      "expected_reason": "canonical Tribal classifier now recognises the applicant type this row already carried in its source text",
+      "field": "applicant_types_include_tribal",
+      "fresh_value": true,
+      "human_review_required": false,
+      "row_id": "nf14-mixed-label_spread-14"
+    },
+    {
+      "cached_value": false,
+      "change_class": "gate105_tribal_bridge_correction",
+      "evidence_status": "evidence_backed",
+      "expected_reason": "canonical Tribal classifier now recognises the applicant type this row already carried in its source text",
+      "field": "applicant_types_include_tribal",
+      "fresh_value": true,
+      "human_review_required": false,
+      "row_id": "nf14-mixed-label_spread-15"
+    }
+  ],
+  "fabricated": false,
+  "fabricated_eligibility_risk": true,
+  "fabricated_risk_rows": [
+    {
+      "cached_value": null,
+      "change_class": "preexisting_fixture_drift",
+      "evidence_status": "unknown_narrowed_to_negative",
+      "expected_reason": "unknown narrowed to an affirmative negative, which asserts more than the source says",
+      "field": "applicant_types_include_tribal",
+      "fresh_value": false,
+      "human_review_required": true,
+      "row_id": "nf13-real-fed-025"
+    },
+    {
+      "cached_value": "",
+      "change_class": "preexisting_fixture_drift",
+      "evidence_status": "honest_absence_overwritten",
+      "expected_reason": "derivation would populate an evidence field on a row that marked its own emptiness deliberate",
+      "field": "eligibility_text",
+      "fresh_value": "Federal grant program: EPA — General Assistance Program (GAP). No posted NOFO on Grants.gov at ingest (no_live_nofo).",
+      "human_review_required": true,
+      "row_id": "nf13-real-fed-025"
+    }
+  ],
+  "fields_changed": 5,
+  "fresh_manifest_hash": "b204dc39fe8a09e739033db3556341989b38f3d4d7bf7bbfbffc47e5d46d0e43",
+  "gate105_expected_change_count": 3,
+  "gate105_expected_changes": [
+    {
+      "cached_value": false,
+      "change_class": "gate105_tribal_bridge_correction",
+      "evidence_status": "evidence_backed",
+      "expected_reason": "canonical Tribal classifier now recognises the applicant type this row already carried in its source text",
+      "field": "applicant_types_include_tribal",
+      "fresh_value": true,
+      "human_review_required": false,
+      "row_id": "nf14-mixed-edge-10"
+    },
+    {
+      "cached_value": false,
+      "change_class": "gate105_tribal_bridge_correction",
+      "evidence_status": "evidence_backed",
+      "expected_reason": "canonical Tribal classifier now recognises the applicant type this row already carried in its source text",
+      "field": "applicant_types_include_tribal",
+      "fresh_value": true,
+      "human_review_required": false,
+      "row_id": "nf14-mixed-label_spread-14"
+    },
+    {
+      "cached_value": false,
+      "change_class": "gate105_tribal_bridge_correction",
+      "evidence_status": "evidence_backed",
+      "expected_reason": "canonical Tribal classifier now recognises the applicant type this row already carried in its source text",
+      "field": "applicant_types_include_tribal",
+      "fresh_value": true,
+      "human_review_required": false,
+      "row_id": "nf14-mixed-label_spread-15"
+    }
+  ],
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "positives_added": [
+    {
+      "field": "applicant_types_include_tribal",
+      "row_id": "nf14-mixed-edge-10"
+    },
+    {
+      "field": "applicant_types_include_tribal",
+      "row_id": "nf14-mixed-label_spread-14"
+    },
+    {
+      "field": "applicant_types_include_tribal",
+      "row_id": "nf14-mixed-label_spread-15"
+    }
+  ],
+  "positives_removed": [],
+  "preexisting_drift_count": 2,
+  "preexisting_drift_rows": [
+    "nf13-real-fed-025"
+  ],
+  "rows_changed": 4,
+  "rows_total": 57,
+  "safe_to_regenerate": false,
+  "schema_version": "nf_mixed_corpus_regeneration_diff_v1",
+  "source_monitoring_live": false,
+  "unexpected_change_count": 0,
+  "unexpected_changes": []
+}

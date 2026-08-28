@@ -1,0 +1,52 @@
+{
+  "after_hash": "b204dc39fe8a09e739033db3556341989b38f3d4d7bf7bbfbffc47e5d46d0e43",
+  "attestation_id": "89c837602ac6fe7ba66aeccd15caf313a0b9735ba3d756d2345539a3984d10de",
+  "attestation_notes": [
+    "3 row(s) carry the Gate 105 canonical Tribal classifier correction, each backed by applicant-type text already in the record",
+    "1 row(s) carry drift that predates Gate 105 and is not attributable to it",
+    "nf13-real-fed-025.applicant_types_include_tribal: unknown_narrowed_to_negative - unknown narrowed to an affirmative negative, which asserts more than the source says",
+    "nf13-real-fed-025.eligibility_text: honest_absence_overwritten - derivation would populate an evidence field on a row that marked its own emptiness deliberate",
+    "regeneration refused: the fixture is left byte-identical and the Gate 105 corrections remain unabsorbed in the cached manifest"
+  ],
+  "before_hash": "3296b2a94eb2a1fe5610bd651cce9b3d18a62dafefa199dd88b17af4530a2493",
+  "blocked_reasons": [
+    "fabricated_eligibility_risk:2",
+    "unresolved_preexisting_drift:2"
+  ],
+  "corpus_path": "fixtures/real_grants_corpus/nf14_mixed_corpus.json",
+  "expected_gate105_rows": [
+    "nf14-mixed-edge-10",
+    "nf14-mixed-label_spread-14",
+    "nf14-mixed-label_spread-15"
+  ],
+  "fabricated": false,
+  "fabricated_eligibility_risk": true,
+  "fixture_mutated": false,
+  "human_review_required": true,
+  "live_fetch_performed": false,
+  "live_source_coverage": false,
+  "positives_added": [
+    {
+      "field": "applicant_types_include_tribal",
+      "row_id": "nf14-mixed-edge-10"
+    },
+    {
+      "field": "applicant_types_include_tribal",
+      "row_id": "nf14-mixed-label_spread-14"
+    },
+    {
+      "field": "applicant_types_include_tribal",
+      "row_id": "nf14-mixed-label_spread-15"
+    }
+  ],
+  "positives_removed": [],
+  "preexisting_drift_rows": [
+    "nf13-real-fed-025"
+  ],
+  "rows_changed": 4,
+  "rows_total": 57,
+  "safe_to_commit_fixture": false,
+  "schema_version": "nf_mixed_corpus_regeneration_attestation_v1",
+  "source_monitoring_live": false,
+  "unexpected_rows": []
+}
