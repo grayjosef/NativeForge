@@ -113,7 +113,12 @@ source .venv/bin/activate
 # fixture that must NOT be written and a refusal that must be derived rather
 # than declared - named for the attestation and the regeneration, which
 # nothing earlier reached.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification or attestation or regeneration or drift'
+#
+# `honest`, `empty` and `unknown` were added by Gate 107. The tests that matter
+# are about what derivation must NOT write - a synopsis into eligibility text,
+# a negative nobody earned - and they are named for the honesty and the
+# unknown, which no earlier keyword reached.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification or attestation or regeneration or drift or honest or empty or unknown'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -269,11 +274,21 @@ CRITICAL=(
   # written, the refusal is derived from measurements rather than declared,
   # fabrication risk can never permit a commit, and the permission path is
   # reachable so the refusal means something.
-  "tests/test_gate106_mixed_corpus_regeneration_attestation.py::test_attestation_records_fixture_not_mutated"
+  "tests/test_gate106_mixed_corpus_regeneration_attestation.py::test_attestation_defaults_to_fixture_not_mutated"
   "tests/test_gate106_mixed_corpus_regeneration_attestation.py::test_the_committed_fixture_hash_matches_the_attested_before_hash"
   "tests/test_gate106_mixed_corpus_regeneration_attestation.py::test_safe_to_regenerate_is_derived_not_caller_declared"
   "tests/test_gate106_mixed_corpus_regeneration_attestation.py::test_fabrication_risk_can_never_permit_regeneration"
   "tests/test_gate106_mixed_corpus_regeneration_attestation.py::test_a_clean_diff_would_permit_regeneration"
+
+  # Gate 107. Five that keep derivation honest about what it does not know: a
+  # synopsis never becomes eligibility evidence, a negative is only asserted
+  # when earned, and the attestation that permitted the regeneration still
+  # refuses the shape it blocked at Gate 106.
+  "tests/test_gate107_honest_mixed_corpus_derivation.py::test_no_row_anywhere_carries_its_own_synopsis_as_eligibility_text"
+  "tests/test_gate107_honest_mixed_corpus_derivation.py::test_none_is_not_narrowed_to_false_without_evidence"
+  "tests/test_gate107_honest_mixed_corpus_derivation.py::test_false_is_still_reached_when_the_negative_is_earned"
+  "tests/test_gate107_honest_mixed_corpus_derivation.py::test_the_attestation_was_not_relaxed_to_permit_this"
+  "tests/test_gate107_honest_mixed_corpus_derivation.py::test_the_honest_row_is_untouched_in_the_committed_fixture"
 )
 
 FAIL=0

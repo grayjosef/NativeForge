@@ -67,23 +67,36 @@ SCHEMA_VERSION = "nf_mixed_corpus_regeneration_diff_v1"
 CHANGE_CLASSES = frozenset(
     {
         "gate105_tribal_bridge_correction",
+        "gate107_unknown_restored",
         "preexisting_fixture_drift",
         "unexpected",
         "unchanged",
     }
 )
 
-# The only class a regeneration may consist of.
-REGENERATION_PERMITTED_CLASSES = frozenset({"gate105_tribal_bridge_correction"})
+# The classes a regeneration may consist of.
+#
+# `gate107_unknown_restored` is the mirror of `unknown_narrowed_to_negative`:
+# where that class describes a regeneration *asserting* more than the source
+# says, this one describes it withdrawing an assertion that was never earned.
+# Withdrawing an unearned claim is always safe - it can only ever move a record
+# from a false certainty to an honest unknown, never the other way.
+REGENERATION_PERMITTED_CLASSES = frozenset(
+    {"gate105_tribal_bridge_correction", "gate107_unknown_restored"}
+)
 
 EVIDENCE_STATUSES = frozenset(
     {
         "evidence_backed",
         "honest_absence_overwritten",
         "unknown_narrowed_to_negative",
+        "unearned_negative_withdrawn",
         "not_applicable",
     }
 )
+
+# The field on which an unearned negative may be withdrawn back to unknown.
+UNKNOWN_RESTORABLE_FIELDS = frozenset({"applicant_types_include_tribal"})
 
 # Rows and field the Gate 105 canonical Tribal classifier fix is expected to
 # touch, and the exact transition it is expected to make. Anything else on these
@@ -186,6 +199,12 @@ def classify_field_change(
         and (cached_value, fresh_value) == GATE105_EXPECTED_TRANSITION
     )
 
+    is_unknown_restored = (
+        field in UNKNOWN_RESTORABLE_FIELDS
+        and cached_value is False
+        and fresh_value is None
+    )
+
     if is_gate105:
         change_class = "gate105_tribal_bridge_correction"
         expected_reason = (
@@ -193,6 +212,14 @@ def classify_field_change(
             "row already carried in its source text"
         )
         evidence_status = "evidence_backed"
+        human_review_required = False
+    elif is_unknown_restored:
+        change_class = "gate107_unknown_restored"
+        expected_reason = (
+            "a negative that was never earned is withdrawn back to unknown; "
+            "nothing in the record described who may apply"
+        )
+        evidence_status = "unearned_negative_withdrawn"
         human_review_required = False
     elif field in EVIDENCE_FIELDS and _is_blank(cached_value) and not _is_blank(
         fresh_value
@@ -297,6 +324,9 @@ def build_regeneration_diff(
     gate105 = [
         d for d in diff_rows if d["change_class"] == "gate105_tribal_bridge_correction"
     ]
+    unknown_restored = [
+        d for d in diff_rows if d["change_class"] == "gate107_unknown_restored"
+    ]
     preexisting = [
         d for d in diff_rows if d["change_class"] == "preexisting_fixture_drift"
     ]
@@ -347,7 +377,12 @@ def build_regeneration_diff(
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
-            "cached_manifest_hash": manifest_hash(cached_manifest),
+            # Both hash the row list, so the two are comparable and equal
+            # hashes mean identical content. Hashing the cached *manifest*
+            # against the fresh *rows* - as this did until Gate 107 - produced
+            # two values that could never match, which made an attestation's
+            # before/after pair look like a change even when nothing changed.
+            "cached_manifest_hash": manifest_hash(cached_rows),
             "fresh_manifest_hash": manifest_hash(fresh_rows),
             "rows_total": len(cached_rows),
             "rows_changed": len(changed_row_ids),
@@ -355,6 +390,8 @@ def build_regeneration_diff(
             "fields_changed": len(diff_rows),
             "gate105_expected_changes": gate105,
             "gate105_expected_change_count": len(gate105),
+            "gate107_unknown_restored_changes": unknown_restored,
+            "gate107_unknown_restored_count": len(unknown_restored),
             "preexisting_drift_rows": sorted({d["row_id"] for d in preexisting}),
             "preexisting_drift_count": len(preexisting),
             "unexpected_changes": unexpected,
@@ -404,11 +441,15 @@ def diff_invariant_failures(diff: dict[str, Any]) -> list[str]:
         ):
             fails.append("unexpected_change_without_human_review")
         # An attributed change must say what attributed it.
-        is_expected = (
-            row.get("change_class") == "gate105_tribal_bridge_correction"
-        )
+        is_expected = row.get("change_class") in REGENERATION_PERMITTED_CLASSES
         if is_expected and not row.get("expected_reason"):
             fails.append("expected_change_without_a_reason")
+        # Withdrawing a negative is safe; asserting one is not. This class may
+        # only ever describe False -> None.
+        if row.get("change_class") == "gate107_unknown_restored" and not (
+            row.get("cached_value") is False and row.get("fresh_value") is None
+        ):
+            fails.append("unknown_restored_class_used_for_another_transition")
 
     # safe_to_regenerate must agree with the measurements it claims to summarise.
     expected_safe = (

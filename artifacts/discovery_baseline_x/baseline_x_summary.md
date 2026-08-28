@@ -170,13 +170,13 @@ Per-class discovery quality score:
 
 | Applicant class | score | eligibility evidence | negative intel |
 | --- | --- | --- | --- |
-| `bie_funded_school` | 0.3354 | 0.0 | 11 |
-| `federally_recognized_tribe` | 0.3505 | 0.0757 | 0 |
-| `native_business` | 0.3365 | 0.0054 | 11 |
-| `native_individual` | 0.3354 | 0.0 | 11 |
-| `native_nonprofit` | 0.3354 | 0.0 | 11 |
-| `state_recognized_tribe` | 0.3354 | 0.0 | 11 |
-| `tribal_organization` | 0.3505 | 0.0757 | 1 |
+| `bie_funded_school` | 0.3387 | 0.0 | 11 |
+| `federally_recognized_tribe` | 0.3538 | 0.0757 | 0 |
+| `native_business` | 0.3397 | 0.0054 | 11 |
+| `native_individual` | 0.3387 | 0.0 | 11 |
+| `native_nonprofit` | 0.3387 | 0.0 | 11 |
+| `state_recognized_tribe` | 0.3387 | 0.0 | 11 |
+| `tribal_organization` | 0.3538 | 0.0757 | 1 |
 
 `baseline_quality_score` is 0.0865: the share of the 185 records for which the machinery can produce a cited eligibility or exclusion verdict. It is not the share of records that exist. Volume is not quality, and the gap between 185 records and 16 cited verdicts is the point of this document.
 

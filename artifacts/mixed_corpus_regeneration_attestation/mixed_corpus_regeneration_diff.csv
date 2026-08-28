@@ -1,6 +1,1 @@
 row_id,field,cached_value,fresh_value,change_class,expected_reason,evidence_status,human_review_required
-nf13-real-fed-025,applicant_types_include_tribal,null,false,preexisting_fixture_drift,"unknown narrowed to an affirmative negative, which asserts more than the source says",unknown_narrowed_to_negative,true
-nf13-real-fed-025,eligibility_text,"""""","""Federal grant program: EPA — General Assistance Program (GAP). No posted NOFO on Grants.gov at ingest (no_live_nofo).""",preexisting_fixture_drift,derivation would populate an evidence field on a row that marked its own emptiness deliberate,honest_absence_overwritten,true
-nf14-mixed-edge-10,applicant_types_include_tribal,false,true,gate105_tribal_bridge_correction,canonical Tribal classifier now recognises the applicant type this row already carried in its source text,evidence_backed,false
-nf14-mixed-label_spread-14,applicant_types_include_tribal,false,true,gate105_tribal_bridge_correction,canonical Tribal classifier now recognises the applicant type this row already carried in its source text,evidence_backed,false
-nf14-mixed-label_spread-15,applicant_types_include_tribal,false,true,gate105_tribal_bridge_correction,canonical Tribal classifier now recognises the applicant type this row already carried in its source text,evidence_backed,false

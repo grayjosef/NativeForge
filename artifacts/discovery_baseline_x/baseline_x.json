@@ -10512,98 +10512,98 @@
         "components": {
           "duplicate_penalty": 1.0,
           "eligibility_evidence": 0.0,
-          "native_relevance_evidence": 0.4973,
+          "native_relevance_evidence": 0.5135,
           "provenance_completeness": 0.573,
           "recognition_routing_completeness": 0.0,
           "source_freshness": 0.0
         },
-        "discovery_quality_score": 0.3354,
+        "discovery_quality_score": 0.3387,
         "eligibility_evidence_score": 0.0,
-        "native_relevance_score": 0.4973,
+        "native_relevance_score": 0.5135,
         "negative_intelligence_count": 11
       },
       "federally_recognized_tribe": {
         "components": {
           "duplicate_penalty": 1.0,
           "eligibility_evidence": 0.0757,
-          "native_relevance_evidence": 0.4973,
+          "native_relevance_evidence": 0.5135,
           "provenance_completeness": 0.573,
           "recognition_routing_completeness": 0.0,
           "source_freshness": 0.0
         },
-        "discovery_quality_score": 0.3505,
+        "discovery_quality_score": 0.3538,
         "eligibility_evidence_score": 0.0757,
-        "native_relevance_score": 0.4973,
+        "native_relevance_score": 0.5135,
         "negative_intelligence_count": 0
       },
       "native_business": {
         "components": {
           "duplicate_penalty": 1.0,
           "eligibility_evidence": 0.0054,
-          "native_relevance_evidence": 0.4973,
+          "native_relevance_evidence": 0.5135,
           "provenance_completeness": 0.573,
           "recognition_routing_completeness": 0.0,
           "source_freshness": 0.0
         },
-        "discovery_quality_score": 0.3365,
+        "discovery_quality_score": 0.3397,
         "eligibility_evidence_score": 0.0054,
-        "native_relevance_score": 0.4973,
+        "native_relevance_score": 0.5135,
         "negative_intelligence_count": 11
       },
       "native_individual": {
         "components": {
           "duplicate_penalty": 1.0,
           "eligibility_evidence": 0.0,
-          "native_relevance_evidence": 0.4973,
+          "native_relevance_evidence": 0.5135,
           "provenance_completeness": 0.573,
           "recognition_routing_completeness": 0.0,
           "source_freshness": 0.0
         },
-        "discovery_quality_score": 0.3354,
+        "discovery_quality_score": 0.3387,
         "eligibility_evidence_score": 0.0,
-        "native_relevance_score": 0.4973,
+        "native_relevance_score": 0.5135,
         "negative_intelligence_count": 11
       },
       "native_nonprofit": {
         "components": {
           "duplicate_penalty": 1.0,
           "eligibility_evidence": 0.0,
-          "native_relevance_evidence": 0.4973,
+          "native_relevance_evidence": 0.5135,
           "provenance_completeness": 0.573,
           "recognition_routing_completeness": 0.0,
           "source_freshness": 0.0
         },
-        "discovery_quality_score": 0.3354,
+        "discovery_quality_score": 0.3387,
         "eligibility_evidence_score": 0.0,
-        "native_relevance_score": 0.4973,
+        "native_relevance_score": 0.5135,
         "negative_intelligence_count": 11
       },
       "state_recognized_tribe": {
         "components": {
           "duplicate_penalty": 1.0,
           "eligibility_evidence": 0.0,
-          "native_relevance_evidence": 0.4973,
+          "native_relevance_evidence": 0.5135,
           "provenance_completeness": 0.573,
           "recognition_routing_completeness": 0.0,
           "source_freshness": 0.0
         },
-        "discovery_quality_score": 0.3354,
+        "discovery_quality_score": 0.3387,
         "eligibility_evidence_score": 0.0,
-        "native_relevance_score": 0.4973,
+        "native_relevance_score": 0.5135,
         "negative_intelligence_count": 11
       },
       "tribal_organization": {
         "components": {
           "duplicate_penalty": 1.0,
           "eligibility_evidence": 0.0757,
-          "native_relevance_evidence": 0.4973,
+          "native_relevance_evidence": 0.5135,
           "provenance_completeness": 0.573,
           "recognition_routing_completeness": 0.0,
           "source_freshness": 0.0
         },
-        "discovery_quality_score": 0.3505,
+        "discovery_quality_score": 0.3538,
         "eligibility_evidence_score": 0.0757,
-        "native_relevance_score": 0.4973,
+        "native_relevance_score": 0.5135,
         "negative_intelligence_count": 1
       }
     }

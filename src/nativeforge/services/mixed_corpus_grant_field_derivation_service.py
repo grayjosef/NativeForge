@@ -34,9 +34,50 @@ _NATIVE_SERVING_RE = re.compile(r"native[- ]serving", re.IGNORECASE)
 # See docs/operations/583 and 584. Do not redefine the name here.
 
 
+# Flags by which a row states that its emptiness is deliberate.
+#
+# Deliberately NOT including `never_synthesized`: it is a corpus-wide provenance
+# assertion carried by all 40 NF-13 rows, so it discriminates nothing. A guard
+# whose condition is true of everything is a coincidence, not a guard.
+HONEST_EMPTINESS_FLAGS: tuple[str, ...] = ("empty_honestly", "no_live_nofo")
+
+
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
+
+
+def _declares_honest_emptiness(grant: dict[str, Any]) -> bool:
+    """Has this row said its blank fields are the truth rather than a gap?"""
+    return any(grant.get(flag) is True for flag in HONEST_EMPTINESS_FLAGS)
+
+
+def _parsed_eligibility_is_source_backed(parsed: dict[str, Any]) -> bool:
+    """Did the parser build its eligibility_text from real eligibility fields?
+
+    Detected from the parser's own provenance rather than trusted. When the only
+    contribution was `synopsisDesc`, the result is prose *about* the opportunity
+    - for an unposted NOFO, literally a note that no NOFO exists - and adopting
+    it as eligibility text puts manufactured text into the evidence path that
+    `derive_explicit_source_evidence` and the Tribal classifier read.
+    """
+    return bool(
+        str(parsed.get("applicant_types_text") or "").strip()
+        or str(parsed.get("applicant_eligibility_desc") or "").strip()
+    )
+
+
+def _negative_applicant_type_is_earned(
+    *, applicant_types: Any, eligibility_text: Any
+) -> bool:
+    """Is there anything describing who may apply, that simply did not say Tribal?
+
+    `False` asserts the applicant classes are known and exclude Tribes. That is a
+    claim, and it needs a source. With no structured applicant types and no
+    eligibility text, nobody has said who may apply, and the honest answer is
+    unknown.
+    """
+    return bool(applicant_types) or bool(str(eligibility_text or "").strip())
 
 
 def _source_blob(grant: dict[str, Any], synopsis: dict[str, Any] | None = None) -> str:
@@ -95,7 +136,12 @@ def derive_mixed_corpus_grant_fields(
     )
     out["tribal_priority_points"] = bool(_PRIORITY_RE.search(blob))
 
-    if parsed.get("eligibility_text") and not out.get("eligibility_text"):
+    if (
+        parsed.get("eligibility_text")
+        and not out.get("eligibility_text")
+        and _parsed_eligibility_is_source_backed(parsed)
+        and not _declares_honest_emptiness(out)
+    ):
         out["eligibility_text"] = parsed["eligibility_text"]
     if parsed.get("tribal_eligible") is not None:
         out["tribal_eligible"] = parsed["tribal_eligible"]
@@ -109,18 +155,36 @@ def derive_mixed_corpus_grant_fields(
             tags.append("ihs_service_population")
     out["eligibility_tags"] = tags
 
+    # A negative has to be earned. `False` claims the applicant types are known
+    # and exclude Tribes; that needs something describing who may apply.
+    negative_is_evidence_backed = _negative_applicant_type_is_earned(
+        applicant_types=types, eligibility_text=out.get("eligibility_text")
+    )
+
     if tribal_type_present:
         out["applicant_types_include_tribal"] = True
     elif _UNRESTRICTED_RE.search(str(out.get("eligibility_text") or "")):
         out["applicant_types_include_tribal"] = None
     elif out.get("applicant_types_include_tribal") is None:
-        out["applicant_types_include_tribal"] = False
+        # Unknown stays unknown unless a negative was earned. Narrowing None to
+        # False because nothing said otherwise inverts deny-by-default and
+        # asserts more than the source supports.
+        if negative_is_evidence_backed:
+            out["applicant_types_include_tribal"] = False
 
     if out.get("tribal_eligible") and not tribal_type_present:
         if _TRIBAL_TYPE_RE.search(str(out.get("eligibility_text") or "")):
             out["applicant_types_include_tribal"] = True
-        else:
+        elif negative_is_evidence_backed:
             out["applicant_types_include_tribal"] = False
+
+    # Unknown is a value, not an absence. Where derivation declined to assert
+    # anything, the field is still present and explicitly None - otherwise a
+    # caller reading row["applicant_types_include_tribal"] raises KeyError and
+    # "we do not know" becomes indistinguishable from "this field is not part of
+    # the schema".
+    out.setdefault("eligibility_text", "")
+    out.setdefault("applicant_types_include_tribal", None)
 
     out["tribe_eligible_broad"] = derive_tribe_eligible_broad(
         out,

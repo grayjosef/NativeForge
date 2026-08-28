@@ -108,8 +108,12 @@ def build_regeneration_attestation(
 
     # Derived. Every changed field must be an expected correction, and the diff
     # must independently permit regeneration.
+    from nativeforge.services.mixed_corpus_regeneration_diff_service import (
+        REGENERATION_PERMITTED_CLASSES,
+    )
+
     all_changes_expected = all(
-        row["change_class"] == "gate105_tribal_bridge_correction"
+        row["change_class"] in REGENERATION_PERMITTED_CLASSES
         for row in diff.get("diff_rows") or []
     )
     safe_to_commit_fixture = bool(
@@ -127,6 +131,12 @@ def build_regeneration_attestation(
             f"{len(expected_rows)} row(s) carry the Gate 105 canonical Tribal "
             "classifier correction, each backed by applicant-type text already "
             "in the record"
+        )
+    restored = diff.get("gate107_unknown_restored_changes") or []
+    if restored:
+        notes.append(
+            f"{len(restored)} row(s) withdraw a negative that was never earned "
+            "back to unknown; nothing described who may apply"
         )
     if preexisting_rows:
         notes.append(

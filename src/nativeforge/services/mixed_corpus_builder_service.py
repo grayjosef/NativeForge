@@ -48,7 +48,17 @@ def _pull_to_grant(pull: dict[str, Any], idx: int) -> dict[str, Any]:
         "eligibility_text": payload.get("eligibility_text"),
         "synopsis": payload.get("synopsis"),
         "tribal_eligible": payload.get("tribal_eligible", False),
-        "applicant_types_include_tribal": payload.get("tribal_eligible"),
+        # Seeded only on a positive signal. `tribal_eligible` answers "may Tribes
+        # apply"; `applicant_types_include_tribal` answers "do the listed
+        # applicant types include a Tribal class". Seeding the second from the
+        # second-hand absence of the first turned "no tribal signal recorded"
+        # into "applicant types affirmatively exclude Tribes".
+        #
+        # None hands the question to derivation, which sets False only where
+        # something actually described who may apply. See Gate 107 / doc 591.
+        "applicant_types_include_tribal": (
+            True if payload.get("tribal_eligible") is True else None
+        ),
         "tribal_set_aside": False,
         "tribal_priority_points": False,
         "application_deadline": payload.get("application_deadline"),
