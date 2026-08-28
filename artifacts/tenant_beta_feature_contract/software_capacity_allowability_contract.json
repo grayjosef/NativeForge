@@ -1,0 +1,125 @@
+{
+  "affirmative_labels": [
+    "clearly_allowable",
+    "likely_allowable",
+    "possibly_allowable"
+  ],
+  "cost_types": [
+    "capacity_development",
+    "compliance_infrastructure",
+    "data_document_infrastructure",
+    "grant_administration",
+    "indirect_cost",
+    "program_support",
+    "reporting_infrastructure",
+    "software_license",
+    "unknown"
+  ],
+  "email_delivery_available": false,
+  "evidence_required_for_affirmative_labels": true,
+  "example_only": true,
+  "examples": {
+    "nativeforge_self_assessed": {
+      "allowability_determined": false,
+      "allowability_label": "requires_human_review",
+      "assessed_cost_type": "software_license",
+      "blocked_reasons": [
+        "self_assessment_capped_at_human_review"
+      ],
+      "evidence_present": true,
+      "evidence_quotes_or_refs": [
+        "Allowable costs include grant management software."
+      ],
+      "fabricated": false,
+      "funding_guaranteed": false,
+      "human_review_required": true,
+      "is_nativeforge_itself": true,
+      "label_wording": "requires human review",
+      "opportunity_id": "example-opportunity",
+      "schema_version": "nf_software_capacity_allowability_review_v1",
+      "self_assessment_capped": true,
+      "source_allowability_class": null,
+      "uncapped_label": "clearly_allowable"
+    },
+    "with_evidence": {
+      "allowability_determined": false,
+      "allowability_label": "clearly_allowable",
+      "assessed_cost_type": "grant_administration",
+      "blocked_reasons": [],
+      "evidence_present": true,
+      "evidence_quotes_or_refs": [
+        "Allowable costs include grant administration."
+      ],
+      "fabricated": false,
+      "funding_guaranteed": false,
+      "human_review_required": false,
+      "is_nativeforge_itself": false,
+      "label_wording": "the source text names this cost type as allowable",
+      "opportunity_id": "example-opportunity",
+      "schema_version": "nf_software_capacity_allowability_review_v1",
+      "self_assessment_capped": false,
+      "source_allowability_class": null,
+      "uncapped_label": "clearly_allowable"
+    },
+    "without_evidence": {
+      "allowability_determined": false,
+      "allowability_label": "not_indicated",
+      "assessed_cost_type": "capacity_development",
+      "blocked_reasons": [
+        "affirmative_label_without_evidence:likely_allowable",
+        "no_evidence_supplied"
+      ],
+      "evidence_present": false,
+      "evidence_quotes_or_refs": [],
+      "fabricated": false,
+      "funding_guaranteed": false,
+      "human_review_required": false,
+      "is_nativeforge_itself": false,
+      "label_wording": "not indicated - the source says nothing either way",
+      "opportunity_id": "example-opportunity",
+      "schema_version": "nf_software_capacity_allowability_review_v1",
+      "self_assessment_capped": false,
+      "source_allowability_class": null,
+      "uncapped_label": "not_indicated"
+    }
+  },
+  "fabricated": false,
+  "labels": [
+    "clearly_allowable",
+    "likely_allowable",
+    "likely_not_allowable",
+    "not_indicated",
+    "possibly_allowable",
+    "requires_human_review"
+  ],
+  "live_source_collection_available": false,
+  "live_source_coverage": false,
+  "permitted_phrasing": {
+    "clearly_allowable": "the source text names this cost type as allowable",
+    "likely_allowable": "appears potentially allowable - the source names a close category",
+    "likely_not_allowable": "the source text appears to exclude this cost type",
+    "not_indicated": "not indicated - the source says nothing either way",
+    "possibly_allowable": "may be allowable - the source is permissive but not specific",
+    "requires_human_review": "requires human review"
+  },
+  "prohibited_claims": [
+    "nativeforge is always grant-funded",
+    "this cost is allowable",
+    "guaranteed allowable",
+    "always allowable"
+  ],
+  "ready_for_beta_onboarding": false,
+  "ready_for_demo_contract": true,
+  "schema_version": "nf_tenant_beta_contract_artifact_v1",
+  "self_assessment_cap": "requires_human_review",
+  "source_class_bridge": {
+    "clearly_allowable": "clearly_allowable",
+    "likely_allowable": "likely_allowable",
+    "sometimes_allowable": "possibly_allowable",
+    "unclear": "requires_human_review",
+    "unknown": "not_indicated",
+    "unlikely_allowable": "likely_not_allowable"
+  },
+  "source_monitoring_live": false,
+  "tenant_beta_contract_available": true
+}

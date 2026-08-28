@@ -1,0 +1,347 @@
+{
+  "blocked_reasons": [
+    "applicant_classes_unknown_for_every_demo_tenant",
+    "demo_fixture_profiles_are_not_tenant_facts",
+    "recognition_status_unknown_for_every_demo_tenant"
+  ],
+  "eligibility_determined": false,
+  "email_delivery_available": false,
+  "fabricated": false,
+  "facts_demo_fixture_count": 10,
+  "facts_unknown_count": 14,
+  "facts_verified_count": 0,
+  "fixture_status": "demo_fixture",
+  "live_source_collection_available": false,
+  "live_source_coverage": false,
+  "ready_for_beta_onboarding": false,
+  "ready_for_demo_contract": true,
+  "real_tribe_named": false,
+  "sc_priority_count": 2,
+  "schema_version": "nf_tenant_beta_demo_fixture_v1",
+  "source_monitoring_live": false,
+  "tenant_beta_contract_available": true,
+  "tenant_count": 4,
+  "tenant_facts_verified": false,
+  "tenant_profiles": [
+    {
+      "alert_rules": [],
+      "applicant_classes": {
+        "status": "unknown",
+        "value": null
+      },
+      "awarded_grants_enabled": true,
+      "blocked_reasons": [
+        "applicant_classes_unknown",
+        "recognition_status_unknown",
+        "service_area_unknown"
+      ],
+      "collectors_active": 0,
+      "digest_preferences": {
+        "daily_alerts_audience": "grants_admin",
+        "daily_alerts_enabled": true,
+        "day": "monday",
+        "frequency": "weekly"
+      },
+      "document_library_requirements": [],
+      "eligibility_determined": false,
+      "excluded_applicant_classes": [],
+      "fabricated": false,
+      "human_review_notes": [
+        "demo fixture: recognition status, applicant classes and service area are unknown by design and must be supplied by the tenant before any eligibility decision"
+      ],
+      "inference_prohibited": [
+        {
+          "inference": "recognition_status_from_name_or_state",
+          "why": "federal, state, historic-affiliation and unrecognised are legally distinct; a wrong guess reaches a real government's eligibility"
+        },
+        {
+          "inference": "federal_eligibility_from_state_recognition",
+          "why": "South Carolina recognising a Tribe says nothing about federal programme eligibility, and the inverse is equally false"
+        },
+        {
+          "inference": "operating_state_from_mailing_address",
+          "why": "a tenant may operate, serve and be eligible in a state it is not headquartered in"
+        },
+        {
+          "inference": "applicant_class_from_tenant_kind",
+          "why": "a tribal government may apply under several classes, and which one applies is per-opportunity"
+        }
+      ],
+      "live_source_coverage": false,
+      "mailing_state": null,
+      "operating_states": {
+        "status": "demo_fixture",
+        "value": [
+          "SC"
+        ]
+      },
+      "profile_fact_status": "unknown",
+      "program_priorities": [],
+      "recognition_source": null,
+      "recognition_status": {
+        "status": "unknown",
+        "value": null
+      },
+      "reporting_tracking_enabled": true,
+      "routing_rules": [],
+      "sc_priority": true,
+      "schema_version": "nf_tenant_beta_profile_v1",
+      "service_area": {
+        "status": "unknown",
+        "value": null
+      },
+      "source_monitoring_live": false,
+      "source_watchlist": [],
+      "tenant_id": "nf-demo-tenant-01",
+      "tenant_kind": {
+        "status": "demo_fixture",
+        "value": "tribal_government"
+      },
+      "tenant_name": {
+        "status": "demo_fixture",
+        "value": "Demo Tenant One"
+      },
+      "unrecognised_applicant_classes": []
+    },
+    {
+      "alert_rules": [],
+      "applicant_classes": {
+        "status": "unknown",
+        "value": null
+      },
+      "awarded_grants_enabled": true,
+      "blocked_reasons": [
+        "applicant_classes_unknown",
+        "recognition_status_unknown",
+        "service_area_unknown"
+      ],
+      "collectors_active": 0,
+      "digest_preferences": {
+        "daily_alerts_audience": "none",
+        "daily_alerts_enabled": false,
+        "day": "monday",
+        "frequency": "weekly"
+      },
+      "document_library_requirements": [],
+      "eligibility_determined": false,
+      "excluded_applicant_classes": [],
+      "fabricated": false,
+      "human_review_notes": [
+        "demo fixture: recognition status, applicant classes and service area are unknown by design and must be supplied by the tenant before any eligibility decision"
+      ],
+      "inference_prohibited": [
+        {
+          "inference": "recognition_status_from_name_or_state",
+          "why": "federal, state, historic-affiliation and unrecognised are legally distinct; a wrong guess reaches a real government's eligibility"
+        },
+        {
+          "inference": "federal_eligibility_from_state_recognition",
+          "why": "South Carolina recognising a Tribe says nothing about federal programme eligibility, and the inverse is equally false"
+        },
+        {
+          "inference": "operating_state_from_mailing_address",
+          "why": "a tenant may operate, serve and be eligible in a state it is not headquartered in"
+        },
+        {
+          "inference": "applicant_class_from_tenant_kind",
+          "why": "a tribal government may apply under several classes, and which one applies is per-opportunity"
+        }
+      ],
+      "live_source_coverage": false,
+      "mailing_state": null,
+      "operating_states": {
+        "status": "demo_fixture",
+        "value": [
+          "SC"
+        ]
+      },
+      "profile_fact_status": "unknown",
+      "program_priorities": [],
+      "recognition_source": null,
+      "recognition_status": {
+        "status": "unknown",
+        "value": null
+      },
+      "reporting_tracking_enabled": true,
+      "routing_rules": [],
+      "sc_priority": true,
+      "schema_version": "nf_tenant_beta_profile_v1",
+      "service_area": {
+        "status": "unknown",
+        "value": null
+      },
+      "source_monitoring_live": false,
+      "source_watchlist": [],
+      "tenant_id": "nf-demo-tenant-02",
+      "tenant_kind": {
+        "status": "demo_fixture",
+        "value": "tribal_government"
+      },
+      "tenant_name": {
+        "status": "demo_fixture",
+        "value": "Demo Tenant Two"
+      },
+      "unrecognised_applicant_classes": []
+    },
+    {
+      "alert_rules": [],
+      "applicant_classes": {
+        "status": "unknown",
+        "value": null
+      },
+      "awarded_grants_enabled": true,
+      "blocked_reasons": [
+        "applicant_classes_unknown",
+        "recognition_status_unknown",
+        "service_area_unknown"
+      ],
+      "collectors_active": 0,
+      "digest_preferences": {
+        "daily_alerts_audience": "none",
+        "daily_alerts_enabled": false,
+        "day": "monday",
+        "frequency": "weekly"
+      },
+      "document_library_requirements": [],
+      "eligibility_determined": false,
+      "excluded_applicant_classes": [],
+      "fabricated": false,
+      "human_review_notes": [
+        "demo fixture: recognition status, applicant classes and service area are unknown by design and must be supplied by the tenant before any eligibility decision"
+      ],
+      "inference_prohibited": [
+        {
+          "inference": "recognition_status_from_name_or_state",
+          "why": "federal, state, historic-affiliation and unrecognised are legally distinct; a wrong guess reaches a real government's eligibility"
+        },
+        {
+          "inference": "federal_eligibility_from_state_recognition",
+          "why": "South Carolina recognising a Tribe says nothing about federal programme eligibility, and the inverse is equally false"
+        },
+        {
+          "inference": "operating_state_from_mailing_address",
+          "why": "a tenant may operate, serve and be eligible in a state it is not headquartered in"
+        },
+        {
+          "inference": "applicant_class_from_tenant_kind",
+          "why": "a tribal government may apply under several classes, and which one applies is per-opportunity"
+        }
+      ],
+      "live_source_coverage": false,
+      "mailing_state": null,
+      "operating_states": {
+        "status": "demo_fixture",
+        "value": [
+          "NC"
+        ]
+      },
+      "profile_fact_status": "unknown",
+      "program_priorities": [],
+      "recognition_source": null,
+      "recognition_status": {
+        "status": "unknown",
+        "value": null
+      },
+      "reporting_tracking_enabled": false,
+      "routing_rules": [],
+      "sc_priority": false,
+      "schema_version": "nf_tenant_beta_profile_v1",
+      "service_area": {
+        "status": "unknown",
+        "value": null
+      },
+      "source_monitoring_live": false,
+      "source_watchlist": [],
+      "tenant_id": "nf-demo-tenant-03",
+      "tenant_kind": {
+        "status": "demo_fixture",
+        "value": "native_nonprofit"
+      },
+      "tenant_name": {
+        "status": "demo_fixture",
+        "value": "Demo Tenant Three"
+      },
+      "unrecognised_applicant_classes": []
+    },
+    {
+      "alert_rules": [],
+      "applicant_classes": {
+        "status": "unknown",
+        "value": null
+      },
+      "awarded_grants_enabled": false,
+      "blocked_reasons": [
+        "applicant_classes_unknown",
+        "operating_states_unknown",
+        "recognition_status_unknown",
+        "service_area_unknown",
+        "tenant_kind_needs_human_review"
+      ],
+      "collectors_active": 0,
+      "digest_preferences": {
+        "daily_alerts_audience": "none",
+        "daily_alerts_enabled": false,
+        "day": "monday",
+        "frequency": "weekly"
+      },
+      "document_library_requirements": [],
+      "eligibility_determined": false,
+      "excluded_applicant_classes": [],
+      "fabricated": false,
+      "human_review_notes": [
+        "demo fixture: recognition status, applicant classes and service area are unknown by design and must be supplied by the tenant before any eligibility decision"
+      ],
+      "inference_prohibited": [
+        {
+          "inference": "recognition_status_from_name_or_state",
+          "why": "federal, state, historic-affiliation and unrecognised are legally distinct; a wrong guess reaches a real government's eligibility"
+        },
+        {
+          "inference": "federal_eligibility_from_state_recognition",
+          "why": "South Carolina recognising a Tribe says nothing about federal programme eligibility, and the inverse is equally false"
+        },
+        {
+          "inference": "operating_state_from_mailing_address",
+          "why": "a tenant may operate, serve and be eligible in a state it is not headquartered in"
+        },
+        {
+          "inference": "applicant_class_from_tenant_kind",
+          "why": "a tribal government may apply under several classes, and which one applies is per-opportunity"
+        }
+      ],
+      "live_source_coverage": false,
+      "mailing_state": null,
+      "operating_states": {
+        "status": "unknown",
+        "value": null
+      },
+      "profile_fact_status": "unknown",
+      "program_priorities": [],
+      "recognition_source": null,
+      "recognition_status": {
+        "status": "unknown",
+        "value": null
+      },
+      "reporting_tracking_enabled": false,
+      "routing_rules": [],
+      "sc_priority": false,
+      "schema_version": "nf_tenant_beta_profile_v1",
+      "service_area": {
+        "status": "unknown",
+        "value": null
+      },
+      "source_monitoring_live": false,
+      "source_watchlist": [],
+      "tenant_id": "nf-demo-tenant-04",
+      "tenant_kind": {
+        "status": "needs_human_review",
+        "value": "unknown"
+      },
+      "tenant_name": {
+        "status": "demo_fixture",
+        "value": "Demo Tenant Four"
+      },
+      "unrecognised_applicant_classes": []
+    }
+  ]
+}

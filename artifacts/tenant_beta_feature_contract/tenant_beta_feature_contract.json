@@ -1,0 +1,265 @@
+{
+  "beta_features": [
+    "tenant_eligibility_profile",
+    "sc_federal_source_watchlist",
+    "weekly_nofo_digest",
+    "optional_daily_alerts",
+    "pursuit_suppression",
+    "tenant_pursuit_pipeline",
+    "reporting_burden_preview",
+    "awarded_grants_workspace",
+    "tenant_document_library",
+    "tenant_rules_routing_alerts",
+    "software_capacity_allowability_review"
+  ],
+  "demo_scope": "contract_demo_against_demo_safe_fixtures",
+  "email_delivery_available": false,
+  "fact_statuses": [
+    "demo_fixture",
+    "needs_human_review",
+    "tenant_supplied",
+    "unknown",
+    "verified"
+  ],
+  "live_source_collection_available": false,
+  "live_source_coverage": false,
+  "priority_summaries": [
+    {
+      "blocked_reasons": [
+        "no_active_collectors",
+        "source_monitoring_not_available"
+      ],
+      "by_activation_status": {
+        "activation_allowed": 0,
+        "human_review_only": 3,
+        "not_active": 298,
+        "terms_review_required": 80,
+        "unknown": 0
+      },
+      "collectors_activated": 0,
+      "fabricated": false,
+      "federal_source_count": 303,
+      "fetch_performed": false,
+      "live_coverage": false,
+      "priority_source_count": 360,
+      "priority_tiers": [
+        "tenant_state_priority",
+        "federal_priority",
+        "other_state",
+        "private",
+        "out_of_scope"
+      ],
+      "registry_row_count": 381,
+      "sc_priority_applied": true,
+      "sc_source_count": 57,
+      "schema_version": "nf_tenant_source_priority_v1",
+      "sources_active": 0,
+      "sources_monitored": 0,
+      "tenant_id": "nf-demo-tenant-01",
+      "tenant_operating_states": [
+        "SC"
+      ],
+      "watchlist_matched_count": 0
+    },
+    {
+      "blocked_reasons": [
+        "no_active_collectors",
+        "source_monitoring_not_available"
+      ],
+      "by_activation_status": {
+        "activation_allowed": 0,
+        "human_review_only": 3,
+        "not_active": 298,
+        "terms_review_required": 80,
+        "unknown": 0
+      },
+      "collectors_activated": 0,
+      "fabricated": false,
+      "federal_source_count": 303,
+      "fetch_performed": false,
+      "live_coverage": false,
+      "priority_source_count": 360,
+      "priority_tiers": [
+        "tenant_state_priority",
+        "federal_priority",
+        "other_state",
+        "private",
+        "out_of_scope"
+      ],
+      "registry_row_count": 381,
+      "sc_priority_applied": true,
+      "sc_source_count": 57,
+      "schema_version": "nf_tenant_source_priority_v1",
+      "sources_active": 0,
+      "sources_monitored": 0,
+      "tenant_id": "nf-demo-tenant-02",
+      "tenant_operating_states": [
+        "SC"
+      ],
+      "watchlist_matched_count": 0
+    },
+    {
+      "blocked_reasons": [
+        "no_active_collectors",
+        "source_monitoring_not_available"
+      ],
+      "by_activation_status": {
+        "activation_allowed": 0,
+        "human_review_only": 3,
+        "not_active": 298,
+        "terms_review_required": 80,
+        "unknown": 0
+      },
+      "collectors_activated": 0,
+      "fabricated": false,
+      "federal_source_count": 303,
+      "fetch_performed": false,
+      "live_coverage": false,
+      "priority_source_count": 360,
+      "priority_tiers": [
+        "tenant_state_priority",
+        "federal_priority",
+        "other_state",
+        "private",
+        "out_of_scope"
+      ],
+      "registry_row_count": 381,
+      "sc_priority_applied": false,
+      "sc_source_count": 0,
+      "schema_version": "nf_tenant_source_priority_v1",
+      "sources_active": 0,
+      "sources_monitored": 0,
+      "tenant_id": "nf-demo-tenant-03",
+      "tenant_operating_states": [
+        "NC"
+      ],
+      "watchlist_matched_count": 0
+    },
+    {
+      "blocked_reasons": [
+        "no_active_collectors",
+        "source_monitoring_not_available",
+        "tenant_operating_states_unknown"
+      ],
+      "by_activation_status": {
+        "activation_allowed": 0,
+        "human_review_only": 3,
+        "not_active": 298,
+        "terms_review_required": 80,
+        "unknown": 0
+      },
+      "collectors_activated": 0,
+      "fabricated": false,
+      "federal_source_count": 303,
+      "fetch_performed": false,
+      "live_coverage": false,
+      "priority_source_count": 360,
+      "priority_tiers": [
+        "tenant_state_priority",
+        "federal_priority",
+        "other_state",
+        "private",
+        "out_of_scope"
+      ],
+      "registry_row_count": 381,
+      "sc_priority_applied": false,
+      "sc_source_count": 0,
+      "schema_version": "nf_tenant_source_priority_v1",
+      "sources_active": 0,
+      "sources_monitored": 0,
+      "tenant_id": "nf-demo-tenant-04",
+      "tenant_operating_states": [],
+      "watchlist_matched_count": 0
+    }
+  ],
+  "priority_tiers": [
+    "tenant_state_priority",
+    "federal_priority",
+    "other_state",
+    "private",
+    "out_of_scope"
+  ],
+  "readiness": {
+    "allowability_review_available": true,
+    "awarded_grants_contract_available": true,
+    "blocked_reasons": [
+      "gate_104_component_missing:digest_contract_available",
+      "gate_104_component_missing:pursuit_suppression_contract_available",
+      "onboarding_missing:customer_auth_live",
+      "onboarding_missing:customer_persistence_live",
+      "onboarding_missing:email_delivery_available",
+      "onboarding_missing:live_source_collection_available"
+    ],
+    "collectors_active": 0,
+    "controlled_customer_pilot": false,
+    "customer_auth_live": false,
+    "customer_persistence_live": false,
+    "demo_components_missing": [],
+    "demo_fixtures_available": true,
+    "demo_scope": "contract_demo_against_demo_safe_fixtures",
+    "digest_contract_available": false,
+    "email_delivery_available": false,
+    "fabricated": false,
+    "live_source_collection_available": false,
+    "live_source_coverage": false,
+    "next_required_actions": [
+      {
+        "action": "build_digest_contract",
+        "why": "gate 104 - digest is genuine greenfield; nothing backs it today"
+      },
+      {
+        "action": "build_pursuit_suppression_contract",
+        "why": "gate 104 - tenant-specific, never global, and never a delete"
+      },
+      {
+        "action": "extend_awarded_grants_requirement_tracking",
+        "why": "gate 105 - separate projected burden from active obligations"
+      },
+      {
+        "action": "prove_customer_persistence_for_tenant_profiles",
+        "why": "no tenant profile persists today; NfTribalProfile carries none of the beta fields"
+      },
+      {
+        "action": "prove_customer_auth",
+        "why": "login is not live; onboarding a paying tenant needs it"
+      },
+      {
+        "action": "prove_email_delivery",
+        "why": "a weekly digest nobody can receive is not a weekly digest"
+      },
+      {
+        "action": "activate_a_collector_under_the_existing_gates",
+        "why": "live source collection is 0; every tenant feature is fixture-backed until it is not"
+      }
+    ],
+    "onboarding_components_missing": [
+      "customer_auth_live",
+      "customer_persistence_live",
+      "email_delivery_available",
+      "live_source_collection_available"
+    ],
+    "production_rollout": false,
+    "pursuit_suppression_contract_available": false,
+    "ready_for_beta_onboarding": false,
+    "ready_for_demo": true,
+    "reporting_tracking_contract_available": true,
+    "schema_version": "nf_tenant_beta_readiness_v1",
+    "source_monitoring_live": false,
+    "tenant_beta_contract_available": true,
+    "tenant_feature_entitlements_available": true,
+    "tenant_profiles_available": true,
+    "tenant_source_priority_available": true
+  },
+  "ready_for_beta_onboarding": false,
+  "ready_for_demo_contract": true,
+  "recognition_statuses": [
+    "federally_recognized",
+    "historic_affiliation",
+    "state_recognized",
+    "unknown",
+    "unrecognized"
+  ],
+  "schema_version": "nf_tenant_beta_contract_artifact_v1",
+  "source_monitoring_live": false,
+  "tenant_beta_contract_available": true
+}
