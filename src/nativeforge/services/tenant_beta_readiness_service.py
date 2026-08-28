@@ -65,9 +65,13 @@ DEMO_COMPONENT_MODULES: dict[str, str] = {
     "reporting_tracking_contract_available": (
         "nativeforge.services.awarded_grant_portfolio_service"
     ),
-    # Gate 104. Absent today, and the readiness says so.
+    # Gate 104 built both. The digest module name here was a guess made before
+    # it existed and pointed at `tenant_nofo_digest_service`, which was never
+    # created - so this reported the contract absent for the right reason and
+    # would have gone on reporting it absent for the wrong one. Corrected to the
+    # module that exists.
     "digest_contract_available": (
-        "nativeforge.services.tenant_nofo_digest_service"
+        "nativeforge.services.tenant_nofo_digest_builder_service"
     ),
     "pursuit_suppression_contract_available": (
         "nativeforge.services.tenant_pursuit_suppression_service"

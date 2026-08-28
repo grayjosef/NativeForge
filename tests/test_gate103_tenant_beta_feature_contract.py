@@ -728,11 +728,19 @@ def test_readiness_does_not_claim_customer_auth() -> None:
     assert readiness["customer_persistence_live"] is False
 
 
-def test_the_digest_contract_is_absent_and_says_so() -> None:
+def test_the_digest_and_suppression_contracts_now_exist() -> None:
+    """Gate 103 reported both absent. Gate 104 built them.
+
+    The assertion is inverted rather than deleted, because the detection is
+    what Gate 103 contributed and it must keep working - it now has to *find*
+    the two contracts where it previously had to correctly report neither.
+    """
     readiness = build_tenant_beta_readiness()
-    assert readiness["digest_contract_available"] is False
-    assert readiness["pursuit_suppression_contract_available"] is False
-    assert any("gate_104" in r for r in readiness["blocked_reasons"])
+    assert readiness["digest_contract_available"] is True
+    assert readiness["pursuit_suppression_contract_available"] is True
+    # And onboarding readiness is still false, for reasons Gate 104 did not
+    # touch: no email delivery, no live collection, no auth, no persistence.
+    assert readiness["ready_for_beta_onboarding"] is False
 
 
 def test_readiness_invariants_reject_forged_onboarding() -> None:

@@ -1,0 +1,179 @@
+{
+  "cadences": [
+    "daily",
+    "manual_preview",
+    "unknown",
+    "weekly"
+  ],
+  "change_summary": {
+    "amendment_categories_available": [
+      "attachment_change",
+      "contact_change",
+      "deadline_change",
+      "descriptive_text_change",
+      "eligibility_change",
+      "funding_amount_change",
+      "uncategorized_change"
+    ],
+    "by_change_type": {
+      "amended": 1,
+      "approaching_deadline": 1,
+      "deadline_changed": 1,
+      "deadline_changed_unverified": 1,
+      "downgraded": 1,
+      "first_seen": 0,
+      "human_review_required": 1,
+      "new_match": 2,
+      "newly_excluded": 1,
+      "removed_from_source": 1,
+      "unchanged": 1,
+      "unknown": 0
+    },
+    "change_count": 10,
+    "comparison_kind": "fixture_to_fixture",
+    "fabricated": false,
+    "live_source_coverage": false,
+    "requires_human_review_count": 3,
+    "rows_deleted": 0,
+    "schema_version": "nf_tenant_nofo_digest_change_detection_v1",
+    "source_monitoring_live": false,
+    "tenant_id": "nf-demo-tenant-01"
+  },
+  "change_types": [
+    "amended",
+    "approaching_deadline",
+    "deadline_changed",
+    "deadline_changed_unverified",
+    "downgraded",
+    "first_seen",
+    "human_review_required",
+    "new_match",
+    "newly_excluded",
+    "removed_from_source",
+    "unchanged",
+    "unknown"
+  ],
+  "customer_persistence_live": false,
+  "default_cadence": "weekly",
+  "delivery_statuses": [
+    "failed",
+    "not_configured",
+    "preview_only",
+    "queued",
+    "sent",
+    "unknown"
+  ],
+  "demo_scope": "digest_preview_from_labelled_fixture_snapshots",
+  "digest_contract_available": true,
+  "digest_item_statuses": [
+    "approaching_deadline",
+    "changed",
+    "downgraded",
+    "first_seen",
+    "high_fit_unreviewed",
+    "needs_human_review",
+    "new_match",
+    "newly_excluded",
+    "suppressed",
+    "unchanged",
+    "unknown"
+  ],
+  "email_delivery_available": false,
+  "live_source_collection_available": false,
+  "live_source_coverage": false,
+  "readiness": {
+    "blocked_reasons": [
+      "operational_missing:customer_persistence_live",
+      "operational_missing:email_delivery_available",
+      "operational_missing:live_source_collection_available",
+      "source_monitoring_not_live"
+    ],
+    "change_detection_available": true,
+    "collectors_active": 0,
+    "customer_persistence_live": false,
+    "daily_alerts_preview_available": true,
+    "demo_fixtures_available": true,
+    "demo_scope": "digest_preview_from_labelled_fixture_snapshots",
+    "digest_contract_available": true,
+    "email_delivery_available": false,
+    "emails_sent": 0,
+    "explanation_service_available": true,
+    "fabricated": false,
+    "live_source_collection_available": false,
+    "live_source_coverage": false,
+    "next_required_actions": [
+      {
+        "action": "build_email_delivery",
+        "why": "no email service exists; a weekly digest nobody receives is not a weekly digest"
+      },
+      {
+        "action": "persist_tenant_digests",
+        "why": "no digest table exists; a digest that cannot be re-read cannot be audited after a missed deadline"
+      },
+      {
+        "action": "activate_a_collector_under_the_existing_gates",
+        "why": "change detection compares two recorded snapshots today; a live comparison needs a second real observation"
+      },
+      {
+        "action": "settle_the_pursuit_pipeline_vocabulary",
+        "why": "three vocabularies disagree - PursuitWorkflowStatus, pursuit_workspace_contract, and doc 570's seven stages"
+      },
+      {
+        "action": "extend_awarded_grants_requirement_tracking",
+        "why": "gate 105 - separate projected burden from active obligations"
+      }
+    ],
+    "operational_components_missing": [
+      "customer_persistence_live",
+      "email_delivery_available",
+      "live_source_collection_available"
+    ],
+    "preview_components_missing": [],
+    "ready_for_demo_preview": true,
+    "ready_for_operational_digest": false,
+    "schema_version": "nf_tenant_nofo_digest_readiness_v1",
+    "snapshot_contract_available": true,
+    "source_monitoring_live": false,
+    "suppression_contract_available": true,
+    "weekly_digest_preview_available": true
+  },
+  "ready_for_demo_preview": true,
+  "ready_for_operational_digest": false,
+  "schema_version": "nf_tenant_nofo_digest_artifact_v1",
+  "snapshot_kinds": [
+    "demo_fixture",
+    "live_observation",
+    "recorded_fixture",
+    "unknown"
+  ],
+  "source_monitoring_live": false,
+  "suppression_statuses": [
+    "human_review_required",
+    "not_suppressed",
+    "suppressed_from_daily_alert",
+    "suppressed_from_new_digest",
+    "suppressed_from_weekly_digest",
+    "unknown"
+  ],
+  "suppression_summary": {
+    "by_suppression_status": {
+      "human_review_required": 0,
+      "not_suppressed": 0,
+      "suppressed_from_daily_alert": 0,
+      "suppressed_from_new_digest": 1,
+      "suppressed_from_weekly_digest": 0,
+      "unknown": 0
+    },
+    "fabricated": false,
+    "opportunities_deleted": 0,
+    "provenance_deleted": 0,
+    "record_count": 1,
+    "schema_version": "nf_tenant_pursuit_suppression_v1",
+    "suppressed_by_tenant": {
+      "nf-demo-tenant-01": 1
+    },
+    "suppressed_globally": false,
+    "tenants_with_suppressions": 1
+  },
+  "weekly_digest_preview_available": true
+}

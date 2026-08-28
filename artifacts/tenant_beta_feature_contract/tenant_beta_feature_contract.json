@@ -183,8 +183,6 @@
     "allowability_review_available": true,
     "awarded_grants_contract_available": true,
     "blocked_reasons": [
-      "gate_104_component_missing:digest_contract_available",
-      "gate_104_component_missing:pursuit_suppression_contract_available",
       "onboarding_missing:customer_auth_live",
       "onboarding_missing:customer_persistence_live",
       "onboarding_missing:email_delivery_available",
@@ -197,7 +195,7 @@
     "demo_components_missing": [],
     "demo_fixtures_available": true,
     "demo_scope": "contract_demo_against_demo_safe_fixtures",
-    "digest_contract_available": false,
+    "digest_contract_available": true,
     "email_delivery_available": false,
     "fabricated": false,
     "live_source_collection_available": false,
@@ -239,7 +237,7 @@
       "live_source_collection_available"
     ],
     "production_rollout": false,
-    "pursuit_suppression_contract_available": false,
+    "pursuit_suppression_contract_available": true,
     "ready_for_beta_onboarding": false,
     "ready_for_demo": true,
     "reporting_tracking_contract_available": true,

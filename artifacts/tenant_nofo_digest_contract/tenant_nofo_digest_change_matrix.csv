@@ -1,0 +1,11 @@
+opportunity_id,change_types,previous_status,current_status,deadline_provenance_status,requires_human_review,previous_row_preserved,deleted,digest_contract_available,weekly_digest_preview_available,ready_for_demo_preview,ready_for_operational_digest,email_delivery_available,source_monitoring_live,live_source_collection_available,live_source_coverage,customer_persistence_live
+opp-amended,amended,matched,matched,verified_deadline,False,True,False,True,True,True,False,False,False,False,False,False
+opp-approaching,approaching_deadline; new_match,,matched,verified_deadline,False,False,False,True,True,True,False,False,False,False,False,False
+opp-deadline-unverif,deadline_changed_unverified,matched,matched,unverified_deadline,True,True,False,True,True,True,False,False,False,False,False,False
+opp-deadline-verified,deadline_changed,matched,matched,verified_deadline,False,True,False,True,True,True,False,False,False,False,False,False
+opp-downgraded,downgraded,matched,downgraded,unknown_deadline,False,True,False,True,True,True,False,False,False,False,False,False
+opp-excluded,newly_excluded,matched,excluded,unknown_deadline,False,True,False,True,True,True,False,False,False,False,False,False
+opp-new-match,new_match,,matched,verified_deadline,False,False,False,True,True,True,False,False,False,False,False,False
+opp-removed,removed_from_source,matched,,unknown_deadline,True,True,False,True,True,True,False,False,False,False,False,False
+opp-review,human_review_required,,needs_human_review,suspected_placeholder,True,False,False,True,True,True,False,False,False,False,False,False
+opp-suppressed,unchanged,matched,matched,verified_deadline,False,True,False,True,True,True,False,False,False,False,False,False

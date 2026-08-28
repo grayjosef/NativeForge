@@ -1,0 +1,11 @@
+opportunity_id,digest_item_status,visible,suppressed,requires_human_review,deadline_verified,reporting_burden_status,allowability_label,digest_contract_available,weekly_digest_preview_available,ready_for_demo_preview,ready_for_operational_digest,email_delivery_available,source_monitoring_live,live_source_collection_available,live_source_coverage,customer_persistence_live
+opp-amended,changed,True,False,False,True,partial,not_indicated,True,True,True,False,False,False,False,False,False
+opp-approaching,new_match,True,False,False,True,preview_available,not_indicated,True,True,True,False,False,False,False,False,False
+opp-deadline-unverif,changed,True,False,True,False,unknown,not_indicated,True,True,True,False,False,False,False,False,False
+opp-deadline-verified,changed,True,False,False,True,preview_available,not_indicated,True,True,True,False,False,False,False,False,False
+opp-downgraded,downgraded,True,False,False,False,not_assessed,not_indicated,True,True,True,False,False,False,False,False,False
+opp-excluded,newly_excluded,True,False,False,False,not_assessed,not_indicated,True,True,True,False,False,False,False,False,False
+opp-new-match,new_match,True,False,False,True,preview_available,possibly_allowable,True,True,True,False,False,False,False,False,False
+opp-removed,high_fit_unreviewed,False,False,True,False,unknown,not_indicated,True,True,True,False,False,False,False,False,False
+opp-review,needs_human_review,True,False,True,False,unsupported_document_type,not_indicated,True,True,True,False,False,False,False,False,False
+opp-suppressed,suppressed,False,True,False,True,preview_available,not_indicated,True,True,True,False,False,False,False,False,False

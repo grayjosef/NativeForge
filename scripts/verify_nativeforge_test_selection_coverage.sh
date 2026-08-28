@@ -92,7 +92,14 @@ source .venv/bin/activate
 # stay capped; `eligibility` and `source` reach parts of the module, but the
 # tests holding the NativeForge allowability cap and the no-real-Tribe rule
 # are named for the tenant and the fixture, which nothing else reached.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition'
+#
+# `digest`, `snapshot`, `suppression` and `nofo` were added by Gate 104.
+# `tenant` reaches the module, but the tests holding the four rules that keep
+# a digest honest - no email, no deletion, first_seen without a baseline, and
+# deadline changes gated on provenance - are named for the digest, the
+# snapshot and the suppression, which nothing earlier reached. `nofo` also
+# picks up the older notice tests, which is a bonus rather than the reason.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -223,6 +230,16 @@ CRITICAL=(
   "tests/test_gate103_tenant_beta_feature_contract.py::test_a_non_sc_tenant_gets_no_sc_tier"
   "tests/test_gate103_tenant_beta_feature_contract.py::test_nativeforge_self_assessment_is_capped_at_human_review"
   "tests/test_gate103_tenant_beta_feature_contract.py::test_enabling_the_watchlist_does_not_imply_monitoring"
+
+  # Gate 104. Five that keep the digest honest: no email leaves the building,
+  # suppression deletes nothing and stays tenant-scoped, a first run says
+  # first_seen rather than new, and a deadline change needs verified
+  # provenance on both sides rather than two dates that differ.
+  "tests/test_gate104_tenant_nofo_digest_suppression.py::test_the_digest_is_preview_only"
+  "tests/test_gate104_tenant_nofo_digest_suppression.py::test_suppression_never_deletes_anything"
+  "tests/test_gate104_tenant_nofo_digest_suppression.py::test_suppression_is_tenant_specific"
+  "tests/test_gate104_tenant_nofo_digest_suppression.py::test_no_previous_snapshot_means_first_seen_not_new"
+  "tests/test_gate104_tenant_nofo_digest_suppression.py::test_deadline_changed_requires_verified_provenance_on_both_sides"
 )
 
 FAIL=0

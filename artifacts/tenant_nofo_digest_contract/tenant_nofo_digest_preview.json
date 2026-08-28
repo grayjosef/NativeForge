@@ -1,0 +1,582 @@
+{
+  "comparison_kind": "fixture_to_fixture",
+  "customer_persistence_live": false,
+  "digest": {
+    "blocked_reasons": [
+      "comparison_between_recorded_snapshots_not_live_checks",
+      "items_suppressed:1",
+      "items_with_unknown_reporting_burden:5",
+      "items_with_unverified_deadlines:5",
+      "no_email_delivery_service_exists",
+      "unverified_deadline_changes:1"
+    ],
+    "cadence": "weekly",
+    "comparison_kind": "fixture_to_fixture",
+    "delivery_status": "preview_only",
+    "digest_id": "3a1e64adc6dc70c96d250f9dea29c5d67c5e67469640a41f8e488cb6389b3eec",
+    "digest_items": [
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "amended"
+        ],
+        "deadline_note": "Deadline verified against the source record.",
+        "deadline_verified": true,
+        "delivered": false,
+        "digest_item_status": "changed",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [],
+          "deadline_guaranteed": false,
+          "deadline_note": "Deadline verified against the source record.",
+          "deadline_provenance_status": "verified_deadline",
+          "deadline_verified": true,
+          "digest_item_status": "changed",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Matches your tenant profile",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-amended",
+          "reporting_burden_note": "A partial reporting burden preview is available; some requirements could not be read.",
+          "reporting_burden_status": "partial",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "amended"
+          ],
+          "why_this_matches": [
+            "program priority match"
+          ],
+          "why_this_may_not_match": []
+        },
+        "headline": "Matches your tenant profile",
+        "opportunity_id": "opp-amended",
+        "reporting_burden_status": "partial",
+        "requires_human_review": false,
+        "suppressed": false,
+        "visible": true,
+        "why_this_matches": [
+          "program priority match"
+        ],
+        "why_this_may_not_match": []
+      },
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "approaching_deadline",
+          "new_match"
+        ],
+        "deadline_note": "Deadline verified against the source record.",
+        "deadline_verified": true,
+        "delivered": false,
+        "digest_item_status": "new_match",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [],
+          "deadline_guaranteed": false,
+          "deadline_note": "Deadline verified against the source record.",
+          "deadline_provenance_status": "verified_deadline",
+          "deadline_verified": true,
+          "digest_item_status": "new_match",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Matches your tenant profile",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-approaching",
+          "reporting_burden_note": "A reporting burden preview is available for this item.",
+          "reporting_burden_status": "preview_available",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "approaching_deadline",
+            "new_match"
+          ],
+          "why_this_matches": [
+            "federal scope matches tenant priority"
+          ],
+          "why_this_may_not_match": []
+        },
+        "headline": "Matches your tenant profile",
+        "opportunity_id": "opp-approaching",
+        "reporting_burden_status": "preview_available",
+        "requires_human_review": false,
+        "suppressed": false,
+        "visible": true,
+        "why_this_matches": [
+          "federal scope matches tenant priority"
+        ],
+        "why_this_may_not_match": []
+      },
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "deadline_changed_unverified"
+        ],
+        "deadline_note": "Deadline shown as recorded, but not verified - confirm with the source before relying on it.",
+        "deadline_verified": false,
+        "delivered": false,
+        "digest_item_status": "changed",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [
+            "deadline_not_verified:unverified_deadline",
+            "reporting_burden_not_previewable:unknown"
+          ],
+          "deadline_guaranteed": false,
+          "deadline_note": "Deadline shown as recorded, but not verified - confirm with the source before relying on it.",
+          "deadline_provenance_status": "unverified_deadline",
+          "deadline_verified": false,
+          "digest_item_status": "changed",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Matches your tenant profile",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-deadline-unverif",
+          "reporting_burden_note": "Reporting burden is UNKNOWN for this item.",
+          "reporting_burden_status": "unknown",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "deadline_changed_unverified"
+          ],
+          "why_this_matches": [
+            "federal scope matches tenant priority"
+          ],
+          "why_this_may_not_match": []
+        },
+        "headline": "Matches your tenant profile",
+        "opportunity_id": "opp-deadline-unverif",
+        "reporting_burden_status": "unknown",
+        "requires_human_review": true,
+        "suppressed": false,
+        "visible": true,
+        "why_this_matches": [
+          "federal scope matches tenant priority"
+        ],
+        "why_this_may_not_match": []
+      },
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "deadline_changed"
+        ],
+        "deadline_note": "Deadline verified against the source record.",
+        "deadline_verified": true,
+        "delivered": false,
+        "digest_item_status": "changed",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [],
+          "deadline_guaranteed": false,
+          "deadline_note": "Deadline verified against the source record.",
+          "deadline_provenance_status": "verified_deadline",
+          "deadline_verified": true,
+          "digest_item_status": "changed",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Matches your tenant profile",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-deadline-verified",
+          "reporting_burden_note": "A reporting burden preview is available for this item.",
+          "reporting_burden_status": "preview_available",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "deadline_changed"
+          ],
+          "why_this_matches": [
+            "federal scope matches tenant priority"
+          ],
+          "why_this_may_not_match": []
+        },
+        "headline": "Matches your tenant profile",
+        "opportunity_id": "opp-deadline-verified",
+        "reporting_burden_status": "preview_available",
+        "requires_human_review": false,
+        "suppressed": false,
+        "visible": true,
+        "why_this_matches": [
+          "federal scope matches tenant priority"
+        ],
+        "why_this_may_not_match": []
+      },
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "downgraded"
+        ],
+        "deadline_note": "Nobody has established where this date came from.",
+        "deadline_verified": false,
+        "delivered": false,
+        "digest_item_status": "downgraded",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [
+            "deadline_blocks_freshness:unknown_deadline",
+            "deadline_not_verified:unknown_deadline",
+            "reporting_burden_not_previewable:not_assessed"
+          ],
+          "deadline_guaranteed": false,
+          "deadline_note": "Nobody has established where this date came from.",
+          "deadline_provenance_status": "unknown_deadline",
+          "deadline_verified": false,
+          "digest_item_status": "downgraded",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Downgraded for your tenant",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-downgraded",
+          "reporting_burden_note": "Reporting burden has not been assessed for this item.",
+          "reporting_burden_status": "not_assessed",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "downgraded"
+          ],
+          "why_this_matches": [],
+          "why_this_may_not_match": [
+            "match confidence lowered - service area overlap unconfirmed"
+          ]
+        },
+        "headline": "Downgraded for your tenant",
+        "opportunity_id": "opp-downgraded",
+        "reporting_burden_status": "not_assessed",
+        "requires_human_review": false,
+        "suppressed": false,
+        "visible": true,
+        "why_this_matches": [],
+        "why_this_may_not_match": [
+          "match confidence lowered - service area overlap unconfirmed"
+        ]
+      },
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "newly_excluded"
+        ],
+        "deadline_note": "Nobody has established where this date came from.",
+        "deadline_verified": false,
+        "delivered": false,
+        "digest_item_status": "newly_excluded",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [
+            "deadline_blocks_freshness:unknown_deadline",
+            "deadline_not_verified:unknown_deadline",
+            "reporting_burden_not_previewable:not_assessed"
+          ],
+          "deadline_guaranteed": false,
+          "deadline_note": "Nobody has established where this date came from.",
+          "deadline_provenance_status": "unknown_deadline",
+          "deadline_verified": false,
+          "digest_item_status": "newly_excluded",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Excluded for your tenant",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-excluded",
+          "reporting_burden_note": "Reporting burden has not been assessed for this item.",
+          "reporting_burden_status": "not_assessed",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "newly_excluded"
+          ],
+          "why_this_matches": [],
+          "why_this_may_not_match": [
+            "applicant class restricted to municipalities"
+          ]
+        },
+        "headline": "Excluded for your tenant",
+        "opportunity_id": "opp-excluded",
+        "reporting_burden_status": "not_assessed",
+        "requires_human_review": false,
+        "suppressed": false,
+        "visible": true,
+        "why_this_matches": [],
+        "why_this_may_not_match": [
+          "applicant class restricted to municipalities"
+        ]
+      },
+      {
+        "allowability_label": "possibly_allowable",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "new_match"
+        ],
+        "deadline_note": "Deadline verified against the source record.",
+        "deadline_verified": true,
+        "delivered": false,
+        "digest_item_status": "new_match",
+        "explanation": {
+          "allowability_label": "possibly_allowable",
+          "allowability_note": "Software/capacity cost allowability: possibly_allowable.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [],
+          "deadline_guaranteed": false,
+          "deadline_note": "Deadline verified against the source record.",
+          "deadline_provenance_status": "verified_deadline",
+          "deadline_verified": true,
+          "digest_item_status": "new_match",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Matches your tenant profile",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-new-match",
+          "reporting_burden_note": "A reporting burden preview is available for this item.",
+          "reporting_burden_status": "preview_available",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "new_match"
+          ],
+          "why_this_matches": [
+            "federal scope matches tenant priority",
+            "program area matches a declared tenant priority"
+          ],
+          "why_this_may_not_match": []
+        },
+        "headline": "Matches your tenant profile",
+        "opportunity_id": "opp-new-match",
+        "reporting_burden_status": "preview_available",
+        "requires_human_review": false,
+        "suppressed": false,
+        "visible": true,
+        "why_this_matches": [
+          "federal scope matches tenant priority",
+          "program area matches a declared tenant priority"
+        ],
+        "why_this_may_not_match": []
+      },
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "removed_from_source"
+        ],
+        "deadline_note": "Nobody has established where this date came from.",
+        "deadline_verified": false,
+        "delivered": false,
+        "digest_item_status": "high_fit_unreviewed",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [
+            "deadline_blocks_freshness:unknown_deadline",
+            "deadline_not_verified:unknown_deadline",
+            "reporting_burden_not_previewable:unknown"
+          ],
+          "deadline_guaranteed": false,
+          "deadline_note": "Nobody has established where this date came from.",
+          "deadline_provenance_status": "unknown_deadline",
+          "deadline_verified": false,
+          "digest_item_status": "high_fit_unreviewed",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Matches your tenant profile",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-removed",
+          "reporting_burden_note": "Reporting burden is UNKNOWN for this item.",
+          "reporting_burden_status": "unknown",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "removed_from_source"
+          ],
+          "why_this_matches": [
+            "federal scope match"
+          ],
+          "why_this_may_not_match": []
+        },
+        "headline": "Matches your tenant profile",
+        "opportunity_id": "opp-removed",
+        "reporting_burden_status": "unknown",
+        "requires_human_review": true,
+        "suppressed": false,
+        "visible": false,
+        "why_this_matches": [
+          "federal scope match"
+        ],
+        "why_this_may_not_match": []
+      },
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "human_review_required"
+        ],
+        "deadline_note": "This date appears in a large cluster with no fetch evidence behind it and is likely a placeholder, not a real deadline.",
+        "deadline_verified": false,
+        "delivered": false,
+        "digest_item_status": "needs_human_review",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [
+            "deadline_blocks_freshness:suspected_placeholder",
+            "deadline_not_verified:suspected_placeholder",
+            "eligibility_needs_human_review",
+            "reporting_burden_not_previewable:unsupported_document_type"
+          ],
+          "deadline_guaranteed": false,
+          "deadline_note": "This date appears in a large cluster with no fetch evidence behind it and is likely a placeholder, not a real deadline.",
+          "deadline_provenance_status": "suspected_placeholder",
+          "deadline_verified": false,
+          "digest_item_status": "needs_human_review",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Needs human review before you act",
+          "human_review_note": "recognition status required by this program is unknown for this tenant",
+          "human_review_reasons": [
+            "recognition status required by this program is unknown for this tenant"
+          ],
+          "opportunity_id": "opp-review",
+          "reporting_burden_note": "The attached document type is not supported, so reporting requirements could not be read. UNSUPPORTED_DOCUMENT_TYPE.",
+          "reporting_burden_status": "unsupported_document_type",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "human_review_required"
+          ],
+          "why_this_matches": [],
+          "why_this_may_not_match": []
+        },
+        "headline": "Needs human review before you act",
+        "opportunity_id": "opp-review",
+        "reporting_burden_status": "unsupported_document_type",
+        "requires_human_review": true,
+        "suppressed": false,
+        "visible": true,
+        "why_this_matches": [],
+        "why_this_may_not_match": []
+      },
+      {
+        "allowability_label": "not_indicated",
+        "allowability_self_assessment_capped": false,
+        "change_types": [
+          "unchanged"
+        ],
+        "deadline_note": "Deadline verified against the source record.",
+        "deadline_verified": true,
+        "delivered": false,
+        "digest_item_status": "suppressed",
+        "explanation": {
+          "allowability_label": "not_indicated",
+          "allowability_note": "Software/capacity cost allowability: not_indicated.",
+          "allowability_self_assessment_capped": false,
+          "blocked_reasons": [],
+          "deadline_guaranteed": false,
+          "deadline_note": "Deadline verified against the source record.",
+          "deadline_provenance_status": "verified_deadline",
+          "deadline_verified": true,
+          "digest_item_status": "suppressed",
+          "eligibility_determined": false,
+          "evidence_status": "not_applicable",
+          "fabricated": false,
+          "headline": "Matches your tenant profile",
+          "human_review_note": "No human review flagged.",
+          "human_review_reasons": [],
+          "opportunity_id": "opp-suppressed",
+          "reporting_burden_note": "A reporting burden preview is available for this item.",
+          "reporting_burden_status": "preview_available",
+          "reporting_requirements_verified": false,
+          "schema_version": "nf_tenant_nofo_digest_item_explanation_v1",
+          "tenant_id": "nf-demo-tenant-01",
+          "what_changed": [
+            "nothing_changed_since_the_previous_snapshot"
+          ],
+          "why_this_matches": [
+            "program priority match"
+          ],
+          "why_this_may_not_match": []
+        },
+        "headline": "Matches your tenant profile",
+        "opportunity_id": "opp-suppressed",
+        "reporting_burden_status": "preview_available",
+        "requires_human_review": false,
+        "suppressed": true,
+        "visible": false,
+        "why_this_matches": [
+          "program priority match"
+        ],
+        "why_this_may_not_match": []
+      }
+    ],
+    "email_delivery_live": false,
+    "emails_sent": 0,
+    "fabricated": false,
+    "items_deleted": 0,
+    "items_human_review": 3,
+    "items_suppressed": 1,
+    "items_total": 10,
+    "items_visible": 8,
+    "items_with_unknown_reporting_burden": 5,
+    "items_with_unverified_deadlines": 5,
+    "live_source_coverage": false,
+    "period_end": "2026-01-08",
+    "period_start": "2026-01-01",
+    "requested_cadence": "weekly",
+    "schema_version": "nf_tenant_nofo_digest_builder_v1",
+    "snapshot_ids": [
+      "bc19175e47687b5801c7d21156d5c1c9921dc4550058a152553bccdc5a742ad7",
+      "cc82ab8a9e8d3512d50d5101535153454faeae83167840d80336e53788541557"
+    ],
+    "source_monitoring_live": false,
+    "tenant_id": "nf-demo-tenant-01"
+  },
+  "digest_contract_available": true,
+  "email_delivery_available": false,
+  "live_source_collection_available": false,
+  "live_source_coverage": false,
+  "ready_for_demo_preview": true,
+  "ready_for_operational_digest": false,
+  "schema_version": "nf_tenant_nofo_digest_artifact_v1",
+  "source_monitoring_live": false,
+  "weekly_digest_preview_available": true
+}
