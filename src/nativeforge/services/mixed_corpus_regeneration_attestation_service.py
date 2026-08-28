@@ -174,6 +174,11 @@ def build_regeneration_attestation(
                 diff.get("fabricated_eligibility_risk")
             ),
             "fixture_mutated": bool(fixture_mutated),
+            # Durable and reproducible: does the committed fixture already agree
+            # with fresh derivation? True after a regeneration was applied, and
+            # true equally when nothing ever needed changing. Unlike working-tree
+            # dirtiness, it reads the same whenever it is asked.
+            "fixture_matches_fresh_derivation": not (diff.get("diff_rows") or []),
             "safe_to_commit_fixture": safe_to_commit_fixture,
             "human_review_required": human_review_required,
             "attestation_notes": notes,
@@ -319,18 +324,21 @@ def render_attestation_summary_md(
     lines.append("")
     lines.append("## Outcome")
     lines.append("")
-    if attestation.get("fixture_mutated"):
-        lines.append("The fixture was regenerated. Every change is listed below.")
+    if attestation.get("fixture_matches_fresh_derivation"):
+        lines.append(
+            "**The committed fixture already agrees with fresh derivation.** "
+            "There is nothing outstanding to write."
+        )
     else:
         lines.append(
-            "**The fixture was not regenerated.** It is byte-identical to what "
-            "git tracks. The changes below are what a regeneration *would* have "
-            "written."
+            "**The fixture has not been regenerated.** The changes below are "
+            "what a regeneration would write."
         )
     lines.append("")
     lines.append("```text")
     for key in (
         "fixture_mutated",
+        "fixture_matches_fresh_derivation",
         "safe_to_regenerate",
         "safe_to_commit_fixture",
         "human_review_required",
@@ -425,9 +433,17 @@ def write_attestation_artifacts(*, repo_root: Any = None) -> dict[str, Any]:
     )
 
     diff = build_regeneration_diff()
-    attestation = build_regeneration_attestation(
-        diff=diff, fixture_mutated=not fixture_is_unmodified()
-    )
+
+    # `fixture_mutated` records whether *this* run wrote the fixture. It never
+    # does - regeneration is a separate, deliberate act - so it is False here.
+    #
+    # It used to be `not fixture_is_unmodified()`, which sniffed working-tree
+    # dirtiness. That made the committed artifact unreproducible: generated
+    # before a commit it said true, generated after it said false, and the
+    # artifact-freshness test failed depending on where in a commit cycle it
+    # ran. Whether a regeneration was applied is a durable fact and is recorded
+    # as `fixture_matches_fresh_derivation` instead, derived from the diff.
+    attestation = build_regeneration_attestation(diff=diff, fixture_mutated=False)
 
     root = Path(repo_root) if repo_root else Path(__file__).resolve().parents[3]
     out_dir = root / ARTIFACT_DIR

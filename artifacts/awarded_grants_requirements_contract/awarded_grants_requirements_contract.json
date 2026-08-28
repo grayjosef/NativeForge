@@ -1,0 +1,52 @@
+{
+  "award_transition_contract_available": true,
+  "awarded_grant_record_contract_available": true,
+  "customer_persistence_live": false,
+  "deadlines_fabricated": false,
+  "demo_fixture_available": true,
+  "demo_scope": "awarded_requirements_contract_over_labelled_demo_fixtures",
+  "document_storage_live": false,
+  "live_fetch_performed": false,
+  "live_source_collection_available": false,
+  "missing_operational_components": [
+    "customer_persistence_live",
+    "document_storage_live",
+    "requirement_extraction_live",
+    "ui_available"
+  ],
+  "next_required_actions": [
+    {
+      "action": "reconcile_tenant_id_and_customer_org_id",
+      "why": "two identity spaces meet on the awarded record and no bridge exists; everything below inherits whichever answer this gets"
+    },
+    {
+      "action": "persist_awarded_records_and_requirements",
+      "why": "nothing survives a request today, so a compliance calendar cannot be re-read after a missed deadline"
+    },
+    {
+      "action": "build_the_awarded_grants_surface",
+      "why": "the workspace is mandatory in the tenant beta contract and no UI exists for it"
+    },
+    {
+      "action": "attach_document_storage_under_the_existing_gates",
+      "why": "award packages have to live somewhere before requirements can be extracted from them"
+    },
+    {
+      "action": "wire_requirement_extraction_to_award_documents",
+      "why": "extraction exists for notices; award packages are a different corpus and nothing reads them"
+    }
+  ],
+  "projected_vs_active_boundary_available": true,
+  "proof_audit_contract_available": true,
+  "proof_fabricated": false,
+  "ready_for_demo_contract": true,
+  "ready_for_operational_awarded_tracking": false,
+  "requirement_extraction_live": false,
+  "requirement_model_available": true,
+  "requirements_calendar_available": true,
+  "requirements_fabricated": false,
+  "schema_version": "nf_awarded_grants_requirements_artifact_v1",
+  "source_coverage_claimed": false,
+  "source_monitoring_live": false,
+  "ui_available": false
+}

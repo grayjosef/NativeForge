@@ -438,32 +438,55 @@ def test_fixture_is_unmodified_answers_both_ways(tmp_path):
     assert att.fixture_is_unmodified(repo_root=tmp_path) is False
 
 
-def test_artifact_reports_fixture_mutated_when_the_fixture_is_dirty(
+def test_the_artifact_does_not_depend_on_working_tree_dirtiness(
     tmp_path, monkeypatch
 ):
-    """fixture_mutated must be observed, not pinned to False.
+    """The committed artifact must read the same whenever it is generated.
 
-    The writer passes what `fixture_is_unmodified` reports. With the real
-    fixture clean, a writer hardcoding False is indistinguishable from a
-    correct one, so force the observation and check the artifact follows.
+    `fixture_mutated` was derived from `git status` until Gate 108, which made
+    the artifact say `true` when generated before a commit and `false` after.
+    The freshness test then passed or failed depending on where in a commit
+    cycle it ran. Whether a regeneration was applied is durable and is recorded
+    as `fixture_matches_fresh_derivation` instead.
     """
     monkeypatch.setattr(att, "fixture_is_unmodified", lambda **kwargs: False)
-    written = att.write_attestation_artifacts(repo_root=tmp_path)
-    assert written["attestation"]["fixture_mutated"] is True
+    dirty = att.write_attestation_artifacts(repo_root=tmp_path / "dirty")
+    monkeypatch.setattr(att, "fixture_is_unmodified", lambda **kwargs: True)
+    clean = att.write_attestation_artifacts(repo_root=tmp_path / "clean")
 
+    for name in (
+        "mixed_corpus_regeneration_attestation.json",
+        "mixed_corpus_regeneration_summary.md",
+    ):
+        a = (tmp_path / "dirty" / att.ARTIFACT_DIR / name).read_text(encoding="utf-8")
+        b = (tmp_path / "clean" / att.ARTIFACT_DIR / name).read_text(encoding="utf-8")
+        assert a == b, f"artifact varies with working-tree dirtiness: {name}"
+
+    assert dirty["attestation"]["fixture_mutated"] is False
+    assert clean["attestation"]["fixture_mutated"] is False
+
+
+def test_the_artifact_records_whether_the_fixture_matches_fresh_derivation():
+    """The durable fact, derived from the diff rather than from git."""
     payload = json.loads(
         (
-            tmp_path
+            REPO_ROOT
             / att.ARTIFACT_DIR
             / "mixed_corpus_regeneration_attestation.json"
         ).read_text(encoding="utf-8")
     )
-    assert payload["fixture_mutated"] is True
+    assert payload["fixture_matches_fresh_derivation"] is True
 
-    summary = (
-        tmp_path / att.ARTIFACT_DIR / "mixed_corpus_regeneration_summary.md"
-    ).read_text(encoding="utf-8")
-    assert "The fixture was not regenerated." not in summary
+
+def test_fixture_match_is_derived_from_the_diff_not_declared():
+    """It must be able to say False, or True proves nothing."""
+    cached = {"grants": [{"grant_id": "r1", "tribal_eligible": False}]}
+    fresh = [{"grant_id": "r1", "tribal_eligible": True}]
+    stale = diffsvc.build_regeneration_diff(
+        cached_manifest=cached, fresh_rows=fresh
+    )
+    result = att.build_regeneration_attestation(diff=stale)
+    assert result["fixture_matches_fresh_derivation"] is False
 
 
 def test_attestation_now_permits_committing_the_fixture(attestation):

@@ -4,10 +4,11 @@ Corpus: `fixtures/real_grants_corpus/nf14_mixed_corpus.json`
 
 ## Outcome
 
-The fixture was regenerated. Every change is listed below.
+**The committed fixture already agrees with fresh derivation.** There is nothing outstanding to write.
 
 ```text
-fixture_mutated                  True
+fixture_mutated                  False
+fixture_matches_fresh_derivation True
 safe_to_regenerate               True
 safe_to_commit_fixture           True
 human_review_required            False

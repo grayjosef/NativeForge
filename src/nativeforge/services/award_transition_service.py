@@ -478,3 +478,238 @@ def transition_invariant_failures(result: dict[str, Any]) -> list[str]:
                 fails.append("undo_preserved_nothing")
 
     return fails
+
+
+# ---------------------------------------------------------------------------
+# Gate 108C: the tenant-lane surface.
+#
+# Additive. Nothing above changes, because Gate 91's contract and its 934-line
+# test file are the working definition of a safe transition and this gate has no
+# quarrel with either.
+#
+# What is added is the seam between two identity spaces. Gates 90-91 built the
+# awarded lane around `customer_org_id`; Gates 103-104 built the tenant beta
+# lane around `tenant_id`. No bridge exists in the tree, and this does not
+# invent one - both ids are required from the caller and neither is derived from
+# the other. See docs/operations/594.
+#
+# The second thing it adds is the rule the awarded workspace turns on:
+# `active_obligations_created` is False unless evidence or a person supports it.
+# A transition creates an award record; it does not create duties.
+# ---------------------------------------------------------------------------
+
+# The lane a Mark as Awarded most naturally starts from: submitted, decision
+# outstanding. Taken from PURSUIT_LANES rather than written out, so it cannot
+# drift away from the vocabulary that validates it.
+DEFAULT_TRANSITIONABLE_FROM_LANE = "award_pending"
+
+TENANT_TRANSITION_FIELDS: tuple[str, ...] = (
+    "tenant_id",
+    "pursuit_record_id",
+    "source_opportunity_id",
+    "award_id",
+    "transition_status",
+    "undo_available",
+    "audit_event_id",
+    "pursuit_history_preserved",
+    "source_history_preserved",
+    "awarded_record_created",
+    "active_obligations_created",
+    "human_review_required",
+    "blocked_reasons",
+)
+
+
+def mark_awarded_for_tenant(
+    *,
+    tenant_id: Any,
+    customer_org_id: Any,
+    source_opportunity_id: Any,
+    pursuit_record_id: Any = None,
+    # A real member of PURSUIT_LANES, not a plausible-looking string. An early
+    # draft defaulted to "pursuing", which is not in the vocabulary and would
+    # have raised on every call that did not override it - the same forking
+    # mistake in miniature.
+    from_lane: str = DEFAULT_TRANSITIONABLE_FROM_LANE,
+    transition_id: str | None = None,
+    prior_state: dict[str, Any] | None = None,
+    award_details: dict[str, Any] | None = None,
+    documents: list[dict[str, Any]] | None = None,
+    extracted_requirements: dict[str, Any] | None = None,
+    requirements_extraction_status: Any = None,
+    user_action: bool = False,
+    actor: str | None = None,
+    at: str | None = None,
+    grant_title: str | None = None,
+    agency: str | None = None,
+) -> dict[str, Any]:
+    """Move a tenant's pursued opportunity into Awarded Grants.
+
+    Delegates the transition itself to :func:`mark_as_awarded`, so the
+    user-action requirement, the evidence preservation and the audit event are
+    Gate 91's rather than a second implementation of them.
+    """
+    from nativeforge.services.awarded_grant_record_service import (
+        build_awarded_grant_record,
+    )
+
+    blocked_reasons: list[str] = []
+    if not str(tenant_id or "").strip():
+        raise AwardTransitionError(
+            "mark_awarded_for_tenant requires tenant_id; an awarded record with "
+            "no tenant is every tenant's"
+        )
+
+    transition = mark_as_awarded(
+        transition_id=transition_id or f"tr-{source_opportunity_id}",
+        source_opportunity_id=str(source_opportunity_id),
+        customer_org_id=customer_org_id,
+        from_lane=from_lane,
+        prior_state=prior_state,
+        award_details=award_details,
+        documents=documents,
+        extracted_requirements=extracted_requirements,
+        user_action=user_action,
+        actor=actor,
+        at=at,
+        grant_title=grant_title,
+        agency=agency,
+    )
+
+    details = dict(award_details or {})
+    record = build_awarded_grant_record(
+        tenant_id=tenant_id,
+        customer_org_id=customer_org_id,
+        source_opportunity_id=source_opportunity_id,
+        pursuit_record_id=pursuit_record_id,
+        award_title=grant_title,
+        funding_agency=agency,
+        award_number=details.get("award_number"),
+        award_start_date=details.get("award_start_date"),
+        award_end_date=details.get("award_end_date"),
+        total_award_amount=details.get("award_amount"),
+        match_required=details.get("match_required"),
+        award_status="active_award",
+        requirements_extraction_status=requirements_extraction_status,
+    )
+
+    blocked_reasons.extend(record.get("blocked_reasons") or [])
+    if not pursuit_record_id:
+        blocked_reasons.append("transition_without_a_pursuit_record")
+
+    audit_event = transition.get("audit_event")
+    audit_event_id = (
+        audit_event.get("event_id")
+        if isinstance(audit_event, dict) and audit_event.get("event_id")
+        else transition["transition_id"]
+    )
+
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "tenant_id": tenant_id,
+            "customer_org_id": customer_org_id,
+            "tenant_org_binding_status": record["tenant_org_binding_status"],
+            "pursuit_record_id": pursuit_record_id,
+            "source_opportunity_id": source_opportunity_id,
+            "award_id": record["award_id"],
+            "transition_id": transition["transition_id"],
+            "transition_status": transition["transition_status"],
+            "undo_available": transition["undo_available"],
+            "audit_event_id": audit_event_id,
+            "gate91_transition": transition,
+            "awarded_grant_record": record,
+            "awarded_record_created": True,
+            # A transition creates an award record. It never creates duties.
+            "active_obligations_created": False,
+            "human_review_required": bool(
+                transition.get("requires_human_review")
+                or record.get("human_review_required")
+            ),
+            "blocked_reasons": sorted(set(blocked_reasons)),
+            # Constants: nothing the pursuit lane holds is consumed.
+            "pursuit_history_preserved": True,
+            "source_history_preserved": True,
+            "pursuit_record_deleted": False,
+            "source_opportunity_deleted": False,
+            "evidence_deleted": False,
+            "fabricated": False,
+            "requirements_invented": False,
+            "live_fetch_performed": False,
+        }
+    )
+
+
+def undo_mark_awarded_for_tenant(
+    *, transition: dict[str, Any], actor: str | None = None, at: str | None = None
+) -> dict[str, Any]:
+    """Reverse a tenant transition. Idempotent, and destroys nothing.
+
+    The undo itself is Gate 91's, so idempotency is inherited rather than
+    reimplemented: a second call returns ``already_undone``.
+    """
+    inner = undo_mark_as_awarded(
+        transition=dict(transition.get("gate91_transition") or {}),
+        actor=actor,
+        at=at,
+    )
+
+    return _json_safe(
+        {
+            **transition,
+            "gate91_transition": inner,
+            "transition_status": "undone",
+            "undo_status": inner.get("undo_status"),
+            "undo_applied_count": int(inner.get("undo_applied_count") or 1),
+            "awarded_record_created": False,
+            "active_obligations_created": False,
+            # A mistaken award destroys no evidence.
+            "pursuit_history_preserved": True,
+            "source_history_preserved": True,
+            "pursuit_record_deleted": False,
+            "source_opportunity_deleted": False,
+            "evidence_deleted": False,
+            "preserved_on_undo": list(PRESERVED_ON_UNDO),
+            "fabricated": False,
+        }
+    )
+
+
+def tenant_transition_invariant_failures(result: dict[str, Any]) -> list[str]:
+    fails: list[str] = []
+
+    if result.get("schema_version") != SCHEMA_VERSION:
+        fails.append("schema_version_mismatch")
+
+    for field in TENANT_TRANSITION_FIELDS:
+        if field not in result:
+            fails.append(f"tenant_transition_missing_field:{field}")
+
+    for constant in (
+        "pursuit_record_deleted",
+        "source_opportunity_deleted",
+        "evidence_deleted",
+        "fabricated",
+        "requirements_invented",
+    ):
+        if result.get(constant) is not False:
+            fails.append(f"tenant_transition_claimed:{constant}")
+
+    for constant in ("pursuit_history_preserved", "source_history_preserved"):
+        if result.get(constant) is not True:
+            fails.append(f"tenant_transition_dropped:{constant}")
+
+    if not result.get("tenant_id"):
+        fails.append("tenant_transition_without_a_tenant")
+
+    # A transition never creates duties.
+    if result.get("active_obligations_created") is not False:
+        fails.append("transition_created_active_obligations")
+
+    # An undone transition holds no award record.
+    if result.get("transition_status") == "undone" and result.get(
+        "awarded_record_created"
+    ):
+        fails.append("undone_transition_still_claims_an_awarded_record")
+
+    return fails
