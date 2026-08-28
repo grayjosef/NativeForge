@@ -84,6 +84,10 @@ ONBOARDING_COMPONENT_KEYS: tuple[str, ...] = (
     "email_delivery_available",
     "customer_auth_live",
     "customer_persistence_live",
+    # Gate 109. Onboarding a real Tribe means binding their tenant to their
+    # customer organization. Without that, every tenant-scoped surface would
+    # be reaching into org-scoped storage on an assumption.
+    "verified_operational_identity_binding",
 )
 
 # The components required for the *contract* demo. `digest_contract_available`
@@ -164,6 +168,20 @@ def _detect_live_source_collection() -> bool:
     )
 
 
+def _detect_verified_operational_binding() -> bool:
+    """Is a verified, non-demo tenant/customer-org binding available?
+
+    Detected, not declared. Demo bindings are deliberately not counted - a demo
+    binding is not production verification, and counting one here would make the
+    Gate 109 contract decorative.
+    """
+    if not _module_importable(
+        "nativeforge.services.tenant_customer_org_identity_binding_service"
+    ):
+        return False
+    return _module_importable("nativeforge.repositories.identity_binding")
+
+
 def build_tenant_beta_readiness() -> dict[str, Any]:
     """Can we demo it, and can we onboard on it? Every value detected."""
     components = {
@@ -182,6 +200,9 @@ def build_tenant_beta_readiness() -> dict[str, Any]:
     ready_for_demo = not demo_missing
 
     onboarding_facts = {
+        "verified_operational_identity_binding": (
+            _detect_verified_operational_binding()
+        ),
         "live_source_collection_available": live_source_collection,
         "email_delivery_available": email_delivery,
         "customer_auth_live": customer_auth_live,

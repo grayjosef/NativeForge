@@ -23,6 +23,7 @@ demo_scope                          contract_demo_against_demo_safe_fixtures
 - `customer_persistence_live`
 - `email_delivery_available`
 - `live_source_collection_available`
+- `verified_operational_identity_binding`
 
 ## Demo tenants
 

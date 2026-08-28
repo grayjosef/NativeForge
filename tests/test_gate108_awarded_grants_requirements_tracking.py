@@ -114,16 +114,25 @@ def test_an_award_record_is_tenant_specific():
 
 
 def test_the_two_identity_spaces_are_not_merged():
-    """tenant_id and customer_org_id are carried, never derived from each other."""
+    """tenant_id and customer_org_id are carried, never derived from each other.
+
+    Gate 109 replaced the old {caller_supplied, unknown} pair: two strings
+    arriving together is not a statement that they belong to each other, so
+    both ids with no verification is `pending_review`, not a binding.
+    """
     with_both = record.build_awarded_grant_record(
-        tenant_id=TENANT, customer_org_id=ORG, source_opportunity_id="opp-1"
+        tenant_id=TENANT,
+        customer_org_id=ORG,
+        source_opportunity_id="opp-1",
+        binding_source="human_entered",
     )
-    assert with_both["tenant_org_binding_status"] == "caller_supplied"
+    assert with_both["tenant_org_binding_status"] == "pending_review"
+    assert with_both["operational_identity_binding_verified"] is False
 
     without_org = record.build_awarded_grant_record(
         tenant_id=TENANT, source_opportunity_id="opp-1"
     )
-    assert without_org["tenant_org_binding_status"] == "unknown"
+    assert without_org["tenant_org_binding_status"] == "unbound"
     assert without_org["customer_org_id"] is None
     assert "no_customer_org_id_supplied_for_the_gate91_lane" in (
         without_org["blocked_reasons"]
@@ -134,7 +143,7 @@ def test_a_binding_cannot_be_claimed_without_both_identities():
     forged = record.build_awarded_grant_record(
         tenant_id=TENANT, source_opportunity_id="opp-1"
     )
-    forged["tenant_org_binding_status"] = "caller_supplied"
+    forged["tenant_org_binding_status"] = "verified_binding"
     assert "binding_claimed_without_both_identities" in (
         record.award_record_invariant_failures(forged)
     )

@@ -186,7 +186,8 @@
       "onboarding_missing:customer_auth_live",
       "onboarding_missing:customer_persistence_live",
       "onboarding_missing:email_delivery_available",
-      "onboarding_missing:live_source_collection_available"
+      "onboarding_missing:live_source_collection_available",
+      "onboarding_missing:verified_operational_identity_binding"
     ],
     "collectors_active": 0,
     "controlled_customer_pilot": false,
@@ -234,7 +235,8 @@
       "customer_auth_live",
       "customer_persistence_live",
       "email_delivery_available",
-      "live_source_collection_available"
+      "live_source_collection_available",
+      "verified_operational_identity_binding"
     ],
     "production_rollout": false,
     "pursuit_suppression_contract_available": true,
@@ -246,7 +248,8 @@
     "tenant_beta_contract_available": true,
     "tenant_feature_entitlements_available": true,
     "tenant_profiles_available": true,
-    "tenant_source_priority_available": true
+    "tenant_source_priority_available": true,
+    "verified_operational_identity_binding": false
   },
   "ready_for_beta_onboarding": false,
   "ready_for_demo_contract": true,

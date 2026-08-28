@@ -43,7 +43,7 @@ A projected burden stays projected, an unreadable document produces no verified 
 
 ## Next
 
-1. **reconcile_tenant_id_and_customer_org_id** — two identity spaces meet on the awarded record and no bridge exists; everything below inherits whichever answer this gets
+1. **verify_a_real_tenant_customer_org_binding** — Gate 109 built the binding contract; no verified non-demo binding exists yet, and row-level security keys on the organization while the awarded lane is tenant-scoped
 1. **persist_awarded_records_and_requirements** — nothing survives a request today, so a compliance calendar cannot be re-read after a missed deadline
 1. **build_the_awarded_grants_surface** — the workspace is mandatory in the tenant beta contract and no UI exists for it
 1. **attach_document_storage_under_the_existing_gates** — award packages have to live somewhere before requirements can be extracted from them

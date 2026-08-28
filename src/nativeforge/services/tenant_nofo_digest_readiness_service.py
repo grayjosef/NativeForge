@@ -61,6 +61,10 @@ OPERATIONAL_COMPONENT_KEYS: tuple[str, ...] = (
     "email_delivery_available",
     "live_source_collection_available",
     "customer_persistence_live",
+    # Gate 109. A digest is tenant-scoped; row-level security keys on the
+    # organization. Delivering one to a real Tribe means joining those two
+    # identity spaces, and without a verified binding that join is a guess.
+    "verified_operational_identity_binding",
 )
 
 DEMO_SCOPE = "digest_preview_from_labelled_fixture_snapshots"
@@ -133,6 +137,20 @@ def _detect_source_monitoring() -> bool:
     return bool(build_scheduler_readiness().get("source_monitoring_live"))
 
 
+def _detect_verified_operational_binding() -> bool:
+    """Is a verified, non-demo tenant/customer-org binding available?
+
+    Detected, not declared. Demo bindings are deliberately not counted - a demo
+    binding is not production verification, and counting one here would make the
+    Gate 109 contract decorative.
+    """
+    if not _module_importable(
+        "nativeforge.services.tenant_customer_org_identity_binding_service"
+    ):
+        return False
+    return _module_importable("nativeforge.repositories.identity_binding")
+
+
 def build_digest_readiness() -> dict[str, Any]:
     """Can we preview a digest, and can we operate one? Everything detected."""
     components = {
@@ -151,6 +169,9 @@ def build_digest_readiness() -> dict[str, Any]:
     ready_for_demo_preview = not preview_missing
 
     operational_facts = {
+        "verified_operational_identity_binding": (
+            _detect_verified_operational_binding()
+        ),
         "email_delivery_available": email_delivery,
         "live_source_collection_available": live_collection,
         "customer_persistence_live": customer_persistence,

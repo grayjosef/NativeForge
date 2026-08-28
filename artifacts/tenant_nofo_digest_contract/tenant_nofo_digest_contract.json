@@ -86,6 +86,7 @@
       "operational_missing:customer_persistence_live",
       "operational_missing:email_delivery_available",
       "operational_missing:live_source_collection_available",
+      "operational_missing:verified_operational_identity_binding",
       "source_monitoring_not_live"
     ],
     "change_detection_available": true,
@@ -126,7 +127,8 @@
     "operational_components_missing": [
       "customer_persistence_live",
       "email_delivery_available",
-      "live_source_collection_available"
+      "live_source_collection_available",
+      "verified_operational_identity_binding"
     ],
     "preview_components_missing": [],
     "ready_for_demo_preview": true,
@@ -135,6 +137,7 @@
     "snapshot_contract_available": true,
     "source_monitoring_live": false,
     "suppression_contract_available": true,
+    "verified_operational_identity_binding": false,
     "weekly_digest_preview_available": true
   },
   "ready_for_demo_preview": true,

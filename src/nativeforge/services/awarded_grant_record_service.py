@@ -70,6 +70,10 @@ from nativeforge.services.awarded_grant_portfolio_service import (
 from nativeforge.services.awarded_grant_portfolio_service import (
     REQUIRED_AWARD_DETAIL_FIELDS,
 )
+from nativeforge.services.tenant_customer_org_identity_binding_service import (
+    BINDING_STATUSES,
+    build_binding,
+)
 
 SCHEMA_VERSION = "nf_awarded_grant_record_v1"
 
@@ -111,7 +115,12 @@ REQUIREMENTS_EXTRACTION_STATUSES = frozenset(
 # Extraction outcomes that can support an active obligation.
 OBLIGATION_CAPABLE_EXTRACTION = frozenset({"human_entered", "evidence_extracted"})
 
-TENANT_ORG_BINDING_STATUSES = frozenset({"caller_supplied", "unknown"})
+# Gate 109 replaced this vocabulary. It was {caller_supplied, unknown}, which
+# recorded only whether both ids arrived together - and "the caller passed two
+# strings" is not a statement that they belong to each other. The binding
+# service's statuses are imported so the awarded lane and the identity lane
+# cannot drift apart.
+TENANT_ORG_BINDING_STATUSES = BINDING_STATUSES
 
 AWARD_RECORD_FIELDS: tuple[str, ...] = (
     "tenant_id",
@@ -181,6 +190,12 @@ def build_awarded_grant_record(
     match_percent: Any = None,
     award_document_status: Any = None,
     requirements_extraction_status: Any = None,
+    identity_binding: dict[str, Any] | None = None,
+    binding_source: Any = None,
+    requested_binding_status: Any = None,
+    binding_verified_by: Any = None,
+    binding_verified_at: Any = None,
+    binding_demo_label: Any = None,
     human_review_acknowledged: bool = False,
 ) -> dict[str, Any]:
     """One awarded grant for one tenant. Nothing about it is inferred."""
@@ -230,10 +245,26 @@ def build_awarded_grant_record(
     if match_required is True and match_amount is None and match_percent is None:
         blocked_reasons.append("match_required_without_an_amount_or_percent")
 
-    # The two identity spaces, related only as the caller related them.
-    binding = "caller_supplied" if (tenant_id and customer_org_id) else "unknown"
+    # The two identity spaces, related only by an explicit binding record.
+    #
+    # Gate 108 recorded "caller_supplied" when both ids arrived. Gate 109 found
+    # that too weak: two strings arriving together is not a statement that they
+    # belong to each other. The binding is built by the identity service, which
+    # refuses to verify without a source that can verify.
+    binding_record = identity_binding or build_binding(
+        tenant_id=tenant_id,
+        customer_org_id=customer_org_id,
+        binding_source=binding_source,
+        requested_status=requested_binding_status,
+        verified_by=binding_verified_by,
+        verified_at=binding_verified_at,
+        demo_label=binding_demo_label,
+    )
+    binding = binding_record.get("binding_status", "unknown")
     if not customer_org_id:
         blocked_reasons.append("no_customer_org_id_supplied_for_the_gate91_lane")
+    if binding not in {"verified_binding", "demo_fixture"}:
+        blocked_reasons.append(f"identity_binding_not_operational:{binding}")
 
     if extraction == "unsupported_document_type":
         evidence_status = "unsupported_document_type"
@@ -261,6 +292,8 @@ def build_awarded_grant_record(
             "tenant_id": tenant_id,
             "customer_org_id": customer_org_id,
             "tenant_org_binding_status": binding,
+            "identity_binding": binding_record,
+            "operational_identity_binding_verified": binding == "verified_binding",
             "award_id": build_award_id(
                 tenant_id=tenant_id,
                 source_opportunity_id=source_opportunity_id,
@@ -347,11 +380,25 @@ def award_record_invariant_failures(record: dict[str, Any]) -> list[str]:
     if not record.get("tenant_id"):
         fails.append("award_record_without_a_tenant")
 
-    # The binding is only as good as what the caller supplied.
-    if record.get("tenant_org_binding_status") == "caller_supplied" and not (
-        record.get("tenant_id") and record.get("customer_org_id")
-    ):
+    # A verified or demo binding requires both identities behind it.
+    if record.get("tenant_org_binding_status") in {
+        "verified_binding",
+        "demo_fixture",
+    } and not (record.get("tenant_id") and record.get("customer_org_id")):
         fails.append("binding_claimed_without_both_identities")
+
+    # The record's binding status must be the one the binding record holds.
+    embedded = record.get("identity_binding") or {}
+    if embedded and embedded.get("binding_status") != record.get(
+        "tenant_org_binding_status"
+    ):
+        fails.append("binding_status_disagrees_with_the_binding_record")
+
+    # Operational verification is never claimed without a verified binding.
+    if record.get("operational_identity_binding_verified") is not (
+        record.get("tenant_org_binding_status") == "verified_binding"
+    ):
+        fails.append("operational_binding_verification_disagrees_with_the_status")
 
     # Unsupported documents can never support obligations.
     if record.get(

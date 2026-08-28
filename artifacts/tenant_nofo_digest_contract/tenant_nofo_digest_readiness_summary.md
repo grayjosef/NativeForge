@@ -61,6 +61,7 @@ items_with_unknown_reporting_burden 5
 - `customer_persistence_live`
 - `email_delivery_available`
 - `live_source_collection_available`
+- `verified_operational_identity_binding`
 
 ## What must happen next
 

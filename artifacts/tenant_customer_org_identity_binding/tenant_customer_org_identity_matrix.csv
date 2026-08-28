@@ -1,0 +1,6 @@
+case,tenant_id,customer_org_id,tenant_id_shape,binding_status,binding_source,binding_confidence,is_production_verified,human_review_required
+demo_verified,nf-demo-tenant-01,nf-demo-org-01,free_form,demo_fixture,demo_fixture,demo_only,false,false
+unbound,nf-demo-tenant-02,,free_form,unbound,human_entered,none,false,true
+pending_review,nf-demo-tenant-03,nf-demo-org-03,free_form,pending_review,human_entered,asserted,false,true
+conflict,nf-demo-shared-id,nf-demo-shared-id,free_form,conflict,human_entered,none,false,true
+revoked,nf-demo-tenant-05,nf-demo-org-05,free_form,revoked,admin_verified,none,false,false

@@ -1,0 +1,22 @@
+{
+  "awarded_demo_contract_ready": true,
+  "beta_demo_ready": true,
+  "beta_onboarding_ready": false,
+  "bindings_persisted": false,
+  "customer_auth_live": false,
+  "customer_org_id_derived_from_tenant_id": false,
+  "customer_persistence_live": false,
+  "demo_fixture_bindings_available": true,
+  "digest_demo_preview_ready": true,
+  "identities_assumed_equivalent": false,
+  "identity_binding_contract_available": true,
+  "live_fetch_performed": false,
+  "live_source_collection_available": false,
+  "operational_awarded_tracking_ready": false,
+  "operational_digest_ready": false,
+  "schema_version": "nf_tenant_customer_org_identity_artifact_v1",
+  "source_coverage_claimed": false,
+  "source_monitoring_live": false,
+  "tenant_id_derived_from_customer_org_id": false,
+  "verified_operational_binding_available": false
+}

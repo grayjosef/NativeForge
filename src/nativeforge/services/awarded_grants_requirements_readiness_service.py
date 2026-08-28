@@ -62,20 +62,28 @@ CONTRACT_COMPONENT_MODULES: dict[str, str] = {
 }
 
 # What operational tracking needs on top. None of it exists.
+#
+# `verified_operational_identity_binding` was added by Gate 109. An awarded
+# record carries a tenant_id and a customer_org_id, row-level security keys on
+# the organization, and nothing relates the two without an explicit binding.
+# Tracking a real Tribe's compliance obligations across that gap is how one
+# Tribe ends up reading another's awards.
 OPERATIONAL_COMPONENT_KEYS: tuple[str, ...] = (
     "ui_available",
     "customer_persistence_live",
     "document_storage_live",
     "requirement_extraction_live",
+    "verified_operational_identity_binding",
 )
 
 DEMO_SCOPE = "awarded_requirements_contract_over_labelled_demo_fixtures"
 
 NEXT_ACTION_SEQUENCE: tuple[tuple[str, str], ...] = (
     (
-        "reconcile_tenant_id_and_customer_org_id",
-        "two identity spaces meet on the awarded record and no bridge exists; "
-        "everything below inherits whichever answer this gets",
+        "verify_a_real_tenant_customer_org_binding",
+        "Gate 109 built the binding contract; no verified non-demo binding "
+        "exists yet, and row-level security keys on the organization while the "
+        "awarded lane is tenant-scoped",
     ),
     (
         "persist_awarded_records_and_requirements",
@@ -143,6 +151,21 @@ def _detect_requirement_extraction_live() -> bool:
     )
 
 
+def _detect_verified_operational_binding() -> bool:
+    """Is any verified, non-demo tenant/customer-org binding available?
+
+    Detected, not declared. A binding store would be the thing to ask; none
+    exists, and demo fixtures are deliberately not counted - a demo binding is
+    not production verification, and counting it here would make the whole
+    Gate 109 contract decorative.
+    """
+    if not _module_importable(
+        "nativeforge.services.tenant_customer_org_identity_binding_service"
+    ):
+        return False
+    return _module_importable("nativeforge.repositories.identity_binding")
+
+
 def build_awarded_requirements_readiness(
     *, detect_root: Any = None
 ) -> dict[str, Any]:
@@ -169,6 +192,9 @@ def build_awarded_requirements_readiness(
         "customer_persistence_live": customer_persistence_live,
         "document_storage_live": document_storage_live,
         "requirement_extraction_live": requirement_extraction_live,
+        "verified_operational_identity_binding": (
+            _detect_verified_operational_binding()
+        ),
     }
 
     missing_contract = sorted(k for k, v in components.items() if not v)
