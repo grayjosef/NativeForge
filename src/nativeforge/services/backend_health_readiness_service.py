@@ -164,7 +164,15 @@ def detect_git_identity(*, repo_root: Path | None = None) -> dict[str, Any]:
         return proc.stdout.strip()
 
     sha = _run(["git", "rev-parse", "HEAD"])
-    status = _run(["git", "status", "--porcelain"])
+    # Tracked changes only. `--porcelain` alone counts untracked files, and this
+    # repository carries hundreds of untracked smoke artifacts - which made
+    # `source_dirty` permanently true on this host.
+    #
+    # A flag that is always true carries no information. This one is paired with
+    # `git_sha` to answer "does the running code differ from that commit", and
+    # an untracked scratch file does not change the running code. Tracked
+    # modifications do, so those are what it reports.
+    status = _run(["git", "status", "--porcelain", "--untracked-files=no"])
 
     return _json_safe(
         {

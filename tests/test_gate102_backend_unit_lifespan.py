@@ -160,6 +160,38 @@ def test_healthcheck_satisfying_is_only_ok() -> None:
     assert HEALTHCHECK_SATISFYING == frozenset({"ok"})
 
 
+def test_source_dirty_counts_tracked_changes_only(tmp_path: Path) -> None:
+    """An untracked scratch file does not change the running code.
+
+    This repository carries hundreds of untracked smoke artifacts, which made
+    `source_dirty` permanently true on this host. The flag is paired with
+    `git_sha` to answer "does the running code differ from that commit", and a
+    flag that is always true can never answer it.
+    """
+    from nativeforge.services.backend_health_readiness_service import (
+        detect_git_identity,
+    )
+
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
+    subprocess.run(
+        ["git", "config", "user.email", "t@example.invalid"], cwd=tmp_path, check=True
+    )
+    subprocess.run(["git", "config", "user.name", "t"], cwd=tmp_path, check=True)
+    (tmp_path / "tracked.txt").write_text("one\n", encoding="utf-8")
+    subprocess.run(["git", "add", "tracked.txt"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-qm", "init"], cwd=tmp_path, check=True)
+
+    assert detect_git_identity(repo_root=tmp_path)["source_dirty"] is False
+
+    # An untracked file is not a dirty source.
+    (tmp_path / "scratch.log").write_text("noise\n", encoding="utf-8")
+    assert detect_git_identity(repo_root=tmp_path)["source_dirty"] is False
+
+    # A tracked modification is.
+    (tmp_path / "tracked.txt").write_text("two\n", encoding="utf-8")
+    assert detect_git_identity(repo_root=tmp_path)["source_dirty"] is True
+
+
 @pytest.mark.parametrize("dirty", [True, False, None])
 def test_source_dirty_blocks_production_but_not_the_observation(
     dirty: object,
