@@ -38,6 +38,7 @@
     "collectors_active": 0,
     "dry_run_worker_available": true,
     "fabricated": false,
+    "lifespan_hook_available": true,
     "live_collection_requires_production_store": true,
     "live_fetch_performed": false,
     "live_source_coverage": false,
@@ -242,6 +243,7 @@
         "local_only",
         "production"
       ],
+      "lifespan_hook_available": true,
       "local_raw_payload_store_available": true,
       "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
@@ -307,6 +309,7 @@
         "local_only",
         "production"
       ],
+      "lifespan_hook_available": true,
       "local_raw_payload_store_available": true,
       "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
@@ -372,6 +375,7 @@
         "local_only",
         "production"
       ],
+      "lifespan_hook_available": true,
       "local_raw_payload_store_available": true,
       "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
@@ -439,6 +443,7 @@
         "local_only",
         "production"
       ],
+      "lifespan_hook_available": true,
       "local_raw_payload_store_available": true,
       "persistent_backend_live": false,
       "production_raw_payload_store_available": false,
@@ -504,6 +509,7 @@
         "local_only",
         "production"
       ],
+      "lifespan_hook_available": true,
       "local_raw_payload_store_available": true,
       "persistent_backend_live": false,
       "production_raw_payload_store_available": false,

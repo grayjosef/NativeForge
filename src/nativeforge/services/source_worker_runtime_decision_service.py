@@ -224,10 +224,13 @@ def build_worker_runtime_decision(
     backend_runtime_contract_available = bool(
         readiness.get("backend_runtime_contract_available")
     )
+    lifespan_hook_available = bool(readiness.get("lifespan_hook_available"))
 
     blocked_reasons: list[str] = []
     if not persistent_backend_live:
         blocked_reasons.append("persistent_backend_not_live")
+    if not lifespan_hook_available:
+        blocked_reasons.append("lifespan_hook_unavailable")
     if not background_worker_available:
         blocked_reasons.append("background_worker_not_detected")
     if external_worker_required and not broker_selected:
@@ -257,7 +260,13 @@ def build_worker_runtime_decision(
             # in-process topology is not selectable until a backend exists.
             "persistent_backend_live": persistent_backend_live,
             "backend_runtime_contract_available": backend_runtime_contract_available,
-            "in_process_worker_possible": persistent_backend_live,
+            # Gate 102D tightened this. A process to live in is half of it; the
+            # other half is somewhere in that process to attach, which is what
+            # the lifespan hook is. Gate 101 could only check the first because
+            # the second did not exist.
+            "lifespan_hook_available": lifespan_hook_available,
+            "in_process_worker_possible": persistent_backend_live
+            and lifespan_hook_available,
             "dependency_required": dependency_required,
             "dependency_selected": dependency_selected,
             "broker_required": broker_required,
@@ -334,10 +343,15 @@ def worker_runtime_invariant_failures(decision: dict[str, Any]) -> list[str]:
 
     # Gate 101E. An in-process worker needs a persistent backend, and a backend
     # *contract* is not one.
-    if decision.get("in_process_worker_possible") != decision.get(
-        "persistent_backend_live"
+    if decision.get("in_process_worker_possible") != (
+        bool(decision.get("persistent_backend_live"))
+        and bool(decision.get("lifespan_hook_available"))
     ):
         fails.append("in_process_possibility_disagrees_with_the_backend")
+    if decision.get("in_process_worker_possible") and not decision.get(
+        "lifespan_hook_available"
+    ):
+        fails.append("in_process_worker_without_a_lifespan_hook")
     if decision.get("backend_runtime_contract_available") and decision.get(
         "in_process_worker_possible"
     ):

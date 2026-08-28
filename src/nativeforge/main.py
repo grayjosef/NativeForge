@@ -1,5 +1,8 @@
 """FastAPI application factory."""
 
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
 from nativeforge.api.activation_routes import (
@@ -50,11 +53,42 @@ from nativeforge.api.tribal_profile_routes import (
 )
 from nativeforge.api.trust_routes import demo_trust_router, real_trust_router
 from nativeforge.lib.settings import get_settings
+from nativeforge.services.backend_lifespan_hook_service import (
+    record_shutdown,
+    record_startup,
+)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Gate 102C: the attach point a future in-process scheduler would use.
+
+    Nothing is attached to it. Startup records that it ran and starts no
+    scheduler, no collector, and no fetch; shutdown records that it ran and
+    stops nothing, because nothing was running.
+
+    The hook exists because Gates 100A and 101A both ended at the same wall -
+    there was nowhere for an in-process background task to live even once a
+    process existed. Adding the attach point removes that wall without stepping
+    over it, and it makes the absence of a scheduler *testable*: "no scheduler
+    runs at startup" used to be true because startup did not exist, and is now
+    true because startup ran and deliberately started nothing.
+
+    Anything attached here in a later gate must first satisfy
+    `ATTACH_PREREQUISITES` in `backend_lifespan_hook_service` - a proven
+    persistent backend, a background worker, a periodic trigger, and a
+    production payload store. None is satisfied today.
+    """
+    record_startup()
+    try:
+        yield
+    finally:
+        record_shutdown()
 
 
 def create_app() -> FastAPI:
     settings = get_settings()
-    app = FastAPI(title=settings.app_name)
+    app = FastAPI(title=settings.app_name, lifespan=lifespan)
     app.include_router(health_router)
     app.include_router(backend_runtime_router)
     app.include_router(isolation_router)

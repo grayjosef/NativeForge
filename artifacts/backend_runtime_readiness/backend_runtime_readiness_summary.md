@@ -25,7 +25,7 @@ runtime_mode                          loopback_backend_contract
 | `backend_runtime_available` | true |
 | `persistent_backend_live` | false |
 | `loopback_only` | true |
-| `lifespan_hook_available` | false |
+| `lifespan_hook_available` | true |
 | `systemd_unit_available` | true |
 | `systemd_unit_installed` | false |
 | `systemd_unit_enabled` | false |
@@ -36,7 +36,6 @@ runtime_mode                          loopback_backend_contract
 ## What blocks a persistent backend
 
 - `api_started_only_by_smoke_scripts`
-- `no_lifespan_hook_in_main`
 - `no_long_running_process_proof`
 - `systemd_unit_not_enabled`
 - `systemd_unit_not_installed`
@@ -54,7 +53,7 @@ runtime_mode                          loopback_backend_contract
 | --- | --- | --- |
 | `backend_runtime_contract_available` | true | gate 101B |
 | `persistent_backend_live` | false | gate 101B |
-| `lifespan_hook_available` | false | gate 101B |
+| `lifespan_hook_available` | true | gate 101B |
 | `systemd_unit_installed` | false | gate 101B |
 | `loopback_only` | true | gate 101B |
 | `production_raw_payload_store_available` | false | gate 96/97 |

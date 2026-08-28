@@ -8,7 +8,6 @@
     "backend_started": false,
     "blocked_reasons": [
       "api_started_only_by_smoke_scripts",
-      "no_lifespan_hook_in_main",
       "no_long_running_process_proof",
       "systemd_unit_not_enabled",
       "systemd_unit_not_installed"
@@ -18,7 +17,8 @@
     "fabricated": false,
     "healthcheck_path": "/backend/health",
     "host": "127.0.0.1",
-    "lifespan_hook_available": false,
+    "in_process_attach_possible": false,
+    "lifespan_hook_available": true,
     "live_fetch_performed": false,
     "live_source_coverage": false,
     "loopback_only": true,

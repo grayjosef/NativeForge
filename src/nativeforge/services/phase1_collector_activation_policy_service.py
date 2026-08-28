@@ -222,6 +222,22 @@ def _persistent_backend_live() -> bool:
     return bool(build_scheduler_readiness().get("persistent_backend_live"))
 
 
+def _lifespan_hook_available() -> bool:
+    """Gate 102D: an attach point exists. Nothing is attached to it.
+
+    Recorded on the matrix and load-bearing for nothing here: scheduling still
+    requires a background worker, of which there is none. An invariant below
+    fails if a hook is ever read as permission.
+    """
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(build_scheduler_readiness().get("lifespan_hook_available"))
+
+
 def _dry_run_worker_available() -> bool:
     """Gate 100D: a dry-run worker exists and buys nothing here.
 
@@ -348,6 +364,8 @@ def build_phase1_activation_matrix(
             "dry_run_worker_available": _dry_run_worker_available(),
             # Gate 101E. Same: on the record, guarded, permits nothing.
             "persistent_backend_live": _persistent_backend_live(),
+            # Gate 102D. The hook exists and nothing is attached to it.
+            "lifespan_hook_available": _lifespan_hook_available(),
             "live_fetch_performed": False,
             "live_source_coverage": False,
             # Gate 95. Three separate facts. The local store exists and is
@@ -501,6 +519,19 @@ def policy_invariant_failures(matrix: dict[str, Any]) -> list[str]:
     # schedulable or a collector fetchable. `scheduler_runtime_available` here
     # already requires a detected background worker; this fails loudly if a
     # future edit ever lets the dry-run answer stand in for it.
+    # Gate 102D. A lifespan hook is an attach point, not an attachment. It may
+    # never on its own make a source schedulable or fetchable.
+    if matrix.get("lifespan_hook_available") and not matrix.get(
+        "persistent_backend_live"
+    ):
+        if matrix.get("sources_may_schedule_monitor") or matrix.get("monitors_active"):
+            fails.append("lifespan_hook_read_as_a_scheduler")
+        for source in matrix.get("sources") or []:
+            if source.get("may_fetch_live_now"):
+                fails.append(
+                    f"lifespan_hook_permitted_live_fetch:{source.get('source_id')}"
+                )
+
     # Gate 101E. Nothing may be scheduled or fetched without a backend process
     # for the scheduler to live in. A backend contract is not a backend.
     if not matrix.get("persistent_backend_live"):

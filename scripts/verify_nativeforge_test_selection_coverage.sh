@@ -79,7 +79,13 @@ source .venv/bin/activate
 # and a unit template that must bind loopback only; `runtime` and `health`
 # reach the module, but the test proving the template never binds a public
 # interface is named for systemd and loopback, which nothing else reached.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan'
+#
+# `proof`, `install` and `attach` were added by Gate 102. Its critical tests
+# are about an observation that must carry a pid and a passing healthcheck,
+# and an attach point with nothing attached to it; `backend` and `lifespan`
+# reach the module, but the tests holding the five proof requirements are
+# named for the proof, which no earlier keyword reached.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -191,6 +197,15 @@ CRITICAL=(
   "tests/test_gate101_persistent_backend_process.py::test_persistent_backend_live_remains_false_without_process_proof"
   "tests/test_gate101_persistent_backend_process.py::test_health_never_claims_production_readiness"
   "tests/test_gate101_persistent_backend_process.py::test_readiness_preserves_the_no_go_statuses"
+
+  # Gate 102. Five that hold the proof and attach boundary: live needs a
+  # passing healthcheck and a pid, the hook starts no scheduler and no
+  # collectors, and the unit is started but never enabled.
+  "tests/test_gate102_backend_unit_lifespan.py::test_a_proof_requires_a_passing_healthcheck"
+  "tests/test_gate102_backend_unit_lifespan.py::test_a_proof_requires_a_pid"
+  "tests/test_gate102_backend_unit_lifespan.py::test_the_hook_starts_no_scheduler"
+  "tests/test_gate102_backend_unit_lifespan.py::test_the_hook_starts_no_collectors"
+  "tests/test_gate102_backend_unit_lifespan.py::test_the_unit_is_not_enabled_on_this_host"
 )
 
 FAIL=0

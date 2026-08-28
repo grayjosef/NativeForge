@@ -661,11 +661,43 @@ def test_no_periodic_trigger_is_checked_into_the_repo() -> None:
 
 
 def test_readiness_is_detected_rather_than_declared() -> None:
-    """No argument can turn a missing component into a present one."""
+    """No *claim* can turn a missing component into a present one.
+
+    Gate 98 asserted the signature took only `repo_root`. Gate 102B had to add
+    `process_proof`, and the reason is worth stating rather than papering over:
+    whether a process is *running* cannot be detected without I/O that would
+    make this answer differ per machine and per minute, which would break the
+    determinism the committed artifacts depend on.
+
+    So liveness is the one component established by evidence passed in. The
+    guarantee is preserved by validating that evidence rather than trusting it -
+    a bare truthy value, a partial observation, or one that says it saw nothing
+    all leave the answer false. Only a complete observation flips it.
+    """
     import inspect
 
     params = set(inspect.signature(build_scheduler_readiness).parameters)
-    assert params == {"repo_root"}
+    assert params == {"repo_root", "process_proof"}
+
+    # A claim is not evidence.
+    for not_evidence in (
+        {"lol": 1},
+        {"observed": True},
+        {"observed": True, "pid": 5},
+        {"observed": False, "pid": 5, "observed_at": "2026-01-01T00:00:00+00:00"},
+    ):
+        readiness = build_scheduler_readiness(process_proof=not_evidence)
+        assert readiness["persistent_backend_live"] is False, not_evidence
+
+    # And a complete observation does, so the check is not vacuous.
+    complete = build_scheduler_readiness(
+        process_proof={
+            "observed": True,
+            "pid": 5,
+            "observed_at": "2026-01-01T00:00:00+00:00",
+        }
+    )
+    assert complete["persistent_backend_live"] is True
 
 
 def test_the_runtime_detection_is_live_not_a_hardcoded_false(monkeypatch) -> None:

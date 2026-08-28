@@ -270,6 +270,17 @@ def _persistent_backend_live() -> bool:
     return bool(build_scheduler_readiness().get("persistent_backend_live"))
 
 
+def _lifespan_hook_available() -> bool:
+    """Gate 102D: an attach point exists, and buys nothing here."""
+    try:
+        from nativeforge.services.source_scheduler_readiness_service import (
+            build_scheduler_readiness,
+        )
+    except ImportError:
+        return False
+    return bool(build_scheduler_readiness().get("lifespan_hook_available"))
+
+
 def _background_worker_present() -> bool:
     """Gate 100D: a real worker, detected. The only thing that permits work."""
     try:
@@ -535,6 +546,8 @@ def build_activation_preflight(
             # Gate 101E: recorded for the same reason - the invariant below
             # reads the record rather than re-querying the world.
             "persistent_backend_live": _persistent_backend_live(),
+            # Gate 102D: an attach point, recorded. It permits nothing here.
+            "lifespan_hook_available": _lifespan_hook_available(),
             "scheduling_blocked_reasons": sorted(set(scheduling_blocked_reasons)),
             "activation_is_not_scheduler_readiness": True,
             # Constant for this gate. Nothing fetches, so nothing may say it is

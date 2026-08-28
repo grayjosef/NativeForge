@@ -1,0 +1,10 @@
+requirement,satisfied_in_committed_scope,why,owner,backend_unit_template_available,lifespan_hook_available,installed_by_this_gate,enabled_by_this_gate,persistent_backend_live,collectors_started,urls_fetched,source_monitoring_live,live_source_coverage
+observed_at_present,False,"a dated observation, absent from a committed file",gate 102B,True,True,True,False,False,False,False,False,False
+unit_active,False,systemd reports the service running,gate 102B,True,True,True,False,False,False,False,False,False
+pid_present,False,a process id was actually seen,gate 102B,True,True,True,False,False,False,False,False,False
+loopback_host,False,127.0.0.1 or ::1 only,gate 102B,True,True,True,False,False,False,False,False,False
+healthcheck_ok,False,/backend/health answered,gate 102B,True,True,True,False,False,False,False,False,False
+attach_prerequisite:persistent_backend_live,False,"gate 101B/102B - a proven long-running process, not a smoke script",gate 102C,True,True,True,False,False,False,False,False,False
+attach_prerequisite:background_worker_available,False,gate 98E - a worker module or console entry point; there is none,gate 102C,True,True,True,False,False,False,False,False,False
+attach_prerequisite:periodic_trigger_configured,False,gate 98E - a timer or cron entry checked into the repo,gate 102C,True,True,True,False,False,False,False,False,False
+attach_prerequisite:production_raw_payload_store_available,False,gate 96/97 - somewhere durable for a check's bytes to land,gate 102C,True,True,True,False,False,False,False,False,False

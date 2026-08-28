@@ -287,13 +287,24 @@ def detect_dry_run_worker() -> dict[str, Any]:
     )
 
 
-def detect_persistent_backend(*, repo_root: Path | None = None) -> dict[str, Any]:
+def detect_persistent_backend(
+    *,
+    repo_root: Path | None = None,
+    process_proof: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Whether a persistent backend process exists, via Gate 101B.
 
-    An in-process scheduler or worker needs a process to live in. Gate 101A
-    found the API is started only by smoke scripts that kill it on exit, so this
-    is absent - and its absence is what stops an in-process runtime ever being
-    more than a dry run.
+    An in-process scheduler or worker needs a process to live in.
+
+    `process_proof` is a Gate 102B observation and defaults to absent. That
+    default is what keeps this deterministic: a *running* backend is a fact
+    about one host at one moment, and a readiness call that went looking for one
+    would answer differently on every machine and again the moment the service
+    stopped. Committed artifacts would then never match a fresh generation.
+
+    So the repository's standing answer is "no proof supplied", and a caller
+    holding a real observation passes it in. Gate 102 captured one and reports
+    it in its gate report rather than baking it into an artifact.
     """
     try:
         from nativeforge.services.backend_runtime_contract_service import (
@@ -308,7 +319,11 @@ def detect_persistent_backend(*, repo_root: Path | None = None) -> dict[str, Any
             }
         )
 
-    contract = build_backend_runtime_contract(repo_root=repo_root)
+    contract = build_backend_runtime_contract(
+        repo_root=repo_root,
+        systemd_unit_installed=bool(process_proof),
+        process_proof=process_proof,
+    )
     return _json_safe(
         {
             # A *contract* is not a process. Only a proven live backend counts.
@@ -318,6 +333,11 @@ def detect_persistent_backend(*, repo_root: Path | None = None) -> dict[str, Any
                 contract["backend_runtime_contract_available"]
             ),
             "loopback_only": bool(contract["loopback_only"]),
+            "lifespan_hook_available": bool(contract["lifespan_hook_available"]),
+            "in_process_attach_possible": bool(
+                contract["in_process_attach_possible"]
+            ),
+            "process_proof_supplied": bool(contract["process_proof_supplied"]),
             "detection_method": "gate 101B backend runtime contract",
             "reason": None
             if contract["persistent_backend_live"]
@@ -486,7 +506,11 @@ def _detect_production_store() -> dict[str, Any]:
     }
 
 
-def build_scheduler_readiness(*, repo_root: Path | None = None) -> dict[str, Any]:
+def build_scheduler_readiness(
+    *,
+    repo_root: Path | None = None,
+    process_proof: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Could this system start monitoring sources? Everything is detected."""
     components: dict[str, dict[str, Any]] = {
         "schedule_decision_service": _detect_decision_service(
@@ -501,7 +525,9 @@ def build_scheduler_readiness(*, repo_root: Path | None = None) -> dict[str, Any
         "production_raw_payload_store": _detect_production_store(),
         "dry_run_runtime": detect_dry_run_runtime(),
         "dry_run_worker": detect_dry_run_worker(),
-        "persistent_backend": detect_persistent_backend(repo_root=repo_root),
+        "persistent_backend": detect_persistent_backend(
+            repo_root=repo_root, process_proof=process_proof
+        ),
         "scheduler_runtime": detect_scheduler_runtime(),
         "background_worker": detect_background_worker(),
         "periodic_trigger": detect_periodic_trigger(repo_root=repo_root),
@@ -598,6 +624,18 @@ def build_scheduler_readiness(*, repo_root: Path | None = None) -> dict[str, Any
             ),
             "backend_runtime_mode": components["persistent_backend"].get(
                 "backend_runtime_mode", "none"
+            ),
+            # Gate 102D. The lifespan hook exists; nothing is attached to it.
+            # An in-process scheduler needs both this and a live backend, and
+            # the conjunction is reported so a reader does not have to derive it.
+            "lifespan_hook_available": bool(
+                components["persistent_backend"].get("lifespan_hook_available")
+            ),
+            "in_process_scheduler_possible": bool(
+                components["persistent_backend"].get("in_process_attach_possible")
+            ),
+            "backend_process_proof_supplied": bool(
+                components["persistent_backend"].get("process_proof_supplied")
             ),
             # Kept distinct from `scheduler_runtime_available`, which changed
             # meaning in Gate 99D. This is still the narrow question Gate 98
@@ -706,6 +744,22 @@ def scheduler_readiness_invariant_failures(result: dict[str, Any]) -> list[str]:
         record = components.get("persistent_backend") or {}
         if record.get("backend_runtime_mode") != "persistent_backend_live":
             fails.append("backend_contract_read_as_a_persistent_backend")
+
+    # Gate 102D. An in-process scheduler needs a process to live in *and*
+    # somewhere in that process to attach. Either half alone is not enough, and
+    # a lifespan hook with nothing running is the easier of the two to mistake
+    # for progress.
+    lifespan_ok = bool(result.get("lifespan_hook_available"))
+    if result.get("in_process_scheduler_possible") != (lifespan_ok and backend_ok):
+        fails.append("in_process_scheduler_disagrees_with_its_halves")
+    if result.get("in_process_scheduler_possible"):
+        if not lifespan_ok:
+            fails.append("in_process_scheduler_without_a_lifespan_hook")
+        if not backend_ok:
+            fails.append("in_process_scheduler_without_a_persistent_backend")
+    # A live backend must have had a proof behind it.
+    if backend_ok and not result.get("backend_process_proof_supplied"):
+        fails.append("persistent_backend_without_a_process_proof")
 
     # Gate 100D. A dry-run worker is not a background worker, and no component
     # in the dry-run set may contribute to the worker answer. `background_worker`

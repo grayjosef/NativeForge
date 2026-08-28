@@ -1,0 +1,49 @@
+{
+  "attach_point": "nativeforge.main:lifespan",
+  "attach_prerequisites": [
+    {
+      "owner": "gate 101B/102B - a proven long-running process, not a smoke script",
+      "requirement": "persistent_backend_live"
+    },
+    {
+      "owner": "gate 98E - a worker module or console entry point; there is none",
+      "requirement": "background_worker_available"
+    },
+    {
+      "owner": "gate 98E - a timer or cron entry checked into the repo",
+      "requirement": "periodic_trigger_configured"
+    },
+    {
+      "owner": "gate 96/97 - somewhere durable for a check's bytes to land",
+      "requirement": "production_raw_payload_store_available"
+    }
+  ],
+  "backend_unit_template_available": true,
+  "blocked_reasons": [
+    "attach_prerequisite_unmet:background_worker_available",
+    "attach_prerequisite_unmet:periodic_trigger_configured",
+    "attach_prerequisite_unmet:persistent_backend_live",
+    "attach_prerequisite_unmet:production_raw_payload_store_available"
+  ],
+  "collectors_started": false,
+  "enabled_by_this_gate": false,
+  "fabricated": false,
+  "future_scheduler_dependencies": [
+    "nativeforge.services.source_schedule_decision_service",
+    "nativeforge.services.source_circuit_breaker_service",
+    "nativeforge.services.source_scheduler_queue_service",
+    "nativeforge.services.source_scheduler_dry_run_worker_service"
+  ],
+  "installed_by_this_gate": true,
+  "lifespan_defined": true,
+  "lifespan_hook_available": true,
+  "lifespan_passed_to_fastapi": true,
+  "live_source_coverage": false,
+  "persistent_backend_live": false,
+  "raw_payloads_written": false,
+  "runtime_mode": "loopback_backend_contract",
+  "scheduler_attached": false,
+  "schema_version": "nf_backend_lifespan_hook_v1",
+  "source_monitoring_live": false,
+  "urls_fetched": false
+}

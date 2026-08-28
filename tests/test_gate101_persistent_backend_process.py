@@ -219,11 +219,17 @@ def test_the_default_host_and_port() -> None:
     assert contract["port"] == DEFAULT_PORT == 8000
 
 
-def test_main_has_no_lifespan_hook() -> None:
+def test_main_now_has_a_lifespan_hook() -> None:
+    """Gate 101 asserted the absence of one. Gate 102C added it.
+
+    The assertion is inverted rather than deleted, because the detector is what
+    Gate 101 contributed and it must keep working - it now has to *find* a hook
+    where it previously had to correctly report none.
+    """
     detected = detect_lifespan_hook()
-    assert detected["available"] is False
-    assert detected["reason"] == "no_lifespan_or_startup_hook"
-    assert build_backend_runtime_contract()["lifespan_hook_available"] is False
+    assert detected["available"] is True
+    assert "lifespan_argument" in detected["hooks_found"]
+    assert build_backend_runtime_contract()["lifespan_hook_available"] is True
 
 
 def test_the_lifespan_detector_finds_a_hook_when_one_exists(tmp_path: Path) -> None:
@@ -484,18 +490,21 @@ def test_the_unit_template_documents_health_and_restart() -> None:
     assert "WorkingDirectory=" in text
 
 
-def test_this_gate_did_not_install_or_enable_the_unit() -> None:
+def test_gate_101_reports_no_install_of_its_own() -> None:
+    """Gate 101 installed nothing, and its contract still says so by default.
+
+    The host check that used to live here has moved to Gate 102, which owns
+    host state: Gate 102 installed the unit with explicit operator approval, so
+    a Gate 101 test asserting the file is absent would now fail for a reason
+    that says nothing about Gate 101.
+
+    What Gate 101 can still assert is its own default: the contract reports no
+    installed unit unless a caller says otherwise, because it never inspects
+    the host.
+    """
     contract = build_backend_runtime_contract()
     assert contract["systemd_unit_installed"] is False
     assert contract["systemd_unit_enabled"] is False
-    installed = (
-        Path.home()
-        / ".config"
-        / "systemd"
-        / "user"
-        / "nativeforge-backend.service"
-    )
-    assert not installed.exists(), "Gate 101 must not install the unit"
 
 
 def test_the_loopback_detector_rejects_a_public_template(tmp_path: Path) -> None:

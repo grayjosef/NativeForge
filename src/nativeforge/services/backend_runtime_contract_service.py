@@ -374,6 +374,12 @@ def build_backend_runtime_contract(
             "readiness_path": READINESS_PATH,
             "trust_endpoint_available": persistent_backend_live,
             "lifespan_hook_available": bool(lifespan["available"]),
+            # Gate 102D. An in-process scheduler needs both halves: a process to
+            # live in, and somewhere in that process to attach. Either alone is
+            # not enough, and reporting them only separately would leave the
+            # conjunction for a reader to work out.
+            "in_process_attach_possible": bool(lifespan["available"])
+            and persistent_backend_live,
             "systemd_unit_available": bool(unit["available"]),
             "systemd_unit_installed": bool(systemd_unit_installed),
             "systemd_unit_enabled": bool(systemd_unit_enabled),
@@ -464,6 +470,18 @@ def backend_runtime_invariant_failures(contract: dict[str, Any]) -> list[str]:
         "systemd_unit_binds_loopback_only"
     ):
         fails.append("systemd_template_does_not_bind_loopback_only")
+
+    # Gate 102D. Both halves, or neither.
+    if contract.get("in_process_attach_possible") != (
+        bool(contract.get("lifespan_hook_available"))
+        and bool(contract.get("persistent_backend_live"))
+    ):
+        fails.append("in_process_attach_disagrees_with_its_halves")
+    if contract.get("in_process_attach_possible"):
+        if not contract.get("lifespan_hook_available"):
+            fails.append("in_process_attach_without_a_lifespan_hook")
+        if not contract.get("persistent_backend_live"):
+            fails.append("in_process_attach_without_a_persistent_backend")
 
     # The trust surface answers only when something is serving.
     if contract.get("trust_endpoint_available") != contract.get(

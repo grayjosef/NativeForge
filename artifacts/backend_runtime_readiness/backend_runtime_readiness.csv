@@ -1,7 +1,7 @@
 fact,value,owner,blocks_monitoring,runtime_mode,backend_runtime_contract_available,persistent_backend_live,source_monitoring_live,collectors_live,live_fetch_performed,live_source_coverage,customer_auth_live
 backend_runtime_contract_available,True,gate 101B,False,loopback_backend_contract,True,False,False,0,False,False,False
 persistent_backend_live,False,gate 101B,True,loopback_backend_contract,True,False,False,0,False,False,False
-lifespan_hook_available,False,gate 101B,True,loopback_backend_contract,True,False,False,0,False,False,False
+lifespan_hook_available,True,gate 101B,True,loopback_backend_contract,True,False,False,0,False,False,False
 systemd_unit_installed,False,gate 101B,True,loopback_backend_contract,True,False,False,0,False,False,False
 loopback_only,True,gate 101B,False,loopback_backend_contract,True,False,False,0,False,False,False
 production_raw_payload_store_available,False,gate 96/97,True,loopback_backend_contract,True,False,False,0,False,False,False

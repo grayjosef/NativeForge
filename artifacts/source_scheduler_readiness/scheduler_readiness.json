@@ -1,6 +1,7 @@
 {
   "background_worker_available": false,
   "readiness": {
+    "backend_process_proof_supplied": false,
     "backend_runtime_contract_available": true,
     "backend_runtime_mode": "loopback_backend_contract",
     "background_worker_available": false,
@@ -102,7 +103,10 @@
         "backend_runtime_contract_available": true,
         "backend_runtime_mode": "loopback_backend_contract",
         "detection_method": "gate 101B backend runtime contract",
+        "in_process_attach_possible": false,
+        "lifespan_hook_available": true,
         "loopback_only": true,
+        "process_proof_supplied": false,
         "reason": "no_persistent_backend_process"
       },
       "production_raw_payload_store": {
@@ -153,6 +157,8 @@
     "dry_run_runtime_available": true,
     "dry_run_worker_available": true,
     "fabricated": false,
+    "in_process_scheduler_possible": false,
+    "lifespan_hook_available": true,
     "live_fetch_performed": false,
     "live_source_coverage": false,
     "periodic_trigger_available": false,
