@@ -105,7 +105,16 @@ NEXT_ACTION_SEQUENCE: tuple[tuple[str, str], ...] = (
     (
         "stand_up_customer_auth",
         "a verified binding needs a verifier, and nobody can be one until a "
-        "person can authenticate",
+        "person can authenticate. Gate 111 built the contracts that decide who "
+        "may verify - the auth principal, the binder authorization and the RLS "
+        "claim guard - but the login promotion gate still reports seven of ten "
+        "gates missing, so no provider is attached",
+    ),
+    (
+        "map_oidc_claims_to_organization_id",
+        "the OIDC identity mapper resolves a claim to organization_profile_id, "
+        "a String(128) with no foreign key on a table with no RLS. Even a live "
+        "login would not produce the UUID the policies enforce on",
     ),
     (
         "resolve_org_id_overloading_in_persistence_paths",

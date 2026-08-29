@@ -135,7 +135,12 @@ source .venv/bin/activate
 # identity the database actually enforces on and what may never be written
 # under a label - named for the canonicalization and the RLS authority, which
 # no earlier keyword reached.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification or attestation or regeneration or drift or honest or empty or unknown or obligation or calendar or binding or cross_tenant or canonicalization or rls'
+#
+# `principal`, `binder` and `verified_org` were added by Gate 111. `auth`,
+# `login` and `oidc` already reach the module - deliberately not re-added - but
+# the tests that matter are about what authentication does NOT establish:
+# named for the principal and the binder, which no earlier keyword reached.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification or attestation or regeneration or drift or honest or empty or unknown or obligation or calendar or binding or cross_tenant or canonicalization or rls or principal or binder or verified_org'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -336,6 +341,17 @@ CRITICAL=(
   "tests/test_gate110_org_identity_canonicalization.py::test_tenant_id_cannot_persist_awarded_grants_even_with_a_verified_binding"
   "tests/test_gate110_org_identity_canonicalization.py::test_a_satisfied_binding_still_does_not_let_a_label_carry_the_write"
   "tests/test_gate110_org_identity_canonicalization.py::test_the_binding_store_anchors_to_the_rls_authority"
+
+  # Gate 111. Five that keep authentication from over-claiming: a demo
+  # principal is not production auth, edge access is not app auth, being
+  # authenticated does not establish an organization, a demo principal
+  # verifies demo bindings only, and no unauthenticated header claim reaches
+  # the RLS context.
+  "tests/test_gate111_customer_auth_verified_binder.py::test_demo_auth_is_not_production_auth"
+  "tests/test_gate111_customer_auth_verified_binder.py::test_cloudflare_access_is_not_customer_app_auth"
+  "tests/test_gate111_customer_auth_verified_binder.py::test_authenticated_does_not_imply_verified_organization_membership"
+  "tests/test_gate111_customer_auth_verified_binder.py::test_a_demo_principal_may_verify_a_demo_binding_only"
+  "tests/test_gate111_customer_auth_verified_binder.py::test_the_dev_request_header_is_not_an_authenticated_claim"
 )
 
 FAIL=0

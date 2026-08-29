@@ -1,0 +1,8 @@
+claimed_identity_name,claimed_identity_shape,claim_source,claim_verified,rls_context_allowed,set_current_org_allowed,cross_tenant_risk
+organization_id,uuid,verified_auth_claim,true,true,true,false
+org_id,uuid,verified_auth_claim,true,true,true,false
+organization_id,uuid,dev_request_header,false,false,false,true
+organization_id,free_form,verified_auth_claim,true,false,false,true
+tenant_id,uuid,verified_auth_claim,true,false,false,true
+customer_org_id,uuid,verified_auth_claim,true,false,false,true
+organization_id,free_form,demo_fixture,false,false,false,true
