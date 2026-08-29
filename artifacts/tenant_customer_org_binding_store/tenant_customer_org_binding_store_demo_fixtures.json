@@ -1,0 +1,352 @@
+{
+  "case_count": 9,
+  "cases": [
+    {
+      "case": "verified_binding_with_verifier",
+      "expect_storage_allowed": true,
+      "expect_write_allowed": true,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "admin_verified",
+        "binding_status": "verified_binding",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "organization_id": "00000000-0000-4000-8000-000000000113",
+        "tenant_id": "nf-demo-tenant-113",
+        "verified_at": "2026-08-29T00:00:00Z",
+        "verified_by_identity_id": "00000000-0000-4000-8000-0000000001b1"
+      },
+      "why": "the only shape the store accepts: anchored on organization_id, verified by a named identity at a named time"
+    },
+    {
+      "case": "verified_binding_without_verifier",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "admin_verified",
+        "binding_status": "verified_binding",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "organization_id": "00000000-0000-4000-8000-000000000113",
+        "tenant_id": "nf-demo-tenant-113"
+      },
+      "why": "the word verified with nobody behind it - refused here and by ck_nf_binding_verified_needs_verifier in the schema"
+    },
+    {
+      "case": "tenant_id_as_anchor",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "admin_verified",
+        "binding_status": "verified_binding",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "tenant_id": "nf-demo-tenant-113",
+        "verified_at": "2026-08-29T00:00:00Z",
+        "verified_by_identity_id": "00000000-0000-4000-8000-0000000001b1"
+      },
+      "why": "a tenant label cannot be the row's organization"
+    },
+    {
+      "case": "customer_org_id_as_anchor",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "admin_verified",
+        "binding_status": "verified_binding",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "tenant_id": "nf-demo-tenant-113",
+        "verified_at": "2026-08-29T00:00:00Z",
+        "verified_by_identity_id": "00000000-0000-4000-8000-0000000001b1"
+      },
+      "why": "a customer label cannot be the row's organization either"
+    },
+    {
+      "case": "organization_profile_id_as_anchor",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "admin_verified",
+        "binding_status": "verified_binding",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "organization_profile_id": "nf-demo-org-profile-113",
+        "tenant_id": "nf-demo-tenant-113",
+        "verified_at": "2026-08-29T00:00:00Z",
+        "verified_by_identity_id": "00000000-0000-4000-8000-0000000001b1"
+      },
+      "why": "the near-miss: a real identifier from a real column, in the wrong identity space. RLS casts to ::uuid and this is not one"
+    },
+    {
+      "case": "demo_fixture_binding",
+      "expect_storage_allowed": true,
+      "expect_write_allowed": true,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "demo_fixture",
+        "binding_status": "demo_fixture",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "demo_label": "demo_fixture",
+        "is_demo": true,
+        "organization_id": "00000000-0000-4000-8000-000000000113",
+        "tenant_id": "nf-demo-tenant-113"
+      },
+      "why": "a demo binding is not a small verified one; it carries no verifier and never becomes operational"
+    },
+    {
+      "case": "demo_anchor_value",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "admin_verified",
+        "binding_status": "verified_binding",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "organization_id": "nf-demo-org-113",
+        "tenant_id": "nf-demo-tenant-113",
+        "verified_at": "2026-08-29T00:00:00Z",
+        "verified_by_identity_id": "00000000-0000-4000-8000-0000000001b1"
+      },
+      "why": "a demo organization value can anchor nothing, whatever the status"
+    },
+    {
+      "case": "conflict_binding",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "human_entered",
+        "binding_status": "conflict",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "organization_id": "00000000-0000-4000-8000-000000000114",
+        "tenant_id": "nf-demo-tenant-113"
+      },
+      "why": "two organizations claiming one tenant label is a question for a person, not a row to write"
+    },
+    {
+      "case": "revoked_binding",
+      "expect_storage_allowed": true,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "record": {
+        "binding_source": "admin_verified",
+        "binding_status": "revoked",
+        "customer_org_id": "nf-demo-customer-org-113",
+        "organization_id": "00000000-0000-4000-8000-000000000113",
+        "revoked_at": "2026-08-29T00:00:00Z",
+        "revoked_by_identity_id": "00000000-0000-4000-8000-0000000001b1",
+        "tenant_id": "nf-demo-tenant-113"
+      },
+      "why": "a withdrawn relationship stops authorising anything, and the row survives for the audit trail"
+    }
+  ],
+  "cases_disagreeing_with_expectation": [],
+  "customer_auth_live": false,
+  "customer_persistence_live": false,
+  "demo_customer_org_id": "nf-demo-customer-org-113",
+  "demo_organization_id": "00000000-0000-4000-8000-000000000113",
+  "demo_profile_id": "nf-demo-org-profile-113",
+  "demo_tenant_id": "nf-demo-tenant-113",
+  "fabricated": false,
+  "fixture_label": "demo_fixture",
+  "identities_assumed_equivalent": false,
+  "live_fetch_performed": false,
+  "operational_case_count": 1,
+  "permitted_read_allowed": true,
+  "persisted": false,
+  "real_customer_data": false,
+  "refused_case_count": 6,
+  "refused_read_allowed": false,
+  "refused_read_reasons": [
+    "read_without_a_uuid_anchor:free_form"
+  ],
+  "revocation": {
+    "history_preserved": true,
+    "revoked_status": "revoked",
+    "rows_deleted": 0
+  },
+  "rows": [
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "verified_binding",
+      "blocked_reasons": [],
+      "case": "verified_binding_with_verifier",
+      "expect_storage_allowed": true,
+      "expect_write_allowed": true,
+      "fixture_label": "demo_fixture",
+      "human_review_required": false,
+      "is_demo": false,
+      "operational": true,
+      "organization_id_shape": "uuid",
+      "read_allowed": true,
+      "rls_anchor": "organization_id",
+      "storage_allowed": true,
+      "write_allowed": true
+    },
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "verified_binding",
+      "blocked_reasons": [
+        "verified_binding_without_a_verifier_identity"
+      ],
+      "case": "verified_binding_without_verifier",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "human_review_required": true,
+      "is_demo": false,
+      "operational": false,
+      "organization_id_shape": "uuid",
+      "read_allowed": false,
+      "rls_anchor": "organization_id",
+      "storage_allowed": false,
+      "write_allowed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "verified_binding",
+      "blocked_reasons": [
+        "binding_without_an_organization_id_anchor"
+      ],
+      "case": "tenant_id_as_anchor",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "human_review_required": true,
+      "is_demo": false,
+      "operational": false,
+      "organization_id_shape": "absent",
+      "read_allowed": false,
+      "rls_anchor": "organization_id",
+      "storage_allowed": false,
+      "write_allowed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "verified_binding",
+      "blocked_reasons": [
+        "binding_without_an_organization_id_anchor"
+      ],
+      "case": "customer_org_id_as_anchor",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "human_review_required": true,
+      "is_demo": false,
+      "operational": false,
+      "organization_id_shape": "absent",
+      "read_allowed": false,
+      "rls_anchor": "organization_id",
+      "storage_allowed": false,
+      "write_allowed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "verified_binding",
+      "blocked_reasons": [
+        "binding_without_an_organization_id_anchor",
+        "organization_profile_id_is_not_an_organization_id_anchor"
+      ],
+      "case": "organization_profile_id_as_anchor",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "human_review_required": true,
+      "is_demo": false,
+      "operational": false,
+      "organization_id_shape": "absent",
+      "read_allowed": false,
+      "rls_anchor": "organization_id",
+      "storage_allowed": false,
+      "write_allowed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "demo_fixture",
+      "blocked_reasons": [],
+      "case": "demo_fixture_binding",
+      "expect_storage_allowed": true,
+      "expect_write_allowed": true,
+      "fixture_label": "demo_fixture",
+      "human_review_required": false,
+      "is_demo": true,
+      "operational": false,
+      "organization_id_shape": "uuid",
+      "read_allowed": true,
+      "rls_anchor": "organization_id",
+      "storage_allowed": true,
+      "write_allowed": true
+    },
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "verified_binding",
+      "blocked_reasons": [
+        "demo_identity_cannot_anchor_a_stored_binding",
+        "organization_id_anchor_is_not_a_uuid:free_form"
+      ],
+      "case": "demo_anchor_value",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "human_review_required": true,
+      "is_demo": false,
+      "operational": false,
+      "organization_id_shape": "free_form",
+      "read_allowed": false,
+      "rls_anchor": "organization_id",
+      "storage_allowed": false,
+      "write_allowed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "conflict",
+      "blocked_reasons": [
+        "conflict_binding_blocks_reads_and_writes"
+      ],
+      "case": "conflict_binding",
+      "expect_storage_allowed": false,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "human_review_required": true,
+      "is_demo": false,
+      "operational": false,
+      "organization_id_shape": "uuid",
+      "read_allowed": false,
+      "rls_anchor": "organization_id",
+      "storage_allowed": false,
+      "write_allowed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "binding_status": "revoked",
+      "blocked_reasons": [],
+      "case": "revoked_binding",
+      "expect_storage_allowed": true,
+      "expect_write_allowed": false,
+      "fixture_label": "demo_fixture",
+      "human_review_required": false,
+      "is_demo": false,
+      "operational": false,
+      "organization_id_shape": "uuid",
+      "read_allowed": true,
+      "rls_anchor": "organization_id",
+      "storage_allowed": true,
+      "write_allowed": false
+    }
+  ],
+  "rows_written": 0,
+  "schema_version": "nf_tenant_customer_org_binding_store_demo_fixture_v1",
+  "storable_case_count": 3,
+  "store_cases_covered": [
+    "conflict_binding",
+    "customer_org_id_as_anchor",
+    "demo_anchor_value",
+    "demo_fixture_binding",
+    "organization_profile_id_as_anchor",
+    "revoked_binding",
+    "tenant_id_as_anchor",
+    "verified_binding_with_verifier",
+    "verified_binding_without_verifier"
+  ],
+  "store_cases_missing": []
+}

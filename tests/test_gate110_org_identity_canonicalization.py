@@ -532,9 +532,28 @@ def test_the_migration_can_become_safe():
         customer_auth_live=True,
         customer_persistence_live=True,
         verified_binding_available=True,
+        # Gate 113 created the binding table, which made "the decision permits
+        # storing" and "there is a table to store into" separable facts. They
+        # were one value while no such table could exist.
+        database_revision="0029",
     )
     assert decision["migration_safe_now"] is True
+    assert decision["migration_applied"] is True
     assert decision["operational_binding_storage_allowed"] is True
+    assert store.decision_invariant_failures(decision) == []
+
+
+def test_storage_is_refused_when_no_database_has_the_migration():
+    """Every precondition met, but nothing has created the table."""
+    decision = store.build_binding_store_decision(
+        rls_authority_confirmed=True,
+        customer_auth_live=True,
+        customer_persistence_live=True,
+        verified_binding_available=True,
+    )
+    assert decision["migration_defined"] is True
+    assert decision["migration_applied"] is False
+    assert decision["operational_binding_storage_allowed"] is False
     assert store.decision_invariant_failures(decision) == []
 
 

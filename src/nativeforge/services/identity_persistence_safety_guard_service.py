@@ -51,6 +51,15 @@ from typing import Any
 from nativeforge.services.org_identity_role_contract_service import (
     describe_identity_role,
 )
+from nativeforge.services.tenant_customer_org_binding_store_service import (
+    RLS_ANCHOR_COLUMN,
+)
+from nativeforge.services.tenant_customer_org_binding_store_service import (
+    SCHEMA_VERSION as BINDING_STORE_SCHEMA_VERSION,
+)
+from nativeforge.services.tenant_customer_org_identity_binding_service import (
+    SCHEMA_VERSION as BINDING_CONTRACT_SCHEMA_VERSION,
+)
 
 SCHEMA_VERSION = "nf_identity_persistence_safety_guard_v1"
 
@@ -69,6 +78,15 @@ PERSIST_OPERATIONS = frozenset(
 # Every operation here writes customer data. There is no harmless one.
 CUSTOMER_DATA_OPERATIONS = PERSIST_OPERATIONS - {"unknown"}
 
+BINDING_PROVENANCES = frozenset(
+    {
+        "binding_store_record",
+        "binding_contract_object",
+        "caller_asserted",
+        "absent",
+    }
+)
+
 # Binding statuses that satisfy a binding requirement for an operational write.
 OPERATIONAL_BINDING_STATUSES = frozenset({"verified_binding"})
 
@@ -81,6 +99,8 @@ RESULT_FIELDS: tuple[str, ...] = (
     "rls_compatible",
     "binding_required",
     "binding_present",
+    "binding_provenance",
+    "binding_is_stored_record",
     "write_allowed",
     "cross_tenant_risk",
     "human_review_required",
@@ -132,8 +152,43 @@ def evaluate_persistence_safety(
     binding_status = (binding or {}).get("binding_status")
     binding_present = binding_status in OPERATIONAL_BINDING_STATUSES
 
+    # Gate 113. A dict saying "verified_binding" is a claim; where it came from
+    # decides whether it is also a fact. Three provenances are distinguishable,
+    # and collapsing them was the reporting defect this gate fixes:
+    #
+    #   binding_store_record     Gate 113's store accepted it. The strongest
+    #                            thing available, and still not a write permit.
+    #   binding_contract_object  Gate 109's binding service derived it. A real
+    #                            decision, but nothing has stored it.
+    #   caller_asserted          an unrecognised shape. Someone typed it.
+    #
+    # This loosens nothing. It cannot: ``write_allowed`` already requires
+    # ``not binding_required``, so no binding of any provenance has ever
+    # granted a write here.
+    binding_map = binding or {}
+    binding_schema = binding_map.get("schema_version")
+
+    if not binding_map:
+        binding_provenance = "absent"
+    elif binding_schema == BINDING_STORE_SCHEMA_VERSION and (
+        binding_map.get("storage_allowed")
+        and binding_map.get("rls_anchor") == RLS_ANCHOR_COLUMN
+        and not binding_map.get("blocked_reasons")
+    ):
+        binding_provenance = "binding_store_record"
+    elif binding_schema == BINDING_CONTRACT_SCHEMA_VERSION and not binding_map.get(
+        "blocked_reasons"
+    ):
+        binding_provenance = "binding_contract_object"
+    else:
+        binding_provenance = "caller_asserted"
+
+    binding_is_stored_record = binding_provenance == "binding_store_record"
+
     if binding_required and not binding_present:
         blocked_reasons.append(f"binding_required_for:{name}")
+    elif binding_present and binding_provenance == "caller_asserted":
+        blocked_reasons.append("binding_asserted_by_the_caller_not_derived_or_stored")
 
     # Even a satisfied binding does not let a label carry the write. The
     # binding names the organization; the write must use that organization's id.
@@ -168,6 +223,8 @@ def evaluate_persistence_safety(
             "rls_compatible": rls_compatible,
             "binding_required": binding_required,
             "binding_present": binding_present,
+            "binding_provenance": binding_provenance,
+            "binding_is_stored_record": binding_is_stored_record,
             "binding_status": binding_status,
             "write_allowed": write_allowed,
             "cross_tenant_risk": cross_tenant_risk,
@@ -302,5 +359,29 @@ def persistence_safety_invariant_failures(result: dict[str, Any]) -> list[str]:
     # A refusal must name itself.
     if not result.get("write_allowed") and not result.get("blocked_reasons"):
         fails.append("write_refused_without_a_reason")
+
+    # Gate 113. Provenance is a closed vocabulary; an unrecognised value would
+    # mean a fourth kind of binding nobody reviewed.
+    provenance = result.get("binding_provenance")
+    if provenance not in BINDING_PROVENANCES:
+        fails.append("binding_provenance_out_of_vocabulary")
+
+    # The stored flag is a restatement of the provenance, so it may not disagree
+    # with it in either direction.
+    stored = bool(result.get("binding_is_stored_record"))
+    if stored != (provenance == "binding_store_record"):
+        fails.append("binding_is_stored_record_disagrees_with_provenance")
+
+    # A binding cannot be simultaneously present and absent.
+    if result.get("binding_present") and provenance == "absent":
+        fails.append("binding_present_with_absent_provenance")
+
+    # Nothing a caller merely asserted may satisfy a binding requirement.
+    if (
+        result.get("binding_required")
+        and provenance == "caller_asserted"
+        and not result.get("blocked_reasons")
+    ):
+        fails.append("caller_asserted_binding_accepted_without_a_reason")
 
     return fails

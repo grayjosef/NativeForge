@@ -33,6 +33,7 @@ cheated:
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
@@ -64,7 +65,15 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # (nf_raw_source_payloads) and five create_index calls on that same table. It
 # touches neither nf_identities nor nf_org_memberships — the only two tables
 # this adapter reads — nor organizations. The adapter's schema is unchanged.
-EXPECTED_MIGRATION_HEAD = "0028"
+#
+# Gate 113 moved it 0028 -> 0029, under the same standard. The review: 0029's
+# upgrade() performs one create_table (nf_tenant_customer_org_bindings) and two
+# create_index calls on that table, then installs an RLS policy on it. It reads
+# nf_identities and organizations only as foreign key *targets*, which alters
+# neither. Neither nf_org_memberships nor nf_identities gains, loses or changes
+# a column, and the 0027 policies this adapter relies on are untouched. The
+# adapter's schema is unchanged.
+EXPECTED_MIGRATION_HEAD = "0029"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.
@@ -93,6 +102,17 @@ STORAGE_PRECONDITIONS = (
     "rls_proof_passed",
     "backup_restore_posture_documented",
 )
+
+
+_UUID_RE = re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    re.IGNORECASE,
+)
+
+
+def _is_uuid_shaped(value: Any) -> bool:
+    """Can this value survive the ``::uuid`` cast every RLS policy performs?"""
+    return bool(_UUID_RE.match(str(value or "").strip()))
 
 
 def _json_safe(x: Any) -> Any:
@@ -256,16 +276,35 @@ class PostgresMembershipDirectory:
         return dict(rows[0]) if rows else None
 
     def lookup_membership(
-        self, *, identity_id: Any, organization_profile_id: str | None
+        self, *, identity_id: Any, organization_id: str | None
     ) -> dict[str, Any] | None:
-        if not identity_id or not organization_profile_id or not self.configured:
+        """Membership for one identity in one organization.
+
+        The parameter is ``organization_id`` because the predicate is
+        ``organization_id`` - a Uuid(as_uuid=True) foreign key to
+        organizations.id. It was named ``organization_profile_id`` until Gate
+        113, which meant a String(128) profile identifier was being bound to a
+        UUID column: two identity spaces sharing one variable.
+
+        Nothing surfaced because the directory is unconfigured in normal
+        operation and the tests supply a fake row source, so the value never
+        reached a real column. Against Postgres the ``::uuid`` comparison would
+        raise - the database refusing the conflation, which is a worse place to
+        find out than here.
+        """
+        if not identity_id or not organization_id or not self.configured:
+            return None
+        if not _is_uuid_shaped(organization_id):
+            # Refused rather than coerced. A profile id is not an organization
+            # id, and passing one here would either raise in Postgres or match
+            # nothing - both worse than a named refusal.
             return None
         rows = self._query(
             f"SELECT id, organization_id, identity_id, state, membership_source, "
             f"role, role_source, approved_by, revoked_at, expires_at "
             f"FROM {MEMBERSHIP_TABLE} "
             f"WHERE identity_id = :identity_id AND organization_id = :org",
-            {"identity_id": identity_id, "org": str(organization_profile_id)},
+            {"identity_id": identity_id, "org": str(organization_id)},
         )
         return dict(rows[0]) if rows else None
 
@@ -278,7 +317,7 @@ def _audit(
     *,
     subject: str | None,
     issuer: str | None,
-    organization_profile_id: str | None,
+    organization_id: str | None,
     reasons: list[str],
     persisted: bool,
 ) -> dict[str, Any]:
@@ -286,7 +325,9 @@ def _audit(
         "event_type": event_type,
         "issuer": issuer,
         "subject": subject,
-        "organization_profile_id": organization_profile_id,
+        # Gate 113: the audit records the organization the lookup actually used,
+        # not whichever parameter name the caller happened to pass it under.
+        "organization_id": organization_id,
         "reasons": list(reasons),
         # Modeled, not stored. Flips only when audit persistence is wired against
         # a provisioned database — see doc 391.
@@ -297,7 +338,8 @@ def _audit(
 def resolve_persisted_membership(
     *,
     identity: Mapping[str, Any],
-    organization_profile_id: str | None,
+    organization_id: str | None = None,
+    organization_profile_id: str | None = None,
     directory: PostgresMembershipDirectory | None = None,
     now: str | None = None,
 ) -> dict[str, Any]:
@@ -308,6 +350,20 @@ def resolve_persisted_membership(
     verification, not repeated here.
     """
     reasons: list[str] = []
+
+    # Gate 113. `organization_id` is the parameter that reaches the UUID column.
+    # `organization_profile_id` is kept for callers that predate this gate and
+    # is deliberately NOT forwarded to that path - a profile id is not an
+    # organization id, and silently coercing one is the bug this gate fixes.
+    requested_organization_id = organization_id
+    if organization_id is None and organization_profile_id is not None:
+        if _is_uuid_shaped(organization_profile_id):
+            # A UUID arriving under the old name is an organization id wearing
+            # the wrong label. Accept it and say so.
+            requested_organization_id = organization_profile_id
+            reasons.append("organization_supplied_under_the_deprecated_parameter")
+        else:
+            reasons.append("organization_profile_id_is_not_an_organization_id")
 
     issuer = identity.get("issuer")
     subject = identity.get("subject")
@@ -321,7 +377,7 @@ def resolve_persisted_membership(
         reasons.append("identity_has_no_subject")
     if not issuer:
         reasons.append("identity_has_no_issuer")
-    if not organization_profile_id:
+    if not requested_organization_id:
         reasons.append("no_organization_requested")
 
     if directory is None or not directory.configured:
@@ -336,6 +392,7 @@ def resolve_persisted_membership(
                 "blocked_reasons": reasons,
                 "issuer": issuer,
                 "subject": subject,
+                "organization_id": requested_organization_id,
                 "organization_profile_id": organization_profile_id,
                 "trusted_role": None,
                 "identity_row_found": False,
@@ -350,7 +407,7 @@ def resolve_persisted_membership(
                     "tenant_access_denied",
                     subject=subject,
                     issuer=issuer,
-                    organization_profile_id=organization_profile_id,
+                    organization_id=requested_organization_id,
                     reasons=reasons,
                     persisted=False,
                 ),
@@ -369,10 +426,10 @@ def resolve_persisted_membership(
         reasons.append("no_identity_row")
 
     membership_row = None
-    if identity_row is not None and organization_profile_id:
+    if identity_row is not None and requested_organization_id:
         membership_row = directory.lookup_membership(
             identity_id=identity_row.get("id"),
-            organization_profile_id=organization_profile_id,
+            organization_id=requested_organization_id,
         )
         if membership_row is None:
             reasons.append("no_membership_row")
@@ -420,8 +477,13 @@ def resolve_persisted_membership(
 
         # Defence in depth behind RLS: if a row for a different organization
         # reached this code, the database boundary already failed. Say so loudly.
+        # Gate 113: compared against the organization the lookup actually used.
+        # This read `organization_profile_id` until the parameter split, which
+        # would have compared every row against None once callers moved to the
+        # correct name - the same stale-reference class of bug this gate fixed
+        # in the query itself.
         row_org = membership_row.get("organization_id")
-        if row_org is not None and str(row_org) != str(organization_profile_id):
+        if row_org is not None and str(row_org) != str(requested_organization_id):
             reasons.append("organization_mismatch")
 
         if not reasons and role in ALL_ROLES and role not in NON_GRANTING_ROLES:
@@ -440,6 +502,7 @@ def resolve_persisted_membership(
             "blocked_reasons": reasons,
             "issuer": issuer,
             "subject": subject,
+            "organization_id": requested_organization_id,
             "organization_profile_id": organization_profile_id,
             "trusted_role": trusted_role,
             "identity_row_found": identity_row is not None,
@@ -458,7 +521,7 @@ def resolve_persisted_membership(
                     event_type,
                     subject=subject,
                     issuer=issuer,
-                    organization_profile_id=organization_profile_id,
+                    organization_id=requested_organization_id,
                     reasons=reasons,
                     persisted=persisted,
                 )

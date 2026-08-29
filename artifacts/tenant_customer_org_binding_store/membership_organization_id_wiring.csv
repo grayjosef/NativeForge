@@ -1,0 +1,6 @@
+call_site,parameter,reaches,gate_113_status
+postgres_membership_directory.lookup_membership,organization_id,nf_org_memberships.organization_id (uuid),renamed_by_gate_113
+postgres_membership_directory.resolve_persisted_membership,organization_id,forwarded to lookup_membership,renamed_by_gate_113
+postgres_membership_directory.resolve_persisted_membership,organization_profile_id,refused unless uuid-shaped,deprecated_by_gate_113
+in_memory_membership_directory.lookup,organization_id,"dict key (no column, no rls)",vocabulary_added_by_gate_113
+in_memory_membership_directory.lookup,organization_profile_id,"dict key (no column, no rls)",correct_here_unchanged

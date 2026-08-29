@@ -1,0 +1,46 @@
+{
+  "beta_onboarding_ready": false,
+  "blocked_reasons": [
+    "no_customer_auth_so_nobody_can_verify_a_binding",
+    "no_customer_persistence_to_write_a_binding_into",
+    "no_database_has_applied_the_binding_store_migration",
+    "no_verified_binding_exists_to_store"
+  ],
+  "customer_auth_live": false,
+  "customer_bindings_stored": false,
+  "customer_org_id_is_rls_authority": false,
+  "customer_persistence_live": false,
+  "demo_binding_storage_ready": false,
+  "fabricated": false,
+  "forbidden_anchor_names": [
+    "customer_org_id",
+    "organization_profile_id",
+    "tenant_id"
+  ],
+  "label_columns": [
+    "tenant_id",
+    "customer_org_id"
+  ],
+  "label_columns_have_foreign_keys": false,
+  "live_fetch_performed": false,
+  "migration_applied": false,
+  "migration_defined": true,
+  "migration_revision": "0029",
+  "operational_binding_storage_ready": false,
+  "organization_profile_id_is_rls_authority": false,
+  "production_rollout_ready": false,
+  "rls_anchor_column": "organization_id",
+  "rls_predicate": "organization_id = current_setting('app.current_org_id', true)::uuid AND is_demo = current_setting('app.current_org_is_demo', true)::boolean",
+  "rows_in_table": 0,
+  "schema_version": "nf_tenant_customer_org_binding_store_artifact_v1",
+  "storable_binding_statuses": [
+    "conflict",
+    "demo_fixture",
+    "pending_review",
+    "revoked",
+    "verified_binding"
+  ],
+  "store_table": "nf_tenant_customer_org_bindings",
+  "store_writable": false,
+  "tenant_id_is_rls_authority": false
+}

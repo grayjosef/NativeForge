@@ -52,7 +52,11 @@ IDENTITY_ROW = {
     "email_verified": True,
 }
 
-ORG = "org-profile-1"
+# Gate 113: a real organization_id. This was "org-profile-1" - a
+# profile-shaped string flowing into the organization_id UUID predicate,
+# which is exactly the conflation Gate 113 fixed. The lookup now refuses a
+# non-UUID value, so these tests supply the identity the column holds.
+ORG = "00000000-0000-4000-8000-0000000000a1"
 
 
 def _membership_row(**overrides: object) -> dict[str, object]:
@@ -286,7 +290,7 @@ def test_adapter_fails_closed_without_a_row_source() -> None:
     directory = PostgresMembershipDirectory()
     assert directory.configured is False
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert "no_production_storage_configured" in result["blocked_reasons"]
@@ -297,7 +301,7 @@ def test_adapter_fails_closed_without_a_row_source() -> None:
 
 def test_adapter_fails_closed_with_no_directory_at_all() -> None:
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=None
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=None
     )
     assert result["allowed"] is False
     assert result["production_storage_live"] is False
@@ -318,7 +322,7 @@ def test_verified_identity_alone_cannot_act_without_membership() -> None:
     """Gate 60 ends at a verified token. A token is not a seat."""
     directory = _directory(identity_row=IDENTITY_ROW, membership_row=None)
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert result["identity_row_found"] is True
@@ -330,7 +334,7 @@ def test_unverified_identity_is_denied_even_with_a_perfect_membership() -> None:
     directory = _directory(identity_row=IDENTITY_ROW, membership_row=_membership_row())
     result = resolve_persisted_membership(
         identity={**VERIFIED_IDENTITY, "verification_trusted": False},
-        organization_profile_id=ORG,
+        organization_id=ORG,
         directory=directory,
     )
     assert result["allowed"] is False
@@ -340,7 +344,7 @@ def test_unverified_identity_is_denied_even_with_a_perfect_membership() -> None:
 def test_active_trusted_membership_maps_a_role_in_the_modeled_path() -> None:
     directory = _directory(identity_row=IDENTITY_ROW, membership_row=_membership_row())
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is True, result["blocked_reasons"]
     assert result["trusted_role"] == "grant_lead"
@@ -357,7 +361,7 @@ def test_identity_is_keyed_on_issuer_and_subject_not_email() -> None:
     directory = _directory(identity_row=IDENTITY_ROW, membership_row=_membership_row())
     result = resolve_persisted_membership(
         identity={**VERIFIED_IDENTITY, "issuer": "https://evil.example/"},
-        organization_profile_id=ORG,
+        organization_id=ORG,
         directory=directory,
     )
     assert result["allowed"] is False
@@ -375,7 +379,7 @@ def test_non_active_membership_states_deny(state: str) -> None:
         identity_row=IDENTITY_ROW, membership_row=_membership_row(state=state)
     )
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert result["trusted_role"] is None
@@ -393,7 +397,7 @@ def test_revocation_timestamp_overrides_an_active_state_column() -> None:
         ),
     )
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert result["membership_state"] == "revoked"
@@ -405,7 +409,7 @@ def test_expiry_is_evaluated_against_caller_supplied_now() -> None:
 
     before = resolve_persisted_membership(
         identity=VERIFIED_IDENTITY,
-        organization_profile_id=ORG,
+        organization_id=ORG,
         directory=directory,
         now="2026-05-01T00:00:00Z",
     )
@@ -413,7 +417,7 @@ def test_expiry_is_evaluated_against_caller_supplied_now() -> None:
 
     after = resolve_persisted_membership(
         identity=VERIFIED_IDENTITY,
-        organization_profile_id=ORG,
+        organization_id=ORG,
         directory=directory,
         now="2026-07-01T00:00:00Z",
     )
@@ -431,7 +435,7 @@ def test_untrusted_membership_sources_deny(source: str) -> None:
         membership_row=_membership_row(membership_source=source),
     )
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert result["trusted_role"] is None
@@ -450,7 +454,7 @@ def test_untrusted_role_sources_deny(source: str) -> None:
         identity_row=IDENTITY_ROW, membership_row=_membership_row(role_source=source)
     )
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert any(
@@ -464,7 +468,7 @@ def test_internal_role_cannot_become_customer_authority() -> None:
         membership_row=_membership_row(role="operator_internal"),
     )
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert "internal_role_cannot_hold_customer_authority" in result["blocked_reasons"]
@@ -476,7 +480,7 @@ def test_unknown_role_grants_nothing() -> None:
         identity_row=IDENTITY_ROW, membership_row=_membership_row(role="unknown")
     )
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert "role_grants_nothing:unknown" in result["blocked_reasons"]
@@ -489,7 +493,7 @@ def test_org_mismatch_is_denied_and_audited_as_cross_org() -> None:
         membership_row=_membership_row(organization_id="some-other-org"),
     )
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is False
     assert "organization_mismatch" in result["blocked_reasons"]
@@ -507,7 +511,7 @@ def test_every_denial_emits_an_audit_event() -> None:
         directory = _directory(identity_row=IDENTITY_ROW, membership_row=row)
         result = resolve_persisted_membership(
             identity=VERIFIED_IDENTITY,
-            organization_profile_id=ORG,
+            organization_id=ORG,
             directory=directory,
         )
         assert result["allowed"] is False
@@ -529,7 +533,7 @@ def test_customer_login_live_is_never_true_from_this_path() -> None:
         **ALL_PRECONDITIONS,
     )
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=directory
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=directory
     )
     assert result["allowed"] is True, result["blocked_reasons"]
     assert result["customer_login_live"] is False
@@ -538,7 +542,7 @@ def test_customer_login_live_is_never_true_from_this_path() -> None:
 
 def test_invariants_reject_a_denial_that_leaks_a_role() -> None:
     result = resolve_persisted_membership(
-        identity=VERIFIED_IDENTITY, organization_profile_id=ORG, directory=None
+        identity=VERIFIED_IDENTITY, organization_id=ORG, directory=None
     )
     result["trusted_role"] = "org_owner"
     assert "denied_but_role_returned" in resolution_invariant_failures(result)

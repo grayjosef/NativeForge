@@ -37,7 +37,15 @@ DOCS = ROOT / "docs" / "operations"
 # PAYLOADS_SCHEMA.md. The migration adds a metadata table only; it is not a
 # production storage claim, and doc 544 records that production raw payload
 # storage remains unavailable because no body store is configured.
-CURRENT_HEAD = "0028"
+#
+# Gate 113 re-pinned 0028 -> 0029 for nf_tenant_customer_org_bindings, the
+# tenant/customer-org identity binding store. Documented in
+# docs/operations/618_GATE113_IDENTITY_BINDING_STORE_SCHEMA.md. The table is
+# created empty and stays empty: doc 620 records that creating it permitted no
+# storage, because Gate 110's three refusals - no customer auth to supply a
+# verifier, no customer persistence to write into, no verified binding to
+# store - are untouched by a CREATE TABLE.
+CURRENT_HEAD = "0029"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

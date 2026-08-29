@@ -65,6 +65,7 @@ organization_profile_id        String(128), no FK, on a table with no RLS and a
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any
 
 SCHEMA_VERSION = "nf_tenant_customer_org_binding_store_decision_v1"
@@ -93,6 +94,9 @@ DECISION_FIELDS: tuple[str, ...] = (
     "recommended_foreign_keys",
     "requires_migration",
     "migration_safe_now",
+    "migration_defined",
+    "migration_revision",
+    "migration_applied",
     "rls_enforced_by",
     "binding_lookup_key",
     "demo_binding_storage_allowed",
@@ -135,6 +139,76 @@ NEXT_ACTION_SEQUENCE: tuple[tuple[str, str], ...] = (
 )
 
 
+# Gate 113 created the table this decision recommended. Two different facts got
+# the same name before that, and only one of them was ever true:
+#
+#   migration_defined  the revision file exists in this repository
+#   migration_applied  a database has actually run it
+#
+# Both were reported as the single constant ``migration_applied: False``. That
+# was accidentally correct while no migration existed and no database existed.
+# It would have become a lie the moment revision 0029 landed, which is why this
+# gate measures both rather than asserting either.
+BINDING_TABLE_NAME = "nf_tenant_customer_org_bindings"
+
+
+def _versions_dir() -> Path:
+    return Path(__file__).resolve().parents[3] / "alembic" / "versions"
+
+
+def detect_binding_migration_defined(
+    versions_dir: Path | None = None,
+) -> dict[str, Any]:
+    """Is there a revision file in this repo that creates the binding table?
+
+    Read off disk, never declared. The directory is injectable so a test can
+    point at an empty one and observe the negative branch - without that, the
+    False case is unreachable in a repository that contains the migration.
+    """
+    vdir = versions_dir if versions_dir is not None else _versions_dir()
+    matches: list[str] = []
+    if vdir.is_dir():
+        for path in sorted(vdir.glob("*.py")):
+            body = path.read_text(encoding="utf-8", errors="replace")
+            if BINDING_TABLE_NAME in body and "op.create_table" in body:
+                matches.append(path.name)
+
+    revision: str | None = None
+    if len(matches) == 1:
+        # Revision files are named ``<revision>_<slug>.py`` throughout this repo.
+        revision = matches[0].split("_", 1)[0]
+
+    return {
+        "migration_defined": len(matches) == 1,
+        "migration_revision": revision,
+        "matching_migration_files": matches,
+        # More than one file creating the same table is ambiguity, not progress.
+        "duplicate_migration_files": len(matches) > 1,
+    }
+
+
+def _migration_applied(
+    *,
+    migration_defined: bool,
+    migration_revision: str | None,
+    database_revision: str | None,
+) -> bool:
+    """Has a database actually run the binding migration?
+
+    A file on disk is not an applied migration. With no provisioned database
+    ``database_revision`` is None and this is False - the same answer the old
+    constant gave, now for a reason that can change when the world does.
+
+    Revision ids in this repository are zero-padded decimal strings, so an
+    ordering comparison is valid; anything else is refused rather than guessed.
+    """
+    if not migration_defined or not migration_revision or not database_revision:
+        return False
+    if not (migration_revision.isdigit() and database_revision.isdigit()):
+        return False
+    return int(database_revision) >= int(migration_revision)
+
+
 def _json_safe(x: Any) -> Any:
     json.dumps(x)
     return x
@@ -146,6 +220,8 @@ def build_binding_store_decision(
     customer_auth_live: bool | None = None,
     customer_persistence_live: bool | None = None,
     verified_binding_available: bool | None = None,
+    versions_dir: Path | None = None,
+    database_revision: str | None = None,
 ) -> dict[str, Any]:
     """Recommend a store and say whether acting on it is safe. Applies nothing."""
     from nativeforge.services.awarded_grants_requirements_readiness_service import (
@@ -175,7 +251,18 @@ def build_binding_store_decision(
             awarded.get("verified_operational_identity_binding")
         )
 
+    migration_detection = detect_binding_migration_defined(versions_dir)
+    migration_defined = bool(migration_detection["migration_defined"])
+    migration_applied = _migration_applied(
+        migration_defined=migration_defined,
+        migration_revision=migration_detection["migration_revision"],
+        database_revision=database_revision,
+    )
+
     blocked_reasons: list[str] = []
+
+    if migration_detection["duplicate_migration_files"]:
+        blocked_reasons.append("multiple_migration_files_create_the_binding_table")
 
     if not rls_authority_confirmed:
         blocked_reasons.append("rls_authority_not_confirmed")
@@ -222,11 +309,20 @@ def build_binding_store_decision(
             "recommended_label_columns": ["tenant_id", "customer_org_id"],
             "requires_migration": requires_migration,
             "migration_safe_now": migration_safe_now,
-            "migration_applied": False,
+            "migration_defined": migration_defined,
+            "migration_revision": migration_detection["migration_revision"],
+            "migration_applied": migration_applied,
             "rls_enforced_by": rls_enforced_by,
             "binding_lookup_key": binding_lookup_key,
             "demo_binding_storage_allowed": False,
-            "operational_binding_storage_allowed": migration_safe_now,
+            # Gate 113 split two facts that were one value while no binding
+            # table could exist: ``migration_safe_now`` is whether the
+            # preconditions for acting are met, and this is whether there is
+            # somewhere to write. Storing into a table no database has created
+            # is not permitted by the first fact being true.
+            "operational_binding_storage_allowed": bool(
+                migration_safe_now and migration_applied
+            ),
             "rls_authority_confirmed": rls_authority_confirmed,
             "customer_auth_live": customer_auth_live,
             "customer_persistence_live": customer_persistence_live,
@@ -259,7 +355,6 @@ def decision_invariant_failures(decision: dict[str, Any]) -> list[str]:
     for constant in (
         "tenant_id_recommended_as_rls_authority",
         "demo_ids_recommended_as_persistence_keys",
-        "migration_applied",
         "schema_changed",
         "demo_binding_storage_allowed",
         "fabricated",
@@ -310,5 +405,36 @@ def decision_invariant_failures(decision: dict[str, Any]) -> list[str]:
     # A refusal must name itself.
     if not decision.get("migration_safe_now") and not decision.get("blocked_reasons"):
         fails.append("migration_refused_without_a_reason")
+
+    # Gate 113. ``migration_applied`` used to be a hard-coded False checked by
+    # this function as a constant, which would have made the invariant fire on
+    # a correctly-applied migration. It is measured now, so what follows checks
+    # the relationships between the measurements instead of their values.
+
+    # A database cannot have run a revision this repository does not contain.
+    if decision.get("migration_applied") and not decision.get("migration_defined"):
+        fails.append("migration_applied_without_a_defined_migration")
+
+    # Detection reports a revision if and only if it found exactly one file.
+    if decision.get("migration_defined") and not decision.get("migration_revision"):
+        fails.append("migration_defined_without_a_revision")
+    if decision.get("migration_revision") and not decision.get("migration_defined"):
+        fails.append("migration_revision_without_a_defined_migration")
+
+    # Writing operational bindings into a table no database has created is the
+    # failure this whole store exists to make impossible.
+    if decision.get("operational_binding_storage_allowed") and not decision.get(
+        "migration_applied"
+    ):
+        fails.append("operational_storage_permitted_before_the_migration_is_applied")
+
+    # The table existing must never, on its own, permit storage. Gate 110's
+    # three refusals are about having a verifier, a place to write and a
+    # binding worth writing - none of which a CREATE TABLE supplies.
+    if decision.get("migration_defined") and decision.get(
+        "operational_binding_storage_allowed"
+    ):
+        if not decision.get("customer_auth_live"):
+            fails.append("storage_allowed_from_a_table_existing_without_a_verifier")
 
     return fails

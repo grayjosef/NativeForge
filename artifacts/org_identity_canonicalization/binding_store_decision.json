@@ -12,6 +12,8 @@
   "fabricated": false,
   "live_fetch_performed": false,
   "migration_applied": false,
+  "migration_defined": true,
+  "migration_revision": "0029",
   "migration_safe_now": false,
   "next_required_actions": [
     {

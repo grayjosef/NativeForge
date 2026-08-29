@@ -236,11 +236,26 @@ class InMemoryMembershipDirectory:
         self._records[(subject, org)] = dict(record)
 
     def lookup(
-        self, *, subject: str | None, organization_profile_id: str | None
+        self,
+        *,
+        subject: str | None,
+        organization_profile_id: str | None = None,
+        organization_id: str | None = None,
     ) -> dict[str, Any] | None:
-        if not subject or not organization_profile_id:
+        """Look up a record by whichever organization key the caller holds.
+
+        This directory is a plain dict with no UUID column and no row-level
+        security behind it, so profile keying is correct here - unlike the
+        Postgres directory, where the same name was bound to a UUID column.
+        Gate 113 added ``organization_id`` for vocabulary agreement, not because
+        the in-memory keying was wrong.
+        """
+        key = organization_id if organization_id is not None else (
+            organization_profile_id
+        )
+        if not subject or not key:
             return None
-        rec = self._records.get((str(subject), str(organization_profile_id)))
+        rec = self._records.get((str(subject), str(key)))
         return dict(rec) if rec else None
 
     def status(self) -> dict[str, Any]:
