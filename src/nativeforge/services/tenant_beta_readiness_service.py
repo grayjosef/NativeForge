@@ -182,6 +182,27 @@ def _detect_verified_operational_binding() -> bool:
     return _module_importable("nativeforge.repositories.identity_binding")
 
 
+
+def _capability_persistence_live(capability: str) -> bool:
+    """Is this lane's customer persistence actually live?
+
+    Gate 114 replaced three different answers to this question with one. Before
+    it, this lane asked whether a module imported - which would have reported
+    "persistence live" for an empty file, with no table, no RLS policy, no
+    organization anchor and nobody able to authenticate.
+
+    The capability model requires all of those, so this moves only when
+    persistence really does.
+    """
+    try:
+        from nativeforge.services.customer_persistence_capability_service import (
+            build_capability,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return False
+    return bool(build_capability(capability).get("operational"))
+
+
 def build_tenant_beta_readiness() -> dict[str, Any]:
     """Can we demo it, and can we onboard on it? Every value detected."""
     components = {
@@ -194,7 +215,11 @@ def build_tenant_beta_readiness() -> dict[str, Any]:
     # separate absence and none is inferred from the others.
     email_delivery = _module_importable("nativeforge.services.email_delivery_service")
     customer_auth_live = False
-    customer_persistence_live = False
+    # Gate 114: was a hard-coded False, alongside a differently-derived False in
+    # the awarded lane and a third in the digest lane. One question, one answer.
+    customer_persistence_live = _capability_persistence_live(
+        "tenant_profile_persistence"
+    )
 
     demo_missing = sorted(key for key in DEMO_REQUIRED_KEYS if not components[key])
     ready_for_demo = not demo_missing

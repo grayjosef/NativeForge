@@ -1,0 +1,243 @@
+{
+  "beta_onboarding_recommended": false,
+  "blocked_reasons": [
+    "every_lane_is_waiting_on_an_unmet_prerequisite",
+    "no_customer_auth_so_no_lane_can_be_operated",
+    "no_document_storage_for_award_evidence",
+    "no_email_delivery_for_digest_distribution",
+    "no_live_source_collection_for_digest_or_watchlist"
+  ],
+  "capabilities_operational_out_of_sequence": [],
+  "customer_persistence_live": false,
+  "demo_persistence_allowed": true,
+  "demo_persistence_label": "demo_fixture",
+  "fabricated": false,
+  "live_fetch_performed": false,
+  "next_gate_recommendation": {
+    "recommendation": "customer_authentication",
+    "unblocks": [
+      "award_requirements_persistence",
+      "awarded_grants_persistence",
+      "beta_onboarding_persistence",
+      "document_library_persistence",
+      "identity_binding_persistence",
+      "source_watchlist_persistence",
+      "tenant_digest_persistence",
+      "tenant_profile_persistence"
+    ],
+    "why": "every lane in the spine lists customer_auth as a prerequisite, so no amount of schema moves any of them. Auth is the only thing that unblocks more than one lane at once."
+  },
+  "operational_awarded_recommended": false,
+  "operational_digest_recommended": false,
+  "persisted": false,
+  "ready_to_build": [],
+  "ready_to_build_next": null,
+  "recommended_sequence": [
+    {
+      "capability": "identity_binding_persistence",
+      "guard_operation": "write_identity_binding",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 1,
+      "prerequisites": [
+        "customer_auth"
+      ],
+      "ready_to_build": false,
+      "repository_available": false,
+      "requires_migration": false,
+      "requires_repository": true,
+      "rls_backed": true,
+      "schema_available": true,
+      "unmet_prerequisites": [
+        "customer_auth"
+      ],
+      "why_here": "nothing else can be owned by an organization until a binding says which organization a tenant label corresponds to"
+    },
+    {
+      "capability": "tenant_profile_persistence",
+      "guard_operation": "write_tenant_profile",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 2,
+      "prerequisites": [
+        "customer_auth",
+        "identity_binding_persistence"
+      ],
+      "ready_to_build": false,
+      "repository_available": true,
+      "requires_migration": false,
+      "requires_repository": false,
+      "rls_backed": true,
+      "schema_available": true,
+      "unmet_prerequisites": [
+        "customer_auth",
+        "identity_binding_persistence"
+      ],
+      "why_here": "the first row a real customer owns, and the thing every other lane attaches to"
+    },
+    {
+      "capability": "awarded_grants_persistence",
+      "guard_operation": "write_awarded_grant",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 3,
+      "prerequisites": [
+        "customer_auth",
+        "tenant_profile_persistence"
+      ],
+      "ready_to_build": false,
+      "repository_available": false,
+      "requires_migration": true,
+      "requires_repository": true,
+      "rls_backed": false,
+      "schema_available": false,
+      "unmet_prerequisites": [
+        "customer_auth",
+        "tenant_profile_persistence"
+      ],
+      "why_here": "an award is the anchor its requirements hang from"
+    },
+    {
+      "capability": "award_requirements_persistence",
+      "guard_operation": "write_award_requirement",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 4,
+      "prerequisites": [
+        "customer_auth",
+        "awarded_grants_persistence",
+        "document_storage"
+      ],
+      "ready_to_build": false,
+      "repository_available": false,
+      "requires_migration": true,
+      "requires_repository": true,
+      "rls_backed": false,
+      "schema_available": false,
+      "unmet_prerequisites": [
+        "customer_auth",
+        "awarded_grants_persistence",
+        "document_storage"
+      ],
+      "why_here": "requirements are meaningless without the award they came from, and unsubstantiable without somewhere to keep the evidence"
+    },
+    {
+      "capability": "document_library_persistence",
+      "guard_operation": "write_document_library_item",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 5,
+      "prerequisites": [
+        "customer_auth",
+        "document_storage"
+      ],
+      "ready_to_build": false,
+      "repository_available": false,
+      "requires_migration": true,
+      "requires_repository": true,
+      "rls_backed": false,
+      "schema_available": false,
+      "unmet_prerequisites": [
+        "customer_auth",
+        "document_storage"
+      ],
+      "why_here": "evidence needs a home before anything claims to track compliance"
+    },
+    {
+      "capability": "tenant_digest_persistence",
+      "guard_operation": "write_digest_record",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 6,
+      "prerequisites": [
+        "customer_auth",
+        "tenant_profile_persistence",
+        "live_source_collection"
+      ],
+      "ready_to_build": false,
+      "repository_available": false,
+      "requires_migration": true,
+      "requires_repository": true,
+      "rls_backed": false,
+      "schema_available": false,
+      "unmet_prerequisites": [
+        "customer_auth",
+        "tenant_profile_persistence",
+        "live_source_collection"
+      ],
+      "why_here": "a digest summarises persisted state over live sources; without both it summarises fixtures"
+    },
+    {
+      "capability": "source_watchlist_persistence",
+      "guard_operation": "write_source_watchlist",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 7,
+      "prerequisites": [
+        "customer_auth",
+        "live_source_collection"
+      ],
+      "ready_to_build": false,
+      "repository_available": false,
+      "requires_migration": true,
+      "requires_repository": true,
+      "rls_backed": false,
+      "schema_available": false,
+      "unmet_prerequisites": [
+        "customer_auth",
+        "live_source_collection"
+      ],
+      "why_here": "what a tenant watches is only meaningful once sources are collected"
+    },
+    {
+      "capability": "beta_onboarding_persistence",
+      "guard_operation": "write_beta_onboarding_record",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 8,
+      "prerequisites": [
+        "customer_auth",
+        "identity_binding_persistence",
+        "tenant_profile_persistence"
+      ],
+      "ready_to_build": false,
+      "repository_available": false,
+      "requires_migration": true,
+      "requires_repository": true,
+      "rls_backed": false,
+      "schema_available": false,
+      "unmet_prerequisites": [
+        "customer_auth",
+        "identity_binding_persistence",
+        "tenant_profile_persistence"
+      ],
+      "why_here": "onboarding is the last thing built and the first thing shown; it needs everything under it to be real"
+    }
+  ],
+  "requires_auth": true,
+  "requires_document_storage": true,
+  "requires_email_delivery": true,
+  "requires_live_source_collection": true,
+  "requires_migrations": [
+    "award_requirements_persistence",
+    "awarded_grants_persistence",
+    "beta_onboarding_persistence",
+    "document_library_persistence",
+    "source_watchlist_persistence",
+    "tenant_digest_persistence"
+  ],
+  "requires_repositories": [
+    "award_requirements_persistence",
+    "awarded_grants_persistence",
+    "beta_onboarding_persistence",
+    "document_library_persistence",
+    "identity_binding_persistence",
+    "source_watchlist_persistence",
+    "tenant_digest_persistence"
+  ],
+  "rls_anchor": "organization_id",
+  "rows_written": 0,
+  "schema_changed": false,
+  "schema_version": "nf_customer_persistence_spine_decision_v1",
+  "sequence_length": 8
+}

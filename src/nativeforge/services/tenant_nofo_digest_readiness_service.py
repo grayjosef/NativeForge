@@ -151,6 +151,27 @@ def _detect_verified_operational_binding() -> bool:
     return _module_importable("nativeforge.repositories.identity_binding")
 
 
+
+def _capability_persistence_live(capability: str) -> bool:
+    """Is this lane's customer persistence actually live?
+
+    Gate 114 replaced three different answers to this question with one. Before
+    it, this lane asked whether a module imported - which would have reported
+    "persistence live" for an empty file, with no table, no RLS policy, no
+    organization anchor and nobody able to authenticate.
+
+    The capability model requires all of those, so this moves only when
+    persistence really does.
+    """
+    try:
+        from nativeforge.services.customer_persistence_capability_service import (
+            build_capability,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return False
+    return bool(build_capability(capability).get("operational"))
+
+
 def build_digest_readiness() -> dict[str, Any]:
     """Can we preview a digest, and can we operate one? Everything detected."""
     components = {
@@ -163,7 +184,10 @@ def build_digest_readiness() -> dict[str, Any]:
     )
     live_collection = _detect_live_source_collection()
     monitoring = _detect_source_monitoring()
-    customer_persistence = False
+    # Gate 114: was a hard-coded False. Correct today, and the same kind of
+    # constant Gate 113 removed from migration_applied - it would still have
+    # said False after digest persistence became real.
+    customer_persistence = _capability_persistence_live("tenant_digest_persistence")
 
     preview_missing = sorted(k for k, v in components.items() if not v)
     ready_for_demo_preview = not preview_missing

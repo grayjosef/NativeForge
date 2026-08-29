@@ -174,6 +174,11 @@ def build_binding_store_readiness(
             "operational_binding_storage_ready": operational_ready,
             "demo_binding_storage_ready": demo_ready,
             "rls_anchor": decision["rls_enforced_by"],
+            # Gate 114: where this lane sits in the persistence spine, and what
+            # the spine says to build next. A readiness surface that reports a
+            # refusal without saying what would lift it leaves the reader to
+            # guess, and the guess is usually "build this one harder".
+            "persistence_spine_position": _spine_position(),
             **components,
             "blocked_reasons": sorted(set(blocked_reasons)),
             # Constants. A readiness report reads nothing and writes nothing.
@@ -187,6 +192,46 @@ def build_binding_store_readiness(
             "live_fetch_performed": False,
         }
     )
+
+
+def _spine_position() -> dict[str, Any]:
+    """This lane's place in the Gate 114D sequence, read from that service.
+
+    Imported inside the function because the spine decision reads the capability
+    model, which reads this repository's schema - keeping the import local keeps
+    the module graph acyclic and the cost off the import path.
+    """
+    try:
+        from nativeforge.services.customer_persistence_spine_decision_service import (
+            build_persistence_spine_decision,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return {
+            "capability": "identity_binding_persistence",
+            "position": None,
+            "ready_to_build": False,
+            "unmet_prerequisites": ["spine_decision_unavailable"],
+            "next_recommended": None,
+        }
+
+    decision = build_persistence_spine_decision()
+    entry = next(
+        (
+            row
+            for row in decision["recommended_sequence"]
+            if row["capability"] == "identity_binding_persistence"
+        ),
+        {},
+    )
+    return {
+        "capability": "identity_binding_persistence",
+        "position": entry.get("position"),
+        "ready_to_build": bool(entry.get("ready_to_build")),
+        "unmet_prerequisites": list(entry.get("unmet_prerequisites") or []),
+        "next_recommended": decision.get("next_gate_recommendation", {}).get(
+            "recommendation"
+        ),
+    }
 
 
 def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
@@ -246,5 +291,14 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
         "blocked_reasons"
     ):
         fails.append("storage_refused_without_a_reason")
+
+    # Gate 114: and it must say what would lift it. A blocked lane with no
+    # place in the sequence is a dead end rather than a next step.
+    spine = readiness.get("persistence_spine_position") or {}
+    if not readiness.get("operational_binding_storage_ready"):
+        if not spine:
+            fails.append("readiness_refused_without_a_spine_position")
+        elif spine.get("ready_to_build") and spine.get("unmet_prerequisites"):
+            fails.append("spine_reports_ready_to_build_with_unmet_prerequisites")
 
     return fails

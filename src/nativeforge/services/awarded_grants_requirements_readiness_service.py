@@ -168,6 +168,27 @@ def _detect_verified_operational_binding() -> bool:
     return _module_importable("nativeforge.repositories.identity_binding")
 
 
+
+def _capability_persistence_live(capability: str) -> bool:
+    """Is this lane's customer persistence actually live?
+
+    Gate 114 replaced three different answers to this question with one. Before
+    it, this lane asked whether a module imported - which would have reported
+    "persistence live" for an empty file, with no table, no RLS policy, no
+    organization anchor and nobody able to authenticate.
+
+    The capability model requires all of those, so this moves only when
+    persistence really does.
+    """
+    try:
+        from nativeforge.services.customer_persistence_capability_service import (
+            build_capability,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return False
+    return bool(build_capability(capability).get("operational"))
+
+
 def build_awarded_requirements_readiness(
     *, detect_root: Any = None
 ) -> dict[str, Any]:
@@ -178,11 +199,17 @@ def build_awarded_requirements_readiness(
     }
 
     ui_available = _detect_awarded_ui(detect_root)
-    # Nothing persists and no document store is wired. Both are detected the
-    # same way the digest lane detects its own gaps: by asking whether the
-    # module that would do it exists.
-    customer_persistence_live = _module_importable(
-        "nativeforge.repositories.awarded_grant"
+    # No document store is wired, detected the same way the digest lane detects
+    # its own gaps: by asking whether the module that would do it exists.
+    #
+    # Persistence is no longer detected that way. Gate 114A found this line
+    # asking whether ``nativeforge.repositories.awarded_grant`` imports, which
+    # would have flipped customer_persistence_live to True for an empty file -
+    # a module-existence proxy moving in the unsafe direction. It now asks the
+    # capability model, which requires a table, an organization_id anchor, an
+    # RLS policy, a repository, a contract and customer auth.
+    customer_persistence_live = _capability_persistence_live(
+        "awarded_grants_persistence"
     )
     document_storage_live = _module_importable(
         "nativeforge.services.award_document_store_service"
