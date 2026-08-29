@@ -129,7 +129,13 @@ source .venv/bin/activate
 # `org` already reach the module, but the tests that matter are about two
 # identity spaces that must never be silently equated - named for the binding
 # and the cross-tenant risk, which no earlier keyword reached.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification or attestation or regeneration or drift or honest or empty or unknown or obligation or calendar or binding or cross_tenant'
+#
+# `canonicalization` and `rls` were added by Gate 110. `identity`, `org` and
+# `binding` already reach the module, but the tests that matter are about which
+# identity the database actually enforces on and what may never be written
+# under a label - named for the canonicalization and the RLS authority, which
+# no earlier keyword reached.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification or attestation or regeneration or drift or honest or empty or unknown or obligation or calendar or binding or cross_tenant or canonicalization or rls'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -320,6 +326,16 @@ CRITICAL=(
   "tests/test_gate109_tenant_customer_org_identity_binding.py::test_a_demo_binding_never_reaches_an_operational_surface"
   "tests/test_gate109_tenant_customer_org_identity_binding.py::test_cross_tenant_risk_is_true_whenever_binding_is_absent_or_conflicting"
   "tests/test_gate109_tenant_customer_org_identity_binding.py::test_a_write_cannot_be_permitted_without_a_verified_binding"
+
+  # Gate 110. Five that keep customer data inside the boundary the database
+  # actually enforces: organization_id is the authority, a UUID-shaped
+  # tenant_id is still not, a label never carries a write however well bound,
+  # and the binding store is never keyed on a label.
+  "tests/test_gate110_org_identity_canonicalization.py::test_organization_id_is_the_rls_authority"
+  "tests/test_gate110_org_identity_canonicalization.py::test_a_uuid_shaped_tenant_id_is_still_not_the_authority"
+  "tests/test_gate110_org_identity_canonicalization.py::test_tenant_id_cannot_persist_awarded_grants_even_with_a_verified_binding"
+  "tests/test_gate110_org_identity_canonicalization.py::test_a_satisfied_binding_still_does_not_let_a_label_carry_the_write"
+  "tests/test_gate110_org_identity_canonicalization.py::test_the_binding_store_anchors_to_the_rls_authority"
 )
 
 FAIL=0

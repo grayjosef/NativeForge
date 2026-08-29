@@ -81,9 +81,11 @@ DEMO_SCOPE = "awarded_requirements_contract_over_labelled_demo_fixtures"
 NEXT_ACTION_SEQUENCE: tuple[tuple[str, str], ...] = (
     (
         "verify_a_real_tenant_customer_org_binding",
-        "Gate 109 built the binding contract; no verified non-demo binding "
-        "exists yet, and row-level security keys on the organization while the "
-        "awarded lane is tenant-scoped",
+        "Gate 109 built the binding contract and Gate 110 decided its store: a "
+        "new identity binding table anchored to organization_id, the column "
+        "every row-level security policy enforces on. No verified non-demo "
+        "binding exists yet, and the migration is not safe to apply until "
+        "customer auth can supply a verifier",
     ),
     (
         "persist_awarded_records_and_requirements",

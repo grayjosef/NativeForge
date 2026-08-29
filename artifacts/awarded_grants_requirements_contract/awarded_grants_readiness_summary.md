@@ -43,7 +43,7 @@ A projected burden stays projected, an unreadable document produces no verified 
 
 ## Next
 
-1. **verify_a_real_tenant_customer_org_binding** — Gate 109 built the binding contract; no verified non-demo binding exists yet, and row-level security keys on the organization while the awarded lane is tenant-scoped
+1. **verify_a_real_tenant_customer_org_binding** — Gate 109 built the binding contract and Gate 110 decided its store: a new identity binding table anchored to organization_id, the column every row-level security policy enforces on. No verified non-demo binding exists yet, and the migration is not safe to apply until customer auth can supply a verifier
 1. **persist_awarded_records_and_requirements** — nothing survives a request today, so a compliance calendar cannot be re-read after a missed deadline
 1. **build_the_awarded_grants_surface** — the workspace is mandatory in the tenant beta contract and no UI exists for it
 1. **attach_document_storage_under_the_existing_gates** — award packages have to live somewhere before requirements can be extracted from them

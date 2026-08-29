@@ -1,0 +1,52 @@
+{
+  "binding_lookup_key": "organization_id",
+  "blocked_reasons": [
+    "no_customer_auth_so_nobody_can_verify_a_binding",
+    "no_customer_persistence_to_write_a_binding_into",
+    "no_verified_binding_exists_to_store"
+  ],
+  "customer_auth_live": false,
+  "customer_persistence_live": false,
+  "demo_binding_storage_allowed": false,
+  "demo_ids_recommended_as_persistence_keys": false,
+  "fabricated": false,
+  "live_fetch_performed": false,
+  "migration_applied": false,
+  "migration_safe_now": false,
+  "next_required_actions": [
+    {
+      "action": "stand_up_customer_auth",
+      "why": "a verified binding needs a verifier, and nobody can be one until a person can authenticate"
+    },
+    {
+      "action": "resolve_org_id_overloading_in_persistence_paths",
+      "why": "org_id is a uuid.UUID in routes and a free-form string in most of the ~70 services using it; a migration assuming the first is wrong wherever the second holds"
+    },
+    {
+      "action": "create_the_identity_binding_table_under_rls",
+      "why": "organization_id primary anchor, tenant label column, the Gate 109 statuses, a verifier and a verified_at"
+    },
+    {
+      "action": "backfill_nothing",
+      "why": "there is no verified binding to migrate; the table starts empty and fills as bindings are verified"
+    }
+  ],
+  "operational_binding_storage_allowed": false,
+  "recommended_foreign_keys": [
+    "organizations.id"
+  ],
+  "recommended_label_columns": [
+    "tenant_id",
+    "customer_org_id"
+  ],
+  "recommended_primary_key": "organization_id",
+  "recommended_store": "new_identity_binding_table",
+  "requires_migration": true,
+  "rls_authority_confirmed": true,
+  "rls_enforced_by": "organization_id",
+  "rows_written": 0,
+  "schema_changed": false,
+  "schema_version": "nf_tenant_customer_org_binding_store_decision_v1",
+  "tenant_id_recommended_as_rls_authority": false,
+  "verified_binding_available": false
+}

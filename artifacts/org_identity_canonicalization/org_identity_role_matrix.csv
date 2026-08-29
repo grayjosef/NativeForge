@@ -1,0 +1,6 @@
+identity_name,role,shape,authority_level,rls_allowed,persistence_allowed,product_surface_allowed,requires_binding
+current_org_id,rls_session_context,uuid,session_context,true,false,false,false
+customer_org_id,customer_surface_alias,free_form,label,false,false,true,true
+org_id,service_alias,uuid,alias_of_authority,false,true,true,false
+organization_id,rls_authority,uuid,authority,true,true,true,false
+tenant_id,demo_fixture_label,free_form,label,false,false,true,true
