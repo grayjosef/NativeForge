@@ -1,0 +1,585 @@
+{
+  "case_count": 7,
+  "cases": [
+    {
+      "case": "routes_absent",
+      "expect_any_session_created": false,
+      "expect_routes_available": 0,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "callback_validation_passed": false,
+        "provider_configured": false,
+        "route_readiness": {
+          "application_route_count": 0,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "no_security_scheme_is_declared_anywhere",
+            "route_absent:callback_route_available",
+            "route_absent:current_user_route_available",
+            "route_absent:login_route_available",
+            "route_absent:logout_route_available",
+            "route_absent:session_route_available"
+          ],
+          "callback_route_available": false,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": false,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": false,
+          "logout_route_available": false,
+          "matched_routes": {
+            "callback_route_available": [],
+            "current_user_route_available": [],
+            "login_route_available": [],
+            "logout_route_available": [],
+            "session_route_available": []
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_scheme_declared": false,
+          "security_schemes_declared": [],
+          "session_cookie_policy_available": true,
+          "session_route_available": false
+        },
+        "session_cookie_policy_available": false
+      },
+      "why": "the application before Gate 116: nowhere to log in"
+    },
+    {
+      "case": "routes_exist_no_provider",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "callback_validation_passed": false,
+        "provider_configured": false,
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "security_scheme_declared_but_no_route_requires_it"
+          ],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/api/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/api/auth/current-user"
+            ],
+            "login_route_available": [
+              "/api/auth/login"
+            ],
+            "logout_route_available": [
+              "/api/auth/logout"
+            ],
+            "session_route_available": [
+              "/api/auth/session"
+            ]
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_scheme_declared": true,
+          "security_schemes_declared": [
+            "nf_session_cookie"
+          ],
+          "session_cookie_policy_available": true,
+          "session_route_available": true
+        },
+        "session_cookie_policy_available": true
+      },
+      "why": "the application after Gate 116, which is today: five routes that answer honestly and authenticate nobody"
+    },
+    {
+      "case": "provider_configured_no_callback",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "callback_validation_passed": false,
+        "provider_configured": true,
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "security_scheme_declared_but_no_route_requires_it"
+          ],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/api/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/api/auth/current-user"
+            ],
+            "login_route_available": [
+              "/api/auth/login"
+            ],
+            "logout_route_available": [
+              "/api/auth/logout"
+            ],
+            "session_route_available": [
+              "/api/auth/session"
+            ]
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_scheme_declared": true,
+          "security_schemes_declared": [
+            "nf_session_cookie"
+          ],
+          "session_cookie_policy_available": true,
+          "session_route_available": true
+        },
+        "session_cookie_policy_available": true
+      },
+      "why": "configuration arrived and nothing has been validated. The login route may now reach a provider; the callback still refuses to mint anything"
+    },
+    {
+      "case": "callback_validated_no_org",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "callback_validation_passed": true,
+        "membership_verified": false,
+        "organization_id_resolved": false,
+        "provider_configured": true,
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "security_scheme_declared_but_no_route_requires_it"
+          ],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/api/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/api/auth/current-user"
+            ],
+            "login_route_available": [
+              "/api/auth/login"
+            ],
+            "logout_route_available": [
+              "/api/auth/logout"
+            ],
+            "session_route_available": [
+              "/api/auth/session"
+            ]
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_scheme_declared": true,
+          "security_schemes_declared": [
+            "nf_session_cookie"
+          ],
+          "session_cookie_policy_available": true,
+          "session_route_available": true
+        },
+        "session_cookie_policy_available": true
+      },
+      "why": "a callback validated and nobody knows whose session it would be. Gate 112's resolution and a verified membership are both still required"
+    },
+    {
+      "case": "session_route_unauthenticated",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "callback_validation_passed": false,
+        "provider_configured": false,
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/api/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/api/auth/current-user"
+            ],
+            "login_route_available": [
+              "/api/auth/login"
+            ],
+            "logout_route_available": [
+              "/api/auth/logout"
+            ],
+            "session_route_available": [
+              "/api/auth/session"
+            ]
+          },
+          "ready_for_live_login": true,
+          "real_sessions_created": false,
+          "route_auth_enforced": true,
+          "route_org_resolution_enforced": true,
+          "route_role_mapping_enforced": true,
+          "route_session_cookie_policy_enforced": true,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 2,
+          "security_scheme_declared": true,
+          "security_schemes_declared": [
+            "nf_session_cookie"
+          ],
+          "session_cookie_policy_available": true,
+          "session_route_available": true
+        },
+        "session_cookie_policy_available": true
+      },
+      "why": "the honest answer /session gives every caller, including one arriving through Cloudflare Access with a valid dev header"
+    },
+    {
+      "case": "logout_clears_without_session",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "callback_validation_passed": false,
+        "provider_configured": false,
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "security_scheme_declared_but_no_route_requires_it"
+          ],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/api/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/api/auth/current-user"
+            ],
+            "login_route_available": [
+              "/api/auth/login"
+            ],
+            "logout_route_available": [
+              "/api/auth/logout"
+            ],
+            "session_route_available": [
+              "/api/auth/session"
+            ]
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_scheme_declared": true,
+          "security_schemes_declared": [
+            "nf_session_cookie"
+          ],
+          "session_cookie_policy_available": true,
+          "session_route_available": true
+        },
+        "session_cookie_policy_available": true
+      },
+      "why": "the one action permitted while auth is dead. Clearing a cookie is safe whether or not one exists"
+    },
+    {
+      "case": "all_routes_and_policy_blocked",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "callback_validation_passed": false,
+        "provider_configured": false,
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/api/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/api/auth/current-user"
+            ],
+            "login_route_available": [
+              "/api/auth/login"
+            ],
+            "logout_route_available": [
+              "/api/auth/logout"
+            ],
+            "session_route_available": [
+              "/api/auth/session"
+            ]
+          },
+          "ready_for_live_login": true,
+          "real_sessions_created": false,
+          "route_auth_enforced": true,
+          "route_org_resolution_enforced": true,
+          "route_role_mapping_enforced": true,
+          "route_session_cookie_policy_enforced": true,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 2,
+          "security_scheme_declared": true,
+          "security_schemes_declared": [
+            "nf_session_cookie"
+          ],
+          "session_cookie_policy_available": true,
+          "session_route_available": true
+        },
+        "session_cookie_policy_available": true
+      },
+      "why": "everything a route gate can build - five routes, a security scheme, enforcement, a cookie policy - and activation is still refused. Provider configuration is not something a route supplies"
+    }
+  ],
+  "cases_disagreeing_with_expectation": [],
+  "cookies_set": false,
+  "current_org_id_set": false,
+  "customer_auth_live_in_actual_environment": false,
+  "fabricated": false,
+  "fixture_label": "demo_fixture",
+  "login_live_in_actual_environment": false,
+  "network_calls": false,
+  "provider_contacted": false,
+  "real_sessions_created": false,
+  "real_users_created": false,
+  "route_cases_covered": [
+    "all_routes_and_policy_blocked",
+    "callback_validated_no_org",
+    "logout_clears_without_session",
+    "provider_configured_no_callback",
+    "routes_absent",
+    "routes_exist_no_provider",
+    "session_route_unauthenticated"
+  ],
+  "route_cases_missing": [],
+  "rows": [
+    {
+      "agrees_with_expectation": true,
+      "any_session_created": false,
+      "blocked_reasons": [
+        "callback_validation_has_not_passed",
+        "membership_not_verified_for_this_organization",
+        "no_provider_configured_so_no_provider_call",
+        "no_session_cookie_policy_available",
+        "organization_id_not_resolved_from_the_claims",
+        "route_not_registered:/api/auth/callback",
+        "route_not_registered:/api/auth/current-user",
+        "route_not_registered:/api/auth/login",
+        "route_not_registered:/api/auth/logout",
+        "route_not_registered:/api/auth/session"
+      ],
+      "callback_validation_passed": false,
+      "case": "routes_absent",
+      "expect_any_session_created": false,
+      "expect_routes_available": 0,
+      "fixture_label": "demo_fixture",
+      "provider_call_allowed_count": 0,
+      "provider_configured": false,
+      "routes_available_count": 0,
+      "session_cookie_policy_available": false,
+      "session_creating_routes": []
+    },
+    {
+      "agrees_with_expectation": true,
+      "any_session_created": false,
+      "blocked_reasons": [
+        "callback_validation_has_not_passed",
+        "membership_not_verified_for_this_organization",
+        "no_provider_configured_so_no_provider_call",
+        "organization_id_not_resolved_from_the_claims"
+      ],
+      "callback_validation_passed": false,
+      "case": "routes_exist_no_provider",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "provider_call_allowed_count": 0,
+      "provider_configured": false,
+      "routes_available_count": 5,
+      "session_cookie_policy_available": true,
+      "session_creating_routes": []
+    },
+    {
+      "agrees_with_expectation": true,
+      "any_session_created": false,
+      "blocked_reasons": [
+        "callback_validation_has_not_passed",
+        "membership_not_verified_for_this_organization",
+        "organization_id_not_resolved_from_the_claims"
+      ],
+      "callback_validation_passed": false,
+      "case": "provider_configured_no_callback",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "provider_call_allowed_count": 2,
+      "provider_configured": true,
+      "routes_available_count": 5,
+      "session_cookie_policy_available": true,
+      "session_creating_routes": []
+    },
+    {
+      "agrees_with_expectation": true,
+      "any_session_created": false,
+      "blocked_reasons": [
+        "membership_not_verified_for_this_organization",
+        "organization_id_not_resolved_from_the_claims"
+      ],
+      "callback_validation_passed": true,
+      "case": "callback_validated_no_org",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "provider_call_allowed_count": 2,
+      "provider_configured": true,
+      "routes_available_count": 5,
+      "session_cookie_policy_available": true,
+      "session_creating_routes": []
+    },
+    {
+      "agrees_with_expectation": true,
+      "any_session_created": false,
+      "blocked_reasons": [
+        "callback_validation_has_not_passed",
+        "membership_not_verified_for_this_organization",
+        "no_provider_configured_so_no_provider_call",
+        "organization_id_not_resolved_from_the_claims"
+      ],
+      "callback_validation_passed": false,
+      "case": "session_route_unauthenticated",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "provider_call_allowed_count": 0,
+      "provider_configured": false,
+      "routes_available_count": 5,
+      "session_cookie_policy_available": true,
+      "session_creating_routes": []
+    },
+    {
+      "agrees_with_expectation": true,
+      "any_session_created": false,
+      "blocked_reasons": [
+        "callback_validation_has_not_passed",
+        "membership_not_verified_for_this_organization",
+        "no_provider_configured_so_no_provider_call",
+        "organization_id_not_resolved_from_the_claims"
+      ],
+      "callback_validation_passed": false,
+      "case": "logout_clears_without_session",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "provider_call_allowed_count": 0,
+      "provider_configured": false,
+      "routes_available_count": 5,
+      "session_cookie_policy_available": true,
+      "session_creating_routes": []
+    },
+    {
+      "agrees_with_expectation": true,
+      "any_session_created": false,
+      "blocked_reasons": [
+        "callback_validation_has_not_passed",
+        "membership_not_verified_for_this_organization",
+        "no_provider_configured_so_no_provider_call",
+        "organization_id_not_resolved_from_the_claims"
+      ],
+      "callback_validation_passed": false,
+      "case": "all_routes_and_policy_blocked",
+      "expect_any_session_created": false,
+      "expect_routes_available": 5,
+      "fixture_label": "demo_fixture",
+      "provider_call_allowed_count": 0,
+      "provider_configured": false,
+      "routes_available_count": 5,
+      "session_cookie_policy_available": true,
+      "session_creating_routes": []
+    }
+  ],
+  "schema_version": "nf_customer_auth_route_demo_fixture_v1",
+  "secret_value_emitted": false,
+  "secrets_stored": false,
+  "session_creating_case_count": 0
+}

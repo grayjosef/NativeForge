@@ -10,7 +10,7 @@
     "secret_present_jwks_unvalidated"
   ],
   "activation_cases_missing": [],
-  "actual_missing_gate_count": 12,
+  "actual_missing_gate_count": 10,
   "case_count": 8,
   "cases": [
     {
@@ -65,7 +65,9 @@
           "route_session_cookie_policy_enforced": false,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 0,
+          "security_scheme_declared": false,
           "security_schemes_declared": [],
+          "session_cookie_policy_available": true,
           "session_route_available": false
         },
         "validation": {
@@ -130,7 +132,9 @@
           "route_session_cookie_policy_enforced": false,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 0,
+          "security_scheme_declared": false,
           "security_schemes_declared": [],
+          "session_cookie_policy_available": true,
           "session_route_available": false
         },
         "validation": {
@@ -195,7 +199,9 @@
           "route_session_cookie_policy_enforced": false,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 0,
+          "security_scheme_declared": false,
           "security_schemes_declared": [],
+          "session_cookie_policy_available": true,
           "session_route_available": false
         },
         "validation": {
@@ -265,7 +271,9 @@
           "route_session_cookie_policy_enforced": false,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 0,
+          "security_scheme_declared": false,
           "security_schemes_declared": [],
+          "session_cookie_policy_available": true,
           "session_route_available": true
         },
         "validation": {
@@ -329,9 +337,11 @@
           "route_session_cookie_policy_enforced": true,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 2,
+          "security_scheme_declared": true,
           "security_schemes_declared": [
             "nf_session"
           ],
+          "session_cookie_policy_available": true,
           "session_route_available": true
         },
         "validation": {
@@ -395,9 +405,11 @@
           "route_session_cookie_policy_enforced": true,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 2,
+          "security_scheme_declared": true,
           "security_schemes_declared": [
             "nf_session"
           ],
+          "session_cookie_policy_available": true,
           "session_route_available": true
         },
         "validation": {
@@ -461,9 +473,11 @@
           "route_session_cookie_policy_enforced": true,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 2,
+          "security_scheme_declared": true,
           "security_schemes_declared": [
             "nf_session"
           ],
+          "session_cookie_policy_available": true,
           "session_route_available": true
         },
         "validation": {
@@ -527,9 +541,11 @@
           "route_session_cookie_policy_enforced": true,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 2,
+          "security_scheme_declared": true,
           "security_schemes_declared": [
             "nf_session"
           ],
+          "session_cookie_policy_available": true,
           "session_route_available": true
         },
         "validation": {
@@ -571,7 +587,6 @@
         "auth_gate_not_satisfied:provider_configured",
         "auth_gate_not_satisfied:role_mapping_passed",
         "auth_gate_not_satisfied:secret_present",
-        "auth_gate_not_satisfied:session_cookie_policy_available",
         "issuer_jwks_unvalidated_no_network_check_performed",
         "owner_has_not_authorized_customer_auth_activation"
       ],
@@ -585,7 +600,7 @@
       "fixture_label": "demo_fixture",
       "issuer_jwks_validated": false,
       "login_live": false,
-      "missing_gate_count": 12,
+      "missing_gate_count": 11,
       "org_binding_passed": false,
       "owner_approval_present": false,
       "provider_configured": false,
@@ -606,7 +621,6 @@
         "auth_gate_not_satisfied:provider_configured",
         "auth_gate_not_satisfied:role_mapping_passed",
         "auth_gate_not_satisfied:secret_present",
-        "auth_gate_not_satisfied:session_cookie_policy_available",
         "issuer_jwks_unvalidated_no_network_check_performed",
         "owner_has_not_authorized_customer_auth_activation"
       ],
@@ -620,7 +634,7 @@
       "fixture_label": "demo_fixture",
       "issuer_jwks_validated": false,
       "login_live": false,
-      "missing_gate_count": 10,
+      "missing_gate_count": 9,
       "org_binding_passed": false,
       "owner_approval_present": false,
       "provider_configured": false,
@@ -639,7 +653,6 @@
         "auth_gate_not_satisfied:issuer_jwks_validated",
         "auth_gate_not_satisfied:org_binding_passed",
         "auth_gate_not_satisfied:role_mapping_passed",
-        "auth_gate_not_satisfied:session_cookie_policy_available",
         "issuer_jwks_unvalidated_no_network_check_performed",
         "owner_has_not_authorized_customer_auth_activation"
       ],
@@ -653,7 +666,7 @@
       "fixture_label": "demo_fixture",
       "issuer_jwks_validated": false,
       "login_live": false,
-      "missing_gate_count": 8,
+      "missing_gate_count": 7,
       "org_binding_passed": false,
       "owner_approval_present": false,
       "provider_configured": true,
@@ -671,7 +684,6 @@
         "auth_gate_not_satisfied:issuer_jwks_validated",
         "auth_gate_not_satisfied:org_binding_passed",
         "auth_gate_not_satisfied:role_mapping_passed",
-        "auth_gate_not_satisfied:session_cookie_policy_available",
         "owner_has_not_authorized_customer_auth_activation"
       ],
       "callback_route_available": true,
@@ -684,7 +696,7 @@
       "fixture_label": "demo_fixture",
       "issuer_jwks_validated": false,
       "login_live": false,
-      "missing_gate_count": 7,
+      "missing_gate_count": 6,
       "org_binding_passed": false,
       "owner_approval_present": false,
       "provider_configured": true,

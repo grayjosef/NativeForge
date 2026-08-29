@@ -147,8 +147,8 @@ GATE_REMEDIES: dict[str, str] = {
         "configuration. No such route exists among the 178 endpoints"
     ),
     "session_cookie_policy_available": (
-        "NativeForge defines a session cookie policy; no securityScheme is "
-        "declared anywhere in the application today"
+        "NativeForge defines a session cookie policy that passes its own "
+        "invariants - Gate 116B"
     ),
     "callback_session_validated": (
         "validate a real callback and session once the route exists"
@@ -250,8 +250,11 @@ def build_customer_auth_activation_gate(
         "role_mapping_passed": bool(val.get("role_mapping_passed")),
         # -- routes --------------------------------------------------------
         "callback_route_available": bool(routes.get("callback_route_available")),
+        # Gate 116: reads whether a policy *exists*, not whether a route
+        # enforces one. The field is named "available" and was measuring
+        # enforcement, which meant a defined policy could never satisfy it.
         "session_cookie_policy_available": bool(
-            routes.get("route_session_cookie_policy_enforced")
+            routes.get("session_cookie_policy_available")
         ),
         # -- contracts -----------------------------------------------------
         "organization_id_resolution_available": _module_importable(

@@ -9,6 +9,8 @@ from nativeforge.api.activation_routes import (
     demo_activation_router,
     real_activation_router,
 )
+from nativeforge.api.auth import install_auth_security_scheme
+from nativeforge.api.auth import router as auth_router
 from nativeforge.api.backend_runtime_routes import router as backend_runtime_router
 from nativeforge.api.form_package_routes import (
     demo_form_pkg_router,
@@ -120,6 +122,11 @@ def create_app() -> FastAPI:
     app.include_router(real_source_ingestion_router)
     app.include_router(demo_activation_router)
     app.include_router(real_activation_router)
+    # Gate 116: five customer auth routes that authenticate nobody and
+    # say so. The security scheme is advertised and applied to no
+    # operation - see api/auth.py.
+    app.include_router(auth_router)
+    install_auth_security_scheme(app)
     return app
 
 

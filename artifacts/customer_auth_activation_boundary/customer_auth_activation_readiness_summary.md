@@ -5,10 +5,9 @@ A customer auth **activation boundary** exists. **Customer auth is not live and 
 ## The gates
 
 ```text
-satisfied  3 of 15
+satisfied  5 of 15
 
 missing    audience_configured
-missing    callback_route_available
 missing    callback_session_validated
 missing    dev_header_disabled_for_production
 missing    invite_binding_passed
@@ -18,7 +17,6 @@ missing    org_binding_passed
 missing    provider_configured
 missing    role_mapping_passed
 missing    secret_present
-missing    session_cookie_policy_available
 ```
 
 ## What lifts each one
@@ -34,12 +32,8 @@ issuer_jwks_validated
     run the existing live validation path once configuration exists; no network check happens before then, so this is unvalidated rather than failed
 audience_configured
     owner sets OIDC_AUDIENCE
-callback_route_available
-    NativeForge builds an OIDC callback route - engineering work, not configuration. No such route exists among the 178 endpoints
 callback_session_validated
     validate a real callback and session once the route exists
-session_cookie_policy_available
-    NativeForge defines a session cookie policy; no securityScheme is declared anywhere in the application today
 invite_binding_passed
     validate invite binding against a real flow
 org_binding_passed
@@ -64,7 +58,7 @@ X-NF-Org-Id          UUID-validated and existence-checked, and it establishes no
 
 ```text
 enabled by default                    true
-route modules depending on it         16
+route modules depending on it         15
 safe to disable now                   false
 must disable before production auth   true
 ```

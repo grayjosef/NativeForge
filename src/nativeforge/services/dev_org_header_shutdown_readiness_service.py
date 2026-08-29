@@ -53,6 +53,7 @@ flag is read from settings and the route dependency is counted by reading the
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -67,6 +68,17 @@ ORG_CONTEXT_DEPENDENCIES: tuple[str, ...] = (
     "get_org_context_with_db",
     "require_demo_org_db",
 )
+
+# Gate 116: matched as a FastAPI dependency rather than as a substring.
+#
+# The first version searched for the bare name, which counted any module that
+# mentioned it - including `capability_guard.py`, whose only reference is a
+# docstring describing the header, and `api/auth.py`, whose docstring explains
+# why it deliberately does *not* use it. A module documenting its refusal was
+# being counted as a dependant.
+#
+# `Depends(name)` is what actually wires the dependency into a route.
+DEPENDENCY_USE_PATTERN = r"Depends\(\s*{name}\s*\)"
 
 # What an authenticated replacement would have to provide. Each is detected by
 # import; naming them individually means a report can say which is missing.
@@ -86,6 +98,7 @@ REPLACEMENT_COMPONENT_MODULES: dict[str, str] = {
 }
 
 READINESS_FIELDS: tuple[str, ...] = (
+    "auth_replacement_routes_available",
     "dev_header_enabled_default",
     "dev_header_used_by_routes",
     "auth_replacement_available",
@@ -123,13 +136,27 @@ def detect_dev_header_route_usage(api_dir: Path | None = None) -> dict[str, Any]
         api_dir = Path(__file__).resolve().parents[3] / "src/nativeforge/api"
 
     modules: list[str] = []
+    mentions_only: list[str] = []
     if api_dir.is_dir():
         for path in sorted(api_dir.glob("*.py")):
             body = path.read_text(encoding="utf-8", errors="replace")
-            if any(dep in body for dep in ORG_CONTEXT_DEPENDENCIES):
+            uses = any(
+                re.search(DEPENDENCY_USE_PATTERN.format(name=dep), body)
+                for dep in ORG_CONTEXT_DEPENDENCIES
+            )
+            if uses:
                 modules.append(path.name)
+            elif any(dep in body for dep in ORG_CONTEXT_DEPENDENCIES):
+                # Named so the difference between using and discussing the
+                # header is visible rather than silently dropped.
+                mentions_only.append(path.name)
 
-    return {"module_count": len(modules), "modules": modules}
+    return {
+        "module_count": len(modules),
+        "modules": modules,
+        "mention_only_module_count": len(mentions_only),
+        "mention_only_modules": mentions_only,
+    }
 
 
 def _dev_header_enabled() -> bool:
@@ -172,13 +199,42 @@ def build_dev_header_shutdown_readiness(
 
     blocked_reasons: list[str] = []
 
-    # A replacement is not a set of contracts. It is a route a customer can
-    # actually authenticate through, plus the contracts behind it. Gate 115C
-    # measured that no such route exists among the application's endpoints.
+    # Gate 116 added five auth routes, which makes a fact that was previously
+    # meaningless worth reporting separately: the routes now *exist*.
+    #
+    #   auth_replacement_routes_available   the endpoints are registered
+    #   replacement_route_available         one of them can actually
+    #                                       authenticate somebody
+    #
+    # The first is true as of Gate 116. The second is not, and will not be until
+    # a route refuses an unauthenticated caller. Reporting only the first would
+    # let "the auth routes are in" read as "the dev header can go".
+    auth_replacement_routes_available = all(
+        bool(routes.get(field))
+        for field in (
+            "login_route_available",
+            "logout_route_available",
+            "callback_route_available",
+            "session_route_available",
+            "current_user_route_available",
+        )
+    )
     replacement_route_available = bool(routes.get("ready_for_live_login"))
+
+    # A replacement is not a set of contracts, and it is not a set of endpoints
+    # either. It is a route a customer can actually authenticate through, plus
+    # the contracts behind it.
     auth_replacement_available = bool(
         replacement_route_available and all(components.values())
     )
+
+    if not auth_replacement_routes_available:
+        blocked_reasons.append("auth_replacement_routes_are_not_registered")
+    elif not replacement_route_available:
+        # The state Gate 116 leaves the system in, named rather than silent.
+        blocked_reasons.append(
+            "auth_routes_exist_but_none_of_them_authenticates_anybody_yet"
+        )
 
     if not replacement_route_available:
         blocked_reasons.append(
@@ -212,7 +268,12 @@ def build_dev_header_shutdown_readiness(
             "dev_header_enabled_default": enabled,
             "dev_header_used_by_routes": usage["module_count"],
             "dev_header_route_modules": usage["modules"],
+            # Modules that name the dependency without wiring it into a route -
+            # docstrings describing the header, including api/auth.py's
+            # explanation of why it does not use one.
+            "dev_header_mention_only_modules": usage["mention_only_modules"],
             "auth_replacement_available": auth_replacement_available,
+            "auth_replacement_routes_available": auth_replacement_routes_available,
             "replacement_route_available": replacement_route_available,
             **components,
             "safe_to_disable_now": safe_to_disable_now,
@@ -256,6 +317,14 @@ def shutdown_readiness_invariant_failures(readiness: dict[str, Any]) -> list[str
     if readiness.get("must_disable_before_production_auth") is not True:
         fails.append("dev_header_permitted_to_survive_into_production_auth")
 
+    # Gate 116: routes existing must never, on its own, permit the header to
+    # go. This is the invariant that keeps "the auth routes are in" from
+    # reading as "the dev header can be turned off".
+    if readiness.get("safe_to_disable_now") and not readiness.get(
+        "replacement_route_available"
+    ):
+        fails.append("safe_to_disable_because_routes_exist_but_none_authenticates")
+
     # Safe to disable requires a replacement that actually exists.
     if readiness.get("safe_to_disable_now"):
         if not readiness.get("auth_replacement_available"):
@@ -267,6 +336,8 @@ def shutdown_readiness_invariant_failures(readiness: dict[str, Any]) -> list[str
     if readiness.get("auth_replacement_available"):
         if not readiness.get("replacement_route_available"):
             fails.append("auth_replacement_claimed_without_an_authenticated_route")
+        if not readiness.get("auth_replacement_routes_available"):
+            fails.append("auth_replacement_claimed_without_the_routes_existing")
         for key in REPLACEMENT_COMPONENT_MODULES:
             if not readiness.get(key):
                 fails.append(f"auth_replacement_claimed_without:{key}")

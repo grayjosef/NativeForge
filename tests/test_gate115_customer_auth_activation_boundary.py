@@ -259,12 +259,23 @@ def test_every_unmet_gate_points_somewhere():
 # ------------------------------------------------- route readiness
 
 
-def test_the_application_has_no_customer_auth_routes():
+def test_the_applications_auth_routes_enforce_nothing():
+    """Gate 115 asserted these routes did not exist. Gate 116 added them.
+
+    The point of the original test was that readiness reflects reality rather
+    than a constant, and that point survives the change: the five routes now
+    exist, a security scheme is now declared, and **still** nothing is enforced
+    and login is not ready. Deleting the test would have lost the assertion
+    that matters; keeping the old assertion would have pinned reality to a
+    state this gate deliberately moved past.
+    """
     readiness = routes_svc.build_route_readiness()
     assert readiness["application_route_count"] > 100
     for field in routes_svc.REQUIRED_ROUTES:
-        assert readiness[field] is False, field
-    assert readiness["security_schemes_declared"] == []
+        assert readiness[field] is True, field
+    assert readiness["security_scheme_declared"] is True
+    assert readiness["secured_route_count"] == 0
+    assert readiness["route_auth_enforced"] is False
     assert readiness["ready_for_live_login"] is False
 
 
@@ -735,12 +746,18 @@ def test_the_gate_artifact_reports_auth_not_live():
     assert payload["missing_auth_gates"]
 
 
-def test_the_route_matrix_reports_no_route_and_no_enforcement():
+def test_the_route_matrix_reports_routes_without_enforcement():
+    """Gate 116 added the five routes; none of them enforces anything.
+
+    The assertion that matters is the second half, and it is unchanged.
+    """
     rows = list(csv.reader(io.StringIO(_artifact(
         "customer_auth_route_readiness_matrix.csv"
     ))))[1:]
     by_name = {row[0]: row for row in rows}
     for field in routes_svc.REQUIRED_ROUTES:
+        assert by_name[field][2] == "true", field
+    for field in routes_svc.REQUIRED_ENFORCEMENT:
         assert by_name[field][2] == "false", field
     assert by_name["ready_for_live_login"][2] == "false"
     assert by_name["cloudflare_access_is_customer_auth"][2] == "false"

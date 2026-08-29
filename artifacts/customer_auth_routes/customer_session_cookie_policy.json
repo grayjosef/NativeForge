@@ -1,0 +1,28 @@
+{
+  "blocked_reasons": [
+    "cookie_not_marked_secure_so_not_production_safe"
+  ],
+  "cookie_name": "nf_session",
+  "cookie_set_by_this_service": false,
+  "csrf_required": true,
+  "domain": null,
+  "fabricated": false,
+  "http_only": true,
+  "logout_clears_cookie": true,
+  "max_age_seconds": 28800,
+  "path": "/",
+  "pkce_rationale": "no authorization-url builder, token exchange or code_verifier exists anywhere in this repository, so nothing proves PKCE unnecessary. An absent flow is not evidence.",
+  "pkce_required": true,
+  "production_environment": false,
+  "production_safe": false,
+  "real_sessions_created": false,
+  "real_users_created": false,
+  "rotation_required": true,
+  "same_site": "lax",
+  "same_site_rationale": "lax is sent on the top-level navigation back from the identity provider; strict would not be, and the callback would arrive without the session cookie",
+  "schema_version": "nf_customer_session_cookie_policy_v1",
+  "secret_value_emitted": false,
+  "secure": false,
+  "sessions_live": false,
+  "state_required": true
+}

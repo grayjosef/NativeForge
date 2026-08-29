@@ -68,6 +68,8 @@ ROUTE_PATTERNS: dict[str, str] = {
 }
 
 READINESS_FIELDS: tuple[str, ...] = (
+    "security_scheme_declared",
+    "session_cookie_policy_available",
     "login_route_available",
     "logout_route_available",
     "callback_route_available",
@@ -156,6 +158,23 @@ def _load_openapi() -> dict[str, Any]:
         return {"paths": {}, "components": {}}
 
 
+def _session_cookie_policy_available() -> bool:
+    """Does a session cookie policy exist, and does it hold together?
+
+    Available means it exists *and* passes its own invariants. A policy failing
+    them is not a policy anything should rely on, and reporting one as available
+    would be worse than reporting none.
+    """
+    try:
+        from nativeforge.services.customer_session_cookie_policy_service import (
+            build_session_cookie_policy,
+            policy_invariant_failures,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return False
+    return not policy_invariant_failures(build_session_cookie_policy())
+
+
 def build_route_readiness(
     *,
     openapi: dict[str, Any] | None = None,
@@ -172,10 +191,18 @@ def build_route_readiness(
         if not routes[field]:
             blocked_reasons.append(f"route_absent:{field}")
 
-    # Enforcement is a property of the route table, not of the routes existing.
-    # A securityScheme is the weakest possible evidence that anything is
-    # required, and there is none.
-    has_security = bool(surface["security_schemes"]) and bool(
+    # Gate 116 split two facts that were one value while no scheme existed.
+    #
+    #   security_scheme_declared   a scheme appears in the OpenAPI document
+    #   has_security               some operation actually depends on one
+    #
+    # Gate 116 declares a scheme and applies it to no operation, deliberately.
+    # A scheme in a document is documentation; enforcement is a refusal, and
+    # nothing refuses yet. Collapsing the two would have made this service
+    # report enforcement the moment the scheme was advertised - the exact
+    # "existence is not enforcement" defect it exists to catch, one layer up.
+    security_scheme_declared = bool(surface["security_schemes"])
+    has_security = security_scheme_declared and bool(
         surface["globally_secured"] or surface["secured_route_count"]
     )
 
@@ -204,8 +231,12 @@ def build_route_readiness(
         if not enforced:
             blocked_reasons.append(f"enforcement_absent:{field}")
 
-    if not surface["security_schemes"]:
+    if not security_scheme_declared:
         blocked_reasons.append("no_security_scheme_is_declared_anywhere")
+    elif not has_security:
+        # The state Gate 116 leaves the application in, named rather than
+        # silent: a scheme is advertised and no operation requires it.
+        blocked_reasons.append("security_scheme_declared_but_no_route_requires_it")
 
     if cloudflare_access_in_front:
         # Stated as a refusal rather than omitted, so nobody reads the absence
@@ -232,6 +263,11 @@ def build_route_readiness(
             ),
             "ready_for_live_login": ready_for_live_login,
             "application_route_count": surface["application_route_count"],
+            "security_scheme_declared": security_scheme_declared,
+            # Gate 116: whether a session cookie policy exists at all, which is
+            # a different question from whether a route enforces one. The
+            # activation gate reads this rather than the enforcement field.
+            "session_cookie_policy_available": _session_cookie_policy_available(),
             "security_schemes_declared": surface["security_schemes"],
             "secured_route_count": surface["secured_route_count"],
             "matched_routes": matched,
@@ -271,6 +307,21 @@ def route_readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
         "security_schemes_declared"
     ):
         fails.append("auth_reported_enforced_without_a_security_scheme")
+
+    # Gate 116: nor is a scheme being *declared*. An advertised scheme that no
+    # operation requires enforces nothing, and this is the invariant that keeps
+    # advertising it from reading as securing anything.
+    if readiness.get("route_auth_enforced") and not readiness.get(
+        "secured_route_count"
+    ):
+        fails.append("auth_reported_enforced_with_zero_secured_routes")
+
+    # And a declared scheme must be reported as declared, or the two fields
+    # would be able to disagree.
+    if bool(readiness.get("security_schemes_declared")) is not bool(
+        readiness.get("security_scheme_declared")
+    ):
+        fails.append("security_scheme_declared_disagrees_with_the_scheme_list")
 
     if readiness.get("route_org_resolution_enforced") and not readiness.get(
         "route_auth_enforced"

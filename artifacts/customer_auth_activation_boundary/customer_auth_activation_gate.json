@@ -3,7 +3,6 @@
   "audience_configured": false,
   "blocked_reasons": [
     "auth_gate_not_satisfied:audience_configured",
-    "auth_gate_not_satisfied:callback_route_available",
     "auth_gate_not_satisfied:callback_session_validated",
     "auth_gate_not_satisfied:dev_header_disabled_for_production",
     "auth_gate_not_satisfied:invite_binding_passed",
@@ -13,11 +12,10 @@
     "auth_gate_not_satisfied:provider_configured",
     "auth_gate_not_satisfied:role_mapping_passed",
     "auth_gate_not_satisfied:secret_present",
-    "auth_gate_not_satisfied:session_cookie_policy_available",
     "issuer_jwks_unvalidated_no_network_check_performed",
     "owner_has_not_authorized_customer_auth_activation"
   ],
-  "callback_route_available": false,
+  "callback_route_available": true,
   "callback_session_validated": false,
   "current_org_id_set": false,
   "customer_auth_live": false,
@@ -36,9 +34,7 @@
     "issuer_configured",
     "issuer_jwks_validated",
     "audience_configured",
-    "callback_route_available",
     "callback_session_validated",
-    "session_cookie_policy_available",
     "invite_binding_passed",
     "org_binding_passed",
     "role_mapping_passed",
@@ -50,9 +46,7 @@
     "issuer_configured",
     "issuer_jwks_validated",
     "audience_configured",
-    "callback_route_available",
     "callback_session_validated",
-    "session_cookie_policy_available",
     "org_binding_passed",
     "role_mapping_passed"
   ],
@@ -79,16 +73,8 @@
       "gate": "audience_configured"
     },
     {
-      "action": "NativeForge builds an OIDC callback route - engineering work, not configuration. No such route exists among the 178 endpoints",
-      "gate": "callback_route_available"
-    },
-    {
       "action": "validate a real callback and session once the route exists",
       "gate": "callback_session_validated"
-    },
-    {
-      "action": "NativeForge defines a session cookie policy; no securityScheme is declared anywhere in the application today",
-      "gate": "session_cookie_policy_available"
     },
     {
       "action": "validate invite binding against a real flow",
@@ -123,5 +109,5 @@
   "secret_present": false,
   "secret_value_emitted": false,
   "secrets_stored": false,
-  "session_cookie_policy_available": false
+  "session_cookie_policy_available": true
 }
