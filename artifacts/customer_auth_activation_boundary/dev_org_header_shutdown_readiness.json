@@ -1,8 +1,9 @@
 {
   "auth_replacement_available": false,
   "auth_replacement_routes_available": true,
+  "auth_routes_enforce_authentication": true,
   "blocked_reasons": [
-    "auth_routes_exist_but_none_of_them_authenticates_anybody_yet",
+    "auth_routes_refuse_unauthenticated_callers_but_cannot_admit_anybody",
     "dev_header_is_enabled_by_default_in_settings",
     "dev_header_is_load_bearing_for_15_route_modules",
     "no_authenticated_route_can_supply_an_organization_id_yet"

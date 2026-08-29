@@ -1,0 +1,39 @@
+{
+  "blocked_reasons": [
+    "token_exchange_blocked:callback_code_present",
+    "token_exchange_blocked:network_call_allowed",
+    "token_exchange_blocked:pkce_validated",
+    "token_exchange_blocked:provider_configured",
+    "token_exchange_blocked:secret_present",
+    "token_exchange_blocked:state_validated"
+  ],
+  "callback_code_present": false,
+  "claims_verified": false,
+  "fabricated": false,
+  "id_token_received": false,
+  "missing_conditions": [
+    "provider_configured",
+    "secret_present",
+    "callback_code_present",
+    "state_validated",
+    "pkce_validated",
+    "network_call_allowed"
+  ],
+  "network_call_allowed": false,
+  "network_calls": false,
+  "next_required_action": "owner sets the OIDC_* environment variables out-of-band; this service never receives or stores them",
+  "persisted": false,
+  "pkce_validated": false,
+  "provider_configured": false,
+  "provider_contacted": false,
+  "real_sessions_created": false,
+  "real_users_created": false,
+  "schema_version": "nf_customer_auth_token_exchange_boundary_v1",
+  "secret_present": false,
+  "secret_value_emitted": false,
+  "secret_value_read": false,
+  "state_validated": false,
+  "token_exchange_allowed": false,
+  "token_exchange_performed": false,
+  "token_value_emitted": false
+}

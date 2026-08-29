@@ -45,6 +45,7 @@
           "callback_route_available": false,
           "cloudflare_access_is_customer_auth": false,
           "current_user_route_available": false,
+          "customer_auth_live": false,
           "dev_header_is_customer_auth": false,
           "fabricated": false,
           "frontend_preview_is_backend_login": false,
@@ -112,6 +113,7 @@
           "callback_route_available": false,
           "cloudflare_access_is_customer_auth": false,
           "current_user_route_available": false,
+          "customer_auth_live": false,
           "dev_header_is_customer_auth": false,
           "fabricated": false,
           "frontend_preview_is_backend_login": false,
@@ -179,6 +181,7 @@
           "callback_route_available": false,
           "cloudflare_access_is_customer_auth": false,
           "current_user_route_available": false,
+          "customer_auth_live": false,
           "dev_header_is_customer_auth": false,
           "fabricated": false,
           "frontend_preview_is_backend_login": false,
@@ -241,6 +244,7 @@
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
           "current_user_route_available": true,
+          "customer_auth_live": false,
           "dev_header_is_customer_auth": false,
           "fabricated": false,
           "frontend_preview_is_backend_login": false,
@@ -303,10 +307,14 @@
         },
         "route_readiness": {
           "application_route_count": 5,
-          "blocked_reasons": [],
+          "blocked_reasons": [
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced"
+          ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
           "current_user_route_available": true,
+          "customer_auth_live": false,
           "dev_header_is_customer_auth": false,
           "fabricated": false,
           "frontend_preview_is_backend_login": false,
@@ -329,11 +337,11 @@
               "/v1/auth/session"
             ]
           },
-          "ready_for_live_login": true,
+          "ready_for_live_login": false,
           "real_sessions_created": false,
           "route_auth_enforced": true,
-          "route_org_resolution_enforced": true,
-          "route_role_mapping_enforced": true,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
           "route_session_cookie_policy_enforced": true,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 2,
@@ -371,10 +379,14 @@
         },
         "route_readiness": {
           "application_route_count": 5,
-          "blocked_reasons": [],
+          "blocked_reasons": [
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced"
+          ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
           "current_user_route_available": true,
+          "customer_auth_live": false,
           "dev_header_is_customer_auth": false,
           "fabricated": false,
           "frontend_preview_is_backend_login": false,
@@ -397,11 +409,11 @@
               "/v1/auth/session"
             ]
           },
-          "ready_for_live_login": true,
+          "ready_for_live_login": false,
           "real_sessions_created": false,
           "route_auth_enforced": true,
-          "route_org_resolution_enforced": true,
-          "route_role_mapping_enforced": true,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
           "route_session_cookie_policy_enforced": true,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 2,
@@ -439,10 +451,14 @@
         },
         "route_readiness": {
           "application_route_count": 5,
-          "blocked_reasons": [],
+          "blocked_reasons": [
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced"
+          ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
           "current_user_route_available": true,
+          "customer_auth_live": false,
           "dev_header_is_customer_auth": false,
           "fabricated": false,
           "frontend_preview_is_backend_login": false,
@@ -465,11 +481,11 @@
               "/v1/auth/session"
             ]
           },
-          "ready_for_live_login": true,
+          "ready_for_live_login": false,
           "real_sessions_created": false,
           "route_auth_enforced": true,
-          "route_org_resolution_enforced": true,
-          "route_role_mapping_enforced": true,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
           "route_session_cookie_policy_enforced": true,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 2,
@@ -507,10 +523,14 @@
         },
         "route_readiness": {
           "application_route_count": 5,
-          "blocked_reasons": [],
+          "blocked_reasons": [
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced"
+          ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
           "current_user_route_available": true,
+          "customer_auth_live": false,
           "dev_header_is_customer_auth": false,
           "fabricated": false,
           "frontend_preview_is_backend_login": false,
@@ -533,11 +553,11 @@
               "/v1/auth/session"
             ]
           },
-          "ready_for_live_login": true,
+          "ready_for_live_login": false,
           "real_sessions_created": false,
           "route_auth_enforced": true,
-          "route_org_resolution_enforced": true,
-          "route_role_mapping_enforced": true,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
           "route_session_cookie_policy_enforced": true,
           "schema_version": "nf_customer_auth_route_readiness_v1",
           "secured_route_count": 2,

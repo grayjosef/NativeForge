@@ -175,10 +175,28 @@ def _session_cookie_policy_available() -> bool:
     return not policy_invariant_failures(build_session_cookie_policy())
 
 
+def _customer_auth_live() -> bool:
+    """Can anybody actually authenticate?
+
+    Read through Gate 115's cheap detector rather than the activation gate
+    directly: the gate reads this module's own output, and asking it back would
+    be a cycle. The detector short-circuits on environment presence before
+    paying for anything.
+    """
+    try:
+        from nativeforge.services.customer_auth_live_detector_service import (
+            detect_customer_auth_live,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return False
+    return detect_customer_auth_live()
+
+
 def build_route_readiness(
     *,
     openapi: dict[str, Any] | None = None,
     cloudflare_access_in_front: bool = True,
+    customer_auth_live: bool | None = None,
 ) -> dict[str, Any]:
     """Which login routes exist, and whether any of them enforces anything."""
     surface = detect_route_surface(openapi=openapi)
@@ -206,17 +224,40 @@ def build_route_readiness(
         surface["globally_secured"] or surface["secured_route_count"]
     )
 
-    route_auth_enforced = bool(has_security and routes["session_route_available"])
+    # Gate 117: enforcement is a refusal, so it is measured from an operation
+    # that has a security requirement attached AND a route that turns callers
+    # away. Gate 116 could only infer it from the scheme, because nothing
+    # refused; now one route does.
+    route_auth_enforced = bool(has_security and surface["secured_route_count"])
 
-    # Organization resolution and role mapping are enforced at a route only if
-    # something authenticates first. Gate 112's contract existing is not the
-    # same as a route applying it, and this service will not conflate them.
+    # Organization resolution and role mapping are NOT enforced by a 401.
+    #
+    # Gate 116 derived both from route_auth_enforced, which was safe while that
+    # was always false. Securing /current-user would have made all three true at
+    # once - and while the 401 is real, no route resolves an organization or
+    # maps a role, and neither can until a principal exists.
+    #
+    # So both now additionally require customer auth to be live, which is what
+    # a principal needs to exist at all.
+    # Injectable, and it has to be. Without it `ready_for_live_login: True`
+    # would be unreachable in this repository, and an unreachable branch makes
+    # every "not ready" claim above it unfalsifiable.
+    principal_possible = (
+        _customer_auth_live()
+        if customer_auth_live is None
+        else bool(customer_auth_live)
+    )
     route_org_resolution_enforced = bool(
-        route_auth_enforced and routes["current_user_route_available"]
+        route_auth_enforced
+        and principal_possible
+        and routes["current_user_route_available"]
     )
     route_role_mapping_enforced = route_org_resolution_enforced
+
+    # The cookie policy is enforced at a route when a route actually reads a
+    # cookie to decide - which is what the required dependency does.
     route_session_cookie_policy_enforced = bool(
-        has_security and routes["session_route_available"]
+        route_auth_enforced and _session_cookie_policy_available()
     )
 
     for field, enforced in (
@@ -264,6 +305,9 @@ def build_route_readiness(
             "ready_for_live_login": ready_for_live_login,
             "application_route_count": surface["application_route_count"],
             "security_scheme_declared": security_scheme_declared,
+            # Gate 117: measured, and reported beside enforcement so a reader
+            # can see which of the two a claim rests on.
+            "customer_auth_live": principal_possible,
             # Gate 116: whether a session cookie policy exists at all, which is
             # a different question from whether a route enforces one. The
             # activation gate reads this rather than the enforcement field.
@@ -315,6 +359,18 @@ def route_readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
         "secured_route_count"
     ):
         fails.append("auth_reported_enforced_with_zero_secured_routes")
+
+    # Gate 117: a 401 is not an organization. Enforcing authentication says
+    # nothing about whether a route resolves an organization_id or maps a role,
+    # and both need a principal that only live auth can produce.
+    if readiness.get("route_org_resolution_enforced") and not readiness.get(
+        "customer_auth_live"
+    ):
+        fails.append("org_resolution_enforced_while_nobody_can_authenticate")
+    if readiness.get("route_role_mapping_enforced") and not readiness.get(
+        "customer_auth_live"
+    ):
+        fails.append("role_mapping_enforced_while_nobody_can_authenticate")
 
     # And a declared scheme must be reported as declared, or the two fields
     # would be able to disagree.

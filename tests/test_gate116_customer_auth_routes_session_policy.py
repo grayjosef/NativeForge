@@ -160,10 +160,13 @@ def test_the_session_route_exists():
     assert response.json()["route"] == "session"
 
 
-def test_the_current_user_route_exists():
+def test_the_current_user_route_exists_and_refuses():
+    """Gate 116 returned 200 here. Gate 117 made it the first route to refuse."""
     response = _client().get("/api/auth/current-user")
-    assert response.status_code == 200
-    assert response.json()["route"] == "current_user"
+    assert response.status_code == 401
+    detail = response.json()["detail"]
+    assert detail["status"] == "unauthenticated"
+    assert detail["customer_auth_live"] is False
 
 
 # ------------------------------------------------- and authenticate nobody
@@ -172,7 +175,11 @@ def test_the_current_user_route_exists():
 def test_no_route_creates_a_real_session_while_auth_is_not_live():
     client = _client()
     for method, path in AUTH_ROUTES:
-        body = client.request(method, path).json()
+        response = client.request(method, path)
+        if response.status_code == 401:
+            # Gate 117: /current-user refuses. A refusal creates nothing.
+            continue
+        body = response.json()
         assert body["real_session_created"] is False, path
         assert body["real_user_created"] is False, path
         assert body["provider_contacted"] is False, path
@@ -188,24 +195,38 @@ def test_the_callback_refuses_to_create_a_session():
     assert body["pkce_verified"] is False
 
 
-def test_session_and_current_user_report_unauthenticated():
+def test_session_and_current_user_both_report_unauthenticated():
+    """Same answer, two different ways of giving it.
+
+    /session is optional and says no with a 200; /current-user is required and
+    says no with a 401. Gate 117 introduced the second.
+    """
     client = _client()
-    for path in ("/api/auth/session", "/api/auth/current-user"):
-        body = client.get(path).json()
-        assert body["authenticated"] is False, path
-        assert body["status"] == "unauthenticated", path
-        assert body["customer_auth_live"] is False, path
+
+    session = client.get("/api/auth/session")
+    assert session.status_code == 200
+    assert session.json()["authenticated"] is False
+    assert session.json()["customer_auth_live"] is False
+
+    current = client.get("/api/auth/current-user")
+    assert current.status_code == 401
+    assert current.json()["detail"]["status"] == "unauthenticated"
+    assert current.json()["detail"]["customer_auth_live"] is False
 
 
-def test_current_user_reports_no_organization_and_no_privilege():
+def test_current_user_refuses_rather_than_reporting_an_organization():
     """A route reporting an organization from an unverified claim would be the
-    defect Gates 110-113 exist to prevent."""
-    body = _client().get("/api/auth/current-user").json()
-    assert body["organization_id"] is None
-    assert body["organization_id_resolved"] is False
-    assert body["membership_verified"] is False
-    assert body["roles"] == []
-    assert body["least_privilege_role"] == "unknown"
+    defect Gates 110-113 exist to prevent.
+
+    Gate 116 answered with nulls. Gate 117 refuses outright, which is stronger:
+    there is no body to misread.
+    """
+    response = _client().get("/api/auth/current-user")
+    assert response.status_code == 401
+    body = response.json()
+    assert "organization_id" not in body
+    assert "roles" not in body
+    assert body["detail"]["status"] == "unauthenticated"
 
 
 def test_logout_clears_the_cookie_without_a_live_session():
@@ -225,9 +246,11 @@ def test_every_route_reports_auth_and_login_not_live():
     client = _client()
     for method, path in AUTH_ROUTES:
         body = client.request(method, path).json()
-        assert body["customer_auth_live"] is False, path
-        assert body["login_live"] is False, path
-        assert body["blocked_reasons"], path
+        # Gate 117: a 401 carries the same two fields inside `detail`.
+        payload = body.get("detail", body)
+        assert payload["customer_auth_live"] is False, path
+        assert payload["login_live"] is False, path
+        assert payload["blocked_reasons"], path
 
 
 def test_no_auth_route_leaks_a_secret(monkeypatch):
@@ -269,17 +292,15 @@ def test_route_existence_does_not_imply_customer_auth_live():
 
 
 def test_a_declared_security_scheme_is_not_enforcement():
-    """The distinction this gate turns on."""
-    readiness = routes_svc.build_route_readiness()
-    assert readiness["security_scheme_declared"] is True
-    assert readiness["secured_route_count"] == 0
-    assert readiness["route_auth_enforced"] is False
-    assert (
-        "security_scheme_declared_but_no_route_requires_it"
-        in readiness["blocked_reasons"]
-    )
+    """The distinction Gate 116 turned on, still enforced by an invariant.
 
-    forged = dict(readiness)
+    Gate 117 attached the scheme to a route that refuses, so the live
+    application now reports enforcement honestly. The rule that a *declared*
+    scheme alone proves nothing is unchanged, and is asserted here against a
+    forged readiness with the scheme present and no secured route.
+    """
+    forged = dict(routes_svc.build_route_readiness())
+    forged["secured_route_count"] = 0
     forged["route_auth_enforced"] = True
     assert (
         "auth_reported_enforced_with_zero_secured_routes"
@@ -287,7 +308,9 @@ def test_a_declared_security_scheme_is_not_enforcement():
     )
 
 
-def test_the_security_scheme_is_declared_and_applied_to_nothing():
+def test_the_security_scheme_is_applied_only_where_auth_is_enforced():
+    """Gate 116 attached it to nothing. Gate 117 attached it to the one route
+    that refuses, and to nothing else."""
     spec = _client().get("/openapi.json").json()
     schemes = spec.get("components", {}).get("securitySchemes", {})
     assert "nf_session_cookie" in schemes
@@ -298,7 +321,7 @@ def test_the_security_scheme_is_declared_and_applied_to_nothing():
         for path, ops in spec["paths"].items()
         if any("security" in op for op in ops.values())
     ]
-    assert secured == []
+    assert secured == ["/api/auth/current-user"]
 
 
 def test_the_activation_gate_gained_exactly_the_two_route_gates():
@@ -401,8 +424,10 @@ def test_auth_routes_existing_does_not_make_the_dev_header_removable():
     assert readiness["replacement_route_available"] is False
     assert readiness["auth_replacement_available"] is False
     assert readiness["safe_to_disable_now"] is False
+    # Gate 117: the routes now refuse, which is a different sentence from
+    # "none of them authenticates anybody" and gets its own reason.
     assert (
-        "auth_routes_exist_but_none_of_them_authenticates_anybody_yet"
+        "auth_routes_refuse_unauthenticated_callers_but_cannot_admit_anybody"
         in readiness["blocked_reasons"]
     )
     assert header.shutdown_readiness_invariant_failures(readiness) == []
@@ -544,15 +569,21 @@ def test_a_planted_secret_never_reaches_a_route_artifact(monkeypatch, tmp_path):
         assert planted not in path.read_text(encoding="utf-8"), path.name
 
 
-def test_the_matrix_shows_available_routes_and_no_enforcement():
+def test_the_matrix_shows_enforcement_only_where_a_route_requires_it():
+    """Gate 116 rendered one enforcement value for all five rows, which was
+    accurate while the answer was "none of them". Gate 117 made it per route."""
     rows = list(csv.DictReader(io.StringIO(_artifact(
         "customer_auth_route_readiness_matrix.csv"
     ))))
     assert len(rows) == 5
+    enforced = set()
     for row in rows:
         assert row["route_available"] == "true", row["route"]
-        assert row["route_enforced"] == "false", row["route"]
         assert row["creates_real_session"] == "false", row["route"]
+        if row["route_enforced"] == "true":
+            assert row["security_required"] == "true", row["route"]
+            enforced.add(row["route"])
+    assert enforced == {"current_user"}
 
 
 def test_the_cookie_policy_artifact_is_http_only():
@@ -580,8 +611,12 @@ def test_the_artifact_invariants_catch_a_forged_declaration():
         in art.route_artifact_invariant_failures(declaration)
     )
 
+    # Gate 117 secured one route, so enforcement is honest now. The rule that
+    # enforcement without a secured route is a lie is asserted against a forged
+    # declaration rather than against the live one.
     declaration = dict(art.build_route_declaration())
     declaration["route_auth_enforced"] = True
+    declaration["secured_route_count"] = 0
     assert (
         "artifact_reports_enforcement_with_zero_secured_routes"
         in art.route_artifact_invariant_failures(declaration)

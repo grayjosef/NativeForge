@@ -1,0 +1,17 @@
+dependency_mode,session_cookie_present,session_cookie_valid,principal_resolved,authenticated,authorized,http_status,security_scheme_required,sets_rls_context,blocked_reasons
+forbid,false,false,false,false,true,200,false,false,
+forbid,true,false,false,false,true,200,false,false,session_cookie_present_but_invalid
+forbid,true,true,false,false,true,200,false,false,session_cookie_valid_but_no_principal_resolved
+forbid,true,true,true,true,false,403,false,false,forbid_mode_refuses_an_authenticated_caller; no_organization_id_resolved_from_the_principal; no_verified_membership_for_this_organization
+optional,false,false,false,false,true,200,false,false,
+optional,true,false,false,false,true,200,false,false,session_cookie_present_but_invalid
+optional,true,true,false,false,true,200,false,false,session_cookie_valid_but_no_principal_resolved
+optional,true,true,true,true,true,200,false,false,no_organization_id_resolved_from_the_principal; no_verified_membership_for_this_organization
+required,false,false,false,false,false,401,true,false,required_mode_refuses_an_unauthenticated_caller
+required,true,false,false,false,false,401,true,false,required_mode_refuses_an_unauthenticated_caller; session_cookie_present_but_invalid
+required,true,true,false,false,false,401,true,false,required_mode_refuses_an_unauthenticated_caller; session_cookie_valid_but_no_principal_resolved
+required,true,true,true,true,true,200,true,false,no_organization_id_resolved_from_the_principal; no_verified_membership_for_this_organization
+unknown,false,false,false,false,false,401,false,false,route_declared_no_auth_dependency_mode
+unknown,true,false,false,false,false,401,false,false,route_declared_no_auth_dependency_mode; session_cookie_present_but_invalid
+unknown,true,true,false,false,false,401,false,false,route_declared_no_auth_dependency_mode; session_cookie_valid_but_no_principal_resolved
+unknown,true,true,true,true,false,401,false,false,no_organization_id_resolved_from_the_principal; no_verified_membership_for_this_organization; route_declared_no_auth_dependency_mode

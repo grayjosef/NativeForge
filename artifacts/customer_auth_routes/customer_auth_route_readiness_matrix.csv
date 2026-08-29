@@ -2,5 +2,5 @@ route,method,route_path,route_available,route_enforced,security_required,provide
 login,GET,/api/auth/login,true,false,false,false,false,true,true,false,false,true,no_provider_configured_so_no_provider_call
 callback,GET,/api/auth/callback,true,false,false,false,false,true,true,true,true,true,callback_validation_has_not_passed; membership_not_verified_for_this_organization; no_provider_configured_so_no_provider_call; organization_id_not_resolved_from_the_claims
 logout,POST,/api/auth/logout,true,false,false,false,false,false,false,false,false,true,
-session,GET,/api/auth/session,true,false,true,false,false,false,false,false,false,true,
-current_user,GET,/api/auth/current-user,true,false,true,false,false,false,false,true,true,true,
+session,GET,/api/auth/session,true,false,false,false,false,false,false,false,false,true,
+current_user,GET,/api/auth/current-user,true,true,true,false,false,false,false,true,true,true,

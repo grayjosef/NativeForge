@@ -1,0 +1,86 @@
+{
+  "authorization_url_available": false,
+  "authorization_url_returned": false,
+  "blocked_reasons": [
+    "callback_pkce_not_validated",
+    "callback_state_not_validated",
+    "callback_validation_has_not_passed",
+    "no_organization_id_resolved_from_the_claims",
+    "no_provider_configured_so_no_authorization_url",
+    "no_verified_membership_for_this_organization",
+    "token_exchange_blocked:callback_code_present",
+    "token_exchange_blocked:network_call_allowed",
+    "token_exchange_blocked:pkce_validated",
+    "token_exchange_blocked:provider_configured",
+    "token_exchange_blocked:secret_present",
+    "token_exchange_blocked:state_validated"
+  ],
+  "callback_code_present": false,
+  "callback_validation_passed": false,
+  "code_challenge_method": "S256",
+  "current_org_id_set": false,
+  "customer_auth_live": false,
+  "fabricated": false,
+  "login_live": false,
+  "membership_verified": false,
+  "missing_session_conditions": [
+    "token_exchange_allowed",
+    "callback_validation_passed",
+    "organization_id_resolved",
+    "membership_verified"
+  ],
+  "network_calls": false,
+  "next_required_actions": [
+    {
+      "action": "owner sets the OIDC_* environment variables out-of-band; no value is read into this service",
+      "step": "provider_configured"
+    },
+    {
+      "action": "follows provider configuration; building a URL is local work and contacts nobody",
+      "step": "authorization_url_available"
+    },
+    {
+      "action": "the callback must return the state issued at /login",
+      "step": "state_validated"
+    },
+    {
+      "action": "the callback must present a verifier matching the challenge sent at /login",
+      "step": "pkce_validated"
+    },
+    {
+      "action": "every condition in the token exchange boundary, including network_call_allowed, which nothing raises today",
+      "step": "token_exchange_allowed"
+    },
+    {
+      "action": "validate a real callback against the eight failure modes the OIDC harness already models",
+      "step": "callback_validation_passed"
+    },
+    {
+      "action": "Gate 112's resolution must turn a verified claim into an organization_id; a token does not carry one",
+      "step": "organization_id_resolved"
+    },
+    {
+      "action": "a membership record must back the organization the claim names",
+      "step": "membership_verified"
+    }
+  ],
+  "organization_id_resolved": false,
+  "persisted": false,
+  "pkce_generated": true,
+  "pkce_validated": false,
+  "provider_configured": false,
+  "provider_contacted": false,
+  "real_sessions_created": false,
+  "real_users_created": false,
+  "redirect_flow_contract_available": true,
+  "role_mapping_available": true,
+  "schema_version": "nf_customer_auth_redirect_flow_v1",
+  "secret_value_emitted": false,
+  "session_created": false,
+  "session_creation_allowed": false,
+  "state_generated": true,
+  "state_validated": false,
+  "token_exchange_allowed": false,
+  "token_exchange_performed": false,
+  "token_value_emitted": false
+}

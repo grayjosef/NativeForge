@@ -1,0 +1,31 @@
+{
+  "blocked_reasons": [
+    "code_verifier_outside_43_128_range",
+    "state_shorter_than_32_characters"
+  ],
+  "code_challenge": "XuRMBtny6bqUwgHLrz74s8DY1MfLcpai5bJsK59Ntuk",
+  "code_challenge_generated": true,
+  "code_challenge_method": "S256",
+  "code_verifier": "nf-demo-fixture-verifier",
+  "code_verifier_generated": true,
+  "code_verifier_length": 24,
+  "deterministic_generator_used": true,
+  "fabricated": false,
+  "fixture_label": "demo_fixture",
+  "is_fixture": true,
+  "network_calls": false,
+  "persisted": false,
+  "pkce_required": true,
+  "pkce_valid": false,
+  "production_mode": false,
+  "production_safe": false,
+  "provider_contacted": false,
+  "schema_version": "nf_customer_auth_state_pkce_v1",
+  "secrets_exposed": false,
+  "state": "nf-demo-fixture-state",
+  "state_entropy_ok": false,
+  "state_generated": true,
+  "state_length": 21,
+  "state_required": true,
+  "state_valid": false
+}

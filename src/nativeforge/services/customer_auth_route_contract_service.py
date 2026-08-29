@@ -72,10 +72,15 @@ ROUTE_FIELDS: tuple[str, ...] = (
 
 # Per-route requirements, declared before the code that implements them.
 #
-# `security_required` means "a caller must already hold a session to use this".
-# It is false for /login and /callback by necessity - a caller with a session
-# does not need to log in - and true for /session and /current-user, which
-# report on a session the caller must already have.
+# `security_required` means "a caller must already hold a session to use this",
+# and it is true for exactly one route.
+#
+# /login and /callback are false by necessity: a caller with a session does not
+# need to log in. /logout is false because clearing a cookie is safe either way.
+# /session is false because a caller asking whether they have one should be told
+# no rather than refused for not having one - Gate 116 had it true, which read
+# correctly before there was a dependency to make the distinction.
+# /current-user is the one that refuses.
 ROUTE_SPECS: tuple[dict[str, Any], ...] = (
     {
         "name": "login",
@@ -130,15 +135,19 @@ ROUTE_SPECS: tuple[dict[str, Any], ...] = (
         "name": "session",
         "route_path": f"{AUTH_ROUTE_PREFIX}/session",
         "method": "GET",
-        "security_required": True,
+        # Gate 117 made this optional. Gate 116 declared it required, which read
+        # correctly then and would now be wrong: a caller asking whether they
+        # have a session should be told no, not refused for not having one.
+        "security_required": False,
         "requires_state": False,
         "requires_pkce": False,
         "requires_session_cookie_policy": True,
         "requires_organization_id_resolution": False,
         "requires_membership_verification": False,
         "why": (
-            "reports on a session the caller already holds. It resolves no "
-            "organization because it establishes nothing - it describes"
+            "reports on whatever session the caller holds, including none. It "
+            "resolves no organization because it establishes nothing - it "
+            "describes"
         ),
     },
     {

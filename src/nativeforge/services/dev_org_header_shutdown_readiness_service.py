@@ -219,7 +219,14 @@ def build_dev_header_shutdown_readiness(
             "current_user_route_available",
         )
     )
+    # Gate 117: a route that refuses is not a route that authenticates.
+    #
+    # /current-user now returns 401, which makes route_auth_enforced true. That
+    # is real enforcement and it is still not a replacement for the dev header:
+    # the header supplies an organization_id, and a 401 supplies nothing. A
+    # replacement must be able to say yes to somebody.
     replacement_route_available = bool(routes.get("ready_for_live_login"))
+    auth_routes_enforce = bool(routes.get("route_auth_enforced"))
 
     # A replacement is not a set of contracts, and it is not a set of endpoints
     # either. It is a route a customer can actually authenticate through, plus
@@ -231,10 +238,15 @@ def build_dev_header_shutdown_readiness(
     if not auth_replacement_routes_available:
         blocked_reasons.append("auth_replacement_routes_are_not_registered")
     elif not replacement_route_available:
-        # The state Gate 116 leaves the system in, named rather than silent.
-        blocked_reasons.append(
-            "auth_routes_exist_but_none_of_them_authenticates_anybody_yet"
-        )
+        # The state Gate 117 leaves the system in, named rather than silent.
+        if auth_routes_enforce:
+            blocked_reasons.append(
+                "auth_routes_refuse_unauthenticated_callers_but_cannot_admit_anybody"
+            )
+        else:
+            blocked_reasons.append(
+                "auth_routes_exist_but_none_of_them_authenticates_anybody_yet"
+            )
 
     if not replacement_route_available:
         blocked_reasons.append(
@@ -274,6 +286,7 @@ def build_dev_header_shutdown_readiness(
             "dev_header_mention_only_modules": usage["mention_only_modules"],
             "auth_replacement_available": auth_replacement_available,
             "auth_replacement_routes_available": auth_replacement_routes_available,
+            "auth_routes_enforce_authentication": auth_routes_enforce,
             "replacement_route_available": replacement_route_available,
             **components,
             "safe_to_disable_now": safe_to_disable_now,
@@ -316,6 +329,14 @@ def shutdown_readiness_invariant_failures(readiness: dict[str, Any]) -> list[str
     # The boundary with no true branch.
     if readiness.get("must_disable_before_production_auth") is not True:
         fails.append("dev_header_permitted_to_survive_into_production_auth")
+
+    # Gate 117: nor does a route that refuses. Enforcement is not admission,
+    # and the dev header exists to supply an organization_id - which a 401
+    # supplies to nobody.
+    if readiness.get("safe_to_disable_now") and readiness.get(
+        "auth_routes_enforce_authentication"
+    ) and not readiness.get("replacement_route_available"):
+        fails.append("safe_to_disable_because_routes_refuse_rather_than_admit")
 
     # Gate 116: routes existing must never, on its own, permit the header to
     # go. This is the invariant that keeps "the auth routes are in" from

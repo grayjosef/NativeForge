@@ -18,8 +18,8 @@ application routes                   183
 
 ```text
 security_scheme_declared             true
-secured_route_count                  0
-route_auth_enforced                  false
+secured_route_count                  1
+route_auth_enforced                  true
 ready_for_live_login                 false
 ```
 

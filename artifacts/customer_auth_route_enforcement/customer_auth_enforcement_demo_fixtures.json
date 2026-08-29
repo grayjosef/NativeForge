@@ -1,0 +1,469 @@
+{
+  "boundary_with_network_off": {
+    "missing_conditions": [
+      "network_call_allowed"
+    ],
+    "token_exchange_allowed": false,
+    "token_exchange_performed": false
+  },
+  "case_count": 10,
+  "cases": [
+    {
+      "case": "required_dependency_no_session",
+      "expect_authorized": false,
+      "expect_http_status": 401,
+      "fixture_label": "demo_fixture",
+      "kind": "dependency",
+      "request": {
+        "dependency_mode": "required"
+      },
+      "why": "the 401 NativeForge now returns, and never did before"
+    },
+    {
+      "case": "optional_dependency_no_session",
+      "expect_authorized": true,
+      "expect_http_status": 200,
+      "fixture_label": "demo_fixture",
+      "kind": "dependency",
+      "request": {
+        "dependency_mode": "optional"
+      },
+      "why": "the 200 that says you are nobody. A caller asking whether they have a session is told no rather than refused for not having one"
+    },
+    {
+      "case": "invalid_session_cookie",
+      "expect_authorized": false,
+      "expect_http_status": 401,
+      "fixture_label": "demo_fixture",
+      "kind": "dependency",
+      "request": {
+        "dependency_mode": "required",
+        "session_cookie_present": true,
+        "session_cookie_valid": false
+      },
+      "why": "something was sent and it did not check out, which is worse than nothing being sent and is named separately"
+    },
+    {
+      "case": "verified_principal_no_auth_live",
+      "expect_authorized": true,
+      "expect_http_status": 200,
+      "fixture_label": "demo_fixture",
+      "kind": "dependency",
+      "request": {
+        "dependency_mode": "required",
+        "membership_verified": true,
+        "organization_id_resolved": true,
+        "principal_resolved": true,
+        "session_cookie_present": true,
+        "session_cookie_valid": true
+      },
+      "why": "a principal forged all the way through: valid cookie, resolved principal, organization, verified membership. The dependency admits it - and customer_auth_live is still false, because that is measured from the real environment"
+    },
+    {
+      "case": "current_user_unauthenticated_401",
+      "expect_authorized": false,
+      "expect_http_status": 401,
+      "fixture_label": "demo_fixture",
+      "kind": "dependency",
+      "request": {
+        "dependency_mode": "required",
+        "session_cookie_present": true,
+        "session_cookie_valid": false
+      },
+      "why": "the enforced route, refusing. Same shape as the first case and kept separate because it is the one attached to the security scheme"
+    },
+    {
+      "case": "login_provider_missing",
+      "expect_authorization_url": false,
+      "expect_session_allowed": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "request": {
+        "provider_configured": false
+      },
+      "why": "no provider, so no authorization URL and nothing to redirect to"
+    },
+    {
+      "case": "login_provider_configured",
+      "expect_authorization_url": true,
+      "expect_session_allowed": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "request": {
+        "provider_configured": true
+      },
+      "why": "an authorization URL becomes buildable. Building one is local work; the browser would visit it, not NativeForge"
+    },
+    {
+      "case": "callback_missing_state",
+      "expect_authorization_url": true,
+      "expect_session_allowed": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "request": {
+        "callback_code_present": true,
+        "provider_configured": true,
+        "secret_present": true,
+        "state_validation": {
+          "blocked_reasons": [
+            "no_expected_state_to_compare_against"
+          ],
+          "code_challenge_generated": true,
+          "code_challenge_method": "S256",
+          "code_verifier_generated": true,
+          "fabricated": false,
+          "network_calls": false,
+          "persisted": false,
+          "pkce_required": true,
+          "pkce_valid": true,
+          "provider_contacted": false,
+          "schema_version": "nf_customer_auth_state_pkce_v1",
+          "secrets_exposed": false,
+          "state_entropy_ok": false,
+          "state_generated": false,
+          "state_length": 0,
+          "state_required": true,
+          "state_valid": false
+        }
+      },
+      "why": "a callback with nothing to compare its state against"
+    },
+    {
+      "case": "callback_invalid_pkce",
+      "expect_authorization_url": true,
+      "expect_session_allowed": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "request": {
+        "callback_code_present": true,
+        "provider_configured": true,
+        "secret_present": true,
+        "state_validation": {
+          "blocked_reasons": [
+            "code_challenge_mismatch"
+          ],
+          "code_challenge_generated": true,
+          "code_challenge_method": "S256",
+          "code_verifier_generated": true,
+          "fabricated": false,
+          "network_calls": false,
+          "persisted": false,
+          "pkce_required": true,
+          "pkce_valid": false,
+          "provider_contacted": false,
+          "schema_version": "nf_customer_auth_state_pkce_v1",
+          "secrets_exposed": false,
+          "state_entropy_ok": true,
+          "state_generated": true,
+          "state_length": 54,
+          "state_required": true,
+          "state_valid": true
+        }
+      },
+      "why": "a verifier that does not derive the challenge that was sent"
+    },
+    {
+      "case": "token_exchange_network_blocked",
+      "expect_authorization_url": true,
+      "expect_session_allowed": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "request": {
+        "callback_code_present": true,
+        "callback_validation_passed": true,
+        "membership_verified": true,
+        "organization_id_resolved": true,
+        "provider_configured": true,
+        "secret_present": true,
+        "state_validation": {
+          "blocked_reasons": [],
+          "code_challenge_generated": true,
+          "code_challenge_method": "S256",
+          "code_verifier_generated": true,
+          "fabricated": false,
+          "network_calls": false,
+          "persisted": false,
+          "pkce_required": true,
+          "pkce_valid": true,
+          "provider_contacted": false,
+          "schema_version": "nf_customer_auth_state_pkce_v1",
+          "secrets_exposed": false,
+          "state_entropy_ok": true,
+          "state_generated": true,
+          "state_length": 54,
+          "state_required": true,
+          "state_valid": true
+        }
+      },
+      "why": "every security condition satisfied and the exchange still does not happen, because network_call_allowed is false and nothing in this repository raises it"
+    }
+  ],
+  "cases_disagreeing_with_expectation": [],
+  "cookies_set": false,
+  "current_org_id_set": false,
+  "customer_auth_live_in_actual_environment": false,
+  "enforcement_cases_covered": [
+    "callback_invalid_pkce",
+    "callback_missing_state",
+    "current_user_unauthenticated_401",
+    "invalid_session_cookie",
+    "login_provider_configured",
+    "login_provider_missing",
+    "optional_dependency_no_session",
+    "required_dependency_no_session",
+    "token_exchange_network_blocked",
+    "verified_principal_no_auth_live"
+  ],
+  "enforcement_cases_missing": [],
+  "fabricated": false,
+  "fixture_label": "demo_fixture",
+  "fixture_state_pkce": {
+    "blocked_reasons": [
+      "code_verifier_outside_43_128_range",
+      "state_shorter_than_32_characters"
+    ],
+    "code_challenge": "XuRMBtny6bqUwgHLrz74s8DY1MfLcpai5bJsK59Ntuk",
+    "code_challenge_generated": true,
+    "code_challenge_method": "S256",
+    "code_verifier": "nf-demo-fixture-verifier",
+    "code_verifier_generated": true,
+    "code_verifier_length": 24,
+    "deterministic_generator_used": true,
+    "fabricated": false,
+    "fixture_label": "demo_fixture",
+    "is_fixture": true,
+    "network_calls": false,
+    "persisted": false,
+    "pkce_required": true,
+    "pkce_valid": false,
+    "production_mode": false,
+    "production_safe": false,
+    "provider_contacted": false,
+    "schema_version": "nf_customer_auth_state_pkce_v1",
+    "secrets_exposed": false,
+    "state": "nf-demo-fixture-state",
+    "state_entropy_ok": false,
+    "state_generated": true,
+    "state_length": 21,
+    "state_required": true,
+    "state_valid": false
+  },
+  "login_live_in_actual_environment": false,
+  "network_calls": false,
+  "provider_contacted": false,
+  "real_sessions_created": false,
+  "real_users_created": false,
+  "refused_401_count": 3,
+  "rls_context_count": 1,
+  "rows": [
+    {
+      "agrees_with_expectation": true,
+      "authenticated": false,
+      "authorized": false,
+      "blocked_reasons": [
+        "required_mode_refuses_an_unauthenticated_caller"
+      ],
+      "case": "required_dependency_no_session",
+      "customer_auth_live": false,
+      "dependency_mode": "required",
+      "fixture_label": "demo_fixture",
+      "http_status": 401,
+      "kind": "dependency",
+      "provider_contacted": false,
+      "session_created": false,
+      "sets_rls_context": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "authenticated": false,
+      "authorized": true,
+      "blocked_reasons": [],
+      "case": "optional_dependency_no_session",
+      "customer_auth_live": false,
+      "dependency_mode": "optional",
+      "fixture_label": "demo_fixture",
+      "http_status": 200,
+      "kind": "dependency",
+      "provider_contacted": false,
+      "session_created": false,
+      "sets_rls_context": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "authenticated": false,
+      "authorized": false,
+      "blocked_reasons": [
+        "required_mode_refuses_an_unauthenticated_caller",
+        "session_cookie_present_but_invalid"
+      ],
+      "case": "invalid_session_cookie",
+      "customer_auth_live": false,
+      "dependency_mode": "required",
+      "fixture_label": "demo_fixture",
+      "http_status": 401,
+      "kind": "dependency",
+      "provider_contacted": false,
+      "session_created": false,
+      "sets_rls_context": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "authenticated": true,
+      "authorized": true,
+      "blocked_reasons": [],
+      "case": "verified_principal_no_auth_live",
+      "customer_auth_live": false,
+      "dependency_mode": "required",
+      "fixture_label": "demo_fixture",
+      "http_status": 200,
+      "kind": "dependency",
+      "provider_contacted": false,
+      "session_created": false,
+      "sets_rls_context": true
+    },
+    {
+      "agrees_with_expectation": true,
+      "authenticated": false,
+      "authorized": false,
+      "blocked_reasons": [
+        "required_mode_refuses_an_unauthenticated_caller",
+        "session_cookie_present_but_invalid"
+      ],
+      "case": "current_user_unauthenticated_401",
+      "customer_auth_live": false,
+      "dependency_mode": "required",
+      "fixture_label": "demo_fixture",
+      "http_status": 401,
+      "kind": "dependency",
+      "provider_contacted": false,
+      "session_created": false,
+      "sets_rls_context": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "authorization_url_available": false,
+      "blocked_reasons": [
+        "callback_pkce_not_validated",
+        "callback_state_not_validated",
+        "callback_validation_has_not_passed",
+        "no_organization_id_resolved_from_the_claims",
+        "no_provider_configured_so_no_authorization_url",
+        "no_verified_membership_for_this_organization",
+        "token_exchange_blocked:callback_code_present",
+        "token_exchange_blocked:network_call_allowed",
+        "token_exchange_blocked:pkce_validated",
+        "token_exchange_blocked:provider_configured",
+        "token_exchange_blocked:secret_present",
+        "token_exchange_blocked:state_validated"
+      ],
+      "case": "login_provider_missing",
+      "customer_auth_live": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "pkce_validated": false,
+      "provider_contacted": false,
+      "session_created": false,
+      "session_creation_allowed": false,
+      "state_validated": false,
+      "token_exchange_allowed": false,
+      "token_exchange_performed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "authorization_url_available": true,
+      "blocked_reasons": [
+        "callback_pkce_not_validated",
+        "callback_state_not_validated",
+        "callback_validation_has_not_passed",
+        "no_organization_id_resolved_from_the_claims",
+        "no_verified_membership_for_this_organization",
+        "token_exchange_blocked:callback_code_present",
+        "token_exchange_blocked:network_call_allowed",
+        "token_exchange_blocked:pkce_validated",
+        "token_exchange_blocked:secret_present",
+        "token_exchange_blocked:state_validated"
+      ],
+      "case": "login_provider_configured",
+      "customer_auth_live": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "pkce_validated": false,
+      "provider_contacted": false,
+      "session_created": false,
+      "session_creation_allowed": false,
+      "state_validated": false,
+      "token_exchange_allowed": false,
+      "token_exchange_performed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "authorization_url_available": true,
+      "blocked_reasons": [
+        "callback_state_not_validated",
+        "callback_validation_has_not_passed",
+        "no_organization_id_resolved_from_the_claims",
+        "no_verified_membership_for_this_organization",
+        "token_exchange_blocked:network_call_allowed",
+        "token_exchange_blocked:state_validated"
+      ],
+      "case": "callback_missing_state",
+      "customer_auth_live": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "pkce_validated": true,
+      "provider_contacted": false,
+      "session_created": false,
+      "session_creation_allowed": false,
+      "state_validated": false,
+      "token_exchange_allowed": false,
+      "token_exchange_performed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "authorization_url_available": true,
+      "blocked_reasons": [
+        "callback_pkce_not_validated",
+        "callback_validation_has_not_passed",
+        "no_organization_id_resolved_from_the_claims",
+        "no_verified_membership_for_this_organization",
+        "token_exchange_blocked:network_call_allowed",
+        "token_exchange_blocked:pkce_validated"
+      ],
+      "case": "callback_invalid_pkce",
+      "customer_auth_live": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "pkce_validated": false,
+      "provider_contacted": false,
+      "session_created": false,
+      "session_creation_allowed": false,
+      "state_validated": true,
+      "token_exchange_allowed": false,
+      "token_exchange_performed": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "authorization_url_available": true,
+      "blocked_reasons": [
+        "token_exchange_blocked:network_call_allowed"
+      ],
+      "case": "token_exchange_network_blocked",
+      "customer_auth_live": false,
+      "fixture_label": "demo_fixture",
+      "kind": "flow",
+      "pkce_validated": true,
+      "provider_contacted": false,
+      "session_created": false,
+      "session_creation_allowed": false,
+      "state_validated": true,
+      "token_exchange_allowed": false,
+      "token_exchange_performed": false
+    }
+  ],
+  "schema_version": "nf_customer_auth_enforcement_demo_fixture_v1",
+  "secret_value_emitted": false,
+  "secrets_stored": false,
+  "session_created_count": 0,
+  "token_exchange_allowed_count": 0,
+  "token_value_emitted": false
+}

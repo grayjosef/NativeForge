@@ -179,16 +179,20 @@ def render_route_matrix(
         "safe_without_provider",
         "blocked_reasons",
     )
-    # Enforcement is a property of the route table, not of the contract, so it
-    # is read from readiness rather than restated per row.
-    enforced = _flag(readiness["route_auth_enforced"])
+    # Gate 117: enforcement is per route, not per application.
+    #
+    # Gate 116 rendered one value for every row, which was accurate while the
+    # answer was "none of them". Now /current-user refuses and the other four do
+    # not, and a single column repeating `true` five times would say four things
+    # that are false.
+    application_enforces = bool(readiness["route_auth_enforced"])
     rows = [
         [
             row["route"],
             row["method"],
             row["route_path"],
             _flag(row["route_available"]),
-            enforced,
+            _flag(application_enforces and row["security_required"]),
             _flag(row["security_required"]),
             _flag(row["provider_call_allowed"]),
             _flag(row["creates_real_session"]),
@@ -483,13 +487,17 @@ def route_artifact_invariant_failures(
         header, body = parsed[0], parsed[1:]
         available = header.index("route_available")
         enforced = header.index("route_enforced")
+        security = header.index("security_required")
         session = header.index("creates_real_session")
         route = header.index("route")
         if not any(row[available] == "true" for row in body):
             fails.append("matrix_shows_no_available_route")
-        if any(row[enforced] == "true" for row in body):
-            fails.append("matrix_reports_an_enforced_route")
+        # Gate 117: a route may report enforcement only if it requires a
+        # credential. Gate 116 asserted no route was enforced at all, which was
+        # right then and would now hide the four that still are not.
         for row in body:
+            if row[enforced] == "true" and row[security] != "true":
+                fails.append(f"matrix_enforces_a_route_that_requires_nothing:{row[route]}")
             if row[session] == "true":
                 fails.append(f"matrix_reports_a_session_creating_route:{row[route]}")
 

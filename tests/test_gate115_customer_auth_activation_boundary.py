@@ -68,8 +68,17 @@ FULL_VALIDATION = {
 
 
 def _secured_routes():
+    """A forged application that authenticates people.
+
+    `customer_auth_live=True` is forged alongside the route table because Gate
+    117 made organization-resolution enforcement depend on a principal being
+    possible. Without it `ready_for_live_login: True` would be unreachable, and
+    an unreachable branch makes every "not ready" claim unfalsifiable.
+    """
     return routes_svc.build_route_readiness(
-        openapi=SECURED_OPENAPI, cloudflare_access_in_front=False
+        openapi=SECURED_OPENAPI,
+        cloudflare_access_in_front=False,
+        customer_auth_live=True,
     )
 
 
@@ -274,8 +283,11 @@ def test_the_applications_auth_routes_enforce_nothing():
     for field in routes_svc.REQUIRED_ROUTES:
         assert readiness[field] is True, field
     assert readiness["security_scheme_declared"] is True
-    assert readiness["secured_route_count"] == 0
-    assert readiness["route_auth_enforced"] is False
+    # Gate 117 attached the scheme to /current-user, which now refuses.
+    assert readiness["secured_route_count"] == 1
+    assert readiness["route_auth_enforced"] is True
+    # And still nothing resolves an organization, so login is not ready.
+    assert readiness["route_org_resolution_enforced"] is False
     assert readiness["ready_for_live_login"] is False
 
 
@@ -746,10 +758,11 @@ def test_the_gate_artifact_reports_auth_not_live():
     assert payload["missing_auth_gates"]
 
 
-def test_the_route_matrix_reports_routes_without_enforcement():
-    """Gate 116 added the five routes; none of them enforces anything.
+def test_the_route_matrix_reports_enforcement_without_login_readiness():
+    """Gate 116 added the routes; Gate 117 made one of them refuse.
 
-    The assertion that matters is the second half, and it is unchanged.
+    Authentication is enforced and organization resolution is not, which is the
+    distinction that keeps a 401 from reading as a working login.
     """
     rows = list(csv.reader(io.StringIO(_artifact(
         "customer_auth_route_readiness_matrix.csv"
@@ -757,8 +770,9 @@ def test_the_route_matrix_reports_routes_without_enforcement():
     by_name = {row[0]: row for row in rows}
     for field in routes_svc.REQUIRED_ROUTES:
         assert by_name[field][2] == "true", field
-    for field in routes_svc.REQUIRED_ENFORCEMENT:
-        assert by_name[field][2] == "false", field
+    assert by_name["route_auth_enforced"][2] == "true"
+    assert by_name["route_org_resolution_enforced"][2] == "false"
+    assert by_name["route_role_mapping_enforced"][2] == "false"
     assert by_name["ready_for_live_login"][2] == "false"
     assert by_name["cloudflare_access_is_customer_auth"][2] == "false"
 

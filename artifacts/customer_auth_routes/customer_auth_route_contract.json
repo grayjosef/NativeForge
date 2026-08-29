@@ -112,8 +112,8 @@
       "safe_without_provider": true,
       "schema_version": "nf_customer_auth_route_contract_v1",
       "secret_value_emitted": false,
-      "security_required": true,
-      "why": "reports on a session the caller already holds. It resolves no organization because it establishes nothing - it describes"
+      "security_required": false,
+      "why": "reports on whatever session the caller holds, including none. It resolves no organization because it establishes nothing - it describes"
     },
     {
       "blocked_reasons": [],
