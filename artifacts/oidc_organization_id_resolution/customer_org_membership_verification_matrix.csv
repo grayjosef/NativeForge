@@ -1,0 +1,7 @@
+principal_id,organization_id,organization_id_shape,membership_status,membership_source,membership_verified,can_set_rls_context,can_verify_binding
+nf-demo-principal-01,00000000-0000-4000-8000-000000000112,uuid,verified_member,nf_org_memberships,true,true,false
+nf-demo-principal-02,00000000-0000-4000-8000-000000000112,uuid,verified_admin,nf_org_memberships,true,true,true
+nf-demo-principal-03,00000000-0000-4000-8000-000000000112,uuid,pending_member,invite_approval,false,false,false
+nf-demo-principal-04,00000000-0000-4000-8000-000000000112,uuid,missing_membership,nf_org_memberships,false,false,false
+nf-demo-principal-05,00000000-0000-4000-8000-000000000112,uuid,revoked,nf_org_memberships,false,false,false
+nf-demo-principal-06,nf-demo-org-01,free_form,demo_fixture,demo_fixture,false,false,false

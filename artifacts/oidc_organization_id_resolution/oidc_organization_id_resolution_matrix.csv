@@ -1,0 +1,9 @@
+case,auth_source,claims_verified,organization_claim_value,organization_profile_id,organization_id_shape,resolution_status,resolved_organization_id,membership_verified,rls_context_allowed
+verified_uuid_org_with_membership,oidc,true,00000000-0000-4000-8000-000000000112,,uuid,resolved_verified_organization_id,00000000-0000-4000-8000-000000000112,true,true
+verified_profile_only,oidc,true,,nf-demo-org-profile-112,absent,resolved_profile_only,,false,false
+unverified_claims_uuid_org,oidc,false,00000000-0000-4000-8000-000000000112,,uuid,unresolved_unverified_claims,,true,false
+verified_invalid_uuid_org,oidc,true,not-a-uuid-at-all,,free_form,unresolved_invalid_uuid,,false,false
+verified_missing_membership,oidc,true,00000000-0000-4000-8000-000000000112,,uuid,unresolved_membership_missing,,false,false
+verified_conflicting_profile_org,oidc,true,nf-demo-org-profile-112,nf-demo-org-profile-112,free_form,conflict,,false,false
+demo_fixture_resolution,demo_fixture,true,00000000-0000-4000-8000-000000000112,,uuid,resolved_demo_fixture,,true,false
+revoked_membership,oidc,true,00000000-0000-4000-8000-000000000112,,uuid,unresolved_membership_missing,,false,false

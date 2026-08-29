@@ -140,7 +140,12 @@ source .venv/bin/activate
 # `login` and `oidc` already reach the module - deliberately not re-added - but
 # the tests that matter are about what authentication does NOT establish:
 # named for the principal and the binder, which no earlier keyword reached.
-GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification or attestation or regeneration or drift or honest or empty or unknown or obligation or calendar or binding or cross_tenant or canonicalization or rls or principal or binder or verified_org'
+#
+# `resolution`, `membership` and `profile_id` were added by Gate 112. `oidc`
+# and `org` already reach the module, but the tests that matter are about a
+# claim stopping one identifier short of the RLS authority - named for the
+# resolution and the profile id, which no earlier keyword reached.
+GATE_K='order_independence or recognition_requirement_coverage_expansion or sprint348_nf15_closeout or fit_dimension or readiness or gate37 or audit_state or audit_refs or demo_payload or negative_intelligence or sc_customer_demo or notice_ingestion or notice_artifact or html_notice or pdf_notice or nofo or notice or amendment or eligibility_exclusion or excluded_by_evidence or funding_lane or south_carolina or sc_state or sc_source or sc_native or state_recognized or federally_recognized or grants_gov or federal or corpus or fixture or source or opportunity or discovery or stale or duplicate or native or capability or audit or invite or approval or backup or restore or storage or postgres or rls or membership or identity or oidc or auth or token or tenant or rbac or role or authority or claim or demo or deadline or normalization or freshness or awarded or pursuit or reporting or lifecycle or attachment or extraction or network or http or robots or chokepoint or user_agent or guard or payload or redaction or promotion or evidence or secret or store or migration or alembic or schema or repository or body_store or object_store or settings or credential or s3 or scheduler or schedule or circuit or breaker or monitor or check_run or job or queue or dry_run or idempotency or runtime or worker or broker or dependency or backend or persistent or systemd or loopback or lifespan or proof or install or attach or tenant or entitlement or allowability or fixture or recognition or digest or snapshot or suppression or nofo or bridge or shadow or classification or attestation or regeneration or drift or honest or empty or unknown or obligation or calendar or binding or cross_tenant or canonicalization or rls or principal or binder or verified_org or resolution or membership or profile_id'
 
 # Tests that have already rotted invisibly once, plus the few whose silent loss
 # would be worst. Every one is a node id, so a rename shows up here as a failure
@@ -352,6 +357,16 @@ CRITICAL=(
   "tests/test_gate111_customer_auth_verified_binder.py::test_authenticated_does_not_imply_verified_organization_membership"
   "tests/test_gate111_customer_auth_verified_binder.py::test_a_demo_principal_may_verify_a_demo_binding_only"
   "tests/test_gate111_customer_auth_verified_binder.py::test_the_dev_request_header_is_not_an_authenticated_claim"
+
+  # Gate 112. Five that keep a claim from reaching the RLS boundary without
+  # resolving to the authority: a profile id is never promoted, membership is
+  # required as well as an org claim, and the dev header is never
+  # production-safe however well contained the deployment happens to be.
+  "tests/test_gate112_oidc_organization_id_resolution.py::test_organization_profile_id_alone_cannot_set_rls"
+  "tests/test_gate112_oidc_organization_id_resolution.py::test_organization_profile_id_is_never_promoted"
+  "tests/test_gate112_oidc_organization_id_resolution.py::test_verified_membership_is_required_for_rls_context"
+  "tests/test_gate112_oidc_organization_id_resolution.py::test_rls_context_requires_verified_membership"
+  "tests/test_gate112_oidc_organization_id_resolution.py::test_the_dev_header_is_never_production_safe"
 )
 
 FAIL=0

@@ -229,6 +229,12 @@ def build_principal(
     roles: list[str] | None = None,
     claims_verified: bool = False,
     org_claim_verified: bool = False,
+    # Gate 112. Verified-org auth establishes *which* organization was asserted
+    # and checked. It does not establish that this person belongs to it - that
+    # comes from nf_org_memberships and is a separate fact from a separate
+    # source. Defaults False, so an RLS context is never granted on an
+    # organization claim alone.
+    membership_verified: bool = False,
     session_expired: bool = False,
     revoked: bool = False,
     demo_label: Any = None,
@@ -321,8 +327,13 @@ def build_principal(
         granted.discard("verify_binding")
 
     rls_context_allowed = bool(
-        status in OPERATIONAL_AUTH_STATUSES and org_shape == "uuid" and not org_is_demo
+        status in OPERATIONAL_AUTH_STATUSES
+        and org_shape == "uuid"
+        and not org_is_demo
+        and membership_verified
     )
+    if status in OPERATIONAL_AUTH_STATUSES and not membership_verified:
+        blocked_reasons.append("organization_membership_not_verified_for_rls")
 
     human_review_required = bool(
         blocked_reasons or status in {"expired", "revoked", "unknown"}
@@ -344,6 +355,7 @@ def build_principal(
             "permissions": sorted(granted),
             "claims_verified": bool(claims_verified),
             "org_claim_verified": org_verified,
+            "membership_verified": bool(membership_verified),
             "rls_context_allowed": rls_context_allowed,
             "is_demo_principal": status == "authenticated_demo",
             # A demo principal is never production authentication.
@@ -419,12 +431,16 @@ def principal_invariant_failures(principal: dict[str, Any]) -> list[str]:
         if principal.get("organization_id_shape") != "uuid":
             fails.append("verified_org_status_without_a_uuid_organization_id")
 
-    # RLS context needs verified-org and a UUID.
+    # RLS context needs verified-org auth, a UUID, and verified membership.
     if principal.get("rls_context_allowed"):
         if status not in OPERATIONAL_AUTH_STATUSES:
             fails.append("rls_context_permitted_without_verified_org_auth")
         if principal.get("organization_id_shape") != "uuid":
             fails.append("rls_context_permitted_for_a_non_uuid_organization_id")
+        # Gate 112: an organization claim says which organization was asserted.
+        # Membership says they belong to it. Both, or no context.
+        if not principal.get("membership_verified"):
+            fails.append("rls_context_permitted_without_verified_membership")
 
     # A dead principal carries nothing.
     if status in DEAD_AUTH_STATUSES and principal.get("permissions"):

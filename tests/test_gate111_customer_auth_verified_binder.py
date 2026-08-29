@@ -142,11 +142,38 @@ def test_an_org_claim_resolving_to_a_profile_string_is_not_verified():
 
 
 def test_organization_id_must_be_uuid_shaped_for_rls():
-    verified = _oidc("tenant_admin")
+    """Gate 112 added membership as a second requirement, so it is supplied here.
+
+    An organization claim says *which* organization was asserted; membership
+    says the person belongs to it. Both are needed for an RLS context, and this
+    test is about the shape half.
+    """
+    verified = _oidc("tenant_admin", membership_verified=True)
     assert verified["rls_context_allowed"] is True
 
-    non_uuid = _oidc("tenant_admin", organization_id="not-a-uuid")
+    non_uuid = _oidc(
+        "tenant_admin", organization_id="not-a-uuid", membership_verified=True
+    )
     assert non_uuid["rls_context_allowed"] is False
+
+
+def test_a_verified_org_claim_without_membership_gets_no_rls_context():
+    """Gate 112: verified-org auth alone is not enough."""
+    without = _oidc("tenant_admin")
+    assert without["auth_status"] == "authenticated_verified_org"
+    assert without["membership_verified"] is False
+    assert without["rls_context_allowed"] is False
+    assert "organization_membership_not_verified_for_rls" in (
+        without["blocked_reasons"]
+    )
+
+
+def test_rls_cannot_be_claimed_without_verified_membership():
+    forged = _oidc("tenant_admin")
+    forged["rls_context_allowed"] = True
+    assert "rls_context_permitted_without_verified_membership" in (
+        principals.principal_invariant_failures(forged)
+    )
 
 
 def test_an_unverified_org_principal_holds_no_operational_permission():
