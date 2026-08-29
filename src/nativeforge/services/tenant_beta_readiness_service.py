@@ -203,6 +203,16 @@ def _capability_persistence_live(capability: str) -> bool:
     return bool(build_capability(capability).get("operational"))
 
 
+
+def _detect_customer_auth_live_from_gate() -> bool:
+    """Bridged from Gate 115's activation gate via its cheap detector."""
+    from nativeforge.services.customer_auth_live_detector_service import (
+        detect_customer_auth_live,
+    )
+
+    return detect_customer_auth_live()
+
+
 def build_tenant_beta_readiness() -> dict[str, Any]:
     """Can we demo it, and can we onboard on it? Every value detected."""
     components = {
@@ -214,7 +224,10 @@ def build_tenant_beta_readiness() -> dict[str, Any]:
     # No delivery path, no auth, no tenant-profile persistence. Each is a
     # separate absence and none is inferred from the others.
     email_delivery = _module_importable("nativeforge.services.email_delivery_service")
-    customer_auth_live = False
+    # Gate 115: was a hard-coded False. Correct today, and a constant that
+    # would have gone on saying False after auth became real - the failure Gate
+    # 113 removed from migration_applied. It now reads the activation gate.
+    customer_auth_live = _detect_customer_auth_live_from_gate()
     # Gate 114: was a hard-coded False, alongside a differently-derived False in
     # the awarded lane and a third in the digest lane. One question, one answer.
     customer_persistence_live = _capability_persistence_live(

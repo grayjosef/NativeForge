@@ -1,0 +1,13 @@
+provider_role_claims,mapping_status,mapped_roles,least_privilege_role,can_view_grants,can_edit_grants,can_manage_persistence,can_verify_binding,human_review_required,blocked_reasons
+(none),no_claims_supplied,(none),unknown,false,false,false,false,true,membership_not_verified_for_this_organization; no_provider_claim_mapped_to_a_nativeforge_role; organization_id_not_resolved_from_the_claims
+some-unmapped-group,all_claims_unmapped,(none),unknown,false,false,false,false,true,no_provider_claim_mapped_to_a_nativeforge_role; provider_claim_has_no_configured_mapping:some-unmapped-group
+platform_admin,all_claims_unmapped,(none),unknown,false,false,false,false,true,no_provider_claim_mapped_to_a_nativeforge_role; provider_claim_has_no_configured_mapping:platform_admin
+nf-platform-admins,fully_mapped,platform_admin,platform_admin,true,true,true,false,true,binder_authorization_not_granted_separately
+nf-platform-admins,fully_mapped,platform_admin,platform_admin,true,true,true,true,false,
+nf-tenant-admins,fully_mapped,tenant_admin,tenant_admin,true,true,true,true,false,
+nf-grants-managers,fully_mapped,grants_manager,grants_manager,true,true,true,false,false,
+nf-grants-viewers,fully_mapped,grants_viewer,grants_viewer,true,false,false,false,false,
+nf-auditors,fully_mapped,auditor,auditor,true,false,false,false,false,
+nf-platform-admins; nf-grants-viewers,fully_mapped,platform_admin; grants_viewer,grants_viewer,true,false,false,false,false,
+nf-platform-admins,fully_mapped,platform_admin,platform_admin,false,false,false,false,true,organization_id_not_resolved_from_the_claims
+nf-platform-admins,fully_mapped,platform_admin,platform_admin,false,false,false,false,true,membership_not_verified_for_this_organization

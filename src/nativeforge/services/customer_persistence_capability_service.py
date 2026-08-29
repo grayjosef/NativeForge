@@ -364,36 +364,30 @@ def build_capability(
     )
 
 
-# A module that can mint an authenticated customer session. None of these
-# exists; the list is what would have to, and naming them is more useful than a
-# constant nobody can act on.
-CUSTOMER_SESSION_MODULES: tuple[str, ...] = (
-    "nativeforge.services.customer_auth_session_service",
-    "nativeforge.services.customer_login_service",
-)
-
-
 def _detect_customer_auth_live() -> bool:
     """Can anything in this repository authenticate a real customer?
 
-    Deliberately *not* bridged from `tenant_beta_readiness_service`: that module
-    now asks this one about persistence, and asking it back would be a cycle.
-    Deliberately not bridged from `dev_org_header_containment_service` either -
-    it shells out to systemctl, which would make this value, and therefore every
-    committed capability artifact, depend on the machine it ran on.
+    Gate 114 answered this by asking whether a customer-session module existed -
+    a module-existence proxy standing in for a fact nobody could measure yet. It
+    was one conjunct of seven and could not on its own make a lane operational,
+    but it was still a proxy.
 
-    So it is detected locally, and affirmatively: something must exist for auth
-    to be live. This is a module-existence check, which Gate 114A criticised in
-    the awarded lane - the difference is direction and weight. There, one empty
-    file flipped `customer_persistence_live` to True on its own. Here it is one
-    conjunct of seven, and an empty file still leaves a lane with no table, no
-    policy, no anchor and no repository, so nothing becomes operational.
+    Gate 115 built an activation gate that measures the question properly:
+    provider configuration, secret presence, issuer validation, callback route,
+    session policy, org binding, role mapping, the Gate 111/112 contracts, the
+    dev-header posture, and an explicit owner authorization. This now asks that.
 
-    Gate 112's finding stands behind the False this returns today: the only
-    org-context path in the application is an unauthenticated dev header, and
-    `dev_org_header_containment_service.production_safe` is a constant False.
+    The detector is used rather than the gate directly because the gate reads
+    the application's route table, which imports `nativeforge.main` - and this
+    module is called from the readiness services that `nativeforge.main`
+    transitively imports. The detector short-circuits on two cheap necessary
+    conditions before paying that cost.
     """
-    return any(_module_importable(name) for name in CUSTOMER_SESSION_MODULES)
+    from nativeforge.services.customer_auth_live_detector_service import (
+        detect_customer_auth_live,
+    )
+
+    return detect_customer_auth_live()
 
 
 def build_capability_matrix(

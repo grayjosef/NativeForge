@@ -1,0 +1,127 @@
+{
+  "activation_allowed": false,
+  "audience_configured": false,
+  "blocked_reasons": [
+    "auth_gate_not_satisfied:audience_configured",
+    "auth_gate_not_satisfied:callback_route_available",
+    "auth_gate_not_satisfied:callback_session_validated",
+    "auth_gate_not_satisfied:dev_header_disabled_for_production",
+    "auth_gate_not_satisfied:invite_binding_passed",
+    "auth_gate_not_satisfied:issuer_configured",
+    "auth_gate_not_satisfied:issuer_jwks_validated",
+    "auth_gate_not_satisfied:org_binding_passed",
+    "auth_gate_not_satisfied:provider_configured",
+    "auth_gate_not_satisfied:role_mapping_passed",
+    "auth_gate_not_satisfied:secret_present",
+    "auth_gate_not_satisfied:session_cookie_policy_available",
+    "issuer_jwks_unvalidated_no_network_check_performed",
+    "owner_has_not_authorized_customer_auth_activation"
+  ],
+  "callback_route_available": false,
+  "callback_session_validated": false,
+  "current_org_id_set": false,
+  "customer_auth_live": false,
+  "dev_header_disabled_for_production": false,
+  "fabricated": false,
+  "identity_provider_contacted": false,
+  "invite_binding_passed": false,
+  "issuer_configured": false,
+  "issuer_jwks_network_check_performed": false,
+  "issuer_jwks_validated": false,
+  "login_live": false,
+  "membership_verification_available": true,
+  "missing_auth_gates": [
+    "provider_configured",
+    "secret_present",
+    "issuer_configured",
+    "issuer_jwks_validated",
+    "audience_configured",
+    "callback_route_available",
+    "callback_session_validated",
+    "session_cookie_policy_available",
+    "invite_binding_passed",
+    "org_binding_passed",
+    "role_mapping_passed",
+    "dev_header_disabled_for_production"
+  ],
+  "missing_login_gates": [
+    "provider_configured",
+    "secret_present",
+    "issuer_configured",
+    "issuer_jwks_validated",
+    "audience_configured",
+    "callback_route_available",
+    "callback_session_validated",
+    "session_cookie_policy_available",
+    "org_binding_passed",
+    "role_mapping_passed"
+  ],
+  "network_calls": false,
+  "next_required_actions": [
+    {
+      "action": "owner sets the OIDC_* environment variables out-of-band; this gate never stores or receives them",
+      "gate": "provider_configured"
+    },
+    {
+      "action": "owner supplies OIDC_CLIENT_SECRET out-of-band; presence is detected, the value is never read into any output",
+      "gate": "secret_present"
+    },
+    {
+      "action": "owner sets OIDC_ISSUER",
+      "gate": "issuer_configured"
+    },
+    {
+      "action": "run the existing live validation path once configuration exists; no network check happens before then, so this is unvalidated rather than failed",
+      "gate": "issuer_jwks_validated"
+    },
+    {
+      "action": "owner sets OIDC_AUDIENCE",
+      "gate": "audience_configured"
+    },
+    {
+      "action": "NativeForge builds an OIDC callback route - engineering work, not configuration. No such route exists among the 178 endpoints",
+      "gate": "callback_route_available"
+    },
+    {
+      "action": "validate a real callback and session once the route exists",
+      "gate": "callback_session_validated"
+    },
+    {
+      "action": "NativeForge defines a session cookie policy; no securityScheme is declared anywhere in the application today",
+      "gate": "session_cookie_policy_available"
+    },
+    {
+      "action": "validate invite binding against a real flow",
+      "gate": "invite_binding_passed"
+    },
+    {
+      "action": "validate that a verified claim resolves to an organization_id and a membership record - Gate 112's contract, exercised for real",
+      "gate": "org_binding_passed"
+    },
+    {
+      "action": "configure provider roles and map them explicitly; unknown roles grant nothing by design",
+      "gate": "role_mapping_passed"
+    },
+    {
+      "action": "replace X-NF-Org-Id with an authenticated claim, then disable it; 16 route modules depend on it today",
+      "gate": "dev_header_disabled_for_production"
+    },
+    {
+      "action": "owner sets NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL out-of-band. Every gate passing is necessary and not sufficient: configuration arriving in an environment is not a decision to expose a login page to real Tribes.",
+      "gate": "owner_approval"
+    }
+  ],
+  "org_binding_passed": false,
+  "organization_id_resolution_available": true,
+  "owner_approval_present": false,
+  "provider_configured": false,
+  "real_sessions_created": false,
+  "real_users_created": false,
+  "rls_claim_guard_available": true,
+  "role_mapping_passed": false,
+  "schema_version": "nf_customer_auth_activation_gate_v1",
+  "secret_present": false,
+  "secret_value_emitted": false,
+  "secrets_stored": false,
+  "session_cookie_policy_available": false
+}

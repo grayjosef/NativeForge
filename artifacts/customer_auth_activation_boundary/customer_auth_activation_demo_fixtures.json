@@ -1,0 +1,795 @@
+{
+  "activation_cases_covered": [
+    "all_gates_missing",
+    "all_gates_pass",
+    "callback_route_no_session",
+    "dev_header_still_enabled",
+    "membership_no_role_mapping",
+    "org_claim_no_membership",
+    "provider_configured_no_secret",
+    "secret_present_jwks_unvalidated"
+  ],
+  "activation_cases_missing": [],
+  "actual_missing_gate_count": 12,
+  "case_count": 8,
+  "cases": [
+    {
+      "case": "all_gates_missing",
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": false,
+        "owner_approval": false,
+        "preflight": {
+          "audience_present": false,
+          "client_secret_present": false,
+          "issuer_url_present": false,
+          "jwks_reachable": null,
+          "validation_possible": false
+        },
+        "route_readiness": {
+          "application_route_count": 0,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "no_security_scheme_is_declared_anywhere",
+            "route_absent:callback_route_available",
+            "route_absent:current_user_route_available",
+            "route_absent:login_route_available",
+            "route_absent:logout_route_available",
+            "route_absent:session_route_available"
+          ],
+          "callback_route_available": false,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": false,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": false,
+          "logout_route_available": false,
+          "matched_routes": {
+            "callback_route_available": [],
+            "current_user_route_available": [],
+            "login_route_available": [],
+            "logout_route_available": [],
+            "session_route_available": []
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_schemes_declared": [],
+          "session_route_available": false
+        },
+        "validation": {
+          "callback_session_validated": false,
+          "invite_binding_passed": false,
+          "org_binding_passed": false,
+          "provider_validated": false,
+          "role_mapping_passed": false
+        }
+      },
+      "why": "the environment as it actually is: nothing configured"
+    },
+    {
+      "case": "provider_configured_no_secret",
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": false,
+        "owner_approval": false,
+        "preflight": {
+          "audience_present": true,
+          "client_secret_present": false,
+          "issuer_url_present": true,
+          "jwks_reachable": null,
+          "validation_possible": false
+        },
+        "route_readiness": {
+          "application_route_count": 0,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "no_security_scheme_is_declared_anywhere",
+            "route_absent:callback_route_available",
+            "route_absent:current_user_route_available",
+            "route_absent:login_route_available",
+            "route_absent:logout_route_available",
+            "route_absent:session_route_available"
+          ],
+          "callback_route_available": false,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": false,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": false,
+          "logout_route_available": false,
+          "matched_routes": {
+            "callback_route_available": [],
+            "current_user_route_available": [],
+            "login_route_available": [],
+            "logout_route_available": [],
+            "session_route_available": []
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_schemes_declared": [],
+          "session_route_available": false
+        },
+        "validation": {
+          "callback_session_validated": false,
+          "invite_binding_passed": false,
+          "org_binding_passed": false,
+          "provider_validated": false,
+          "role_mapping_passed": false
+        }
+      },
+      "why": "issuer and audience arrived and the client secret did not - presence is a boolean, and it is false"
+    },
+    {
+      "case": "secret_present_jwks_unvalidated",
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": false,
+        "owner_approval": false,
+        "preflight": {
+          "audience_present": true,
+          "client_secret_present": true,
+          "issuer_url_present": true,
+          "jwks_reachable": null,
+          "validation_possible": true
+        },
+        "route_readiness": {
+          "application_route_count": 0,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "no_security_scheme_is_declared_anywhere",
+            "route_absent:callback_route_available",
+            "route_absent:current_user_route_available",
+            "route_absent:login_route_available",
+            "route_absent:logout_route_available",
+            "route_absent:session_route_available"
+          ],
+          "callback_route_available": false,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": false,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": false,
+          "logout_route_available": false,
+          "matched_routes": {
+            "callback_route_available": [],
+            "current_user_route_available": [],
+            "login_route_available": [],
+            "logout_route_available": [],
+            "session_route_available": []
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_schemes_declared": [],
+          "session_route_available": false
+        },
+        "validation": {
+          "callback_session_validated": false,
+          "invite_binding_passed": false,
+          "org_binding_passed": false,
+          "provider_validated": false,
+          "role_mapping_passed": false
+        }
+      },
+      "why": "everything configured and nothing checked. Unvalidated is not the same fact as validated-and-failed, and the gate says which"
+    },
+    {
+      "case": "callback_route_no_session",
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": false,
+        "owner_approval": false,
+        "preflight": {
+          "audience_present": true,
+          "client_secret_present": true,
+          "issuer_url_present": true,
+          "jwks_reachable": true,
+          "validation_possible": true
+        },
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [
+            "enforcement_absent:route_auth_enforced",
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "enforcement_absent:route_session_cookie_policy_enforced",
+            "no_security_scheme_is_declared_anywhere"
+          ],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/v1/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/v1/auth/me"
+            ],
+            "login_route_available": [
+              "/v1/auth/login"
+            ],
+            "logout_route_available": [
+              "/v1/auth/logout"
+            ],
+            "session_route_available": [
+              "/v1/auth/session"
+            ]
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "route_auth_enforced": false,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": false,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 0,
+          "security_schemes_declared": [],
+          "session_route_available": true
+        },
+        "validation": {
+          "callback_session_validated": false,
+          "invite_binding_passed": false,
+          "org_binding_passed": false,
+          "provider_validated": false,
+          "role_mapping_passed": false
+        }
+      },
+      "why": "five auth routes exist and declare no security scheme. Route existence is not enforcement, and this is the case that says so"
+    },
+    {
+      "case": "org_claim_no_membership",
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": true,
+        "owner_approval": true,
+        "preflight": {
+          "audience_present": true,
+          "client_secret_present": true,
+          "issuer_url_present": true,
+          "jwks_reachable": true,
+          "validation_possible": true
+        },
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/v1/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/v1/auth/me"
+            ],
+            "login_route_available": [
+              "/v1/auth/login"
+            ],
+            "logout_route_available": [
+              "/v1/auth/logout"
+            ],
+            "session_route_available": [
+              "/v1/auth/session"
+            ]
+          },
+          "ready_for_live_login": true,
+          "real_sessions_created": false,
+          "route_auth_enforced": true,
+          "route_org_resolution_enforced": true,
+          "route_role_mapping_enforced": true,
+          "route_session_cookie_policy_enforced": true,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 2,
+          "security_schemes_declared": [
+            "nf_session"
+          ],
+          "session_route_available": true
+        },
+        "validation": {
+          "callback_session_validated": true,
+          "invite_binding_passed": false,
+          "org_binding_passed": false,
+          "provider_validated": true,
+          "role_mapping_passed": true
+        }
+      },
+      "why": "a claim resolved to an organization_id and no membership record backs it. Gate 112's rule, at the activation layer"
+    },
+    {
+      "case": "membership_no_role_mapping",
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": true,
+        "owner_approval": true,
+        "preflight": {
+          "audience_present": true,
+          "client_secret_present": true,
+          "issuer_url_present": true,
+          "jwks_reachable": true,
+          "validation_possible": true
+        },
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/v1/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/v1/auth/me"
+            ],
+            "login_route_available": [
+              "/v1/auth/login"
+            ],
+            "logout_route_available": [
+              "/v1/auth/logout"
+            ],
+            "session_route_available": [
+              "/v1/auth/session"
+            ]
+          },
+          "ready_for_live_login": true,
+          "real_sessions_created": false,
+          "route_auth_enforced": true,
+          "route_org_resolution_enforced": true,
+          "route_role_mapping_enforced": true,
+          "route_session_cookie_policy_enforced": true,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 2,
+          "security_schemes_declared": [
+            "nf_session"
+          ],
+          "session_route_available": true
+        },
+        "validation": {
+          "callback_session_validated": true,
+          "invite_binding_passed": true,
+          "org_binding_passed": true,
+          "provider_validated": true,
+          "role_mapping_passed": false
+        }
+      },
+      "why": "a verified member whose provider roles map to nothing. Unknown grants nothing, so activation waits"
+    },
+    {
+      "case": "all_gates_pass",
+      "expect_customer_auth_live": true,
+      "expect_login_live": true,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": true,
+        "owner_approval": true,
+        "preflight": {
+          "audience_present": true,
+          "client_secret_present": true,
+          "issuer_url_present": true,
+          "jwks_reachable": true,
+          "validation_possible": true
+        },
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/v1/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/v1/auth/me"
+            ],
+            "login_route_available": [
+              "/v1/auth/login"
+            ],
+            "logout_route_available": [
+              "/v1/auth/logout"
+            ],
+            "session_route_available": [
+              "/v1/auth/session"
+            ]
+          },
+          "ready_for_live_login": true,
+          "real_sessions_created": false,
+          "route_auth_enforced": true,
+          "route_org_resolution_enforced": true,
+          "route_role_mapping_enforced": true,
+          "route_session_cookie_policy_enforced": true,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 2,
+          "security_schemes_declared": [
+            "nf_session"
+          ],
+          "session_route_available": true
+        },
+        "validation": {
+          "callback_session_validated": true,
+          "invite_binding_passed": true,
+          "org_binding_passed": true,
+          "provider_validated": true,
+          "role_mapping_passed": true
+        }
+      },
+      "why": "theoretical activation. Every refusal above is unfalsifiable without it - a gate that only says no is a constant"
+    },
+    {
+      "case": "dev_header_still_enabled",
+      "expect_customer_auth_live": false,
+      "expect_login_live": true,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": false,
+        "owner_approval": true,
+        "preflight": {
+          "audience_present": true,
+          "client_secret_present": true,
+          "issuer_url_present": true,
+          "jwks_reachable": true,
+          "validation_possible": true
+        },
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/v1/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/v1/auth/me"
+            ],
+            "login_route_available": [
+              "/v1/auth/login"
+            ],
+            "logout_route_available": [
+              "/v1/auth/logout"
+            ],
+            "session_route_available": [
+              "/v1/auth/session"
+            ]
+          },
+          "ready_for_live_login": true,
+          "real_sessions_created": false,
+          "route_auth_enforced": true,
+          "route_org_resolution_enforced": true,
+          "route_role_mapping_enforced": true,
+          "route_session_cookie_policy_enforced": true,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 2,
+          "security_schemes_declared": [
+            "nf_session"
+          ],
+          "session_route_available": true
+        },
+        "validation": {
+          "callback_session_validated": true,
+          "invite_binding_passed": true,
+          "org_binding_passed": true,
+          "provider_validated": true,
+          "role_mapping_passed": true
+        }
+      },
+      "why": "identical to all_gates_pass but for one input. A login flow could run; customer auth is not live while an unauthenticated header can still set app.current_org_id"
+    }
+  ],
+  "cases_disagreeing_with_expectation": [],
+  "current_org_id_set": false,
+  "customer_auth_live_in_actual_environment": false,
+  "fabricated": false,
+  "fixture_label": "demo_fixture",
+  "identity_provider_contacted": false,
+  "login_live_in_actual_environment": false,
+  "network_calls": false,
+  "real_sessions_created": false,
+  "real_users_created": false,
+  "refused_count": 7,
+  "required_auth_gate_count": 15,
+  "rows": [
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:audience_configured",
+        "auth_gate_not_satisfied:callback_route_available",
+        "auth_gate_not_satisfied:callback_session_validated",
+        "auth_gate_not_satisfied:dev_header_disabled_for_production",
+        "auth_gate_not_satisfied:invite_binding_passed",
+        "auth_gate_not_satisfied:issuer_configured",
+        "auth_gate_not_satisfied:issuer_jwks_validated",
+        "auth_gate_not_satisfied:org_binding_passed",
+        "auth_gate_not_satisfied:provider_configured",
+        "auth_gate_not_satisfied:role_mapping_passed",
+        "auth_gate_not_satisfied:secret_present",
+        "auth_gate_not_satisfied:session_cookie_policy_available",
+        "issuer_jwks_unvalidated_no_network_check_performed",
+        "owner_has_not_authorized_customer_auth_activation"
+      ],
+      "callback_route_available": false,
+      "callback_session_validated": false,
+      "case": "all_gates_missing",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": false,
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": false,
+      "login_live": false,
+      "missing_gate_count": 12,
+      "org_binding_passed": false,
+      "owner_approval_present": false,
+      "provider_configured": false,
+      "role_mapping_passed": false,
+      "secret_present": false,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:callback_route_available",
+        "auth_gate_not_satisfied:callback_session_validated",
+        "auth_gate_not_satisfied:dev_header_disabled_for_production",
+        "auth_gate_not_satisfied:invite_binding_passed",
+        "auth_gate_not_satisfied:issuer_jwks_validated",
+        "auth_gate_not_satisfied:org_binding_passed",
+        "auth_gate_not_satisfied:provider_configured",
+        "auth_gate_not_satisfied:role_mapping_passed",
+        "auth_gate_not_satisfied:secret_present",
+        "auth_gate_not_satisfied:session_cookie_policy_available",
+        "issuer_jwks_unvalidated_no_network_check_performed",
+        "owner_has_not_authorized_customer_auth_activation"
+      ],
+      "callback_route_available": false,
+      "callback_session_validated": false,
+      "case": "provider_configured_no_secret",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": false,
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": false,
+      "login_live": false,
+      "missing_gate_count": 10,
+      "org_binding_passed": false,
+      "owner_approval_present": false,
+      "provider_configured": false,
+      "role_mapping_passed": false,
+      "secret_present": false,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:callback_route_available",
+        "auth_gate_not_satisfied:callback_session_validated",
+        "auth_gate_not_satisfied:dev_header_disabled_for_production",
+        "auth_gate_not_satisfied:invite_binding_passed",
+        "auth_gate_not_satisfied:issuer_jwks_validated",
+        "auth_gate_not_satisfied:org_binding_passed",
+        "auth_gate_not_satisfied:role_mapping_passed",
+        "auth_gate_not_satisfied:session_cookie_policy_available",
+        "issuer_jwks_unvalidated_no_network_check_performed",
+        "owner_has_not_authorized_customer_auth_activation"
+      ],
+      "callback_route_available": false,
+      "callback_session_validated": false,
+      "case": "secret_present_jwks_unvalidated",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": false,
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": false,
+      "login_live": false,
+      "missing_gate_count": 8,
+      "org_binding_passed": false,
+      "owner_approval_present": false,
+      "provider_configured": true,
+      "role_mapping_passed": false,
+      "secret_present": true,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:callback_session_validated",
+        "auth_gate_not_satisfied:dev_header_disabled_for_production",
+        "auth_gate_not_satisfied:invite_binding_passed",
+        "auth_gate_not_satisfied:issuer_jwks_validated",
+        "auth_gate_not_satisfied:org_binding_passed",
+        "auth_gate_not_satisfied:role_mapping_passed",
+        "auth_gate_not_satisfied:session_cookie_policy_available",
+        "owner_has_not_authorized_customer_auth_activation"
+      ],
+      "callback_route_available": true,
+      "callback_session_validated": false,
+      "case": "callback_route_no_session",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": false,
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": false,
+      "login_live": false,
+      "missing_gate_count": 7,
+      "org_binding_passed": false,
+      "owner_approval_present": false,
+      "provider_configured": true,
+      "role_mapping_passed": false,
+      "secret_present": true,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:invite_binding_passed",
+        "auth_gate_not_satisfied:org_binding_passed"
+      ],
+      "callback_route_available": true,
+      "callback_session_validated": true,
+      "case": "org_claim_no_membership",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": true,
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": true,
+      "login_live": false,
+      "missing_gate_count": 2,
+      "org_binding_passed": false,
+      "owner_approval_present": true,
+      "provider_configured": true,
+      "role_mapping_passed": true,
+      "secret_present": true,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:role_mapping_passed"
+      ],
+      "callback_route_available": true,
+      "callback_session_validated": true,
+      "case": "membership_no_role_mapping",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": true,
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": true,
+      "login_live": false,
+      "missing_gate_count": 1,
+      "org_binding_passed": true,
+      "owner_approval_present": true,
+      "provider_configured": true,
+      "role_mapping_passed": false,
+      "secret_present": true,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": true,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [],
+      "callback_route_available": true,
+      "callback_session_validated": true,
+      "case": "all_gates_pass",
+      "customer_auth_live": true,
+      "dev_header_disabled_for_production": true,
+      "expect_customer_auth_live": true,
+      "expect_login_live": true,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": true,
+      "login_live": true,
+      "missing_gate_count": 0,
+      "org_binding_passed": true,
+      "owner_approval_present": true,
+      "provider_configured": true,
+      "role_mapping_passed": true,
+      "secret_present": true,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:dev_header_disabled_for_production"
+      ],
+      "callback_route_available": true,
+      "callback_session_validated": true,
+      "case": "dev_header_still_enabled",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": false,
+      "expect_customer_auth_live": false,
+      "expect_login_live": true,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": true,
+      "login_live": true,
+      "missing_gate_count": 1,
+      "org_binding_passed": true,
+      "owner_approval_present": true,
+      "provider_configured": true,
+      "role_mapping_passed": true,
+      "secret_present": true,
+      "secret_value_emitted": false
+    }
+  ],
+  "schema_version": "nf_customer_auth_activation_demo_fixture_v1",
+  "secret_value_emitted": false,
+  "secrets_stored": false,
+  "theoretical_activation_count": 1
+}

@@ -95,6 +95,13 @@ measurement rather than a constant.
 
 ## How customer_auth_live is detected, and why not the obvious ways
 
+> **Superseded by Gate 115.** The mechanism below was correct for Gate 114,
+> which had nothing that could measure customer auth. Gate 115 built the
+> activation gate, and this value now reads it through
+> `customer_auth_live_detector_service`. See docs 627 and 631. The reasoning
+> below is kept because it records why the obvious alternatives were rejected,
+> and those reasons still hold.
+
 Not from `tenant_beta_readiness_service`: that module now asks this one about
 persistence, and asking back would be a cycle.
 
