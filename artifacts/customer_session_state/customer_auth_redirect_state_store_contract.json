@@ -1,0 +1,27 @@
+{
+  "current_scope": "contract_only",
+  "database_table_added_by_this_gate": false,
+  "database_table_rationale": "a table nothing writes to. No session can be created - no provider is configured, no signing key exists, and the token exchange is behind a network flag nothing raises",
+  "default_ttl_seconds": 600,
+  "fabricated": false,
+  "max_ttl_seconds": 900,
+  "persisted_to_database": false,
+  "pkce_verifier_included": false,
+  "production_scopes": [
+    "database"
+  ],
+  "redirect_state_store_contract_available": true,
+  "replay_detection": true,
+  "replay_rationale": "an expired state stopped being usable; a consumed state was already used, and reusing it is the signature of somebody resubmitting a captured callback URL. They are reported separately because only one is worth alerting on",
+  "schema_version": "nf_customer_session_state_artifact_v1",
+  "state_expiry_required": true,
+  "state_single_use": true,
+  "state_store_production": false,
+  "state_value_included": false,
+  "storage_scopes": [
+    "contract_only",
+    "database",
+    "in_memory_test",
+    "unknown"
+  ]
+}

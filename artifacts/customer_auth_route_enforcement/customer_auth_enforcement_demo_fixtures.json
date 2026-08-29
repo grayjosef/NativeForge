@@ -349,6 +349,7 @@
         "no_organization_id_resolved_from_the_claims",
         "no_provider_configured_so_no_authorization_url",
         "no_verified_membership_for_this_organization",
+        "redirect_state_store_scope_is_not_production:contract_only",
         "token_exchange_blocked:callback_code_present",
         "token_exchange_blocked:network_call_allowed",
         "token_exchange_blocked:pkce_validated",
@@ -377,6 +378,7 @@
         "callback_validation_has_not_passed",
         "no_organization_id_resolved_from_the_claims",
         "no_verified_membership_for_this_organization",
+        "redirect_state_store_scope_is_not_production:contract_only",
         "token_exchange_blocked:callback_code_present",
         "token_exchange_blocked:network_call_allowed",
         "token_exchange_blocked:pkce_validated",
@@ -403,6 +405,7 @@
         "callback_validation_has_not_passed",
         "no_organization_id_resolved_from_the_claims",
         "no_verified_membership_for_this_organization",
+        "redirect_state_store_scope_is_not_production:contract_only",
         "token_exchange_blocked:network_call_allowed",
         "token_exchange_blocked:state_validated"
       ],
@@ -426,6 +429,7 @@
         "callback_validation_has_not_passed",
         "no_organization_id_resolved_from_the_claims",
         "no_verified_membership_for_this_organization",
+        "redirect_state_store_scope_is_not_production:contract_only",
         "token_exchange_blocked:network_call_allowed",
         "token_exchange_blocked:pkce_validated"
       ],
@@ -445,6 +449,7 @@
       "agrees_with_expectation": true,
       "authorization_url_available": true,
       "blocked_reasons": [
+        "redirect_state_store_scope_is_not_production:contract_only",
         "token_exchange_blocked:network_call_allowed"
       ],
       "case": "token_exchange_network_blocked",

@@ -36,6 +36,7 @@
             "enforcement_absent:route_role_mapping_enforced",
             "enforcement_absent:route_session_cookie_policy_enforced",
             "no_security_scheme_is_declared_anywhere",
+            "no_session_signing_key_configured_so_no_cookie_can_verify",
             "route_absent:callback_route_available",
             "route_absent:current_user_route_available",
             "route_absent:login_route_available",
@@ -60,6 +61,7 @@
           },
           "ready_for_live_login": false,
           "real_sessions_created": false,
+          "redirect_state_store_available": true,
           "route_auth_enforced": false,
           "route_org_resolution_enforced": false,
           "route_role_mapping_enforced": false,
@@ -69,7 +71,10 @@
           "security_scheme_declared": false,
           "security_schemes_declared": [],
           "session_cookie_policy_available": true,
-          "session_route_available": false
+          "session_format_available": true,
+          "session_route_available": false,
+          "session_signing_key_present": false,
+          "session_verifier_available": true
         },
         "validation": {
           "callback_session_validated": false,
@@ -104,6 +109,7 @@
             "enforcement_absent:route_role_mapping_enforced",
             "enforcement_absent:route_session_cookie_policy_enforced",
             "no_security_scheme_is_declared_anywhere",
+            "no_session_signing_key_configured_so_no_cookie_can_verify",
             "route_absent:callback_route_available",
             "route_absent:current_user_route_available",
             "route_absent:login_route_available",
@@ -128,6 +134,7 @@
           },
           "ready_for_live_login": false,
           "real_sessions_created": false,
+          "redirect_state_store_available": true,
           "route_auth_enforced": false,
           "route_org_resolution_enforced": false,
           "route_role_mapping_enforced": false,
@@ -137,7 +144,10 @@
           "security_scheme_declared": false,
           "security_schemes_declared": [],
           "session_cookie_policy_available": true,
-          "session_route_available": false
+          "session_format_available": true,
+          "session_route_available": false,
+          "session_signing_key_present": false,
+          "session_verifier_available": true
         },
         "validation": {
           "callback_session_validated": false,
@@ -172,6 +182,7 @@
             "enforcement_absent:route_role_mapping_enforced",
             "enforcement_absent:route_session_cookie_policy_enforced",
             "no_security_scheme_is_declared_anywhere",
+            "no_session_signing_key_configured_so_no_cookie_can_verify",
             "route_absent:callback_route_available",
             "route_absent:current_user_route_available",
             "route_absent:login_route_available",
@@ -196,6 +207,7 @@
           },
           "ready_for_live_login": false,
           "real_sessions_created": false,
+          "redirect_state_store_available": true,
           "route_auth_enforced": false,
           "route_org_resolution_enforced": false,
           "route_role_mapping_enforced": false,
@@ -205,7 +217,10 @@
           "security_scheme_declared": false,
           "security_schemes_declared": [],
           "session_cookie_policy_available": true,
-          "session_route_available": false
+          "session_format_available": true,
+          "session_route_available": false,
+          "session_signing_key_present": false,
+          "session_verifier_available": true
         },
         "validation": {
           "callback_session_validated": false,
@@ -239,7 +254,8 @@
             "enforcement_absent:route_org_resolution_enforced",
             "enforcement_absent:route_role_mapping_enforced",
             "enforcement_absent:route_session_cookie_policy_enforced",
-            "no_security_scheme_is_declared_anywhere"
+            "no_security_scheme_is_declared_anywhere",
+            "no_session_signing_key_configured_so_no_cookie_can_verify"
           ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
@@ -269,6 +285,7 @@
           },
           "ready_for_live_login": false,
           "real_sessions_created": false,
+          "redirect_state_store_available": true,
           "route_auth_enforced": false,
           "route_org_resolution_enforced": false,
           "route_role_mapping_enforced": false,
@@ -278,7 +295,10 @@
           "security_scheme_declared": false,
           "security_schemes_declared": [],
           "session_cookie_policy_available": true,
-          "session_route_available": true
+          "session_format_available": true,
+          "session_route_available": true,
+          "session_signing_key_present": false,
+          "session_verifier_available": true
         },
         "validation": {
           "callback_session_validated": false,
@@ -309,7 +329,8 @@
           "application_route_count": 5,
           "blocked_reasons": [
             "enforcement_absent:route_org_resolution_enforced",
-            "enforcement_absent:route_role_mapping_enforced"
+            "enforcement_absent:route_role_mapping_enforced",
+            "no_session_signing_key_configured_so_no_cookie_can_verify"
           ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
@@ -339,6 +360,7 @@
           },
           "ready_for_live_login": false,
           "real_sessions_created": false,
+          "redirect_state_store_available": true,
           "route_auth_enforced": true,
           "route_org_resolution_enforced": false,
           "route_role_mapping_enforced": false,
@@ -350,7 +372,10 @@
             "nf_session"
           ],
           "session_cookie_policy_available": true,
-          "session_route_available": true
+          "session_format_available": true,
+          "session_route_available": true,
+          "session_signing_key_present": false,
+          "session_verifier_available": true
         },
         "validation": {
           "callback_session_validated": true,
@@ -381,7 +406,8 @@
           "application_route_count": 5,
           "blocked_reasons": [
             "enforcement_absent:route_org_resolution_enforced",
-            "enforcement_absent:route_role_mapping_enforced"
+            "enforcement_absent:route_role_mapping_enforced",
+            "no_session_signing_key_configured_so_no_cookie_can_verify"
           ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
@@ -411,6 +437,7 @@
           },
           "ready_for_live_login": false,
           "real_sessions_created": false,
+          "redirect_state_store_available": true,
           "route_auth_enforced": true,
           "route_org_resolution_enforced": false,
           "route_role_mapping_enforced": false,
@@ -422,7 +449,10 @@
             "nf_session"
           ],
           "session_cookie_policy_available": true,
-          "session_route_available": true
+          "session_format_available": true,
+          "session_route_available": true,
+          "session_signing_key_present": false,
+          "session_verifier_available": true
         },
         "validation": {
           "callback_session_validated": true,
@@ -453,7 +483,8 @@
           "application_route_count": 5,
           "blocked_reasons": [
             "enforcement_absent:route_org_resolution_enforced",
-            "enforcement_absent:route_role_mapping_enforced"
+            "enforcement_absent:route_role_mapping_enforced",
+            "no_session_signing_key_configured_so_no_cookie_can_verify"
           ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
@@ -483,6 +514,7 @@
           },
           "ready_for_live_login": false,
           "real_sessions_created": false,
+          "redirect_state_store_available": true,
           "route_auth_enforced": true,
           "route_org_resolution_enforced": false,
           "route_role_mapping_enforced": false,
@@ -494,7 +526,10 @@
             "nf_session"
           ],
           "session_cookie_policy_available": true,
-          "session_route_available": true
+          "session_format_available": true,
+          "session_route_available": true,
+          "session_signing_key_present": false,
+          "session_verifier_available": true
         },
         "validation": {
           "callback_session_validated": true,
@@ -525,7 +560,8 @@
           "application_route_count": 5,
           "blocked_reasons": [
             "enforcement_absent:route_org_resolution_enforced",
-            "enforcement_absent:route_role_mapping_enforced"
+            "enforcement_absent:route_role_mapping_enforced",
+            "no_session_signing_key_configured_so_no_cookie_can_verify"
           ],
           "callback_route_available": true,
           "cloudflare_access_is_customer_auth": false,
@@ -555,6 +591,7 @@
           },
           "ready_for_live_login": false,
           "real_sessions_created": false,
+          "redirect_state_store_available": true,
           "route_auth_enforced": true,
           "route_org_resolution_enforced": false,
           "route_role_mapping_enforced": false,
@@ -566,7 +603,10 @@
             "nf_session"
           ],
           "session_cookie_policy_available": true,
-          "session_route_available": true
+          "session_format_available": true,
+          "session_route_available": true,
+          "session_signing_key_present": false,
+          "session_verifier_available": true
         },
         "validation": {
           "callback_session_validated": true,

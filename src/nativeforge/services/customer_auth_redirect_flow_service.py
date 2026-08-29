@@ -244,6 +244,15 @@ def build_redirect_flow_contract(
     role_mapping_available = _module_importable(
         "nativeforge.services.customer_auth_role_mapping_service"
     )
+
+    # Gate 118: contract-only. Nothing is stored between /login and /callback,
+    # which is why a real flow could not complete even with everything else
+    # satisfied - and is named here rather than left to be discovered.
+    state_store_scope = "contract_only"
+    if state_store_scope != "database":
+        blocked_reasons.append(
+            f"redirect_state_store_scope_is_not_production:{state_store_scope}"
+        )
     if not role_mapping_available:
         blocked_reasons.append("no_role_mapping_contract_available")
 
@@ -303,6 +312,17 @@ def build_redirect_flow_contract(
             "organization_id_resolved": bool(organization_id_resolved),
             "membership_verified": bool(membership_verified),
             "role_mapping_available": role_mapping_available,
+            # Gate 118: the three contracts that would carry a session across
+            # the redirect and back. Each detected, and none of them makes a
+            # session - `session_created` below is still a constant False.
+            "session_format_available": _module_importable(
+                "nativeforge.services.customer_session_format_service"
+            ),
+            "redirect_state_store_available": _module_importable(
+                "nativeforge.services.customer_auth_redirect_state_store_service"
+            ),
+            "state_store_scope": state_store_scope,
+            "state_store_production": state_store_scope == "database",
             "session_creation_allowed": session_creation_allowed,
             "session_created": session_created,
             "missing_session_conditions": [
@@ -390,6 +410,13 @@ def redirect_flow_invariant_failures(result: dict[str, Any]) -> list[str]:
             fails.append("session_allowed_without_an_organization_id")
         if not result.get("membership_verified"):
             fails.append("session_allowed_without_a_verified_membership")
+
+    # Gate 118: a production store is the only kind that survives a redirect
+    # in a deployment with more than one worker.
+    if result.get("state_store_production") and result.get(
+        "state_store_scope"
+    ) != "database":
+        fails.append("state_store_production_claimed_for_a_non_database_scope")
 
     # PKCE is S256 or it is not PKCE.
     method = result.get("code_challenge_method")

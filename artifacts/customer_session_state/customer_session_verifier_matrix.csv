@@ -1,0 +1,8 @@
+case,cookie_present,cookie_parseable,signature_valid,session_expired,organization_id_valid,principal_resolved,membership_verified,session_cookie_valid,rls_context_allowed,customer_auth_live,blocked_reasons
+missing_cookie,false,false,false,false,false,false,false,false,false,false,no_session_cookie_was_sent
+malformed_cookie,true,false,false,false,false,false,false,false,false,false,session_cookie_is_not_three_dot_separated_parts
+expired_session,true,true,true,true,true,false,false,false,false,false,session_expired
+invalid_signature,true,true,false,false,true,false,false,false,false,false,session_cookie_signature_does_not_verify
+profile_shaped_organization_id,true,true,true,false,false,false,true,false,false,false,session_organization_id_is_not_uuid_shaped
+valid_session_without_membership,true,true,true,false,true,true,false,true,false,false,membership_not_verified_for_this_organization
+valid_session_with_membership,true,true,true,false,true,true,true,true,true,false,

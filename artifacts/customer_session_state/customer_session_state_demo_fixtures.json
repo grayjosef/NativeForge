@@ -1,0 +1,353 @@
+{
+  "case_count": 11,
+  "cases": [
+    {
+      "case": "missing_cookie",
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "why": "nothing was sent"
+    },
+    {
+      "case": "malformed_cookie",
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "why": "something was sent and it is not a session"
+    },
+    {
+      "case": "expired_session",
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "why": "genuine and signed, and past the expiry it carries inside itself. A cookie Max-Age is a request to the browser; this is the check the server makes"
+    },
+    {
+      "case": "invalid_signature",
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "why": "well-formed, signed with a key we do not hold"
+    },
+    {
+      "case": "profile_shaped_organization_id",
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "why": "the signature is genuine and the session is refused anyway. Gates 110-113 at the session layer: a profile id is a real value in the wrong identity space, and signing it does not make it an RLS authority"
+    },
+    {
+      "case": "valid_session_without_membership",
+      "expect_rls": false,
+      "expect_valid": true,
+      "fixture_label": "demo_fixture",
+      "why": "everything checks out and nobody vouches for the organization. A valid session is not a membership - memberships get revoked and a session outlives the revocation until it expires"
+    },
+    {
+      "case": "valid_session_with_membership",
+      "expect_rls": true,
+      "expect_valid": true,
+      "fixture_label": "demo_fixture",
+      "why": "the one that authorizes - and customer_auth_live is still false, measured from the real environment rather than from this fixture"
+    },
+    {
+      "case": "missing_state",
+      "expect_consume_allowed": false,
+      "expect_replay": false,
+      "fixture_label": "demo_fixture",
+      "why": "nothing was stored under that id"
+    },
+    {
+      "case": "expired_state",
+      "expect_consume_allowed": false,
+      "expect_replay": false,
+      "fixture_label": "demo_fixture",
+      "why": "stored, and the redirect window closed before the callback"
+    },
+    {
+      "case": "consumed_state_replay",
+      "expect_consume_allowed": false,
+      "expect_replay": true,
+      "fixture_label": "demo_fixture",
+      "why": "used once and presented again - the signature of somebody resubmitting a captured callback URL, reported separately from expiry because only one of them is worth alerting on"
+    },
+    {
+      "case": "valid_state_and_pkce",
+      "expect_consume_allowed": true,
+      "expect_replay": false,
+      "fixture_label": "demo_fixture",
+      "why": "the one that consumes, exactly once"
+    }
+  ],
+  "cases_disagreeing_with_expectation": [],
+  "consume_allowed_count": 1,
+  "cookies_set": false,
+  "customer_auth_live_in_actual_environment": false,
+  "fabricated": false,
+  "fixture_label": "demo_fixture",
+  "login_live_in_actual_environment": false,
+  "persisted_to_database": false,
+  "pkce_verifier_emitted": false,
+  "production_sessions_created": false,
+  "production_store_count": 0,
+  "provider_contacted": false,
+  "real_secrets_exposed": false,
+  "real_users_created": false,
+  "replay_detected_count": 1,
+  "rls_allowed_count": 1,
+  "rows": [
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "no_session_cookie_was_sent"
+      ],
+      "case": "missing_cookie",
+      "cookie_parseable": false,
+      "cookie_present": false,
+      "customer_auth_live": false,
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "kind": "session",
+      "membership_verified": false,
+      "organization_id_valid": false,
+      "principal_resolved": false,
+      "rls_context_allowed": false,
+      "session_cookie_valid": false,
+      "session_expired": false,
+      "signature_valid": false,
+      "signing_key_present": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "session_cookie_is_not_three_dot_separated_parts"
+      ],
+      "case": "malformed_cookie",
+      "cookie_parseable": false,
+      "cookie_present": true,
+      "customer_auth_live": false,
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "kind": "session",
+      "membership_verified": false,
+      "organization_id_valid": false,
+      "principal_resolved": false,
+      "rls_context_allowed": false,
+      "session_cookie_valid": false,
+      "session_expired": false,
+      "signature_valid": false,
+      "signing_key_present": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "session_expired"
+      ],
+      "case": "expired_session",
+      "cookie_parseable": true,
+      "cookie_present": true,
+      "customer_auth_live": false,
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "kind": "session",
+      "membership_verified": false,
+      "organization_id_valid": true,
+      "principal_resolved": false,
+      "rls_context_allowed": false,
+      "session_cookie_valid": false,
+      "session_expired": true,
+      "signature_valid": true,
+      "signing_key_present": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "session_cookie_signature_does_not_verify"
+      ],
+      "case": "invalid_signature",
+      "cookie_parseable": true,
+      "cookie_present": true,
+      "customer_auth_live": false,
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "kind": "session",
+      "membership_verified": false,
+      "organization_id_valid": true,
+      "principal_resolved": false,
+      "rls_context_allowed": false,
+      "session_cookie_valid": false,
+      "session_expired": false,
+      "signature_valid": false,
+      "signing_key_present": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "session_organization_id_is_not_uuid_shaped"
+      ],
+      "case": "profile_shaped_organization_id",
+      "cookie_parseable": true,
+      "cookie_present": true,
+      "customer_auth_live": false,
+      "expect_rls": false,
+      "expect_valid": false,
+      "fixture_label": "demo_fixture",
+      "kind": "session",
+      "membership_verified": true,
+      "organization_id_valid": false,
+      "principal_resolved": false,
+      "rls_context_allowed": false,
+      "session_cookie_valid": false,
+      "session_expired": false,
+      "signature_valid": true,
+      "signing_key_present": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "membership_not_verified_for_this_organization"
+      ],
+      "case": "valid_session_without_membership",
+      "cookie_parseable": true,
+      "cookie_present": true,
+      "customer_auth_live": false,
+      "expect_rls": false,
+      "expect_valid": true,
+      "fixture_label": "demo_fixture",
+      "kind": "session",
+      "membership_verified": false,
+      "organization_id_valid": true,
+      "principal_resolved": true,
+      "rls_context_allowed": false,
+      "session_cookie_valid": true,
+      "session_expired": false,
+      "signature_valid": true,
+      "signing_key_present": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [],
+      "case": "valid_session_with_membership",
+      "cookie_parseable": true,
+      "cookie_present": true,
+      "customer_auth_live": false,
+      "expect_rls": true,
+      "expect_valid": true,
+      "fixture_label": "demo_fixture",
+      "kind": "session",
+      "membership_verified": true,
+      "organization_id_valid": true,
+      "principal_resolved": true,
+      "rls_context_allowed": true,
+      "session_cookie_valid": true,
+      "session_expired": false,
+      "signature_valid": true,
+      "signing_key_present": false
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "no_state_found_for_this_id"
+      ],
+      "case": "missing_state",
+      "consume_allowed": false,
+      "consumed": false,
+      "expect_consume_allowed": false,
+      "expect_replay": false,
+      "expired": false,
+      "fixture_label": "demo_fixture",
+      "kind": "state",
+      "operation": "consume",
+      "pkce_verifier_present": false,
+      "production_store": false,
+      "replay_detected": false,
+      "state_value_present": false,
+      "state_value_valid": false,
+      "storage_scope": "in_memory_test"
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "state_expired"
+      ],
+      "case": "expired_state",
+      "consume_allowed": false,
+      "consumed": false,
+      "expect_consume_allowed": false,
+      "expect_replay": false,
+      "expired": true,
+      "fixture_label": "demo_fixture",
+      "kind": "state",
+      "operation": "consume",
+      "pkce_verifier_present": true,
+      "production_store": false,
+      "replay_detected": false,
+      "state_value_present": true,
+      "state_value_valid": true,
+      "storage_scope": "in_memory_test"
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "state_already_consumed_replay_detected"
+      ],
+      "case": "consumed_state_replay",
+      "consume_allowed": false,
+      "consumed": true,
+      "expect_consume_allowed": false,
+      "expect_replay": true,
+      "expired": false,
+      "fixture_label": "demo_fixture",
+      "kind": "state",
+      "operation": "consume",
+      "pkce_verifier_present": true,
+      "production_store": false,
+      "replay_detected": true,
+      "state_value_present": true,
+      "state_value_valid": true,
+      "storage_scope": "in_memory_test"
+    },
+    {
+      "agrees_with_expectation": true,
+      "blocked_reasons": [],
+      "case": "valid_state_and_pkce",
+      "consume_allowed": true,
+      "consumed": true,
+      "expect_consume_allowed": true,
+      "expect_replay": false,
+      "expired": false,
+      "fixture_label": "demo_fixture",
+      "kind": "state",
+      "operation": "consume",
+      "pkce_verifier_present": true,
+      "production_store": false,
+      "replay_detected": false,
+      "state_value_present": true,
+      "state_value_valid": true,
+      "storage_scope": "in_memory_test"
+    }
+  ],
+  "schema_version": "nf_customer_session_state_demo_fixture_v1",
+  "session_cookie_value_emitted": false,
+  "session_signing_key_present_in_actual_environment": false,
+  "session_state_cases_covered": [
+    "consumed_state_replay",
+    "expired_session",
+    "expired_state",
+    "invalid_signature",
+    "malformed_cookie",
+    "missing_cookie",
+    "missing_state",
+    "profile_shaped_organization_id",
+    "valid_session_with_membership",
+    "valid_session_without_membership",
+    "valid_state_and_pkce"
+  ],
+  "session_state_cases_missing": [],
+  "state_value_emitted": false,
+  "valid_session_count": 2
+}

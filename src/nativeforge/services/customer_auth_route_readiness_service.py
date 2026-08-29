@@ -69,6 +69,10 @@ ROUTE_PATTERNS: dict[str, str] = {
 
 READINESS_FIELDS: tuple[str, ...] = (
     "security_scheme_declared",
+    "session_format_available",
+    "session_verifier_available",
+    "redirect_state_store_available",
+    "session_signing_key_present",
     "session_cookie_policy_available",
     "login_route_available",
     "logout_route_available",
@@ -158,6 +162,26 @@ def _load_openapi() -> dict[str, Any]:
         return {"paths": {}, "components": {}}
 
 
+def _module_importable(name: str) -> bool:
+    import importlib.util
+
+    try:
+        return importlib.util.find_spec(name) is not None
+    except (ImportError, ValueError):
+        return False
+
+
+def _signing_key_present() -> bool:
+    """Is a session signing key configured? Presence only, never the value."""
+    try:
+        from nativeforge.services.customer_session_format_service import (
+            signing_key_present,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return False
+    return signing_key_present()
+
+
 def _session_cookie_policy_available() -> bool:
     """Does a session cookie policy exist, and does it hold together?
 
@@ -197,6 +221,7 @@ def build_route_readiness(
     openapi: dict[str, Any] | None = None,
     cloudflare_access_in_front: bool = True,
     customer_auth_live: bool | None = None,
+    session_signing_key_present: bool | None = None,
 ) -> dict[str, Any]:
     """Which login routes exist, and whether any of them enforces anything."""
     surface = detect_route_surface(openapi=openapi)
@@ -242,6 +267,15 @@ def build_route_readiness(
     # Injectable, and it has to be. Without it `ready_for_live_login: True`
     # would be unreachable in this repository, and an unreachable branch makes
     # every "not ready" claim above it unfalsifiable.
+    # Injectable for the same reason customer_auth_live is: without it,
+    # `ready_for_live_login: True` would be unreachable and every "not ready"
+    # claim above it unfalsifiable. Gate 117 learned this the same way, one
+    # conjunct earlier.
+    signing_key = (
+        _signing_key_present()
+        if session_signing_key_present is None
+        else bool(session_signing_key_present)
+    )
     principal_possible = (
         _customer_auth_live()
         if customer_auth_live is None
@@ -272,6 +306,14 @@ def build_route_readiness(
         if not enforced:
             blocked_reasons.append(f"enforcement_absent:{field}")
 
+    # Gate 118: a session format exists and no key signs it. Named rather than
+    # silent - this is the single thing standing between the verifier and a
+    # cookie that could verify.
+    if not signing_key:
+        blocked_reasons.append(
+            "no_session_signing_key_configured_so_no_cookie_can_verify"
+        )
+
     if not security_scheme_declared:
         blocked_reasons.append("no_security_scheme_is_declared_anywhere")
     elif not has_security:
@@ -290,6 +332,11 @@ def build_route_readiness(
         and route_org_resolution_enforced
         and route_role_mapping_enforced
         and route_session_cookie_policy_enforced
+        # Gate 118: without a signing key nothing can be signed and nothing can
+        # be checked, so a login flow has no credential at the end of it. The
+        # invariant below said so already; this makes the service incapable of
+        # producing a result that fails it.
+        and signing_key
     )
 
     return _json_safe(
@@ -305,6 +352,20 @@ def build_route_readiness(
             "ready_for_live_login": ready_for_live_login,
             "application_route_count": surface["application_route_count"],
             "security_scheme_declared": security_scheme_declared,
+            # Gate 118: three contracts a login flow needs, each detected by
+            # import rather than assumed. A contract existing is not a working
+            # session - `session_cookie_valid` in the verifier is still false
+            # for every cookie, because no signing key is configured.
+            "session_format_available": _module_importable(
+                "nativeforge.services.customer_session_format_service"
+            ),
+            "session_verifier_available": _module_importable(
+                "nativeforge.services.customer_session_verifier_service"
+            ),
+            "redirect_state_store_available": _module_importable(
+                "nativeforge.services.customer_auth_redirect_state_store_service"
+            ),
+            "session_signing_key_present": signing_key,
             # Gate 117: measured, and reported beside enforcement so a reader
             # can see which of the two a claim rests on.
             "customer_auth_live": principal_possible,
@@ -371,6 +432,15 @@ def route_readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
         "customer_auth_live"
     ):
         fails.append("role_mapping_enforced_while_nobody_can_authenticate")
+
+    # Gate 118: a session format existing does not make a cookie verifiable.
+    # Without a signing key nothing can be signed and nothing can be checked,
+    # and a readiness surface reporting login-ready while that is true would be
+    # describing a flow with no credential at the end of it.
+    if readiness.get("ready_for_live_login") and not readiness.get(
+        "session_signing_key_present"
+    ):
+        fails.append("login_ready_without_a_session_signing_key")
 
     # And a declared scheme must be reported as declared, or the two fields
     # would be able to disagree.

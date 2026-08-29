@@ -120,8 +120,34 @@ def evaluate_auth_dependency(
     membership_verified: bool = False,
     customer_auth_live: bool | None = None,
     login_live: bool | None = None,
+    session_verification: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """What a route's auth dependency decides for this caller. Deny by default."""
+    """What a route's auth dependency decides for this caller. Deny by default.
+
+    Gate 118 added `session_verification`: a result from
+    `customer_session_verifier_service`, which supplies the four facts this
+    contract previously had to be told. Passing one overrides the individual
+    parameters, because a verifier that looked at the cookie is a better source
+    than a caller asserting what it would have found.
+
+    The individual parameters remain for tests that want to isolate a single
+    conjunct without constructing a whole session.
+    """
+    if session_verification is not None:
+        # Read from the verification rather than from the caller. A caller
+        # asserting `principal_resolved=True` alongside a verification that
+        # found no principal is the shape of a bug, and the verification wins.
+        session_cookie_present = bool(session_verification.get("cookie_present"))
+        session_cookie_valid = bool(
+            session_verification.get("session_cookie_valid")
+        )
+        principal_resolved = bool(session_verification.get("principal_resolved"))
+        organization_id_resolved = bool(
+            session_verification.get("organization_id_valid")
+        )
+        membership_verified = bool(
+            session_verification.get("membership_verified")
+        )
     mode = str(dependency_mode or "").strip().lower()
     if mode not in DEPENDENCY_MODES:
         mode = DEFAULT_MODE
@@ -203,6 +229,9 @@ def evaluate_auth_dependency(
             "http_status": http_status,
             "security_scheme_required": mode in SECURITY_SCHEME_MODES,
             "sets_rls_context": sets_rls_context,
+            # Gate 118: whether this decision came from a verified cookie or
+            # from parameters a caller supplied. A route must use the first.
+            "session_verified": session_verification is not None,
             "blocked_reasons": sorted(set(blocked_reasons)),
             # Constants: a dependency decides. It mints nothing and reads no
             # cookie value.

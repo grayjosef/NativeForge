@@ -36,6 +36,7 @@
       "session_cookie_present": false,
       "session_cookie_valid": false,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -62,6 +63,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": false,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -88,6 +90,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": true,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -116,6 +119,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": true,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -140,6 +144,7 @@
       "session_cookie_present": false,
       "session_cookie_valid": false,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -166,6 +171,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": false,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -192,6 +198,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": true,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -219,6 +226,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": true,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -245,6 +253,7 @@
       "session_cookie_present": false,
       "session_cookie_valid": false,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -272,6 +281,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": false,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -299,6 +309,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": true,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -326,6 +337,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": true,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -352,6 +364,7 @@
       "session_cookie_present": false,
       "session_cookie_valid": false,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -379,6 +392,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": false,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -406,6 +420,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": true,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     },
     {
@@ -434,6 +449,7 @@
       "session_cookie_present": true,
       "session_cookie_valid": true,
       "session_cookie_value_read": false,
+      "session_verified": false,
       "sets_rls_context": false
     }
   ],

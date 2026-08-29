@@ -79,6 +79,10 @@ def _secured_routes():
         openapi=SECURED_OPENAPI,
         cloudflare_access_in_front=False,
         customer_auth_live=True,
+        # Gate 118 added a session signing key to the conjuncts. Forged here for
+        # the same reason as customer_auth_live: the permitted branch has to be
+        # reachable or the refusals prove nothing.
+        session_signing_key_present=True,
     )
 
 

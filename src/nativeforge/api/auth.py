@@ -82,11 +82,17 @@ from nativeforge.services.customer_auth_dependency_contract_service import (
 from nativeforge.services.customer_auth_redirect_flow_service import (
     build_redirect_flow_contract,
 )
+from nativeforge.services.customer_auth_redirect_state_store_service import (
+    consume_state,
+)
 from nativeforge.services.customer_auth_token_exchange_boundary_service import (
     evaluate_token_exchange_boundary,
 )
 from nativeforge.services.customer_session_cookie_policy_service import (
     build_session_cookie_policy,
+)
+from nativeforge.services.customer_session_verifier_service import (
+    verify_session_cookie,
 )
 
 router = APIRouter(prefix="/api/auth", tags=["customer-auth"])
@@ -103,26 +109,46 @@ def _gate() -> dict[str, Any]:
 
 
 def _session_decision(mode: str, cookie: str | None) -> dict[str, Any]:
-    """Ask the dependency contract what to do with this caller.
+    """Verify the cookie, then ask the dependency contract what to do.
 
-    The cookie's *presence* is passed, never its value. Nothing here parses,
-    decodes or logs it - there is no session format to parse it against, and a
-    value that reached a log would be a session anybody could replay.
+    Gate 117 passed the cookie's *presence* and derived `valid=False`, because
+    no session format existed to check it against. Gate 118 built one, so the
+    cookie is now verified rather than assumed invalid - and it still comes out
+    invalid, because no signing key is configured and nothing has issued a
+    session.
+
+    The cookie value goes into the verifier and no further. Nothing here logs,
+    echoes or returns it: a session value in a response body is a session
+    anybody can replay.
+
+    `membership_verified=False` is passed deliberately rather than omitted. A
+    membership record is a database question this route does not ask, and Gate
+    112's rule is that a valid session is not a membership - so the answer is
+    no until something looks it up.
     """
     policy = build_session_cookie_policy()
-    present = bool(cookie)
 
-    # No session format exists, so no cookie can be valid. Stated as a
-    # derivation rather than a constant so it moves when one does.
-    valid = False
-    principal_resolved = False
+    verification = verify_session_cookie(
+        cookie_value=cookie,
+        membership_verified=False,
+    )
 
     return evaluate_auth_dependency(
         dependency_mode=mode,
-        session_cookie_present=present,
-        session_cookie_valid=valid,
-        principal_resolved=principal_resolved,
-    ) | {"cookie_name": policy["cookie_name"]}
+        session_verification=verification,
+    ) | {
+        "cookie_name": policy["cookie_name"],
+        "session_verification": {
+            # Booleans only. The value never leaves the verifier.
+            "cookie_parseable": verification["cookie_parseable"],
+            "signature_valid": verification["signature_valid"],
+            "session_expired": verification["session_expired"],
+            "organization_id_valid": verification["organization_id_valid"],
+            "membership_verified": verification["membership_verified"],
+            "rls_context_allowed": verification["rls_context_allowed"],
+            "blocked_reasons": verification["blocked_reasons"],
+        },
+    }
 
 
 def require_customer_session(
@@ -234,6 +260,9 @@ def callback() -> dict[str, Any]:
         pkce_validated=False,
     )
     flow = build_redirect_flow_contract()
+    # Nothing was issued, so nothing can be found. Contract-only scope, which
+    # stores nothing and says so.
+    state_lookup = consume_state(state_id=None, returned_state=None)
 
     body = _envelope("callback", "callback_validation_not_passed", gate)
     body.update(
@@ -247,6 +276,14 @@ def callback() -> dict[str, Any]:
             "network_call_allowed": bool(exchange["network_call_allowed"]),
             "callback_session_validated": bool(gate["callback_session_validated"]),
             "org_binding_passed": bool(gate["org_binding_passed"]),
+            # Gate 118: no state was issued, so there is nothing stored to
+            # retrieve. The store is consulted rather than assumed, so this
+            # route reports the same refusal a real callback would get.
+            "state_store_scope": state_lookup["storage_scope"],
+            "state_store_production": state_lookup["production_store"],
+            "stored_state_found": state_lookup["state_value_present"],
+            "state_consume_allowed": state_lookup["consume_allowed"],
+            "state_replay_detected": state_lookup["replay_detected"],
             # Named individually: a caller who gets a refusal here needs to know
             # which of the three is missing, not merely that one is.
             "organization_id_resolved": False,
@@ -300,12 +337,22 @@ def session(
     """
     gate = _gate()
     body = _envelope("session", "unauthenticated", gate)
+    verification = decision["session_verification"]
     body.update(
         {
             "authenticated": bool(decision["authenticated"]),
             "session_present": bool(decision["session_cookie_present"]),
             "session_valid": bool(decision["session_cookie_valid"]),
+            "session_verified": bool(decision["session_verified"]),
             "dependency_mode": decision["dependency_mode"],
+            # Gate 118: what the verifier found, as booleans. A caller learns
+            # why their cookie did not work without the cookie coming back.
+            "cookie_parseable": verification["cookie_parseable"],
+            "signature_valid": verification["signature_valid"],
+            "session_expired": verification["session_expired"],
+            "session_blocked_reasons": verification["blocked_reasons"],
+            # Still None: an organization comes from a verified membership,
+            # and this route asks nobody for one.
             "organization_id": None,
             "expires_at": None,
         }
