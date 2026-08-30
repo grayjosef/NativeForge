@@ -114,6 +114,21 @@ CAPABILITY_REPOSITORY_MODULES: dict[str, str] = {
     ),
 }
 
+# Gate 123: the *behaviour* profile, which is a different object from the
+# grant-application identity profile the tenant_profile lane already tracks.
+#
+# `nf_tribal_profiles`      who this Tribe is when a form is submitted
+# `nf_tenant_beta_profiles` how this tenant wants NativeForge to behave
+#
+# Gate 123A found the two share not one column. Reported as its own fact rather
+# than folded into the tenant_profile lane, because a lane that counted two
+# unrelated repositories as one would report a write path for a table that has
+# none.
+TENANT_BETA_PROFILE_REPOSITORY_MODULE = (
+    "nativeforge.services.tenant_profile_repository_service"
+)
+TENANT_BETA_PROFILE_TABLE = "nf_tenant_beta_profiles"
+
 # The repository module that would address each lane's table.
 CAPABILITY_REPOSITORIES: dict[str, str] = {
     "tenant_profile_persistence": "tribal_profiles",
@@ -367,6 +382,12 @@ def build_capability(
             "rls_anchor": RLS_ANCHOR_COLUMN,
             "schema_available": schema_available,
             "repository_available": repository_available,
+            # Gate 123. A second repository, named rather than counted: it
+            # addresses a different table and moves no lane on its own.
+            "tenant_beta_profile_repository_available": _module_importable(
+                TENANT_BETA_PROFILE_REPOSITORY_MODULE
+            ),
+            "tenant_beta_profile_table": TENANT_BETA_PROFILE_TABLE,
             "service_contract_available": contract_available,
             "rls_backed": rls_backed,
             "organization_id_anchor_available": anchor_available,

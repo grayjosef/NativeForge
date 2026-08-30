@@ -44,9 +44,7 @@ SCHEMA_VERSION = "nf_tenant_beta_readiness_v1"
 
 # Components that make the contract demo possible.
 DEMO_COMPONENT_MODULES: dict[str, str] = {
-    "tenant_profiles_available": (
-        "nativeforge.services.tenant_beta_profile_service"
-    ),
+    "tenant_profiles_available": ("nativeforge.services.tenant_beta_profile_service"),
     "tenant_feature_entitlements_available": (
         "nativeforge.services.tenant_beta_feature_entitlement_service"
     ),
@@ -182,7 +180,6 @@ def _detect_verified_operational_binding() -> bool:
     return _module_importable("nativeforge.repositories.identity_binding")
 
 
-
 def _capability_persistence_live(capability: str) -> bool:
     """Is this lane's customer persistence actually live?
 
@@ -201,7 +198,6 @@ def _capability_persistence_live(capability: str) -> bool:
     except ImportError:  # pragma: no cover - the module is in this repository
         return False
     return bool(build_capability(capability).get("operational"))
-
 
 
 def _detect_customer_auth_live_from_gate() -> bool:
@@ -262,6 +258,17 @@ def build_tenant_beta_readiness() -> dict[str, Any]:
             "tenant_beta_contract_available": ready_for_demo,
             **components,
             **onboarding_facts,
+            # Gate 123B. A contract that could not be stored is now one that
+            # can be - and no profile has been. `tenant_profiles_available`
+            # says a contract exists; these say a table and a repository do,
+            # which is a different claim and does not move beta onboarding.
+            "tenant_beta_profile_repository_available": _module_importable(
+                "nativeforge.services.tenant_profile_repository_service"
+            ),
+            "tenant_beta_profile_validation_available": _module_importable(
+                "nativeforge.services.tenant_profile_persistence_validation_service"
+            ),
+            "tenant_beta_profiles_stored": 0,
             "ready_for_demo": ready_for_demo,
             "demo_scope": DEMO_SCOPE,
             "ready_for_beta_onboarding": ready_for_beta_onboarding,

@@ -154,10 +154,11 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
     # nf_raw_source_payloads. Gate 113: re-pinned 0028 -> 0029 for
     # nf_tenant_customer_org_bindings.
     # nf_raw_source_payloads. Gate 119: re-pinned 0029 -> 0030 for
-    # nf_auth_redirect_states. This assertion still protects a real invariant
+    # nf_auth_redirect_states. Gate 123: re-pinned 0030 -> 0031 for
+    # nf_tenant_beta_profiles. This assertion still protects a real invariant
     # (single head, no duplicate revision ids); only the expected value moves.
     # Update it deliberately when a migration is approved.
-    assert result.stdout.strip() == "0030 (head)"
+    assert result.stdout.strip() == "0031 (head)"
 
     sprint_discovery_files = [
         "0010_nf_opportunity_sources_discovery.py",

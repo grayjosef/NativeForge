@@ -83,7 +83,15 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # which alters it in no way. Neither nf_org_memberships nor nf_identities gains,
 # loses or changes a column, and the 0027 policies this adapter relies on are
 # untouched. The adapter's schema is unchanged.
-EXPECTED_MIGRATION_HEAD = "0030"
+#
+# Gate 123 moved it 0030 -> 0031, under the same standard. The review: 0031's
+# upgrade() performs one create_table (nf_tenant_beta_profiles) and two
+# create_index calls on that table, then installs an RLS policy on it. It reads
+# organizations and nf_identities only as foreign key *targets*, which alters
+# neither. Neither nf_org_memberships nor nf_identities gains, loses or changes
+# a column, and the 0027 policies this adapter relies on are untouched. The
+# adapter's schema is unchanged.
+EXPECTED_MIGRATION_HEAD = "0031"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.

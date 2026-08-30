@@ -1,0 +1,253 @@
+{
+  "actionable_fact_statuses": [
+    "tenant_supplied",
+    "verified"
+  ],
+  "alembic_head": "0031",
+  "applicant_classes": [
+    "federally_recognized_tribe",
+    "native_business",
+    "native_nonprofit",
+    "state_recognized_tribe",
+    "tribal_college_or_university",
+    "tribal_consortium",
+    "tribal_government_department",
+    "unknown"
+  ],
+  "check_constraints": [
+    "ck_nf_tenant_beta_applicant_classes_fact_status",
+    "ck_nf_tenant_beta_archived_needs_timestamp",
+    "ck_nf_tenant_beta_digest_frequency",
+    "ck_nf_tenant_beta_operating_states_fact_status",
+    "ck_nf_tenant_beta_profile_status",
+    "ck_nf_tenant_beta_recognition_fact_status",
+    "ck_nf_tenant_beta_recognition_status",
+    "ck_nf_tenant_beta_unknown_recognition_is_unestablished"
+  ],
+  "column_count": 28,
+  "columns": [
+    {
+      "name": "id",
+      "nullable": false,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "organization_id",
+      "nullable": false,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "tenant_id_label",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "customer_org_id_label",
+      "nullable": true,
+      "type": "TEXT"
+    },
+    {
+      "name": "recognition_status",
+      "nullable": false,
+      "type": "VARCHAR(32)"
+    },
+    {
+      "name": "recognition_status_fact_status",
+      "nullable": false,
+      "type": "VARCHAR(32)"
+    },
+    {
+      "name": "operating_states",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "operating_states_fact_status",
+      "nullable": false,
+      "type": "VARCHAR(32)"
+    },
+    {
+      "name": "service_area",
+      "nullable": true,
+      "type": "TEXT"
+    },
+    {
+      "name": "applicant_classes",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "applicant_classes_fact_status",
+      "nullable": false,
+      "type": "VARCHAR(32)"
+    },
+    {
+      "name": "programs",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "departments",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "priority_topics",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "excluded_topics",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "source_watchlist_preferences",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "digest_frequency",
+      "nullable": false,
+      "type": "VARCHAR(16)"
+    },
+    {
+      "name": "routing_rules",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "custom_alerts",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "profile_status",
+      "nullable": false,
+      "type": "VARCHAR(32)"
+    },
+    {
+      "name": "created_by_identity_id",
+      "nullable": true,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "updated_by_identity_id",
+      "nullable": true,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "archived_at",
+      "nullable": true,
+      "type": "DATETIME"
+    },
+    {
+      "name": "is_demo",
+      "nullable": false,
+      "type": "BOOLEAN"
+    },
+    {
+      "name": "human_review_required",
+      "nullable": false,
+      "type": "BOOLEAN"
+    },
+    {
+      "name": "blocked_reasons",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "created_at",
+      "nullable": false,
+      "type": "DATETIME"
+    },
+    {
+      "name": "updated_at",
+      "nullable": false,
+      "type": "DATETIME"
+    }
+  ],
+  "digest_frequencies": [
+    "daily",
+    "none",
+    "weekly"
+  ],
+  "fact_statuses": [
+    "demo_fixture",
+    "needs_human_review",
+    "tenant_supplied",
+    "unknown",
+    "verified"
+  ],
+  "forbidden_anchor_names": [
+    "customer_org_id",
+    "organization_profile_id",
+    "tenant_id"
+  ],
+  "migration_revision": "0031",
+  "operations": [
+    "archive_tenant_profile",
+    "get_tenant_profile",
+    "list_tenant_profiles",
+    "prepare_profile_write",
+    "upsert_tenant_profile",
+    "validate_profile_persistence"
+  ],
+  "production_tenant_profiles_created": 0,
+  "profile_statuses": [
+    "active",
+    "archived",
+    "draft",
+    "needs_human_review"
+  ],
+  "prohibited_inferences": [
+    {
+      "inference": "recognition_status_from_name_or_state",
+      "why": "federal, state, historic-affiliation and unrecognised are legally distinct; a wrong guess reaches a real government's eligibility"
+    },
+    {
+      "inference": "federal_eligibility_from_state_recognition",
+      "why": "South Carolina recognising a Tribe says nothing about federal programme eligibility, and the inverse is equally false"
+    },
+    {
+      "inference": "operating_state_from_mailing_address",
+      "why": "a tenant may operate, serve and be eligible in a state it is not headquartered in"
+    },
+    {
+      "inference": "applicant_class_from_tenant_kind",
+      "why": "a tribal government may apply under several classes, and which one applies is per-opportunity"
+    }
+  ],
+  "read_operations": [
+    "get_tenant_profile",
+    "list_tenant_profiles"
+  ],
+  "real_customer_data_written": 0,
+  "recognition_statuses": [
+    "federally_recognized",
+    "historic_affiliation",
+    "state_recognized",
+    "unknown",
+    "unrecognized"
+  ],
+  "rls_anchor": "organization_id",
+  "rls_predicate": "organization_id = current_setting('app.current_org_id', true)::uuid AND is_demo = current_setting('app.current_org_is_demo', true)::boolean",
+  "rows_deleted": 0,
+  "rows_in_the_application_database": 0,
+  "rules": [
+    "organization_id is required and must be UUID-shaped",
+    "tenant_id_label and customer_org_id_label are labels and never select a row",
+    "organization_profile_id is refused, not ignored",
+    "operating_states drives state matching; a service area or a mailing address never does",
+    "an unknown recognition status may only carry an unestablished fact status",
+    "archive by setting archived_at; nothing is ever deleted",
+    "a production write requires customer_auth_live and a verified operational binding",
+    "demo fixture writes are storable and never actionable"
+  ],
+  "schema_version": "nf_tenant_profile_persistence_artifact_v1",
+  "table_name": "nf_tenant_beta_profiles",
+  "write_operations": [
+    "archive_tenant_profile",
+    "upsert_tenant_profile"
+  ]
+}

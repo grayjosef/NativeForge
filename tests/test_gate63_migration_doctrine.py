@@ -54,7 +54,16 @@ DOCS = ROOT / "docs" / "operations"
 # organization to scope it to, and nf_identities (0023) is the precedent. It is
 # created empty and stays empty: doc 651 records that /login still refuses while
 # no provider is configured, so nothing writes a row.
-CURRENT_HEAD = "0030"
+#
+# Gate 123 re-pinned 0030 -> 0031 for nf_tenant_beta_profiles, the tenant
+# behaviour profile. Documented in
+# docs/operations/665_GATE123_TENANT_PROFILE_REPOSITORY_CONTRACT.md. It is a
+# different object from nf_tribal_profiles (0003), which is the
+# grant-application identity - Gate 123A found the two share not one column.
+# The table is created empty and stays empty: doc 667 records that a production
+# write needs customer_auth_live and a verified operational binding, and both
+# are false.
+CURRENT_HEAD = "0031"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

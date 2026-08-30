@@ -34,6 +34,8 @@
           "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": true
         }
       },
@@ -69,6 +71,8 @@
           "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": true
         },
         "tenant_id": "nf-demo-tenant-114"
@@ -106,6 +110,8 @@
           "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": true
         }
       },
@@ -142,6 +148,8 @@
           "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": true
         }
       },
@@ -179,6 +187,8 @@
           "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": true
         }
       },
@@ -220,6 +230,8 @@
           "schema_available": false,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": false,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": false
         }
       },
@@ -260,6 +272,8 @@
           "schema_available": false,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": false
         }
       },
@@ -298,6 +312,8 @@
           "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": true
         }
       },
@@ -338,6 +354,8 @@
           "schema_available": false,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": false,
+          "tenant_beta_profile_repository_available": true,
+          "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": false
         }
       },
