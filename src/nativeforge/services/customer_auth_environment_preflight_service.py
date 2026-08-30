@@ -347,12 +347,17 @@ def build_environment_preflight(
         header.get("must_disable_before_production_auth")
         and not header.get("dev_header_is_production_safe")
     )
+    # Gate 122A corrected this count from 15 to 14: the module that *defines*
+    # the dev-header chain was being counted as one of the routes that consume
+    # it. The corrected number and the module names both travel, so an operator
+    # reading the action knows which files are in scope.
+    dev_header_route_modules = list(header.get("dev_header_route_modules") or [])
+    dev_header_replacement_available = bool(header.get("central_replacement_available"))
     if dev_header_production_blocker:
         blocked_reasons.append("dev_header_must_be_replaced_before_production_auth")
         next_required_actions.append(
             f"replace {header.get('dev_header_name')} across "
-            f"{header.get('dev_header_used_by_routes')} route modules, then "
-            "disable it"
+            f"{len(dev_header_route_modules)} route modules, then disable it"
         )
 
     # -- the database, reported beside the gates rather than inside them -----
@@ -407,6 +412,9 @@ def build_environment_preflight(
         "public_origin_configured": public_origin_configured,
         "session_cookie_production_safe": session_cookie_production_safe,
         "dev_header_production_blocker": dev_header_production_blocker,
+        "dev_header_route_modules": dev_header_route_modules,
+        "dev_header_route_module_count": len(dev_header_route_modules),
+        "dev_header_replacement_available": dev_header_replacement_available,
         "database_revision": str(revision or ""),
         "required_database_revision": REQUIRED_DATABASE_REVISION,
         "database_revision_ready": database_revision_ready,

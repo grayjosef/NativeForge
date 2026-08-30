@@ -101,6 +101,12 @@ READINESS_FIELDS: tuple[str, ...] = (
     "auth_replacement_routes_available",
     "dev_header_enabled_default",
     "dev_header_used_by_routes",
+    # Gate 122A. The provider module depends on its own providers internally and
+    # is not a route. One number conflated the two and has been quoted in four
+    # places since Gate 116.
+    "dev_header_provider_modules",
+    "dev_header_route_modules",
+    "central_replacement_available",
     "auth_replacement_available",
     "rls_claim_guard_available",
     "organization_id_resolution_available",
@@ -125,6 +131,16 @@ def _module_importable(name: str) -> bool:
         return False
 
 
+# The module that defines the dev-header dependency chain. It uses its own
+# providers and is not a route module.
+PROVIDER_MODULES: frozenset[str] = frozenset({"deps_db.py"})
+
+# Where the replacement lives. Detected by import: a module that can be
+# imported is a replacement that exists, which is a weaker claim than a route
+# that can be reached and is the one this field makes.
+REPLACEMENT_MODULE = "nativeforge.api.deps_customer_auth"
+
+
 def detect_dev_header_route_usage(api_dir: Path | None = None) -> dict[str, Any]:
     """Which route modules obtain an organization through the dev header path.
 
@@ -136,6 +152,7 @@ def detect_dev_header_route_usage(api_dir: Path | None = None) -> dict[str, Any]
         api_dir = Path(__file__).resolve().parents[3] / "src/nativeforge/api"
 
     modules: list[str] = []
+    provider_modules: list[str] = []
     mentions_only: list[str] = []
     if api_dir.is_dir():
         for path in sorted(api_dir.glob("*.py")):
@@ -144,7 +161,13 @@ def detect_dev_header_route_usage(api_dir: Path | None = None) -> dict[str, Any]
                 re.search(DEPENDENCY_USE_PATTERN.format(name=dep), body)
                 for dep in ORG_CONTEXT_DEPENDENCIES
             )
-            if uses:
+            if uses and path.name in PROVIDER_MODULES:
+                # The module that *defines* the dev-header chain depends on its
+                # own providers internally. It is the thing to be replaced, not
+                # a consumer of it, and counting it as a route module
+                # overstates the migration by one every time.
+                provider_modules.append(path.name)
+            elif uses:
                 modules.append(path.name)
             elif any(dep in body for dep in ORG_CONTEXT_DEPENDENCIES):
                 # Named so the difference between using and discussing the
@@ -154,6 +177,8 @@ def detect_dev_header_route_usage(api_dir: Path | None = None) -> dict[str, Any]
     return {
         "module_count": len(modules),
         "modules": modules,
+        "provider_module_count": len(provider_modules),
+        "provider_modules": provider_modules,
         "mention_only_module_count": len(mentions_only),
         "mention_only_modules": mentions_only,
     }
@@ -231,6 +256,12 @@ def build_dev_header_shutdown_readiness(
     # A replacement is not a set of contracts, and it is not a set of endpoints
     # either. It is a route a customer can actually authenticate through, plus
     # the contracts behind it.
+    # Gate 122C. A central replacement that can be imported is a different
+    # claim from a route a customer can authenticate through, and both are
+    # reported. `auth_replacement_available` keeps the stronger meaning it has
+    # had since Gate 116 - it is what the activation gate reads.
+    central_replacement_available = _module_importable(REPLACEMENT_MODULE)
+
     auth_replacement_available = bool(
         replacement_route_available and all(components.values())
     )
@@ -265,9 +296,7 @@ def build_dev_header_shutdown_readiness(
         blocked_reasons.append("dev_header_is_enabled_by_default_in_settings")
 
     # Disabling now would break the application without making anything safer.
-    safe_to_disable_now = bool(
-        auth_replacement_available and not usage["module_count"]
-    )
+    safe_to_disable_now = bool(auth_replacement_available and not usage["module_count"])
 
     # No true branch by design, and an invariant keeps it that way.
     must_disable_before_production_auth = True
@@ -279,7 +308,11 @@ def build_dev_header_shutdown_readiness(
             "dev_header_setting": DEV_HEADER_SETTING,
             "dev_header_enabled_default": enabled,
             "dev_header_used_by_routes": usage["module_count"],
-            "dev_header_route_modules": usage["modules"],
+            "dev_header_route_modules": list(usage["modules"]),
+            # Gate 122A: the module that defines the chain, separated from the
+            # routes that consume it. One number conflated the two.
+            "dev_header_provider_modules": list(usage["provider_modules"]),
+            "central_replacement_available": central_replacement_available,
             # Modules that name the dependency without wiring it into a route -
             # docstrings describing the header, including api/auth.py's
             # explanation of why it does not use one.
@@ -333,9 +366,11 @@ def shutdown_readiness_invariant_failures(readiness: dict[str, Any]) -> list[str
     # Gate 117: nor does a route that refuses. Enforcement is not admission,
     # and the dev header exists to supply an organization_id - which a 401
     # supplies to nobody.
-    if readiness.get("safe_to_disable_now") and readiness.get(
-        "auth_routes_enforce_authentication"
-    ) and not readiness.get("replacement_route_available"):
+    if (
+        readiness.get("safe_to_disable_now")
+        and readiness.get("auth_routes_enforce_authentication")
+        and not readiness.get("replacement_route_available")
+    ):
         fails.append("safe_to_disable_because_routes_refuse_rather_than_admit")
 
     # Gate 116: routes existing must never, on its own, permit the header to

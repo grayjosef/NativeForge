@@ -5,9 +5,10 @@
   "blocked_reasons": [
     "auth_routes_refuse_unauthenticated_callers_but_cannot_admit_anybody",
     "dev_header_is_enabled_by_default_in_settings",
-    "dev_header_is_load_bearing_for_15_route_modules",
+    "dev_header_is_load_bearing_for_14_route_modules",
     "no_authenticated_route_can_supply_an_organization_id_yet"
   ],
+  "central_replacement_available": true,
   "cloudflare_access_is_customer_auth": false,
   "current_org_id_set": false,
   "dev_header_enabled_default": true,
@@ -15,12 +16,15 @@
   "dev_header_is_production_safe": false,
   "dev_header_mention_only_modules": [
     "auth.py",
-    "capability_guard.py"
+    "capability_guard.py",
+    "deps_customer_auth.py"
   ],
   "dev_header_name": "X-NF-Org-Id",
+  "dev_header_provider_modules": [
+    "deps_db.py"
+  ],
   "dev_header_route_modules": [
     "activation_routes.py",
-    "deps_db.py",
     "form_package_routes.py",
     "grant_spark_routes.py",
     "nofo_extraction_routes.py",
@@ -36,7 +40,7 @@
     "trust_routes.py"
   ],
   "dev_header_setting": "nf_dev_org_headers",
-  "dev_header_used_by_routes": 15,
+  "dev_header_used_by_routes": 14,
   "fabricated": false,
   "header_disabled_by_this_service": false,
   "membership_verification_available": true,

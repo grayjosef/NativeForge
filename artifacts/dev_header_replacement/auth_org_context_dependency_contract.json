@@ -1,0 +1,64 @@
+{
+  "central_dependency_functions": [
+    "get_customer_org_context_required",
+    "get_customer_org_context_optional",
+    "get_dev_org_context_explicit_only"
+  ],
+  "central_dependency_module": "nativeforge.api.deps_customer_auth",
+  "central_replacement_module_available": true,
+  "current_org_id_set_by_this_gate": false,
+  "customer_auth_live": false,
+  "customer_persistence_live": false,
+  "dependency_modes": [
+    "dev_demo_explicit",
+    "optional",
+    "required",
+    "unknown"
+  ],
+  "dev_header_is_production_safe": false,
+  "dev_header_name": "X-NF-Org-Id",
+  "dev_header_replacement_contract_available": true,
+  "dev_header_setting": "nf_dev_org_headers",
+  "forbidden_identity_names": [
+    "customer_org_id",
+    "organization_profile_id",
+    "tenant_id"
+  ],
+  "login_live": false,
+  "production_safe_dev_header_uses": 0,
+  "real_customer_data_written": 0,
+  "result_fields": [
+    "dependency_mode",
+    "session_present",
+    "session_valid",
+    "organization_id_resolved",
+    "membership_verified",
+    "rls_claim_guard_passed",
+    "dev_header_used",
+    "dev_header_allowed",
+    "production_safe",
+    "org_context_available",
+    "http_status",
+    "blocked_reasons"
+  ],
+  "rls_eligible_identity_names": [
+    "org_id",
+    "organization_id"
+  ],
+  "routes_converted": 0,
+  "rules": [
+    "production mode never accepts X-NF-Org-Id as authority",
+    "the dev header is honoured only in dev_demo_explicit mode, outside production, with the setting enabled",
+    "an unknown app_env counts as production",
+    "org context requires a valid session, a resolved organization_id and a verified membership",
+    "optional mode returns no organization, never a default one",
+    "tenant_id, customer_org_id and organization_profile_id never set an RLS context",
+    "this contract sets no GUCs and creates nothing"
+  ],
+  "safe_to_disable_now": false,
+  "schema_version": "nf_dev_header_replacement_artifact_v1",
+  "trusted_claim_sources": [
+    "resolved_binding",
+    "verified_auth_claim"
+  ]
+}
