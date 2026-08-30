@@ -98,6 +98,22 @@ CAPABILITY_TABLES: dict[str, str] = {
     "beta_onboarding_persistence": "nf_beta_onboarding_records",
 }
 
+# A repository that lives in `services/` rather than `repositories/`, detected
+# by import. Gate 120B built the identity binding repository as a service, in
+# the shape the other binding contracts use, and the file probe below would not
+# have seen it.
+#
+# The probe measures a *filename convention*. That is the declared-versus-derived
+# defect this campaign keeps finding: what matters is whether anything can
+# address the table, not where it happens to live. This map is the derived
+# answer for the lanes that have one; the rest fall through to the probe and
+# stay false, because they are still false.
+CAPABILITY_REPOSITORY_MODULES: dict[str, str] = {
+    "identity_binding_persistence": (
+        "nativeforge.services.tenant_customer_org_binding_repository_service"
+    ),
+}
+
 # The repository module that would address each lane's table.
 CAPABILITY_REPOSITORIES: dict[str, str] = {
     "tenant_profile_persistence": "tribal_profiles",
@@ -291,7 +307,13 @@ def build_capability(
         if repositories_dir is not None
         else root / "src/nativeforge/repositories"
     )
-    repository_available = (repos / f"{CAPABILITY_REPOSITORIES[name]}.py").is_file()
+    repository_available = bool(
+        (repos / f"{CAPABILITY_REPOSITORIES[name]}.py").is_file()
+        or (
+            name in CAPABILITY_REPOSITORY_MODULES
+            and _module_importable(CAPABILITY_REPOSITORY_MODULES[name])
+        )
+    )
 
     contract_available = _module_importable(CAPABILITY_CONTRACT_MODULES[name])
 

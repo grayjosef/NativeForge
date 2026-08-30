@@ -13,6 +13,7 @@
   "demo_persistence_allowed": true,
   "demo_persistence_label": "demo_fixture",
   "fabricated": false,
+  "identity_binding_repository_available": true,
   "live_fetch_performed": false,
   "next_gate_recommendation": {
     "recommendation": "customer_authentication",
@@ -44,9 +45,9 @@
         "customer_auth"
       ],
       "ready_to_build": false,
-      "repository_available": false,
+      "repository_available": true,
       "requires_migration": false,
-      "requires_repository": true,
+      "requires_repository": false,
       "rls_backed": true,
       "schema_available": true,
       "unmet_prerequisites": [
@@ -232,7 +233,6 @@
     "awarded_grants_persistence",
     "beta_onboarding_persistence",
     "document_library_persistence",
-    "identity_binding_persistence",
     "source_watchlist_persistence",
     "tenant_digest_persistence"
   ],
@@ -243,5 +243,7 @@
   "schema_version": "nf_customer_persistence_spine_decision_v1",
   "sequence_length": 8,
   "session_signing_key_ready": false,
-  "session_signing_key_source": "missing"
+  "session_signing_key_source": "missing",
+  "verified_binding_workflow_available": true,
+  "verified_operational_binding": false
 }

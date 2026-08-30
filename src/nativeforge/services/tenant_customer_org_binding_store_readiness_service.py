@@ -79,6 +79,13 @@ READINESS_FIELDS: tuple[str, ...] = (
     "store_schema_available",
     "store_contract_available",
     "store_writable",
+    # Gate 120B. A schema is a container, a repository is something that can
+    # address it, and a write path is both plus a contract that decides what
+    # goes in. Three facts, reported separately, because a table with no
+    # repository and a repository with no table fail in different ways.
+    "repository_available",
+    "write_path_available",
+    "operational_verified_binding",
     "operational_binding_storage_ready",
     "demo_binding_storage_ready",
     "blocked_reasons",
@@ -131,6 +138,18 @@ def build_binding_store_readiness(
     store_writable = bool(decision["migration_applied"])
     store_contract_available = bool(components["store_contract_available"])
 
+    # Measured by import rather than asserted. Gate 120B's repository is the
+    # first thing in this repository that can address the binding table.
+    repository_available = _module_importable(
+        "nativeforge.services.tenant_customer_org_binding_repository_service"
+    )
+    workflow_available = _module_importable(
+        "nativeforge.services.verified_binding_workflow_service"
+    )
+    write_path_available = bool(
+        store_schema_available and repository_available and store_contract_available
+    )
+
     blocked_reasons: list[str] = list(decision.get("blocked_reasons") or [])
 
     if not store_schema_available:
@@ -171,6 +190,15 @@ def build_binding_store_readiness(
             "store_migration_revision": decision["migration_revision"],
             "store_contract_available": store_contract_available,
             "store_writable": store_writable,
+            "repository_available": repository_available,
+            "workflow_available": workflow_available,
+            "write_path_available": write_path_available,
+            # A repository existing moves the write path. It does not move
+            # this: a binding binds nobody until somebody can be authenticated
+            # as the person it names, and 11 of 16 activation gates are unmet.
+            "operational_verified_binding": bool(
+                write_path_available and decision["customer_auth_live"]
+            ),
             "operational_binding_storage_ready": operational_ready,
             "demo_binding_storage_ready": demo_ready,
             "rls_anchor": decision["rls_enforced_by"],
@@ -253,9 +281,7 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
 
     # The table existing is not the table being writable. This is the single
     # confusion this service was written to prevent, so it is also an invariant.
-    if readiness.get("store_writable") and not readiness.get(
-        "store_schema_available"
-    ):
+    if readiness.get("store_writable") and not readiness.get("store_schema_available"):
         fails.append("store_writable_without_a_defined_schema")
 
     # Storage readiness requires somewhere to store.

@@ -77,15 +77,18 @@ def test_every_capability_is_covered_and_refused_with_a_reason():
 
 
 def test_the_binding_store_schema_does_not_imply_customer_persistence_live():
-    """Gate 113 created a table. That is not this."""
+    """Gate 113 created a table. Gate 120 added a repository. Neither is this."""
     binding = capability_svc.build_capability("identity_binding_persistence")
     assert binding["schema_available"] is True
     assert binding["rls_backed"] is True
+    # Gate 120B built the repository this lane was missing, so the write path
+    # is now complete. The lane is still not operational, and the reason has
+    # changed rather than disappeared: it is auth, not a missing write path.
+    assert binding["repository_available"] is True
+    assert binding["write_path_available"] is True
     assert binding["operational"] is False
-    # No repository addresses it, which is deliberate: Gate 113 built the table
-    # and the contract and no write path.
-    assert binding["repository_available"] is False
-    assert "no_repository_can_address_this_capability" in binding["blocked_reasons"]
+    assert "no_customer_auth_so_nobody_owns_the_row" in binding["blocked_reasons"]
+    assert "no_repository_can_address_this_capability" not in binding["blocked_reasons"]
 
     matrix = capability_svc.build_capability_matrix()
     assert matrix["customer_persistence_live"] is False
@@ -116,7 +119,13 @@ def test_the_operational_branch_is_reachable():
 
     matrix = capability_svc.build_capability_matrix(customer_auth_live=True)
     assert matrix["customer_persistence_live"] is True
-    assert matrix["operational_capabilities"] == ["tenant_profile_persistence"]
+    # Two lanes as of Gate 120: identity_binding gained the repository it was
+    # missing, so with auth forged it too has everything it needs. Both are
+    # still false in the real environment, where auth is not forged.
+    assert matrix["operational_capabilities"] == [
+        "tenant_profile_persistence",
+        "identity_binding_persistence",
+    ]
 
 
 def test_a_lane_with_no_table_never_becomes_operational_however_auth_moves():
@@ -228,8 +237,7 @@ def test_organization_profile_id_cannot_write_customer_data():
     )
     assert result["write_allowed"] is False
     assert (
-        "organization_profile_id_is_not_a_write_authority"
-        in result["blocked_reasons"]
+        "organization_profile_id_is_not_a_write_authority" in result["blocked_reasons"]
     )
 
 
@@ -246,8 +254,7 @@ def test_a_profile_id_is_refused_even_beside_a_valid_anchor():
     assert result["rls_compatible"] is True
     assert result["write_allowed"] is False
     assert (
-        "organization_profile_id_is_not_a_write_authority"
-        in result["blocked_reasons"]
+        "organization_profile_id_is_not_a_write_authority" in result["blocked_reasons"]
     )
 
 
@@ -414,7 +421,11 @@ def test_the_sequence_moves_when_a_precondition_does():
             "live_source_collection": False,
         },
     )
-    assert decision["ready_to_build_next"] == "identity_binding_persistence"
+    # Gate 120 built the identity binding repository, so that lane is no longer
+    # the next thing to build - it is built. The sequence moved on, which is
+    # exactly what this test exists to observe.
+    assert decision["ready_to_build_next"] == "awarded_grants_persistence"
+    assert "identity_binding_persistence" not in decision["ready_to_build"]
     assert spine_svc.spine_decision_invariant_failures(decision) == []
 
 
@@ -424,10 +435,24 @@ def test_a_lane_operating_ahead_of_its_prerequisites_is_reported():
     One says "can this be written", the other "should it be yet". They can
     disagree, and the decision must say so rather than suppress it.
     """
+    # Gate 120 removed the *naturally occurring* instance of this disagreement:
+    # tenant_profile was operational ahead of identity_binding, and identity
+    # binding is now built. The disagreement is still possible, so it is forged
+    # here rather than the test being deleted - a reporting path that only ever
+    # fired by accident is one nobody has actually tested.
+    matrix = capability_svc.build_capability_matrix(customer_auth_live=True)
+    matrix = dict(matrix)
+    matrix["rows"] = [
+        (
+            {**row, "operational": False}
+            if row["capability"] == "identity_binding_persistence"
+            else row
+        )
+        for row in matrix["rows"]
+    ]
+
     decision = spine_svc.build_persistence_spine_decision(
-        capability_matrix=capability_svc.build_capability_matrix(
-            customer_auth_live=True
-        ),
+        capability_matrix=matrix,
         preconditions={
             "customer_auth": True,
             "document_storage": False,
@@ -558,9 +583,8 @@ def test_the_binding_store_readiness_points_at_the_spine():
 
     stripped = dict(readiness)
     stripped["persistence_spine_position"] = {}
-    assert (
-        "readiness_refused_without_a_spine_position"
-        in readiness_invariant_failures(stripped)
+    assert "readiness_refused_without_a_spine_position" in readiness_invariant_failures(
+        stripped
     )
 
 
@@ -681,7 +705,9 @@ def test_the_artifacts_state_every_required_claim():
 
 def test_the_capability_matrix_artifact_reports_no_operational_lane():
     rows = list(
-        csv.DictReader(io.StringIO(_artifact("customer_persistence_capability_matrix.csv")))
+        csv.DictReader(
+            io.StringIO(_artifact("customer_persistence_capability_matrix.csv"))
+        )
     )
     assert len(rows) == len(capability_svc.CAPABILITIES)
     assert all(row["operational"] == "false" for row in rows)

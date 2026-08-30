@@ -1,0 +1,142 @@
+{
+  "alembic_head": "0030",
+  "check_constraints": [
+    "ck_nf_binding_demo_has_no_verifier",
+    "ck_nf_binding_source",
+    "ck_nf_binding_status",
+    "ck_nf_binding_verified_needs_verifier"
+  ],
+  "column_count": 16,
+  "columns": [
+    {
+      "name": "id",
+      "nullable": false,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "organization_id",
+      "nullable": false,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "tenant_id",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "customer_org_id",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "binding_status",
+      "nullable": false,
+      "type": "VARCHAR(32)"
+    },
+    {
+      "name": "binding_source",
+      "nullable": false,
+      "type": "VARCHAR(32)"
+    },
+    {
+      "name": "binding_confidence",
+      "nullable": false,
+      "type": "VARCHAR(16)"
+    },
+    {
+      "name": "verified_by_identity_id",
+      "nullable": true,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "verified_at",
+      "nullable": true,
+      "type": "DATETIME"
+    },
+    {
+      "name": "revoked_at",
+      "nullable": true,
+      "type": "DATETIME"
+    },
+    {
+      "name": "revoked_by_identity_id",
+      "nullable": true,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "is_demo",
+      "nullable": false,
+      "type": "BOOLEAN"
+    },
+    {
+      "name": "human_review_required",
+      "nullable": false,
+      "type": "BOOLEAN"
+    },
+    {
+      "name": "blocked_reasons",
+      "nullable": false,
+      "type": "JSON"
+    },
+    {
+      "name": "created_at",
+      "nullable": false,
+      "type": "DATETIME"
+    },
+    {
+      "name": "updated_at",
+      "nullable": false,
+      "type": "DATETIME"
+    }
+  ],
+  "forbidden_anchor_names": [
+    "customer_org_id",
+    "organization_profile_id",
+    "tenant_id"
+  ],
+  "migration_revision": "0029",
+  "operations": [
+    "get_active_binding",
+    "insert_binding",
+    "list_bindings_for_organization",
+    "mark_conflict",
+    "prepare_insert",
+    "revoke_binding"
+  ],
+  "production_verified_bindings_created": 0,
+  "read_operations": [
+    "get_active_binding",
+    "list_bindings_for_organization"
+  ],
+  "real_customer_rows_written": 0,
+  "rls_anchor": "organization_id",
+  "rls_predicate": "organization_id = current_setting('app.current_org_id', true)::uuid AND is_demo = current_setting('app.current_org_is_demo', true)::boolean",
+  "rows_in_the_application_database": 0,
+  "rules": [
+    "organization_id is required and must be UUID-shaped",
+    "tenant_id and customer_org_id are labels and never select alone",
+    "organization_profile_id is refused, not ignored",
+    "a verified binding requires a verifier identity and a timestamp",
+    "a demo fixture binding may carry neither",
+    "a conflicting binding authorizes no operational write",
+    "revocation is an UPDATE; nothing is ever deleted",
+    "contract mode is the default and touches no database"
+  ],
+  "schema_version": "nf_verified_binding_workflow_artifact_v1",
+  "storable_binding_statuses": [
+    "conflict",
+    "demo_fixture",
+    "pending_review",
+    "revoked",
+    "verified_binding"
+  ],
+  "table_name": "nf_tenant_customer_org_bindings",
+  "verifier_required_statuses": [
+    "verified_binding"
+  ],
+  "write_operations": [
+    "insert_binding",
+    "mark_conflict",
+    "revoke_binding"
+  ]
+}

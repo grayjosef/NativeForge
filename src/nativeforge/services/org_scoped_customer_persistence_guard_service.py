@@ -138,6 +138,15 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
+def _module_importable(name: str) -> bool:
+    import importlib.util
+
+    try:
+        return importlib.util.find_spec(name) is not None
+    except (ImportError, ValueError):
+        return False
+
+
 def _uuid_shaped(value: Any) -> bool:
     """Can this survive the ``::uuid`` cast every RLS policy performs?"""
     import re
@@ -247,8 +256,20 @@ def evaluate_persistence_write(
     binding_required = op in LABEL_BOUND_OPERATIONS
     binding_present = status in OPERATIONAL_BINDING_STATUSES
 
+    # Gate 120B: whether anything could *supply* the binding this guard demands.
+    # Until this gate the answer was no, which made every refusal below
+    # permanent rather than pending. It is still a refusal - a repository that
+    # can store a verified binding is not a verified binding - but the reason it
+    # cannot be satisfied has moved from "nothing can write one" to "nobody can
+    # be authenticated to verify one".
+    binding_repository_available = _module_importable(
+        "nativeforge.services.tenant_customer_org_binding_repository_service"
+    )
+
     if binding_required and not binding_present:
         blocked_reasons.append(f"verified_binding_required_for:{op}")
+        if not binding_repository_available:
+            blocked_reasons.append("no_repository_can_store_a_verified_binding")
 
     # -- demo ---------------------------------------------------------------
     demo_write = bool(is_demo_fixture) or anchor_is_demo or status == DEMO_LABEL
@@ -311,6 +332,7 @@ def evaluate_persistence_write(
             "customer_auth_required": customer_auth_required,
             "customer_auth_live": customer_auth_live,
             "binding_required": binding_required,
+            "binding_repository_available": binding_repository_available,
             "binding_present": binding_present,
             "binding_status": status,
             "demo_only": demo_only,

@@ -278,28 +278,27 @@
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "persistence_capability": {
           "blocked_reasons": [
-            "no_customer_auth_so_nobody_owns_the_row",
-            "no_repository_can_address_this_capability"
+            "no_customer_auth_so_nobody_owns_the_row"
           ],
           "capability": "identity_binding_persistence",
           "customer_auth_live": false,
           "customer_auth_required": true,
-          "demo_only": false,
+          "demo_only": true,
           "expected_table": "nf_tenant_customer_org_bindings",
           "fabricated": false,
           "live_fetch_performed": false,
           "operational": false,
           "organization_id_anchor_available": true,
           "persisted": false,
-          "read_path_available": false,
-          "repository_available": false,
+          "read_path_available": true,
+          "repository_available": true,
           "rls_anchor": "organization_id",
           "rls_backed": true,
           "rows_written": 0,
           "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
-          "write_path_available": false
+          "write_path_available": true
         }
       },
       "why": "an operational attempt on a fully-built lane, blocked by the single conjunct that is false everywhere today"
@@ -379,6 +378,7 @@
       {
         "auth_principal_status": "authenticated_verified_org",
         "binding_present": true,
+        "binding_repository_available": true,
         "binding_required": true,
         "binding_status": "verified_binding",
         "blocked_reasons": [
@@ -410,6 +410,7 @@
       {
         "auth_principal_status": "authenticated_verified_org",
         "binding_present": true,
+        "binding_repository_available": true,
         "binding_required": true,
         "binding_status": "verified_binding",
         "blocked_reasons": [
@@ -442,6 +443,7 @@
       {
         "auth_principal_status": "authenticated_verified_org",
         "binding_present": true,
+        "binding_repository_available": true,
         "binding_required": true,
         "binding_status": "verified_binding",
         "blocked_reasons": [
@@ -474,6 +476,7 @@
       {
         "auth_principal_status": "authenticated_verified_org",
         "binding_present": true,
+        "binding_repository_available": true,
         "binding_required": true,
         "binding_status": "verified_binding",
         "blocked_reasons": [
@@ -506,6 +509,7 @@
       {
         "auth_principal_status": "authenticated_demo",
         "binding_present": false,
+        "binding_repository_available": true,
         "binding_required": true,
         "binding_status": "demo_fixture",
         "blocked_reasons": [
@@ -539,6 +543,7 @@
       {
         "auth_principal_status": "authenticated_demo",
         "binding_present": false,
+        "binding_repository_available": true,
         "binding_required": false,
         "binding_status": "unknown",
         "blocked_reasons": [
@@ -575,6 +580,7 @@
       {
         "auth_principal_status": "authenticated_demo",
         "binding_present": false,
+        "binding_repository_available": true,
         "binding_required": false,
         "binding_status": "unknown",
         "blocked_reasons": [
@@ -611,11 +617,11 @@
       {
         "auth_principal_status": "authenticated_verified_org",
         "binding_present": true,
+        "binding_repository_available": true,
         "binding_required": true,
         "binding_status": "verified_binding",
         "blocked_reasons": [
-          "customer_auth_not_live",
-          "no_write_path_for:identity_binding_persistence"
+          "customer_auth_not_live"
         ],
         "cross_tenant_risk": true,
         "customer_auth_live": false,
@@ -643,6 +649,7 @@
       {
         "auth_principal_status": "authenticated_verified_org",
         "binding_present": true,
+        "binding_repository_available": true,
         "binding_required": false,
         "binding_status": "verified_binding",
         "blocked_reasons": [
@@ -886,8 +893,7 @@
       "binding_required": true,
       "binding_status": "verified_binding",
       "blocked_reasons": [
-        "customer_auth_not_live",
-        "no_write_path_for:identity_binding_persistence"
+        "customer_auth_not_live"
       ],
       "case": "auth_live_false_blocks_write",
       "cross_tenant_risk": true,

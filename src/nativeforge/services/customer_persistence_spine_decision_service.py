@@ -311,6 +311,16 @@ def build_persistence_spine_decision(
             "requires_migrations": requires_migrations,
             "requires_repositories": requires_repositories,
             "requires_auth": not pre[CUSTOMER_AUTH],
+            # Gate 120B. Reported, not recommended: a repository existing does
+            # not change what the next gate should be while auth blocks every
+            # lane at once. It changes what that gate will find waiting for it.
+            "identity_binding_repository_available": _module_importable(
+                "nativeforge.services.tenant_customer_org_binding_repository_service"
+            ),
+            "verified_binding_workflow_available": _module_importable(
+                "nativeforge.services.verified_binding_workflow_service"
+            ),
+            "verified_operational_binding": False,
             "requires_session_signing_key": not signing_ready,
             "session_signing_key_ready": signing_ready,
             "session_signing_key_source": signing.get("signing_key_source"),

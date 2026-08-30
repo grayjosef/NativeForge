@@ -7,7 +7,7 @@ A customer persistence **contract** exists. **Customer persistence is not live.*
 ```text
 schema available       2 of 8
 under row-level security  2 of 8
-complete write path    1 of 8
+complete write path    2 of 8
 operational            0 of 8
 ```
 
