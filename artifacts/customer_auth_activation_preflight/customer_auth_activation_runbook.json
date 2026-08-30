@@ -1,0 +1,384 @@
+{
+  "activation_performed": false,
+  "all_commands_secret_safe": true,
+  "blocking_item_count": 16,
+  "blocking_item_ids": [
+    "env.provider",
+    "env.secret",
+    "env.signing_key",
+    "provider.application",
+    "provider.redirect_uri",
+    "provider.jwks",
+    "db.migrate",
+    "db.rls_proof",
+    "security.dev_header",
+    "security.cookie_policy",
+    "smoke.callback_session",
+    "smoke.org_binding",
+    "smoke.invite_binding",
+    "roles.provider",
+    "roles.explicit_mapping",
+    "binding.verifier_identity"
+  ],
+  "customer_auth_live": false,
+  "done_item_count": 0,
+  "environment_mutated": false,
+  "item_count": 28,
+  "items": {
+    "callback_smoke": [
+      {
+        "blocked_reasons": [],
+        "blocks_activation": true,
+        "item_id": "smoke.callback_session",
+        "owner": "operator",
+        "risk": "high",
+        "status": "blocked",
+        "title": "Complete one real redirect in a real browser and validate the session",
+        "verification_command": "# a human with a browser; no local command"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": true,
+        "item_id": "smoke.org_binding",
+        "owner": "operator",
+        "risk": "critical",
+        "status": "blocked",
+        "title": "Confirm the callback resolves to an organization_id and a membership",
+        "verification_command": "# a human with a browser; no local command"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": true,
+        "item_id": "smoke.invite_binding",
+        "owner": "operator",
+        "risk": "high",
+        "status": "blocked",
+        "title": "Confirm the invite path binds correctly",
+        "verification_command": "# a human with a browser; no local command"
+      }
+    ],
+    "database": [
+      {
+        "blocked_reasons": [
+          "database_not_at_revision_0030"
+        ],
+        "blocks_activation": true,
+        "item_id": "db.migrate",
+        "owner": "operator",
+        "risk": "high",
+        "status": "blocked",
+        "title": "Apply migrations to the runtime database, to head 0030",
+        "verification_command": "uv run alembic current 2>/tmp/nf_alembic_current.err | tail -1; echo stderr=/tmp/nf_alembic_current.err"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": true,
+        "item_id": "db.rls_proof",
+        "owner": "engineering",
+        "risk": "critical",
+        "status": "manual",
+        "title": "Re-run the RLS isolation proof against the migrated database",
+        "verification_command": "./scripts/verify_nativeforge_rls_isolation.sh > /tmp/nf_rls_proof.log 2>&1; tail -1 /tmp/nf_rls_proof.log"
+      }
+    ],
+    "do_not_do": [
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "never.dev_header",
+        "owner": "engineering",
+        "risk": "critical",
+        "status": "prohibited",
+        "title": "Do not leave X-NF-Org-Id enabled alongside live customer auth",
+        "verification_command": "# an unauthenticated header that sets app.current_org_id is a cross-tenant read waiting to happen"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "never.tenant_id_anchor",
+        "owner": "engineering",
+        "risk": "critical",
+        "status": "prohibited",
+        "title": "Do not use tenant_id as an RLS authority",
+        "verification_command": "# organization_id is the only anchor"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "never.customer_org_id_anchor",
+        "owner": "engineering",
+        "risk": "critical",
+        "status": "prohibited",
+        "title": "Do not use customer_org_id as an RLS authority",
+        "verification_command": "# it is a label; it has no foreign key"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "never.profile_id_anchor",
+        "owner": "engineering",
+        "risk": "critical",
+        "status": "prohibited",
+        "title": "Do not use organization_profile_id as an organization_id",
+        "verification_command": "# a real value from a real column in the wrong identity space"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "never.fake_binding",
+        "owner": "operator",
+        "risk": "critical",
+        "status": "prohibited",
+        "title": "Do not insert a verified binding without a real verifier identity",
+        "verification_command": "# ck_nf_binding_verified_needs_verifier refuses it, and the workflow refuses before the database does"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "never.fake_session",
+        "owner": "engineering",
+        "risk": "critical",
+        "status": "prohibited",
+        "title": "Do not sign a production session with the committed fixture key",
+        "verification_command": "# the fixture key is disqualified by source, not by length"
+      }
+    ],
+    "environment_variables": [
+      {
+        "blocked_reasons": [
+          "missing:OIDC_AUDIENCE",
+          "missing:OIDC_CLIENT_ID",
+          "missing:OIDC_ISSUER"
+        ],
+        "blocks_activation": true,
+        "item_id": "env.provider",
+        "owner": "operator",
+        "risk": "high",
+        "status": "blocked",
+        "title": "Set OIDC_ISSUER, OIDC_CLIENT_ID and OIDC_AUDIENCE",
+        "verification_command": "uv run python -c \"from nativeforge.services.customer_auth_environment_preflight_service import build_environment_preflight as b; print(b()['provider_env_missing_keys'])\""
+      },
+      {
+        "blocked_reasons": [
+          "missing:NF_SESSION_SIGNING_KEY",
+          "missing:OIDC_CLIENT_SECRET"
+        ],
+        "blocks_activation": true,
+        "item_id": "env.secret",
+        "owner": "owner",
+        "risk": "critical",
+        "status": "blocked",
+        "title": "Supply OIDC_CLIENT_SECRET from a secret manager",
+        "verification_command": "test -n \"${OIDC_CLIENT_SECRET:-}\" && echo present || echo missing"
+      },
+      {
+        "blocked_reasons": [
+          "no_signing_key_configured"
+        ],
+        "blocks_activation": true,
+        "item_id": "env.signing_key",
+        "owner": "owner",
+        "risk": "critical",
+        "status": "blocked",
+        "title": "Supply NF_SESSION_SIGNING_KEY from an environment or secret manager",
+        "verification_command": "test -n \"${NF_SESSION_SIGNING_KEY:-}\" && echo present || echo missing"
+      },
+      {
+        "blocked_reasons": [
+          "no_public_origin_configured_to_compare_against"
+        ],
+        "blocks_activation": false,
+        "item_id": "env.public_origin",
+        "owner": "operator",
+        "risk": "medium",
+        "status": "blocked",
+        "title": "Set NF_PUBLIC_ORIGIN to the origin browsers actually reach",
+        "verification_command": "test -n \"${NF_PUBLIC_ORIGIN:-}\" && echo set || echo missing"
+      }
+    ],
+    "provider_console": [
+      {
+        "blocked_reasons": [],
+        "blocks_activation": true,
+        "item_id": "provider.application",
+        "owner": "provider_admin",
+        "risk": "high",
+        "status": "blocked",
+        "title": "Create the application in the provider console",
+        "verification_command": "# provider console; no local command"
+      },
+      {
+        "blocked_reasons": [
+          "configured_redirect_uri_matches_no_callback_route"
+        ],
+        "blocks_activation": true,
+        "item_id": "provider.redirect_uri",
+        "owner": "provider_admin",
+        "risk": "critical",
+        "status": "blocked",
+        "title": "Register the redirect URI, matching a route that can consume it",
+        "verification_command": "uv run python -c \"from nativeforge.services.customer_auth_provider_readiness_service import build_provider_readiness as b; print(b()['callback_route_matches_redirect_uri'])\""
+      },
+      {
+        "blocked_reasons": [
+          "jwks_never_checked_which_is_not_the_same_as_failed"
+        ],
+        "blocks_activation": true,
+        "item_id": "provider.jwks",
+        "owner": "engineering",
+        "risk": "medium",
+        "status": "manual",
+        "title": "Validate the issuer JWKS once, deliberately, under review",
+        "verification_command": "# the only step that touches the network; run under review"
+      }
+    ],
+    "role_mapping": [
+      {
+        "blocked_reasons": [],
+        "blocks_activation": true,
+        "item_id": "roles.provider",
+        "owner": "provider_admin",
+        "risk": "high",
+        "status": "blocked",
+        "title": "Define roles in the provider console",
+        "verification_command": "# provider console; no local command"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": true,
+        "item_id": "roles.explicit_mapping",
+        "owner": "engineering",
+        "risk": "critical",
+        "status": "blocked",
+        "title": "Map every provider role explicitly; unknown roles grant nothing",
+        "verification_command": "uv run python -c \"from nativeforge.services.customer_auth_role_mapping_service import ROLES; print(sorted(ROLES))\""
+      }
+    ],
+    "rollback": [
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "rollback.unset_approval",
+        "owner": "owner",
+        "risk": "critical",
+        "status": "manual",
+        "title": "Unset NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL to withdraw activation",
+        "verification_command": "unset NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL; test -z \"${NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL:-}\" && echo withdrawn"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "rollback.rotate_signing_key",
+        "owner": "owner",
+        "risk": "critical",
+        "status": "manual",
+        "title": "Rotate NF_SESSION_SIGNING_KEY if a session may have leaked",
+        "verification_command": "# a signed session cannot be revoked before it expires - rotating the key invalidates every outstanding session at once"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "rollback.revoke_bindings",
+        "owner": "operator",
+        "risk": "high",
+        "status": "manual",
+        "title": "Revoke any verified binding created in error - never delete one",
+        "verification_command": "# Gate 120's revoke_binding is an UPDATE; the row and its history stay"
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "rollback.provider_redirect",
+        "owner": "provider_admin",
+        "risk": "high",
+        "status": "manual",
+        "title": "Remove the redirect URI from the provider console",
+        "verification_command": "# provider console; no local command"
+      }
+    ],
+    "security": [
+      {
+        "blocked_reasons": [
+          "dev_header_must_be_replaced_before_production_auth"
+        ],
+        "blocks_activation": true,
+        "item_id": "security.dev_header",
+        "owner": "engineering",
+        "risk": "critical",
+        "status": "blocked",
+        "title": "Replace X-NF-Org-Id across every route module, then disable it",
+        "verification_command": "uv run python -c \"from nativeforge.services.dev_org_header_shutdown_readiness_service import build_dev_header_shutdown_readiness as b; r=b(); print(r['dev_header_used_by_routes'], r['safe_to_disable_now'])\""
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": true,
+        "item_id": "security.cookie_policy",
+        "owner": "engineering",
+        "risk": "high",
+        "status": "blocked",
+        "title": "Confirm the session cookie policy is production safe",
+        "verification_command": "uv run python -c \"from nativeforge.services.customer_session_cookie_policy_service import build_session_cookie_policy as b; print(b()['production_safe'])\""
+      }
+    ],
+    "verified_binding": [
+      {
+        "blocked_reasons": [
+          "no_verified_oidc_subject_exists_to_name_as_a_verifier"
+        ],
+        "blocks_activation": true,
+        "item_id": "binding.verifier_identity",
+        "owner": "operator",
+        "risk": "critical",
+        "status": "blocked",
+        "title": "Confirm a verified OIDC subject exists to name as the verifier",
+        "verification_command": "uv run python -c \"from nativeforge.services.verified_binding_workflow_service import run_binding_workflow as w; print(w(operation='inspect_pending')['customer_auth_live'])\""
+      },
+      {
+        "blocked_reasons": [],
+        "blocks_activation": false,
+        "item_id": "binding.first_binding",
+        "owner": "operator",
+        "risk": "critical",
+        "status": "pending",
+        "title": "Create the first verified binding through the Gate 120 workflow",
+        "verification_command": "uv run python -c \"from nativeforge.services.tenant_customer_org_binding_repository_service import list_bindings_for_organization as l; print('repository ready')\""
+      }
+    ]
+  },
+  "login_live": false,
+  "missing_activation_gates": [
+    "provider_configured",
+    "secret_present",
+    "issuer_configured",
+    "issuer_jwks_validated",
+    "audience_configured",
+    "callback_session_validated",
+    "invite_binding_passed",
+    "org_binding_passed",
+    "role_mapping_passed",
+    "dev_header_disabled_for_production",
+    "session_signing_key_ready"
+  ],
+  "missing_environment_key_names": [
+    "NF_SESSION_SIGNING_KEY",
+    "OIDC_AUDIENCE",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_ISSUER"
+  ],
+  "prohibited_item_count": 6,
+  "provider_contacted": false,
+  "schema_version": "nf_customer_auth_activation_runbook_v1",
+  "secret_values_included": false,
+  "sections": [
+    "environment_variables",
+    "provider_console",
+    "database",
+    "security",
+    "callback_smoke",
+    "role_mapping",
+    "verified_binding",
+    "rollback",
+    "do_not_do"
+  ]
+}

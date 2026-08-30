@@ -1,0 +1,59 @@
+{
+  "activation_performed": false,
+  "blocked_reasons": [
+    "callback_url_path_does_not_match_any_callback_route",
+    "database_not_at_revision_0030",
+    "dev_header_must_be_replaced_before_production_auth",
+    "network_validation_not_allowed_so_nothing_checked",
+    "no_public_origin_configured_to_compare_against",
+    "owner_has_not_authorized_customer_auth_activation",
+    "provider_environment_incomplete",
+    "secret_environment_incomplete",
+    "session_cookie_policy_not_production_safe",
+    "signing_key_not_fit_to_sign:source=missing"
+  ],
+  "callback_path_matches_route": false,
+  "callback_route_path": "/api/auth/callback",
+  "callback_url_configured": true,
+  "callback_url_matches_public_origin": false,
+  "callback_url_redacted": "http://localhost:5173/auth/callback",
+  "customer_auth_live": false,
+  "database_revision": "",
+  "database_revision_ready": false,
+  "dev_header_production_blocker": true,
+  "environment_mutated": false,
+  "environment_name": "local",
+  "login_live": false,
+  "network_calls": false,
+  "network_validation_allowed": false,
+  "next_required_actions": [
+    "apply migrations to the runtime database, to head 0030",
+    "point the configured callback URL at a path that can consume a callback - the API route is /api/auth/callback - and register the same value provider-side",
+    "replace X-NF-Org-Id across 15 route modules, then disable it",
+    "set NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL once every step above is done - it is a signature, not a switch",
+    "set NF_PUBLIC_ORIGIN to the origin browsers will actually reach, so the callback can be checked against it",
+    "set the missing provider keys out-of-band: OIDC_AUDIENCE, OIDC_CLIENT_ID, OIDC_ISSUER",
+    "supply the missing secrets from a secret manager: NF_SESSION_SIGNING_KEY, OIDC_CLIENT_SECRET"
+  ],
+  "provider_contacted": false,
+  "provider_env_missing_keys": [
+    "OIDC_AUDIENCE",
+    "OIDC_CLIENT_ID",
+    "OIDC_ISSUER"
+  ],
+  "provider_env_present": false,
+  "provider_validation_attempted": false,
+  "provider_validation_passed": false,
+  "public_origin_configured": false,
+  "required_database_revision": "0030",
+  "schema_version": "nf_customer_auth_environment_preflight_v1",
+  "secret_env_missing_keys": [
+    "NF_SESSION_SIGNING_KEY",
+    "OIDC_CLIENT_SECRET"
+  ],
+  "secret_env_present": false,
+  "secret_values_exposed": false,
+  "session_cookie_production_safe": false,
+  "signing_key_present": false,
+  "signing_key_source": "missing"
+}

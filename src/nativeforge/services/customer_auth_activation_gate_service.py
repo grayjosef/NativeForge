@@ -216,6 +216,7 @@ def build_customer_auth_activation_gate(
     dev_header_disabled_for_production: bool | None = None,
     owner_approval: bool | None = None,
     signing_key_readiness: dict[str, Any] | None = None,
+    environment_preflight: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """May customer authentication be activated? Deny by default.
 
@@ -319,6 +320,46 @@ def build_customer_auth_activation_gate(
     login_live = bool(all_login_gates and owner_approval)
     activation_allowed = customer_auth_live
 
+    # Gate 121B. Consulted for *naming*, never for deriving: the sixteen gates
+    # above decide, and this classifies what is missing by who would have to
+    # act. Folding the preflight into the derivation would double-count the
+    # facts the gates already measure, and a gate that could be satisfied two
+    # ways is a gate nobody can reason about.
+    #
+    # Imported lazily. Nothing the preflight touches imports this module, but a
+    # module-level import would make that a matter of luck rather than design.
+    preflight = environment_preflight
+    if preflight is None:
+        from nativeforge.services.customer_auth_environment_preflight_service import (  # noqa: E501
+            build_environment_preflight,
+        )
+
+        preflight = build_environment_preflight()
+
+    activation_blockers = {
+        # Each is a distinct operator action, and lumping them together is how
+        # "auth is not configured" becomes an unactionable sentence.
+        "provider_configuration_missing": not bool(
+            preflight.get("provider_env_present")
+        ),
+        "secret_configuration_missing": not bool(preflight.get("secret_env_present")),
+        "signing_key_not_fit_to_sign": str(
+            preflight.get("signing_key_source") or "missing"
+        )
+        not in {"environment", "secret_manager"},
+        "database_revision_not_applied": not bool(
+            preflight.get("database_revision_ready")
+        ),
+        "callback_url_does_not_match_a_route": not bool(
+            preflight.get("callback_path_matches_route")
+        ),
+        "role_mapping_not_validated": not gates["role_mapping_passed"],
+        "dev_header_still_in_place": bool(
+            preflight.get("dev_header_production_blocker")
+        ),
+        "owner_authorization_absent": not bool(owner_approval),
+    }
+
     next_required_actions = [
         {"gate": name, "action": GATE_REMEDIES[name]}
         for name in REQUIRED_AUTH_GATES
@@ -352,6 +393,16 @@ def build_customer_auth_activation_gate(
                 name for name in REQUIRED_LOGIN_GATES if not gates[name]
             ],
             "issuer_jwks_network_check_performed": not jwks_unchecked,
+            # Gate 121E. The same refusal, classified by who has to act on it.
+            "activation_blockers": {
+                name: bool(value) for name, value in sorted(activation_blockers.items())
+            },
+            "activation_blocker_names": sorted(
+                name for name, value in activation_blockers.items() if value
+            ),
+            "operator_actionable_blocker_count": sum(
+                1 for value in activation_blockers.values() if value
+            ),
             "blocked_reasons": sorted(set(blocked_reasons)),
             "next_required_actions": next_required_actions,
             # Constants. A gate decides; it authenticates nobody.

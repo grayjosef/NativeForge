@@ -199,6 +199,10 @@ def build_binding_store_readiness(
             "operational_verified_binding": bool(
                 write_path_available and decision["customer_auth_live"]
             ),
+            # Gate 121E. The write path is complete and the binding still
+            # cannot be verified, so the reason belongs here rather than being
+            # left for a reader to go and find.
+            "auth_activation_blocker_count": _auth_activation_blocker_count(),
             "operational_binding_storage_ready": operational_ready,
             "demo_binding_storage_ready": demo_ready,
             "rls_anchor": decision["rls_enforced_by"],
@@ -220,6 +224,23 @@ def build_binding_store_readiness(
             "live_fetch_performed": False,
         }
     )
+
+
+def _auth_activation_blocker_count() -> int:
+    """How many named operator actions stand between here and a verified binding."""
+    try:
+        from nativeforge.services.customer_auth_activation_gate_service import (
+            build_customer_auth_activation_gate,
+        )
+
+        return int(
+            build_customer_auth_activation_gate().get(
+                "operator_actionable_blocker_count"
+            )
+            or 0
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return 0
 
 
 def _spine_position() -> dict[str, Any]:

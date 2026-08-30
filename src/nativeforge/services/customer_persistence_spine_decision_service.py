@@ -321,6 +321,15 @@ def build_persistence_spine_decision(
                 "nativeforge.services.verified_binding_workflow_service"
             ),
             "verified_operational_binding": False,
+            # Gate 121E. The spine has recommended `customer_authentication`
+            # since Gate 114 and still does. What changed is that the
+            # recommendation now has a checklist behind it: eight named
+            # blockers, each with an owner, rather than one unactionable
+            # sentence.
+            "auth_activation_blocker_names": _auth_activation_blockers(),
+            "auth_activation_runbook_available": _module_importable(
+                "nativeforge.services.customer_auth_activation_runbook_service"
+            ),
             "requires_session_signing_key": not signing_ready,
             "session_signing_key_ready": signing_ready,
             "session_signing_key_source": signing.get("signing_key_source"),
@@ -347,6 +356,24 @@ def build_persistence_spine_decision(
             "live_fetch_performed": False,
         }
     )
+
+
+def _auth_activation_blockers() -> list[str]:
+    """The named blockers, or an empty list if the gate cannot be read.
+
+    Reported, never derived from. The spine's recommendation is unchanged by
+    this; it is what a reader does after reading the recommendation.
+    """
+    try:
+        from nativeforge.services.customer_auth_activation_gate_service import (
+            build_customer_auth_activation_gate,
+        )
+
+        return list(
+            build_customer_auth_activation_gate().get("activation_blocker_names") or []
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return []
 
 
 def _next_gate_recommendation(
