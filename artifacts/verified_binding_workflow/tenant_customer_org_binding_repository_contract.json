@@ -1,5 +1,5 @@
 {
-  "alembic_head": "0031",
+  "alembic_head": "0032",
   "check_constraints": [
     "ck_nf_binding_demo_has_no_verifier",
     "ck_nf_binding_source",

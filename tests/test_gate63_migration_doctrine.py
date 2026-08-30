@@ -63,7 +63,15 @@ DOCS = ROOT / "docs" / "operations"
 # The table is created empty and stays empty: doc 667 records that a production
 # write needs customer_auth_live and a verified operational binding, and both
 # are false.
-CURRENT_HEAD = "0031"
+# Gate 124 re-pinned 0031 -> 0032 for nf_awarded_grants, where an awarded
+# grant lives. Documented in
+# docs/operations/669_GATE124_AWARDED_GRANTS_REPOSITORY_CONTRACT.md. It is not
+# a pursuit table: nf_grant_sparks (0004), nf_grant_pursuits (0007) and
+# nf_spark_requirements (0005) are all pursuit-side, and Gate 91's separation
+# is what keeps an award out of them. The table is created empty and stays
+# empty: doc 671 records that a production write needs customer_auth_live and a
+# verified operational binding, and both are false.
+CURRENT_HEAD = "0032"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

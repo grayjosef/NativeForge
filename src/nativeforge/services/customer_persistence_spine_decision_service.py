@@ -279,10 +279,23 @@ def build_persistence_spine_decision(
     # by a reader skimming for a green line.
     digest = by_name.get("tenant_digest_persistence", {})
     awarded = by_name.get("awarded_grants_persistence", {})
+    awarded_requirements = by_name.get("award_requirements_persistence", {})
     onboarding = by_name.get("beta_onboarding_persistence", {})
 
     operational_digest_recommended = bool(digest.get("operational"))
-    operational_awarded_recommended = bool(awarded.get("operational"))
+    # Both lanes, because "awarded tracking" is two of them. An award is a row;
+    # tracking is the requirements hanging off it, with their own due dates and
+    # their own proof trail.
+    #
+    # This read only the awards lane until Gate 124, and it did not matter while
+    # both lanes were equally empty. Gate 124 built the awards half and left the
+    # requirements half for a later gate, which separated them for the first
+    # time - and immediately contradicted the invariant below, which has always
+    # asked about award_requirements_persistence. The invariant was right and
+    # this derivation was reading the wrong half.
+    operational_awarded_recommended = bool(
+        awarded.get("operational") and awarded_requirements.get("operational")
+    )
     beta_onboarding_recommended = bool(onboarding.get("operational"))
 
     requires_migrations = sorted(

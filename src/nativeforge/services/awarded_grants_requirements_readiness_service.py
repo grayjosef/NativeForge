@@ -68,6 +68,21 @@ CONTRACT_COMPONENT_MODULES: dict[str, str] = {
 # the organization, and nothing relates the two without an explicit binding.
 # Tracking a real Tribe's compliance obligations across that gap is how one
 # Tribe ends up reading another's awards.
+# Gate 124: what storage exists, which is a different question from whether
+# persistence is live. The lane now has a table, an organization_id anchor, an
+# RLS policy and a repository, and still nobody can authenticate to write to it.
+#
+# Reported separately rather than folded into `customer_persistence_live`,
+# because a single field answering both would have to pick one, and both answers
+# are load-bearing: "built" tells a reader what this gate did, "live" tells them
+# what a Tribe can do. Gate 114 collapsed three answers into one here for the
+# opposite reason - three detectors disagreeing about the same question.
+STORAGE_COMPONENT_KEYS: tuple[str, ...] = (
+    "awarded_grants_schema_available",
+    "awarded_grants_repository_available",
+    "awarded_grants_write_path_available",
+)
+
 OPERATIONAL_COMPONENT_KEYS: tuple[str, ...] = (
     "ui_available",
     "customer_persistence_live",
@@ -88,9 +103,11 @@ NEXT_ACTION_SEQUENCE: tuple[tuple[str, str], ...] = (
         "customer auth can supply a verifier",
     ),
     (
-        "persist_awarded_records_and_requirements",
-        "nothing survives a request today, so a compliance calendar cannot be "
-        "re-read after a missed deadline",
+        "persist_award_requirements",
+        "Gate 124 gave an awarded grant somewhere to live; a requirement still "
+        "has none, and a requirement is the half with the due date. A "
+        "compliance calendar that cannot be re-read after a missed deadline is "
+        "not a calendar, and requirements are what would be re-read",
     ),
     (
         "build_the_awarded_grants_surface",
@@ -168,7 +185,6 @@ def _detect_verified_operational_binding() -> bool:
     return _module_importable("nativeforge.repositories.identity_binding")
 
 
-
 def _capability_persistence_live(capability: str) -> bool:
     """Is this lane's customer persistence actually live?
 
@@ -189,9 +205,29 @@ def _capability_persistence_live(capability: str) -> bool:
     return bool(build_capability(capability).get("operational"))
 
 
-def build_awarded_requirements_readiness(
-    *, detect_root: Any = None
-) -> dict[str, Any]:
+def _awarded_grants_storage_facts() -> dict[str, bool]:
+    """What the awarded grants lane has built, regardless of whether it is live.
+
+    Asked of the capability model rather than the filesystem, for the reason
+    Gate 114 recorded below and Gate 120 rediscovered: a module-existence proxy
+    reports "available" for an empty file.
+    """
+    try:
+        from nativeforge.services.customer_persistence_capability_service import (
+            build_capability,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return dict.fromkeys(STORAGE_COMPONENT_KEYS, False)
+
+    lane = build_capability("awarded_grants_persistence")
+    return {
+        "awarded_grants_schema_available": bool(lane.get("schema_available")),
+        "awarded_grants_repository_available": bool(lane.get("repository_available")),
+        "awarded_grants_write_path_available": bool(lane.get("write_path_available")),
+    }
+
+
+def build_awarded_requirements_readiness(*, detect_root: Any = None) -> dict[str, Any]:
     """Readiness, every component observed rather than declared."""
     components = {
         key: _module_importable(module)
@@ -226,6 +262,8 @@ def build_awarded_requirements_readiness(
         ),
     }
 
+    storage = _awarded_grants_storage_facts()
+
     missing_contract = sorted(k for k, v in components.items() if not v)
     missing_operational = sorted(k for k, v in operational.items() if not v)
 
@@ -245,6 +283,9 @@ def build_awarded_requirements_readiness(
             "schema_version": SCHEMA_VERSION,
             **components,
             **operational,
+            **storage,
+            # Built and unusable. Both halves stated, neither implying the other.
+            "awarded_grants_storage_available": all(storage.values()),
             "demo_scope": DEMO_SCOPE,
             "ready_for_demo_contract": ready_for_demo_contract,
             "ready_for_operational_awarded_tracking": (
@@ -286,6 +327,21 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
     for key in OPERATIONAL_COMPONENT_KEYS:
         if key not in readiness:
             fails.append(f"readiness_missing_component:{key}")
+    for key in STORAGE_COMPONENT_KEYS:
+        if key not in readiness:
+            fails.append(f"readiness_missing_component:{key}")
+
+    # The whole reason the two are separate fields. Storage existing must never
+    # be readable as persistence working.
+    if readiness.get("awarded_grants_storage_available") and not all(
+        readiness.get(key) for key in STORAGE_COMPONENT_KEYS
+    ):
+        fails.append("storage_available_without_every_storage_component")
+
+    if readiness.get("customer_persistence_live") and not readiness.get(
+        "awarded_grants_storage_available"
+    ):
+        fails.append("persistence_live_without_storage")
 
     # Operational readiness cannot be claimed while anything is missing.
     if readiness.get("ready_for_operational_awarded_tracking") and (

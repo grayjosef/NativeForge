@@ -5,9 +5,9 @@ A customer persistence **contract** exists. **Customer persistence is not live.*
 ## The eight lanes
 
 ```text
-schema available       2 of 8
-under row-level security  2 of 8
-complete write path    2 of 8
+schema available       3 of 8
+under row-level security  3 of 8
+complete write path    3 of 8
 operational            0 of 8
 ```
 

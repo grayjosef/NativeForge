@@ -207,35 +207,32 @@
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "persistence_capability": {
           "blocked_reasons": [
-            "no_customer_auth_so_nobody_owns_the_row",
-            "no_repository_can_address_this_capability",
-            "no_service_decides_what_may_be_written",
-            "no_table_declares_this_capability:nf_awarded_grants"
+            "no_customer_auth_so_nobody_owns_the_row"
           ],
           "capability": "awarded_grants_persistence",
           "customer_auth_live": false,
           "customer_auth_required": true,
-          "demo_only": false,
+          "demo_only": true,
           "expected_table": "nf_awarded_grants",
           "fabricated": false,
           "live_fetch_performed": false,
           "operational": false,
-          "organization_id_anchor_available": false,
+          "organization_id_anchor_available": true,
           "persisted": false,
-          "read_path_available": false,
-          "repository_available": false,
+          "read_path_available": true,
+          "repository_available": true,
           "rls_anchor": "organization_id",
-          "rls_backed": false,
+          "rls_backed": true,
           "rows_written": 0,
-          "schema_available": false,
+          "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
-          "service_contract_available": false,
+          "service_contract_available": true,
           "tenant_beta_profile_repository_available": true,
           "tenant_beta_profile_table": "nf_tenant_beta_profiles",
-          "write_path_available": false
+          "write_path_available": true
         }
       },
-      "why": "a demo write in a lane with no table, refused twice over"
+      "why": "a demo write into the table Gate 124 built. Refused twice over: the identity is a demo one, and the fixture says so"
     },
     {
       "case": "demo_fixture_digest",
@@ -328,19 +325,18 @@
       "request": {
         "auth_principal_status": "authenticated_verified_org",
         "binding_status": "verified_binding",
-        "operation": "write_awarded_grant",
+        "operation": "write_award_requirement",
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "persistence_capability": {
           "blocked_reasons": [
             "no_repository_can_address_this_capability",
-            "no_service_decides_what_may_be_written",
-            "no_table_declares_this_capability:nf_awarded_grants"
+            "no_table_declares_this_capability:nf_award_requirements"
           ],
-          "capability": "awarded_grants_persistence",
+          "capability": "award_requirements_persistence",
           "customer_auth_live": true,
           "customer_auth_required": true,
           "demo_only": false,
-          "expected_table": "nf_awarded_grants",
+          "expected_table": "nf_award_requirements",
           "fabricated": false,
           "live_fetch_performed": false,
           "operational": false,
@@ -353,13 +349,13 @@
           "rows_written": 0,
           "schema_available": false,
           "schema_version": "nf_customer_persistence_capability_v1",
-          "service_contract_available": false,
+          "service_contract_available": true,
           "tenant_beta_profile_repository_available": true,
           "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": false
         }
       },
-      "why": "auth forced live and everything else correct - and still refused, because there is no table to write into"
+      "why": "auth forced live and everything else correct - and still refused, because there is no table to write into. Gate 124 moved this case from awarded grants to award requirements, which is the half that still has none"
     }
   ],
   "cases_disagreeing_with_expectation": [],
@@ -562,15 +558,13 @@
         "auth_principal_status": "authenticated_demo",
         "binding_present": false,
         "binding_repository_available": true,
-        "binding_required": false,
+        "binding_required": true,
         "binding_status": "unknown",
         "blocked_reasons": [
           "auth_principal_not_operational:authenticated_demo",
           "customer_auth_not_live",
           "demo_fixture_write_is_never_operational",
-          "no_rls_policy_for:awarded_grants_persistence",
-          "no_schema_for:awarded_grants_persistence",
-          "no_write_path_for:awarded_grants_persistence"
+          "verified_binding_required_for:write_awarded_grant"
         ],
         "cross_tenant_risk": true,
         "customer_auth_live": false,
@@ -671,9 +665,9 @@
         "binding_required": false,
         "binding_status": "verified_binding",
         "blocked_reasons": [
-          "no_rls_policy_for:awarded_grants_persistence",
-          "no_schema_for:awarded_grants_persistence",
-          "no_write_path_for:awarded_grants_persistence"
+          "no_rls_policy_for:award_requirements_persistence",
+          "no_schema_for:award_requirements_persistence",
+          "no_write_path_for:award_requirements_persistence"
         ],
         "cross_tenant_risk": true,
         "customer_auth_live": true,
@@ -684,11 +678,11 @@
         "human_review_required": true,
         "identities_assumed_equivalent": false,
         "live_fetch_performed": false,
-        "operation": "write_awarded_grant",
+        "operation": "write_award_requirement",
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "organization_profile_id": null,
         "persisted": false,
-        "persistence_capability": "awarded_grants_persistence",
+        "persistence_capability": "award_requirements_persistence",
         "read_allowed": false,
         "real_customer_data": false,
         "rls_anchor": "organization_id",
@@ -852,15 +846,13 @@
     },
     {
       "agrees_with_expectation": true,
-      "binding_required": false,
+      "binding_required": true,
       "binding_status": "unknown",
       "blocked_reasons": [
         "auth_principal_not_operational:authenticated_demo",
         "customer_auth_not_live",
         "demo_fixture_write_is_never_operational",
-        "no_rls_policy_for:awarded_grants_persistence",
-        "no_schema_for:awarded_grants_persistence",
-        "no_write_path_for:awarded_grants_persistence"
+        "verified_binding_required_for:write_awarded_grant"
       ],
       "case": "demo_fixture_awarded_grant",
       "cross_tenant_risk": true,
@@ -934,9 +926,9 @@
       "binding_required": false,
       "binding_status": "verified_binding",
       "blocked_reasons": [
-        "no_rls_policy_for:awarded_grants_persistence",
-        "no_schema_for:awarded_grants_persistence",
-        "no_write_path_for:awarded_grants_persistence"
+        "no_rls_policy_for:award_requirements_persistence",
+        "no_schema_for:award_requirements_persistence",
+        "no_write_path_for:award_requirements_persistence"
       ],
       "case": "missing_capability_schema",
       "cross_tenant_risk": true,
@@ -947,9 +939,9 @@
       "fixture_label": "demo_fixture",
       "forges_customer_auth": true,
       "human_review_required": true,
-      "operation": "write_awarded_grant",
+      "operation": "write_award_requirement",
       "organization_id": "00000000-0000-4000-8000-000000000114",
-      "persistence_capability": "awarded_grants_persistence",
+      "persistence_capability": "award_requirements_persistence",
       "read_allowed": false,
       "rls_compatible": true,
       "write_allowed": false

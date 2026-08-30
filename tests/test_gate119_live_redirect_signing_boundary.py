@@ -868,5 +868,5 @@ def test_the_declaration_still_refuses_every_liveness_claim():
         "redirect_state_rows_written",
     ):
         assert declaration[claim] is False
-    assert declaration["alembic_head"] == "0031"
+    assert declaration["alembic_head"] == "0032"
     assert declaration["missing_auth_gates"]

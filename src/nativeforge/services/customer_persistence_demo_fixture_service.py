@@ -11,7 +11,7 @@ tenant_id_only_write             a label attempting to be the authority
 customer_org_id_only_write       the other label, same attempt
 organization_profile_id_write    the near-miss: real identifier, wrong space
 demo_fixture_tenant_profile      a demo write, permitted as demo and no more
-demo_fixture_awarded_grant       the same, in a lane with no table at all
+demo_fixture_awarded_grant       the same, in the table Gate 124 built
 demo_fixture_digest              the same, in the lane furthest from ready
 auth_live_false_blocks_write     an operational attempt, blocked only by auth
 missing_capability_schema        an operational attempt with nowhere to write
@@ -96,6 +96,14 @@ def build_demo_persistence_cases() -> list[dict[str, Any]]:
     )
     awarded = build_capability("awarded_grants_persistence")
     digest = build_capability("tenant_digest_persistence")
+    # Gate 124 built nf_awarded_grants, so the awarded grants lane is no
+    # longer this set's example of somewhere with nothing to write into.
+    # Award requirements are: Gate 124A decided they get their own table in
+    # a later gate, because a requirement recurs and one award produces
+    # dozens of rows with their own due dates.
+    requirements_authed = build_capability(
+        "award_requirements_persistence", customer_auth_live=True
+    )
 
     return [
         {
@@ -188,7 +196,10 @@ def build_demo_persistence_cases() -> list[dict[str, Any]]:
         {
             "case": "demo_fixture_awarded_grant",
             "fixture_label": FIXTURE_LABEL,
-            "why": "a demo write in a lane with no table, refused twice over",
+            "why": (
+                "a demo write into the table Gate 124 built. Refused twice "
+                "over: the identity is a demo one, and the fixture says so"
+            ),
             "forges_customer_auth": False,
             "expect_write_allowed": False,
             "expect_demo_only": True,
@@ -243,19 +254,19 @@ def build_demo_persistence_cases() -> list[dict[str, Any]]:
             "fixture_label": FIXTURE_LABEL,
             "why": (
                 "auth forced live and everything else correct - and still "
-                "refused, because there is no table to write into"
+                "refused, because there is no table to write into. Gate 124 "
+                "moved this case from awarded grants to award requirements, "
+                "which is the half that still has none"
             ),
             "forges_customer_auth": True,
             "expect_write_allowed": False,
             "expect_demo_only": False,
             "request": {
-                "operation": "write_awarded_grant",
+                "operation": "write_award_requirement",
                 "organization_id": DEMO_ORGANIZATION_ID,
                 "auth_principal_status": "authenticated_verified_org",
                 "binding_status": "verified_binding",
-                "persistence_capability": build_capability(
-                    "awarded_grants_persistence", customer_auth_live=True
-                ),
+                "persistence_capability": requirements_authed,
             },
         },
     ]

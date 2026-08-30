@@ -111,6 +111,13 @@ LABEL_BOUND_OPERATIONS = frozenset(
         "write_tenant_profile",
         "write_beta_onboarding_record",
         "write_identity_binding",
+        # Gate 124C. An awarded grant row carries tenant_id_label and
+        # customer_org_id_label, and nothing relates either to the organization
+        # it is anchored on except a verified binding. An award is also the most
+        # consequential object here - a real obligation to a real funder - so
+        # writing one against a label nobody has verified is how one Tribe's
+        # compliance calendar ends up holding another Tribe's award.
+        "write_awarded_grant",
     }
 )
 

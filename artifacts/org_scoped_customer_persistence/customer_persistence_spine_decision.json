@@ -99,11 +99,11 @@
         "tenant_profile_persistence"
       ],
       "ready_to_build": false,
-      "repository_available": false,
-      "requires_migration": true,
-      "requires_repository": true,
-      "rls_backed": false,
-      "schema_available": false,
+      "repository_available": true,
+      "requires_migration": false,
+      "requires_repository": false,
+      "rls_backed": true,
+      "schema_available": true,
       "unmet_prerequisites": [
         "customer_auth",
         "tenant_profile_persistence"
@@ -233,7 +233,6 @@
   "requires_live_source_collection": true,
   "requires_migrations": [
     "award_requirements_persistence",
-    "awarded_grants_persistence",
     "beta_onboarding_persistence",
     "document_library_persistence",
     "source_watchlist_persistence",
@@ -241,7 +240,6 @@
   ],
   "requires_repositories": [
     "award_requirements_persistence",
-    "awarded_grants_persistence",
     "beta_onboarding_persistence",
     "document_library_persistence",
     "source_watchlist_persistence",

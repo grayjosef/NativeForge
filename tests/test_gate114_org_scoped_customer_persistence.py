@@ -119,18 +119,21 @@ def test_the_operational_branch_is_reachable():
 
     matrix = capability_svc.build_capability_matrix(customer_auth_live=True)
     assert matrix["customer_persistence_live"] is True
-    # Two lanes as of Gate 120: identity_binding gained the repository it was
-    # missing, so with auth forged it too has everything it needs. Both are
-    # still false in the real environment, where auth is not forged.
+    # Three lanes as of Gate 124: identity_binding gained a repository in
+    # Gate 120 and awarded_grants gained a table and a repository here, so with
+    # auth forged each has everything it needs. All three are still false in
+    # the real environment, where auth is not forged.
     assert matrix["operational_capabilities"] == [
         "tenant_profile_persistence",
+        "awarded_grants_persistence",
         "identity_binding_persistence",
     ]
 
 
 def test_a_lane_with_no_table_never_becomes_operational_however_auth_moves():
+    # awarded_grants_persistence left this list in Gate 124, which built its
+    # table. The lane is still not operational - auth is what it is missing now.
     for name in (
-        "awarded_grants_persistence",
         "award_requirements_persistence",
         "tenant_digest_persistence",
         "document_library_persistence",
@@ -316,15 +319,17 @@ def test_a_demo_organization_cannot_anchor_a_write():
 
 
 def test_a_write_to_a_lane_with_no_schema_is_refused():
+    # Gate 124 gave awarded grants a table, so this asks about the half that
+    # still has none: a requirement recurs, so requirements get their own.
     result = guard.evaluate_persistence_write(
-        operation="write_awarded_grant",
+        operation="write_award_requirement",
         organization_id=ORG,
         auth_principal_status="authenticated_verified_org",
         binding_status="verified_binding",
-        persistence_capability=_authed("awarded_grants_persistence"),
+        persistence_capability=_authed("award_requirements_persistence"),
     )
     assert result["write_allowed"] is False
-    assert "no_schema_for:awarded_grants_persistence" in result["blocked_reasons"]
+    assert "no_schema_for:award_requirements_persistence" in result["blocked_reasons"]
 
 
 def test_an_unrecognised_operation_grants_neither_read_nor_write():
@@ -421,11 +426,14 @@ def test_the_sequence_moves_when_a_precondition_does():
             "live_source_collection": False,
         },
     )
-    # Gate 120 built the identity binding repository, so that lane is no longer
-    # the next thing to build - it is built. The sequence moved on, which is
-    # exactly what this test exists to observe.
-    assert decision["ready_to_build_next"] == "awarded_grants_persistence"
+    # The sequence moves as lanes are built, which is exactly what this test
+    # exists to observe. Gate 120 built identity binding; Gate 124 built awarded
+    # grants. Award requirements and the document library are next in the
+    # sequence and both need document storage, which these preconditions hold
+    # false, so the first lane with every prerequisite met is onboarding.
+    assert decision["ready_to_build_next"] == "beta_onboarding_persistence"
     assert "identity_binding_persistence" not in decision["ready_to_build"]
+    assert "awarded_grants_persistence" not in decision["ready_to_build"]
     assert spine_svc.spine_decision_invariant_failures(decision) == []
 
 
@@ -507,8 +515,9 @@ def test_the_three_ordering_constraints_are_enforced():
 
 def test_the_spine_requires_a_migration_for_every_empty_lane():
     decision = spine_svc.build_persistence_spine_decision()
+    # awarded_grants_persistence left this set in Gate 124, which is what
+    # "requires a migration" means: it has one now.
     assert set(decision["requires_migrations"]) == {
-        "awarded_grants_persistence",
         "award_requirements_persistence",
         "tenant_digest_persistence",
         "document_library_persistence",

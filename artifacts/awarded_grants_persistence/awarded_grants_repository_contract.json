@@ -1,0 +1,145 @@
+{
+  "active_obligation_statuses": [
+    "needs_human_review",
+    "no_obligations_established",
+    "obligations_closed",
+    "obligations_established",
+    "unknown"
+  ],
+  "check_constraints": [
+    "ck_nf_awarded_grants_amount_needs_currency",
+    "ck_nf_awarded_grants_award_status",
+    "ck_nf_awarded_grants_fact_status",
+    "ck_nf_awarded_grants_obligation_status",
+    "ck_nf_awarded_grants_obligations_need_established_facts",
+    "ck_nf_awarded_grants_period_order",
+    "ck_nf_awarded_grants_title_not_blank",
+    "ck_nf_awarded_grants_unknown_amount_is_unestablished"
+  ],
+  "column_count": 27,
+  "columns": [
+    "id",
+    "organization_id",
+    "tenant_beta_profile_id",
+    "tenant_id_label",
+    "customer_org_id_label",
+    "source_pursuit_id",
+    "source_opportunity_id",
+    "award_number",
+    "award_title",
+    "funder_name",
+    "program_name",
+    "award_status",
+    "award_amount",
+    "award_currency",
+    "period_start",
+    "period_end",
+    "awarded_at",
+    "active_obligation_status",
+    "fact_status",
+    "human_review_required",
+    "created_by_identity_id",
+    "updated_by_identity_id",
+    "archived_at",
+    "is_demo",
+    "blocked_reasons",
+    "created_at",
+    "updated_at"
+  ],
+  "forbidden_anchor_names": [
+    "customer_org_id",
+    "organization_profile_id",
+    "tenant_id"
+  ],
+  "lineage_fields": [
+    "source_pursuit_id",
+    "source_opportunity_id"
+  ],
+  "migration_revision": "0032",
+  "operations": [
+    "archive_awarded_grant",
+    "create_awarded_grant",
+    "get_awarded_grant",
+    "list_awarded_grants",
+    "prepare_award_write",
+    "validate_award_persistence"
+  ],
+  "production_award_requirements_created": 0,
+  "production_awarded_grants_created": 0,
+  "real_customer_data_written": 0,
+  "rls_anchor": "organization_id",
+  "rls_predicate": "organization_id = current_setting('app.current_org_id', true)::uuid AND is_demo = current_setting('app.current_org_is_demo', true)::boolean",
+  "rows_deleted": 0,
+  "rows_in_the_application_database": 0,
+  "rules": [
+    "organization_id is required and must be UUID-shaped",
+    "tenant_id, customer_org_id and organization_profile_id are refused as anchors",
+    "source_pursuit_id and source_opportunity_id are lineage text with no foreign key, and never a reason to create an award",
+    "an awarded grant is never created from a pursuit automatically",
+    "active_obligation_status is never derived from a projected burden",
+    "obligations_established requires established facts, a capable extraction and a live award - every conjunct, or False",
+    "an unknown award amount stays unknown and is never defaulted to zero",
+    "a reversed period is refused, not swapped or clamped",
+    "a production write requires customer_auth_live and a verified operational binding",
+    "archive by setting archived_at; there is no delete path, and mistaken_award is a status rather than a deletion"
+  ],
+  "schema_version": "nf_awarded_grants_persistence_artifact_v1",
+  "table_name": "nf_awarded_grants",
+  "vocabularies": {
+    "actionable_fact_statuses": [
+      "tenant_supplied",
+      "verified"
+    ],
+    "active_obligation_statuses": [
+      "needs_human_review",
+      "no_obligations_established",
+      "obligations_closed",
+      "obligations_established",
+      "unknown"
+    ],
+    "award_statuses": [
+      "active_award",
+      "cancelled",
+      "closed",
+      "closeout_pending",
+      "draft_award_record",
+      "mistaken_award",
+      "unknown"
+    ],
+    "fact_statuses": [
+      "demo_fixture",
+      "needs_human_review",
+      "tenant_supplied",
+      "unknown",
+      "verified"
+    ],
+    "forbidden_anchor_names": [
+      "customer_org_id",
+      "organization_profile_id",
+      "tenant_id"
+    ],
+    "lineage_fields": [
+      "source_pursuit_id",
+      "source_opportunity_id"
+    ],
+    "live_award_statuses": [
+      "active_award",
+      "closeout_pending"
+    ],
+    "obligating_statuses": [
+      "obligations_established"
+    ],
+    "obligation_capable_extraction": [
+      "evidence_extracted",
+      "human_entered"
+    ],
+    "requirements_extraction_statuses": [
+      "evidence_extracted",
+      "human_entered",
+      "needs_human_review",
+      "not_attempted",
+      "unknown",
+      "unsupported_document_type"
+    ]
+  }
+}

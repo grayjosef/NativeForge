@@ -112,6 +112,11 @@ CAPABILITY_REPOSITORY_MODULES: dict[str, str] = {
     "identity_binding_persistence": (
         "nativeforge.services.tenant_customer_org_binding_repository_service"
     ),
+    # Gate 124C. Built as a service, like Gate 120's, so the filename probe
+    # below cannot see it either.
+    "awarded_grants_persistence": (
+        "nativeforge.services.awarded_grants_repository_service"
+    ),
 }
 
 # Gate 123: the *behaviour* profile, which is a different object from the
@@ -144,13 +149,25 @@ CAPABILITY_REPOSITORIES: dict[str, str] = {
 # The service that decides what may enter each lane. Detected by import, and
 # several of these genuinely exist while their tables do not - a contract
 # without a store, which is the state most of this campaign has been building.
+#
+# Gate 124A found two of these named a module that does not exist, one token
+# away from one that does:
+#
+#     awarded_grant_record_contract_service -> awarded_grant_record_service
+#     award_requirements_model_service      -> award_requirement_model_service
+#
+# Both lanes reported `no_service_decides_what_may_be_written` while a 432-line
+# and a 494-line service decided exactly that. Same family as Gate 120's
+# filename probe and Gate 122's provider miscount: a detector reporting on a
+# *name* rather than a capability. A test now asserts every module in this map
+# imports, so a third typo cannot hide as a false negative.
+#
+# The remaining three absences are real and stay false.
 CAPABILITY_CONTRACT_MODULES: dict[str, str] = {
     "tenant_profile_persistence": "nativeforge.services.tribal_profile_service",
-    "awarded_grants_persistence": (
-        "nativeforge.services.awarded_grant_record_contract_service"
-    ),
+    "awarded_grants_persistence": "nativeforge.services.awarded_grant_record_service",
     "award_requirements_persistence": (
-        "nativeforge.services.award_requirements_model_service"
+        "nativeforge.services.award_requirement_model_service"
     ),
     "tenant_digest_persistence": (
         "nativeforge.services.tenant_nofo_digest_builder_service"

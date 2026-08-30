@@ -512,7 +512,23 @@ def test_an_operational_binding_claimed_without_auth_is_an_invariant_failure():
 # ------------------------------------------------- readiness
 
 
-def test_the_repository_moves_the_binding_lane_and_only_that_lane():
+def test_a_lane_reports_a_repository_only_where_one_can_be_reached():
+    """Gate 120's defect, restated so it cannot need editing every gate.
+
+    The original hard-coded the lanes expected to be false, which made it a
+    record of which repositories existed in August rather than a check that the
+    detector agrees with reality. Gate 124 built the awarded grants repository
+    and the list went stale the same week.
+
+    Derived instead: a lane may report a repository exactly when one is
+    reachable - a `repositories/<name>.py` file, or a mapped module that
+    imports. That still catches the Gate 120 defect in both directions, a
+    repository built as a service going undetected and a lane flipping without
+    one.
+    """
+    import importlib.util
+    from pathlib import Path
+
     matrix = cap_svc.build_capability_matrix()
     lanes = {row["capability"]: row for row in matrix["rows"]}
 
@@ -522,16 +538,21 @@ def test_the_repository_moves_the_binding_lane_and_only_that_lane():
     # And it is still not operational.
     assert binding["operational"] is False
 
-    # Every other lane without a repositories/ module stays false.
-    for name in (
-        "awarded_grants_persistence",
-        "award_requirements_persistence",
-        "tenant_digest_persistence",
-        "document_library_persistence",
-        "source_watchlist_persistence",
-        "beta_onboarding_persistence",
-    ):
-        assert lanes[name]["repository_available"] is False, name
+    def reachable(name):
+        if Path(
+            f"src/nativeforge/repositories/{cap_svc.CAPABILITY_REPOSITORIES[name]}.py"
+        ).is_file():
+            return True
+        module = cap_svc.CAPABILITY_REPOSITORY_MODULES.get(name)
+        if not module:
+            return False
+        try:
+            return importlib.util.find_spec(module) is not None
+        except (ImportError, ValueError):
+            return False
+
+    for name, lane in lanes.items():
+        assert lane["repository_available"] is reachable(name), name
 
 
 def test_a_repository_does_not_make_customer_persistence_live():
@@ -730,5 +751,5 @@ def test_the_repository_bridges_gate_109s_vocabulary_rather_than_restating_it():
 
 def test_alembic_head_is_unchanged_by_this_gate():
     contract = art.build_repository_contract()
-    assert contract["alembic_head"] == "0031"
+    assert contract["alembic_head"] == "0032"
     assert contract["migration_revision"] == "0029"

@@ -158,7 +158,7 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
     # nf_tenant_beta_profiles. This assertion still protects a real invariant
     # (single head, no duplicate revision ids); only the expected value moves.
     # Update it deliberately when a migration is approved.
-    assert result.stdout.strip() == "0031 (head)"
+    assert result.stdout.strip() == "0032 (head)"
 
     sprint_discovery_files = [
         "0010_nf_opportunity_sources_discovery.py",

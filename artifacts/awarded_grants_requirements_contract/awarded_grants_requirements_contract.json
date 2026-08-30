@@ -21,8 +21,8 @@
       "why": "Gate 109 built the binding contract and Gate 110 decided its store: a new identity binding table anchored to organization_id, the column every row-level security policy enforces on. No verified non-demo binding exists yet, and the migration is not safe to apply until customer auth can supply a verifier"
     },
     {
-      "action": "persist_awarded_records_and_requirements",
-      "why": "nothing survives a request today, so a compliance calendar cannot be re-read after a missed deadline"
+      "action": "persist_award_requirements",
+      "why": "Gate 124 gave an awarded grant somewhere to live; a requirement still has none, and a requirement is the half with the due date. A compliance calendar that cannot be re-read after a missed deadline is not a calendar, and requirements are what would be re-read"
     },
     {
       "action": "build_the_awarded_grants_surface",
