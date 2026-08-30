@@ -35,6 +35,7 @@ no_customer_auth_so_no_lane_can_be_operated
 no_document_storage_for_award_evidence
 no_email_delivery_for_digest_distribution
 no_live_source_collection_for_digest_or_watchlist
+no_session_signing_key_fit_to_sign_so_no_session_can_be_issued
 ```
 
 **Next: customer_authentication.** every lane in the spine lists customer_auth as a prerequisite, so no amount of schema moves any of them. Auth is the only thing that unblocks more than one lane at once.

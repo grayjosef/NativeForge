@@ -1,0 +1,60 @@
+{
+  "actual": {
+    "authorization_endpoint_configured": false,
+    "authorization_url_available": false,
+    "authorization_url_redacted": "",
+    "authorization_url_returned": false,
+    "blocked_reasons": [
+      "no_client_id_configured_set_OIDC_CLIENT_ID",
+      "no_issuer_configured_set_OIDC_ISSUER",
+      "no_pkce_challenge_bound_to_the_authorization_request",
+      "no_redirect_uri_supplied",
+      "no_state_bound_to_the_authorization_request"
+    ],
+    "client_id_configured": false,
+    "issuer": "",
+    "pkce_bound": false,
+    "provider_called": false,
+    "provider_configured": false,
+    "redirect_uri_configured": false,
+    "schema_version": "nf_customer_auth_authorization_url_v1",
+    "scope": "openid profile email",
+    "secret_exposed": false,
+    "state_bound": false
+  },
+  "authorize_path": "/authorize",
+  "code_challenge_method": "S256",
+  "default_scopes": [
+    "openid",
+    "profile",
+    "email"
+  ],
+  "fixture": {
+    "authorization_endpoint_configured": true,
+    "authorization_url_available": true,
+    "authorization_url_redacted": "https://nf-demo-fixture-issuer.invalid/authorize?response_type=code&client_id=nf-demo-fixture-client-id&redirect_uri=https%3A%2F%2Fnf-demo-fixture-app.invalid%2Fauth%2Fcallback&scope=openid+profile+email&state=REDACTED_STATE&code_challenge=REDACTED_CODE_CHALLENGE&code_challenge_method=S256",
+    "authorization_url_returned": true,
+    "blocked_reasons": [],
+    "client_id_configured": true,
+    "issuer": "https://nf-demo-fixture-issuer.invalid",
+    "pkce_bound": true,
+    "provider_called": false,
+    "provider_configured": true,
+    "redirect_uri_configured": true,
+    "schema_version": "nf_customer_auth_authorization_url_v1",
+    "scope": "openid profile email",
+    "secret_exposed": false,
+    "state_bound": true
+  },
+  "fixture_url_redacted": "https://nf-demo-fixture-issuer.invalid/authorize?response_type=code&client_id=nf-demo-fixture-client-id&redirect_uri=https%3A%2F%2Fnf-demo-fixture-app.invalid%2Fauth%2Fcallback&scope=openid+profile+email&state=REDACTED_STATE&code_challenge=REDACTED_CODE_CHALLENGE&code_challenge_method=S256",
+  "response_type": "code",
+  "rules": [
+    "building a URL makes no network call",
+    "the client secret never appears in a URL",
+    "a state is required",
+    "a PKCE challenge is required",
+    "missing provider configuration blocks the URL",
+    "only a redacted URL is ever published"
+  ],
+  "schema_version": "nf_customer_auth_live_redirect_artifact_v1"
+}

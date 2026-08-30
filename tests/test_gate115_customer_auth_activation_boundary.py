@@ -94,6 +94,9 @@ def _activated(**overrides):
         "route_readiness": _secured_routes(),
         "dev_header_disabled_for_production": True,
         "owner_approval": True,
+        # Gate 119B added a sixteenth gate. Forged readiness, booleans only -
+        # no key material appears in this file.
+        "signing_key_readiness": fixtures.SIGNING_READY,
     }
     kwargs.update(overrides)
     return gate_svc.build_customer_auth_activation_gate(**kwargs)
@@ -653,7 +656,9 @@ def test_operational_digest_remains_false():
 
 def test_the_fixture_set_covers_every_required_case():
     fixture = fixtures.build_activation_demo_fixture_set()
-    assert fixture["case_count"] == 8
+    # Nine as of Gate 119: the set gained a case isolating the signing key's
+    # source, the way `dev_header_still_enabled` isolates one input.
+    assert fixture["case_count"] == 9
     assert fixture["activation_cases_missing"] == []
     assert fixture["cases_disagreeing_with_expectation"] == []
     assert fixtures.activation_demo_invariant_failures(fixture) == []

@@ -138,16 +138,12 @@ def evaluate_auth_dependency(
         # asserting `principal_resolved=True` alongside a verification that
         # found no principal is the shape of a bug, and the verification wins.
         session_cookie_present = bool(session_verification.get("cookie_present"))
-        session_cookie_valid = bool(
-            session_verification.get("session_cookie_valid")
-        )
+        session_cookie_valid = bool(session_verification.get("session_cookie_valid"))
         principal_resolved = bool(session_verification.get("principal_resolved"))
         organization_id_resolved = bool(
             session_verification.get("organization_id_valid")
         )
-        membership_verified = bool(
-            session_verification.get("membership_verified")
-        )
+        membership_verified = bool(session_verification.get("membership_verified"))
     mode = str(dependency_mode or "").strip().lower()
     if mode not in DEPENDENCY_MODES:
         mode = DEFAULT_MODE
@@ -174,8 +170,24 @@ def evaluate_auth_dependency(
 
     # A cookie that is present and invalid is worse than one that is absent: it
     # means somebody sent something, and it did not check out.
+    #
+    # Gate 119F: *why* it did not check out changes what an operator should do.
+    # A verification that could not run for want of a signing key is a
+    # configuration failure; one that ran and failed is a bad cookie. The
+    # verifier now separates the two, so this contract stops flattening them.
     if session_cookie_present and not session_cookie_valid:
-        blocked_reasons.append("session_cookie_present_but_invalid")
+        if session_verification is not None and session_verification.get(
+            "signature_unverifiable"
+        ):
+            blocked_reasons.append(
+                "session_cookie_could_not_be_verified_no_signing_key_available"
+            )
+        elif session_verification is not None and session_verification.get(
+            "signature_invalid"
+        ):
+            blocked_reasons.append("session_cookie_signature_did_not_verify")
+        else:
+            blocked_reasons.append("session_cookie_present_but_invalid")
 
     # A valid session with nobody behind it is a contradiction, and the kind
     # that would let a forged cookie become a principal.
@@ -355,9 +367,7 @@ def dependency_invariant_failures(result: dict[str, Any]) -> list[str]:
 
     # Only `required` advertises the scheme. A scheme on an optional route tells
     # a reader a credential is needed when it is not.
-    if result.get("security_scheme_required") is not (
-        mode in SECURITY_SCHEME_MODES
-    ):
+    if result.get("security_scheme_required") is not (mode in SECURITY_SCHEME_MODES):
         fails.append("security_scheme_required_disagrees_with_the_mode")
 
     # The RLS boundary, in both directions.

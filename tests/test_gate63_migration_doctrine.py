@@ -45,7 +45,16 @@ DOCS = ROOT / "docs" / "operations"
 # storage, because Gate 110's three refusals - no customer auth to supply a
 # verifier, no customer persistence to write into, no verified binding to
 # store - are untouched by a CREATE TABLE.
-CURRENT_HEAD = "0029"
+#
+# Gate 119 re-pinned 0029 -> 0030 for nf_auth_redirect_states, where a redirect
+# state and its PKCE verifier live between /login and /callback. Documented in
+# docs/operations/649_GATE119_REDIRECT_STATE_TABLE.md. The table stores two
+# sha256 digests and never a raw state or verifier, carries no organization_id
+# and no RLS - it is created before anybody is authenticated, so there is no
+# organization to scope it to, and nf_identities (0023) is the precedent. It is
+# created empty and stays empty: doc 651 records that /login still refuses while
+# no provider is configured, so nothing writes a row.
+CURRENT_HEAD = "0030"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

@@ -384,7 +384,13 @@ def test_no_token_or_secret_value_may_appear_in_a_boundary_result():
 
 
 def test_the_authorization_url_builder_does_not_call_a_provider():
-    result = flow_svc.build_redirect_flow_contract(provider_configured=True)
+    # Gate 119D builds a real URL, so availability needs the config a URL is
+    # made of. `provider_configured=True` alone no longer conjures one - that
+    # was a declared fact standing in for a derived one.
+    result = flow_svc.build_redirect_flow_contract(
+        provider_configured=True,
+        **fixtures.DEMO_PROVIDER,
+    )
     assert result["authorization_url_available"] is True
     assert result["provider_contacted"] is False
     assert result["network_calls"] is False
@@ -395,9 +401,12 @@ def test_the_authorization_url_builder_does_not_call_a_provider():
 def test_no_authorization_url_without_a_configured_provider():
     result = flow_svc.build_redirect_flow_contract(provider_configured=False)
     assert result["authorization_url_available"] is False
-    assert (
-        "no_provider_configured_so_no_authorization_url" in result["blocked_reasons"]
-    )
+    # Gate 119D names which piece is missing rather than reporting the whole
+    # provider as absent: an issuer, a client id and a redirect URI fail
+    # separately, and an operator needs to know which one to supply.
+    assert "no_issuer_configured_set_OIDC_ISSUER" in result["blocked_reasons"]
+    assert "no_client_id_configured_set_OIDC_CLIENT_ID" in result["blocked_reasons"]
+    assert "no_redirect_uri_supplied" in result["blocked_reasons"]
 
 
 def test_the_callback_cannot_create_a_session_while_the_exchange_is_blocked():
@@ -452,6 +461,16 @@ def test_the_session_creation_branch_is_reachable_and_still_creates_nothing():
         network_call_allowed=True,
         state_pkce=generated,
         state_validation=validated,
+        # Gate 119 added two conjuncts to session creation: a key fit to sign
+        # one, and a store durable enough to survive the redirect. Both are
+        # injectable, so this branch stays reachable.
+        state_store_scope="database",
+        signing_key_readiness={
+            "can_sign_production_session": True,
+            "signing_key_source": "secret_manager",
+            "blocked_reasons": [],
+        },
+        **fixtures.DEMO_PROVIDER,
     )
     assert result["session_creation_allowed"] is True
     assert result["session_created"] is False

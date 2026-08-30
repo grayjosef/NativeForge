@@ -5,7 +5,8 @@
     "no_customer_auth_so_no_lane_can_be_operated",
     "no_document_storage_for_award_evidence",
     "no_email_delivery_for_digest_distribution",
-    "no_live_source_collection_for_digest_or_watchlist"
+    "no_live_source_collection_for_digest_or_watchlist",
+    "no_session_signing_key_fit_to_sign_so_no_session_can_be_issued"
   ],
   "capabilities_operational_out_of_sequence": [],
   "customer_persistence_live": false,
@@ -235,9 +236,12 @@
     "source_watchlist_persistence",
     "tenant_digest_persistence"
   ],
+  "requires_session_signing_key": true,
   "rls_anchor": "organization_id",
   "rows_written": 0,
   "schema_changed": false,
   "schema_version": "nf_customer_persistence_spine_decision_v1",
-  "sequence_length": 8
+  "sequence_length": 8,
+  "session_signing_key_ready": false,
+  "session_signing_key_source": "missing"
 }

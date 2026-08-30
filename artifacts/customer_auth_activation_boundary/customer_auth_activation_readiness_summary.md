@@ -5,7 +5,7 @@ A customer auth **activation boundary** exists. **Customer auth is not live and 
 ## The gates
 
 ```text
-satisfied  5 of 15
+satisfied  5 of 16
 
 missing    audience_configured
 missing    callback_session_validated
@@ -17,6 +17,7 @@ missing    org_binding_passed
 missing    provider_configured
 missing    role_mapping_passed
 missing    secret_present
+missing    session_signing_key_ready
 ```
 
 ## What lifts each one
@@ -41,7 +42,9 @@ org_binding_passed
 role_mapping_passed
     configure provider roles and map them explicitly; unknown roles grant nothing by design
 dev_header_disabled_for_production
-    replace X-NF-Org-Id with an authenticated claim, then disable it; 16 route modules depend on it today
+    replace X-NF-Org-Id with an authenticated claim, then disable it; 15 route modules depend on it today
+session_signing_key_ready
+    owner supplies NF_SESSION_SIGNING_KEY out-of-band from an environment or a secret manager; the committed local_dev_fixture key may never sign a production session - Gate 119B
 owner_approval
     owner sets NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL out-of-band. Every gate passing is necessary and not sufficient: configuration arriving in an environment is not a decision to expose a login page to real Tribes.
 ```

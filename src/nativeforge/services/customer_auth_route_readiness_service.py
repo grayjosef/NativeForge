@@ -73,6 +73,9 @@ READINESS_FIELDS: tuple[str, ...] = (
     "session_verifier_available",
     "redirect_state_store_available",
     "session_signing_key_present",
+    # Gate 119B: presence and fitness-to-sign are different facts, and only the
+    # second one gates a live login.
+    "session_signing_key_ready",
     "session_cookie_policy_available",
     "login_route_available",
     "logout_route_available",
@@ -109,9 +112,7 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
-def detect_route_surface(
-    *, openapi: dict[str, Any] | None = None
-) -> dict[str, Any]:
+def detect_route_surface(*, openapi: dict[str, Any] | None = None) -> dict[str, Any]:
     """Read the application's own route table.
 
     The schema is injectable so a test can supply one describing an application
@@ -122,15 +123,11 @@ def detect_route_surface(
         openapi = _load_openapi()
 
     paths = sorted(openapi.get("paths", {}) or {})
-    app_paths = [
-        p for p in paths if not p.startswith(FRAMEWORK_ROUTE_PREFIXES)
-    ]
+    app_paths = [p for p in paths if not p.startswith(FRAMEWORK_ROUTE_PREFIXES)]
 
     matched: dict[str, list[str]] = {}
     for field, pattern in ROUTE_PATTERNS.items():
-        matched[field] = [
-            p for p in app_paths if re.search(pattern, p, re.IGNORECASE)
-        ]
+        matched[field] = [p for p in app_paths if re.search(pattern, p, re.IGNORECASE)]
 
     schemes = list((openapi.get("components", {}) or {}).get("securitySchemes", {}))
     secured_paths = [
@@ -169,6 +166,29 @@ def _module_importable(name: str) -> bool:
         return importlib.util.find_spec(name) is not None
     except (ImportError, ValueError):
         return False
+
+
+def _signing_key_ready(
+    readiness: dict[str, Any] | None,
+    *,
+    session_signing_key_present: bool | None = None,
+) -> bool:
+    """Is the key fit to sign a production session? Injectable, deliberately.
+
+    When a caller has already asserted presence but supplied no readiness, the
+    assertion is honoured: a test isolating the presence conjunct should not be
+    forced to construct a readiness result as well. Without that, this branch
+    would be unreachable and every refusal above it unfalsifiable.
+    """
+    if readiness is not None:
+        return bool(readiness.get("can_sign_production_session"))
+    if session_signing_key_present is not None:
+        return bool(session_signing_key_present)
+    from nativeforge.services.customer_auth_signing_key_readiness_service import (
+        build_signing_key_readiness,
+    )
+
+    return bool(build_signing_key_readiness()["can_sign_production_session"])
 
 
 def _signing_key_present() -> bool:
@@ -222,6 +242,7 @@ def build_route_readiness(
     cloudflare_access_in_front: bool = True,
     customer_auth_live: bool | None = None,
     session_signing_key_present: bool | None = None,
+    signing_key_readiness: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Which login routes exist, and whether any of them enforces anything."""
     surface = detect_route_surface(openapi=openapi)
@@ -276,6 +297,14 @@ def build_route_readiness(
         if session_signing_key_present is None
         else bool(session_signing_key_present)
     )
+    # Gate 119B. A key read from the committed local-dev fixture is present and
+    # unfit, so `ready_for_live_login` reads readiness while the older presence
+    # boolean stays reported beside it - the two answer different questions and
+    # collapsing them is how a demo secret ends up signing a real session.
+    signing_ready = _signing_key_ready(
+        signing_key_readiness,
+        session_signing_key_present=session_signing_key_present,
+    )
     principal_possible = (
         _customer_auth_live()
         if customer_auth_live is None
@@ -313,6 +342,10 @@ def build_route_readiness(
         blocked_reasons.append(
             "no_session_signing_key_configured_so_no_cookie_can_verify"
         )
+    elif not signing_ready:
+        blocked_reasons.append(
+            "session_signing_key_present_but_not_fit_to_sign_a_production_session"
+        )
 
     if not security_scheme_declared:
         blocked_reasons.append("no_security_scheme_is_declared_anywhere")
@@ -337,6 +370,7 @@ def build_route_readiness(
         # invariant below said so already; this makes the service incapable of
         # producing a result that fails it.
         and signing_key
+        and signing_ready
     )
 
     return _json_safe(
@@ -349,6 +383,7 @@ def build_route_readiness(
             "route_session_cookie_policy_enforced": (
                 route_session_cookie_policy_enforced
             ),
+            "session_signing_key_ready": signing_ready,
             "ready_for_live_login": ready_for_live_login,
             "application_route_count": surface["application_route_count"],
             "security_scheme_declared": security_scheme_declared,

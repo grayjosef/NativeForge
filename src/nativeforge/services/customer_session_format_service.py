@@ -183,14 +183,35 @@ def build_session(
     signing_key: str | None = None,
     is_demo_fixture: bool = False,
     now: int | None = None,
+    signing_key_readiness: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build and validate one session. Deny by default.
 
     `email` is accepted and deliberately discarded - see `build_session_payload`.
+
+    Gate 119B: a *present* key and a key fit to sign a production session are
+    different facts. A key read from the committed local-dev fixture is present
+    and may never sign anything a customer would be held to, so
+    `production_session` is derived from readiness and `signing_key_present`
+    remains reported alongside it.
+
+    Imported lazily because the readiness service imports this module's fixture
+    key and environment name; at module scope the two would be a cycle.
     """
+    from nativeforge.services.customer_auth_signing_key_readiness_service import (
+        build_signing_key_readiness,
+    )
+
     blocked_reasons: list[str] = []
 
     key_configured = signing_key_present()
+    readiness = (
+        signing_key_readiness
+        if signing_key_readiness is not None
+        else build_signing_key_readiness()
+    )
+    key_ready = bool(readiness.get("can_sign_production_session"))
+    key_source = str(readiness.get("signing_key_source") or "unknown")
     # An explicitly supplied key is a test or fixture key. A session signed with
     # one is never a production session, whatever else is true.
     key_supplied = signing_key is not None
@@ -272,11 +293,15 @@ def build_session(
     )
 
     demo_fixture = bool(is_demo_fixture or key_supplied)
-    # A production session needs a configured key, a signature that verifies
-    # under it, and no fixture marking anywhere.
-    production_session = bool(
-        session_cookie_valid and key_configured and not demo_fixture
-    )
+    # A production session needs a key fit to sign one, a signature that
+    # verifies under it, and no fixture marking anywhere. `key_ready` rather
+    # than `key_configured`: Gate 119B distinguishes the two, and this is the
+    # decision the distinction exists for.
+    production_session = bool(session_cookie_valid and key_ready and not demo_fixture)
+    if session_cookie_valid and key_configured and not key_ready:
+        blocked_reasons.append(
+            f"signing_key_present_but_not_fit_to_sign:source={key_source}"
+        )
     if demo_fixture and not is_demo_fixture:
         blocked_reasons.append("session_signed_with_a_supplied_key_is_not_production")
 
@@ -299,6 +324,8 @@ def build_session(
             "signature_present": signature_present,
             "signature_valid": signature_valid,
             "signing_key_present": key_configured,
+            "signing_key_ready": key_ready,
+            "signing_key_source": key_source,
             "session_cookie_valid": session_cookie_valid,
             "production_session": production_session,
             "demo_fixture": demo_fixture,
@@ -408,6 +435,8 @@ def session_format_invariant_failures(session: dict[str, Any]) -> list[str]:
 
     # Production requires a configured key and no fixture marking.
     if session.get("production_session"):
+        if not session.get("signing_key_ready"):
+            fails.append("production_session_without_a_signing_key_fit_to_sign")
         if not session.get("signing_key_present"):
             fails.append("production_session_without_a_configured_signing_key")
         if session.get("demo_fixture"):
@@ -427,9 +456,7 @@ def session_format_invariant_failures(session: dict[str, Any]) -> list[str]:
             fails.append("expiry_before_issue_without_a_reason")
 
     # A refusal must name itself.
-    if not session.get("session_cookie_valid") and not session.get(
-        "blocked_reasons"
-    ):
+    if not session.get("session_cookie_valid") and not session.get("blocked_reasons"):
         fails.append("session_refused_without_a_reason")
 
     return fails

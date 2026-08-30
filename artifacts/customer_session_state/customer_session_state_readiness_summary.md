@@ -34,6 +34,7 @@ invite_binding_passed
 org_binding_passed
 role_mapping_passed
 dev_header_disabled_for_production
+session_signing_key_ready
 ```
 
 A session format moved none of them. Not one is a session-format fact.

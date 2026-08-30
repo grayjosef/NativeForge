@@ -77,6 +77,15 @@ FIXTURE_LABEL = "demo_fixture"
 DEMO_STATE = "nf-demo-state-" + ("a" * 40)
 DEMO_VERIFIER = "nf-demo-verifier-" + ("b" * 40)
 
+# Gate 119D. An authorization URL needs an issuer, a client id and a redirect
+# URI; `provider_configured: True` on its own no longer conjures one, which is
+# exactly the defect Gate 119 went back and fixed. All three resolve nowhere.
+DEMO_PROVIDER: dict[str, Any] = {
+    "issuer": "https://nf-demo-fixture-issuer.invalid",
+    "client_id": "nf-demo-fixture-client-id",
+    "redirect_uri": "https://nf-demo-fixture-app.invalid/auth/callback",
+}
+
 REQUIRED_ENFORCEMENT_CASES: frozenset[str] = frozenset(
     {
         "required_dependency_no_session",
@@ -195,7 +204,7 @@ def build_demo_enforcement_cases() -> list[dict[str, Any]]:
             ),
             "expect_authorization_url": True,
             "expect_session_allowed": False,
-            "request": {"provider_configured": True},
+            "request": {"provider_configured": True, **DEMO_PROVIDER},
         },
         {
             "case": "callback_missing_state",
@@ -205,6 +214,7 @@ def build_demo_enforcement_cases() -> list[dict[str, Any]]:
             "expect_authorization_url": True,
             "expect_session_allowed": False,
             "request": {
+                **DEMO_PROVIDER,
                 "provider_configured": True,
                 "secret_present": True,
                 "callback_code_present": True,
@@ -224,6 +234,7 @@ def build_demo_enforcement_cases() -> list[dict[str, Any]]:
             "expect_authorization_url": True,
             "expect_session_allowed": False,
             "request": {
+                **DEMO_PROVIDER,
                 "provider_configured": True,
                 "secret_present": True,
                 "callback_code_present": True,
@@ -249,6 +260,7 @@ def build_demo_enforcement_cases() -> list[dict[str, Any]]:
             "expect_authorization_url": True,
             "expect_session_allowed": False,
             "request": {
+                **DEMO_PROVIDER,
                 "provider_configured": True,
                 "secret_present": True,
                 "callback_code_present": True,
@@ -357,17 +369,11 @@ def build_enforcement_demo_fixture_set() -> dict[str, Any]:
             "case_count": len(cases),
             "rows": rows,
             "enforcement_cases_covered": sorted(covered),
-            "enforcement_cases_missing": sorted(
-                REQUIRED_ENFORCEMENT_CASES - covered
-            ),
+            "enforcement_cases_missing": sorted(REQUIRED_ENFORCEMENT_CASES - covered),
             "cases_disagreeing_with_expectation": disagreements,
-            "refused_401_count": sum(
-                1 for r in rows if r.get("http_status") == 401
-            ),
+            "refused_401_count": sum(1 for r in rows if r.get("http_status") == 401),
             "session_created_count": sum(1 for r in rows if r["session_created"]),
-            "rls_context_count": sum(
-                1 for r in rows if r.get("sets_rls_context")
-            ),
+            "rls_context_count": sum(1 for r in rows if r.get("sets_rls_context")),
             "token_exchange_allowed_count": sum(
                 1 for r in rows if r.get("token_exchange_allowed")
             ),

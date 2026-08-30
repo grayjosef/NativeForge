@@ -5,10 +5,13 @@
     "callback_pkce_not_validated",
     "callback_state_not_validated",
     "callback_validation_has_not_passed",
+    "no_client_id_configured_set_OIDC_CLIENT_ID",
+    "no_issuer_configured_set_OIDC_ISSUER",
     "no_organization_id_resolved_from_the_claims",
-    "no_provider_configured_so_no_authorization_url",
+    "no_redirect_uri_supplied",
     "no_verified_membership_for_this_organization",
     "redirect_state_store_scope_is_not_production:contract_only",
+    "signing_key:no_signing_key_configured",
     "token_exchange_blocked:callback_code_present",
     "token_exchange_blocked:network_call_allowed",
     "token_exchange_blocked:pkce_validated",
@@ -28,7 +31,9 @@
     "token_exchange_allowed",
     "callback_validation_passed",
     "organization_id_resolved",
-    "membership_verified"
+    "membership_verified",
+    "session_signing_key_ready",
+    "redirect_state_store_durable"
   ],
   "network_calls": false,
   "next_required_actions": [
@@ -37,8 +42,16 @@
       "step": "provider_configured"
     },
     {
-      "action": "follows provider configuration; building a URL is local work and contacts nobody",
+      "action": "needs an issuer, a client id and a redirect URI; building the URL is local string work and contacts nobody - Gate 119D",
       "step": "authorization_url_available"
+    },
+    {
+      "action": "owner supplies NF_SESSION_SIGNING_KEY out-of-band; the committed fixture key may not sign a production session - Gate 119B",
+      "step": "session_signing_key_ready"
+    },
+    {
+      "action": "the redirect state store must run at database scope; the table exists as of migration 0030 and nothing writes to it yet - Gate 119C",
+      "step": "redirect_state_store_durable"
     },
     {
       "action": "the callback must return the state issued at /login",
@@ -74,13 +87,18 @@
   "real_sessions_created": false,
   "real_users_created": false,
   "redirect_flow_contract_available": true,
+  "redirect_state_repository_available": true,
   "redirect_state_store_available": true,
+  "redirect_state_store_durable": false,
+  "redirect_state_table": "nf_auth_redirect_states",
   "role_mapping_available": true,
   "schema_version": "nf_customer_auth_redirect_flow_v1",
   "secret_value_emitted": false,
   "session_created": false,
   "session_creation_allowed": false,
   "session_format_available": true,
+  "session_signing_key_ready": false,
+  "signing_key_source": "missing",
   "state_generated": true,
   "state_store_production": false,
   "state_store_scope": "contract_only",

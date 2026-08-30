@@ -55,6 +55,7 @@
           "session_format_available": true,
           "session_route_available": false,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "session_cookie_policy_available": false
@@ -122,6 +123,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "session_cookie_policy_available": true
@@ -189,6 +191,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "session_cookie_policy_available": true
@@ -258,6 +261,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "session_cookie_policy_available": true
@@ -322,6 +326,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "session_cookie_policy_available": true
@@ -389,6 +394,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "session_cookie_policy_available": true
@@ -453,6 +459,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "session_cookie_policy_available": true

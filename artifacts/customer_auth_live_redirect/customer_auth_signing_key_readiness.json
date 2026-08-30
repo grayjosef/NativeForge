@@ -1,0 +1,43 @@
+{
+  "actual": {
+    "blocked_reasons": [
+      "no_signing_key_configured"
+    ],
+    "can_sign_production_session": false,
+    "can_verify_production_session": false,
+    "next_required_actions": [
+      "implement_signing_key_rotation",
+      "set_NF_SESSION_SIGNING_KEY_out_of_band_or_supply_a_secret_manager"
+    ],
+    "schema_version": "nf_customer_auth_signing_key_readiness_v1",
+    "secret_value_exposed": false,
+    "signing_key_configured": false,
+    "signing_key_length_ok": false,
+    "signing_key_present": false,
+    "signing_key_rotation_supported": false,
+    "signing_key_source": "missing"
+  },
+  "environment_variable": "NF_SESSION_SIGNING_KEY",
+  "key_sources": [
+    "environment",
+    "local_dev_fixture",
+    "missing",
+    "secret_manager",
+    "unknown"
+  ],
+  "minimum_distinct_characters": 8,
+  "minimum_length": 32,
+  "production_key_sources": [
+    "environment",
+    "secret_manager"
+  ],
+  "rules": [
+    "presence is not readiness",
+    "a local_dev_fixture key may never sign a production session",
+    "production signing requires environment or secret_manager",
+    "sign and verify use one symmetric key, so they never diverge",
+    "rotation may be false and must be reported when it is",
+    "the value is measured and never returned"
+  ],
+  "schema_version": "nf_customer_auth_live_redirect_artifact_v1"
+}

@@ -7,11 +7,12 @@
     "membership_no_role_mapping",
     "org_claim_no_membership",
     "provider_configured_no_secret",
-    "secret_present_jwks_unvalidated"
+    "secret_present_jwks_unvalidated",
+    "signing_key_is_the_local_fixture"
   ],
   "activation_cases_missing": [],
-  "actual_missing_gate_count": 10,
-  "case_count": 8,
+  "actual_missing_gate_count": 11,
+  "case_count": 9,
   "cases": [
     {
       "case": "all_gates_missing",
@@ -74,6 +75,7 @@
           "session_format_available": true,
           "session_route_available": false,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "validation": {
@@ -147,6 +149,7 @@
           "session_format_available": true,
           "session_route_available": false,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "validation": {
@@ -220,6 +223,7 @@
           "session_format_available": true,
           "session_route_available": false,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "validation": {
@@ -298,6 +302,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "validation": {
@@ -375,6 +380,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "validation": {
@@ -452,6 +458,7 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
         },
         "validation": {
@@ -529,7 +536,13 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
+        },
+        "signing_key_readiness": {
+          "blocked_reasons": [],
+          "can_sign_production_session": true,
+          "signing_key_source": "secret_manager"
         },
         "validation": {
           "callback_session_validated": true,
@@ -540,6 +553,91 @@
         }
       },
       "why": "theoretical activation. Every refusal above is unfalsifiable without it - a gate that only says no is a constant"
+    },
+    {
+      "case": "signing_key_is_the_local_fixture",
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "request": {
+        "dev_header_disabled_for_production": true,
+        "owner_approval": true,
+        "preflight": {
+          "audience_present": true,
+          "client_secret_present": true,
+          "issuer_url_present": true,
+          "jwks_reachable": true,
+          "validation_possible": true
+        },
+        "route_readiness": {
+          "application_route_count": 5,
+          "blocked_reasons": [
+            "enforcement_absent:route_org_resolution_enforced",
+            "enforcement_absent:route_role_mapping_enforced",
+            "no_session_signing_key_configured_so_no_cookie_can_verify"
+          ],
+          "callback_route_available": true,
+          "cloudflare_access_is_customer_auth": false,
+          "current_user_route_available": true,
+          "customer_auth_live": false,
+          "dev_header_is_customer_auth": false,
+          "fabricated": false,
+          "frontend_preview_is_backend_login": false,
+          "login_route_available": true,
+          "logout_route_available": true,
+          "matched_routes": {
+            "callback_route_available": [
+              "/v1/auth/callback"
+            ],
+            "current_user_route_available": [
+              "/v1/auth/me"
+            ],
+            "login_route_available": [
+              "/v1/auth/login"
+            ],
+            "logout_route_available": [
+              "/v1/auth/logout"
+            ],
+            "session_route_available": [
+              "/v1/auth/session"
+            ]
+          },
+          "ready_for_live_login": false,
+          "real_sessions_created": false,
+          "redirect_state_store_available": true,
+          "route_auth_enforced": true,
+          "route_org_resolution_enforced": false,
+          "route_role_mapping_enforced": false,
+          "route_session_cookie_policy_enforced": true,
+          "schema_version": "nf_customer_auth_route_readiness_v1",
+          "secured_route_count": 2,
+          "security_scheme_declared": true,
+          "security_schemes_declared": [
+            "nf_session"
+          ],
+          "session_cookie_policy_available": true,
+          "session_format_available": true,
+          "session_route_available": true,
+          "session_signing_key_present": false,
+          "session_signing_key_ready": false,
+          "session_verifier_available": true
+        },
+        "signing_key_readiness": {
+          "blocked_reasons": [
+            "signing_key_is_the_committed_local_dev_fixture"
+          ],
+          "can_sign_production_session": false,
+          "signing_key_source": "local_dev_fixture"
+        },
+        "validation": {
+          "callback_session_validated": true,
+          "invite_binding_passed": true,
+          "org_binding_passed": true,
+          "provider_validated": true,
+          "role_mapping_passed": true
+        }
+      },
+      "why": "Gate 119B. Identical to all_gates_pass but for the key's source. A present key that came from the committed fixture signs nothing anybody should accept, so neither login nor customer auth goes live - and the reason names the source"
     },
     {
       "case": "dev_header_still_enabled",
@@ -606,7 +704,13 @@
           "session_format_available": true,
           "session_route_available": true,
           "session_signing_key_present": false,
+          "session_signing_key_ready": false,
           "session_verifier_available": true
+        },
+        "signing_key_readiness": {
+          "blocked_reasons": [],
+          "can_sign_production_session": true,
+          "signing_key_source": "secret_manager"
         },
         "validation": {
           "callback_session_validated": true,
@@ -629,8 +733,8 @@
   "network_calls": false,
   "real_sessions_created": false,
   "real_users_created": false,
-  "refused_count": 7,
-  "required_auth_gate_count": 15,
+  "refused_count": 8,
+  "required_auth_gate_count": 16,
   "rows": [
     {
       "activation_allowed": false,
@@ -647,6 +751,7 @@
         "auth_gate_not_satisfied:provider_configured",
         "auth_gate_not_satisfied:role_mapping_passed",
         "auth_gate_not_satisfied:secret_present",
+        "auth_gate_not_satisfied:session_signing_key_ready",
         "issuer_jwks_unvalidated_no_network_check_performed",
         "owner_has_not_authorized_customer_auth_activation"
       ],
@@ -660,7 +765,7 @@
       "fixture_label": "demo_fixture",
       "issuer_jwks_validated": false,
       "login_live": false,
-      "missing_gate_count": 11,
+      "missing_gate_count": 12,
       "org_binding_passed": false,
       "owner_approval_present": false,
       "provider_configured": false,
@@ -681,6 +786,7 @@
         "auth_gate_not_satisfied:provider_configured",
         "auth_gate_not_satisfied:role_mapping_passed",
         "auth_gate_not_satisfied:secret_present",
+        "auth_gate_not_satisfied:session_signing_key_ready",
         "issuer_jwks_unvalidated_no_network_check_performed",
         "owner_has_not_authorized_customer_auth_activation"
       ],
@@ -694,7 +800,7 @@
       "fixture_label": "demo_fixture",
       "issuer_jwks_validated": false,
       "login_live": false,
-      "missing_gate_count": 9,
+      "missing_gate_count": 10,
       "org_binding_passed": false,
       "owner_approval_present": false,
       "provider_configured": false,
@@ -713,12 +819,44 @@
         "auth_gate_not_satisfied:issuer_jwks_validated",
         "auth_gate_not_satisfied:org_binding_passed",
         "auth_gate_not_satisfied:role_mapping_passed",
+        "auth_gate_not_satisfied:session_signing_key_ready",
         "issuer_jwks_unvalidated_no_network_check_performed",
         "owner_has_not_authorized_customer_auth_activation"
       ],
       "callback_route_available": false,
       "callback_session_validated": false,
       "case": "secret_present_jwks_unvalidated",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": false,
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": false,
+      "login_live": false,
+      "missing_gate_count": 8,
+      "org_binding_passed": false,
+      "owner_approval_present": false,
+      "provider_configured": true,
+      "role_mapping_passed": false,
+      "secret_present": true,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:callback_session_validated",
+        "auth_gate_not_satisfied:dev_header_disabled_for_production",
+        "auth_gate_not_satisfied:invite_binding_passed",
+        "auth_gate_not_satisfied:issuer_jwks_validated",
+        "auth_gate_not_satisfied:org_binding_passed",
+        "auth_gate_not_satisfied:role_mapping_passed",
+        "auth_gate_not_satisfied:session_signing_key_ready",
+        "owner_has_not_authorized_customer_auth_activation"
+      ],
+      "callback_route_available": true,
+      "callback_session_validated": false,
+      "case": "callback_route_no_session",
       "customer_auth_live": false,
       "dev_header_disabled_for_production": false,
       "expect_customer_auth_live": false,
@@ -738,38 +876,9 @@
       "activation_allowed": false,
       "agrees_with_expectation": true,
       "blocked_reasons": [
-        "auth_gate_not_satisfied:callback_session_validated",
-        "auth_gate_not_satisfied:dev_header_disabled_for_production",
         "auth_gate_not_satisfied:invite_binding_passed",
-        "auth_gate_not_satisfied:issuer_jwks_validated",
         "auth_gate_not_satisfied:org_binding_passed",
-        "auth_gate_not_satisfied:role_mapping_passed",
-        "owner_has_not_authorized_customer_auth_activation"
-      ],
-      "callback_route_available": true,
-      "callback_session_validated": false,
-      "case": "callback_route_no_session",
-      "customer_auth_live": false,
-      "dev_header_disabled_for_production": false,
-      "expect_customer_auth_live": false,
-      "expect_login_live": false,
-      "fixture_label": "demo_fixture",
-      "issuer_jwks_validated": false,
-      "login_live": false,
-      "missing_gate_count": 6,
-      "org_binding_passed": false,
-      "owner_approval_present": false,
-      "provider_configured": true,
-      "role_mapping_passed": false,
-      "secret_present": true,
-      "secret_value_emitted": false
-    },
-    {
-      "activation_allowed": false,
-      "agrees_with_expectation": true,
-      "blocked_reasons": [
-        "auth_gate_not_satisfied:invite_binding_passed",
-        "auth_gate_not_satisfied:org_binding_passed"
+        "auth_gate_not_satisfied:session_signing_key_ready"
       ],
       "callback_route_available": true,
       "callback_session_validated": true,
@@ -781,7 +890,7 @@
       "fixture_label": "demo_fixture",
       "issuer_jwks_validated": true,
       "login_live": false,
-      "missing_gate_count": 2,
+      "missing_gate_count": 3,
       "org_binding_passed": false,
       "owner_approval_present": true,
       "provider_configured": true,
@@ -793,7 +902,8 @@
       "activation_allowed": false,
       "agrees_with_expectation": true,
       "blocked_reasons": [
-        "auth_gate_not_satisfied:role_mapping_passed"
+        "auth_gate_not_satisfied:role_mapping_passed",
+        "auth_gate_not_satisfied:session_signing_key_ready"
       ],
       "callback_route_available": true,
       "callback_session_validated": true,
@@ -805,7 +915,7 @@
       "fixture_label": "demo_fixture",
       "issuer_jwks_validated": true,
       "login_live": false,
-      "missing_gate_count": 1,
+      "missing_gate_count": 2,
       "org_binding_passed": true,
       "owner_approval_present": true,
       "provider_configured": true,
@@ -828,6 +938,30 @@
       "issuer_jwks_validated": true,
       "login_live": true,
       "missing_gate_count": 0,
+      "org_binding_passed": true,
+      "owner_approval_present": true,
+      "provider_configured": true,
+      "role_mapping_passed": true,
+      "secret_present": true,
+      "secret_value_emitted": false
+    },
+    {
+      "activation_allowed": false,
+      "agrees_with_expectation": true,
+      "blocked_reasons": [
+        "auth_gate_not_satisfied:session_signing_key_ready"
+      ],
+      "callback_route_available": true,
+      "callback_session_validated": true,
+      "case": "signing_key_is_the_local_fixture",
+      "customer_auth_live": false,
+      "dev_header_disabled_for_production": true,
+      "expect_customer_auth_live": false,
+      "expect_login_live": false,
+      "fixture_label": "demo_fixture",
+      "issuer_jwks_validated": true,
+      "login_live": false,
+      "missing_gate_count": 1,
       "org_binding_passed": true,
       "owner_approval_present": true,
       "provider_configured": true,

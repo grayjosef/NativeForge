@@ -90,7 +90,10 @@
       "fixture_label": "demo_fixture",
       "kind": "flow",
       "request": {
-        "provider_configured": true
+        "client_id": "nf-demo-fixture-client-id",
+        "issuer": "https://nf-demo-fixture-issuer.invalid",
+        "provider_configured": true,
+        "redirect_uri": "https://nf-demo-fixture-app.invalid/auth/callback"
       },
       "why": "an authorization URL becomes buildable. Building one is local work; the browser would visit it, not NativeForge"
     },
@@ -102,7 +105,10 @@
       "kind": "flow",
       "request": {
         "callback_code_present": true,
+        "client_id": "nf-demo-fixture-client-id",
+        "issuer": "https://nf-demo-fixture-issuer.invalid",
         "provider_configured": true,
+        "redirect_uri": "https://nf-demo-fixture-app.invalid/auth/callback",
         "secret_present": true,
         "state_validation": {
           "blocked_reasons": [
@@ -136,7 +142,10 @@
       "kind": "flow",
       "request": {
         "callback_code_present": true,
+        "client_id": "nf-demo-fixture-client-id",
+        "issuer": "https://nf-demo-fixture-issuer.invalid",
         "provider_configured": true,
+        "redirect_uri": "https://nf-demo-fixture-app.invalid/auth/callback",
         "secret_present": true,
         "state_validation": {
           "blocked_reasons": [
@@ -171,9 +180,12 @@
       "request": {
         "callback_code_present": true,
         "callback_validation_passed": true,
+        "client_id": "nf-demo-fixture-client-id",
+        "issuer": "https://nf-demo-fixture-issuer.invalid",
         "membership_verified": true,
         "organization_id_resolved": true,
         "provider_configured": true,
+        "redirect_uri": "https://nf-demo-fixture-app.invalid/auth/callback",
         "secret_present": true,
         "state_validation": {
           "blocked_reasons": [],
@@ -346,10 +358,13 @@
         "callback_pkce_not_validated",
         "callback_state_not_validated",
         "callback_validation_has_not_passed",
+        "no_client_id_configured_set_OIDC_CLIENT_ID",
+        "no_issuer_configured_set_OIDC_ISSUER",
         "no_organization_id_resolved_from_the_claims",
-        "no_provider_configured_so_no_authorization_url",
+        "no_redirect_uri_supplied",
         "no_verified_membership_for_this_organization",
         "redirect_state_store_scope_is_not_production:contract_only",
+        "signing_key:no_signing_key_configured",
         "token_exchange_blocked:callback_code_present",
         "token_exchange_blocked:network_call_allowed",
         "token_exchange_blocked:pkce_validated",
@@ -379,6 +394,7 @@
         "no_organization_id_resolved_from_the_claims",
         "no_verified_membership_for_this_organization",
         "redirect_state_store_scope_is_not_production:contract_only",
+        "signing_key:no_signing_key_configured",
         "token_exchange_blocked:callback_code_present",
         "token_exchange_blocked:network_call_allowed",
         "token_exchange_blocked:pkce_validated",
@@ -406,6 +422,7 @@
         "no_organization_id_resolved_from_the_claims",
         "no_verified_membership_for_this_organization",
         "redirect_state_store_scope_is_not_production:contract_only",
+        "signing_key:no_signing_key_configured",
         "token_exchange_blocked:network_call_allowed",
         "token_exchange_blocked:state_validated"
       ],
@@ -430,6 +447,7 @@
         "no_organization_id_resolved_from_the_claims",
         "no_verified_membership_for_this_organization",
         "redirect_state_store_scope_is_not_production:contract_only",
+        "signing_key:no_signing_key_configured",
         "token_exchange_blocked:network_call_allowed",
         "token_exchange_blocked:pkce_validated"
       ],
@@ -450,6 +468,7 @@
       "authorization_url_available": true,
       "blocked_reasons": [
         "redirect_state_store_scope_is_not_production:contract_only",
+        "signing_key:no_signing_key_configured",
         "token_exchange_blocked:network_call_allowed"
       ],
       "case": "token_exchange_network_blocked",

@@ -12,6 +12,7 @@
     "auth_gate_not_satisfied:provider_configured",
     "auth_gate_not_satisfied:role_mapping_passed",
     "auth_gate_not_satisfied:secret_present",
+    "auth_gate_not_satisfied:session_signing_key_ready",
     "issuer_jwks_unvalidated_no_network_check_performed",
     "owner_has_not_authorized_customer_auth_activation"
   ],
@@ -38,7 +39,8 @@
     "invite_binding_passed",
     "org_binding_passed",
     "role_mapping_passed",
-    "dev_header_disabled_for_production"
+    "dev_header_disabled_for_production",
+    "session_signing_key_ready"
   ],
   "missing_login_gates": [
     "provider_configured",
@@ -48,7 +50,8 @@
     "audience_configured",
     "callback_session_validated",
     "org_binding_passed",
-    "role_mapping_passed"
+    "role_mapping_passed",
+    "session_signing_key_ready"
   ],
   "network_calls": false,
   "next_required_actions": [
@@ -89,8 +92,12 @@
       "gate": "role_mapping_passed"
     },
     {
-      "action": "replace X-NF-Org-Id with an authenticated claim, then disable it; 16 route modules depend on it today",
+      "action": "replace X-NF-Org-Id with an authenticated claim, then disable it; 15 route modules depend on it today",
       "gate": "dev_header_disabled_for_production"
+    },
+    {
+      "action": "owner supplies NF_SESSION_SIGNING_KEY out-of-band from an environment or a secret manager; the committed local_dev_fixture key may never sign a production session - Gate 119B",
+      "gate": "session_signing_key_ready"
     },
     {
       "action": "owner sets NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL out-of-band. Every gate passing is necessary and not sufficient: configuration arriving in an environment is not a decision to expose a login page to real Tribes.",
@@ -109,5 +116,6 @@
   "secret_present": false,
   "secret_value_emitted": false,
   "secrets_stored": false,
-  "session_cookie_policy_available": true
+  "session_cookie_policy_available": true,
+  "session_signing_key_ready": false
 }

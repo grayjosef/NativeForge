@@ -122,10 +122,19 @@ def verify_session_cookie(
     if not cookie_present:
         blocked_reasons.append("no_session_cookie_was_sent")
 
-    key = signing_key if signing_key is not None else os.environ.get(
-        SIGNING_KEY_ENV, ""
+    key = (
+        signing_key if signing_key is not None else os.environ.get(SIGNING_KEY_ENV, "")
     )
-    if cookie_present and not key:
+    # Gate 119F: the two failures below are not the same failure, and a caller
+    # that cannot tell them apart cannot act on either.
+    #
+    #   no key         we cannot check. Nothing is known about this cookie.
+    #   bad signature  we checked, and it was altered or never ours.
+    #
+    # The first is an operator problem; the second is an attack or a stale
+    # cookie from a rotated key. Reporting both as "invalid" loses that.
+    signing_key_available = bool(key)
+    if cookie_present and not signing_key_available:
         blocked_reasons.append("no_signing_key_available_so_nothing_can_be_verified")
 
     # -- parse --------------------------------------------------------------
@@ -155,12 +164,17 @@ def verify_session_cookie(
 
     # -- signature ----------------------------------------------------------
     signature_valid = False
+    signature_checked = bool(cookie_parseable and signing_key_available)
     if cookie_parseable and key:
-        expected = base64.urlsafe_b64encode(
-            hmac.digest(
-                key.encode("utf-8"), encoded_payload.encode("utf-8"), hashlib.sha256
+        expected = (
+            base64.urlsafe_b64encode(
+                hmac.digest(
+                    key.encode("utf-8"), encoded_payload.encode("utf-8"), hashlib.sha256
+                )
             )
-        ).decode("ascii").rstrip("=")
+            .decode("ascii")
+            .rstrip("=")
+        )
         # Constant-time. An early-returning comparison leaks the prefix to
         # anybody who can time it, and a signature is exactly what an attacker
         # cannot produce.
@@ -223,6 +237,15 @@ def verify_session_cookie(
             "cookie_present": cookie_present,
             "cookie_parseable": cookie_parseable,
             "signature_valid": signature_valid,
+            # Gate 119F. `signature_valid: False` answers two different
+            # questions and these separate them: whether the check ran at all,
+            # and whether it ran and failed.
+            "signing_key_available": signing_key_available,
+            "signature_checked": signature_checked,
+            "signature_unverifiable": bool(
+                cookie_parseable and not signing_key_available
+            ),
+            "signature_invalid": bool(signature_checked and not signature_valid),
             "session_expired": session_expired,
             "organization_id": organization_id or None,
             "organization_id_valid": organization_id_valid,
@@ -354,6 +377,18 @@ def verifier_invariant_failures(result: dict[str, Any]) -> list[str]:
     # A signature cannot verify a cookie that did not parse.
     if result.get("signature_valid") and not result.get("cookie_parseable"):
         fails.append("signature_valid_without_a_parseable_cookie")
+
+    # Gate 119F: the two signature failures are mutually exclusive by
+    # construction, and a result claiming both has lost the distinction they
+    # exist to preserve.
+    if result.get("signature_unverifiable") and result.get("signature_invalid"):
+        fails.append("signature_both_unverifiable_and_invalid")
+
+    if result.get("signature_checked") and not result.get("signing_key_available"):
+        fails.append("signature_checked_without_a_signing_key")
+
+    if result.get("signature_valid") and not result.get("signature_checked"):
+        fails.append("signature_valid_without_having_been_checked")
 
     # A refusal must name itself.
     if not result.get("session_cookie_valid") and not result.get("blocked_reasons"):

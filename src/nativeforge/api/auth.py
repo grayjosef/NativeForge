@@ -69,6 +69,8 @@ stays false.
 
 from __future__ import annotations
 
+import time
+import uuid
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
@@ -76,14 +78,30 @@ from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
 from nativeforge.services.customer_auth_activation_gate_service import (
     build_customer_auth_activation_gate,
 )
+from nativeforge.services.customer_auth_authorization_url_service import (
+    build_authorization_url,
+)
 from nativeforge.services.customer_auth_dependency_contract_service import (
     evaluate_auth_dependency,
 )
 from nativeforge.services.customer_auth_redirect_flow_service import (
     build_redirect_flow_contract,
 )
+from nativeforge.services.customer_auth_redirect_state_repository_service import (
+    TABLE_NAME as REDIRECT_STATE_TABLE,
+)
+from nativeforge.services.customer_auth_redirect_state_store_service import (
+    DEFAULT_SCOPE as STATE_STORE_SCOPE,
+)
 from nativeforge.services.customer_auth_redirect_state_store_service import (
     consume_state,
+    store_state,
+)
+from nativeforge.services.customer_auth_signing_key_readiness_service import (
+    build_signing_key_readiness,
+)
+from nativeforge.services.customer_auth_state_pkce_service import (
+    generate_state_and_pkce,
 )
 from nativeforge.services.customer_auth_token_exchange_boundary_service import (
     evaluate_token_exchange_boundary,
@@ -207,11 +225,20 @@ def _envelope(route: str, status: str, gate: dict[str, Any]) -> dict[str, Any]:
 
 @router.get("/login")
 def login() -> dict[str, Any]:
-    """Start a login. Refuses while no provider is configured.
+    """Start a login. Issues state and PKCE; refuses to redirect.
 
     Returns a structured refusal rather than a redirect: redirecting to an
     unconfigured issuer would produce a browser error page with no explanation,
     and a 500 would suggest a bug rather than a missing configuration.
+
+    Gate 119E: the state and the PKCE pair are now generated for real. They are
+    local work — `secrets` and `hashlib`, no provider involved — so they do not
+    wait on configuration. What waits on configuration is whether they can be
+    placed in a URL, which is a separate boolean and is false.
+
+    Neither value is returned. `state_issued` says one was made; a response body
+    carrying the state itself would hand an attacker the thing the state exists
+    to prove.
     """
     gate = _gate()
     flow = build_redirect_flow_contract()
@@ -221,22 +248,64 @@ def login() -> dict[str, Any]:
     if configured and not gate["login_live"]:
         route_status = "auth_not_live"
 
+    # Local. No provider is contacted to produce either of these.
+    issued = generate_state_and_pkce()
+    state_issued = bool(issued["state_generated"])
+    pkce_issued = bool(issued["code_challenge_generated"])
+
+    # Recorded at the contract-only scope, which stores nothing and says so. The
+    # table exists as of migration 0030 and this route does not write to it:
+    # there is nowhere to send the browser, so there is no redirect to survive.
+    stored = store_state(
+        state_id=uuid.uuid4().hex,
+        state_value=issued["state"],
+        code_verifier=issued["code_verifier"],
+        code_challenge=issued["code_challenge"],
+        issued_at=int(time.time()),
+        storage_scope=STATE_STORE_SCOPE,
+    )
+
+    # Consulted rather than assumed, so this route reports the same answer a
+    # configured deployment would get. No URL is returned either way.
+    url = build_authorization_url(
+        redirect_uri=None,
+        state=issued["state"],
+        code_challenge=issued["code_challenge"],
+    )
+    signing = build_signing_key_readiness()
+
     body = _envelope("login", route_status, gate)
     body.update(
         {
-            "provider_configured": bool(flow["provider_configured"]),
-            "authorization_url_available": bool(flow["authorization_url_available"]),
+            "provider_configured": bool(url["provider_configured"]),
+            "authorization_url_available": bool(url["authorization_url_available"]),
             # Never returned. A URL carrying a client id and a redirect URI in a
             # response body is a configuration disclosure nobody asked for, and
             # there is nowhere to send the browser anyway.
             "authorization_redirect_issued": False,
-            # Generated locally at this route once there is somewhere to send
-            # them. Not issued now, because there is not.
-            "state_issued": False,
-            "pkce_challenge_issued": False,
+            "authorization_url_returned": False,
+            # Gate 119E: derived from a generator that ran, not constants.
+            "state_issued": state_issued,
+            "pkce_challenge_issued": pkce_issued,
+            # Booleans about values, never the values.
+            "state_value_returned": False,
+            "pkce_verifier_returned": False,
+            "state_stored": bool(stored["record_stored"]),
+            "state_store_scope": stored["storage_scope"],
+            "state_store_production": bool(stored["production_store"]),
+            "redirect_state_table": REDIRECT_STATE_TABLE,
             "code_challenge_method": flow["code_challenge_method"],
             "state_required": True,
             "pkce_required": True,
+            # A login that cannot sign a session cannot finish one.
+            "session_signing_key_ready": bool(signing["can_sign_production_session"]),
+            "signing_key_source": signing["signing_key_source"],
+            # Kept out of `blocked_reasons`, which the envelope takes from the
+            # activation gate so a route can never disagree with it about why
+            # auth is unavailable. These are narrower: why this particular URL
+            # could not be built.
+            "authorization_url_blocked_reasons": list(url["blocked_reasons"]),
+            "signing_key_blocked_reasons": list(signing["blocked_reasons"]),
         }
     )
     return body
@@ -281,6 +350,14 @@ def callback() -> dict[str, Any]:
             # route reports the same refusal a real callback would get.
             "state_store_scope": state_lookup["storage_scope"],
             "state_store_production": state_lookup["production_store"],
+            # Gate 119C: the durable store exists. This route does not read it,
+            # because /login wrote nothing to it - the two facts are reported
+            # separately so "a table exists" is never mistaken for "a redirect
+            # can complete".
+            "redirect_state_table": REDIRECT_STATE_TABLE,
+            "redirect_state_repository_available": True,
+            "redirect_state_durable": bool(flow["redirect_state_store_durable"]),
+            "session_signing_key_ready": bool(flow["session_signing_key_ready"]),
             "stored_state_found": state_lookup["state_value_present"],
             "state_consume_allowed": state_lookup["consume_allowed"],
             "state_replay_detected": state_lookup["replay_detected"],

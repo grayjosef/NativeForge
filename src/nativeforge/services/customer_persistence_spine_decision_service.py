@@ -179,6 +179,7 @@ def build_persistence_spine_decision(
     *,
     capability_matrix: dict[str, Any] | None = None,
     preconditions: dict[str, bool] | None = None,
+    signing_key_readiness: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """The safest order to make persistence real. Recommends; applies nothing."""
     matrix = (
@@ -187,6 +188,21 @@ def build_persistence_spine_decision(
         else build_capability_matrix()
     )
     pre = preconditions if preconditions is not None else _detect_preconditions()
+
+    # Gate 119B. `customer_auth_live` already accounts for the signing key, so
+    # this changes no decision - it names one. "No customer auth" is true and
+    # unactionable; "no signing key, and here is the environment variable" is
+    # the same fact an owner can do something about.
+    from nativeforge.services.customer_auth_signing_key_readiness_service import (
+        build_signing_key_readiness,
+    )
+
+    signing = (
+        signing_key_readiness
+        if signing_key_readiness is not None
+        else build_signing_key_readiness()
+    )
+    signing_ready = bool(signing.get("can_sign_production_session"))
 
     by_name = {row["capability"]: row for row in matrix.get("rows") or []}
 
@@ -234,9 +250,7 @@ def build_persistence_spine_decision(
                 # is reported rather than suppressed - the spine exists to
                 # notice it, and a decision that stayed silent about it would be
                 # the more dangerous artifact.
-                "operational_out_of_sequence": bool(
-                    row.get("operational") and unmet
-                ),
+                "operational_out_of_sequence": bool(row.get("operational") and unmet),
             }
         )
 
@@ -247,6 +261,10 @@ def build_persistence_spine_decision(
 
     if not pre[CUSTOMER_AUTH]:
         blocked_reasons.append("no_customer_auth_so_no_lane_can_be_operated")
+    if not signing_ready:
+        blocked_reasons.append(
+            "no_session_signing_key_fit_to_sign_so_no_session_can_be_issued"
+        )
     if not pre[DOCUMENT_STORAGE]:
         blocked_reasons.append("no_document_storage_for_award_evidence")
     if not pre[LIVE_SOURCES]:
@@ -293,6 +311,9 @@ def build_persistence_spine_decision(
             "requires_migrations": requires_migrations,
             "requires_repositories": requires_repositories,
             "requires_auth": not pre[CUSTOMER_AUTH],
+            "requires_session_signing_key": not signing_ready,
+            "session_signing_key_ready": signing_ready,
+            "session_signing_key_source": signing.get("signing_key_source"),
             "requires_document_storage": not pre[DOCUMENT_STORAGE],
             "requires_email_delivery": not pre[EMAIL_DELIVERY],
             "requires_live_source_collection": not pre[LIVE_SOURCES],
@@ -308,9 +329,7 @@ def build_persistence_spine_decision(
             "demo_persistence_allowed": True,
             "demo_persistence_label": "demo_fixture",
             # Constants: a decision changes no schema and writes no row.
-            "customer_persistence_live": bool(
-                matrix.get("customer_persistence_live")
-            ),
+            "customer_persistence_live": bool(matrix.get("customer_persistence_live")),
             "schema_changed": False,
             "rows_written": 0,
             "persisted": False,
@@ -468,9 +487,10 @@ def spine_decision_invariant_failures(decision: dict[str, Any]) -> list[str]:
         fails.append("demo_persistence_allowed_without_its_label")
 
     # A refusal must name itself.
-    if decision.get("blocked_reasons") == [] and decision.get(
-        "customer_persistence_live"
-    ) is False:
+    if (
+        decision.get("blocked_reasons") == []
+        and decision.get("customer_persistence_live") is False
+    ):
         fails.append("persistence_not_live_without_a_reason")
 
     return fails

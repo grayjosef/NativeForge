@@ -73,7 +73,17 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # neither. Neither nf_org_memberships nor nf_identities gains, loses or changes
 # a column, and the 0027 policies this adapter relies on are untouched. The
 # adapter's schema is unchanged.
-EXPECTED_MIGRATION_HEAD = "0029"
+#
+# Gate 119 moved it 0029 -> 0030, under the same standard. The review: 0030's
+# upgrade() performs one create_table (nf_auth_redirect_states) and two
+# create_index calls on that table, and installs no RLS policy at all - the row
+# predates authentication, so it carries no organization_id to scope on, the
+# same position nf_identities (0023) has held since Gate 62. It reads
+# nf_identities only as a foreign key *target* for consumed_by_identity_id,
+# which alters it in no way. Neither nf_org_memberships nor nf_identities gains,
+# loses or changes a column, and the 0027 policies this adapter relies on are
+# untouched. The adapter's schema is unchanged.
+EXPECTED_MIGRATION_HEAD = "0030"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.

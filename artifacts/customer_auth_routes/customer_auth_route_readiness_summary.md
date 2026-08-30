@@ -57,6 +57,7 @@ invite_binding_passed
 org_binding_passed
 role_mapping_passed
 dev_header_disabled_for_production
+session_signing_key_ready
 ```
 
 This gate satisfied the two gates a route spine can satisfy. The remainder are provider configuration, secrets, validation of a real flow, and removing the dev org header - none of which a route supplies.

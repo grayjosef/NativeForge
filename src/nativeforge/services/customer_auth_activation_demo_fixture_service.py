@@ -66,6 +66,19 @@ SCHEMA_VERSION = "nf_customer_auth_activation_demo_fixture_v1"
 
 FIXTURE_LABEL = "demo_fixture"
 
+# Gate 119B. Forged readiness results, booleans only - no key material appears
+# in this module, and the "ready" one names a source rather than a value.
+SIGNING_READY: dict[str, Any] = {
+    "can_sign_production_session": True,
+    "signing_key_source": "secret_manager",
+    "blocked_reasons": [],
+}
+SIGNING_FIXTURE_KEY: dict[str, Any] = {
+    "can_sign_production_session": False,
+    "signing_key_source": "local_dev_fixture",
+    "blocked_reasons": ["signing_key_is_the_committed_local_dev_fixture"],
+}
+
 # A route table describing an application that has auth routes and declares a
 # security scheme. Invented; NativeForge has no such routes today.
 DEMO_SECURED_OPENAPI: dict[str, Any] = {
@@ -154,7 +167,7 @@ def _json_safe(x: Any) -> Any:
 
 
 def build_demo_activation_cases() -> list[dict[str, Any]]:
-    """Eight labelled cases. Seven refusals and one theoretical activation."""
+    """Nine labelled cases. Eight refusals and one theoretical activation."""
     secured = build_route_readiness(
         openapi=DEMO_SECURED_OPENAPI, cloudflare_access_in_front=False
     )
@@ -284,6 +297,27 @@ def build_demo_activation_cases() -> list[dict[str, Any]]:
                 "route_readiness": secured,
                 "dev_header_disabled_for_production": True,
                 "owner_approval": True,
+                "signing_key_readiness": SIGNING_READY,
+            },
+        },
+        {
+            "case": "signing_key_is_the_local_fixture",
+            "fixture_label": FIXTURE_LABEL,
+            "why": (
+                "Gate 119B. Identical to all_gates_pass but for the key's "
+                "source. A present key that came from the committed fixture "
+                "signs nothing anybody should accept, so neither login nor "
+                "customer auth goes live - and the reason names the source"
+            ),
+            "expect_customer_auth_live": False,
+            "expect_login_live": False,
+            "request": {
+                "preflight": PREFLIGHT_CONFIGURED,
+                "validation": VALIDATION_ALL,
+                "route_readiness": secured,
+                "dev_header_disabled_for_production": True,
+                "owner_approval": True,
+                "signing_key_readiness": SIGNING_FIXTURE_KEY,
             },
         },
         {
@@ -302,6 +336,7 @@ def build_demo_activation_cases() -> list[dict[str, Any]]:
                 "route_readiness": secured,
                 "dev_header_disabled_for_production": False,
                 "owner_approval": True,
+                "signing_key_readiness": SIGNING_READY,
             },
         },
     ]
@@ -317,7 +352,7 @@ def measure_activation_cases(cases: list[dict[str, Any]]) -> set[str]:
 
 
 def build_activation_demo_fixture_set() -> dict[str, Any]:
-    """The eight cases, each run through the activation gate."""
+    """The nine cases, each run through the activation gate."""
     cases = build_demo_activation_cases()
     covered = measure_activation_cases(cases)
 

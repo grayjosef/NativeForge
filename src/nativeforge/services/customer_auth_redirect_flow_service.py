@@ -63,6 +63,13 @@ import json
 from collections.abc import Callable
 from typing import Any
 
+from nativeforge.services.customer_auth_redirect_state_repository_service import (
+    TABLE_NAME as REDIRECT_STATE_TABLE,
+)
+from nativeforge.services.customer_auth_redirect_state_store_service import (
+    STORAGE_SCOPES,
+)
+
 SCHEMA_VERSION = "nf_customer_auth_redirect_flow_v1"
 
 # What must hold before a session may be created at the end of a flow.
@@ -72,6 +79,12 @@ SESSION_CREATION_CONDITIONS: tuple[str, ...] = (
     "organization_id_resolved",
     "membership_verified",
     "role_mapping_available",
+    # Gate 119: everything above can pass and still produce nothing, because a
+    # session that cannot be signed cannot be issued.
+    "session_signing_key_ready",
+    # Gate 119: an in-memory state does not survive the redirect it exists to
+    # survive.
+    "redirect_state_store_durable",
 )
 
 RESULT_FIELDS: tuple[str, ...] = (
@@ -101,8 +114,18 @@ FLOW_REMEDIES: tuple[tuple[str, str], ...] = (
     ),
     (
         "authorization_url_available",
-        "follows provider configuration; building a URL is local work and "
-        "contacts nobody",
+        "needs an issuer, a client id and a redirect URI; building the URL is "
+        "local string work and contacts nobody - Gate 119D",
+    ),
+    (
+        "session_signing_key_ready",
+        "owner supplies NF_SESSION_SIGNING_KEY out-of-band; the committed "
+        "fixture key may not sign a production session - Gate 119B",
+    ),
+    (
+        "redirect_state_store_durable",
+        "the redirect state store must run at database scope; the table exists "
+        "as of migration 0030 and nothing writes to it yet - Gate 119C",
     ),
     (
         "state_validated",
@@ -110,8 +133,7 @@ FLOW_REMEDIES: tuple[tuple[str, str], ...] = (
     ),
     (
         "pkce_validated",
-        "the callback must present a verifier matching the challenge sent at "
-        "/login",
+        "the callback must present a verifier matching the challenge sent at /login",
     ),
     (
         "token_exchange_allowed",
@@ -161,6 +183,11 @@ def build_redirect_flow_contract(
     state_pkce: dict[str, Any] | None = None,
     state_validation: dict[str, Any] | None = None,
     generator: Callable[[int], str] | None = None,
+    redirect_uri: str | None = None,
+    issuer: str | None = None,
+    client_id: str | None = None,
+    state_store_scope: str = "contract_only",
+    signing_key_readiness: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """The whole flow, refusing at every step it cannot complete. Deny by default."""
     from nativeforge.services.auth0_live_validation_runner_service import (
@@ -170,6 +197,12 @@ def build_redirect_flow_contract(
     from nativeforge.services.customer_auth_activation_gate_service import (
         build_customer_auth_activation_gate,
     )
+    from nativeforge.services.customer_auth_authorization_url_service import (
+        build_authorization_url,
+    )
+    from nativeforge.services.customer_auth_signing_key_readiness_service import (
+        build_signing_key_readiness,
+    )
     from nativeforge.services.customer_auth_state_pkce_service import (
         generate_state_and_pkce,
     )
@@ -178,9 +211,7 @@ def build_redirect_flow_contract(
     )
 
     if provider_configured is None:
-        provider_configured = bool(
-            run_auth0_preflight().get("validation_possible")
-        )
+        provider_configured = bool(run_auth0_preflight().get("validation_possible"))
     if callback_validation_passed is None:
         callback_validation_passed = bool(
             run_auth0_live_validation().get("callback_session_validated")
@@ -204,11 +235,28 @@ def build_redirect_flow_contract(
 
     blocked_reasons: list[str] = []
 
-    # Building a URL needs configuration and nothing else. NativeForge does not
-    # visit it; a browser would.
-    authorization_url_available = bool(provider_configured)
-    if not provider_configured:
-        blocked_reasons.append("no_provider_configured_so_no_authorization_url")
+    # Gate 119D builds the URL, so this is no longer a restatement of
+    # `provider_configured`. It was one, and that was the campaign's recurring
+    # defect: a declared fact standing in for a derived one. A redirect URI is
+    # part of provider configuration and was not being checked at all.
+    #
+    # State and challenge are passed because availability requires them bound.
+    # No URL is returned from this contract; only whether one could be built.
+    # `issuer` and `client_id` are injectable for the same reason every other
+    # conjunct here is: a caller asserting `provider_configured=True` while the
+    # builder reads an empty environment would make this branch unreachable, and
+    # an unreachable branch is what Gates 117 and 118 each had to go back and
+    # fix. Supplying provider configuration means supplying all of it.
+    url_contract = build_authorization_url(
+        issuer=issuer,
+        client_id=client_id,
+        redirect_uri=redirect_uri,
+        state="bound" if state_generated else None,
+        code_challenge="bound" if pkce_generated else None,
+    )
+    authorization_url_available = bool(url_contract["authorization_url_available"])
+    if not authorization_url_available:
+        blocked_reasons.extend(url_contract["blocked_reasons"])
 
     if not state_generated:
         blocked_reasons.append("no_state_generated")
@@ -245,16 +293,30 @@ def build_redirect_flow_contract(
         "nativeforge.services.customer_auth_role_mapping_service"
     )
 
-    # Gate 118: contract-only. Nothing is stored between /login and /callback,
-    # which is why a real flow could not complete even with everything else
-    # satisfied - and is named here rather than left to be discovered.
-    state_store_scope = "contract_only"
-    if state_store_scope != "database":
+    # Gate 119C: the table exists as of migration 0030, so this is a scope
+    # rather than a constant. It still defaults to contract-only, because
+    # nothing in the running application writes a row.
+    state_store_scope = str(state_store_scope or "contract_only").strip().lower()
+    if state_store_scope not in STORAGE_SCOPES:
+        state_store_scope = "unknown"
+    redirect_state_store_durable = state_store_scope == "database"
+    if not redirect_state_store_durable:
         blocked_reasons.append(
             f"redirect_state_store_scope_is_not_production:{state_store_scope}"
         )
     if not role_mapping_available:
         blocked_reasons.append("no_role_mapping_contract_available")
+
+    signing = (
+        signing_key_readiness
+        if signing_key_readiness is not None
+        else build_signing_key_readiness()
+    )
+    session_signing_key_ready = bool(signing["can_sign_production_session"])
+    if not session_signing_key_ready:
+        blocked_reasons.extend(
+            f"signing_key:{reason}" for reason in signing["blocked_reasons"]
+        )
 
     conditions = {
         "token_exchange_allowed": token_exchange_allowed,
@@ -262,6 +324,8 @@ def build_redirect_flow_contract(
         "organization_id_resolved": bool(organization_id_resolved),
         "membership_verified": bool(membership_verified),
         "role_mapping_available": role_mapping_available,
+        "session_signing_key_ready": session_signing_key_ready,
+        "redirect_state_store_durable": redirect_state_store_durable,
     }
 
     # Derived affirmatively. Every conjunct must hold.
@@ -281,6 +345,8 @@ def build_redirect_flow_contract(
             step,
             provider_configured=provider_configured,
             authorization_url_available=authorization_url_available,
+            session_signing_key_ready=session_signing_key_ready,
+            redirect_state_store_durable=redirect_state_store_durable,
             state_validated=state_validated,
             pkce_validated=pkce_validated,
             token_exchange_allowed=token_exchange_allowed,
@@ -321,8 +387,17 @@ def build_redirect_flow_contract(
             "redirect_state_store_available": _module_importable(
                 "nativeforge.services.customer_auth_redirect_state_store_service"
             ),
+            # Gate 119C. Importable is not the same as durable, and the two are
+            # reported separately for exactly that reason.
+            "redirect_state_repository_available": _module_importable(
+                "nativeforge.services.customer_auth_redirect_state_repository_service"
+            ),
+            "redirect_state_table": REDIRECT_STATE_TABLE,
+            "redirect_state_store_durable": redirect_state_store_durable,
             "state_store_scope": state_store_scope,
-            "state_store_production": state_store_scope == "database",
+            "state_store_production": redirect_state_store_durable,
+            "session_signing_key_ready": session_signing_key_ready,
+            "signing_key_source": signing["signing_key_source"],
             "session_creation_allowed": session_creation_allowed,
             "session_created": session_created,
             "missing_session_conditions": [
@@ -413,9 +488,10 @@ def redirect_flow_invariant_failures(result: dict[str, Any]) -> list[str]:
 
     # Gate 118: a production store is the only kind that survives a redirect
     # in a deployment with more than one worker.
-    if result.get("state_store_production") and result.get(
-        "state_store_scope"
-    ) != "database":
+    if (
+        result.get("state_store_production")
+        and result.get("state_store_scope") != "database"
+    ):
         fails.append("state_store_production_claimed_for_a_non_database_scope")
 
     # PKCE is S256 or it is not PKCE.
@@ -424,16 +500,12 @@ def redirect_flow_invariant_failures(result: dict[str, Any]) -> list[str]:
         fails.append(f"pkce_validated_with_a_disallowed_method:{method}")
 
     # The missing list must agree with the conditions it summarises.
-    expected = [
-        name for name in SESSION_CREATION_CONDITIONS if not result.get(name)
-    ]
+    expected = [name for name in SESSION_CREATION_CONDITIONS if not result.get(name)]
     if list(result.get("missing_session_conditions") or []) != expected:
         fails.append("missing_session_conditions_disagrees_with_the_conditions")
 
     # A refusal must name itself.
-    if not result.get("session_creation_allowed") and not result.get(
-        "blocked_reasons"
-    ):
+    if not result.get("session_creation_allowed") and not result.get("blocked_reasons"):
         fails.append("session_creation_refused_without_a_reason")
 
     return fails

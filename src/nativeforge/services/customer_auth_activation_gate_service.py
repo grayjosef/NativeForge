@@ -97,6 +97,9 @@ REQUIRED_AUTH_GATES: tuple[str, ...] = (
     "membership_verification_available",
     "rls_claim_guard_available",
     "dev_header_disabled_for_production",
+    # Gate 119: a login that cannot sign a session is a login that cannot
+    # finish. Presence was known before; readiness was not.
+    "session_signing_key_ready",
 )
 
 # The subset that decides whether a *login flow* can run. Narrower than auth
@@ -114,6 +117,8 @@ REQUIRED_LOGIN_GATES: tuple[str, ...] = (
     "session_cookie_policy_available",
     "org_binding_passed",
     "role_mapping_passed",
+    # Login is the act of issuing a session, so it needs the key that signs one.
+    "session_signing_key_ready",
 )
 
 GATE_FIELDS: tuple[str, ...] = REQUIRED_AUTH_GATES + (
@@ -170,8 +175,13 @@ GATE_REMEDIES: dict[str, str] = {
     ),
     "rls_claim_guard_available": "Gate 111's RLS claim guard must be importable",
     "dev_header_disabled_for_production": (
-        "replace X-NF-Org-Id with an authenticated claim, then disable it; 16 "
+        "replace X-NF-Org-Id with an authenticated claim, then disable it; 15 "
         "route modules depend on it today"
+    ),
+    "session_signing_key_ready": (
+        "owner supplies NF_SESSION_SIGNING_KEY out-of-band from an environment "
+        "or a secret manager; the committed local_dev_fixture key may never "
+        "sign a production session - Gate 119B"
     ),
 }
 
@@ -205,6 +215,7 @@ def build_customer_auth_activation_gate(
     route_readiness: dict[str, Any] | None = None,
     dev_header_disabled_for_production: bool | None = None,
     owner_approval: bool | None = None,
+    signing_key_readiness: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """May customer authentication be activated? Deny by default.
 
@@ -219,13 +230,14 @@ def build_customer_auth_activation_gate(
     from nativeforge.services.customer_auth_route_readiness_service import (
         build_route_readiness,
     )
+    from nativeforge.services.customer_auth_signing_key_readiness_service import (
+        build_signing_key_readiness,
+    )
 
     # Offline. jwks_network_check_enabled defaults False and is not raised here.
     pre = preflight if preflight is not None else run_auth0_preflight()
     val = validation if validation is not None else run_auth0_live_validation()
-    routes = (
-        route_readiness if route_readiness is not None else build_route_readiness()
-    )
+    routes = route_readiness if route_readiness is not None else build_route_readiness()
 
     if dev_header_disabled_for_production is None:
         # Detected from settings rather than from the containment service, which
@@ -235,6 +247,15 @@ def build_customer_auth_activation_gate(
 
     if owner_approval is None:
         owner_approval = _owner_approval_present()
+
+    # Injectable, so this gate's true branch is reachable without setting a
+    # process-wide signing key. Gates 117 and 118 each shipped a conjunct whose
+    # permitted branch could not be reached; this one can.
+    signing = (
+        signing_key_readiness
+        if signing_key_readiness is not None
+        else build_signing_key_readiness()
+    )
 
     gates: dict[str, bool] = {
         # -- provider configuration, presence only -------------------------
@@ -267,9 +288,11 @@ def build_customer_auth_activation_gate(
             "nativeforge.services.rls_context_claim_guard_service"
         ),
         # -- posture -------------------------------------------------------
-        "dev_header_disabled_for_production": bool(
-            dev_header_disabled_for_production
-        ),
+        "dev_header_disabled_for_production": bool(dev_header_disabled_for_production),
+        # -- signing -------------------------------------------------------
+        # Readiness, not presence: a key that came from the committed fixture is
+        # present and may not sign anything a customer would be held to.
+        "session_signing_key_ready": bool(signing.get("can_sign_production_session")),
     }
 
     blocked_reasons: list[str] = []

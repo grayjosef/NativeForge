@@ -1,0 +1,104 @@
+{
+  "column_count": 15,
+  "columns": [
+    {
+      "name": "id",
+      "nullable": false,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "state_hash",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "pkce_verifier_hash",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "code_challenge",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "code_challenge_method",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "redirect_uri",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "issuer",
+      "nullable": true,
+      "type": "TEXT"
+    },
+    {
+      "name": "audience",
+      "nullable": true,
+      "type": "TEXT"
+    },
+    {
+      "name": "created_at",
+      "nullable": false,
+      "type": "DATETIME"
+    },
+    {
+      "name": "expires_at",
+      "nullable": false,
+      "type": "DATETIME"
+    },
+    {
+      "name": "consumed_at",
+      "nullable": true,
+      "type": "DATETIME"
+    },
+    {
+      "name": "consumed_by_identity_id",
+      "nullable": true,
+      "type": "CHAR(32)"
+    },
+    {
+      "name": "replay_detected",
+      "nullable": false,
+      "type": "BOOLEAN"
+    },
+    {
+      "name": "storage_scope",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "blocked_reasons",
+      "nullable": false,
+      "type": "JSON"
+    }
+  ],
+  "max_state_ttl_seconds": 900,
+  "migration_revision": "0030",
+  "organization_rls_applies": false,
+  "production_scopes": [
+    "database"
+  ],
+  "rows_written": 0,
+  "rules": [
+    "hashes are stored, never the raw state",
+    "hashes are stored, never the raw PKCE verifier",
+    "a state is single-use and consumption is one-way",
+    "a state expires, and the database enforces expires_at > created_at",
+    "a consumed state presented again is a replay, not an expiry",
+    "no customer data row is ever written here"
+  ],
+  "schema_version": "nf_customer_auth_live_redirect_artifact_v1",
+  "storage_scopes": [
+    "contract_only",
+    "database",
+    "in_memory_test",
+    "unknown"
+  ],
+  "table_name": "nf_auth_redirect_states",
+  "why_no_rls": "a redirect state is created before anybody is authenticated, so there is no organization to scope it to and no app.current_org_id to set. Inventing an RLS anchor at issue time would be worse than having none. nf_identities (0023) is the precedent: a verified subject exists before it belongs to anything"
+}
