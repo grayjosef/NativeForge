@@ -21,6 +21,8 @@
   "client_secret_present": false,
   "client_secret_value_emitted": false,
   "customer_auth_live": false,
+  "endpoints_are_conventional": false,
+  "endpoints_discovered": false,
   "issuer_configured": false,
   "issuer_redacted": "",
   "jwks_network_check_allowed": false,

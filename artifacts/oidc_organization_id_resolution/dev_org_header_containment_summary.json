@@ -1,13 +1,14 @@
 {
   "backend_loopback_only": true,
-  "backend_publicly_exposed": false,
+  "backend_publicly_exposed": true,
   "backend_unit": "nativeforge-backend.service",
-  "backend_unit_active": false,
+  "backend_unit_active": true,
   "blocked_reasons": [
     "NF_DEV_ORG_HEADERS_defaults_true",
+    "backend_reachable_from_outside_loopback",
     "unauthenticated_header_can_set_app_current_org_id"
   ],
-  "contained_by_deployment_posture": true,
+  "contained_by_deployment_posture": false,
   "current_org_id_set": false,
   "customer_auth_live": false,
   "dev_header_enabled_default": true,
@@ -21,5 +22,5 @@
   "production_safe": false,
   "replacement_service": "nativeforge.services.rls_context_claim_guard_service",
   "schema_version": "nf_dev_org_header_containment_v1",
-  "tunnel_routes_backend": false
+  "tunnel_routes_backend": true
 }

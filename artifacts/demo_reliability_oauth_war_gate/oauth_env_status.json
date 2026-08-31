@@ -1,0 +1,29 @@
+{
+  "callback_url": "https://nf-dev.mayhem-nc.dev/api/auth/callback",
+  "callback_url_has_trailing_slash": false,
+  "client_secret_recorded": false,
+  "env_key_names": [
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+    "NF_PUBLIC_ORIGIN",
+    "NF_SESSION_SIGNING_KEY"
+  ],
+  "env_key_presence": {
+    "NF_PUBLIC_ORIGIN": true,
+    "NF_SESSION_SIGNING_KEY": true,
+    "OIDC_AUDIENCE": true,
+    "OIDC_CALLBACK_URL": true,
+    "OIDC_CLIENT_ID": true,
+    "OIDC_CLIENT_SECRET": true,
+    "OIDC_ISSUER": true
+  },
+  "env_keys_present_count": 7,
+  "env_values_recorded": false,
+  "issuer_expected": "https://accounts.google.com",
+  "provider": "google_oidc",
+  "schema_version": "nf_demo_reliability_oauth_artifact_v1",
+  "session_signing_key_ready": false
+}

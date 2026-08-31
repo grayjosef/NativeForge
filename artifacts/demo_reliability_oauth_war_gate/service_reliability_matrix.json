@@ -1,0 +1,33 @@
+{
+  "all_active": true,
+  "all_enabled": true,
+  "all_restart_always": true,
+  "linger": "yes",
+  "restart_policy_note": "on-failure ignores a zero exit. cloudflared exits zero when it gives up on its edge connections, which leaves the hostname serving Cloudflare Error 1033.",
+  "schema_version": "nf_demo_reliability_oauth_artifact_v1",
+  "service_names": [
+    "nativeforge-demo-preview",
+    "nativeforge-backend",
+    "nativeforge-mayhem-tunnel"
+  ],
+  "services": {
+    "nativeforge-backend": {
+      "active": "active",
+      "enabled": "enabled",
+      "restart_count": "0",
+      "restart_policy": "always"
+    },
+    "nativeforge-demo-preview": {
+      "active": "active",
+      "enabled": "enabled",
+      "restart_count": "0",
+      "restart_policy": "always"
+    },
+    "nativeforge-mayhem-tunnel": {
+      "active": "active",
+      "enabled": "enabled",
+      "restart_count": "0",
+      "restart_policy": "always"
+    }
+  }
+}

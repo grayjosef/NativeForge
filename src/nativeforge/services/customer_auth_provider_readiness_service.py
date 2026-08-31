@@ -64,7 +64,6 @@ from typing import Any
 
 from nativeforge.services.customer_auth_authorization_url_service import (
     AUDIENCE_ENV,
-    AUTHORIZE_PATH,
     CLIENT_ID_ENV,
     CLIENT_SECRET_ENV,
     ISSUER_ENV,
@@ -274,16 +273,34 @@ def build_provider_readiness(
     # has run a JWKS fetch yet.
     provider_ready = all(gates[name] for name in REQUIRED_PROVIDER_GATES)
 
+    from nativeforge.services.oidc_provider_discovery_service import (
+        build_provider_endpoints,
+    )
+
+    _resolved_endpoints = build_provider_endpoints(resolved_issuer)
+
     result = {
         "schema_version": SCHEMA_VERSION,
         **gates,
         # Public identifiers, redacted anyway so an artifact can carry them.
         "issuer_redacted": redact_url(resolved_issuer),
+        # Gate 130: derived from the issuer's discovery document when one is
+        # available, and from the conventional shape otherwise. Concatenating
+        # `/authorize` under the issuer publishes a falsehood for any provider
+        # that does not follow Auth0's convention - Google's authorization
+        # endpoint is /o/oauth2/v2/auth and its token and JWKS endpoints are on
+        # different hosts entirely.
         "authorization_endpoint_redacted": redact_url(
-            _endpoint(resolved_issuer, AUTHORIZE_PATH)
+            _resolved_endpoints.get("authorization_endpoint", "")
         ),
-        "token_endpoint_redacted": redact_url(_endpoint(resolved_issuer, TOKEN_PATH)),
-        "jwks_uri_redacted": redact_url(_endpoint(resolved_issuer, JWKS_PATH)),
+        "token_endpoint_redacted": redact_url(
+            _resolved_endpoints.get("token_endpoint", "")
+        ),
+        "jwks_uri_redacted": redact_url(_resolved_endpoints.get("jwks_uri", "")),
+        "endpoints_discovered": bool(_resolved_endpoints.get("endpoints_discovered")),
+        "endpoints_are_conventional": bool(
+            _resolved_endpoints.get("endpoints_are_conventional")
+        ),
         "redirect_uri_redacted": redact_url(resolved_redirect),
         "callback_route_path": str(callback_route_path),
         # Named `_claimed` because nothing here can verify it.

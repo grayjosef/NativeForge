@@ -4,7 +4,7 @@
   "current_org_id_set": false,
   "customer_auth_live": false,
   "customer_persistence_live": false,
-  "dev_header_contained_by_deployment_posture": true,
+  "dev_header_contained_by_deployment_posture": false,
   "dev_header_containment_contract_available": true,
   "dev_header_production_safe": false,
   "fabricated": false,

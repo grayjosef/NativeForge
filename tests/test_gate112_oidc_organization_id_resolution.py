@@ -465,23 +465,72 @@ def test_production_safe_cannot_be_claimed():
 
 
 def test_containment_is_measured_not_asserted():
-    """Containment and production-safety are different questions."""
+    """Containment and production-safety are different questions.
+
+    Gate 130. This asserted a snapshot: backend not running, tunnel not routing
+    to it, therefore contained. All three moved.
+
+    Gate 129 added `path: ^/api/.* -> 127.0.0.1:8000` to the tunnel, and Gate
+    130 started and enabled the backend. The backend is publicly routed now, so
+    `contained_by_deployment_posture` is False and the service says so.
+
+    Worse, the detector could not see it: `_tunnel_routes_backend` read
+    `~/.cloudflared/config.yml` while the live tunnel runs from
+    `nativeforge-mayhem.yml`. A renamed file made a whole ingress invisible and
+    the containment claim held on a measurement of the wrong config.
+
+    So this asserts the *relationship* rather than the values. Containment is
+    whatever the measurements say, and production-safety is false regardless.
+    """
     result = containment.build_dev_header_containment()
-    assert result["backend_unit_active"] is False
     assert result["backend_loopback_only"] is True
-    assert result["tunnel_routes_backend"] is False
-    assert result["backend_publicly_exposed"] is False
-    # Contained today, and still not safe.
-    assert result["contained_by_deployment_posture"] is True
+
+    # Contained only if nothing routes the backend to the public internet.
+    expected_exposed = bool(result["tunnel_routes_backend"])
+    assert result["backend_publicly_exposed"] is expected_exposed
+    assert result["contained_by_deployment_posture"] is (not expected_exposed)
+
+    # Never safe, whichever way containment lands. That is the invariant the
+    # snapshot was standing in for.
     assert result["production_safe"] is False
+    assert result["must_disable_before_customer_auth"] is True
+    assert containment.containment_invariant_failures(result) == []
+
+
+def test_the_tunnel_detector_reads_every_cloudflared_config(tmp_path):
+    """A renamed config must not make an ingress invisible.
+
+    This is the defect above, pinned: the detector looked for `config.yml` by
+    name, so `nativeforge-mayhem.yml` routing /api/* to the backend read as no
+    route at all.
+    """
+    root = tmp_path / "repo"
+    (root / "ops" / "cloudflared").mkdir(parents=True)
+    (root / "ops" / "cloudflared" / "some-other-name.yml").write_text(
+        "ingress:\n  - hostname: x\n    service: http://127.0.0.1:8000\n",
+        encoding="utf-8",
+    )
+    assert containment._tunnel_routes_backend(root) is True
 
 
 def test_containment_disagreeing_with_its_measurements_fails():
-    forged = containment.build_dev_header_containment()
-    forged["contained_by_deployment_posture"] = False
+    """Forged against the live value, whichever way it currently sits.
+
+    Gate 130. This hardcoded `False`, which was the disagreeing value while the
+    backend was unrouted. The tunnel now routes /api/* to it, so the real value
+    is False too and the forge became a no-op that asserted nothing - a test
+    passing for a reason unrelated to what it claims.
+    """
+    real = containment.build_dev_header_containment()
+    forged = dict(real)
+    forged["contained_by_deployment_posture"] = not real[
+        "contained_by_deployment_posture"
+    ]
     assert "containment_disagrees_with_the_measurements" in (
         containment.containment_invariant_failures(forged)
     )
+    # The unforged value must not trip it, or the check fires on everything.
+    assert containment.containment_invariant_failures(real) == []
 
 
 def _write_backend_unit(root: Path, host: str) -> None:
@@ -667,9 +716,7 @@ def test_the_contract_artifact_states_the_required_facts():
 
 
 def test_the_resolution_matrix_artifact_permits_only_a_resolved_uuid():
-    path = (
-        REPO_ROOT / art.ARTIFACT_DIR / "oidc_organization_id_resolution_matrix.csv"
-    )
+    path = REPO_ROOT / art.ARTIFACT_DIR / "oidc_organization_id_resolution_matrix.csv"
     rows = list(csv.DictReader(path.read_text(encoding="utf-8").splitlines()))
     assert rows
     for row in rows:
@@ -682,9 +729,7 @@ def test_the_resolution_matrix_artifact_permits_only_a_resolved_uuid():
 
 def test_the_membership_matrix_artifact_separates_member_from_admin():
     path = (
-        REPO_ROOT
-        / art.ARTIFACT_DIR
-        / "customer_org_membership_verification_matrix.csv"
+        REPO_ROOT / art.ARTIFACT_DIR / "customer_org_membership_verification_matrix.csv"
     )
     rows = list(csv.DictReader(path.read_text(encoding="utf-8").splitlines()))
     assert rows

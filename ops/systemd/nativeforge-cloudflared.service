@@ -8,8 +8,15 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=/home/josefgray
 ExecStart=/usr/local/bin/cloudflared --no-autoupdate --config /home/josefgray/.cloudflared/config.yml --metrics 127.0.0.1:20241 tunnel run
-Restart=on-failure
+# Gate 130B: `always`, not `on-failure`. systemd counts a zero exit as
+# success, and cloudflared exits zero when it gives up on its edge
+# connections ("no more connections active and exiting"). Under
+# `on-failure` that leaves the tunnel down and the hostname serving
+# Cloudflare Error 1033, which is what happened during the demo.
+Restart=always
 RestartSec=5
+StartLimitIntervalSec=300
+StartLimitBurst=5
 # Tunnel config and credentials live outside the repo in ~/.cloudflared/.
 # No tunnel UUID, token, or credential path beyond the config file appears here.
 # Logs go to the user journal: journalctl --user -u nativeforge-cloudflared.service

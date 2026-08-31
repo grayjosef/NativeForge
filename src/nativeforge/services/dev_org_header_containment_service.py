@@ -24,7 +24,11 @@ The distinction matters, and stating it precisely is the point of this service.
 ```text
 backend_unit_active     false - the API is not running
 backend_loopback_only   true  - binds 127.0.0.1:8000, a test parses the unit file
-tunnel_routes_backend   false - the tunnel's ingress origin is the static preview
+tunnel_routes_backend   measured - since Gate 129 the ingress sends /api/*
+                        to 127.0.0.1:8000, so the backend IS publicly routed.
+                        Containment now rests on Cloudflare Access gating
+                        every /api path except the OAuth callback, and on the
+                        auth routes not consuming the dev header at all.
 backend_publicly_exposed false
 ```
 
@@ -139,16 +143,36 @@ def _backend_loopback_only(detect_root: Any = None) -> bool:
     return all(f"--host {LOOPBACK_BIND}" in line for line in exec_lines)
 
 
-def _tunnel_routes_backend(detect_root: Any = None) -> bool:
-    """Does the tunnel's ingress point at the API? Read from its config."""
-    candidates = [
-        Path.home() / ".cloudflared" / "config.yml",
-        _repo_root(detect_root) / "ops" / "cloudflared" / "config.yml",
+def _tunnel_config_paths(detect_root: Any = None) -> list[Path]:
+    """Every cloudflared config on this host, not two guessed filenames.
+
+    Gate 130. This looked only at `config.yml` in each location. The tunnel
+    actually serving nf-dev.mayhem-nc.dev runs from
+    `~/.cloudflared/nativeforge-mayhem.yml`, so a file rename made the whole
+    ingress invisible and the detector reported no backend route while
+    `/api/* -> 127.0.0.1:8000` was live and public.
+    """
+    roots = [
+        Path.home() / ".cloudflared",
+        _repo_root(detect_root) / "ops" / "cloudflared",
     ]
-    for path in candidates:
+    found: list[Path] = []
+    for root in roots:
         try:
-            if not path.is_file():
+            if not root.is_dir():
                 continue
+            for path in sorted(root.iterdir()):
+                if path.is_file() and path.suffix in {".yml", ".yaml"}:
+                    found.append(path)
+        except OSError:
+            continue
+    return found
+
+
+def _tunnel_routes_backend(detect_root: Any = None) -> bool:
+    """Does any tunnel ingress point at the API? Read from its config."""
+    for path in _tunnel_config_paths(detect_root):
+        try:
             text = path.read_text(encoding="utf-8")
         except OSError:
             continue

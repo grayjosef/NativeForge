@@ -8,8 +8,15 @@ Wants=network-online.target
 Type=simple
 WorkingDirectory=/home/josefgray/projects/nativeforge
 ExecStart=/home/josefgray/projects/nativeforge/scripts/serve_frontend_preview_5175.sh
-Restart=on-failure
+# Gate 130B: `always`, not `on-failure`. systemd counts a zero exit as
+# success, and cloudflared exits zero when it gives up on its edge
+# connections ("no more connections active and exiting"). Under
+# `on-failure` that leaves the tunnel down and the hostname serving
+# Cloudflare Error 1033, which is what happened during the demo.
+Restart=always
 RestartSec=3
+StartLimitIntervalSec=300
+StartLimitBurst=5
 # Loopback-only preview. Does not start cloudflared. No secrets.
 
 [Install]

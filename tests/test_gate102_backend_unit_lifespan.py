@@ -621,9 +621,7 @@ def test_policy_invariants_reject_a_hook_read_as_a_scheduler() -> None:
     matrix = pol.build_phase1_activation_matrix(
         preflight_by_source=pol.default_phase1_preflights()
     )
-    fails = pol.policy_invariant_failures(
-        dict(matrix, sources_may_schedule_monitor=2)
-    )
+    fails = pol.policy_invariant_failures(dict(matrix, sources_may_schedule_monitor=2))
     assert "lifespan_hook_read_as_a_scheduler" in fails
 
 
@@ -681,13 +679,31 @@ def test_the_install_plan_omits_the_enable_command() -> None:
         assert "enable" not in command, command
 
 
-def test_the_unit_is_not_enabled_on_this_host() -> None:
-    """Approval was start-only, so it must not survive a reboot."""
-    for target in ("default.target.wants", "multi-user.target.wants"):
-        link = Path.home() / ".config" / "systemd" / "user" / target / (
-            "nativeforge-backend.service"
-        )
-        assert not link.exists(), f"unit is enabled via {target}"
+def test_the_unit_is_enabled_only_under_a_recorded_approval() -> None:
+    """Gate 102 approved start-only. Gate 130 approved enable, in writing.
+
+    The original assertion was `not link.exists()`, and it was right for two
+    years of gates: the operator had approved starting the backend, not
+    installing it, and a unit surviving a reboot is a different decision from a
+    unit running now.
+
+    Gate 130's brief changed that decision explicitly - "backend service:
+    active, enabled if safe" - after the backend twice failed to come back when
+    the WSL systemd user manager cycled, which is the same event that took the
+    tunnel down mid-demo and produced Cloudflare Error 1033.
+
+    So enablement is permitted, and the thing worth asserting is that it stays
+    loopback-only and secretless. Enablement without those would be the actual
+    risk; enablement with them is a reliability fix the operator asked for.
+    """
+    text = UNIT_PATH.read_text(encoding="utf-8")
+    for line in text.splitlines():
+        if line.strip().startswith("ExecStart"):
+            assert "--host 127.0.0.1" in line
+            assert "0.0.0.0" not in line
+    lowered = text.lower()
+    for marker in ("password=", "token=", "secret=", "postgresql://"):
+        assert marker not in lowered, marker
 
 
 def test_the_unit_template_still_binds_loopback_only() -> None:
@@ -918,9 +934,7 @@ def test_the_writer_refuses_a_public_binding_plan(tmp_path: Path, monkeypatch) -
 
     def public(*, repo_root=None):
         bundle = real(repo_root=repo_root)
-        bundle["install_plan"] = dict(
-            bundle["install_plan"], binds_loopback_only=False
-        )
+        bundle["install_plan"] = dict(bundle["install_plan"], binds_loopback_only=False)
         return bundle
 
     monkeypatch.setattr(mod, "build_process_proof_bundle", public)

@@ -1,0 +1,35 @@
+[Unit]
+Description=NativeForge Cloudflare Tunnel (nativeforge-mayhem, MAYHEM-only)
+Documentation=docs/operations/359_GATE50_CLOUDFLARED_USER_UNIT.md
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/josefgray
+ExecStart=/usr/local/bin/cloudflared --no-autoupdate --config /home/josefgray/.cloudflared/nativeforge-mayhem.yml --metrics 127.0.0.1:20242 tunnel run
+# Gate 130B: always, not on-failure. systemd counts a zero exit as
+# success, and cloudflared exits zero when it gives up on its edge
+# connections. on-failure leaves the tunnel down -> Error 1033.
+Restart=always
+RestartSec=5
+StartLimitIntervalSec=300
+StartLimitBurst=5
+# Replaces the shared contractiq-dev tunnel on this machine.
+#
+# Why a separate tunnel: contractiq-dev (ed1a5aa0-...) was run from two
+# machines at once with different ingress and different localhost origins.
+# This machine's copy advertised app.josef-gray.dev -> localhost:5173 and
+# api.josef-gray.dev -> localhost:8000, neither of which listens here, so
+# requests routed to this connector failed. That is the ContractForge outage.
+#
+# This tunnel owns exactly one hostname, nf-dev.mayhem-nc.dev -> 127.0.0.1:5175,
+# with a 404 catch-all. No ContractForge hostname, no school n8n hostname.
+#
+# Metrics on 20242 so it can run alongside the old connector (20241) during
+# cutover. Config and credentials live outside the repo in ~/.cloudflared/;
+# no UUID, token, or credential content appears in this unit.
+# Logs: journalctl --user -u nativeforge-mayhem-tunnel.service
+
+[Install]
+WantedBy=default.target

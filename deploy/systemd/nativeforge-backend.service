@@ -32,7 +32,12 @@ ExecStart=/home/josefgray/projects/nativeforge/.venv/bin/uvicorn nativeforge.mai
 
 # Restart policy: restart on failure, back off, and give up rather than loop.
 # A backend that cannot start should stop and be visible, not thrash quietly.
-Restart=on-failure
+# Gate 130B: `always`, not `on-failure`. systemd counts a zero exit as
+# success, and cloudflared exits zero when it gives up on its edge
+# connections ("no more connections active and exiting"). Under
+# `on-failure` that leaves the tunnel down and the hostname serving
+# Cloudflare Error 1033, which is what happened during the demo.
+Restart=always
 RestartSec=5
 StartLimitIntervalSec=300
 StartLimitBurst=5

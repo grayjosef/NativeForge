@@ -61,7 +61,6 @@ can present at a callback.
 from __future__ import annotations
 
 import json
-import os
 from typing import Any
 from urllib.parse import urlencode
 
@@ -130,7 +129,19 @@ def _json_safe(x: Any) -> Any:
 
 
 def _env(name: str) -> str:
-    return (os.environ.get(name) or "").strip()
+    """One resolution order: os.environ wins, Settings fills the gaps.
+
+    Gate 129C moved the preflight, the provider readiness and the signing key
+    onto this order and missed this module, so it still read `os.environ`
+    alone. Under systemd that works, because the unit's `EnvironmentFile`
+    parses `.env` into the process environment; under pytest or an ad-hoc
+    `python -c` it does not. Same configuration, two answers, depending on how
+    the process was started - which is the defect Gate 129 named and this is
+    the last place it survived.
+    """
+    from nativeforge.lib.settings import auth_environment_overlay
+
+    return (auth_environment_overlay().get(name) or "").strip()
 
 
 def _authorization_endpoint(

@@ -1,0 +1,19 @@
+{
+  "access_policy_changed_by_this_gate": false,
+  "broader_api_bypass_created": false,
+  "error_1033_observed": false,
+  "interpretation": {
+    "/": "302 to Cloudflare Access - demo correctly gated",
+    "/api/auth/callback": "200 API - narrow Access bypass, required for OAuth",
+    "/api/auth/login": "302 to Access - needs an Access session"
+  },
+  "public_origin": "https://nf-dev.mayhem-nc.dev",
+  "routes": {
+    "/": 302,
+    "/?view=sc_customer_demo": 302,
+    "/api/auth/callback": 200,
+    "/api/auth/current-user": 302,
+    "/api/auth/login": 302
+  },
+  "schema_version": "nf_demo_reliability_oauth_artifact_v1"
+}

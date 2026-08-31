@@ -1,0 +1,21 @@
+{
+  "demo_url": "https://nf-dev.mayhem-nc.dev/?view=sc_customer_demo",
+  "incident": {
+    "cause": "wsl_systemd_user_manager_restarted_with_the_connector",
+    "evidence": "systemd[235] -> systemd[248] in the tunnel journal",
+    "restart_policy_now": "always",
+    "restart_policy_was": "on-failure",
+    "self_recovered": true,
+    "symptom": "cloudflare_error_1033",
+    "window_seconds_approx": 15
+  },
+  "linger_enabled": true,
+  "local_routes": {
+    "/api/auth/callback": 200,
+    "/api/auth/current-user": 401,
+    "/backend/health": 200,
+    "preview": 200
+  },
+  "schema_version": "nf_demo_reliability_oauth_artifact_v1",
+  "services_all_active": true
+}

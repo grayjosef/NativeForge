@@ -84,6 +84,9 @@ from nativeforge.services.customer_auth_authorization_url_service import (
 from nativeforge.services.customer_auth_dependency_contract_service import (
     evaluate_auth_dependency,
 )
+from nativeforge.services.customer_auth_environment_preflight_service import (
+    CALLBACK_ROUTE_PATH,
+)
 from nativeforge.services.customer_auth_redirect_flow_service import (
     build_redirect_flow_contract,
 )
@@ -223,6 +226,23 @@ def _envelope(route: str, status: str, gate: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+#: Gate 130. Discovery reaches the issuer's public metadata document, which is
+#: a network call, so it is off unless a deployment turns it on. An issuer that
+#: follows the conventional shape resolves offline without it; one that does not
+#: reports no endpoint rather than a guessed one.
+DISCOVERY_ENV = "NF_OIDC_DISCOVERY_ENABLED"
+
+
+def _discovery_allowed() -> bool:
+    import os
+
+    return (os.environ.get(DISCOVERY_ENV) or "").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+    }
+
+
 @router.get("/login")
 def login() -> dict[str, Any]:
     """Start a login. Issues state and PKCE; refuses to redirect.
@@ -267,10 +287,29 @@ def login() -> dict[str, Any]:
 
     # Consulted rather than assumed, so this route reports the same answer a
     # configured deployment would get. No URL is returned either way.
+    #
+    # Gate 130: `redirect_uri=None` was hardcoded, so the claim above was not
+    # true - the route reported what an UNCONFIGURED deployment gets no matter
+    # what the environment held. The configured callback is read now, and the
+    # authorization endpoint is discovered from the issuer rather than guessed:
+    # Google's is /o/oauth2/v2/auth, not the /authorize this codebase assumed.
+    #
+    # Discovery is a network call, so it is opt-in per deployment. Without it a
+    # conventional issuer still resolves offline and Google reports no endpoint
+    # rather than a wrong one.
+    from nativeforge.lib.settings import auth_environment_overlay
+
+    _auth_env = auth_environment_overlay()
+    _configured_callback = (_auth_env.get("OIDC_CALLBACK_URL") or "").strip()
+    if not _configured_callback:
+        _origin = (_auth_env.get("NF_PUBLIC_ORIGIN") or "").strip().rstrip("/")
+        _configured_callback = f"{_origin}{CALLBACK_ROUTE_PATH}" if _origin else ""
+
     url = build_authorization_url(
-        redirect_uri=None,
+        redirect_uri=_configured_callback or None,
         state=issued["state"],
         code_challenge=issued["code_challenge"],
+        allow_network=_discovery_allowed(),
     )
     signing = build_signing_key_readiness()
 

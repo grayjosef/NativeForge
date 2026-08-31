@@ -12,6 +12,41 @@ from sqlalchemy import text
 _tmp = Path(tempfile.mkdtemp(prefix="nf_pytest_"))
 os.environ["DATABASE_URL"] = f"sqlite+pysqlite:///{(_tmp / 'nf.sqlite3').as_posix()}"
 
+# Gate 130. The suite must not read whoever's provider happens to be configured
+# on the machine running it.
+#
+# Gate 129C gave every auth detector one resolution order - os.environ wins,
+# Settings fills the gaps - and Settings reads `.env`. That was invisible while
+# `.env` held no auth keys. The moment Gate 130 configured a real Google client,
+# 25 tests failed: gates 115 through 118 assert unconfigured-provider behaviour
+# and were reading live credentials.
+#
+# A suite whose result depends on the developer's `.env` is not testing the code.
+#
+# Blanking these in `os.environ` is NOT enough and was the first attempt here:
+# the overlay falls through to Settings when an environment value is empty, and
+# Settings reads `.env`, so the credentials came back. The file itself has to go.
+#
+# `os.environ` still outranks `.env` in pydantic-settings, so the DATABASE_URL
+# override above keeps working, and a test that wants a configured provider
+# injects one explicitly.
+for _auth_key in (
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+    "NF_PUBLIC_ORIGIN",
+    "NF_SESSION_SIGNING_KEY",
+    "NF_OIDC_DISCOVERY_ENABLED",
+    "NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL",
+):
+    os.environ.pop(_auth_key, None)
+
+from nativeforge.lib.settings import Settings as _Settings  # noqa: E402
+
+_Settings.model_config["env_file"] = None
+
 
 def pytest_configure(config: pytest.Config) -> None:
     from alembic import command
