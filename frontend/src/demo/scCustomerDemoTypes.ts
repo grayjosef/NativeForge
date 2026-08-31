@@ -38,6 +38,42 @@ export type ScCustomerDemoPayload = {
   capture_date: string;
   content_digest: string;
   claim_matrix: Record<string, unknown>;
+  /**
+   * Gate 129B: the operating shell. Every status here is read from the
+   * capability matrix and the persistence spine on the Python side, so the
+   * page cannot claim a lane is live while the system says it is not.
+   */
+  demo_operating_shell?: {
+    schema_version: string;
+    section_count: number;
+    section_ids: string[];
+    sections: Array<{
+      section_id: string;
+      title: string;
+      shows: string;
+      capability: string | null;
+      expected_table: string | null;
+      built: boolean;
+      operational: boolean;
+      blocked_reasons: string[];
+      rows_written: number;
+      data_source: string;
+    }>;
+    truth_labels: Array<{
+      label: string;
+      active: boolean;
+      derived_from: string;
+    }>;
+    active_truth_labels: string[];
+    customer_auth_live: boolean;
+    login_live: boolean;
+    live_source_monitoring_active: boolean;
+    email_delivery_active: boolean;
+    object_store_configured: boolean;
+    provider_ready: boolean;
+    operational_section_count: number;
+    rows_written: number;
+  };
   profiles: {
     profile_count: number;
     federal_recognized_count: number;

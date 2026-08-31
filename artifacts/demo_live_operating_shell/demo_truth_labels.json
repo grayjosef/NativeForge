@@ -1,0 +1,45 @@
+{
+  "active_labels": [
+    "CONTROLLED DEMO DATA",
+    "AUTH NOT LIVE",
+    "LIVE SOURCE MONITORING NOT ACTIVE",
+    "EMAIL DELIVERY NOT ACTIVE",
+    "OBJECT STORE NOT CONFIGURED",
+    "PROVIDER CONFIG REQUIRED FOR LOGIN"
+  ],
+  "all_six_active": true,
+  "labels": [
+    {
+      "active": true,
+      "derived_from": "spine.persisted, and every lane's rows_written",
+      "label": "CONTROLLED DEMO DATA"
+    },
+    {
+      "active": true,
+      "derived_from": "activation_gate.customer_auth_live",
+      "label": "AUTH NOT LIVE"
+    },
+    {
+      "active": true,
+      "derived_from": "spine.requires_live_source_collection",
+      "label": "LIVE SOURCE MONITORING NOT ACTIVE"
+    },
+    {
+      "active": true,
+      "derived_from": "spine.requires_email_delivery",
+      "label": "EMAIL DELIVERY NOT ACTIVE"
+    },
+    {
+      "active": true,
+      "derived_from": "spine.requires_document_storage",
+      "label": "OBJECT STORE NOT CONFIGURED"
+    },
+    {
+      "active": true,
+      "derived_from": "provider_readiness.provider_ready",
+      "label": "PROVIDER CONFIG REQUIRED FOR LOGIN"
+    }
+  ],
+  "note": "active is computed, not asserted. When a capability goes live its label deactivates because the underlying service changed, not because anyone edited this list.",
+  "schema_version": "nf_demo_live_operating_shell_artifact_v1"
+}

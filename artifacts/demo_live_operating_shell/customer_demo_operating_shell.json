@@ -1,0 +1,269 @@
+{
+  "demo_url": "https://nf-dev.mayhem-nc.dev/?view=sc_customer_demo",
+  "invariant_failures": [],
+  "schema_version": "nf_demo_live_operating_shell_artifact_v1",
+  "shell": {
+    "active_truth_labels": [
+      "CONTROLLED DEMO DATA",
+      "AUTH NOT LIVE",
+      "LIVE SOURCE MONITORING NOT ACTIVE",
+      "EMAIL DELIVERY NOT ACTIVE",
+      "OBJECT STORE NOT CONFIGURED",
+      "PROVIDER CONFIG REQUIRED FOR LOGIN"
+    ],
+    "customer_auth_live": false,
+    "email_delivery_active": false,
+    "fabricated": false,
+    "live_fetch_performed": false,
+    "live_source_monitoring_active": false,
+    "login_live": false,
+    "next_actions": [
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "tenant_profile_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row",
+          "no_repository_can_address_this_capability",
+          "no_service_decides_what_may_be_written",
+          "no_table_declares_this_capability:nf_source_watchlist_entries"
+        ],
+        "capability": "source_watchlist_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row",
+          "no_repository_can_address_this_capability",
+          "no_table_declares_this_capability:nf_tenant_digest_records"
+        ],
+        "capability": "tenant_digest_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "awarded_grants_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "award_requirements_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "proof_audit_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "document_library_persistence"
+      }
+    ],
+    "object_store_configured": false,
+    "operational_section_count": 0,
+    "persisted": false,
+    "production_ready": false,
+    "provider_ready": false,
+    "rows_written": 0,
+    "schema_version": "nf_customer_demo_operating_shell_v1",
+    "section_count": 10,
+    "section_ids": [
+      "tenant_profile",
+      "source_watchlist",
+      "weekly_digest",
+      "pursuit_pipeline",
+      "awarded_grants",
+      "award_requirements",
+      "proof_audit",
+      "document_metadata",
+      "readiness_blockers",
+      "next_actions"
+    ],
+    "sections": [
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "tenant_profile_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_tribal_profiles",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "tenant_profile",
+        "shows": "who the Tribe is, recognition status, and resulting eligibility",
+        "title": "Tribal tenant profile & eligibility"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row",
+          "no_repository_can_address_this_capability",
+          "no_service_decides_what_may_be_written",
+          "no_table_declares_this_capability:nf_source_watchlist_entries"
+        ],
+        "built": false,
+        "capability": "source_watchlist_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_source_watchlist_entries",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "source_watchlist",
+        "shows": "which funding sources are watched for this Tribe",
+        "title": "Source watchlist"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row",
+          "no_repository_can_address_this_capability",
+          "no_table_declares_this_capability:nf_tenant_digest_records"
+        ],
+        "built": false,
+        "capability": "tenant_digest_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_tenant_digest_records",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "weekly_digest",
+        "shows": "new and changed notices matched to this Tribe's profile",
+        "title": "Weekly matched NOFO digest"
+      },
+      {
+        "blocked_reasons": [
+          "no_persistence_lane_of_its_own"
+        ],
+        "built": true,
+        "capability": null,
+        "data_source": "controlled_demo",
+        "expected_table": null,
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "pursuit_pipeline",
+        "shows": "opportunities being worked, with stage and owner",
+        "title": "Pursuit pipeline"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "awarded_grants_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_awarded_grants",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "awarded_grants",
+        "shows": "grants actually won, and the obligations that came with them",
+        "title": "Awarded grants workspace"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "award_requirements_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_award_requirements",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "award_requirements",
+        "shows": "what each award requires and when it is due",
+        "title": "Award requirements & reporting deadlines"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "proof_audit_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_award_requirement_proof_events",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "proof_audit",
+        "shows": "what was submitted, when, and what evidence supports it",
+        "title": "Proof & audit trail"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "document_library_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_award_documents",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "document_metadata",
+        "shows": "which compliance documents exist, filed when, with what digest",
+        "title": "Document metadata"
+      },
+      {
+        "blocked_reasons": [
+          "no_persistence_lane_of_its_own"
+        ],
+        "built": true,
+        "capability": null,
+        "data_source": "controlled_demo",
+        "expected_table": null,
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "readiness_blockers",
+        "shows": "what is built, what is live, and what is blocking the rest",
+        "title": "Readiness & blockers"
+      },
+      {
+        "blocked_reasons": [
+          "no_persistence_lane_of_its_own"
+        ],
+        "built": true,
+        "capability": null,
+        "data_source": "controlled_demo",
+        "expected_table": null,
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "next_actions",
+        "shows": "the specific next step for each blocked capability",
+        "title": "Next actions"
+      }
+    ],
+    "truth_labels": [
+      {
+        "active": true,
+        "derived_from": "spine.persisted, and every lane's rows_written",
+        "label": "CONTROLLED DEMO DATA"
+      },
+      {
+        "active": true,
+        "derived_from": "activation_gate.customer_auth_live",
+        "label": "AUTH NOT LIVE"
+      },
+      {
+        "active": true,
+        "derived_from": "spine.requires_live_source_collection",
+        "label": "LIVE SOURCE MONITORING NOT ACTIVE"
+      },
+      {
+        "active": true,
+        "derived_from": "spine.requires_email_delivery",
+        "label": "EMAIL DELIVERY NOT ACTIVE"
+      },
+      {
+        "active": true,
+        "derived_from": "spine.requires_document_storage",
+        "label": "OBJECT STORE NOT CONFIGURED"
+      },
+      {
+        "active": true,
+        "derived_from": "provider_readiness.provider_ready",
+        "label": "PROVIDER CONFIG REQUIRED FOR LOGIN"
+      }
+    ]
+  }
+}

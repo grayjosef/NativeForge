@@ -56,7 +56,6 @@ refuses any result claiming a validation passed that was never attempted.
 from __future__ import annotations
 
 import json
-import os
 import re
 from typing import Any
 from urllib.parse import urlsplit
@@ -252,6 +251,9 @@ def build_environment_preflight(
     Injecting a value does not make it true of this machine. When nothing is
     supplied the real environment is read, and it reports what it actually has.
     """
+    # Gate 129C: one resolution order - os.environ wins, Settings fills gaps -
+    # so a key in .env, in an EnvironmentFile or exported all read the same.
+    from nativeforge.lib.settings import auth_environment_overlay
     from nativeforge.services.customer_auth_signing_key_readiness_service import (
         build_signing_key_readiness,
     )
@@ -265,7 +267,7 @@ def build_environment_preflight(
         build_oidc_config_schema,
     )
 
-    env = dict(environ) if environ is not None else dict(os.environ)
+    env = auth_environment_overlay(environ)
 
     blocked_reasons: list[str] = []
     next_required_actions: list[str] = []

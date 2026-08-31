@@ -60,7 +60,6 @@ claiming otherwise.
 from __future__ import annotations
 
 import json
-import os
 from typing import Any
 
 from nativeforge.services.customer_auth_authorization_url_service import (
@@ -154,7 +153,11 @@ def build_provider_readiness(
     provider. Injecting one does not configure anything: with nothing supplied
     the environment is read and reports what it actually holds.
     """
-    env = dict(environ) if environ is not None else dict(os.environ)
+    # Gate 129C: same resolution order as the preflight. Two answers to
+    # "is the issuer configured" is the defect this campaign keeps finding.
+    from nativeforge.lib.settings import auth_environment_overlay
+
+    env = auth_environment_overlay(environ)
 
     resolved_issuer = str(
         issuer if issuer is not None else env.get(ISSUER_ENV, "")

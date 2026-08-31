@@ -689,6 +689,23 @@ def build_sc_customer_demo_bridge_payload(
             f"{storage_sca_pentest_fails}"
         )
 
+    # Gate 129B: the operating shell. Every status in it is read from the
+    # capability matrix and the spine, so the demo cannot claim a lane is live
+    # while the system says it is not.
+    from nativeforge.services.customer_demo_operating_shell_service import (
+        build_customer_demo_operating_shell,
+        operating_shell_invariant_failures,
+    )
+
+    demo_operating_shell_surface = build_customer_demo_operating_shell()
+    operating_shell_fails = operating_shell_invariant_failures(
+        demo_operating_shell_surface
+    )
+    if operating_shell_fails:
+        raise ValueError(
+            f"Demo operating shell invariants failed: {operating_shell_fails}"
+        )
+
     oidc_live_path_surface = build_oidc_live_path_demo_surface()
     oidc_live_path_fails = oidc_live_path_demo_surface_invariant_failures(
         oidc_live_path_surface
@@ -1173,6 +1190,7 @@ def build_sc_customer_demo_bridge_payload(
             "audit_operator_storage": audit_operator_storage_surface,
             "external_pilot_auth": external_pilot_auth_surface,
             "storage_sca_pentest": storage_sca_pentest_surface,
+            "demo_operating_shell": demo_operating_shell_surface,
             "oidc_live_path": oidc_live_path_surface,
             "storage_pentest_support": storage_pentest_support_surface,
             "auth0_validation": auth0_validation_surface,

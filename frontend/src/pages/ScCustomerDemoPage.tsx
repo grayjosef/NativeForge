@@ -1,5 +1,6 @@
 /** Read-only SC Monday customer demo — curated state + federal opportunities. */
 
+import { DemoOperatingShell } from "../components/DemoOperatingShell";
 import { loadScCustomerDemoPayload } from "../demo/loadScCustomerDemo";
 import type { ScCustomerDemoPayload } from "../demo/scCustomerDemoTypes";
 
@@ -155,6 +156,10 @@ export function ScCustomerDemoPage({
           </p>
         </div>
       </header>
+
+      {/* Gate 129B: the operating shell reads first — the product story end to
+          end, with its truth labels, before any of the gate detail below. */}
+      <DemoOperatingShell shell={data.demo_operating_shell} />
 
       {/* Three tier bands. CSS `order` groups the 95 pinned sections beneath
           them by decision weight; nothing is hidden, collapsed or removed. */}

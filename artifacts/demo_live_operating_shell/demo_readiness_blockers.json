@@ -1,0 +1,50 @@
+{
+  "activation_blockers": [
+    "callback_url_does_not_match_a_route",
+    "dev_header_still_in_place",
+    "owner_authorization_absent",
+    "provider_configuration_missing",
+    "role_mapping_not_validated",
+    "secret_configuration_missing",
+    "signing_key_not_fit_to_sign"
+  ],
+  "api_reachable_locally": true,
+  "auth_env_key_presence": {
+    "NF_PUBLIC_ORIGIN": false,
+    "NF_SESSION_SIGNING_KEY": false,
+    "OIDC_AUDIENCE": false,
+    "OIDC_CALLBACK_URL": false,
+    "OIDC_CLIENT_ID": false,
+    "OIDC_CLIENT_SECRET": false,
+    "OIDC_ISSUER": false
+  },
+  "auth_env_values_recorded": false,
+  "code_or_runtime_blockers": [
+    "dev_header_still_in_place:14_route_modules"
+  ],
+  "customer_auth_live": false,
+  "demo_url": "https://nf-dev.mayhem-nc.dev/?view=sc_customer_demo",
+  "demo_visible_today": true,
+  "login_live": false,
+  "oauth_callback_reachable_publicly_unauthenticated": true,
+  "operator_or_provider_blockers": [
+    "callback_url_does_not_match_a_route",
+    "owner_authorization_absent",
+    "provider_configuration_missing",
+    "role_mapping_not_validated",
+    "secret_configuration_missing",
+    "signing_key_not_fit_to_sign"
+  ],
+  "public_edge": "cloudflare_access_protects_every_path_except_the_oauth_callback",
+  "public_edge_measured": {
+    "/": "302_to_cloudflare_access",
+    "/api/auth/callback": "200_api_json_callback_validation_not_passed",
+    "/api/auth/current-user": "302_to_cloudflare_access",
+    "/api/auth/login": "302_to_cloudflare_access",
+    "/api/auth/session": "302_to_cloudflare_access",
+    "/api/does-not-exist": "302_to_cloudflare_access",
+    "/backend/health": "302_to_cloudflare_access"
+  },
+  "public_edge_note": "Exactly one path is exempt, and it is the callback. That is an Access bypass policy already scoped to /api/auth/callback - it was not added by this gate. A browser arriving from a provider carries no Access session, so this exemption is what makes an OAuth redirect able to land on the API at all.",
+  "schema_version": "nf_demo_live_operating_shell_artifact_v1"
+}

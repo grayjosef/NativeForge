@@ -9245,7 +9245,7 @@
     "result": {
       "audience_validated": false,
       "audit_event_emitted": false,
-      "auth_run_id": "nf_g35_auth_094ed0c9",
+      "auth_run_id": "nf_g35_auth_7b513c64",
       "callback_validated": false,
       "controlled_pilot_auth_ready": false,
       "env_core_present": false,
@@ -9386,7 +9386,7 @@
       "live_validation_attempted": false,
       "mode": "dry_run",
       "overall_status": "PASS",
-      "run_id": "nf_auth0_live_val_20260101T000000Z_e9179e71"
+      "run_id": "nf_auth0_live_val_20260101T000000Z_95f52f1f"
     }
   },
   "auth0_login_rbac": {
@@ -9457,7 +9457,7 @@
     "validation_result": {
       "audience_validated": false,
       "audit_event_emitted": true,
-      "auth_validation_run_id": "nf_auth_val_g24_20260101T000000Z_c6142892",
+      "auth_validation_run_id": "nf_auth_val_g24_20260101T000000Z_201be551",
       "callback_validated": false,
       "controlled_customer_pilot_status": "NO_GO",
       "controlled_pilot_auth_ready": false,
@@ -9643,7 +9643,7 @@
       ],
       "mode_detected": "mode_a",
       "network_calls": false,
-      "no_secret_log_path": "/tmp/nativeforge-demo-determinism/auth0_mode_b_no_secret_logs/nf_camp47_auth0_unlock_20260101T000000Z_102d53eb.json",
+      "no_secret_log_path": "/tmp/nativeforge-demo-determinism/auth0_mode_b_no_secret_logs/nf_camp47_auth0_unlock_20260101T000000Z_a9606985.json",
       "no_secret_log_written": true,
       "overall_status": "PASS",
       "owner_config_present": false,
@@ -9656,7 +9656,7 @@
       "production_auth_claimed": false,
       "provider_validated": false,
       "rbac_tenant_audit_passed": true,
-      "run_id": "nf_camp47_auth0_unlock_20260101T000000Z_102d53eb",
+      "run_id": "nf_camp47_auth0_unlock_20260101T000000Z_a9606985",
       "schema_version": "nf_auth0_mode_b_live_unlock_v1",
       "secret_present_flag": false,
       "secret_value_printed": false
@@ -9710,7 +9710,7 @@
     "result": {
       "audience_validated": false,
       "audit_event_emitted": false,
-      "auth_real_input_run_id": "nf_auth_real_input_20260101T000000Z_9b26cbb7",
+      "auth_real_input_run_id": "nf_auth_real_input_20260101T000000Z_710a8b9b",
       "callback_validated": false,
       "controlled_pilot_auth_ready": false,
       "external_access_claimed": false,
@@ -9854,7 +9854,7 @@
       "login_live_claimed": false,
       "mode": "dry_run",
       "overall_status": "PASS",
-      "run_id": "nf_auth0_validation_smoke_20260101T000000Z_dc371fee",
+      "run_id": "nf_auth0_validation_smoke_20260101T000000Z_f4d0da8e",
       "secret_present": false
     },
     "tenant_boundary": true,
@@ -10166,7 +10166,7 @@
       "blockers_exposed": true,
       "buyer_trust_contract": true,
       "claim_freeze_visible": true,
-      "closeout_run_id": "nf_gate30_closeout_20260101T000000Z_046ef910",
+      "closeout_run_id": "nf_gate30_closeout_20260101T000000Z_b5a65602",
       "controlled_customer_pilot_status": "CONDITIONAL_INTERNAL_ONLY",
       "demo_safe": true,
       "fake_green_badge": false,
@@ -13557,6 +13557,270 @@
     "title": "Production cutover checklist + final claim freeze"
   },
   "demo_dev_only": true,
+  "demo_operating_shell": {
+    "active_truth_labels": [
+      "CONTROLLED DEMO DATA",
+      "AUTH NOT LIVE",
+      "LIVE SOURCE MONITORING NOT ACTIVE",
+      "EMAIL DELIVERY NOT ACTIVE",
+      "OBJECT STORE NOT CONFIGURED",
+      "PROVIDER CONFIG REQUIRED FOR LOGIN"
+    ],
+    "customer_auth_live": false,
+    "email_delivery_active": false,
+    "fabricated": false,
+    "live_fetch_performed": false,
+    "live_source_monitoring_active": false,
+    "login_live": false,
+    "next_actions": [
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "tenant_profile_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row",
+          "no_repository_can_address_this_capability",
+          "no_service_decides_what_may_be_written",
+          "no_table_declares_this_capability:nf_source_watchlist_entries"
+        ],
+        "capability": "source_watchlist_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row",
+          "no_repository_can_address_this_capability",
+          "no_table_declares_this_capability:nf_tenant_digest_records"
+        ],
+        "capability": "tenant_digest_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "awarded_grants_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "award_requirements_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "proof_audit_persistence"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "capability": "document_library_persistence"
+      }
+    ],
+    "object_store_configured": false,
+    "operational_section_count": 0,
+    "persisted": false,
+    "production_ready": false,
+    "provider_ready": false,
+    "rows_written": 0,
+    "schema_version": "nf_customer_demo_operating_shell_v1",
+    "section_count": 10,
+    "section_ids": [
+      "tenant_profile",
+      "source_watchlist",
+      "weekly_digest",
+      "pursuit_pipeline",
+      "awarded_grants",
+      "award_requirements",
+      "proof_audit",
+      "document_metadata",
+      "readiness_blockers",
+      "next_actions"
+    ],
+    "sections": [
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "tenant_profile_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_tribal_profiles",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "tenant_profile",
+        "shows": "who the Tribe is, recognition status, and resulting eligibility",
+        "title": "Tribal tenant profile & eligibility"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row",
+          "no_repository_can_address_this_capability",
+          "no_service_decides_what_may_be_written",
+          "no_table_declares_this_capability:nf_source_watchlist_entries"
+        ],
+        "built": false,
+        "capability": "source_watchlist_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_source_watchlist_entries",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "source_watchlist",
+        "shows": "which funding sources are watched for this Tribe",
+        "title": "Source watchlist"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row",
+          "no_repository_can_address_this_capability",
+          "no_table_declares_this_capability:nf_tenant_digest_records"
+        ],
+        "built": false,
+        "capability": "tenant_digest_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_tenant_digest_records",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "weekly_digest",
+        "shows": "new and changed notices matched to this Tribe's profile",
+        "title": "Weekly matched NOFO digest"
+      },
+      {
+        "blocked_reasons": [
+          "no_persistence_lane_of_its_own"
+        ],
+        "built": true,
+        "capability": null,
+        "data_source": "controlled_demo",
+        "expected_table": null,
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "pursuit_pipeline",
+        "shows": "opportunities being worked, with stage and owner",
+        "title": "Pursuit pipeline"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "awarded_grants_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_awarded_grants",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "awarded_grants",
+        "shows": "grants actually won, and the obligations that came with them",
+        "title": "Awarded grants workspace"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "award_requirements_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_award_requirements",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "award_requirements",
+        "shows": "what each award requires and when it is due",
+        "title": "Award requirements & reporting deadlines"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "proof_audit_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_award_requirement_proof_events",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "proof_audit",
+        "shows": "what was submitted, when, and what evidence supports it",
+        "title": "Proof & audit trail"
+      },
+      {
+        "blocked_reasons": [
+          "no_customer_auth_so_nobody_owns_the_row"
+        ],
+        "built": true,
+        "capability": "document_library_persistence",
+        "data_source": "controlled_demo",
+        "expected_table": "nf_award_documents",
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "document_metadata",
+        "shows": "which compliance documents exist, filed when, with what digest",
+        "title": "Document metadata"
+      },
+      {
+        "blocked_reasons": [
+          "no_persistence_lane_of_its_own"
+        ],
+        "built": true,
+        "capability": null,
+        "data_source": "controlled_demo",
+        "expected_table": null,
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "readiness_blockers",
+        "shows": "what is built, what is live, and what is blocking the rest",
+        "title": "Readiness & blockers"
+      },
+      {
+        "blocked_reasons": [
+          "no_persistence_lane_of_its_own"
+        ],
+        "built": true,
+        "capability": null,
+        "data_source": "controlled_demo",
+        "expected_table": null,
+        "operational": false,
+        "rows_written": 0,
+        "section_id": "next_actions",
+        "shows": "the specific next step for each blocked capability",
+        "title": "Next actions"
+      }
+    ],
+    "truth_labels": [
+      {
+        "active": true,
+        "derived_from": "spine.persisted, and every lane's rows_written",
+        "label": "CONTROLLED DEMO DATA"
+      },
+      {
+        "active": true,
+        "derived_from": "activation_gate.customer_auth_live",
+        "label": "AUTH NOT LIVE"
+      },
+      {
+        "active": true,
+        "derived_from": "spine.requires_live_source_collection",
+        "label": "LIVE SOURCE MONITORING NOT ACTIVE"
+      },
+      {
+        "active": true,
+        "derived_from": "spine.requires_email_delivery",
+        "label": "EMAIL DELIVERY NOT ACTIVE"
+      },
+      {
+        "active": true,
+        "derived_from": "spine.requires_document_storage",
+        "label": "OBJECT STORE NOT CONFIGURED"
+      },
+      {
+        "active": true,
+        "derived_from": "provider_readiness.provider_ready",
+        "label": "PROVIDER CONFIG REQUIRED FOR LOGIN"
+      }
+    ]
+  },
   "demo_route_path": "/?view=sc_customer_demo",
   "draft_workspace": {
     "ai_drafting_enabled": false,
@@ -14806,8 +15070,8 @@
       "production_data_mutated": false,
       "production_rollout_status": "PRODUCTION_ROLLOUT_NO_GO",
       "production_storage_claimed": false,
-      "rehearsal_run_id": "nf_modeb_rehearsal_20260101T000000Z_08badbeb",
-      "run_id": "nf_dryrun_cutover_20260101T000000Z_c5f86eb3",
+      "rehearsal_run_id": "nf_modeb_rehearsal_20260101T000000Z_85c93739",
+      "run_id": "nf_dryrun_cutover_20260101T000000Z_67021e0d",
       "sca_evidence_check": "validated",
       "schema_version": "nf_gate28_dry_run_cutover_v1",
       "skipped_after_blocker_count": 19,
@@ -16826,7 +17090,7 @@
         "real_input_ingest",
         "sca"
       ],
-      "closeout_run_id": "nf_gate30_closeout_20260101T000000Z_f4b07d9a",
+      "closeout_run_id": "nf_gate30_closeout_20260101T000000Z_094ed0c9",
       "controlled_customer_pilot_status": "CONDITIONAL_INTERNAL_ONLY",
       "customer_persistence_claimed": false,
       "evidence_map": {
@@ -29022,7 +29286,7 @@
       "prompt_alone_is_not_approval": true,
       "real_owner_inputs_present": false,
       "rehearsal_contract": true,
-      "rehearsal_run_id": "nf_modeb_rehearsal_20260101T000000Z_6820fbf8",
+      "rehearsal_run_id": "nf_modeb_rehearsal_20260101T000000Z_5e4457c0",
       "rejected_secret_keys": [],
       "schema_version": "nf_gate28_mode_b_rehearsal_v1",
       "secrets_in_output": false,
@@ -37841,7 +38105,7 @@
           "environment_scope": "fixture_internal",
           "event_type": "auth_context_resolved",
           "next_state": null,
-          "nonce": "74b1c585",
+          "nonce": "d57a2d74",
           "object_id": "oidc_sub_demo",
           "object_type": "oidc_identity",
           "operator_review_required": true,
@@ -37947,7 +38211,7 @@
             "action": "view",
             "actor_id": "oidc_sub_demo",
             "actor_type": "customer",
-            "audit_event_id": "aud_39677be65928",
+            "audit_event_id": "aud_e9179e712317",
             "created_at": "2026-01-01T00:00:00Z",
             "customer_visible": false,
             "decision": "deny",
@@ -38001,7 +38265,7 @@
         "environment_scope": "fixture_internal",
         "event_type": "auth_context_resolved",
         "next_state": null,
-        "nonce": "7a33ab1c",
+        "nonce": "fc72e25d",
         "object_id": "oidc_sub_demo",
         "object_type": "oidc_identity",
         "operator_review_required": true,
@@ -38107,7 +38371,7 @@
           "action": "view",
           "actor_id": "oidc_sub_demo",
           "actor_type": "customer",
-          "audit_event_id": "aud_8e3f75b2a073",
+          "audit_event_id": "aud_d252f368ddf5",
           "created_at": "2026-01-01T00:00:00Z",
           "customer_visible": false,
           "decision": "deny",
@@ -38352,7 +38616,7 @@
       ],
       "collaboration_matching_claimed": false,
       "collaboration_status": "dark_off",
-      "current_head": "267516c",
+      "current_head": "334169a",
       "customer_data_persistence_claimed": false,
       "customer_next_actions": [
         "Provide missing org evidence when durable upload path is approved",
@@ -38573,7 +38837,7 @@
         "Review evidence intake storage proposal before any migration",
         "Keep collaboration and final export OFF"
       ],
-      "operator_readiness_id": "or_483699908943828e",
+      "operator_readiness_id": "or_23eff23f0773c2b7",
       "package_readiness_reference": "package_readiness_queue",
       "pen_test_passed_claimed": false,
       "pen_test_readiness_reference": "docs/operations/152_PEN_TEST_READINESS_REPORT.md",
@@ -56634,7 +56898,7 @@
       "mode": "A",
       "pass_evidence_present": false,
       "pen_test_pass_claim": false,
-      "pentest_run_id": "nf_g35_pt_19bbf086",
+      "pentest_run_id": "nf_g35_pt_efd1a497",
       "production_rollout_security_ready": false,
       "remediation_required": true,
       "report_reference_present": false,
@@ -56910,7 +57174,7 @@
       "auth": {
         "audience_validated": false,
         "audit_event_emitted": false,
-        "auth_run_id": "nf_g35_auth_0f79f092",
+        "auth_run_id": "nf_g35_auth_10268094",
         "callback_validated": false,
         "controlled_pilot_auth_ready": false,
         "env_core_present": false,
@@ -56958,7 +57222,7 @@
         "mode": "A",
         "pass_evidence_present": false,
         "pen_test_pass_claim": false,
-        "pentest_run_id": "nf_g35_pt_cf892463",
+        "pentest_run_id": "nf_g35_pt_75c88580",
         "production_rollout_security_ready": false,
         "remediation_required": true,
         "report_reference_present": false,
@@ -57020,7 +57284,7 @@
         "schema_version": "nf_gate35_storage_ingest_v1",
         "signed_url_config_present": false,
         "sse_kms_config_present": false,
-        "storage_run_id": "nf_g35_stor_816cccc6",
+        "storage_run_id": "nf_g35_stor_456b2b40",
         "wait_state": "blocked_owner_input"
       }
     },
@@ -63582,7 +63846,7 @@
       "restore_evidence_ref": "nf://gate33/non-prod-restore-rehearsal",
       "restore_proof": true,
       "restore_rehearsal_contract": true,
-      "restore_run_id": "nf_restore_18fa54879b",
+      "restore_run_id": "nf_restore_73443b83b1",
       "restore_steps": [
         "load_non_prod_manifest",
         "validate_evidence_ref",
@@ -69848,7 +70112,7 @@
           "network_used": false,
           "probe_allowed": true,
           "probe_attempted": true,
-          "probe_run_id": "nf_probe_d6ea7bcb7e",
+          "probe_run_id": "nf_probe_19bbf0861b",
           "reachable": false,
           "source_id": "pkt-SC",
           "source_name": "SC packet allowlist",
@@ -69868,7 +70132,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_ffd8a16d06",
+          "probe_run_id": "nf_probe_0f79f09251",
           "reachable": false,
           "source_id": "pkt-OK",
           "source_name": "OK_packet",
@@ -69888,7 +70152,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_d03b5c69f2",
+          "probe_run_id": "nf_probe_816cccc611",
           "reachable": false,
           "source_id": "pkt-AZ",
           "source_name": "AZ_packet",
@@ -69908,7 +70172,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_4df89ea25b",
+          "probe_run_id": "nf_probe_cf8924638b",
           "reachable": false,
           "source_id": "pkt-NM",
           "source_name": "NM_packet",
@@ -69928,7 +70192,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_b35b2119e0",
+          "probe_run_id": "nf_probe_70f25901fc",
           "reachable": false,
           "source_id": "pkt-AK",
           "source_name": "AK_packet",
@@ -69948,7 +70212,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_6a89dd880d",
+          "probe_run_id": "nf_probe_2cd60aa725",
           "reachable": false,
           "source_id": "pkt-CA",
           "source_name": "CA_packet",
@@ -69968,7 +70232,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_201be5517c",
+          "probe_run_id": "nf_probe_8dcacd81f8",
           "reachable": false,
           "source_id": "pkt-WA",
           "source_name": "WA_packet",
@@ -69988,7 +70252,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_330cc408e9",
+          "probe_run_id": "nf_probe_575b7a072b",
           "reachable": false,
           "source_id": "pkt-OR",
           "source_name": "OR_packet",
@@ -70008,7 +70272,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_4cbefd0a2a",
+          "probe_run_id": "nf_probe_4601e7c129",
           "reachable": false,
           "source_id": "pkt-MT",
           "source_name": "MT_packet",
@@ -70028,7 +70292,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_9e1a5595b8",
+          "probe_run_id": "nf_probe_e64ed49f56",
           "reachable": false,
           "source_id": "pkt-SD",
           "source_name": "SD_packet",
@@ -70048,7 +70312,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_5e4457c0fb",
+          "probe_run_id": "nf_probe_9ab072135c",
           "reachable": false,
           "source_id": "pkt-ND",
           "source_name": "ND_packet",
@@ -70068,7 +70332,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_67021e0d3d",
+          "probe_run_id": "nf_probe_e7af6511dd",
           "reachable": false,
           "source_id": "pkt-MN",
           "source_name": "MN_packet",
@@ -70088,7 +70352,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_85c93739e5",
+          "probe_run_id": "nf_probe_d7020db514",
           "reachable": false,
           "source_id": "pkt-WI",
           "source_name": "WI_packet",
@@ -70108,7 +70372,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_710a8b9b97",
+          "probe_run_id": "nf_probe_5e2b41ba58",
           "reachable": false,
           "source_id": "pkt-NC",
           "source_name": "NC_packet",
@@ -70128,7 +70392,7 @@
           "network_used": false,
           "probe_allowed": false,
           "probe_attempted": false,
-          "probe_run_id": "nf_probe_891847987c",
+          "probe_run_id": "nf_probe_fa2f2ddb9a",
           "reachable": false,
           "source_id": "pkt-HI",
           "source_name": "HI_packet",
@@ -70508,7 +70772,7 @@
       "schema_version": "nf_gate35_storage_ingest_v1",
       "signed_url_config_present": false,
       "sse_kms_config_present": false,
-      "storage_run_id": "nf_g35_stor_b5a65602",
+      "storage_run_id": "nf_g35_stor_5d96f063",
       "wait_state": "blocked_owner_input"
     },
     "schema_version": "nf_gate35_stor_assembler_v1",
@@ -71230,7 +71494,7 @@
       "schema_version": "nf_gate29_storage_security_real_input_v1",
       "signed_url_config_present": false,
       "sse_encryption_config_present": false,
-      "storage_security_real_input_run_id": "nf_storage_sec_real_input_20260101T000000Z_2a6a9a58",
+      "storage_security_real_input_run_id": "nf_storage_sec_real_input_20260101T000000Z_89184798",
       "synthetic_pen_test_artifacts_ignored": true,
       "synthetic_rehearsal_artifacts_ignored": true,
       "synthetic_storage_artifacts_ignored": true

@@ -59,7 +59,6 @@ import base64
 import hashlib
 import hmac
 import json
-import os
 import re
 from typing import Any
 
@@ -71,6 +70,13 @@ SESSION_FORMAT_VERSION = "nf1"
 # Where a real signing key would come from. Presence-detected only; the value
 # is compared inside hmac.digest and never read into a return.
 SIGNING_KEY_ENV = "NF_SESSION_SIGNING_KEY"
+
+
+def _auth_env() -> dict[str, str]:
+    from nativeforge.lib.settings import auth_environment_overlay
+
+    return auth_environment_overlay()
+
 
 # The obviously-fake key fixture sessions are signed with. Committed on purpose:
 # it signs nothing anybody would accept, and naming it makes every fixture
@@ -126,7 +132,10 @@ def _uuid_shaped(value: Any) -> bool:
 
 def signing_key_present() -> bool:
     """Is a real signing key configured? Presence only; never the value."""
-    return bool((os.environ.get(SIGNING_KEY_ENV) or "").strip())
+    # Gate 129C: Settings-backed too, same order.
+    from nativeforge.lib.settings import auth_environment_overlay
+
+    return bool((auth_environment_overlay().get(SIGNING_KEY_ENV) or "").strip())
 
 
 def _sign(payload: str, key: str) -> str:
@@ -215,7 +224,7 @@ def build_session(
     # An explicitly supplied key is a test or fixture key. A session signed with
     # one is never a production session, whatever else is true.
     key_supplied = signing_key is not None
-    key = signing_key if key_supplied else os.environ.get(SIGNING_KEY_ENV, "")
+    key = signing_key if key_supplied else _auth_env().get(SIGNING_KEY_ENV, "")
 
     payload = build_session_payload(
         principal_id=principal_id,
