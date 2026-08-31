@@ -1,0 +1,15 @@
+{
+  "authenticated": false,
+  "customer_auth_live": false,
+  "identity_present": false,
+  "local_status": "unauthenticated",
+  "local_status_code": 401,
+  "login_live": false,
+  "membership_verified": false,
+  "org_binding_passed": false,
+  "organization_id_resolved": false,
+  "public_status": "cloudflare_access_redirect",
+  "public_status_code": 302,
+  "session_present": false,
+  "session_values_recorded": false
+}

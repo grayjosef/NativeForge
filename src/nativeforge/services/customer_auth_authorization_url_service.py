@@ -133,9 +133,37 @@ def _env(name: str) -> str:
     return (os.environ.get(name) or "").strip()
 
 
-def _authorization_endpoint(issuer: str) -> str:
-    """The conventional path under the issuer. No discovery document is fetched."""
-    return f"{issuer.rstrip('/')}{AUTHORIZE_PATH}"
+def _authorization_endpoint(
+    issuer: str,
+    *,
+    provider_metadata: dict[str, Any] | None = None,
+    allow_network: bool = False,
+) -> tuple[str, dict[str, Any]]:
+    """Where the provider says its authorization endpoint is.
+
+    Gate 130. This returned `issuer + "/authorize"` unconditionally, which is
+    Auth0's convention and correct for every provider this campaign had targeted.
+    It is wrong for Google, whose authorization endpoint is
+    `/o/oauth2/v2/auth` and whose token and JWKS endpoints are on entirely
+    different hosts - so a Google login built from the convention reaches a 404
+    before the user sees a consent screen.
+
+    The endpoint is derived from the provider's discovery document when one is
+    available, and the conventional shape remains a named fallback for issuers
+    that follow it. For an issuer known not to follow it, no endpoint is
+    produced at all: guessing is what sent the browser to a 404 while every gate
+    reported ready.
+    """
+    from nativeforge.services.oidc_provider_discovery_service import (
+        build_provider_endpoints,
+    )
+
+    endpoints = build_provider_endpoints(
+        issuer,
+        metadata=provider_metadata,
+        allow_network=allow_network,
+    )
+    return str(endpoints.get("authorization_endpoint") or ""), endpoints
 
 
 def build_authorization_url(
@@ -148,6 +176,8 @@ def build_authorization_url(
     state: str | None = None,
     code_challenge: str | None = None,
     code_challenge_method: str = CODE_CHALLENGE_METHOD,
+    provider_metadata: dict[str, Any] | None = None,
+    allow_network: bool = False,
 ) -> dict[str, Any]:
     """Construct an authorization URL, or name why one cannot be constructed.
 
@@ -204,10 +234,27 @@ def build_authorization_url(
         issuer_configured and client_id_configured and redirect_uri_configured
     )
 
-    endpoint_configured = issuer_configured
-    endpoint = _authorization_endpoint(resolved_issuer) if issuer_configured else ""
+    # Gate 130. This read `endpoint_configured = issuer_configured` — an
+    # endpoint reported as configured because an *issuer* was, which is the
+    # declared-versus-derived shape this campaign keeps finding. An issuer is
+    # not an endpoint, and for Google the difference is a 404.
+    endpoint, endpoint_discovery = (
+        _authorization_endpoint(
+            resolved_issuer,
+            provider_metadata=provider_metadata,
+            allow_network=allow_network,
+        )
+        if issuer_configured
+        else ("", {})
+    )
+    endpoint_configured = bool(endpoint)
+    if issuer_configured and not endpoint_configured:
+        blocked_reasons.append("no_authorization_endpoint_for_this_issuer")
+        blocked_reasons.extend(endpoint_discovery.get("blocked_reasons") or [])
 
-    available = bool(provider_configured and state_bound and pkce_bound)
+    available = bool(
+        provider_configured and state_bound and pkce_bound and endpoint_configured
+    )
     url = ""
     redacted = ""
 
@@ -237,6 +284,14 @@ def build_authorization_url(
         # hostname every user's browser is sent to.
         "issuer": resolved_issuer,
         "authorization_endpoint_configured": endpoint_configured,
+        # Gate 130: whether the endpoint was read from the provider's discovery
+        # document or assembled from a convention. A caller that needs to know
+        # if it is looking at a fact or a guess can ask.
+        "authorization_endpoint": endpoint,
+        "endpoints_discovered": bool(endpoint_discovery.get("endpoints_discovered")),
+        "endpoints_are_conventional": bool(
+            endpoint_discovery.get("endpoints_are_conventional")
+        ),
         "client_id_configured": client_id_configured,
         "redirect_uri_configured": redirect_uri_configured,
         "scope": scope,

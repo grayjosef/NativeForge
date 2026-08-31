@@ -100,6 +100,14 @@ APPROVED_NETWORK_SITES: tuple[ApprovedSite, ...] = (
         "allow_network defaults False; https enforced before the request",
     ),
     ApprovedSite(
+        "oidc_provider_discovery_service",
+        "the issuer's own /.well-known/openid-configuration, so endpoints are "
+        "read rather than guessed (Gate 130)",
+        "allow_network defaults False; https enforced before the request; the "
+        "only URL reachable is the configured issuer's discovery document, "
+        "which carries no credential and returns no user data",
+    ),
+    ApprovedSite(
         "feedback_slack_alert_service",
         "operational alert webhook",
         "live_network_guard_service (purpose=operational_alert); "

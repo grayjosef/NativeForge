@@ -1,0 +1,35 @@
+{
+  "attempted": false,
+  "blocked_reasons": [
+    "callback_url_does_not_match_a_route",
+    "dev_header_still_in_place",
+    "owner_authorization_absent",
+    "provider_configuration_missing",
+    "role_mapping_not_validated",
+    "secret_configuration_missing",
+    "signing_key_not_fit_to_sign"
+  ],
+  "callback_reached_api": false,
+  "callback_validation_result": "not_attempted",
+  "cookies_recorded": false,
+  "current_user_result": "401_unauthenticated_local",
+  "customer_auth_live": false,
+  "fake_bindings_created": false,
+  "fake_sessions_created": false,
+  "fake_users_created": false,
+  "identity_email_domain_redacted": null,
+  "identity_validated": false,
+  "login_live": false,
+  "org_binding_status": "no_identity_to_bind",
+  "provider_redirect_occurred": false,
+  "raw_pkce_verifier_recorded": false,
+  "raw_state_recorded": false,
+  "reasons": [
+    "no_google_oauth_client_exists",
+    "no_provider_env_values_configured",
+    "google_account_authentication_is_the_owner_s_to_perform"
+  ],
+  "result": "not_attempted",
+  "session_created": false,
+  "tokens_recorded": false
+}

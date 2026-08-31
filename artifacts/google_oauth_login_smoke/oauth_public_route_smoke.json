@@ -1,0 +1,26 @@
+{
+  "access_policy_changed_by_this_gate": false,
+  "broader_api_bypass_created": false,
+  "interpretation": {
+    "/": "302 to Cloudflare Access - demo stays protected",
+    "/api/auth/callback": "200 from the NativeForge API - an existing Access bypass is scoped to this one path, which is what an OAuth redirect needs",
+    "/api/auth/callback/": "307 from FastAPI's trailing-slash redirect back to the no-slash path. Register the no-slash form with the provider.",
+    "/api/auth/login": "302 to Cloudflare Access - login must be started from a browser that already holds an Access session for this host"
+  },
+  "local_routes": {
+    "/api/auth/callback": 200,
+    "/api/auth/current-user": 401,
+    "/api/auth/login": 200,
+    "/api/auth/session": 200,
+    "/backend/health": 200
+  },
+  "public_origin": "https://nf-dev.mayhem-nc.dev",
+  "public_routes": {
+    "/": 302,
+    "/?view=sc_customer_demo": 302,
+    "/api/auth/callback": 200,
+    "/api/auth/callback/": 307,
+    "/api/auth/current-user": 302,
+    "/api/auth/login": 302
+  }
+}

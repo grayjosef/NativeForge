@@ -1,0 +1,41 @@
+{
+  "audience_note": "Google's ID token aud claim is the OAuth client id, so OIDC_AUDIENCE takes the same value as OIDC_CLIENT_ID. Google ignores an audience parameter on the authorization request; it is an Auth0 extension.",
+  "callback_route_path": "/api/auth/callback",
+  "callback_url": "https://nf-dev.mayhem-nc.dev/api/auth/callback",
+  "callback_url_has_trailing_slash": false,
+  "client_secret_recorded": false,
+  "endpoints_offline": {
+    "available": false,
+    "blocked_reasons": [
+      "issuer_does_not_follow_the_conventional_shape:https://accounts.google.com"
+    ],
+    "conventional": false,
+    "discovered": false
+  },
+  "env_key_names": [
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+    "NF_PUBLIC_ORIGIN",
+    "NF_SESSION_SIGNING_KEY"
+  ],
+  "env_key_presence": {
+    "NF_PUBLIC_ORIGIN": false,
+    "NF_SESSION_SIGNING_KEY": false,
+    "OIDC_AUDIENCE": false,
+    "OIDC_CALLBACK_URL": false,
+    "OIDC_CLIENT_ID": false,
+    "OIDC_CLIENT_SECRET": false,
+    "OIDC_ISSUER": false
+  },
+  "env_keys_present_count": 0,
+  "env_values_recorded": false,
+  "issuer_expected": "https://accounts.google.com",
+  "logout_note": "Google's discovery document publishes no end_session_endpoint, so there is no RP-initiated logout and OIDC_LOGOUT_URL stays unset.",
+  "oauth_client_blocker": "creating the client requires the Google Cloud console under the owner's account, and the client secret is displayed there. Neither the account authentication nor the secret transcription is something this agent performs.",
+  "oauth_client_created": false,
+  "provider": "google_oidc",
+  "public_origin": "https://nf-dev.mayhem-nc.dev"
+}
