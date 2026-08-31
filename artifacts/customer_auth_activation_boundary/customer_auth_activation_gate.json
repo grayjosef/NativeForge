@@ -2,7 +2,6 @@
   "activation_allowed": false,
   "activation_blocker_names": [
     "callback_url_does_not_match_a_route",
-    "database_revision_not_applied",
     "dev_header_still_in_place",
     "owner_authorization_absent",
     "provider_configuration_missing",
@@ -12,7 +11,7 @@
   ],
   "activation_blockers": {
     "callback_url_does_not_match_a_route": true,
-    "database_revision_not_applied": true,
+    "database_revision_not_applied": false,
     "dev_header_still_in_place": true,
     "owner_authorization_absent": true,
     "provider_configuration_missing": true,
@@ -124,7 +123,7 @@
       "gate": "owner_approval"
     }
   ],
-  "operator_actionable_blocker_count": 8,
+  "operator_actionable_blocker_count": 7,
   "org_binding_passed": false,
   "organization_id_resolution_available": true,
   "owner_approval_present": false,

@@ -37784,21 +37784,13 @@
         }
       },
       "config": {
-        "allowed_logout_urls": [
-          "http://localhost:5173/auth/logout"
-        ],
-        "allowed_origins": [
-          "http://localhost:5173",
-          "http://127.0.0.1:5173"
-        ],
-        "allowed_redirect_uris": [
-          "http://localhost:5173/auth/callback"
-        ],
-        "allowed_web_origins": [
-          "http://localhost:5173"
-        ],
+        "allowed_logout_urls": [],
+        "allowed_origins": [],
+        "allowed_redirect_uris": [],
+        "allowed_web_origins": [],
         "audience": null,
-        "callback_url": "http://localhost:5173/auth/callback",
+        "callback_route_path": "/api/auth/callback",
+        "callback_url": null,
         "client_id_present": false,
         "client_secret_present": false,
         "client_secret_value": null,
@@ -37813,9 +37805,10 @@
         "issuer_url": null,
         "jwks_url": null,
         "login_live_claimed": false,
-        "logout_url": "http://localhost:5173/auth/logout",
+        "logout_url": null,
         "production_auth_claimed": false,
         "provider_type": "auth0_oidc",
+        "public_origin_configured": false,
         "schema_version": "nf_oidc_config_schema_v1",
         "scopes": [
           "openid",
@@ -38150,21 +38143,13 @@
       "Do not claim login_live until callback + session validated"
     ],
     "oidc_config": {
-      "allowed_logout_urls": [
-        "http://localhost:5173/auth/logout"
-      ],
-      "allowed_origins": [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173"
-      ],
-      "allowed_redirect_uris": [
-        "http://localhost:5173/auth/callback"
-      ],
-      "allowed_web_origins": [
-        "http://localhost:5173"
-      ],
+      "allowed_logout_urls": [],
+      "allowed_origins": [],
+      "allowed_redirect_uris": [],
+      "allowed_web_origins": [],
       "audience": null,
-      "callback_url": "http://localhost:5173/auth/callback",
+      "callback_route_path": "/api/auth/callback",
+      "callback_url": null,
       "client_id_present": false,
       "client_secret_present": false,
       "client_secret_value": null,
@@ -38179,9 +38164,10 @@
       "issuer_url": null,
       "jwks_url": null,
       "login_live_claimed": false,
-      "logout_url": "http://localhost:5173/auth/logout",
+      "logout_url": null,
       "production_auth_claimed": false,
       "provider_type": "auth0_oidc",
+      "public_origin_configured": false,
       "schema_version": "nf_oidc_config_schema_v1",
       "scopes": [
         "openid",
@@ -38366,7 +38352,7 @@
       ],
       "collaboration_matching_claimed": false,
       "collaboration_status": "dark_off",
-      "current_head": "fb6687b",
+      "current_head": "267516c",
       "customer_data_persistence_claimed": false,
       "customer_next_actions": [
         "Provide missing org evidence when durable upload path is approved",
@@ -38587,7 +38573,7 @@
         "Review evidence intake storage proposal before any migration",
         "Keep collaboration and final export OFF"
       ],
-      "operator_readiness_id": "or_95692e73e276bda8",
+      "operator_readiness_id": "or_483699908943828e",
       "package_readiness_reference": "package_readiness_queue",
       "pen_test_passed_claimed": false,
       "pen_test_readiness_reference": "docs/operations/152_PEN_TEST_READINESS_REPORT.md",

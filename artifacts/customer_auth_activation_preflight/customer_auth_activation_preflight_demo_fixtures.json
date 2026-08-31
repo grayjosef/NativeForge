@@ -2,7 +2,6 @@
   "declaration": {
     "activation_blocker_names": [
       "callback_url_does_not_match_a_route",
-      "database_revision_not_applied",
       "dev_header_still_in_place",
       "owner_authorization_absent",
       "provider_configuration_missing",
@@ -16,7 +15,7 @@
     "callback_url_ready_actual": false,
     "customer_auth_live": false,
     "customer_persistence_live": false,
-    "database_revision_ready_actual": false,
+    "database_revision_ready_actual": true,
     "login_live": false,
     "missing_auth_gates": [
       "provider_configured",

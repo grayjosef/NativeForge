@@ -181,9 +181,35 @@ def test_network_validation_is_off_in_the_actual_environment():
 # ------------------------------------------------- callback correctness
 
 
-def test_the_configured_callback_points_at_no_route_today():
-    """Gate 121A's finding, pinned so a fix is noticed."""
+def test_an_unconfigured_environment_reports_no_callback(monkeypatch):
+    """Gate 121A pinned its finding here; Gate 128C fixed the finding.
+
+    The callback was a frozen literal pointing at a path no route served, and
+    `callback_url_configured` was true for it. Pinning that state was right
+    while it was the state -- this test failed the moment it stopped being true,
+    which is what a pin is for.
+
+    What replaces it is the rule rather than the state: an environment that
+    configures nothing reports nothing, and does not report a mismatch it has no
+    URL to mismatch with.
+    """
+    for key in ("OIDC_CALLBACK_URL", "NF_PUBLIC_ORIGIN"):
+        monkeypatch.delenv(key, raising=False)
     result = pre_svc.build_environment_preflight()
+    assert result["callback_url_configured"] is False
+    assert result["callback_url_redacted"] == ""
+    assert "no_callback_url_configured" in result["blocked_reasons"]
+    assert (
+        "callback_url_path_does_not_match_any_callback_route"
+        not in result["blocked_reasons"]
+    )
+
+
+def test_a_configured_callback_on_the_wrong_path_still_blocks():
+    """The mismatch detection must survive the literal's removal."""
+    result = pre_svc.build_environment_preflight(
+        configured_callback_url="https://app.example.test/auth/callback",
+    )
     assert result["callback_url_configured"] is True
     assert result["callback_path_matches_route"] is False
     assert (
@@ -314,18 +340,40 @@ def test_the_actual_environment_is_not_auth_live():
 
 def test_the_activation_gate_names_its_blockers_by_operator_action():
     gate = gate_svc.build_customer_auth_activation_gate()
-    assert gate["operator_actionable_blocker_count"] == 8
     for name in (
         "provider_configuration_missing",
         "secret_configuration_missing",
         "signing_key_not_fit_to_sign",
-        "database_revision_not_applied",
         "callback_url_does_not_match_a_route",
         "role_mapping_not_validated",
         "dev_header_still_in_place",
         "owner_authorization_absent",
     ):
         assert name in gate["activation_blocker_names"], name
+    assert gate["operator_actionable_blocker_count"] == len(
+        gate["activation_blocker_names"]
+    )
+
+
+def test_the_database_blocker_tracks_the_database_rather_than_a_constant():
+    """Gate 128 found this blocker could not clear whatever was applied.
+
+    `_detect_database_revision` asked Gate 113's decision service, which takes
+    the revision as an argument defaulting to None that nobody supplied, so
+    `migration_applied` was False for every database that has ever existed.
+    Both branches are asserted here so neither can become a constant again.
+    """
+    unmigrated = pre_svc.build_environment_preflight(database_revision="")
+    gate = gate_svc.build_customer_auth_activation_gate(
+        environment_preflight=unmigrated
+    )
+    assert "database_revision_not_applied" in gate["activation_blocker_names"]
+
+    migrated = pre_svc.build_environment_preflight(
+        database_revision=pre_svc.REQUIRED_DATABASE_REVISION
+    )
+    gate = gate_svc.build_customer_auth_activation_gate(environment_preflight=migrated)
+    assert "database_revision_not_applied" not in gate["activation_blocker_names"]
 
 
 def test_a_preflight_cannot_activate_anything():
@@ -344,7 +392,10 @@ def test_customer_persistence_stays_false():
     decision = spine_svc.build_persistence_spine_decision()
     assert decision["customer_persistence_live"] is False
     assert decision["verified_operational_binding"] is False
-    assert len(decision["auth_activation_blocker_names"]) == 8
+    # Not a count. Gate 128 cleared one of these by applying migrations, and a
+    # pinned total makes the next real clearance look like a regression.
+    assert decision["auth_activation_blocker_names"]
+    assert "provider_configuration_missing" in decision["auth_activation_blocker_names"]
     assert (
         decision["next_gate_recommendation"]["recommendation"]
         == "customer_authentication"
@@ -416,8 +467,27 @@ def test_the_runbook_carries_no_environment_value():
 def test_the_runbook_blocks_on_what_the_gate_blocks_on():
     book = runbook_svc.build_activation_runbook()
     assert book["blocking_item_count"] > 0
-    assert book["done_item_count"] == 0
     assert book["customer_auth_live"] is False
+
+
+def test_the_runbook_marks_work_done_once_it_is_actually_done():
+    """`done_item_count == 0` was true only while nothing had been done.
+
+    Gate 128 applied the runtime migrations, so one item is done and the
+    checklist has to be able to say so -- a runbook that can only ever report
+    zero progress is not tracking anything.
+    """
+    unmigrated = runbook_svc.build_activation_runbook(
+        preflight=pre_svc.build_environment_preflight(database_revision="")
+    )
+    migrated = runbook_svc.build_activation_runbook(
+        preflight=pre_svc.build_environment_preflight(
+            database_revision=pre_svc.REQUIRED_DATABASE_REVISION
+        )
+    )
+    assert migrated["done_item_count"] > unmigrated["done_item_count"]
+    assert migrated["customer_auth_live"] is False
+    assert migrated["blocking_item_count"] > 0
 
 
 # ------------------------------------------------- the fixture set

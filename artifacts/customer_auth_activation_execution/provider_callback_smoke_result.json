@@ -1,0 +1,27 @@
+{
+  "attempted": false,
+  "cookies_recorded": false,
+  "evidence": {
+    "api_process_running": false,
+    "listening_ports": [
+      "127.0.0.1:5175 (node/vite)",
+      "20242 (cloudflared metrics)"
+    ],
+    "port_8000_bound": false,
+    "public_origin_serves": "frontend/dist as static files",
+    "tunnel_target": "http://127.0.0.1:5175"
+  },
+  "pkce_verifier_recorded": false,
+  "preconditions_unmet": [
+    "no identity provider configured",
+    "no session signing key",
+    "no API process running",
+    "tunnel points at the static preview, not at an API",
+    "owner authorization absent"
+  ],
+  "reason": "no_api_process_serving_the_callback_route",
+  "result": "not_attempted",
+  "schema_version": "nf_gate128_callback_smoke_v1",
+  "state_recorded": false,
+  "tokens_logged": false
+}

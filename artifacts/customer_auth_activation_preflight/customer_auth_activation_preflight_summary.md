@@ -42,7 +42,7 @@ production_sessions_created                 0
 ## The defect this gate found
 
 ```text
-configured callback   http://localhost:5173/auth/callback
+configured callback   
 API callback route    /api/auth/callback
 frontend route        none - the frontend declares no routes
 ```
@@ -57,7 +57,6 @@ problem rather than a configuration one.
 
 ```text
 callback_url_does_not_match_a_route
-database_revision_not_applied
 dev_header_still_in_place
 owner_authorization_absent
 provider_configuration_missing
@@ -86,8 +85,8 @@ session_signing_key_ready
 
 ```text
 items                    28
-blocking activation      16
-already done             0
+blocking activation      15
+already done             1
 prohibited (do not do)   6
 commands secret-safe     true
 ```

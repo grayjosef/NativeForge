@@ -3,7 +3,6 @@
     "acceptance_inferred_from_document": false,
     "activation_blocker_names": [
       "callback_url_does_not_match_a_route",
-      "database_revision_not_applied",
       "dev_header_still_in_place",
       "owner_authorization_absent",
       "provider_configuration_missing",

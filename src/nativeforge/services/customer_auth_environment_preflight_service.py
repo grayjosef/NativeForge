@@ -178,21 +178,55 @@ def _detect_environment(app_env: Any) -> str:
     return name if name in ENVIRONMENT_NAMES else "unknown"
 
 
+def _read_runtime_database_revision() -> str:
+    """The revision the configured database reports, or an empty string.
+
+    Gate 128. This read did not exist. `_detect_database_revision` asked Gate
+    113's decision service for `migration_applied`, and that service takes the
+    database revision as an argument defaulting to None which no caller ever
+    supplied -- so it answered False for every database that has ever existed,
+    and the blocker could not clear however many migrations had been applied.
+
+    Reads only. Never migrates, never writes, and returns "" rather than raising
+    if there is no database, no table, or no connection -- absent must report as
+    absent and never as ready.
+    """
+    try:
+        import sqlalchemy as sa
+
+        from nativeforge.lib.settings import get_settings
+
+        engine = sa.create_engine(get_settings().database_url)
+        try:
+            with engine.connect() as conn:
+                row = conn.execute(
+                    sa.text("SELECT version_num FROM alembic_version")
+                ).first()
+        finally:
+            engine.dispose()
+    except Exception:
+        return ""
+    if row is None:
+        return ""
+    return str(row[0] or "").strip().split()[0] if str(row[0] or "").strip() else ""
+
+
 def _detect_database_revision() -> str:
     """Which revision a runtime database has applied, or an empty string.
 
-    Detected through Gate 113's decision service, which already answers this and
-    already refuses to open a connection it does not have. Duplicating the
-    detection here is how the two would come to disagree.
+    The rule for what counts as applied stays in Gate 113's decision service --
+    duplicating the rule here is how the two would come to disagree. What this
+    supplies is the fact that service was missing.
     """
     from nativeforge.services.tenant_customer_org_binding_store_decision_service import (  # noqa: E501
         build_binding_store_decision,
     )
 
-    decision = build_binding_store_decision()
+    live = _read_runtime_database_revision()
+    decision = build_binding_store_decision(database_revision=live or None)
     if not decision.get("migration_applied"):
         return ""
-    return str(decision.get("database_revision") or "")
+    return live
 
 
 def build_environment_preflight(

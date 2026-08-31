@@ -1,0 +1,283 @@
+{
+  "activation_gate": {
+    "activation_allowed": false,
+    "activation_blocker_names": [
+      "callback_url_does_not_match_a_route",
+      "dev_header_still_in_place",
+      "owner_authorization_absent",
+      "provider_configuration_missing",
+      "role_mapping_not_validated",
+      "secret_configuration_missing",
+      "signing_key_not_fit_to_sign"
+    ],
+    "audience_configured": false,
+    "blocked_reasons": [
+      "auth_gate_not_satisfied:audience_configured",
+      "auth_gate_not_satisfied:callback_session_validated",
+      "auth_gate_not_satisfied:dev_header_disabled_for_production",
+      "auth_gate_not_satisfied:invite_binding_passed",
+      "auth_gate_not_satisfied:issuer_configured",
+      "auth_gate_not_satisfied:issuer_jwks_validated",
+      "auth_gate_not_satisfied:org_binding_passed",
+      "auth_gate_not_satisfied:provider_configured",
+      "auth_gate_not_satisfied:role_mapping_passed",
+      "auth_gate_not_satisfied:secret_present",
+      "auth_gate_not_satisfied:session_signing_key_ready",
+      "issuer_jwks_unvalidated_no_network_check_performed",
+      "owner_has_not_authorized_customer_auth_activation"
+    ],
+    "callback_route_available": true,
+    "callback_session_validated": false,
+    "current_org_id_set": false,
+    "customer_auth_live": false,
+    "dev_header_disabled_for_production": false,
+    "fabricated": false,
+    "identity_provider_contacted": false,
+    "invite_binding_passed": false,
+    "issuer_configured": false,
+    "issuer_jwks_network_check_performed": false,
+    "issuer_jwks_validated": false,
+    "login_live": false,
+    "membership_verification_available": true,
+    "missing_auth_gates": [
+      "provider_configured",
+      "secret_present",
+      "issuer_configured",
+      "issuer_jwks_validated",
+      "audience_configured",
+      "callback_session_validated",
+      "invite_binding_passed",
+      "org_binding_passed",
+      "role_mapping_passed",
+      "dev_header_disabled_for_production",
+      "session_signing_key_ready"
+    ],
+    "missing_login_gates": [
+      "provider_configured",
+      "secret_present",
+      "issuer_configured",
+      "issuer_jwks_validated",
+      "audience_configured",
+      "callback_session_validated",
+      "org_binding_passed",
+      "role_mapping_passed",
+      "session_signing_key_ready"
+    ],
+    "network_calls": false,
+    "next_required_actions": [
+      {
+        "action": "owner sets the OIDC_* environment variables out-of-band; this gate never stores or receives them",
+        "gate": "provider_configured"
+      },
+      {
+        "action": "owner supplies OIDC_CLIENT_SECRET out-of-band; presence is detected, the value is never read into any output",
+        "gate": "secret_present"
+      },
+      {
+        "action": "owner sets OIDC_ISSUER",
+        "gate": "issuer_configured"
+      },
+      {
+        "action": "run the existing live validation path once configuration exists; no network check happens before then, so this is unvalidated rather than failed",
+        "gate": "issuer_jwks_validated"
+      },
+      {
+        "action": "owner sets OIDC_AUDIENCE",
+        "gate": "audience_configured"
+      },
+      {
+        "action": "validate a real callback and session once the route exists",
+        "gate": "callback_session_validated"
+      },
+      {
+        "action": "validate invite binding against a real flow",
+        "gate": "invite_binding_passed"
+      },
+      {
+        "action": "validate that a verified claim resolves to an organization_id and a membership record - Gate 112's contract, exercised for real",
+        "gate": "org_binding_passed"
+      },
+      {
+        "action": "configure provider roles and map them explicitly; unknown roles grant nothing by design",
+        "gate": "role_mapping_passed"
+      },
+      {
+        "action": "replace X-NF-Org-Id with an authenticated claim, then disable it; 15 route modules depend on it today",
+        "gate": "dev_header_disabled_for_production"
+      },
+      {
+        "action": "owner supplies NF_SESSION_SIGNING_KEY out-of-band from an environment or a secret manager; the committed local_dev_fixture key may never sign a production session - Gate 119B",
+        "gate": "session_signing_key_ready"
+      },
+      {
+        "action": "owner sets NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL out-of-band. Every gate passing is necessary and not sufficient: configuration arriving in an environment is not a decision to expose a login page to real Tribes.",
+        "gate": "owner_approval"
+      }
+    ],
+    "operator_actionable_blocker_count": 7,
+    "org_binding_passed": false,
+    "organization_id_resolution_available": true,
+    "owner_approval_present": false,
+    "provider_configured": false,
+    "real_sessions_created": false,
+    "real_users_created": false,
+    "rls_claim_guard_available": true,
+    "role_mapping_passed": false,
+    "secret_present": false,
+    "secret_value_emitted": false,
+    "secrets_stored": false,
+    "session_cookie_policy_available": true,
+    "session_signing_key_ready": false
+  },
+  "callback": {
+    "callback_path_matches_route": false,
+    "callback_route_path": "/api/auth/callback",
+    "configured_callback_redacted": "",
+    "frozen_literal_removed": true,
+    "now_derived_from": [
+      "OIDC_CALLBACK_URL",
+      "NF_PUBLIC_ORIGIN + CALLBACK_ROUTE_PATH"
+    ]
+  },
+  "claims_refused": {
+    "browser_callback_smoke_performed": false,
+    "customer_auth_live": false,
+    "login_live": false,
+    "provider_contacted": false,
+    "real_sessions_created": false,
+    "real_users_created": false,
+    "verified_binding_created": false
+  },
+  "environment_key_presence": {
+    "NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL": false,
+    "NF_PUBLIC_ORIGIN": false,
+    "NF_SESSION_SIGNING_KEY": false,
+    "OIDC_AUDIENCE": false,
+    "OIDC_CALLBACK_URL": false,
+    "OIDC_CLIENT_ID": false,
+    "OIDC_CLIENT_SECRET": false,
+    "OIDC_ISSUER": false
+  },
+  "environment_values_recorded": false,
+  "preflight": {
+    "activation_performed": false,
+    "blocked_reasons": [
+      "dev_header_must_be_replaced_before_production_auth",
+      "network_validation_not_allowed_so_nothing_checked",
+      "no_callback_url_configured",
+      "no_public_origin_configured_to_compare_against",
+      "owner_has_not_authorized_customer_auth_activation",
+      "provider_environment_incomplete",
+      "secret_environment_incomplete",
+      "session_cookie_policy_not_production_safe",
+      "signing_key_not_fit_to_sign:source=missing"
+    ],
+    "callback_path_matches_route": false,
+    "callback_url_configured": false,
+    "callback_url_matches_public_origin": false,
+    "customer_auth_live": false,
+    "database_revision_ready": true,
+    "dev_header_production_blocker": true,
+    "dev_header_replacement_available": true,
+    "dev_header_route_module_count": 14,
+    "dev_header_route_modules": [
+      "activation_routes.py",
+      "form_package_routes.py",
+      "grant_spark_routes.py",
+      "nofo_extraction_routes.py",
+      "operator_workbench_advisory_routes.py",
+      "opportunity_discovery_routes.py",
+      "pursuit_brief_routes.py",
+      "pursuit_routes.py",
+      "source_ingestion_routes.py",
+      "spark_scoring_routes.py",
+      "sprint0_routes.py",
+      "stage12_guided_demo_routes.py",
+      "tribal_profile_routes.py",
+      "trust_routes.py"
+    ],
+    "environment_mutated": false,
+    "login_live": false,
+    "network_calls": false,
+    "network_validation_allowed": false,
+    "next_required_actions": [
+      "replace X-NF-Org-Id across 14 route modules, then disable it",
+      "set NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL once every step above is done - it is a signature, not a switch",
+      "set NF_PUBLIC_ORIGIN to the origin browsers will actually reach, so the callback can be checked against it",
+      "set the missing provider keys out-of-band: OIDC_AUDIENCE, OIDC_CLIENT_ID, OIDC_ISSUER",
+      "supply the missing secrets from a secret manager: NF_SESSION_SIGNING_KEY, OIDC_CLIENT_SECRET"
+    ],
+    "provider_contacted": false,
+    "provider_env_missing_keys": [
+      "OIDC_AUDIENCE",
+      "OIDC_CLIENT_ID",
+      "OIDC_ISSUER"
+    ],
+    "provider_env_present": false,
+    "provider_validation_attempted": false,
+    "provider_validation_passed": false,
+    "public_origin_configured": false,
+    "secret_env_missing_keys": [
+      "NF_SESSION_SIGNING_KEY",
+      "OIDC_CLIENT_SECRET"
+    ],
+    "secret_env_present": false,
+    "secret_values_exposed": false,
+    "session_cookie_production_safe": false,
+    "signing_key_present": false
+  },
+  "provider_readiness": {
+    "audience_configured": false,
+    "authorization_endpoint_configured": false,
+    "blocked_reasons": [
+      "jwks_network_check_not_allowed_so_unvalidated",
+      "provider_gate_not_satisfied:audience_configured",
+      "provider_gate_not_satisfied:authorization_endpoint_configured",
+      "provider_gate_not_satisfied:callback_route_matches_redirect_uri",
+      "provider_gate_not_satisfied:client_id_configured",
+      "provider_gate_not_satisfied:client_secret_present",
+      "provider_gate_not_satisfied:issuer_configured",
+      "provider_gate_not_satisfied:jwks_uri_configured",
+      "provider_gate_not_satisfied:redirect_uri_configured",
+      "provider_gate_not_satisfied:token_endpoint_configured"
+    ],
+    "callback_route_available": true,
+    "callback_route_matches_redirect_uri": false,
+    "client_id_configured": false,
+    "client_secret_present": false,
+    "client_secret_value_emitted": false,
+    "customer_auth_live": false,
+    "issuer_configured": false,
+    "jwks_network_check_allowed": false,
+    "jwks_network_check_attempted": false,
+    "jwks_uri_configured": false,
+    "jwks_validated": false,
+    "login_live": false,
+    "missing_provider_gates": [
+      "issuer_configured",
+      "client_id_configured",
+      "client_secret_present",
+      "authorization_endpoint_configured",
+      "token_endpoint_configured",
+      "jwks_uri_configured",
+      "audience_configured",
+      "redirect_uri_configured",
+      "callback_route_matches_redirect_uri"
+    ],
+    "network_calls": false,
+    "next_required_actions": [
+      "confirm the redirect URI is reachable from a browser on the public internet - this service cannot test that and does not claim to",
+      "run the JWKS check deliberately, under review, once the issuer is configured - it is the only step here that touches the network",
+      "set OIDC_AUDIENCE out-of-band",
+      "set OIDC_CLIENT_ID out-of-band",
+      "set OIDC_ISSUER out-of-band",
+      "supply OIDC_CLIENT_SECRET from a secret manager; presence is detected and the value is never read"
+    ],
+    "provider_called": false,
+    "provider_ready": false,
+    "redirect_uri_configured": false,
+    "redirect_uri_publicly_reachable_claimed": false,
+    "token_endpoint_configured": false
+  },
+  "schema_version": "nf_gate128_activation_matrix_v1"
+}

@@ -1,7 +1,7 @@
 {
   "activation_performed": false,
   "all_commands_secret_safe": true,
-  "blocking_item_count": 16,
+  "blocking_item_count": 15,
   "blocking_item_ids": [
     "env.provider",
     "env.secret",
@@ -9,7 +9,6 @@
     "provider.application",
     "provider.redirect_uri",
     "provider.jwks",
-    "db.migrate",
     "db.rls_proof",
     "security.dev_header",
     "security.cookie_policy",
@@ -21,7 +20,7 @@
     "binding.verifier_identity"
   ],
   "customer_auth_live": false,
-  "done_item_count": 0,
+  "done_item_count": 1,
   "environment_mutated": false,
   "item_count": 28,
   "items": {
@@ -59,14 +58,12 @@
     ],
     "database": [
       {
-        "blocked_reasons": [
-          "database_not_at_revision_0030"
-        ],
+        "blocked_reasons": [],
         "blocks_activation": true,
         "item_id": "db.migrate",
         "owner": "operator",
         "risk": "high",
-        "status": "blocked",
+        "status": "done",
         "title": "Apply migrations to the runtime database, to head 0030",
         "verification_command": "uv run alembic current 2>/tmp/nf_alembic_current.err | tail -1; echo stderr=/tmp/nf_alembic_current.err"
       },

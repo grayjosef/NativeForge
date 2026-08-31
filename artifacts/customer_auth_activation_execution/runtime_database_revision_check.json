@@ -1,0 +1,42 @@
+{
+  "all_required_tables_present": true,
+  "current_revision": "0035",
+  "database_identity": {
+    "ambiguous": false,
+    "credentials_present": false,
+    "file_name": "nativeforge.local.db",
+    "gitignored": true,
+    "scheme": "sqlite+pysqlite"
+  },
+  "database_url_source": "DATABASE_URL, from .env (value not recorded)",
+  "migration_applied": true,
+  "migration_needed": false,
+  "repair_applied": {
+    "backup_file": "~/nativeforge-backups/nativeforge.local.db.gate128.bak (outside the repo)",
+    "steps": [
+      "add organizations.created_at with a constant default",
+      "stamp alembic_version to 0025",
+      "alembic upgrade head"
+    ],
+    "verified_on_copy_first": true
+  },
+  "rows_written_to_customer_tables": 0,
+  "state_before": {
+    "consistent_with_revision": false,
+    "current_revision": "0024",
+    "inconsistency": "migration 0025 was half applied: display_name and seat_cap present, created_at absent, version table still 0024",
+    "plain_upgrade_error": "duplicate column name: display_name",
+    "plain_upgrade_succeeds": false
+  },
+  "tables_verified": {
+    "nf_auth_redirect_states": true,
+    "nf_award_documents": true,
+    "nf_award_requirement_proof_events": true,
+    "nf_award_requirements": true,
+    "nf_awarded_grants": true,
+    "nf_tenant_beta_profiles": true,
+    "nf_tenant_customer_org_bindings": true
+  },
+  "target_head": "0035",
+  "total_tables": 35
+}

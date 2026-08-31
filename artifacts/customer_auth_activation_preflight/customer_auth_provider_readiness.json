@@ -11,6 +11,7 @@
     "provider_gate_not_satisfied:client_secret_present",
     "provider_gate_not_satisfied:issuer_configured",
     "provider_gate_not_satisfied:jwks_uri_configured",
+    "provider_gate_not_satisfied:redirect_uri_configured",
     "provider_gate_not_satisfied:token_endpoint_configured"
   ],
   "callback_route_available": true,
@@ -36,12 +37,12 @@
     "token_endpoint_configured",
     "jwks_uri_configured",
     "audience_configured",
+    "redirect_uri_configured",
     "callback_route_matches_redirect_uri"
   ],
   "network_calls": false,
   "next_required_actions": [
     "confirm the redirect URI is reachable from a browser on the public internet - this service cannot test that and does not claim to",
-    "point the redirect URI at a path that can consume a callback - the API route is /api/auth/callback - and register the same value in the provider console",
     "run the JWKS check deliberately, under review, once the issuer is configured - it is the only step here that touches the network",
     "set OIDC_AUDIENCE out-of-band",
     "set OIDC_CLIENT_ID out-of-band",
@@ -50,9 +51,9 @@
   ],
   "provider_called": false,
   "provider_ready": false,
-  "redirect_uri_configured": true,
+  "redirect_uri_configured": false,
   "redirect_uri_publicly_reachable_claimed": false,
-  "redirect_uri_redacted": "http://localhost:5173/auth/callback",
+  "redirect_uri_redacted": "",
   "schema_version": "nf_customer_auth_provider_readiness_v1",
   "token_endpoint_configured": false,
   "token_endpoint_redacted": ""
