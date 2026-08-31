@@ -325,18 +325,18 @@
       "request": {
         "auth_principal_status": "authenticated_verified_org",
         "binding_status": "verified_binding",
-        "operation": "write_award_requirement",
+        "operation": "write_digest_record",
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "persistence_capability": {
           "blocked_reasons": [
             "no_repository_can_address_this_capability",
-            "no_table_declares_this_capability:nf_award_requirements"
+            "no_table_declares_this_capability:nf_tenant_digest_records"
           ],
-          "capability": "award_requirements_persistence",
+          "capability": "tenant_digest_persistence",
           "customer_auth_live": true,
           "customer_auth_required": true,
           "demo_only": false,
-          "expected_table": "nf_award_requirements",
+          "expected_table": "nf_tenant_digest_records",
           "fabricated": false,
           "live_fetch_performed": false,
           "operational": false,
@@ -355,7 +355,7 @@
           "write_path_available": false
         }
       },
-      "why": "auth forced live and everything else correct - and still refused, because there is no table to write into. Gate 124 moved this case from awarded grants to award requirements, which is the half that still has none"
+      "why": "auth forced live and everything else correct - and still refused, because there is no table to write into. Which lane that is follows the capability model: Gate 124 and Gate 125 each built the one this case used to name"
     }
   ],
   "cases_disagreeing_with_expectation": [],
@@ -665,9 +665,9 @@
         "binding_required": false,
         "binding_status": "verified_binding",
         "blocked_reasons": [
-          "no_rls_policy_for:award_requirements_persistence",
-          "no_schema_for:award_requirements_persistence",
-          "no_write_path_for:award_requirements_persistence"
+          "no_rls_policy_for:tenant_digest_persistence",
+          "no_schema_for:tenant_digest_persistence",
+          "no_write_path_for:tenant_digest_persistence"
         ],
         "cross_tenant_risk": true,
         "customer_auth_live": true,
@@ -678,11 +678,11 @@
         "human_review_required": true,
         "identities_assumed_equivalent": false,
         "live_fetch_performed": false,
-        "operation": "write_award_requirement",
+        "operation": "write_digest_record",
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "organization_profile_id": null,
         "persisted": false,
-        "persistence_capability": "award_requirements_persistence",
+        "persistence_capability": "tenant_digest_persistence",
         "read_allowed": false,
         "real_customer_data": false,
         "rls_anchor": "organization_id",
@@ -926,9 +926,9 @@
       "binding_required": false,
       "binding_status": "verified_binding",
       "blocked_reasons": [
-        "no_rls_policy_for:award_requirements_persistence",
-        "no_schema_for:award_requirements_persistence",
-        "no_write_path_for:award_requirements_persistence"
+        "no_rls_policy_for:tenant_digest_persistence",
+        "no_schema_for:tenant_digest_persistence",
+        "no_write_path_for:tenant_digest_persistence"
       ],
       "case": "missing_capability_schema",
       "cross_tenant_risk": true,
@@ -939,9 +939,9 @@
       "fixture_label": "demo_fixture",
       "forges_customer_auth": true,
       "human_review_required": true,
-      "operation": "write_award_requirement",
+      "operation": "write_digest_record",
       "organization_id": "00000000-0000-4000-8000-000000000114",
-      "persistence_capability": "award_requirements_persistence",
+      "persistence_capability": "tenant_digest_persistence",
       "read_allowed": false,
       "rls_compatible": true,
       "write_allowed": false

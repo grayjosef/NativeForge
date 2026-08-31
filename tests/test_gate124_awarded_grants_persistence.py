@@ -810,11 +810,30 @@ def test_the_repository_is_detected_by_import_rather_than_by_filename():
     assert not Path("src/nativeforge/repositories/awarded_grants.py").exists()
 
 
-def test_the_award_requirements_lane_is_untouched_by_this_gate():
-    lane = cap_svc.build_capability("award_requirements_persistence")
-    assert lane["schema_available"] is False
-    assert lane["write_path_available"] is False
-    assert lane["operational"] is False
+def test_awards_and_requirements_are_separate_lanes_with_separate_tables():
+    """Gate 124 asserted the requirements lane had nothing. Gate 125 built it.
+
+    What Gate 124 actually guaranteed, and what survives, is the separation:
+    an award and a requirement are different objects in different tables, and
+    building one does not build the other. That is the durable claim, so it is
+    the one asserted here - the previous version recorded which week it was.
+    """
+    awards = cap_svc.build_capability("awarded_grants_persistence")
+    requirements = cap_svc.build_capability("award_requirements_persistence")
+
+    assert cap_svc.CAPABILITY_TABLES["awarded_grants_persistence"] == (
+        "nf_awarded_grants"
+    )
+    assert cap_svc.CAPABILITY_TABLES["award_requirements_persistence"] == (
+        "nf_award_requirements"
+    )
+    assert (
+        cap_svc.CAPABILITY_REPOSITORY_MODULES["awarded_grants_persistence"]
+        != cap_svc.CAPABILITY_REPOSITORY_MODULES["award_requirements_persistence"]
+    )
+    # Neither operates, and neither made the other operate.
+    assert awards["operational"] is False
+    assert requirements["operational"] is False
 
 
 # ------------------------------------------------- the guard

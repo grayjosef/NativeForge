@@ -278,23 +278,37 @@ def build_persistence_spine_decision(
     # than trusted to the ordering. Each is a claim that could otherwise be made
     # by a reader skimming for a green line.
     digest = by_name.get("tenant_digest_persistence", {})
-    awarded = by_name.get("awarded_grants_persistence", {})
-    awarded_requirements = by_name.get("award_requirements_persistence", {})
     onboarding = by_name.get("beta_onboarding_persistence", {})
 
     operational_digest_recommended = bool(digest.get("operational"))
-    # Both lanes, because "awarded tracking" is two of them. An award is a row;
-    # tracking is the requirements hanging off it, with their own due dates and
-    # their own proof trail.
+
+    # "Awarded tracking" is two lanes and two questions, and this line has been
+    # wrong about both in turn.
     #
-    # This read only the awards lane until Gate 124, and it did not matter while
-    # both lanes were equally empty. Gate 124 built the awards half and left the
-    # requirements half for a later gate, which separated them for the first
-    # time - and immediately contradicted the invariant below, which has always
-    # asked about award_requirements_persistence. The invariant was right and
-    # this derivation was reading the wrong half.
+    # Gate 124 found it reading only the awards lane while the invariant below
+    # asked about award_requirements_persistence. It did not matter while both
+    # lanes were equally empty; building the awards half separated them.
+    #
+    # Gate 125 found the repaired version still wrong. A lane's `operational`
+    # means schema + anchor + RLS + repository + contract + auth. It says
+    # nothing about the lane's *product* prerequisites, and award_requirements
+    # has one the spine has always named: document_storage. Building the
+    # requirements half separated capability-operational from ready-to-operate.
+    #
+    # `by_name` above is built from the capability matrix, whose rows carry no
+    # prerequisites at all — so a conjunct written against it reads None, and
+    # `not (None or [])` is True for every lane forever. The sequence entries
+    # are what carry `unmet_prerequisites`, and each already derives
+    # `operational_out_of_sequence` as exactly "operable, and not yet due".
+    sequenced = {entry["capability"]: entry for entry in sequence}
+    awarded_lanes = (
+        sequenced.get("awarded_grants_persistence", {}),
+        sequenced.get("award_requirements_persistence", {}),
+    )
     operational_awarded_recommended = bool(
-        awarded.get("operational") and awarded_requirements.get("operational")
+        awarded_lanes[0].get("operational")
+        and awarded_lanes[1].get("operational")
+        and not any(lane.get("operational_out_of_sequence") for lane in awarded_lanes)
     )
     beta_onboarding_recommended = bool(onboarding.get("operational"))
 

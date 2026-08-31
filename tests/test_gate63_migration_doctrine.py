@@ -71,7 +71,14 @@ DOCS = ROOT / "docs" / "operations"
 # is what keeps an award out of them. The table is created empty and stays
 # empty: doc 671 records that a production write needs customer_auth_live and a
 # verified operational binding, and both are false.
-CURRENT_HEAD = "0032"
+# Gate 125 re-pinned 0032 -> 0033 for nf_award_requirements, the other half
+# of awarded tracking. Documented in
+# docs/operations/673_GATE125_AWARD_REQUIREMENTS_REPOSITORY_CONTRACT.md. It is
+# not nf_spark_requirements (0005), which is pursuit-side - what a NOFO asks of
+# an applicant before they apply. The table is created empty and stays empty:
+# doc 675 records that a production write needs customer_auth_live and a
+# verified operational binding, and both are false.
+CURRENT_HEAD = "0033"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

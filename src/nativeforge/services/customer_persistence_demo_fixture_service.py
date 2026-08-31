@@ -51,6 +51,7 @@ from nativeforge.services.customer_persistence_capability_service import (
     build_capability,
 )
 from nativeforge.services.org_scoped_customer_persistence_guard_service import (
+    OPERATION_CAPABILITIES,
     build_guard_matrix,
     evaluate_persistence_write,
 )
@@ -88,6 +89,31 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
+# The guard maps operation -> capability. This set needs the reverse, and
+# building it here rather than restating the pairs keeps one definition.
+_OPERATION_BY_LANE: dict[str, str] = {
+    capability: operation for operation, capability in OPERATION_CAPABILITIES.items()
+}
+
+
+def _first_lane_without_a_table() -> dict[str, Any]:
+    """A capability that genuinely has nowhere to write, with auth forged.
+
+    Forged so the refusal this case demonstrates is the missing schema rather
+    than the missing auth - a case two conditions blocked could not prove which
+    one did it.
+    """
+    from nativeforge.services.customer_persistence_capability_service import (
+        CAPABILITIES,
+    )
+
+    for name in CAPABILITIES:
+        lane = build_capability(name, customer_auth_live=True)
+        if not lane["schema_available"]:
+            return lane
+    raise RuntimeError("every capability lane has a table; this case is obsolete")
+
+
 def build_demo_persistence_cases() -> list[dict[str, Any]]:
     """Nine labelled cases. Every one must be refused, each for its own reason."""
     profile = build_capability("tenant_profile_persistence")
@@ -96,14 +122,13 @@ def build_demo_persistence_cases() -> list[dict[str, Any]]:
     )
     awarded = build_capability("awarded_grants_persistence")
     digest = build_capability("tenant_digest_persistence")
-    # Gate 124 built nf_awarded_grants, so the awarded grants lane is no
-    # longer this set's example of somewhere with nothing to write into.
-    # Award requirements are: Gate 124A decided they get their own table in
-    # a later gate, because a requirement recurs and one award produces
-    # dozens of rows with their own due dates.
-    requirements_authed = build_capability(
-        "award_requirements_persistence", customer_auth_live=True
-    )
+    # Whichever lane still has nowhere to write, measured rather than named.
+    #
+    # This case has been hand-repointed twice - Gate 124 moved it off awarded
+    # grants and Gate 125 off award requirements - which is two gates spent
+    # editing a constant that the capability model already knows. Derived, the
+    # case follows the empty lanes on its own.
+    empty_authed = _first_lane_without_a_table()
 
     return [
         {
@@ -254,19 +279,19 @@ def build_demo_persistence_cases() -> list[dict[str, Any]]:
             "fixture_label": FIXTURE_LABEL,
             "why": (
                 "auth forced live and everything else correct - and still "
-                "refused, because there is no table to write into. Gate 124 "
-                "moved this case from awarded grants to award requirements, "
-                "which is the half that still has none"
+                "refused, because there is no table to write into. Which lane "
+                "that is follows the capability model: Gate 124 and Gate 125 "
+                "each built the one this case used to name"
             ),
             "forges_customer_auth": True,
             "expect_write_allowed": False,
             "expect_demo_only": False,
             "request": {
-                "operation": "write_award_requirement",
+                "operation": _OPERATION_BY_LANE[empty_authed["capability"]],
                 "organization_id": DEMO_ORGANIZATION_ID,
                 "auth_principal_status": "authenticated_verified_org",
                 "binding_status": "verified_binding",
-                "persistence_capability": requirements_authed,
+                "persistence_capability": empty_authed,
             },
         },
     ]

@@ -13,7 +13,7 @@
     "award_amount_inferred": false,
     "award_created_from_pursuit_lineage": false,
     "award_requirements_schema_available": false,
-    "award_requirements_write_path_available": false,
+    "award_requirements_write_path_available": true,
     "award_status_inferred_from_pursuit": false,
     "awarded_grants_lane_operational": false,
     "awarded_grants_operational_tracking_live": false,

@@ -46,6 +46,17 @@ PROFILE_ID = "nf-demo-org-profile-114"
 DEMO_ORG = "nf-demo-org-114"
 
 
+def _lanes_without_a_table() -> list[str]:
+    """The lanes that genuinely have nowhere to write, measured not listed.
+
+    Gate 124 built awarded_grants and Gate 125 built award_requirements, and
+    each time a hard-coded list in this file went stale. Derived, it cannot:
+    the day a lane gains a table it leaves this list on its own.
+    """
+    matrix = capability_svc.build_capability_matrix(customer_auth_live=True)
+    return [row["capability"] for row in matrix["rows"] if not row["schema_available"]]
+
+
 def _authed(capability: str) -> dict:
     """A capability with customer auth forged live.
 
@@ -119,27 +130,23 @@ def test_the_operational_branch_is_reachable():
 
     matrix = capability_svc.build_capability_matrix(customer_auth_live=True)
     assert matrix["customer_persistence_live"] is True
-    # Three lanes as of Gate 124: identity_binding gained a repository in
-    # Gate 120 and awarded_grants gained a table and a repository here, so with
-    # auth forged each has everything it needs. All three are still false in
-    # the real environment, where auth is not forged.
+    # Which lanes these are moves every time one is built - Gate 120 added
+    # identity_binding, Gate 124 awarded_grants, Gate 125 award_requirements.
+    # What does not move is the rule: with auth forged, a lane is operational
+    # exactly when it has a write path. Asserted that way so the test measures
+    # the rule rather than recording which lanes existed the week it was
+    # written. Every one is still false in the real environment.
     assert matrix["operational_capabilities"] == [
-        "tenant_profile_persistence",
-        "awarded_grants_persistence",
-        "identity_binding_persistence",
+        row["capability"] for row in matrix["rows"] if row["write_path_available"]
     ]
+    assert matrix["operational_capabilities"], "no lane became operational"
+    assert "tenant_profile_persistence" in matrix["operational_capabilities"]
 
 
 def test_a_lane_with_no_table_never_becomes_operational_however_auth_moves():
-    # awarded_grants_persistence left this list in Gate 124, which built its
-    # table. The lane is still not operational - auth is what it is missing now.
-    for name in (
-        "award_requirements_persistence",
-        "tenant_digest_persistence",
-        "document_library_persistence",
-        "source_watchlist_persistence",
-        "beta_onboarding_persistence",
-    ):
+    empty = _lanes_without_a_table()
+    assert empty, "every lane has a table; this test has nothing to prove"
+    for name in empty:
         row = _authed(name)
         assert row["schema_available"] is False, name
         assert row["operational"] is False, name
@@ -319,17 +326,21 @@ def test_a_demo_organization_cannot_anchor_a_write():
 
 
 def test_a_write_to_a_lane_with_no_schema_is_refused():
-    # Gate 124 gave awarded grants a table, so this asks about the half that
-    # still has none: a requirement recurs, so requirements get their own.
+    # Whichever lane still has nowhere to write. Named by measurement, because
+    # Gate 124 and Gate 125 each retired the lane this test used to name.
+    lane = _lanes_without_a_table()[0]
+    operation = next(
+        op for op, cap in guard.OPERATION_CAPABILITIES.items() if cap == lane
+    )
     result = guard.evaluate_persistence_write(
-        operation="write_award_requirement",
+        operation=operation,
         organization_id=ORG,
         auth_principal_status="authenticated_verified_org",
         binding_status="verified_binding",
-        persistence_capability=_authed("award_requirements_persistence"),
+        persistence_capability=_authed(lane),
     )
     assert result["write_allowed"] is False
-    assert "no_schema_for:award_requirements_persistence" in result["blocked_reasons"]
+    assert f"no_schema_for:{lane}" in result["blocked_reasons"]
 
 
 def test_an_unrecognised_operation_grants_neither_read_nor_write():
@@ -468,13 +479,34 @@ def test_a_lane_operating_ahead_of_its_prerequisites_is_reported():
             "live_source_collection": False,
         },
     )
-    assert decision["capabilities_operational_out_of_sequence"] == [
-        "tenant_profile_persistence"
-    ]
+    out_of_sequence = decision["capabilities_operational_out_of_sequence"]
+    assert "tenant_profile_persistence" in out_of_sequence
     assert (
         "operational_ahead_of_its_prerequisites:tenant_profile_persistence"
         in decision["blocked_reasons"]
     )
+
+    # Gate 125 brought the naturally occurring instance back, and it is a real
+    # one: award_requirements has a table, a repository and an RLS policy, and
+    # lists document_storage as a prerequisite that does not exist. Operable,
+    # and not yet due. It appears without anything being forged.
+    unforged = spine_svc.build_persistence_spine_decision(
+        capability_matrix=capability_svc.build_capability_matrix(
+            customer_auth_live=True
+        ),
+        preconditions={
+            "customer_auth": True,
+            "document_storage": False,
+            "email_delivery": False,
+            "live_source_collection": False,
+        },
+    )
+    assert (
+        "award_requirements_persistence"
+        in unforged["capabilities_operational_out_of_sequence"]
+    )
+    # And the spine refuses to recommend operating it while that is true.
+    assert unforged["operational_awarded_recommended"] is False
 
     suppressed = dict(decision)
     suppressed["capabilities_operational_out_of_sequence"] = []
@@ -515,15 +547,10 @@ def test_the_three_ordering_constraints_are_enforced():
 
 def test_the_spine_requires_a_migration_for_every_empty_lane():
     decision = spine_svc.build_persistence_spine_decision()
-    # awarded_grants_persistence left this set in Gate 124, which is what
-    # "requires a migration" means: it has one now.
-    assert set(decision["requires_migrations"]) == {
-        "award_requirements_persistence",
-        "tenant_digest_persistence",
-        "document_library_persistence",
-        "source_watchlist_persistence",
-        "beta_onboarding_persistence",
-    }
+    # Exactly the lanes with no table, which is what "requires a migration"
+    # means. Derived, so a lane leaves this set the day it gains one - which
+    # awarded_grants did in Gate 124 and award_requirements in Gate 125.
+    assert set(decision["requires_migrations"]) == set(_lanes_without_a_table())
 
 
 # ------------------------------------------------- readiness surfaces

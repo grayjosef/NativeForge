@@ -1,0 +1,254 @@
+{
+  "check_constraints": [
+    "ck_nf_award_requirements_accepted_needs_submitted",
+    "ck_nf_award_requirements_accepted_proof_needs_a_reference",
+    "ck_nf_award_requirements_calculable_status_needs_a_date",
+    "ck_nf_award_requirements_date_needs_a_status",
+    "ck_nf_award_requirements_due_date_status",
+    "ck_nf_award_requirements_fact_status",
+    "ck_nf_award_requirements_not_both_obligation_and_projection",
+    "ck_nf_award_requirements_obligation_needs_capable_source",
+    "ck_nf_award_requirements_obligation_needs_established_facts",
+    "ck_nf_award_requirements_projection_matches_source",
+    "ck_nf_award_requirements_proof_status",
+    "ck_nf_award_requirements_recurrence",
+    "ck_nf_award_requirements_source",
+    "ck_nf_award_requirements_status",
+    "ck_nf_award_requirements_submission_status",
+    "ck_nf_award_requirements_title_not_blank",
+    "ck_nf_award_requirements_type",
+    "ck_nf_award_requirements_unsupported_is_not_an_obligation",
+    "ck_nf_award_requirements_unsupported_matches_source"
+  ],
+  "column_count": 32,
+  "columns": [
+    "id",
+    "organization_id",
+    "awarded_grant_id",
+    "requirement_type",
+    "requirement_title",
+    "requirement_description",
+    "requirement_status",
+    "requirement_source",
+    "requirement_source_ref",
+    "requirement_due_date",
+    "due_date_status",
+    "recurrence_rule",
+    "owner_identity_id",
+    "proof_required",
+    "proof_status",
+    "proof_document_ref",
+    "submission_status",
+    "submitted_at",
+    "accepted_at",
+    "rejected_at",
+    "active_obligation",
+    "projected_burden",
+    "unsupported_requirement",
+    "fact_status",
+    "human_review_required",
+    "created_by_identity_id",
+    "updated_by_identity_id",
+    "archived_at",
+    "is_demo",
+    "blocked_reasons",
+    "created_at",
+    "updated_at"
+  ],
+  "derived_only_fields": [
+    "active_obligation",
+    "projected_burden",
+    "unsupported_requirement"
+  ],
+  "forbidden_anchor_names": [
+    "awarded_grant_id",
+    "customer_org_id",
+    "organization_profile_id",
+    "tenant_id"
+  ],
+  "migration_revision": "0033",
+  "operations": [
+    "archive_award_requirement",
+    "create_award_requirement",
+    "get_award_requirement",
+    "list_requirements_for_award",
+    "list_requirements_for_organization",
+    "prepare_requirement_write",
+    "validate_requirement_persistence"
+  ],
+  "production_award_requirements_created": 0,
+  "production_awarded_grants_created": 0,
+  "production_proof_records_created": 0,
+  "prohibited_inferences": [
+    {
+      "inference": "obligation_from_requirement_title",
+      "why": "a title says what is required, not whether the award requires it. Only human_entered or evidence_extracted provenance can"
+    },
+    {
+      "inference": "due_date_from_recurrence_rule",
+      "why": "quarterly says how often, not when. The quarter boundaries a funder uses are in the award terms"
+    },
+    {
+      "inference": "submission_from_document_reference",
+      "why": "attaching a document is not filing it"
+    },
+    {
+      "inference": "acceptance_from_submission",
+      "why": "filing something is not the funder accepting it"
+    },
+    {
+      "inference": "document_from_document_reference",
+      "why": "there is no document store. The reference resolves to nothing"
+    },
+    {
+      "inference": "obligation_from_projected_burden",
+      "why": "Gate 91 stamps every projection is_active_obligation False, and this is the other end of that refusal"
+    }
+  ],
+  "projected_source": "projected_from_nofo",
+  "real_customer_data_written": 0,
+  "rls_anchor": "organization_id",
+  "rls_predicate": "organization_id = current_setting('app.current_org_id', true)::uuid AND is_demo = current_setting('app.current_org_is_demo', true)::boolean",
+  "row_relationship_column": "awarded_grant_id",
+  "rows_deleted": 0,
+  "rows_in_the_application_database": 0,
+  "rules": [
+    "organization_id is required and must be UUID-shaped",
+    "awarded_grant_id is required, is a row relationship, and is refused as an anchor",
+    "tenant_id, customer_org_id and organization_profile_id are refused as anchors",
+    "active_obligation, projected_burden and unsupported_requirement are derived from requirement_source and are never inputs",
+    "a projected burden is stored and is never an active obligation",
+    "an unsupported document is stored, obliges nobody, and cannot carry a verified or calculated date",
+    "an estimated due date is recorded, reported as estimated, and never counted down to",
+    "nothing derives a due date from a recurrence rule",
+    "a document reference is not a document, and there is no document store",
+    "a submission is not an acceptance, and each has its own timestamp",
+    "a production write requires customer_auth_live and a verified operational binding",
+    "archive by setting archived_at; there is no delete path"
+  ],
+  "schema_version": "nf_award_requirements_persistence_artifact_v1",
+  "submission_statuses": [
+    "accepted",
+    "needs_human_review",
+    "not_submitted",
+    "rejected",
+    "submitted",
+    "unknown",
+    "waived"
+  ],
+  "table_name": "nf_award_requirements",
+  "unsupported_source": "unsupported_document_type",
+  "vocabularies": {
+    "actionable_fact_statuses": [
+      "tenant_supplied",
+      "verified"
+    ],
+    "active_capable_sources": [
+      "evidence_extracted",
+      "human_entered"
+    ],
+    "closed_statuses": [
+      "accepted",
+      "not_applicable",
+      "waived"
+    ],
+    "date_calculable_statuses": [
+      "calculated",
+      "verified"
+    ],
+    "derived_only_fields": [
+      "active_obligation",
+      "projected_burden",
+      "unsupported_requirement"
+    ],
+    "due_date_statuses": [
+      "calculated",
+      "estimated",
+      "needs_human_review",
+      "unknown",
+      "unsupported",
+      "verified"
+    ],
+    "fact_statuses": [
+      "demo_fixture",
+      "needs_human_review",
+      "tenant_supplied",
+      "unknown",
+      "verified"
+    ],
+    "forbidden_anchor_names": [
+      "awarded_grant_id",
+      "customer_org_id",
+      "organization_profile_id",
+      "tenant_id"
+    ],
+    "proof_statuses": [
+      "not_submitted",
+      "proof_accepted",
+      "proof_attached",
+      "proof_missing",
+      "proof_rejected",
+      "unknown"
+    ],
+    "recurrences": [
+      "annual",
+      "monthly",
+      "on_request",
+      "one_time",
+      "quarterly",
+      "semi_annual",
+      "unknown"
+    ],
+    "requirement_sources": [
+      "evidence_extracted",
+      "human_entered",
+      "needs_human_review",
+      "projected_from_nofo",
+      "unknown",
+      "unsupported_document_type"
+    ],
+    "requirement_statuses": [
+      "accepted",
+      "in_progress",
+      "needs_human_review",
+      "not_applicable",
+      "not_started",
+      "overdue",
+      "rejected",
+      "submitted",
+      "unknown",
+      "waived"
+    ],
+    "requirement_types": [
+      "audit",
+      "board_or_council_resolution",
+      "budget_revision",
+      "closeout",
+      "document_retention",
+      "drawdown",
+      "financial_report",
+      "match_documentation",
+      "narrative_report",
+      "other",
+      "performance_measure",
+      "reimbursement",
+      "subrecipient_report",
+      "unknown",
+      "vendor_documentation"
+    ],
+    "row_relationship_column": "awarded_grant_id",
+    "submission_statuses": [
+      "accepted",
+      "needs_human_review",
+      "not_submitted",
+      "rejected",
+      "submitted",
+      "unknown",
+      "waived"
+    ],
+    "submitted_statuses": [
+      "accepted",
+      "submitted"
+    ]
+  }
+}

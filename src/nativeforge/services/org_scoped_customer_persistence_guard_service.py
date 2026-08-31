@@ -118,6 +118,12 @@ LABEL_BOUND_OPERATIONS = frozenset(
         # writing one against a label nobody has verified is how one Tribe's
         # compliance calendar ends up holding another Tribe's award.
         "write_awarded_grant",
+        # Gate 125C. A requirement carries no tenant label of its own - it
+        # inherits one through its award - which is exactly why it belongs here.
+        # A requirement written against an award whose binding nobody verified
+        # is a deadline attached to the wrong Tribe, and a deadline is the half
+        # somebody is actually held to.
+        "write_award_requirement",
     }
 )
 

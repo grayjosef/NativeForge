@@ -81,6 +81,12 @@ STORAGE_COMPONENT_KEYS: tuple[str, ...] = (
     "awarded_grants_schema_available",
     "awarded_grants_repository_available",
     "awarded_grants_write_path_available",
+    # Gate 125. Awarded tracking is two lanes, so "what storage exists" is two
+    # answers. Reported per lane rather than rolled up, because a reader who
+    # sees one true and one false learns something a single flag would hide.
+    "award_requirements_schema_available",
+    "award_requirements_repository_available",
+    "award_requirements_write_path_available",
 )
 
 OPERATIONAL_COMPONENT_KEYS: tuple[str, ...] = (
@@ -206,7 +212,7 @@ def _capability_persistence_live(capability: str) -> bool:
 
 
 def _awarded_grants_storage_facts() -> dict[str, bool]:
-    """What the awarded grants lane has built, regardless of whether it is live.
+    """What each awarded-tracking lane has built, regardless of whether it is live.
 
     Asked of the capability model rather than the filesystem, for the reason
     Gate 114 recorded below and Gate 120 rediscovered: a module-existence proxy
@@ -219,12 +225,32 @@ def _awarded_grants_storage_facts() -> dict[str, bool]:
     except ImportError:  # pragma: no cover - the module is in this repository
         return dict.fromkeys(STORAGE_COMPONENT_KEYS, False)
 
-    lane = build_capability("awarded_grants_persistence")
-    return {
-        "awarded_grants_schema_available": bool(lane.get("schema_available")),
-        "awarded_grants_repository_available": bool(lane.get("repository_available")),
-        "awarded_grants_write_path_available": bool(lane.get("write_path_available")),
-    }
+    facts: dict[str, bool] = {}
+    for prefix, capability in (
+        ("awarded_grants", "awarded_grants_persistence"),
+        ("award_requirements", "award_requirements_persistence"),
+    ):
+        lane = build_capability(capability)
+        facts[f"{prefix}_schema_available"] = bool(lane.get("schema_available"))
+        facts[f"{prefix}_repository_available"] = bool(lane.get("repository_available"))
+        facts[f"{prefix}_write_path_available"] = bool(lane.get("write_path_available"))
+    return facts
+
+
+def _proof_audit_persistence_available() -> bool:
+    """Is there anywhere to keep a proof audit trail?
+
+    No. Gate 125A decided it gets its own table in a later gate: PROOF_ACTIONS
+    has six verbs and one requirement submitted, rejected, resubmitted and
+    accepted is four rows with four actors. Putting that on the requirement row
+    would mean overwriting the history, which is the one thing an audit trail
+    may never do.
+
+    Measured rather than asserted, so the day it is built this moves on its own.
+    """
+    return _module_importable(
+        "nativeforge.services.award_requirement_proof_repository_service"
+    )
 
 
 def build_awarded_requirements_readiness(*, detect_root: Any = None) -> dict[str, Any]:
@@ -285,7 +311,21 @@ def build_awarded_requirements_readiness(*, detect_root: Any = None) -> dict[str
             **operational,
             **storage,
             # Built and unusable. Both halves stated, neither implying the other.
-            "awarded_grants_storage_available": all(storage.values()),
+            "awarded_grants_storage_available": all(
+                storage[k]
+                for k in STORAGE_COMPONENT_KEYS
+                if k.startswith("awarded_grants_")
+            ),
+            "award_requirements_storage_available": all(
+                storage[k]
+                for k in STORAGE_COMPONENT_KEYS
+                if k.startswith("award_requirements_")
+            ),
+            # Both lanes built. Still not tracking: see the operational list.
+            "awarded_tracking_storage_available": all(storage.values()),
+            # Named separately from document_storage_live, because a proof audit
+            # trail and a document store are different missing things.
+            "proof_audit_persistence_available": (_proof_audit_persistence_available()),
             "demo_scope": DEMO_SCOPE,
             "ready_for_demo_contract": ready_for_demo_contract,
             "ready_for_operational_awarded_tracking": (
@@ -342,6 +382,23 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
         "awarded_grants_storage_available"
     ):
         fails.append("persistence_live_without_storage")
+
+    # Gate 125. Storage for both halves must never read as tracking for either.
+    if readiness.get("awarded_tracking_storage_available") and not (
+        readiness.get("awarded_grants_storage_available")
+        and readiness.get("award_requirements_storage_available")
+    ):
+        fails.append("tracking_storage_claimed_without_both_lanes")
+
+    if readiness.get("ready_for_operational_awarded_tracking") and not readiness.get(
+        "proof_audit_persistence_available"
+    ):
+        fails.append("operational_tracking_claimed_without_proof_audit_persistence")
+
+    if readiness.get("proof_audit_persistence_available") and not readiness.get(
+        "award_requirements_storage_available"
+    ):
+        fails.append("proof_audit_persistence_without_a_requirement_to_attach_to")
 
     # Operational readiness cannot be claimed while anything is missing.
     if readiness.get("ready_for_operational_awarded_tracking") and (

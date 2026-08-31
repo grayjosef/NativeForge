@@ -20,7 +20,7 @@ awarded grants lane operational   false
 operational awarded tracking      false
 customer auth live                false
 verified operational binding      false
-award requirements write path     false
+award requirements write path     true
 production awarded grants created 0
 ```
 

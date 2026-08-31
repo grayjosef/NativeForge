@@ -117,6 +117,10 @@ CAPABILITY_REPOSITORY_MODULES: dict[str, str] = {
     "awarded_grants_persistence": (
         "nativeforge.services.awarded_grants_repository_service"
     ),
+    # Gate 125C, the other half of awarded tracking.
+    "award_requirements_persistence": (
+        "nativeforge.services.award_requirements_repository_service"
+    ),
 }
 
 # Gate 123: the *behaviour* profile, which is a different object from the
