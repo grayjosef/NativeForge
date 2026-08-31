@@ -1,0 +1,15 @@
+case,event_type,event_type_is_bridged,event_status,proof_source,document_reference_present,submission_recorded,proof_is_accepted,proof_is_rejected,proof_retained,review_status_consistent,fact_status,facts_established,event_ready_for_audit_trail,human_review_required,unknown_fields,refused_claims,blocked_reasons
+demo_fixture_submission,mark_submitted,true,proof_attached,human_entered,true,true,false,false,true,true,demo_fixture,false,false,true,,,
+a_valid_acceptance,mark_accepted,true,proof_accepted,human_entered,true,true,true,false,true,true,demo_fixture,false,false,true,,,
+accepted_without_a_submission,mark_accepted,true,proof_accepted,human_entered,true,false,false,false,true,true,demo_fixture,false,false,true,,,accepted_without_having_been_submitted
+accepted_without_a_reference,mark_accepted,true,proof_accepted,human_entered,false,true,false,false,true,true,demo_fixture,false,false,true,,,accepted_without_a_document_reference; proof_accepted_without_a_document_reference
+a_rejection_retains_its_reference,mark_rejected,true,proof_rejected,human_entered,true,true,false,true,true,true,demo_fixture,false,false,true,,,
+a_rejection_that_discarded_its_reference,mark_rejected,true,proof_rejected,human_entered,false,true,false,false,true,true,demo_fixture,false,false,true,,,proof_rejected_without_a_document_reference; rejection_discarded_the_proof_reference
+a_storage_flag_with_no_store,mark_submitted,true,proof_attached,human_entered,true,true,false,false,true,true,demo_fixture,false,false,true,,,event_claimed_a_document_store_that_does_not_exist
+an_audit_note_decides_nothing,audit_note_added,false,not_submitted,human_entered,false,true,false,false,true,true,demo_fixture,false,false,true,,audit_note_added_cannot_record_a_filing_or_a_decision,
+a_review_needs_both_halves,mark_submitted,true,proof_attached,human_entered,true,true,false,false,true,false,demo_fixture,false,false,true,,,a_review_needs_both_a_reviewer_and_a_time
+a_supersede_names_its_predecessor,proof_superseded,false,proof_attached,human_entered,true,true,false,false,true,true,demo_fixture,false,false,true,,,
+a_supersede_without_a_predecessor,proof_superseded,false,proof_attached,human_entered,true,true,false,false,true,true,demo_fixture,false,false,true,,,supersede_event_without_a_predecessor
+a_funder_decision_on_unknown_facts,mark_accepted,true,proof_accepted,human_entered,true,true,false,false,true,true,unknown,false,false,true,fact_status,funder_decision_on_an_unestablished_fact_status,
+an_unknown_event_type_stays_unknown,unknown,true,proof_attached,human_entered,true,true,false,false,true,true,demo_fixture,false,false,true,event_type,,event_type_unestablished_and_never_inferred
+proof_requested_before_anything_is_filed,proof_requested,false,not_submitted,human_entered,false,false,false,false,true,true,demo_fixture,false,false,true,,,

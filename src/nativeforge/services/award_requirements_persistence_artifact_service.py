@@ -75,7 +75,6 @@ FIXED_CLAIMS: dict[str, bool] = {
     "award_requirements_operational": False,
     "awarded_grants_operational_tracking_ready": False,
     "document_storage_available": False,
-    "proof_audit_persistence_available": False,
     "customer_auth_live": False,
     "login_live": False,
     "verified_operational_binding": False,
@@ -140,16 +139,38 @@ FORBIDDEN_PROMOTION_FLAGS: frozenset[str] = frozenset(
     }
 )
 
-# Capabilities this gate did not build. A file claiming either would be read as
-# "the evidence is filed somewhere", and the evidence is nowhere.
+# Capabilities a file may not claim while they are not actually available.
+#
+# Gate 125 froze `proof_audit_persistence_available: False` here and in
+# FIXED_CLAIMS. Gate 126 built the store, which left this gate's artifacts with
+# a choice between telling a stale `false` - one its own invariants could not
+# catch, since they compared the declaration against the same frozen constant -
+# and refusing to write at all.
+#
+# A check that agrees with itself is worse than none. So the scan measures: a
+# payload may claim a capability exactly when that capability is available, and
+# the set below is only the ones this gate can be sure about.
 FORBIDDEN_CAPABILITY_FLAGS: frozenset[str] = frozenset(
     {
         "document_storage_available",
         "document_storage_live",
-        "proof_audit_persistence_available",
         "requirement_extraction_live",
     }
 )
+
+# Measured rather than frozen. Each moves on its own as a store lands.
+MEASURED_CAPABILITY_FLAGS: tuple[str, ...] = ("proof_audit_persistence_available",)
+
+
+def _measured_capabilities() -> dict[str, bool]:
+    """What is actually available right now, for the scan to compare against."""
+    from nativeforge.services.awarded_grants_requirements_readiness_service import (
+        build_awarded_requirements_readiness,
+    )
+
+    readiness = build_awarded_requirements_readiness()
+    return {flag: bool(readiness.get(flag)) for flag in MEASURED_CAPABILITY_FLAGS}
+
 
 MATRIX_COLUMNS: tuple[str, ...] = (
     "case",
@@ -264,14 +285,24 @@ def scan_for_claimed_obligations(payload: Any) -> list[str]:
 
 
 def scan_for_claimed_capabilities(payload: Any) -> list[str]:
-    """Did anything claim a store this gate did not build?"""
+    """Did anything claim a store that is not actually there?
+
+    Two sets, because two questions. `FORBIDDEN_CAPABILITY_FLAGS` are the ones
+    this gate can state flatly: there is no document store and no extraction
+    pipeline. `MEASURED_CAPABILITY_FLAGS` are compared against what is really
+    available, so a claim becomes acceptable the day it becomes true rather
+    than the day somebody remembers to edit this file.
+    """
     found: set[str] = set()
+    measured = _measured_capabilities()
 
     def walk(node: Any) -> None:
         if isinstance(node, dict):
             for key, value in node.items():
                 if key in FORBIDDEN_CAPABILITY_FLAGS and bool(value) is True:
                     found.add(f"claimed_capability:{key}")
+                if key in measured and bool(value) is not measured[key]:
+                    found.add(f"capability_claim_disagrees_with_reality:{key}")
                 walk(value)
         elif isinstance(node, list):
             for item in node:
@@ -521,6 +552,11 @@ def build_persistence_declaration() -> dict[str, Any]:
             "ready_for_operational_awarded_tracking": bool(
                 readiness["ready_for_operational_awarded_tracking"]
             ),
+            # Measured, not frozen. Gate 126 built this and the frozen `false`
+            # would have gone stale silently.
+            "proof_audit_persistence_available": bool(
+                readiness["proof_audit_persistence_available"]
+            ),
             "operational_awarded_recommended": bool(
                 spine["operational_awarded_recommended"]
             ),
@@ -577,6 +613,7 @@ def render_readiness_summary() -> str:
         f"{str(declaration['document_storage_available']).lower()}",
         f"proof audit persistence           "
         f"{str(declaration['proof_audit_persistence_available']).lower()}",
+        "proof audit built by                gate 126",
         f"customer auth live                "
         f"{str(declaration['customer_auth_live']).lower()}",
         f"verified operational binding      "

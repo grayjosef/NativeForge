@@ -51,7 +51,7 @@
     "production_proof_records_created": 0,
     "production_rollout_ready": false,
     "projected_burden_promoted_to_obligation": false,
-    "proof_audit_persistence_available": false,
+    "proof_audit_persistence_available": true,
     "readiness_blocked_reasons": [
       "operational_component_missing:customer_persistence_live",
       "operational_component_missing:document_storage_live",
@@ -687,7 +687,6 @@
     "production_write_count": 0,
     "projected_burden_count": 1,
     "projected_burden_promoted": false,
-    "proof_audit_persistence_available": false,
     "real_customer_data_written": 0,
     "requirement_cases_missing": [],
     "rows_deleted": 0,

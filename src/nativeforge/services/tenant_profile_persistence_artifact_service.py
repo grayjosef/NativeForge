@@ -184,9 +184,9 @@ def build_repository_contract() -> dict[str, Any]:
             "schema_version": SCHEMA_VERSION,
             "table_name": TABLE_NAME,
             # This gate's migration, which never moves, and the live head,
-            # which does. Gate 125 added 0033.
+            # which does. Gate 126 added 0034.
             "migration_revision": "0031",
-            "alembic_head": "0033",
+            "alembic_head": "0034",
             "rls_anchor": RLS_ANCHOR_COLUMN,
             "rls_predicate": (
                 "organization_id = current_setting('app.current_org_id', "

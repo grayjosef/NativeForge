@@ -796,7 +796,11 @@ def test_no_fixture_permits_a_production_write_or_a_proof_record():
     assert fixture["real_customer_data_written"] == 0
     assert fixture["rows_deleted"] == 0
     assert fixture["document_storage_available"] is False
-    assert fixture["proof_audit_persistence_available"] is False
+    # `proof_audit_persistence_available` was asserted here and Gate 126 built
+    # the store. A fixture set states what it did; the state of a neighbouring
+    # lane is readiness's question, and this file asking it made the claim go
+    # stale the moment the lane moved.
+    assert "proof_audit_persistence_available" not in fixture
 
 
 def test_every_fixture_identifier_is_labelled_as_a_fixture():
@@ -893,12 +897,23 @@ def test_the_countdown_scan_refuses_an_estimate():
 
 
 def test_the_capability_scan_refuses_a_store_this_gate_did_not_build():
+    """Two sets now, because the scan answers two questions.
+
+    `document_storage_available` this gate can state flatly: there is no store.
+    `proof_audit_persistence_available` was frozen here as False and Gate 126
+    built it, so the scan measures that one - and refuses denying an available
+    capability as well as claiming an unavailable one.
+    """
     assert art.scan_for_claimed_capabilities({"document_storage_available": True}) == [
         "claimed_capability:document_storage_available"
     ]
+    assert (
+        art.scan_for_claimed_capabilities({"proof_audit_persistence_available": True})
+        == []
+    )
     assert art.scan_for_claimed_capabilities(
-        {"proof_audit_persistence_available": True}
-    ) == ["claimed_capability:proof_audit_persistence_available"]
+        {"proof_audit_persistence_available": False}
+    ) == ["capability_claim_disagrees_with_reality:proof_audit_persistence_available"]
 
 
 def test_the_artifact_write_refuses_a_payload_claiming_a_document_store(monkeypatch):
@@ -1004,12 +1019,19 @@ def test_readiness_reports_both_lanes_built_and_tracking_still_blocked():
     assert readiness_svc.readiness_invariant_failures(readiness) == []
 
 
-def test_document_storage_and_proof_audit_persistence_remain_false():
+def test_document_storage_remains_false_and_proof_audit_moved():
+    """Gate 125 measured this rather than asserting it, and it moved.
+
+    `proof_audit_persistence_available` was built by Gate 126, which is exactly
+    what a measured flag is for: this test records the move rather than pinning
+    a value that a later gate has to come back and edit. Document storage is
+    still absent and still measured the same way.
+    """
     readiness = readiness_svc.build_awarded_requirements_readiness()
     assert readiness["document_storage_live"] is False
-    assert readiness["proof_audit_persistence_available"] is False
-    # The contract exists; the store does not. Both stated.
     assert readiness["proof_audit_contract_available"] is True
+    # Built by Gate 126. The flag followed on its own, which is the point.
+    assert readiness["proof_audit_persistence_available"] is True
 
 
 def test_storage_for_both_lanes_can_never_read_as_tracking():
@@ -1023,8 +1045,16 @@ def test_storage_for_both_lanes_can_never_read_as_tracking():
 
 
 def test_operational_tracking_cannot_be_claimed_without_proof_audit_persistence():
+    """Both halves forged, because Gate 126 made the second one true.
+
+    The invariant fires when tracking is claimed while proof audit persistence
+    is absent. Gate 126 built the store, so the absence has to be forged too -
+    otherwise this test would pass for the wrong reason and stop guarding
+    anything.
+    """
     readiness = dict(readiness_svc.build_awarded_requirements_readiness())
     readiness["ready_for_operational_awarded_tracking"] = True
+    readiness["proof_audit_persistence_available"] = False
     assert (
         "operational_tracking_claimed_without_proof_audit_persistence"
         in readiness_svc.readiness_invariant_failures(readiness)

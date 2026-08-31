@@ -504,8 +504,13 @@ def validate_award_requirement(
             "blocked_reasons": sorted(set(blocked_reasons)),
             # Constants. Nothing here invents an obligation, a date, a filing,
             # an acceptance or a document store.
+            #
+            # `proof_audit_persistence_available` was frozen here too, and
+            # Gate 126 built the store. A validation result states what it
+            # concluded about the requirement in front of it; the state of
+            # a neighbouring lane is readiness's question, and freezing it
+            # in three files made all three disagree with reality at once.
             "document_storage_available": False,
-            "proof_audit_persistence_available": False,
             "due_date_inferred": False,
             "due_date_inferred_from_recurrence": due_date_inferred_from_recurrence,
             "obligation_inferred_from_title": False,
@@ -526,7 +531,6 @@ def validation_invariant_failures(result: dict[str, Any]) -> list[str]:
 
     for field in (
         "document_storage_available",
-        "proof_audit_persistence_available",
         "due_date_inferred",
         "due_date_inferred_from_recurrence",
         "obligation_inferred_from_title",
@@ -676,7 +680,6 @@ def build_validation_matrix(*, cases: list[dict[str, Any]]) -> dict[str, Any]:
                 {f for r in rows for f in r["invariant_failures"]}
             ),
             "document_storage_available": False,
-            "proof_audit_persistence_available": False,
             "fabricated": False,
         }
     )

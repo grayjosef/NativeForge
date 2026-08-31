@@ -78,6 +78,12 @@ SPINE_SEQUENCE: tuple[tuple[str, str, str], ...] = (
         "unsubstantiable without somewhere to keep the evidence",
     ),
     (
+        "proof_audit_persistence",
+        "write_proof_event",
+        "a requirement without its proof trail records what was due and not "
+        "what was done, and an auditor asks the second question",
+    ),
+    (
         "document_library_persistence",
         "write_document_library_item",
         "evidence needs a home before anything claims to track compliance",
@@ -115,6 +121,11 @@ SPINE_PREREQUISITES: dict[str, tuple[str, ...]] = {
     "award_requirements_persistence": (
         CUSTOMER_AUTH,
         "awarded_grants_persistence",
+        DOCUMENT_STORAGE,
+    ),
+    "proof_audit_persistence": (
+        CUSTOMER_AUTH,
+        "award_requirements_persistence",
         DOCUMENT_STORAGE,
     ),
     "document_library_persistence": (CUSTOMER_AUTH, DOCUMENT_STORAGE),
@@ -301,13 +312,19 @@ def build_persistence_spine_decision(
     # are what carry `unmet_prerequisites`, and each already derives
     # `operational_out_of_sequence` as exactly "operable, and not yet due".
     sequenced = {entry["capability"]: entry for entry in sequence}
-    awarded_lanes = (
-        sequenced.get("awarded_grants_persistence", {}),
-        sequenced.get("award_requirements_persistence", {}),
+    # Three lanes as of Gate 126. An award, what it obliges, and what was filed
+    # against it: an auditor reads all three, so recommending operation on two
+    # would recommend a compliance record with no evidence in it.
+    awarded_lanes = tuple(
+        sequenced.get(name, {})
+        for name in (
+            "awarded_grants_persistence",
+            "award_requirements_persistence",
+            "proof_audit_persistence",
+        )
     )
     operational_awarded_recommended = bool(
-        awarded_lanes[0].get("operational")
-        and awarded_lanes[1].get("operational")
+        all(lane.get("operational") for lane in awarded_lanes)
         and not any(lane.get("operational_out_of_sequence") for lane in awarded_lanes)
     )
     beta_onboarding_recommended = bool(onboarding.get("operational"))

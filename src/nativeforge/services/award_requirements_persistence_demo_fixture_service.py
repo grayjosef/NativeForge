@@ -555,7 +555,12 @@ def build_award_requirements_fixture_set() -> dict[str, Any]:
             "customer_persistence_live": False,
             "awarded_grants_operational_tracking_live": False,
             "document_storage_available": False,
-            "proof_audit_persistence_available": False,
+            # `proof_audit_persistence_available` was frozen here and Gate
+            # 126 built the store, which made this set's own constant
+            # disagree with reality. A fixture set states what it did; the
+            # state of a neighbouring lane is readiness's question, and
+            # freezing it here was this file answering one it was not
+            # asked.
             "beta_onboarding_ready": False,
             "production_award_requirements_created": 0,
             "production_proof_records_created": 0,
@@ -598,7 +603,6 @@ def award_requirements_fixture_invariant_failures(
         "customer_persistence_live",
         "awarded_grants_operational_tracking_live",
         "document_storage_available",
-        "proof_audit_persistence_available",
         "beta_onboarding_ready",
         "application_database_touched",
         "projected_burden_promoted",

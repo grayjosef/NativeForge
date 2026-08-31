@@ -5,10 +5,10 @@ A customer persistence **contract** exists. **Customer persistence is not live.*
 ## The eight lanes
 
 ```text
-schema available       4 of 8
-under row-level security  4 of 8
-complete write path    4 of 8
-operational            0 of 8
+schema available       5 of 9
+under row-level security  5 of 9
+complete write path    5 of 9
+operational            0 of 9
 ```
 
 Schema available is not operational. A table is a container; operating it needs an organization anchor, a policy, a repository, a contract and somebody accountable for the row.
@@ -47,10 +47,11 @@ no_session_signing_key_fit_to_sign_so_no_session_can_be_issued
 2. tenant_profile_persistence       waiting on: customer_auth, identity_binding_persistence
 3. awarded_grants_persistence       waiting on: customer_auth, tenant_profile_persistence
 4. award_requirements_persistence   waiting on: customer_auth, awarded_grants_persistence, document_storage
-5. document_library_persistence     waiting on: customer_auth, document_storage
-6. tenant_digest_persistence        waiting on: customer_auth, tenant_profile_persistence, live_source_collection
-7. source_watchlist_persistence     waiting on: customer_auth, live_source_collection
-8. beta_onboarding_persistence      waiting on: customer_auth, identity_binding_persistence, tenant_profile_persistence
+5. proof_audit_persistence          waiting on: customer_auth, award_requirements_persistence, document_storage
+6. document_library_persistence     waiting on: customer_auth, document_storage
+7. tenant_digest_persistence        waiting on: customer_auth, tenant_profile_persistence, live_source_collection
+8. source_watchlist_persistence     waiting on: customer_auth, live_source_collection
+9. beta_onboarding_persistence      waiting on: customer_auth, identity_binding_persistence, tenant_profile_persistence
 ```
 
 ## What is true

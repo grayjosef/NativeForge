@@ -34,6 +34,7 @@
       "beta_onboarding_persistence",
       "document_library_persistence",
       "identity_binding_persistence",
+      "proof_audit_persistence",
       "source_watchlist_persistence",
       "tenant_digest_persistence",
       "tenant_profile_persistence"
@@ -135,11 +136,35 @@
       "why_here": "requirements are meaningless without the award they came from, and unsubstantiable without somewhere to keep the evidence"
     },
     {
+      "capability": "proof_audit_persistence",
+      "guard_operation": "write_proof_event",
+      "operational": false,
+      "operational_out_of_sequence": false,
+      "position": 5,
+      "prerequisites": [
+        "customer_auth",
+        "award_requirements_persistence",
+        "document_storage"
+      ],
+      "ready_to_build": false,
+      "repository_available": true,
+      "requires_migration": false,
+      "requires_repository": false,
+      "rls_backed": true,
+      "schema_available": true,
+      "unmet_prerequisites": [
+        "customer_auth",
+        "award_requirements_persistence",
+        "document_storage"
+      ],
+      "why_here": "a requirement without its proof trail records what was due and not what was done, and an auditor asks the second question"
+    },
+    {
       "capability": "document_library_persistence",
       "guard_operation": "write_document_library_item",
       "operational": false,
       "operational_out_of_sequence": false,
-      "position": 5,
+      "position": 6,
       "prerequisites": [
         "customer_auth",
         "document_storage"
@@ -161,7 +186,7 @@
       "guard_operation": "write_digest_record",
       "operational": false,
       "operational_out_of_sequence": false,
-      "position": 6,
+      "position": 7,
       "prerequisites": [
         "customer_auth",
         "tenant_profile_persistence",
@@ -185,7 +210,7 @@
       "guard_operation": "write_source_watchlist",
       "operational": false,
       "operational_out_of_sequence": false,
-      "position": 7,
+      "position": 8,
       "prerequisites": [
         "customer_auth",
         "live_source_collection"
@@ -207,7 +232,7 @@
       "guard_operation": "write_beta_onboarding_record",
       "operational": false,
       "operational_out_of_sequence": false,
-      "position": 8,
+      "position": 9,
       "prerequisites": [
         "customer_auth",
         "identity_binding_persistence",
@@ -248,7 +273,7 @@
   "rows_written": 0,
   "schema_changed": false,
   "schema_version": "nf_customer_persistence_spine_decision_v1",
-  "sequence_length": 8,
+  "sequence_length": 9,
   "session_signing_key_ready": false,
   "session_signing_key_source": "missing",
   "verified_binding_workflow_available": true,

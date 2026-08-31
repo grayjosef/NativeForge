@@ -87,6 +87,10 @@ STORAGE_COMPONENT_KEYS: tuple[str, ...] = (
     "award_requirements_schema_available",
     "award_requirements_repository_available",
     "award_requirements_write_path_available",
+    # Gate 126. Three lanes now: an award, what it obliges, and what was filed.
+    "proof_audit_schema_available",
+    "proof_audit_repository_available",
+    "proof_audit_write_path_available",
 )
 
 OPERATIONAL_COMPONENT_KEYS: tuple[str, ...] = (
@@ -229,6 +233,7 @@ def _awarded_grants_storage_facts() -> dict[str, bool]:
     for prefix, capability in (
         ("awarded_grants", "awarded_grants_persistence"),
         ("award_requirements", "award_requirements_persistence"),
+        ("proof_audit", "proof_audit_persistence"),
     ):
         lane = build_capability(capability)
         facts[f"{prefix}_schema_available"] = bool(lane.get("schema_available"))
@@ -240,17 +245,29 @@ def _awarded_grants_storage_facts() -> dict[str, bool]:
 def _proof_audit_persistence_available() -> bool:
     """Is there anywhere to keep a proof audit trail?
 
-    No. Gate 125A decided it gets its own table in a later gate: PROOF_ACTIONS
-    has six verbs and one requirement submitted, rejected, resubmitted and
-    accepted is four rows with four actors. Putting that on the requirement row
-    would mean overwriting the history, which is the one thing an audit trail
-    may never do.
+    Gate 126 built one. This asks the capability model rather than naming a
+    module, because the first version named one:
 
-    Measured rather than asserted, so the day it is built this moves on its own.
+    ```text
+    probe expected  ..._proof_repository_service
+    gate 126 built  ..._proof_audit_repository_service
+    ```
+
+    Two different names for one thing, written a gate apart, and the report
+    would have kept saying the store did not exist while it sat in the same
+    directory. Same family as Gate 124A's two near-miss contract mappings.
+
+    `CAPABILITY_REPOSITORY_MODULES` is now the single place a repository module
+    is named, and a test asserts every name in it imports.
     """
-    return _module_importable(
-        "nativeforge.services.award_requirement_proof_repository_service"
-    )
+    try:
+        from nativeforge.services.customer_persistence_capability_service import (
+            build_capability,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return False
+    lane = build_capability("proof_audit_persistence")
+    return bool(lane.get("write_path_available"))
 
 
 def build_awarded_requirements_readiness(*, detect_root: Any = None) -> dict[str, Any]:
@@ -320,6 +337,11 @@ def build_awarded_requirements_readiness(*, detect_root: Any = None) -> dict[str
                 storage[k]
                 for k in STORAGE_COMPONENT_KEYS
                 if k.startswith("award_requirements_")
+            ),
+            "proof_audit_storage_available": all(
+                storage[k]
+                for k in STORAGE_COMPONENT_KEYS
+                if k.startswith("proof_audit_")
             ),
             # Both lanes built. Still not tracking: see the operational list.
             "awarded_tracking_storage_available": all(storage.values()),
@@ -399,6 +421,14 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
         "award_requirements_storage_available"
     ):
         fails.append("proof_audit_persistence_without_a_requirement_to_attach_to")
+
+    # Gate 126. The measured flag and the lane's own storage must agree; two
+    # answers to one question is how a probe comes to name a module nobody
+    # built.
+    if readiness.get("proof_audit_persistence_available") is not readiness.get(
+        "proof_audit_storage_available"
+    ):
+        fails.append("proof_audit_availability_disagrees_with_its_lane")
 
     # Operational readiness cannot be claimed while anything is missing.
     if readiness.get("ready_for_operational_awarded_tracking") and (

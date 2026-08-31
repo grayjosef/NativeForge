@@ -542,7 +542,11 @@ def test_the_three_ordering_constraints_are_enforced():
     assert "onboarding_recommended_without:customer_auth" in fails
     assert "onboarding_recommended_without:identity_binding_persistence" in fails
 
-    assert by_name["beta_onboarding_persistence"]["position"] == 8
+    # The durable claim is that onboarding is last, not that the sequence is
+    # eight long - Gate 126 made it nine. Derived so the next lane does not
+    # move this line again.
+    assert by_name["beta_onboarding_persistence"]["position"] == len(sequence)
+    assert sequence[-1]["capability"] == "beta_onboarding_persistence"
 
 
 def test_the_spine_requires_a_migration_for_every_empty_lane():

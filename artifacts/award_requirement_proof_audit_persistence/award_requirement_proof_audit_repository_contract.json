@@ -1,0 +1,211 @@
+{
+  "check_constraints": [
+    "ck_nf_proof_events_a_note_decides_nothing",
+    "ck_nf_proof_events_accepted_needs_a_reference",
+    "ck_nf_proof_events_accepted_needs_a_timestamp",
+    "ck_nf_proof_events_accepted_needs_submitted",
+    "ck_nf_proof_events_event_status",
+    "ck_nf_proof_events_event_type",
+    "ck_nf_proof_events_fact_status",
+    "ck_nf_proof_events_funder_decision_needs_established_facts",
+    "ck_nf_proof_events_not_accepted_and_rejected",
+    "ck_nf_proof_events_nothing_supersedes_itself",
+    "ck_nf_proof_events_proof_source",
+    "ck_nf_proof_events_rejected_needs_a_timestamp",
+    "ck_nf_proof_events_rejection_retains_the_proof",
+    "ck_nf_proof_events_review_pair",
+    "ck_nf_proof_events_storage_flag_needs_a_store",
+    "ck_nf_proof_events_supersede_names_its_predecessor"
+  ],
+  "column_count": 26,
+  "columns": [
+    "id",
+    "organization_id",
+    "award_requirement_id",
+    "awarded_grant_id",
+    "event_type",
+    "event_status",
+    "proof_document_ref",
+    "proof_document_storage_available",
+    "proof_summary",
+    "proof_source",
+    "proof_source_ref",
+    "submitted_at",
+    "accepted_at",
+    "rejected_at",
+    "reviewed_at",
+    "reviewed_by_identity_id",
+    "supersedes_event_id",
+    "superseded_at",
+    "fact_status",
+    "human_review_required",
+    "created_by_identity_id",
+    "archived_at",
+    "is_demo",
+    "blocked_reasons",
+    "created_at",
+    "updated_at"
+  ],
+  "context_column": "awarded_grant_id",
+  "event_types_added_by_gate_126": [
+    "audit_note_added",
+    "proof_needs_review",
+    "proof_requested",
+    "proof_superseded"
+  ],
+  "event_types_bridged_from_gate_108": [
+    "attach_proof",
+    "mark_accepted",
+    "mark_rejected",
+    "mark_submitted",
+    "mark_waived",
+    "unknown"
+  ],
+  "forbidden_anchor_names": [
+    "award_requirement_id",
+    "awarded_grant_id",
+    "customer_org_id",
+    "organization_profile_id",
+    "tenant_id"
+  ],
+  "migration_revision": "0034",
+  "operations": [
+    "archive_proof_event",
+    "create_proof_event",
+    "get_proof_event",
+    "list_proof_events_for_organization",
+    "list_proof_events_for_requirement",
+    "prepare_proof_event_write",
+    "supersede_proof_event",
+    "validate_proof_event_persistence"
+  ],
+  "post_insert_writable_columns": [
+    "superseded_at",
+    "archived_at"
+  ],
+  "production_award_requirements_created": 0,
+  "production_awarded_grants_created": 0,
+  "production_proof_records_created": 0,
+  "prohibited_inferences": [
+    {
+      "inference": "submission_from_document_reference",
+      "why": "attaching a document is not filing it"
+    },
+    {
+      "inference": "acceptance_from_submission",
+      "why": "filing something is not the funder accepting it"
+    },
+    {
+      "inference": "rejection_from_review_note",
+      "why": "a note records what somebody said. It decides nothing"
+    },
+    {
+      "inference": "document_from_document_reference",
+      "why": "there is no document store. The reference resolves to nothing"
+    },
+    {
+      "inference": "requirement_status_from_this_trail",
+      "why": "the current proof status is derived and returned, never written back. Two writers on one column is how the two come to disagree"
+    },
+    {
+      "inference": "deletion_from_rejection_or_supersession",
+      "why": "a rejected proof and a superseded one are both retained. An audit trail that can be rewritten is not one"
+    }
+  ],
+  "real_customer_data_written": 0,
+  "rls_anchor": "organization_id",
+  "rls_predicate": "organization_id = current_setting('app.current_org_id', true)::uuid AND is_demo = current_setting('app.current_org_is_demo', true)::boolean",
+  "row_relationship_column": "award_requirement_id",
+  "rows_deleted": 0,
+  "rows_in_the_application_database": 0,
+  "rules": [
+    "organization_id is required and must be UUID-shaped",
+    "award_requirement_id is required, is a row relationship, and is refused as an anchor",
+    "awarded_grant_id is context, and is refused as an anchor",
+    "tenant_id, customer_org_id and organization_profile_id are refused as anchors",
+    "an event is written once; only superseded_at and archived_at may be added afterwards, and both are one-way",
+    "there is no delete path",
+    "a rejection retains the proof reference",
+    "a supersession writes a new event and retains the prior one",
+    "an archived event stays in the audit trail",
+    "a document reference is not a document, and there is no document store",
+    "a submission is not an acceptance, and each has its own timestamp",
+    "the requirement's current proof status is derived over the trail and never written back onto the requirement row",
+    "a production write requires customer_auth_live and a verified operational binding"
+  ],
+  "schema_version": "nf_award_requirement_proof_audit_persistence_artifact_v1",
+  "table_name": "nf_award_requirement_proof_events",
+  "vocabularies": {
+    "actionable_fact_statuses": [
+      "tenant_supplied",
+      "verified"
+    ],
+    "context_column": "awarded_grant_id",
+    "event_statuses": [
+      "not_submitted",
+      "proof_accepted",
+      "proof_attached",
+      "proof_missing",
+      "proof_rejected",
+      "unknown"
+    ],
+    "event_types": [
+      "attach_proof",
+      "audit_note_added",
+      "mark_accepted",
+      "mark_rejected",
+      "mark_submitted",
+      "mark_waived",
+      "proof_needs_review",
+      "proof_requested",
+      "proof_superseded",
+      "unknown"
+    ],
+    "event_types_added_by_gate_126": [
+      "audit_note_added",
+      "proof_needs_review",
+      "proof_requested",
+      "proof_superseded"
+    ],
+    "event_types_bridged_from_gate_108": [
+      "attach_proof",
+      "mark_accepted",
+      "mark_rejected",
+      "mark_submitted",
+      "mark_waived",
+      "unknown"
+    ],
+    "fact_statuses": [
+      "demo_fixture",
+      "needs_human_review",
+      "tenant_supplied",
+      "unknown",
+      "verified"
+    ],
+    "forbidden_anchor_names": [
+      "award_requirement_id",
+      "awarded_grant_id",
+      "customer_org_id",
+      "organization_profile_id",
+      "tenant_id"
+    ],
+    "funder_decided_statuses": [
+      "proof_accepted",
+      "proof_rejected"
+    ],
+    "post_insert_writable_columns": [
+      "superseded_at",
+      "archived_at"
+    ],
+    "proof_sources": [
+      "evidence_extracted",
+      "human_entered",
+      "needs_human_review",
+      "system_generated",
+      "unknown",
+      "unsupported_document_type"
+    ],
+    "row_relationship_column": "award_requirement_id"
+  },
+  "vocabulary_invariant_failures": []
+}

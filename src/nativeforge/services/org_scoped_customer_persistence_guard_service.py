@@ -79,6 +79,7 @@ PERSISTENCE_OPERATIONS = frozenset(
         "write_tenant_profile",
         "write_awarded_grant",
         "write_award_requirement",
+        "write_proof_event",
         "write_digest_record",
         "write_document_library_item",
         "write_source_watchlist",
@@ -97,6 +98,7 @@ OPERATION_CAPABILITIES: dict[str, str] = {
     "write_tenant_profile": "tenant_profile_persistence",
     "write_awarded_grant": "awarded_grants_persistence",
     "write_award_requirement": "award_requirements_persistence",
+    "write_proof_event": "proof_audit_persistence",
     "write_digest_record": "tenant_digest_persistence",
     "write_document_library_item": "document_library_persistence",
     "write_source_watchlist": "source_watchlist_persistence",
@@ -124,6 +126,12 @@ LABEL_BOUND_OPERATIONS = frozenset(
         # is a deadline attached to the wrong Tribe, and a deadline is the half
         # somebody is actually held to.
         "write_award_requirement",
+        # Gate 126C. A proof event is the record a funder's auditor reads. It
+        # inherits its tenant through two hops - requirement, then award - so
+        # the binding is the only thing relating it to anybody, and a proof
+        # filed against an unverified binding is one Tribe's evidence in
+        # another Tribe's file.
+        "write_proof_event",
     }
 )
 

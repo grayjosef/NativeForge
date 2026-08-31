@@ -78,6 +78,7 @@ CAPABILITIES: tuple[str, ...] = (
     "tenant_profile_persistence",
     "awarded_grants_persistence",
     "award_requirements_persistence",
+    "proof_audit_persistence",
     "tenant_digest_persistence",
     "document_library_persistence",
     "source_watchlist_persistence",
@@ -91,6 +92,7 @@ CAPABILITY_TABLES: dict[str, str] = {
     "tenant_profile_persistence": "nf_tribal_profiles",
     "awarded_grants_persistence": "nf_awarded_grants",
     "award_requirements_persistence": "nf_award_requirements",
+    "proof_audit_persistence": "nf_award_requirement_proof_events",
     "tenant_digest_persistence": "nf_tenant_digest_records",
     "document_library_persistence": "nf_document_library_items",
     "source_watchlist_persistence": "nf_source_watchlist_entries",
@@ -121,6 +123,12 @@ CAPABILITY_REPOSITORY_MODULES: dict[str, str] = {
     "award_requirements_persistence": (
         "nativeforge.services.award_requirements_repository_service"
     ),
+    # Gate 126C, the last post-award lane. This map is now the single place a
+    # repository module is named - Gate 125 also named one inside the readiness
+    # service and the two disagreed, which is the defect Gate 126A found.
+    "proof_audit_persistence": (
+        "nativeforge.services.award_requirement_proof_audit_repository_service"
+    ),
 }
 
 # Gate 123: the *behaviour* profile, which is a different object from the
@@ -143,6 +151,7 @@ CAPABILITY_REPOSITORIES: dict[str, str] = {
     "tenant_profile_persistence": "tribal_profiles",
     "awarded_grants_persistence": "awarded_grants",
     "award_requirements_persistence": "award_requirements",
+    "proof_audit_persistence": "award_requirement_proof_events",
     "tenant_digest_persistence": "tenant_digest",
     "document_library_persistence": "document_library",
     "source_watchlist_persistence": "source_watchlist",
@@ -172,6 +181,9 @@ CAPABILITY_CONTRACT_MODULES: dict[str, str] = {
     "awarded_grants_persistence": "nativeforge.services.awarded_grant_record_service",
     "award_requirements_persistence": (
         "nativeforge.services.award_requirement_model_service"
+    ),
+    "proof_audit_persistence": (
+        "nativeforge.services.award_requirement_proof_audit_service"
     ),
     "tenant_digest_persistence": (
         "nativeforge.services.tenant_nofo_digest_builder_service"

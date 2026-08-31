@@ -22,7 +22,8 @@ award requirements operational    false
 operational awarded tracking      false
 operational awarded recommended   false
 document storage                  false
-proof audit persistence           false
+proof audit persistence           true
+proof audit built by                gate 126
 customer auth live                false
 verified operational binding      false
 production award requirements     0

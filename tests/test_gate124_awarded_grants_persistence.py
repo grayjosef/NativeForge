@@ -769,13 +769,27 @@ def test_the_awarded_grants_lane_has_a_write_path_and_is_not_operational():
     assert lane["blocked_reasons"] == ["no_customer_auth_so_nobody_owns_the_row"]
 
 
-def test_every_mapped_contract_module_that_claims_to_exist_does():
+# Lanes whose contract module genuinely does not exist yet, each with the
+# reason. A lane may be absent from a mapping only by appearing here, so a typo
+# cannot pass as a planned absence - which is the whole point of the test below.
+KNOWN_ABSENT_CONTRACT_LANES: dict[str, str] = {
+    "document_library_persistence": "no award document store has been built",
+    "source_watchlist_persistence": "no tenant source watchlist has been built",
+    "beta_onboarding_persistence": "no beta onboarding service has been built",
+}
+
+
+def test_every_mapped_contract_module_either_imports_or_is_a_known_absence():
     """Gate 124A found two lanes named a module one token from a real service.
 
     Both reported `no_service_decides_what_may_be_written` while a 432-line and
-    a 494-line service decided exactly that. This asserts the two that were
-    fixed import, and that the three genuine absences are still absent - so a
-    third typo cannot hide as a false negative.
+    a 494-line service decided exactly that.
+
+    The first version of this test enumerated the lanes that import, which made
+    it a record of which services existed that week - Gate 126 added a ninth
+    lane and it went stale. It now asserts the rule instead: a mapped module
+    imports, or its lane is a named absence with a reason. A typo satisfies
+    neither.
     """
     import importlib.util
 
@@ -785,20 +799,21 @@ def test_every_mapped_contract_module_that_claims_to_exist_does():
         except (ImportError, ValueError):
             return False
 
-    present = {
-        lane
-        for lane, module in cap_svc.CAPABILITY_CONTRACT_MODULES.items()
-        if importable(module)
-    }
-    assert "awarded_grants_persistence" in present
-    assert "award_requirements_persistence" in present
-    assert present == {
-        "awarded_grants_persistence",
-        "award_requirements_persistence",
-        "identity_binding_persistence",
-        "tenant_digest_persistence",
-        "tenant_profile_persistence",
-    }
+    for lane, module in cap_svc.CAPABILITY_CONTRACT_MODULES.items():
+        if importable(module):
+            continue
+        assert lane in KNOWN_ABSENT_CONTRACT_LANES, (
+            f"{lane} names a contract module that does not import: {module}"
+        )
+
+    # The two Gate 124A repaired, asserted by name so a regression is loud.
+    for lane in ("awarded_grants_persistence", "award_requirements_persistence"):
+        assert importable(cap_svc.CAPABILITY_CONTRACT_MODULES[lane]), lane
+
+    # And the named absences are still absent, so the list cannot rot into a
+    # blanket exemption.
+    for lane in KNOWN_ABSENT_CONTRACT_LANES:
+        assert not importable(cap_svc.CAPABILITY_CONTRACT_MODULES[lane]), lane
 
 
 def test_the_repository_is_detected_by_import_rather_than_by_filename():

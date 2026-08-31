@@ -78,7 +78,16 @@ DOCS = ROOT / "docs" / "operations"
 # an applicant before they apply. The table is created empty and stays empty:
 # doc 675 records that a production write needs customer_auth_live and a
 # verified operational binding, and both are false.
-CURRENT_HEAD = "0033"
+# Gate 126 re-pinned 0033 -> 0034 for nf_award_requirement_proof_events, the
+# audit trail for what was filed against a requirement. Documented in
+# docs/operations/677_GATE126_PROOF_AUDIT_REPOSITORY_CONTRACT.md. It is not
+# nf_audit_events (0002), which is Sprint 0's generic demo audit table, nor
+# nf_authority_proof_records (0026), which is Gate 52's authority lifecycle -
+# a different proof entirely, about who may act for an organization. The table
+# is created empty and stays empty: doc 679 records that a production write
+# needs customer_auth_live and a verified operational binding, and both are
+# false.
+CURRENT_HEAD = "0034"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")
