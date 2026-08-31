@@ -94,7 +94,10 @@ CAPABILITY_TABLES: dict[str, str] = {
     "award_requirements_persistence": "nf_award_requirements",
     "proof_audit_persistence": "nf_award_requirement_proof_events",
     "tenant_digest_persistence": "nf_tenant_digest_records",
-    "document_library_persistence": "nf_document_library_items",
+    # Gate 127 built nf_award_documents. The lane id keeps its Gate 114
+    # name because the spine, the guard and several tests reference it;
+    # the table it points at is the one that now exists.
+    "document_library_persistence": "nf_award_documents",
     "source_watchlist_persistence": "nf_source_watchlist_entries",
     "identity_binding_persistence": "nf_tenant_customer_org_bindings",
     "beta_onboarding_persistence": "nf_beta_onboarding_records",
@@ -129,6 +132,12 @@ CAPABILITY_REPOSITORY_MODULES: dict[str, str] = {
     "proof_audit_persistence": (
         "nativeforge.services.award_requirement_proof_audit_repository_service"
     ),
+    # Gate 127C. Deliberately NOT `award_document_store_service`: two probes
+    # watched for that exact name and would have reported a document store from
+    # its mere existence, with no bytes stored anywhere.
+    "document_library_persistence": (
+        "nativeforge.services.award_document_store_repository_service"
+    ),
 }
 
 # Gate 123: the *behaviour* profile, which is a different object from the
@@ -153,7 +162,7 @@ CAPABILITY_REPOSITORIES: dict[str, str] = {
     "award_requirements_persistence": "award_requirements",
     "proof_audit_persistence": "award_requirement_proof_events",
     "tenant_digest_persistence": "tenant_digest",
-    "document_library_persistence": "document_library",
+    "document_library_persistence": "award_documents",
     "source_watchlist_persistence": "source_watchlist",
     "identity_binding_persistence": "identity_binding",
     "beta_onboarding_persistence": "beta_onboarding",
@@ -188,8 +197,12 @@ CAPABILITY_CONTRACT_MODULES: dict[str, str] = {
     "tenant_digest_persistence": (
         "nativeforge.services.tenant_nofo_digest_builder_service"
     ),
+    # Gate 127. The contract and the repository are the same module here: the
+    # thing that decides what may be written about a document is the thing that
+    # writes it. Naming a separate `award_document_store_service` would have
+    # tripped the two module-existence probes Gate 127E just removed.
     "document_library_persistence": (
-        "nativeforge.services.award_document_store_service"
+        "nativeforge.services.award_document_store_repository_service"
     ),
     "source_watchlist_persistence": (
         "nativeforge.services.tenant_source_watchlist_service"

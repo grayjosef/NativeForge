@@ -170,11 +170,11 @@
         "document_storage"
       ],
       "ready_to_build": false,
-      "repository_available": false,
-      "requires_migration": true,
-      "requires_repository": true,
-      "rls_backed": false,
-      "schema_available": false,
+      "repository_available": true,
+      "requires_migration": false,
+      "requires_repository": false,
+      "rls_backed": true,
+      "schema_available": true,
       "unmet_prerequisites": [
         "customer_auth",
         "document_storage"
@@ -258,13 +258,11 @@
   "requires_live_source_collection": true,
   "requires_migrations": [
     "beta_onboarding_persistence",
-    "document_library_persistence",
     "source_watchlist_persistence",
     "tenant_digest_persistence"
   ],
   "requires_repositories": [
     "beta_onboarding_persistence",
-    "document_library_persistence",
     "source_watchlist_persistence",
     "tenant_digest_persistence"
   ],

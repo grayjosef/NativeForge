@@ -91,6 +91,10 @@ STORAGE_COMPONENT_KEYS: tuple[str, ...] = (
     "proof_audit_schema_available",
     "proof_audit_repository_available",
     "proof_audit_write_path_available",
+    # Gate 127. Where a document is described - which is not where it lives.
+    "document_metadata_schema_available",
+    "document_metadata_repository_available",
+    "document_metadata_write_path_available",
 )
 
 OPERATIONAL_COMPONENT_KEYS: tuple[str, ...] = (
@@ -234,12 +238,62 @@ def _awarded_grants_storage_facts() -> dict[str, bool]:
         ("awarded_grants", "awarded_grants_persistence"),
         ("award_requirements", "award_requirements_persistence"),
         ("proof_audit", "proof_audit_persistence"),
+        ("document_metadata", "document_library_persistence"),
     ):
         lane = build_capability(capability)
         facts[f"{prefix}_schema_available"] = bool(lane.get("schema_available"))
         facts[f"{prefix}_repository_available"] = bool(lane.get("repository_available"))
         facts[f"{prefix}_write_path_available"] = bool(lane.get("write_path_available"))
     return facts
+
+
+def _detect_object_store_configured() -> bool:
+    """Where a document's bytes would go, asked of Gate 96's detector.
+
+    Not answered again here. `detect_body_store_mode()` already exists, already
+    reports `unconfigured`, and already knows which modes count. Three answers
+    to one question is what Gate 114 spent a gate collapsing.
+    """
+    try:
+        from nativeforge.services.award_document_store_persistence_validation_service import (  # noqa: E501
+            detect_object_store_configured,
+        )
+    except ImportError:  # pragma: no cover - the module is in this repository
+        return False
+    return detect_object_store_configured()
+
+
+def _detect_document_storage_live() -> bool:
+    """Is there somewhere a document's bytes can actually live?
+
+    This asked whether `award_document_store_service` imports - the same
+    module-existence proxy the spine carried, and the same one Gate 114 named
+    when it found `customer_persistence_live` probing a repositories module:
+    it would have reported storage live for an empty file.
+
+    Both conditions are now real, and the second is the one that matters:
+
+    ```text
+    metadata has a home   the document lane has a write path (Gate 127)
+    bytes have a home     detect_body_store_mode() is production-capable
+    ```
+
+    A document store that holds descriptions of documents is not a document
+    store. `document_storage_live` stays in the operational blocker list until
+    the bytes have somewhere to go.
+    """
+    try:
+        from nativeforge.services.award_document_store_persistence_validation_service import (  # noqa: E501
+            detect_object_store_configured,
+        )
+        from nativeforge.services.customer_persistence_capability_service import (
+            build_capability,
+        )
+    except ImportError:  # pragma: no cover - both modules are in this repository
+        return False
+
+    lane = build_capability("document_library_persistence")
+    return bool(lane.get("write_path_available") and detect_object_store_configured())
 
 
 def _proof_audit_persistence_available() -> bool:
@@ -290,9 +344,7 @@ def build_awarded_requirements_readiness(*, detect_root: Any = None) -> dict[str
     customer_persistence_live = _capability_persistence_live(
         "awarded_grants_persistence"
     )
-    document_storage_live = _module_importable(
-        "nativeforge.services.award_document_store_service"
-    )
+    document_storage_live = _detect_document_storage_live()
     requirement_extraction_live = _detect_requirement_extraction_live()
 
     operational = {
@@ -343,6 +395,13 @@ def build_awarded_requirements_readiness(*, detect_root: Any = None) -> dict[str
                 for k in STORAGE_COMPONENT_KEYS
                 if k.startswith("proof_audit_")
             ),
+            # Metadata about documents has a home. The documents do not.
+            "document_metadata_storage_available": all(
+                storage[k]
+                for k in STORAGE_COMPONENT_KEYS
+                if k.startswith("document_metadata_")
+            ),
+            "object_store_configured": _detect_object_store_configured(),
             # Both lanes built. Still not tracking: see the operational list.
             "awarded_tracking_storage_available": all(storage.values()),
             # Named separately from document_storage_live, because a proof audit
@@ -429,6 +488,19 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
         "proof_audit_storage_available"
     ):
         fails.append("proof_audit_availability_disagrees_with_its_lane")
+
+    # Gate 127. The whole reason these are two fields: describing a document is
+    # not storing one, and a reader who saw only the first would take the
+    # metadata table for the evidence.
+    if readiness.get("document_storage_live") and not readiness.get(
+        "object_store_configured"
+    ):
+        fails.append("document_storage_live_without_a_configured_object_store")
+
+    if readiness.get("document_storage_live") and not readiness.get(
+        "document_metadata_storage_available"
+    ):
+        fails.append("document_storage_live_without_metadata_persistence")
 
     # Operational readiness cannot be claimed while anything is missing.
     if readiness.get("ready_for_operational_awarded_tracking") and (

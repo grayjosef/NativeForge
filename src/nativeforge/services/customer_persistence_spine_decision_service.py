@@ -169,6 +169,46 @@ def _module_importable(name: str) -> bool:
         return False
 
 
+def _detect_document_storage() -> bool:
+    """Is there somewhere a document's bytes can actually live?
+
+    This asked whether `nativeforge.services.award_document_store_service`
+    imports. That is a module-existence proxy, and Gate 114 named the shape when
+    it found `customer_persistence_live` probing whether a repositories module
+    imports: it "would have flipped to True for an empty file".
+
+    Here the consequence was worse than a wrong flag. `DOCUMENT_STORAGE` is the
+    last unmet prerequisite on `award_requirements_persistence` and
+    `proof_audit_persistence`, so creating a file with that name would have told
+    both lanes their evidence had a home, cleared `operational_out_of_sequence`
+    on both, and let `operational_awarded_recommended` go true - with zero bytes
+    stored anywhere.
+
+    Two conditions now, and both are real:
+
+    ```text
+    metadata has a home   the document lane has a write path
+    bytes have a home     detect_body_store_mode() is production-capable
+    ```
+
+    Gate 127 built the first. The second is Gate 96's detector, which reports
+    `unconfigured`, so this stays false - correctly, because the prerequisite
+    means "evidence has somewhere to go" and it does not.
+    """
+    try:
+        from nativeforge.services.award_document_store_persistence_validation_service import (  # noqa: E501
+            detect_object_store_configured,
+        )
+        from nativeforge.services.customer_persistence_capability_service import (
+            build_capability,
+        )
+    except ImportError:  # pragma: no cover - both modules are in this repository
+        return False
+
+    lane = build_capability("document_library_persistence")
+    return bool(lane.get("write_path_available") and detect_object_store_configured())
+
+
 def _detect_preconditions() -> dict[str, bool]:
     """The four things that are not capabilities. Each detected separately."""
     from nativeforge.services.tenant_beta_readiness_service import (
@@ -180,9 +220,7 @@ def _detect_preconditions() -> dict[str, bool]:
         CUSTOMER_AUTH: bool(beta.get("customer_auth_live")),
         EMAIL_DELIVERY: bool(beta.get("email_delivery_available")),
         LIVE_SOURCES: bool(beta.get("live_source_collection_available")),
-        DOCUMENT_STORAGE: _module_importable(
-            "nativeforge.services.award_document_store_service"
-        ),
+        DOCUMENT_STORAGE: _detect_document_storage(),
     }
 
 

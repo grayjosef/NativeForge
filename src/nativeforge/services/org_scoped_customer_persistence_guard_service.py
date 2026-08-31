@@ -132,6 +132,11 @@ LABEL_BOUND_OPERATIONS = frozenset(
         # filed against an unverified binding is one Tribe's evidence in
         # another Tribe's file.
         "write_proof_event",
+        # Gate 127C. A document is filed against an award, a requirement or a
+        # proof event, any of which may be the only relationship present. Which
+        # tenant it belongs to is reachable only through the award's binding,
+        # and a document row is the one that later names a bucket and a key.
+        "write_document_library_item",
     }
 )
 

@@ -87,7 +87,16 @@ DOCS = ROOT / "docs" / "operations"
 # is created empty and stays empty: doc 679 records that a production write
 # needs customer_auth_live and a verified operational binding, and both are
 # false.
-CURRENT_HEAD = "0034"
+# Gate 127 re-pinned 0034 -> 0035 for nf_award_documents, metadata about a
+# Tribe's compliance documents. Documented in
+# docs/operations/681_GATE127_AWARD_DOCUMENT_STORE_REPOSITORY_CONTRACT.md. No
+# column holds bytes: it is the same metadata-without-content shape 0028 settled
+# for nf_raw_source_payloads, with an organization_id and RLS because an award
+# document belongs to exactly one Tribe. The table is created empty and stays
+# empty: doc 683 records that a production write needs customer_auth_live and a
+# verified operational binding, and both are false. Object storage remains
+# unconfigured, so document_storage_live stays false too.
+CURRENT_HEAD = "0035"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

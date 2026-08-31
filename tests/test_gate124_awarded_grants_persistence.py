@@ -772,8 +772,12 @@ def test_the_awarded_grants_lane_has_a_write_path_and_is_not_operational():
 # Lanes whose contract module genuinely does not exist yet, each with the
 # reason. A lane may be absent from a mapping only by appearing here, so a typo
 # cannot pass as a planned absence - which is the whole point of the test below.
+# `document_library_persistence` was here until Gate 127 built the award
+# document store repository, and this test failed the moment it did - which is
+# the point. An exemption list that quietly outlives its reason is how a typo
+# passes as a planned absence, so the test asserts the named absences are still
+# absent as well as that mapped modules import.
 KNOWN_ABSENT_CONTRACT_LANES: dict[str, str] = {
-    "document_library_persistence": "no award document store has been built",
     "source_watchlist_persistence": "no tenant source watchlist has been built",
     "beta_onboarding_persistence": "no beta onboarding service has been built",
 }

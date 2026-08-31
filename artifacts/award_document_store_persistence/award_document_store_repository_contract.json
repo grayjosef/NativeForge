@@ -1,0 +1,253 @@
+{
+  "check_constraints": [
+    "ck_nf_award_documents_bucket_needs_a_configured_store",
+    "ck_nf_award_documents_content_length_not_negative",
+    "ck_nf_award_documents_digest_is_sha256_shaped",
+    "ck_nf_award_documents_fact_status",
+    "ck_nf_award_documents_kind",
+    "ck_nf_award_documents_legal_hold_refuses_archive",
+    "ck_nf_award_documents_needs_a_relationship",
+    "ck_nf_award_documents_object_key_needs_a_configured_store",
+    "ck_nf_award_documents_provider_needs_a_configured_store",
+    "ck_nf_award_documents_retention_class",
+    "ck_nf_award_documents_source",
+    "ck_nf_award_documents_status",
+    "ck_nf_award_documents_stored_needs_a_location",
+    "ck_nf_award_documents_title_not_blank",
+    "ck_nf_award_documents_version_needs_a_key",
+    "ck_nf_award_documents_visible_needs_established_facts"
+  ],
+  "column_count": 31,
+  "columns": [
+    "id",
+    "organization_id",
+    "awarded_grant_id",
+    "award_requirement_id",
+    "proof_event_id",
+    "document_kind",
+    "document_status",
+    "document_title",
+    "document_description",
+    "document_source",
+    "document_source_ref",
+    "object_store_configured",
+    "object_store_provider",
+    "object_bucket",
+    "object_key",
+    "object_version",
+    "content_type",
+    "content_length",
+    "sha256_digest",
+    "retention_class",
+    "legal_hold",
+    "customer_visible",
+    "fact_status",
+    "human_review_required",
+    "created_by_identity_id",
+    "updated_by_identity_id",
+    "archived_at",
+    "is_demo",
+    "blocked_reasons",
+    "created_at",
+    "updated_at"
+  ],
+  "derived_only_fields": [
+    "object_store_configured"
+  ],
+  "document_bytes_written": 0,
+  "document_kinds": [
+    "audit_report",
+    "award_letter",
+    "award_terms",
+    "board_or_council_resolution",
+    "closeout_package",
+    "correspondence",
+    "financial_report",
+    "invoice_or_receipt",
+    "match_documentation",
+    "narrative_report",
+    "other",
+    "performance_report",
+    "unknown"
+  ],
+  "document_sources": [
+    "evidence_extracted",
+    "human_entered",
+    "needs_human_review",
+    "system_generated",
+    "tenant_supplied",
+    "unknown",
+    "unsupported_document_type"
+  ],
+  "document_statuses": [
+    "awaiting_upload",
+    "needs_human_review",
+    "reference_recorded",
+    "stored",
+    "superseded",
+    "unknown",
+    "withdrawn"
+  ],
+  "forbidden_anchor_names": [
+    "award_requirement_id",
+    "awarded_grant_id",
+    "customer_org_id",
+    "organization_profile_id",
+    "proof_event_id",
+    "tenant_id"
+  ],
+  "migration_revision": "0035",
+  "object_store": {
+    "body_store_mode": "unconfigured",
+    "built_by_gate_127": false,
+    "detector": "nativeforge.services.raw_payload_body_store_contract_service.detect_body_store_mode",
+    "document_bytes_written": 0,
+    "object_store_configured": false,
+    "object_store_contacted": false,
+    "schema_version": "nf_award_document_store_repository_v1"
+  },
+  "operations": [
+    "archive_award_document",
+    "create_award_document",
+    "get_award_document",
+    "list_documents_for_award",
+    "list_documents_for_organization",
+    "list_documents_for_proof_event",
+    "list_documents_for_requirement",
+    "prepare_document_write",
+    "validate_document_persistence"
+  ],
+  "production_award_requirements_created": 0,
+  "production_document_records_created": 0,
+  "production_proof_records_created": 0,
+  "prohibited_inferences": [
+    {
+      "inference": "storage_from_object_key",
+      "why": "a key is a path. Whether anything is at the end of it is what detect_body_store_mode() answers, and it answers unconfigured"
+    },
+    {
+      "inference": "content_from_metadata",
+      "why": "a digest and a length describe a file this repository has never opened. Neither is evidence the file exists"
+    },
+    {
+      "inference": "submission_from_document",
+      "why": "attaching a document is not filing it. Gate 126 owns that boundary"
+    },
+    {
+      "inference": "acceptance_from_document",
+      "why": "a funder accepting something is a separate event with its own timestamp"
+    },
+    {
+      "inference": "visibility_from_upload",
+      "why": "whether a Tribe is shown their own document is a decision somebody makes. A default of true shows a draft to the wrong person exactly once"
+    },
+    {
+      "inference": "document_kind_from_title_or_content_type",
+      "why": "Report.pdf could be financial, narrative or performance, and the three have different retention"
+    }
+  ],
+  "real_customer_data_written": 0,
+  "relationship_fields": [
+    "awarded_grant_id",
+    "award_requirement_id",
+    "proof_event_id"
+  ],
+  "retention_classes": [
+    "retain_1_year",
+    "retain_7_days",
+    "retain_90_days",
+    "retain_indefinite"
+  ],
+  "rls_anchor": "organization_id",
+  "rls_predicate": "organization_id = current_setting('app.current_org_id', true)::uuid AND is_demo = current_setting('app.current_org_is_demo', true)::boolean",
+  "rows_deleted": 0,
+  "rows_in_the_application_database": 0,
+  "rules": [
+    "organization_id is required and must be UUID-shaped",
+    "at least one of awarded_grant_id, award_requirement_id and proof_event_id is required, and all three are refused as anchors",
+    "tenant_id, customer_org_id and organization_profile_id are refused as anchors",
+    "metadata is not content: no column holds bytes and no operation returns any",
+    "object_key, object_bucket and object_store_provider are refused unless the object store is configured",
+    "object_store_configured is bridged from Gate 96's detect_body_store_mode() and is never accepted from a caller",
+    "a digest is a claim about bytes nobody here has read, and content_verified is a constant false",
+    "a document is not a submission, and not an accepted proof",
+    "customer_visible defaults false and is never derived",
+    "legal_hold refuses archive, in the repository and in the database",
+    "archive by setting archived_at; there is no delete path",
+    "a production write requires customer_auth_live and a verified operational binding"
+  ],
+  "schema_version": "nf_award_document_store_persistence_artifact_v1",
+  "table_name": "nf_award_documents",
+  "vocabularies": {
+    "actionable_fact_statuses": [
+      "tenant_supplied",
+      "verified"
+    ],
+    "derived_only_fields": [
+      "object_store_configured"
+    ],
+    "document_kinds": [
+      "audit_report",
+      "award_letter",
+      "award_terms",
+      "board_or_council_resolution",
+      "closeout_package",
+      "correspondence",
+      "financial_report",
+      "invoice_or_receipt",
+      "match_documentation",
+      "narrative_report",
+      "other",
+      "performance_report",
+      "unknown"
+    ],
+    "document_sources": [
+      "evidence_extracted",
+      "human_entered",
+      "needs_human_review",
+      "system_generated",
+      "tenant_supplied",
+      "unknown",
+      "unsupported_document_type"
+    ],
+    "document_statuses": [
+      "awaiting_upload",
+      "needs_human_review",
+      "reference_recorded",
+      "stored",
+      "superseded",
+      "unknown",
+      "withdrawn"
+    ],
+    "fact_statuses": [
+      "demo_fixture",
+      "needs_human_review",
+      "tenant_supplied",
+      "unknown",
+      "verified"
+    ],
+    "forbidden_anchor_names": [
+      "award_requirement_id",
+      "awarded_grant_id",
+      "customer_org_id",
+      "organization_profile_id",
+      "proof_event_id",
+      "tenant_id"
+    ],
+    "relationship_fields": [
+      "awarded_grant_id",
+      "award_requirement_id",
+      "proof_event_id"
+    ],
+    "retention_classes_bridged_from_gate_96": [
+      "retain_1_year",
+      "retain_7_days",
+      "retain_90_days",
+      "retain_indefinite"
+    ],
+    "stored_statuses": [
+      "stored"
+    ]
+  },
+  "vocabulary_invariant_failures": []
+}
