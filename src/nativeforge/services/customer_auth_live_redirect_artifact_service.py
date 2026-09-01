@@ -207,7 +207,7 @@ def build_live_redirect_declaration() -> dict[str, Any]:
             "migration_revision": "0030",
             # The live head, which moves when a later gate adds a migration.
             # Gate 127 added 0035.
-            "alembic_head": "0036",
+            "alembic_head": "0037",
             "minimum_signing_key_length": MIN_KEY_LENGTH,
             "production_signing_key_sources": sorted(PRODUCTION_KEY_SOURCES),
             # Measured against the real environment, which has none of it.

@@ -1,0 +1,124 @@
+{
+  "deterministic_gate_no_evidence_supplied": {
+    "blocked_reasons": [
+      "auth_gate_not_satisfied:audience_configured",
+      "auth_gate_not_satisfied:callback_session_validated",
+      "auth_gate_not_satisfied:dev_header_disabled_for_production",
+      "auth_gate_not_satisfied:invite_binding_passed",
+      "auth_gate_not_satisfied:issuer_configured",
+      "auth_gate_not_satisfied:issuer_jwks_validated",
+      "auth_gate_not_satisfied:org_binding_passed",
+      "auth_gate_not_satisfied:provider_configured",
+      "auth_gate_not_satisfied:role_mapping_passed",
+      "auth_gate_not_satisfied:secret_present",
+      "auth_gate_not_satisfied:session_signing_key_ready",
+      "issuer_jwks_unvalidated_no_network_check_performed",
+      "owner_has_not_authorized_customer_auth_activation"
+    ],
+    "customer_auth_live": false,
+    "login_activation_approved": false,
+    "login_live": false,
+    "missing_login_gates": [
+      "provider_configured",
+      "secret_present",
+      "issuer_configured",
+      "issuer_jwks_validated",
+      "audience_configured",
+      "callback_session_validated",
+      "org_binding_passed",
+      "role_mapping_passed",
+      "session_signing_key_ready"
+    ]
+  },
+  "env_key_names_checked": [
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+    "NF_PUBLIC_ORIGIN",
+    "NF_SESSION_SIGNING_KEY"
+  ],
+  "env_key_presence": {
+    "NF_PUBLIC_ORIGIN": false,
+    "NF_SESSION_SIGNING_KEY": false,
+    "OIDC_AUDIENCE": false,
+    "OIDC_CALLBACK_URL": false,
+    "OIDC_CLIENT_ID": false,
+    "OIDC_CLIENT_SECRET": false,
+    "OIDC_ISSUER": false
+  },
+  "env_values_recorded": false,
+  "flags_this_gate_did_not_move": {
+    "awarded_operational_tracking": false,
+    "controlled_customer_pilot": false,
+    "customer_auth_live": false,
+    "customer_persistence_live": false,
+    "email_delivery": false,
+    "object_store_configured": false,
+    "production_rollout": false,
+    "source_monitoring_live": false,
+    "tenant_digest_operational": false,
+    "verified_operational_binding": false
+  },
+  "markers_checked": [
+    "id_token",
+    "access_token",
+    "refresh_token",
+    "code_verifier",
+    "client_secret",
+    "Set-Cookie",
+    "nf_session=",
+    "?code=",
+    "GOCSPX-"
+  ],
+  "measured_against_the_dev_deployment": {
+    "callback_session_validated": true,
+    "customer_auth_live": false,
+    "issuer_jwks_validated": true,
+    "login_live": true,
+    "note": "a recording; regenerate by calling /api/auth/current-user",
+    "org_binding_passed": true,
+    "recorded_on": "2026-09-01",
+    "remaining_customer_auth_blockers": [
+      "dev_header_disabled_for_production",
+      "invite_binding_passed",
+      "owner_has_not_authorized_customer_auth_activation"
+    ],
+    "role_mapping_passed": true,
+    "session_signing_key_ready": true
+  },
+  "required_auth_gates": [
+    "provider_configured",
+    "secret_present",
+    "issuer_configured",
+    "issuer_jwks_validated",
+    "audience_configured",
+    "callback_route_available",
+    "callback_session_validated",
+    "session_cookie_policy_available",
+    "invite_binding_passed",
+    "org_binding_passed",
+    "role_mapping_passed",
+    "organization_id_resolution_available",
+    "membership_verification_available",
+    "rls_claim_guard_available",
+    "dev_header_disabled_for_production",
+    "session_signing_key_ready"
+  ],
+  "required_login_gates": [
+    "provider_configured",
+    "secret_present",
+    "issuer_configured",
+    "issuer_jwks_validated",
+    "audience_configured",
+    "callback_route_available",
+    "callback_session_validated",
+    "session_cookie_policy_available",
+    "org_binding_passed",
+    "role_mapping_passed",
+    "session_signing_key_ready"
+  ],
+  "scan_applies_to": "artifacts/login_live_dev_header_kill",
+  "schema_version": "nf_login_live_dev_header_kill_artifact_v1"
+}

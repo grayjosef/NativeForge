@@ -253,6 +253,50 @@ def test_a_url_available_without_provider_config_is_an_invariant_failure():
 # ------------------------------------------------- the redirect state table
 
 
+def _migration_changes_table(body: str, table: str) -> bool:
+    """Does an `op.*` call in this migration name this table?
+
+    Every migration in this repository binds its table name to a module-level
+    constant and passes the constant - `TABLE = "nf_auth_redirect_states"`, then
+    `op.create_index(..., TABLE, ...)`. So a scanner that looks only for string
+    literals in call arguments finds nothing, and one that looks anywhere in the
+    text finds prose. Module-level string assignments are resolved, and then the
+    call arguments are checked against the resolved values.
+    """
+    import ast
+
+    tree = ast.parse(body)
+    constants: dict[str, str] = {}
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and isinstance(node.value, ast.Constant):
+            if isinstance(node.value.value, str):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        constants[target.id] = node.value.value
+
+    def _names_table(argument: ast.AST) -> bool:
+        if isinstance(argument, ast.Constant):
+            return argument.value == table
+        if isinstance(argument, ast.Name):
+            return constants.get(argument.id) == table
+        return False
+
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        func = node.func
+        if not (
+            isinstance(func, ast.Attribute)
+            and isinstance(func.value, ast.Name)
+            and func.value.id == "op"
+        ):
+            continue
+        arguments = list(node.args) + [keyword.value for keyword in node.keywords]
+        if any(_names_table(argument) for argument in arguments):
+            return True
+    return False
+
+
 def _migrations_touching_redirect_states() -> str:
     """Every migration that changes this table, not one hardcoded filename.
 
@@ -260,14 +304,51 @@ def _migrations_touching_redirect_states() -> str:
     whole truth until 0036 added the encrypted PKCE verifier. A fixed filename
     made a later migration invisible - the same shape as Gate 130's tunnel
     detector reading `config.yml` while the live tunnel ran from another file.
+
+    Gate 133: `if TABLE_NAME in body` was too wide. Migration 0037 creates a
+    different table and *mentions* this one in its docstring, explaining that it
+    omits `organization_id` for the same reason 0030 does. That made 0037's
+    columns look like columns of this table and the comparison failed.
+
+    A table name in prose is prose. Only an `op.*` call that names the table as
+    an argument changes it, so the file is parsed and the call arguments are
+    read - not the text. Ninth substring-versus-meaning false positive in this
+    campaign, and the first produced by a fix for the previous one.
     """
     text = ""
     for path in sorted(Path("alembic/versions").glob("*.py")):
         body = path.read_text(encoding="utf-8")
-        if repo_svc.TABLE_NAME in body:
+        if repo_svc.TABLE_NAME not in body:
+            continue
+        if _migration_changes_table(body, repo_svc.TABLE_NAME):
             text += body
-    assert text, "no migration mentions the redirect state table"
+    assert text, "no migration changes the redirect state table"
     return text
+
+
+def test_a_migration_that_only_mentions_the_table_is_not_read_as_changing_it():
+    """The false positive above, asserted so the narrower rule cannot loosen.
+
+    Migration 0037 names this table in prose - it explains that it omits
+    `organization_id` for the same reason 0030 does - and creates a different
+    table. Read as touching this one, its columns joined the comparison and the
+    test failed. Ninth substring-versus-meaning false positive in this campaign,
+    and the first produced by the fix for the eighth.
+    """
+    mentions = set()
+    changes = set()
+    for path in sorted(Path("alembic/versions").glob("*.py")):
+        body = path.read_text(encoding="utf-8")
+        if repo_svc.TABLE_NAME not in body:
+            continue
+        mentions.add(path.name)
+        if _migration_changes_table(body, repo_svc.TABLE_NAME):
+            changes.add(path.name)
+
+    assert changes, "the scanner found no migration that changes the table"
+    prose_only = mentions - changes
+    assert prose_only, "the narrower rule is untested without a prose-only case"
+    assert "0037_nf_auth_validation_events.py" in prose_only
 
 
 def test_the_repository_table_matches_the_migrations():
@@ -886,5 +967,5 @@ def test_the_declaration_still_refuses_every_liveness_claim():
         "redirect_state_rows_written",
     ):
         assert declaration[claim] is False
-    assert declaration["alembic_head"] == "0036"
+    assert declaration["alembic_head"] == "0037"
     assert declaration["missing_auth_gates"]

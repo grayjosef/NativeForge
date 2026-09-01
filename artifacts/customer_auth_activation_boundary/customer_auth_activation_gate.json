@@ -46,6 +46,9 @@
   "issuer_configured": false,
   "issuer_jwks_network_check_performed": false,
   "issuer_jwks_validated": false,
+  "jwks_validation_evidence_supplied": false,
+  "login_activation_approved": false,
+  "login_approval_present": false,
   "login_live": false,
   "membership_verification_available": true,
   "missing_auth_gates": [
@@ -131,6 +134,7 @@
   "real_sessions_created": false,
   "real_users_created": false,
   "rls_claim_guard_available": true,
+  "role_mapping_evidence_supplied": false,
   "role_mapping_passed": false,
   "schema_version": "nf_customer_auth_activation_gate_v1",
   "secret_present": false,

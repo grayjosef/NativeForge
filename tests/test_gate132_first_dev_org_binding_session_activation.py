@@ -685,9 +685,21 @@ def _seed_bound_identity():
 
 
 def _session_cookie(identity_id, organization_id=DEMO_ORG, roles=("org_owner",)):
+    """A session the route will accept, minted against the real clock.
+
+    This used `int(NOW.timestamp())` - a fixed 2026-09-01 12:00 - with a
+    one-hour lifetime. `verify_session_cookie` reads the wall clock and the
+    route cannot inject one, so these tests passed all morning and began
+    failing at 13:00 UTC on the day NOW names. A time bomb, and it went off
+    during Gate 133 rather than because of it.
+
+    `NOW` stays where a timestamp is only ever written and read back.
+    """
+    import time
+
     from nativeforge.services.customer_session_format_service import build_session
 
-    issued = int(NOW.timestamp())
+    issued = int(time.time())
     built = build_session(
         principal_id=identity_id,
         subject=identity_id,
@@ -699,6 +711,7 @@ def _session_cookie(identity_id, organization_id=DEMO_ORG, roles=("org_owner",))
         session_id=str(uuid.uuid4()),
         now=issued + 1,
     )
+    assert built["session_cookie_valid"] is True, built["blocked_reasons"]
     return built
 
 

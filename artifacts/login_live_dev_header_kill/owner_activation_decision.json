@@ -1,0 +1,45 @@
+{
+  "approved_environments": [
+    "local",
+    "dev",
+    "test"
+  ],
+  "approved_organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "approved_provider": "google",
+  "authorization_source": "Gate 132 authorization: 'Authorization is limited to the demo organization only: organization_id: bbbbbbbb-cccc-dddd-eeee-ffffffffffff, org_type: demo, is_demo: true'; Gate 133 instruction: 'Record the owner-approved demo login activation decision' and 'Make login_live true if and only if the facts prove it.'",
+  "customer_auth_approval_present": false,
+  "customer_auth_approval_still_lives_in": "NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL",
+  "in_scope_demo_org": {
+    "approves_customer_auth_live": false,
+    "approves_login_live": true,
+    "blocked_reasons": []
+  },
+  "no_env_var_can_grant_it": true,
+  "not_approved": [
+    "customer_auth_live",
+    "production_rollout",
+    "real_organization_binding",
+    "verified_operational_binding",
+    "customer_persistence_live",
+    "dev_header_production_exposure",
+    "collector_activation",
+    "email_delivery",
+    "object_store_access",
+    "live_grant_source_calls"
+  ],
+  "out_of_scope_production_environment": {
+    "approves_login_live": false,
+    "blocked_reasons": [
+      "environment_outside_the_approved_scope:production"
+    ]
+  },
+  "out_of_scope_real_org": {
+    "approves_login_live": false,
+    "blocked_reasons": [
+      "organization_is_the_explicitly_refused_real_org"
+    ]
+  },
+  "refused_organization_id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "revocation_env": "NF_DEMO_LOGIN_ACTIVATION_REVOKED",
+  "schema_version": "nf_login_live_dev_header_kill_artifact_v1"
+}

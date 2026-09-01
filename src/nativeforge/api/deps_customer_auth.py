@@ -5,20 +5,42 @@ rather than over it.
 
 ## Why beside
 
-Fourteen route modules depend on the dev-header chain. Converting any of them
-today would return 401 to every caller, because the only claim source the RLS
-guard trusts is `verified_auth_claim`, and producing one needs customer auth —
-which Gate 121 measured as eleven activation gates away with zero code-only
-blockers.
+Fourteen route modules depended on the dev-header chain, and converting any of
+them when this was written would have returned 401 to every caller: producing a
+verified claim needed customer auth, which Gate 121 measured as eleven
+activation gates away.
 
 ```text
-convert now  ->  14 route modules unreachable
-             ->  no safety gained: the frontend calls the API zero times, so
-                 no customer can reach them anyway
+convert then ->  14 route modules unreachable
+             ->  no safety gained: the frontend called the API zero times, so
+                 no customer could reach them anyway
 ```
 
-So this module exists, is tested, and is imported by no route yet. Gate 122A
-records the fourteen and why each stays.
+## Gate 133: it is imported by a route now
+
+Gate 132 built the two things this module was missing. A session can exist, an
+identity can have a membership, and an organization knows whether it is demo or
+real. So `isolation_routes` runs on these dependencies, and the count is
+fifteen modules minus one.
+
+The remaining fourteen are 207 routes the demo shell reaches with a header and
+no cookie. Converting them is Gate 134's work and the plan is in
+`docs/operations/703_GATE133_DEV_HEADER_KILL_PLAN.md`.
+
+## Two upgrades this module needed first
+
+```text
+membership_verified   was hardcoded False. Gate 132 built the membership read,
+                      so it is a database question now and gets asked.
+org_type              was hardcoded "real" with the note that this dependency
+                      does not read the organizations row. It reads it now, via
+                      Gate 132's classifier, because a demo-org session
+                      classified real is refused by every demo-only route.
+```
+
+Both needed a database session, so the two session-bearing dependencies take
+one. `get_dev_org_context_explicit_only` does not: it authenticates nobody and
+must not gain the ability to look anything up.
 
 ## Three dependencies
 
@@ -53,8 +75,10 @@ from __future__ import annotations
 import uuid
 from typing import Annotated, Any
 
-from fastapi import Cookie, Header, HTTPException, status
+from fastapi import Cookie, Depends, Header, HTTPException, status
+from sqlalchemy.orm import Session
 
+from nativeforge.api.deps import get_db
 from nativeforge.api.org_context import OrgContext
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.lib.settings import get_settings
@@ -91,31 +115,84 @@ def evaluate_request_org_context(
     mode: str,
     session_cookie: str | None,
     dev_header: str | None,
+    db: Any = None,
 ) -> dict[str, Any]:
     """Verify the cookie, then ask the contract what this request may do.
 
     The verification is passed whole rather than as individual booleans, so a
     caller cannot assert a session the verifier did not find.
+
+    ## Gate 133: the membership question gets asked
+
+    It used to be `membership_verified=False`, hardcoded, with the reason
+    recorded: a membership record is a database question this dependency does
+    not ask. Gate 132 built the read path, so it asks - and the claimed
+    organization has to be the one the membership resolves to. A cookie naming
+    organization A held by a member of organization B is not a member of A, and
+    accepting it because *some* membership exists is the cross-tenant read every
+    RLS rule here is written against.
+
+    Without a session there is nothing to look up, so the verifier is called
+    once and the answer is no.
     """
-    verification = verify_session_cookie(
+    parsed = verify_session_cookie(
         cookie_value=session_cookie,
-        # A membership record is a database question this dependency does not
-        # ask. Gate 118 established that passing False deliberately is more
-        # honest than omitting it.
         membership_verified=False,
     )
+
+    membership_verified = False
+    resolution: dict[str, Any] = {}
+    if db is not None and parsed["session_cookie_valid"] and parsed["principal_id"]:
+        from nativeforge.services.identity_org_session_resolution_service import (
+            resolve_session_organization,
+        )
+
+        try:
+            resolution = resolve_session_organization(
+                connection=db.connection(),
+                identity_id=parsed["principal_id"],
+            )
+        except Exception:
+            db.rollback()
+            resolution = {}
+        membership_verified = bool(
+            resolution.get("organization_id_resolved")
+            and resolution.get("organization_id") == parsed["organization_id"]
+        )
+
+    verification = (
+        verify_session_cookie(cookie_value=session_cookie, membership_verified=True)
+        if membership_verified
+        else parsed
+    )
+
     settings = get_settings()
-    return evaluate_org_context(
+    decision = evaluate_org_context(
         dependency_mode=mode,
         session_verification=verification,
         dev_header_value=dev_header,
         dev_header_setting_enabled=bool(settings.nf_dev_org_headers),
         production_context=_production_context(),
     )
+    return decision | {
+        "membership_verified": membership_verified,
+        "membership_blocked_reasons": sorted(resolution.get("blocked_reasons") or []),
+    }
 
 
-def _org_context_from(decision: dict) -> OrgContext | None:
-    """An OrgContext, or None. Never a fabricated organization."""
+def _org_context_from(decision: dict, db: Any = None) -> OrgContext | None:
+    """An OrgContext, or None. Never a fabricated organization.
+
+    Gate 133: demo-vs-real is a property of the `organizations` row, and this
+    used to assume `real` because the dependency did not read one. That was the
+    safe assumption and it was also wrong for every demo session - a demo
+    organization classified real is refused by every demo-only route, which is
+    why this dependency could not be attached to one.
+
+    Gate 132's classifier reads the row and derives `is_demo` from it. Without a
+    connection the old assumption still applies, because guessing `demo` would
+    be guessing in the permissive direction.
+    """
     organization_id = decision.get("organization_id")
     if not organization_id:
         return None
@@ -123,14 +200,29 @@ def _org_context_from(decision: dict) -> OrgContext | None:
         oid = uuid.UUID(str(organization_id))
     except (ValueError, TypeError):
         return None
-    # Demo-vs-real is a property of the organizations row, which this dependency
-    # does not read. `real` is the safe assumption: it is the stricter of the
-    # two everywhere `require_demo_org_db` and `require_real_org_db` disagree.
+
     org_type: OrgType = "real"
+    if db is not None:
+        from nativeforge.services.demo_org_classification_service import (
+            classify_organization,
+        )
+
+        try:
+            classification = classify_organization(oid, connection=db.connection())
+        except Exception:
+            db.rollback()
+            classification = {}
+        if not classification.get("classification_available"):
+            # An organization the classifier will not classify is one this
+            # dependency will not hand out. Refusing beats defaulting.
+            return None
+        org_type = "demo" if classification.get("is_demo") else "real"
+
     return OrgContext(org_id=oid, org_type=org_type)
 
 
 def get_customer_org_context_required(
+    db: Annotated[Session, Depends(get_db)],
     nf_session: Annotated[str | None, Cookie()] = None,
 ) -> OrgContext:
     """A verified organization context, or 401.
@@ -139,9 +231,9 @@ def get_customer_org_context_required(
     key is configured. The refusal names why rather than being a bare 401.
     """
     decision = evaluate_request_org_context(
-        mode="required", session_cookie=nf_session, dev_header=None
+        mode="required", session_cookie=nf_session, dev_header=None, db=db
     )
-    context = _org_context_from(decision)
+    context = _org_context_from(decision, db)
     if not decision["org_context_available"] or context is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -156,6 +248,7 @@ def get_customer_org_context_required(
 
 
 def get_customer_org_context_optional(
+    db: Annotated[Session, Depends(get_db)],
     nf_session: Annotated[str | None, Cookie()] = None,
 ) -> OrgContext | None:
     """A verified organization context, or None.
@@ -164,11 +257,11 @@ def get_customer_org_context_optional(
     nothing scoped to anybody, which is correct and looks empty.
     """
     decision = evaluate_request_org_context(
-        mode="optional", session_cookie=nf_session, dev_header=None
+        mode="optional", session_cookie=nf_session, dev_header=None, db=db
     )
     if not decision["org_context_available"]:
         return None
-    return _org_context_from(decision)
+    return _org_context_from(decision, db)
 
 
 def get_dev_org_context_explicit_only(
@@ -195,3 +288,32 @@ def get_dev_org_context_explicit_only(
             },
         )
     return context
+
+
+def require_customer_demo_org(
+    ctx: Annotated[OrgContext, Depends(get_customer_org_context_required)],
+) -> OrgContext:
+    """A verified session whose organization is a demo organization, or 403.
+
+    The session-backed counterpart of `isolation_deps.require_demo_org`. The
+    difference is where `org_type` comes from: that one reads the settings
+    allowlist, this one reads the `organizations` row.
+    """
+    if ctx.org_type != "demo":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="demo-only route requires a demo organization",
+        )
+    return ctx
+
+
+def require_customer_real_org(
+    ctx: Annotated[OrgContext, Depends(get_customer_org_context_required)],
+) -> OrgContext:
+    """A verified session whose organization is a real organization, or 403."""
+    if ctx.org_type != "real":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="real-data route requires a real (non-demo) organization",
+        )
+    return ctx

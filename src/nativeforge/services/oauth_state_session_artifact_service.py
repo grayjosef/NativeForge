@@ -80,7 +80,7 @@ def build_state_session_artifacts() -> dict[str, str]:
         {
             "schema_version": SCHEMA_VERSION,
             "table": STATE_TABLE,
-            "migration": "0036",
+            "migration": "0037",
             "durable_scope": "database",
             "columns": sorted(c.name for c in REDIRECT_STATES.columns),
             "state_stored_as": "sha256_digest",

@@ -1,0 +1,49 @@
+{
+  "cookie_claim_can_override_membership": false,
+  "cookie_override_checked_by": "offering the resolver a claim and asserting it refuses; the resolver takes no organization parameter, so the call raises TypeError",
+  "deterministic_gate_no_evidence_supplied": {
+    "role_mapping_passed": false
+  },
+  "email_domain_can_map_a_role": false,
+  "email_domain_can_map_an_organization": false,
+  "header_can_map_a_role": false,
+  "measured_live": {
+    "mapped_identities": 1,
+    "mapped_organizations": [
+      "bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
+    ],
+    "membership_sources_observed": [
+      "org_owner_approved"
+    ],
+    "note": "a recording; regenerate by querying the dev database",
+    "recorded_on": "2026-09-01",
+    "role_mapping_passed": true,
+    "role_sources_observed": [
+      "membership_record"
+    ],
+    "roles_observed": [
+      "org_owner"
+    ]
+  },
+  "membership_table": "nf_org_memberships",
+  "new_storage_rationale": "a membership row is the thing itself rather than a report about an event, so it survives the process without being written down again; role_mapping_passed needed a query, not a migration",
+  "new_storage_required": false,
+  "refused_role_sources": [
+    "client_header",
+    "email_domain",
+    "none",
+    "token_claim",
+    "unknown"
+  ],
+  "role_mapping_source": "nf_org_memberships",
+  "schema_version": "nf_login_live_dev_header_kill_artifact_v1",
+  "token_claim_can_map_a_role": false,
+  "trusted_membership_sources": [
+    "operator_approved",
+    "org_owner_approved",
+    "verified_directory"
+  ],
+  "trusted_role_sources": [
+    "membership_record"
+  ]
+}

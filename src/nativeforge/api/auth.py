@@ -94,6 +94,13 @@ from nativeforge.services.customer_auth_dependency_contract_service import (
 from nativeforge.services.customer_auth_environment_preflight_service import (
     CALLBACK_ROUTE_PATH,
 )
+from nativeforge.services.customer_auth_jwks_validation_evidence_service import (
+    build_jwks_validation_evidence,
+    record_validation_evidence,
+)
+from nativeforge.services.customer_auth_owner_activation_decision_service import (
+    build_owner_activation_decision,
+)
 from nativeforge.services.customer_auth_redirect_flow_service import (
     build_redirect_flow_contract,
 )
@@ -110,6 +117,9 @@ from nativeforge.services.customer_auth_redirect_state_store_service import (
 from nativeforge.services.customer_auth_redirect_state_store_service import (
     consume_state,
     store_state,
+)
+from nativeforge.services.customer_auth_role_mapping_evidence_service import (
+    build_role_mapping_evidence,
 )
 from nativeforge.services.customer_auth_signing_key_readiness_service import (
     build_signing_key_readiness,
@@ -165,15 +175,42 @@ def _gate(db: Session | None = None) -> dict[str, Any]:
     Gate 132G: a route with a session hands over what the database says, so
     `org_binding_passed` and `callback_session_validated` are measured rather
     than assumed false. A caller without one gets the deterministic answer.
+
+    Gate 133 adds two more measurements and one decision. The decision is
+    checked against the organization that actually has a mapped membership,
+    read out of the role-mapping evidence - not against an id this function
+    supplies. When the mapping is ambiguous (nought or several organizations)
+    no organization is offered and the decision refuses by name, which is the
+    deny-by-default branch rather than a fallback.
     """
     evidence = None
+    jwks_evidence = None
+    role_evidence = None
+    decision = None
+
     if db is not None:
         try:
-            evidence = build_binding_evidence(connection=db.connection())
+            connection = db.connection()
+            evidence = build_binding_evidence(connection=connection)
+            jwks_evidence = build_jwks_validation_evidence(connection=connection)
+            role_evidence = build_role_mapping_evidence(connection=connection)
         except Exception:
             db.rollback()
-            evidence = None
-    return build_customer_auth_activation_gate(binding_evidence=evidence)
+            evidence = jwks_evidence = role_evidence = None
+
+    if role_evidence is not None:
+        mapped = list(role_evidence.get("mapped_organizations") or [])
+        decision = build_owner_activation_decision(
+            organization_id=mapped[0] if len(mapped) == 1 else None,
+            provider=(auth_environment_overlay().get("OIDC_ISSUER") or "").strip(),
+        )
+
+    return build_customer_auth_activation_gate(
+        binding_evidence=evidence,
+        jwks_validation_evidence=jwks_evidence,
+        role_mapping_evidence=role_evidence,
+        login_activation_decision=decision,
+    )
 
 
 def _session_decision(
@@ -593,6 +630,10 @@ def callback(
         "blocked_reasons": [],
     }
     verification: dict[str, Any] = {"verified": False, "state": "not_attempted"}
+    validation_evidence: dict[str, Any] = {
+        "rows_written": 0,
+        "blocked_reasons": ["no_verification_attempted"],
+    }
     identity_email_domain = ""
 
     if state_validated and pkce_validated and returned_code:
@@ -625,6 +666,30 @@ def callback(
                 # NativeForge stores, and Gate 112 refuses it as authority.
                 email = str(verification.get("email") or "")
                 identity_email_domain = email.rpartition("@")[2] if "@" in email else ""
+
+            # Gate 133B. Until now this verification happened and then stopped
+            # existing - a local, discarded when the request ended, while
+            # `issuer_jwks_validated` reported a literal False. The whole result
+            # is handed over rather than booleans about it, so a caller cannot
+            # assert a verification the verifier did not perform; the service
+            # reduces it to what may be stored and drops the rest.
+            #
+            # `provider_called` comes from the fetcher's own report of whether
+            # it went out, not from whether discovery was permitted.
+            try:
+                validation_evidence = record_validation_evidence(
+                    connection=db.connection(),
+                    verification=verification,
+                    jwks_fetch=jwks,
+                    provider_called=bool(jwks.get("network_access_attempted")),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                validation_evidence = {
+                    "rows_written": 0,
+                    "blocked_reasons": ["validation_event_store_unavailable"],
+                }
 
     identity_validated = bool(verification.get("verified"))
 
@@ -784,6 +849,14 @@ def callback(
             ),
             "identity_validated": identity_validated,
             "identity_verification_state": str(verification.get("state") or ""),
+            # Gate 133B: whether this login left a durable record that
+            # issuer/JWKS validation happened. Booleans only.
+            "validation_evidence_recorded": bool(
+                validation_evidence.get("rows_written")
+            ),
+            "validation_evidence_blocked_reasons": sorted(
+                validation_evidence.get("blocked_reasons") or []
+            ),
             "identity_email_domain": identity_email_domain,
             "org_binding_missing": org_binding_missing,
             "token_exchange_allowed": bool(exchange["token_exchange_allowed"]),

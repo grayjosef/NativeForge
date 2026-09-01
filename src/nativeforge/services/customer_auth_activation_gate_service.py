@@ -218,6 +218,9 @@ def build_customer_auth_activation_gate(
     signing_key_readiness: dict[str, Any] | None = None,
     environment_preflight: dict[str, Any] | None = None,
     binding_evidence: dict[str, Any] | None = None,
+    jwks_validation_evidence: dict[str, Any] | None = None,
+    role_mapping_evidence: dict[str, Any] | None = None,
+    login_activation_decision: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """May customer authentication be activated? Deny by default.
 
@@ -264,6 +267,15 @@ def build_customer_auth_activation_gate(
     # every evidence field false. This service still touches no database.
     evidence = binding_evidence if binding_evidence is not None else {}
 
+    # Gate 133. Two more measured facts and one recorded decision, on the
+    # same terms: supplied by a caller that read them, absent and therefore
+    # false for a caller that did not. Nothing here opens a connection.
+    jwks_ev = jwks_validation_evidence if jwks_validation_evidence is not None else {}
+    role_ev = role_mapping_evidence if role_mapping_evidence is not None else {}
+    login_decision = (
+        login_activation_decision if login_activation_decision is not None else {}
+    )
+
     gates: dict[str, bool] = {
         # -- provider configuration, presence only -------------------------
         "provider_configured": bool(pre.get("validation_possible")),
@@ -271,7 +283,13 @@ def build_customer_auth_activation_gate(
         "issuer_configured": bool(pre.get("issuer_url_present")),
         "audience_configured": bool(pre.get("audience_present")),
         # -- validation ----------------------------------------------------
-        "issuer_jwks_validated": bool(val.get("provider_validated")),
+        # Gate 133B. The callback verifies Google's ID token against Google's
+        # JWKS on every login, and until 0037 nothing wrote that down - so this
+        # gate read `provider_validated`, a literal assigned False once. It is
+        # measured now, from nf_auth_validation_events.
+        "issuer_jwks_validated": bool(
+            val.get("provider_validated") or jwks_ev.get("issuer_jwks_validated")
+        ),
         # Gate 132G. These two were a literal `False` and a parameter nobody
         # passed - true in no environment for no reason. They are measured now,
         # from rows, and only when a caller supplies something to read: without
@@ -289,7 +307,11 @@ def build_customer_auth_activation_gate(
         "org_binding_passed": bool(
             val.get("org_binding_passed") or evidence.get("org_binding_passed")
         ),
-        "role_mapping_passed": bool(val.get("role_mapping_passed")),
+        # Gate 133C. Membership rows have carried the mapping since Gate 132.
+        # Nothing asked them; this was a parameter no caller passed.
+        "role_mapping_passed": bool(
+            val.get("role_mapping_passed") or role_ev.get("role_mapping_passed")
+        ),
         # -- routes --------------------------------------------------------
         "callback_route_available": bool(routes.get("callback_route_available")),
         # Gate 116: reads whether a policy *exists*, not whether a route
@@ -323,7 +345,13 @@ def build_customer_auth_activation_gate(
 
     # JWKS unvalidated is distinguished from JWKS validated-and-failed. Nothing
     # has been checked, and saying "failed" would be a fabricated measurement.
-    jwks_unchecked = pre.get("jwks_reachable") is None
+    # Gate 133B: a recorded event that reached the provider IS a network
+    # check having happened. The preflight cannot see it - it runs offline and
+    # the check happened inside a callback - so an unchecked preflight is no
+    # longer the whole answer.
+    jwks_unchecked = pre.get("jwks_reachable") is None and not jwks_ev.get(
+        "provider_called"
+    )
     if not gates["issuer_jwks_validated"] and jwks_unchecked:
         blocked_reasons.append("issuer_jwks_unvalidated_no_network_check_performed")
 
@@ -335,9 +363,22 @@ def build_customer_auth_activation_gate(
     all_login_gates = all(gates[name] for name in REQUIRED_LOGIN_GATES)
 
     customer_auth_live = bool(all_auth_gates and owner_approval)
+
+    # Gate 133D. One env var used to gate both of these, which meant the only
+    # way to admit that a working demo login works was to also claim customer
+    # auth is live for real Tribes. They are different decisions and now have
+    # different inputs.
+    #
+    # `or`, not replacement: approving customer auth approves the login path
+    # it runs on, so the broad approval subsumes the narrow one. The narrow
+    # one cannot work in the other direction -
+    # `approves_customer_auth_live()` has no branch that returns True.
+    login_activation_approved = bool(login_decision.get("approves_login_live"))
+    login_approval = bool(owner_approval or login_activation_approved)
+
     # Login can run before the dev header is gone; customer auth is not live
     # while an unauthenticated header can still set the RLS context.
-    login_live = bool(all_login_gates and owner_approval)
+    login_live = bool(all_login_gates and login_approval)
     activation_allowed = customer_auth_live
 
     # Gate 121B. Consulted for *naming*, never for deriving: the sixteen gates
@@ -385,6 +426,18 @@ def build_customer_auth_activation_gate(
         for name in REQUIRED_AUTH_GATES
         if not gates[name]
     ]
+    if all_login_gates and not login_approval:
+        next_required_actions.append(
+            {
+                "gate": "login_activation_decision",
+                "action": (
+                    "every measured login gate passes; record the owner's "
+                    "demo login activation decision "
+                    "(customer_auth_owner_activation_decision_service) or set "
+                    f"{ACTIVATION_APPROVAL_ENV} for the broader claim"
+                ),
+            }
+        )
     if not owner_approval:
         next_required_actions.append(
             {
@@ -406,6 +459,10 @@ def build_customer_auth_activation_gate(
             "login_live": login_live,
             "activation_allowed": activation_allowed,
             "owner_approval_present": bool(owner_approval),
+            "login_activation_approved": login_activation_approved,
+            "login_approval_present": login_approval,
+            "jwks_validation_evidence_supplied": bool(jwks_ev),
+            "role_mapping_evidence_supplied": bool(role_ev),
             "missing_auth_gates": [
                 name for name in REQUIRED_AUTH_GATES if not gates[name]
             ],
@@ -510,8 +567,17 @@ def activation_gate_invariant_failures(gate: dict[str, Any]) -> list[str]:
         for name in REQUIRED_LOGIN_GATES:
             if not gate.get(name):
                 fails.append(f"login_live_without:{name}")
-        if not gate.get("owner_approval_present"):
-            fails.append("login_live_without_owner_approval")
+        # Gate 133D: either approval will do, and one of them must be there.
+        # A login called live on nobody's decision is the claim this campaign
+        # exists to prevent.
+        if not gate.get("owner_approval_present") and not gate.get(
+            "login_activation_approved"
+        ):
+            fails.append("login_live_without_a_login_activation_decision")
+
+    # The narrow decision must never reach the broad claim.
+    if gate.get("customer_auth_live") and not gate.get("owner_approval_present"):
+        fails.append("customer_auth_live_on_a_login_only_decision")
 
     # Activation is exactly customer auth being live; two names, one decision.
     if gate.get("activation_allowed") is not gate.get("customer_auth_live"):

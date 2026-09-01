@@ -1,0 +1,84 @@
+{
+  "append_only": true,
+  "audience_value_stored": false,
+  "database_checks": [
+    "evidence_source IN ('oauth_callback')",
+    "verification_state IN (fifteen named states)",
+    "id_token_signature_validated = false OR jwks_validated = true",
+    "verification_state <> 'verified' OR every validation true"
+  ],
+  "deterministic_gate_no_evidence_supplied": {
+    "issuer_jwks_validated": false
+  },
+  "email_stored": false,
+  "evidence_source": "oauth_callback",
+  "issuer_stored_plaintext": true,
+  "issuer_stored_rationale": "public, and the gate has to know WHICH issuer passed; migration 0030 stores it in plaintext already",
+  "jwks_document_stored": false,
+  "key_id_stored_as": "sha256(kid) truncated to 32 hex characters",
+  "key_material_stored": false,
+  "measured_live": {
+    "algorithm_observed": "RS256",
+    "event_rows": 1,
+    "issuer_jwks_validated": true,
+    "issuers_validated": [
+      "https://accounts.google.com"
+    ],
+    "note": "a recording; regenerate by running a login",
+    "provider_called": true,
+    "recorded_on": "2026-09-01",
+    "verified_event_rows": 1
+  },
+  "migration": "0037",
+  "no_rls_rationale": "written before any organization is known, the same reason migration 0030 gives for nf_auth_redirect_states; an invented anchor would make the RLS predicate pass on a value nobody chose",
+  "organization_id_column": false,
+  "provider_subject_stored": false,
+  "raw_claims_stored": false,
+  "recorded_from": "the real callback, on every login",
+  "rls_policy": false,
+  "schema_version": "nf_login_live_dev_header_kill_artifact_v1",
+  "table": "nf_auth_validation_events",
+  "token_stored": false,
+  "verification_states_recognised": [
+    "audience_invalid",
+    "expired",
+    "issuer_invalid",
+    "jwks_unavailable",
+    "malformed_token",
+    "missing_kid",
+    "missing_token",
+    "not_yet_valid",
+    "signature_invalid",
+    "subject_missing",
+    "unknown",
+    "unknown_kid",
+    "unsupported_algorithm",
+    "verification_error",
+    "verified"
+  ],
+  "what_the_row_holds": [
+    "evidence_source",
+    "issuer",
+    "verification_state",
+    "algorithm",
+    "key_id_fingerprint",
+    "provider_called",
+    "issuer_validated",
+    "jwks_validated",
+    "id_token_signature_validated",
+    "audience_validated",
+    "blocked_reasons"
+  ],
+  "what_the_row_refuses": [
+    "token",
+    "id_token",
+    "access_token",
+    "refresh_token",
+    "subject",
+    "email",
+    "claims",
+    "jwks",
+    "keys",
+    "audience"
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "authenticated": {
+    "callback_reached_api": true,
+    "current_user_authenticated": true,
+    "current_user_email_returned": false,
+    "current_user_organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+    "current_user_roles": [
+      "org_owner"
+    ],
+    "current_user_status_code": 200,
+    "customer_auth_live": false,
+    "identity_email_domain": "gmail.com",
+    "identity_validated": true,
+    "identity_verification_state": "verified",
+    "isolation_demo_only_status_code": 200,
+    "isolation_real_only_status_code": 403,
+    "login_live_on_the_callback_response": false,
+    "login_live_on_the_next_request": true,
+    "login_redirect_to_google": true,
+    "membership_verified": true,
+    "organization_resolved": true,
+    "pkce_validated": true,
+    "recorded_on": "2026-09-01",
+    "session_created": true,
+    "state_validated": true,
+    "token_exchange_http_status": 200,
+    "token_exchange_succeeded": true,
+    "validation_evidence_recorded": true
+  },
+  "authorization_code_returned": false,
+  "cookies_returned": false,
+  "email_returned": false,
+  "organization_from_membership_row_not_the_cookie": true,
+  "provider_subject_returned": false,
+  "raw_pkce_verifier_returned": false,
+  "raw_state_returned": false,
+  "route": "/api/auth/current-user",
+  "schema_version": "nf_login_live_dev_header_kill_artifact_v1",
+  "subject_field_carries": "internal identity id",
+  "tokens_returned": false,
+  "unauthenticated": {
+    "current_user_forged_cookie_loopback": 401,
+    "current_user_no_cookie_loopback": 401,
+    "current_user_public_no_access_session": 302,
+    "public_302_source": "cloudflare_access"
+  }
+}

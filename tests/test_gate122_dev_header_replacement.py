@@ -273,7 +273,7 @@ def test_the_required_dependency_refuses_with_a_named_reason():
     from nativeforge.api import deps_customer_auth as deps
 
     with pytest.raises(HTTPException) as excinfo:
-        deps.get_customer_org_context_required(nf_session=None)
+        deps.get_customer_org_context_required(db=None, nf_session=None)
     assert excinfo.value.status_code == 401
     assert excinfo.value.detail["error"] == "no_verified_organization_context"
     assert excinfo.value.detail["blocked_reasons"]
@@ -283,7 +283,7 @@ def test_the_required_dependency_refuses_with_a_named_reason():
 def test_the_optional_dependency_returns_none_rather_than_an_organization():
     from nativeforge.api import deps_customer_auth as deps
 
-    assert deps.get_customer_org_context_optional(nf_session=None) is None
+    assert deps.get_customer_org_context_optional(db=None, nf_session=None) is None
 
 
 def test_an_unknown_app_env_counts_as_production(monkeypatch):
@@ -294,16 +294,32 @@ def test_an_unknown_app_env_counts_as_production(monkeypatch):
     assert "unknown" not in deps.NON_PRODUCTION_ENVIRONMENTS
 
 
-def test_the_central_dependency_is_imported_by_no_route():
-    """This gate converts nothing; a route importing it would be a surprise."""
+#: Route modules converted onto the session-backed dependency, and the gate that
+#: converted each. Gate 122 asserted this list was empty, which was true when a
+#: session could not exist. Named rather than counted, so a module appearing
+#: here by accident still fails.
+CONVERTED_ROUTE_MODULES: dict[str, str] = {
+    "isolation_routes.py": "Gate 133F",
+}
+
+
+def test_only_the_converted_routes_import_the_central_dependency():
+    """Gate 122 converted nothing and asserted this list was empty.
+
+    Correct then: producing a verified claim needed customer auth, eleven
+    activation gates away. Gate 132 built the identity, the membership and the
+    session; Gate 133F converted the first module. The assertion is a named
+    allowlist rather than a zero, so a module converted without being recorded
+    here still fails.
+    """
     api = Path("src/nativeforge/api")
-    importers = [
+    importers = {
         path.name
         for path in sorted(api.glob("*.py"))
         if path.name != "deps_customer_auth.py"
         and "deps_customer_auth" in path.read_text(encoding="utf-8")
-    ]
-    assert importers == []
+    }
+    assert importers == set(CONVERTED_ROUTE_MODULES)
 
 
 # ------------------------------------------------- counting
