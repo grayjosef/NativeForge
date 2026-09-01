@@ -1,0 +1,26 @@
+{
+  "access_token_returned": false,
+  "authenticated": true,
+  "authenticated_status_code": 200,
+  "cross_organization_cookie_authorizes_nothing": true,
+  "email_returned": false,
+  "forged_cookie_status_code": 401,
+  "id_token_returned": false,
+  "least_privilege_role": "org_owner",
+  "membership_verified": true,
+  "organization_from_membership_row_not_the_cookie": true,
+  "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "organization_id_resolved": true,
+  "provider_subject_returned": false,
+  "public_302_source": "cloudflare access, ahead of the application; the application's own unauthenticated answer is 401, measured on the loopback",
+  "public_unauthenticated_status_code": 302,
+  "refresh_token_returned": false,
+  "roles": [
+    "org_owner"
+  ],
+  "route": "/api/auth/current-user",
+  "schema_version": "nf_first_dev_org_binding_artifact_v1",
+  "session_cookie_value_returned": false,
+  "subject_field_carries": "internal identity id",
+  "unauthenticated_status_code": 401
+}

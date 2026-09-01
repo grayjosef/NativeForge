@@ -1,0 +1,78 @@
+{
+  "deterministic_gate_no_evidence_supplied": {
+    "blocked_reasons": [
+      "auth_gate_not_satisfied:audience_configured",
+      "auth_gate_not_satisfied:callback_session_validated",
+      "auth_gate_not_satisfied:dev_header_disabled_for_production",
+      "auth_gate_not_satisfied:invite_binding_passed",
+      "auth_gate_not_satisfied:issuer_configured",
+      "auth_gate_not_satisfied:issuer_jwks_validated",
+      "auth_gate_not_satisfied:org_binding_passed",
+      "auth_gate_not_satisfied:provider_configured",
+      "auth_gate_not_satisfied:role_mapping_passed",
+      "auth_gate_not_satisfied:secret_present",
+      "auth_gate_not_satisfied:session_signing_key_ready",
+      "issuer_jwks_unvalidated_no_network_check_performed",
+      "owner_has_not_authorized_customer_auth_activation"
+    ],
+    "callback_session_validated": false,
+    "customer_auth_live": false,
+    "login_live": false,
+    "org_binding_passed": false
+  },
+  "env_key_names_checked": [
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+    "NF_PUBLIC_ORIGIN",
+    "NF_SESSION_SIGNING_KEY"
+  ],
+  "env_key_presence": {
+    "NF_PUBLIC_ORIGIN": false,
+    "NF_SESSION_SIGNING_KEY": false,
+    "OIDC_AUDIENCE": false,
+    "OIDC_CALLBACK_URL": false,
+    "OIDC_CLIENT_ID": false,
+    "OIDC_CLIENT_SECRET": false,
+    "OIDC_ISSUER": false
+  },
+  "env_values_recorded": false,
+  "flags_this_gate_did_not_move": {
+    "awarded_operational_tracking": false,
+    "customer_auth_live": false,
+    "customer_persistence_live": false,
+    "email_delivery": false,
+    "login_live": false,
+    "object_store_configured": false,
+    "source_monitoring_live": false,
+    "tenant_digest_operational": false,
+    "verified_operational_binding": false
+  },
+  "markers_checked": [
+    "id_token",
+    "access_token",
+    "refresh_token",
+    "code_verifier",
+    "client_secret",
+    "Set-Cookie",
+    "nf_session=",
+    "?code=",
+    "GOCSPX-"
+  ],
+  "measured_against_the_dev_database": {
+    "callback_session_validated": true,
+    "customer_auth_live": false,
+    "login_live": false,
+    "note": "a recording; regenerate by calling the route",
+    "org_binding_passed": true,
+    "remaining_login_blockers": [
+      "issuer_jwks_validated",
+      "role_mapping_passed",
+      "owner_has_not_authorized_customer_auth_activation"
+    ]
+  },
+  "scan_applies_to": "artifacts/first_dev_org_binding_session_activation",
+  "schema_version": "nf_first_dev_org_binding_artifact_v1"
+}

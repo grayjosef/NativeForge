@@ -1,0 +1,38 @@
+{
+  "after_membership_existed": {
+    "binding_verified": false,
+    "callback_reached_api": true,
+    "current_user_works": true,
+    "customer_auth_live": false,
+    "identity_email_domain": "gmail.com",
+    "identity_validated": true,
+    "login_live": false,
+    "membership_verified": true,
+    "organization_resolved": true,
+    "pkce_validated": true,
+    "provider_redirect_occurred": true,
+    "recorded_on": "2026-09-01",
+    "session_created": true,
+    "state_validated": true,
+    "token_exchange_http_status": 200,
+    "token_exchange_succeeded": true
+  },
+  "authorization_code_recorded": false,
+  "before_membership_existed": {
+    "identity_rows_written": 1,
+    "identity_validated": true,
+    "membership_resolution_blocked_reasons": [
+      "identity_has_no_active_membership"
+    ],
+    "membership_verified": false,
+    "organization_resolved": false,
+    "session_created": false
+  },
+  "blocked_reasons": [],
+  "cookies_recorded": false,
+  "note": "A recording of a browser run, not a measurement taken at generation time. Booleans only.",
+  "raw_pkce_verifier_recorded": false,
+  "raw_state_recorded": false,
+  "schema_version": "nf_first_dev_org_binding_artifact_v1",
+  "tokens_recorded": false
+}

@@ -85,6 +85,9 @@ from nativeforge.services.customer_auth_activation_gate_service import (
 from nativeforge.services.customer_auth_authorization_url_service import (
     build_authorization_url,
 )
+from nativeforge.services.customer_auth_binding_evidence_service import (
+    build_binding_evidence,
+)
 from nativeforge.services.customer_auth_dependency_contract_service import (
     evaluate_auth_dependency,
 )
@@ -120,8 +123,17 @@ from nativeforge.services.customer_auth_token_exchange_boundary_service import (
 from nativeforge.services.customer_session_cookie_policy_service import (
     build_session_cookie_policy,
 )
+from nativeforge.services.customer_session_format_service import (
+    build_session,
+)
 from nativeforge.services.customer_session_verifier_service import (
     verify_session_cookie,
+)
+from nativeforge.services.dev_org_membership_bootstrap_service import (
+    upsert_identity,
+)
+from nativeforge.services.identity_org_session_resolution_service import (
+    resolve_session_organization,
 )
 from nativeforge.services.oidc_provider_discovery_service import (
     build_provider_endpoints,
@@ -147,34 +159,77 @@ DbSession = Annotated[Session, Depends(get_db)]
 SECURITY_SCHEME_NAME = "nf_session_cookie"
 
 
-def _gate() -> dict[str, Any]:
-    """The activation gate, for the two fields every response carries."""
-    return build_customer_auth_activation_gate()
+def _gate(db: Session | None = None) -> dict[str, Any]:
+    """The activation gate, for the two fields every response carries.
+
+    Gate 132G: a route with a session hands over what the database says, so
+    `org_binding_passed` and `callback_session_validated` are measured rather
+    than assumed false. A caller without one gets the deterministic answer.
+    """
+    evidence = None
+    if db is not None:
+        try:
+            evidence = build_binding_evidence(connection=db.connection())
+        except Exception:
+            db.rollback()
+            evidence = None
+    return build_customer_auth_activation_gate(binding_evidence=evidence)
 
 
-def _session_decision(mode: str, cookie: str | None) -> dict[str, Any]:
+def _session_decision(
+    mode: str, cookie: str | None, db: Session | None = None
+) -> dict[str, Any]:
     """Verify the cookie, then ask the dependency contract what to do.
 
     Gate 117 passed the cookie's *presence* and derived `valid=False`, because
     no session format existed to check it against. Gate 118 built one, so the
-    cookie is now verified rather than assumed invalid - and it still comes out
-    invalid, because no signing key is configured and nothing has issued a
-    session.
+    cookie is verified rather than assumed invalid.
 
     The cookie value goes into the verifier and no further. Nothing here logs,
     echoes or returns it: a session value in a response body is a session
     anybody can replay.
 
-    `membership_verified=False` is passed deliberately rather than omitted. A
-    membership record is a database question this route does not ask, and Gate
-    112's rule is that a valid session is not a membership - so the answer is
-    no until something looks it up.
+    ## Gate 132: the membership question is finally asked
+
+    It used to be `membership_verified=False`, passed deliberately, with the
+    reason recorded: "a membership record is a database question this route does
+    not ask". `nf_org_memberships` had no write path, so the answer was no for
+    everybody and asking would have been theatre.
+
+    Now it is asked, which takes two verifier calls. The first parses and checks
+    the signature - a payload is only worth reading once the signature says it
+    is ours - and yields the principal and the organization the cookie claims.
+    The membership is then read, and the second call re-derives with the answer.
+
+    The claimed organization must be the one the membership resolves to. A
+    cookie naming organization A held by a member of organization B is not a
+    member of A, and accepting it because *some* membership exists would be the
+    cross-tenant read every RLS rule in this codebase is written against.
     """
     policy = build_session_cookie_policy()
 
-    verification = verify_session_cookie(
-        cookie_value=cookie,
-        membership_verified=False,
+    parsed = verify_session_cookie(cookie_value=cookie, membership_verified=False)
+
+    membership_verified = False
+    resolution: dict[str, Any] = {}
+    if db is not None and parsed["session_cookie_valid"] and parsed["principal_id"]:
+        try:
+            resolution = resolve_session_organization(
+                connection=db.connection(),
+                identity_id=parsed["principal_id"],
+            )
+        except Exception:
+            db.rollback()
+            resolution = {}
+        membership_verified = bool(
+            resolution.get("organization_id_resolved")
+            and resolution.get("organization_id") == parsed["organization_id"]
+        )
+
+    verification = (
+        verify_session_cookie(cookie_value=cookie, membership_verified=True)
+        if membership_verified
+        else parsed
     )
 
     return evaluate_auth_dependency(
@@ -182,6 +237,10 @@ def _session_decision(mode: str, cookie: str | None) -> dict[str, Any]:
         session_verification=verification,
     ) | {
         "cookie_name": policy["cookie_name"],
+        "membership_lookup_performed": db is not None,
+        "membership_resolution_blocked_reasons": sorted(
+            resolution.get("blocked_reasons") or []
+        ),
         "session_verification": {
             # Booleans only. The value never leaves the verifier.
             "cookie_parseable": verification["cookie_parseable"],
@@ -191,22 +250,38 @@ def _session_decision(mode: str, cookie: str | None) -> dict[str, Any]:
             "membership_verified": verification["membership_verified"],
             "rls_context_allowed": verification["rls_context_allowed"],
             "blocked_reasons": verification["blocked_reasons"],
+            "principal_id": verification["principal_id"],
+            # The organization and the roles come from the **membership row**,
+            # not from the cookie that claims them.
+            #
+            # A first pass here read `verification["organization_id"]`, which is
+            # whatever the payload says. A session naming an organization the
+            # holder is not a member of - a stale cookie outliving a revoked
+            # membership, or one minted before the membership moved - then came
+            # back reported as that organization. Declared, not derived, and the
+            # exact substitution Gates 110-113 exist to prevent. Caught by the
+            # cross-organization case in Gate 132's probe.
+            "organization_id": (
+                resolution.get("organization_id") if membership_verified else None
+            ),
+            "roles": list(resolution.get("roles") or []) if membership_verified else [],
         },
     }
 
 
 def require_customer_session(
+    db: DbSession,
     nf_session: Annotated[str | None, Cookie()] = None,
 ) -> dict[str, Any]:
     """Refuse an unauthenticated caller with 401.
 
-    NativeForge's first refusal. It refuses everybody today, which is correct
-    and is not the same as being broken: nobody can authenticate, so nobody
-    should be let through.
+    NativeForge's first refusal. It refused everybody until Gate 132, which is
+    not the same as being broken: nobody could authenticate, so nobody should
+    have been let through.
     """
-    decision = _session_decision("required", nf_session)
+    decision = _session_decision("required", nf_session, db)
     if not decision["authorized"]:
-        gate = _gate()
+        gate = _gate(db)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={
@@ -221,18 +296,39 @@ def require_customer_session(
 
 
 def optional_customer_session(
+    db: DbSession,
     nf_session: Annotated[str | None, Cookie()] = None,
 ) -> dict[str, Any]:
     """Permit an unauthenticated caller, and tell them they are one."""
-    return _session_decision("optional", nf_session)
+    return _session_decision("optional", nf_session, db)
 
 
-def _envelope(route: str, status: str, gate: dict[str, Any]) -> dict[str, Any]:
+def _envelope(
+    route: str,
+    status: str,
+    gate: dict[str, Any],
+    *,
+    real_session_created: bool = False,
+    real_user_created: bool = False,
+    provider_contacted: bool = False,
+) -> dict[str, Any]:
     """The fields every auth route returns, whatever else it says.
 
     `blocked_reasons` and `next_required_actions` come from the activation gate
     rather than being written here, so a route can never disagree with the gate
     about why auth is unavailable.
+
+    ## Gate 132: three constants stopped being constants
+
+    `real_session_created`, `real_user_created` and `provider_contacted` were
+    hardcoded `False` on every response, and every one of them was true when
+    Gate 132's callback ran: it contacted Google, wrote an `nf_identities` row,
+    and minted a session. A field asserting otherwise is not a safety property,
+    it is a false statement in the response body - and it would have been
+    trusted precisely because it had been true for sixteen gates.
+
+    They default `False`, so a route that does none of those things says so
+    without having to remember to. `/callback` passes what it actually did.
     """
     return {
         "route": route,
@@ -241,11 +337,9 @@ def _envelope(route: str, status: str, gate: dict[str, Any]) -> dict[str, Any]:
         "login_live": bool(gate["login_live"]),
         "blocked_reasons": list(gate["blocked_reasons"]),
         "next_required_actions": list(gate["next_required_actions"]),
-        # Constants, restated per response so a caller reading one endpoint in
-        # isolation still sees them.
-        "real_session_created": False,
-        "real_user_created": False,
-        "provider_contacted": False,
+        "real_session_created": bool(real_session_created),
+        "real_user_created": bool(real_user_created),
+        "provider_contacted": bool(provider_contacted),
     }
 
 
@@ -288,7 +382,7 @@ def login(db: DbSession) -> Any:
     carrying the state itself would hand an attacker the thing the state exists
     to prove.
     """
-    gate = _gate()
+    gate = _gate(db)
     flow = build_redirect_flow_contract()
     configured = bool(gate["provider_configured"] and gate["secret_present"])
 
@@ -433,6 +527,7 @@ def login(db: DbSession) -> Any:
 @router.get("/callback")
 def callback(
     db: DbSession,
+    response: Response,
     code: str | None = None,
     state: str | None = None,
     error: str | None = None,
@@ -448,7 +543,7 @@ def callback(
     token or the access token. They are locals, and the response carries
     booleans and named reasons.
     """
-    gate = _gate()
+    gate = _gate(db)
     flow = build_redirect_flow_contract()
 
     provider_error = str(error or "").strip()
@@ -533,14 +628,99 @@ def callback(
 
     identity_validated = bool(verification.get("verified"))
 
-    # -- 3. the organization, which is where this stops -------------------
+    # -- 3. the identity, persisted -----------------------------------------
     #
-    # No binding exists for any identity, so none resolves. The session format
-    # refuses a session without one - `session_without_an_organization_id` -
-    # so a verified identity still mints nothing. Gate 132's work.
-    organization_id_resolved = False
-    membership_verified = False
+    # Gate 132. The verified subject becomes a row, so the person who just
+    # proved who they are exists in NativeForge rather than only in a log line.
+    # Idempotent by (issuer, subject): signing in twice is one person.
+    #
+    # This creates no membership. A Google account is not a membership, and a
+    # callback that granted one would let anybody with an account join.
+    identity_result: dict[str, Any] = {
+        "rows_written": 0,
+        "identity_existed": False,
+        "identity_id": None,
+        "blocked_reasons": ["identity_not_verified"],
+    }
+    identity_id = ""
+    if identity_validated:
+        try:
+            identity_result = upsert_identity(
+                connection=db.connection(),
+                issuer=str(verification.get("issuer") or "").strip()
+                or (_auth_env.get("OIDC_ISSUER") or "").strip(),
+                subject=verification.get("subject"),
+                email=verification.get("email"),
+                email_verified=bool(verification.get("email_verified")),
+                verification_source="oidc_token_signature",
+            )
+            db.commit()
+            identity_id = str(identity_result.get("identity_id") or "")
+        except Exception:
+            db.rollback()
+            identity_result = {
+                "rows_written": 0,
+                "identity_existed": False,
+                "identity_id": None,
+                "blocked_reasons": ["identity_store_unavailable"],
+            }
+
+    # -- 4. the organization, from a membership row and nothing else --------
+    resolution: dict[str, Any] = {
+        "organization_id_resolved": False,
+        "organization_id": "",
+        "membership_verified": False,
+        "roles": [],
+        "blocked_reasons": ["identity_not_persisted"],
+    }
+    if identity_id:
+        try:
+            resolution = resolve_session_organization(
+                connection=db.connection(), identity_id=identity_id
+            )
+        except Exception:
+            db.rollback()
+            resolution = {
+                "organization_id_resolved": False,
+                "organization_id": "",
+                "membership_verified": False,
+                "roles": [],
+                "blocked_reasons": ["membership_store_unavailable"],
+            }
+
+    organization_id_resolved = bool(resolution.get("organization_id_resolved"))
+    membership_verified = bool(resolution.get("membership_verified"))
     org_binding_missing = bool(identity_validated and not organization_id_resolved)
+
+    # -- 5. the session, only once all of that holds ------------------------
+    session_created = False
+    session_blocked_reasons: list[str] = []
+    if organization_id_resolved and membership_verified:
+        policy = build_session_cookie_policy()
+        issued = int(time.time())
+        built = build_session(
+            principal_id=identity_id,
+            subject=identity_id,
+            organization_id=resolution.get("organization_id"),
+            roles=list(resolution.get("roles") or []),
+            issued_at=issued,
+            expires_at=issued + int(policy["max_age_seconds"]),
+            auth_source="oidc_authorization_code",
+            session_id=str(uuid.uuid4()),
+        )
+        session_blocked_reasons = list(built["blocked_reasons"])
+        if built["session_cookie_valid"]:
+            response.set_cookie(
+                key=policy["cookie_name"],
+                value=built["session_cookie_value"],
+                max_age=int(policy["max_age_seconds"]),
+                path=policy["path"],
+                domain=policy["domain"],
+                secure=bool(policy["secure"]),
+                httponly=bool(policy["http_only"]),
+                samesite=policy["same_site"],
+            )
+            session_created = True
 
     exchange = evaluate_token_exchange_boundary(
         callback_code_present=bool(returned_code),
@@ -552,14 +732,42 @@ def callback(
     route_status = "callback_validation_not_passed"
     if provider_error:
         route_status = "provider_returned_an_error"
+    elif session_created:
+        route_status = "session_created"
     elif org_binding_missing:
         route_status = "identity_verified_without_an_organization_binding"
 
-    body = _envelope("callback", route_status, gate)
+    body = _envelope(
+        "callback",
+        route_status,
+        gate,
+        real_session_created=session_created,
+        real_user_created=bool(identity_result.get("rows_written")),
+        provider_contacted=bool(exchange_report.get("attempted")),
+    )
     body.update(
         {
-            "session_created": False,
+            "session_created": session_created,
             "session_creation_allowed": bool(flow["session_creation_allowed"]),
+            # Gate 132. The identity is a row now; the membership is not
+            # created here, and the session waits on one that already exists.
+            "identity_persisted": bool(
+                identity_result.get("rows_written")
+                or identity_result.get("identity_existed")
+            ),
+            "identity_rows_written": int(identity_result.get("rows_written") or 0),
+            "identity_already_existed": bool(identity_result.get("identity_existed")),
+            "identity_blocked_reasons": sorted(
+                identity_result.get("blocked_reasons") or []
+            ),
+            "membership_resolution_blocked_reasons": sorted(
+                resolution.get("blocked_reasons") or []
+            ),
+            "session_blocked_reasons": sorted(session_blocked_reasons),
+            # The cookie carries the internal identity id. The provider subject
+            # stays in the database.
+            "session_carries_provider_subject": False,
+            "membership_rows_written": 0,
             "state_validated": state_validated,
             "pkce_verified": pkce_validated,
             # Gate 131: the real flow's outcome, in booleans.
@@ -648,6 +856,7 @@ def logout(response: Response) -> dict[str, Any]:
 
 @router.get("/session")
 def session(
+    db: DbSession,
     decision: Annotated[dict[str, Any], Depends(optional_customer_session)],
 ) -> dict[str, Any]:
     """Report on the caller's session. There are none.
@@ -655,7 +864,7 @@ def session(
     Optional rather than required: a caller asking whether they have a session
     should be told no, not refused for not having one.
     """
-    gate = _gate()
+    gate = _gate(db)
     body = _envelope("session", "unauthenticated", gate)
     verification = decision["session_verification"]
     body.update(
@@ -689,31 +898,37 @@ def session(
     responses={401: {"description": "No valid customer session."}},
 )
 def current_user(
+    db: DbSession,
     decision: Annotated[dict[str, Any], Depends(require_customer_session)],
 ) -> dict[str, Any]:
-    """Report who the caller is. Nobody, so far.
+    """Report who the caller is.
 
-    `organization_id` is `None` rather than absent, and it stays `None` until
-    Gate 112's resolution plus a verified membership say otherwise. A route that
-    reported an organization from an unverified claim would be the exact defect
-    Gates 110 through 113 exist to prevent.
+    `organization_id` came back `None` for every gate up to 131, and the reason
+    was correct each time: Gate 112's rule is that it may only come from a
+    verified membership, and no membership existed. Gate 132 made one, so the
+    value now comes from the row the dependency read.
+
+    `email` stays `None`. It is in `nf_identities` and it is not needed to say
+    who the caller is - the principal id and the organization are. A route that
+    returned it would put a real address in every client that ever calls here.
     """
-    # Unreachable while nobody can authenticate: the dependency raises 401
-    # before this runs. It is written for the day that changes, and a test
-    # forces the dependency to permit so this body is not dead code nobody has
-    # ever executed.
-    gate = _gate()
+    gate = _gate(db)
+    verification = decision["session_verification"]
     body = _envelope("current_user", "authenticated", gate)
+    roles = [str(r) for r in verification.get("roles") or []]
     body.update(
         {
             "authenticated": bool(decision["authenticated"]),
-            "subject": None,
+            # The internal principal, never the provider subject.
+            "subject": verification.get("principal_id"),
             "email": None,
-            "organization_id": None,
-            "organization_id_resolved": False,
-            "membership_verified": False,
-            "roles": [],
-            "least_privilege_role": "unknown",
+            "organization_id": verification.get("organization_id"),
+            "organization_id_resolved": bool(verification.get("organization_id")),
+            "membership_verified": bool(verification.get("membership_verified")),
+            "roles": roles,
+            # The least privilege the caller holds, not the most. An empty role
+            # list is `unknown` rather than a default that grants anything.
+            "least_privilege_role": roles[0] if len(roles) == 1 else "unknown",
         }
     )
     return body

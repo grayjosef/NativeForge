@@ -217,6 +217,7 @@ def build_customer_auth_activation_gate(
     owner_approval: bool | None = None,
     signing_key_readiness: dict[str, Any] | None = None,
     environment_preflight: dict[str, Any] | None = None,
+    binding_evidence: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """May customer authentication be activated? Deny by default.
 
@@ -258,6 +259,11 @@ def build_customer_auth_activation_gate(
         else build_signing_key_readiness()
     )
 
+    # Gate 132G. No connection is opened here and none is discovered: a caller
+    # with a session passes what it measured, and a caller without one gets
+    # every evidence field false. This service still touches no database.
+    evidence = binding_evidence if binding_evidence is not None else {}
+
     gates: dict[str, bool] = {
         # -- provider configuration, presence only -------------------------
         "provider_configured": bool(pre.get("validation_possible")),
@@ -266,9 +272,23 @@ def build_customer_auth_activation_gate(
         "audience_configured": bool(pre.get("audience_present")),
         # -- validation ----------------------------------------------------
         "issuer_jwks_validated": bool(val.get("provider_validated")),
-        "callback_session_validated": bool(val.get("callback_session_validated")),
+        # Gate 132G. These two were a literal `False` and a parameter nobody
+        # passed - true in no environment for no reason. They are measured now,
+        # from rows, and only when a caller supplies something to read: without
+        # evidence they stay false, which keeps this gate's output the same on
+        # every machine and keeps the artifacts it feeds reproducible.
+        #
+        # `or` rather than replacement: the validation runner's answer is still
+        # honoured if it ever learns to say yes, and neither source can turn the
+        # other off.
+        "callback_session_validated": bool(
+            val.get("callback_session_validated")
+            or evidence.get("callback_session_validated")
+        ),
         "invite_binding_passed": bool(val.get("invite_binding_passed")),
-        "org_binding_passed": bool(val.get("org_binding_passed")),
+        "org_binding_passed": bool(
+            val.get("org_binding_passed") or evidence.get("org_binding_passed")
+        ),
         "role_mapping_passed": bool(val.get("role_mapping_passed")),
         # -- routes --------------------------------------------------------
         "callback_route_available": bool(routes.get("callback_route_available")),
