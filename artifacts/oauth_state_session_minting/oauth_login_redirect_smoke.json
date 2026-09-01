@@ -1,0 +1,20 @@
+{
+  "authorization_url_returned_in_body": false,
+  "conjuncts_required_for_redirect": [
+    "provider_configured",
+    "authorization_url_available",
+    "state_row_written",
+    "can_sign_production_session"
+  ],
+  "http_status_when_ready": 302,
+  "http_status_when_unconfigured": 200,
+  "pkce_verifier_persisted_server_side": true,
+  "raw_pkce_verifier_in_body": false,
+  "raw_state_in_body": false,
+  "redirect_target_host": "accounts.google.com",
+  "redirect_target_path": "/o/oauth2/v2/auth",
+  "redirects_to_provider": true,
+  "route": "/api/auth/login",
+  "schema_version": "nf_oauth_state_session_artifact_v1",
+  "state_persisted_before_redirect": true
+}

@@ -49,6 +49,15 @@ PrivateTmp=true
 ProtectSystem=full
 ProtectHome=read-only
 ReadWritePaths=/home/josefgray/projects/nativeforge/artifacts
+# Gate 131B: /api/auth/login writes a redirect-state row per attempt, and
+# the dev database is the SQLite file at the repository root. SQLite creates
+# its journal beside that file, so the DIRECTORY must be writable - naming
+# only the .db fails namespace setup on the journal that does not exist yet.
+#
+# Broader than ideal. The narrow fix is to move the dev database out of the
+# source tree; that changes DATABASE_URL and is a separate change.
+# ProtectSystem=full and ProtectHome=read-only still hold everywhere else.
+ReadWritePaths=/home/josefgray/projects/nativeforge
 
 [Install]
 # Present so the unit is installable by hand. Nothing here enables it.

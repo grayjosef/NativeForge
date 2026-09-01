@@ -96,7 +96,7 @@ DOCS = ROOT / "docs" / "operations"
 # empty: doc 683 records that a production write needs customer_auth_live and a
 # verified operational binding, and both are false. Object storage remains
 # unconfigured, so document_storage_live stays false too.
-CURRENT_HEAD = "0035"
+CURRENT_HEAD = "0036"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

@@ -17,7 +17,7 @@
   "callback_url_matches_public_origin": false,
   "callback_url_redacted": "",
   "customer_auth_live": false,
-  "database_revision": "0035",
+  "database_revision": "0036",
   "database_revision_ready": true,
   "dev_header_production_blocker": true,
   "dev_header_replacement_available": true,

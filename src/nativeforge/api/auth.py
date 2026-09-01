@@ -74,7 +74,11 @@ import uuid
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
+from fastapi.responses import RedirectResponse
+from sqlalchemy.orm import Session
 
+from nativeforge.api.deps import get_db
+from nativeforge.lib.settings import auth_environment_overlay
 from nativeforge.services.customer_auth_activation_gate_service import (
     build_customer_auth_activation_gate,
 )
@@ -92,6 +96,10 @@ from nativeforge.services.customer_auth_redirect_flow_service import (
 )
 from nativeforge.services.customer_auth_redirect_state_repository_service import (
     TABLE_NAME as REDIRECT_STATE_TABLE,
+)
+from nativeforge.services.customer_auth_redirect_state_repository_service import (
+    consume_redirect_state,
+    persist_redirect_state,
 )
 from nativeforge.services.customer_auth_redirect_state_store_service import (
     DEFAULT_SCOPE as STATE_STORE_SCOPE,
@@ -115,8 +123,23 @@ from nativeforge.services.customer_session_cookie_policy_service import (
 from nativeforge.services.customer_session_verifier_service import (
     verify_session_cookie,
 )
+from nativeforge.services.oidc_provider_discovery_service import (
+    build_provider_endpoints,
+)
+from nativeforge.services.oidc_token_exchange_client_service import (
+    exchange_authorization_code,
+)
+from nativeforge.services.oidc_token_verification_service import (
+    fetch_jwks,
+    verify_oidc_token,
+)
 
 router = APIRouter(prefix="/api/auth", tags=["customer-auth"])
+
+#: A bare session with no organization bound. Deliberately `get_db` rather than
+#: `deps_db.get_org_context_with_db`: these routes are the replacement for the
+#: dev org header and must not consume the RLS context it sets.
+DbSession = Annotated[Session, Depends(get_db)]
 
 # Declared in the OpenAPI document and attached to exactly one operation:
 # `/current-user`, the only route that actually refuses. Gate 116 attached it to
@@ -243,8 +266,13 @@ def _discovery_allowed() -> bool:
     }
 
 
+#: The scope that actually keeps a row. `contract_only` is the contract's
+#: scope and stores nothing; Gate 131 needs the one that survives a restart.
+DURABLE_STATE_SCOPE = "database"
+
+
 @router.get("/login")
-def login() -> dict[str, Any]:
+def login(db: DbSession) -> Any:
     """Start a login. Issues state and PKCE; refuses to redirect.
 
     Returns a structured refusal rather than a redirect: redirecting to an
@@ -273,9 +301,10 @@ def login() -> dict[str, Any]:
     state_issued = bool(issued["state_generated"])
     pkce_issued = bool(issued["code_challenge_generated"])
 
-    # Recorded at the contract-only scope, which stores nothing and says so. The
-    # table exists as of migration 0030 and this route does not write to it:
-    # there is nowhere to send the browser, so there is no redirect to survive.
+    # Gate 131B. Written to nf_auth_redirect_states for real, with the PKCE
+    # verifier encrypted at rest (migration 0036) so the callback can present it
+    # to the token endpoint. The contract-scope call is kept alongside it so the
+    # response still reports what the contract says, unchanged.
     stored = store_state(
         state_id=uuid.uuid4().hex,
         state_value=issued["state"],
@@ -284,6 +313,36 @@ def login() -> dict[str, Any]:
         issued_at=int(time.time()),
         storage_scope=STATE_STORE_SCOPE,
     )
+
+    _auth_env = auth_environment_overlay()
+    _configured_callback = (_auth_env.get("OIDC_CALLBACK_URL") or "").strip()
+    if not _configured_callback:
+        _origin = (_auth_env.get("NF_PUBLIC_ORIGIN") or "").strip().rstrip("/")
+        _configured_callback = f"{_origin}{CALLBACK_ROUTE_PATH}" if _origin else ""
+
+    persisted = {"row_written": False, "blocked_reasons": ["state_not_attempted"]}
+    if configured and _configured_callback:
+        try:
+            persisted = persist_redirect_state(
+                connection=db.connection(),
+                state_value=issued["state"],
+                code_verifier=issued["code_verifier"],
+                code_challenge=issued["code_challenge"],
+                redirect_uri=_configured_callback,
+                issuer=(_auth_env.get("OIDC_ISSUER") or "").strip() or None,
+                audience=(_auth_env.get("OIDC_AUDIENCE") or "").strip() or None,
+                storage_scope=DURABLE_STATE_SCOPE,
+            )
+            if persisted.get("row_written"):
+                db.commit()
+        except Exception:
+            # A state store that is unreachable is a refusal, not a 500. The
+            # browser gets a named reason rather than a stack trace.
+            db.rollback()
+            persisted = {
+                "row_written": False,
+                "blocked_reasons": ["redirect_state_store_unavailable"],
+            }
 
     # Consulted rather than assumed, so this route reports the same answer a
     # configured deployment would get. No URL is returned either way.
@@ -297,13 +356,10 @@ def login() -> dict[str, Any]:
     # Discovery is a network call, so it is opt-in per deployment. Without it a
     # conventional issuer still resolves offline and Google reports no endpoint
     # rather than a wrong one.
-    from nativeforge.lib.settings import auth_environment_overlay
-
-    _auth_env = auth_environment_overlay()
-    _configured_callback = (_auth_env.get("OIDC_CALLBACK_URL") or "").strip()
-    if not _configured_callback:
-        _origin = (_auth_env.get("NF_PUBLIC_ORIGIN") or "").strip().rstrip("/")
-        _configured_callback = f"{_origin}{CALLBACK_ROUTE_PATH}" if _origin else ""
+    # Gate 131C: the callback is resolved once, above, before the state row is
+    # written. This block resolved it a second time and shadowed the
+    # module-level import doing it.
+    signing = build_signing_key_readiness()
 
     url = build_authorization_url(
         redirect_uri=_configured_callback or None,
@@ -311,13 +367,37 @@ def login() -> dict[str, Any]:
         code_challenge=issued["code_challenge"],
         allow_network=_discovery_allowed(),
     )
-    signing = build_signing_key_readiness()
 
+    # Gate 131C. Every conjunct, derived. A redirect issued while any one of
+    # these is false sends a browser to a provider that will refuse it, or -
+    # worse - completes a flow whose state nobody can validate on return.
+    redirect_ready = bool(
+        configured
+        and url["authorization_url_available"]
+        and persisted.get("row_written")
+        # `can_sign_production_session`, not merely `signing_key_present`: a key
+        # that exists but is too short, or is the committed local_dev_fixture,
+        # must not start a flow whose session it cannot legitimately sign.
+        and signing["can_sign_production_session"]
+    )
+    if redirect_ready:
+        # The URL carries the state, so it is never logged or returned in a
+        # body. It goes in a Location header and nowhere else.
+        return RedirectResponse(
+            url=url["authorization_url"],
+            status_code=status.HTTP_302_FOUND,
+        )
     body = _envelope("login", route_status, gate)
     body.update(
         {
             "provider_configured": bool(url["provider_configured"]),
             "authorization_url_available": bool(url["authorization_url_available"]),
+            # Gate 131: whether a durable row was written, and why not.
+            "state_persisted": bool(persisted.get("row_written")),
+            "state_store_blocked_reasons": sorted(
+                persisted.get("blocked_reasons") or []
+            ),
+            "redirect_ready": bool(redirect_ready),
             # Never returned. A URL carrying a client id and a redirect URI in a
             # response body is a configuration disclosure nobody asked for, and
             # there is nowhere to send the browser anyway.
@@ -351,34 +431,153 @@ def login() -> dict[str, Any]:
 
 
 @router.get("/callback")
-def callback() -> dict[str, Any]:
-    """Receive a provider redirect. Refuses to mint a session.
+def callback(
+    db: DbSession,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+) -> dict[str, Any]:
+    """Receive a provider redirect. Validate, exchange, verify - then stop.
 
-    The one route that could ever create a session, and it does so only once
-    callback validation, organization_id resolution and membership verification
-    have all passed. None has.
+    Gate 131. The route runs the real flow now and refuses by name at each
+    stage. It still creates no session, and the reason is no longer "nothing
+    was issued": it is that a session requires an organization and no identity
+    has one yet.
+
+    Nothing here returns, logs or stores the code, the PKCE verifier, the ID
+    token or the access token. They are locals, and the response carries
+    booleans and named reasons.
     """
     gate = _gate()
-    # No state was issued, so none can be validated. The boundary is consulted
-    # rather than assumed, so this route reports the same refusal the boundary
-    # would give a real callback.
-    exchange = evaluate_token_exchange_boundary(
-        callback_code_present=False,
-        state_validated=False,
-        pkce_validated=False,
-    )
     flow = build_redirect_flow_contract()
-    # Nothing was issued, so nothing can be found. Contract-only scope, which
-    # stores nothing and says so.
+
+    provider_error = str(error or "").strip()
+    returned_state = str(state or "").strip()
+    returned_code = str(code or "").strip()
+
+    _auth_env = auth_environment_overlay()
+
+    # -- 1. the state, consumed exactly once ------------------------------
+    consumed: dict[str, Any] = {
+        "consume_allowed": False,
+        "replay_detected": False,
+        "expired": False,
+        "row_found": False,
+        "blocked_reasons": ["state_not_presented"],
+    }
+    code_verifier = ""
+    if returned_state and not provider_error:
+        try:
+            consumed = consume_redirect_state(
+                connection=db.connection(),
+                returned_state=returned_state,
+                storage_scope=DURABLE_STATE_SCOPE,
+                return_verifier=True,
+            )
+            code_verifier = str(consumed.pop("code_verifier", "") or "")
+            db.commit()
+        except Exception:
+            db.rollback()
+            consumed = {
+                "consume_allowed": False,
+                "replay_detected": False,
+                "expired": False,
+                "row_found": False,
+                "blocked_reasons": ["redirect_state_store_unavailable"],
+            }
+
+    state_validated = bool(consumed.get("consume_allowed"))
+    pkce_validated = bool(state_validated and code_verifier)
+
+    # -- 2. the exchange, only on a validated state -----------------------
+    exchange_report: dict[str, Any] = {
+        "attempted": False,
+        "succeeded": False,
+        "http_status": 0,
+        "provider_error": "",
+        "blocked_reasons": [],
+    }
+    verification: dict[str, Any] = {"verified": False, "state": "not_attempted"}
+    identity_email_domain = ""
+
+    if state_validated and pkce_validated and returned_code:
+        endpoints = build_provider_endpoints(
+            (_auth_env.get("OIDC_ISSUER") or "").strip(),
+            allow_network=_discovery_allowed(),
+        )
+        exchange_report, tokens = exchange_authorization_code(
+            token_endpoint=endpoints.get("token_endpoint"),
+            client_id=(_auth_env.get("OIDC_CLIENT_ID") or "").strip(),
+            client_secret=(_auth_env.get("OIDC_CLIENT_SECRET") or "").strip(),
+            code=returned_code,
+            code_verifier=code_verifier,
+            redirect_uri=(_auth_env.get("OIDC_CALLBACK_URL") or "").strip(),
+            allow_network=_discovery_allowed(),
+        )
+        if exchange_report.get("succeeded"):
+            jwks = fetch_jwks(
+                jwks_url=endpoints.get("jwks_uri"),
+                allow_network=_discovery_allowed(),
+            )
+            verification = verify_oidc_token(
+                token=tokens.get("id_token"),
+                jwks=jwks.get("jwks"),
+                expected_issuer=(_auth_env.get("OIDC_ISSUER") or "").strip(),
+                expected_audience=(_auth_env.get("OIDC_AUDIENCE") or "").strip(),
+            )
+            if verification.get("verified"):
+                # The domain half only. The address itself is not an identifier
+                # NativeForge stores, and Gate 112 refuses it as authority.
+                email = str(verification.get("email") or "")
+                identity_email_domain = email.rpartition("@")[2] if "@" in email else ""
+
+    identity_validated = bool(verification.get("verified"))
+
+    # -- 3. the organization, which is where this stops -------------------
+    #
+    # No binding exists for any identity, so none resolves. The session format
+    # refuses a session without one - `session_without_an_organization_id` -
+    # so a verified identity still mints nothing. Gate 132's work.
+    organization_id_resolved = False
+    membership_verified = False
+    org_binding_missing = bool(identity_validated and not organization_id_resolved)
+
+    exchange = evaluate_token_exchange_boundary(
+        callback_code_present=bool(returned_code),
+        state_validated=state_validated,
+        pkce_validated=pkce_validated,
+    )
     state_lookup = consume_state(state_id=None, returned_state=None)
 
-    body = _envelope("callback", "callback_validation_not_passed", gate)
+    route_status = "callback_validation_not_passed"
+    if provider_error:
+        route_status = "provider_returned_an_error"
+    elif org_binding_missing:
+        route_status = "identity_verified_without_an_organization_binding"
+
+    body = _envelope("callback", route_status, gate)
     body.update(
         {
             "session_created": False,
             "session_creation_allowed": bool(flow["session_creation_allowed"]),
-            "state_validated": False,
-            "pkce_verified": False,
+            "state_validated": state_validated,
+            "pkce_verified": pkce_validated,
+            # Gate 131: the real flow's outcome, in booleans.
+            "provider_error": provider_error,
+            "state_row_found": bool(consumed.get("row_found")),
+            "state_expired": bool(consumed.get("expired")),
+            "state_replay_detected": bool(consumed.get("replay_detected")),
+            "state_blocked_reasons": sorted(consumed.get("blocked_reasons") or []),
+            "token_exchange_attempted": bool(exchange_report.get("attempted")),
+            "token_exchange_succeeded": bool(exchange_report.get("succeeded")),
+            "token_exchange_http_status": int(exchange_report.get("http_status") or 0),
+            "token_exchange_blocked_reasons": sorted(
+                exchange_report.get("blocked_reasons") or []
+            ),
+            "identity_validated": identity_validated,
+            "identity_verification_state": str(verification.get("state") or ""),
+            "identity_email_domain": identity_email_domain,
+            "org_binding_missing": org_binding_missing,
             "token_exchange_allowed": bool(exchange["token_exchange_allowed"]),
             "token_exchange_performed": bool(exchange["token_exchange_performed"]),
             "network_call_allowed": bool(exchange["network_call_allowed"]),
@@ -397,13 +596,18 @@ def callback() -> dict[str, Any]:
             "redirect_state_repository_available": True,
             "redirect_state_durable": bool(flow["redirect_state_store_durable"]),
             "session_signing_key_ready": bool(flow["session_signing_key_ready"]),
-            "stored_state_found": state_lookup["state_value_present"],
-            "state_consume_allowed": state_lookup["consume_allowed"],
-            "state_replay_detected": state_lookup["replay_detected"],
+            "stored_state_found": bool(consumed.get("row_found")),
+            "state_consume_allowed": state_validated,
+            "contract_state_scope": state_lookup["storage_scope"],
             # Named individually: a caller who gets a refusal here needs to know
             # which of the three is missing, not merely that one is.
-            "organization_id_resolved": False,
-            "membership_verified": False,
+            "organization_id_resolved": organization_id_resolved,
+            "membership_verified": membership_verified,
+            "next_required_action": (
+                "create a dev organization binding for this identity"
+                if org_binding_missing
+                else ""
+            ),
         }
     )
     return body

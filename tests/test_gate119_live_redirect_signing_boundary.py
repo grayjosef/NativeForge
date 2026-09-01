@@ -253,24 +253,42 @@ def test_a_url_available_without_provider_config_is_an_invariant_failure():
 # ------------------------------------------------- the redirect state table
 
 
-def test_the_repository_table_matches_the_migration():
+def _migrations_touching_redirect_states() -> str:
+    """Every migration that changes this table, not one hardcoded filename.
+
+    Gate 131. These read `0030_nf_auth_redirect_states.py` alone, which was the
+    whole truth until 0036 added the encrypted PKCE verifier. A fixed filename
+    made a later migration invisible - the same shape as Gate 130's tunnel
+    detector reading `config.yml` while the live tunnel ran from another file.
+    """
+    text = ""
+    for path in sorted(Path("alembic/versions").glob("*.py")):
+        body = path.read_text(encoding="utf-8")
+        if repo_svc.TABLE_NAME in body:
+            text += body
+    assert text, "no migration mentions the redirect state table"
+    return text
+
+
+def test_the_repository_table_matches_the_migrations():
     """A column added to one and not the other fails rather than drifting."""
-    migration = Path("alembic/versions/0030_nf_auth_redirect_states.py").read_text(
-        encoding="utf-8"
-    )
-    declared = set(re.findall(r'sa\.Column\(\s*"(\w+)"', migration))
+    migrations = _migrations_touching_redirect_states()
+    declared = set(re.findall(r'sa\.Column\(\s*"(\w+)"', migrations))
     mapped = {column.name for column in repo_svc.REDIRECT_STATES.columns}
     assert mapped == declared
 
 
 def test_the_repository_table_enforces_the_migrations_constraints():
     """Otherwise a test creates a weaker table than production has and passes."""
-    migration = Path("alembic/versions/0030_nf_auth_redirect_states.py").read_text(
-        encoding="utf-8"
-    )
+    migrations = _migrations_touching_redirect_states()
     declared = set(
-        re.findall(r'name="(ck_nf_auth_redirect_\w+|uq_nf_auth_\w+)"', migration)
+        re.findall(
+            r'name="(ck_nf_auth_redirect_\w+|uq_nf_auth_\w+)"|'
+            r'"(ck_nf_auth_redirect_\w+|uq_nf_auth_\w+)"',
+            migrations,
+        )
     )
+    declared = {name for group in declared for name in group if name}
     mapped = {
         c.name
         for c in repo_svc.REDIRECT_STATES.constraints
@@ -868,5 +886,5 @@ def test_the_declaration_still_refuses_every_liveness_claim():
         "redirect_state_rows_written",
     ):
         assert declaration[claim] is False
-    assert declaration["alembic_head"] == "0035"
+    assert declaration["alembic_head"] == "0036"
     assert declaration["missing_auth_gates"]

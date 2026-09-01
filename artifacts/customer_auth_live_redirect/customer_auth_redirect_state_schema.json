@@ -1,5 +1,5 @@
 {
-  "column_count": 15,
+  "column_count": 17,
   "columns": [
     {
       "name": "id",
@@ -13,6 +13,16 @@
     },
     {
       "name": "pkce_verifier_hash",
+      "nullable": false,
+      "type": "TEXT"
+    },
+    {
+      "name": "pkce_verifier_encrypted",
+      "nullable": true,
+      "type": "TEXT"
+    },
+    {
+      "name": "pkce_verifier_key_scheme",
       "nullable": false,
       "type": "TEXT"
     },

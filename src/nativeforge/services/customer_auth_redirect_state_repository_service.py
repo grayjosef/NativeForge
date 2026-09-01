@@ -136,6 +136,17 @@ REDIRECT_STATES = sa.Table(
     sa.Column("id", sa.Uuid(as_uuid=True), primary_key=True),
     sa.Column("state_hash", sa.Text(), nullable=False),
     sa.Column("pkce_verifier_hash", sa.Text(), nullable=False),
+    # Gate 131B, migration 0036. The hash proves a match; it cannot complete an
+    # exchange, because PKCE requires presenting the raw verifier to the token
+    # endpoint and SHA-256 does not reverse. Encrypted with a key derived from
+    # NF_SESSION_SIGNING_KEY, which is never in this database.
+    sa.Column("pkce_verifier_encrypted", sa.Text(), nullable=True),
+    sa.Column(
+        "pkce_verifier_key_scheme",
+        sa.Text(),
+        nullable=False,
+        server_default="none",
+    ),
     sa.Column("code_challenge", sa.Text(), nullable=False),
     sa.Column("code_challenge_method", sa.Text(), nullable=False),
     sa.Column("redirect_uri", sa.Text(), nullable=False),
@@ -168,6 +179,10 @@ REDIRECT_STATES = sa.Table(
     sa.CheckConstraint(
         "storage_scope IN ('contract_only', 'in_memory_test', 'database', 'unknown')",
         name="ck_nf_auth_redirect_storage_scope",
+    ),
+    sa.CheckConstraint(
+        "pkce_verifier_key_scheme IN ('none', 'fernet_hkdf_sha256_v1')",
+        name="ck_nf_auth_redirect_verifier_scheme",
     ),
 )
 
@@ -277,6 +292,24 @@ def persist_redirect_state(
     issued = created_at or datetime.now(UTC)
     expires = issued + timedelta(seconds=max(ttl, 1))
 
+    # Encrypted before the write, so a failure to encrypt blocks the row rather
+    # than producing one whose verifier can never be recovered.
+    from nativeforge.services.pkce_verifier_encryption_service import encrypt_verifier
+
+    _encrypted = encrypt_verifier(raw_verifier)
+    #
+    # A failure to encrypt does NOT block the row. It records `key_scheme:
+    # none` and no ciphertext, and the consume path refuses to hand back a
+    # verifier it cannot recover (`no_ciphertext_stored`).
+    #
+    # The first version blocked the write, which made state persistence
+    # impossible without a signing key and so made every state test fail on a
+    # suite that blanks the environment. Wrong layer: the repository stores what
+    # it can, and the exchange - which is what actually needs the verifier -
+    # refuses by name. `/login` separately requires `can_sign_production_session`
+    # before it will start a flow at all, so a real login still cannot begin
+    # without a key.
+
     row_written = False
     if scope in PRODUCTION_SCOPES and connection is not None and not blocked_reasons:
         connection.execute(
@@ -284,6 +317,8 @@ def persist_redirect_state(
                 id=state_id or uuid.uuid4(),
                 state_hash=hash_secret_value(raw_state),
                 pkce_verifier_hash=hash_secret_value(raw_verifier),
+                pkce_verifier_encrypted=_encrypted["ciphertext"] or None,
+                pkce_verifier_key_scheme=_encrypted["key_scheme"],
                 code_challenge=challenge,
                 code_challenge_method=method,
                 redirect_uri=uri,
@@ -327,6 +362,7 @@ def consume_redirect_state(
     now: datetime | None = None,
     storage_scope: str = DEFAULT_SCOPE,
     consumed_by_identity_id: uuid.UUID | None = None,
+    return_verifier: bool = False,
 ) -> dict[str, Any]:
     """Match a returned state against a stored one, exactly once.
 
@@ -413,7 +449,25 @@ def consume_redirect_state(
             .values(replay_detected=True)
         )
 
-    return _result(
+    # Gate 131B. Off by default: every existing caller gets a report with no
+    # secret in it, and only the callback asks for the value. The key is
+    # `code_verifier`, which the invariant checker refuses in any other result.
+    recovered_verifier = ""
+    verifier_report: dict[str, Any] = {}
+    if return_verifier and consume_allowed and row is not None:
+        from nativeforge.services.pkce_verifier_encryption_service import (
+            decrypt_verifier,
+        )
+
+        recovered_verifier, verifier_report = decrypt_verifier(
+            row.get("pkce_verifier_encrypted"),
+            key_scheme=str(row.get("pkce_verifier_key_scheme") or "none"),
+            expected_hash=str(row.get("pkce_verifier_hash") or ""),
+        )
+        if not recovered_verifier:
+            blocked_reasons.extend(verifier_report.get("blocked_reasons") or [])
+
+    result = _result(
         operation="consume",
         storage_scope=scope,
         row_written=bool(consume_allowed or replay),
@@ -429,6 +483,13 @@ def consume_redirect_state(
         expires_at=(_aware(row["expires_at"]).isoformat() if row is not None else ""),
         blocked_reasons=blocked_reasons,
     )
+    result["verifier_recovered"] = bool(recovered_verifier)
+    result["verifier_returned_by_request"] = bool(return_verifier)
+    if return_verifier:
+        # The one place a verifier leaves this module. Named so the invariant
+        # checker can refuse it anywhere it is not expected.
+        result["code_verifier"] = recovered_verifier
+    return result
 
 
 def redirect_state_repository_invariant_failures(
@@ -445,9 +506,26 @@ def redirect_state_repository_invariant_failures(
     if scope not in STORAGE_SCOPES:
         failures.append("storage_scope_outside_vocabulary")
 
+    # Gate 131B. `code_verifier` is permitted in exactly one shape: a consume
+    # that was explicitly asked for it, and that says so in the result. Guarded
+    # rather than removed from the list - an unrequested verifier is still a
+    # leak, and dropping the field from the vocabulary would stop catching it.
+    #
+    # Gate 126 settled this pattern: an invariant that fires on its own
+    # permitted branch gets ignored, and an ignored invariant is worse than
+    # none because it reads as coverage.
+    requested = bool(result.get("verifier_returned_by_request"))
     for field in FORBIDDEN_VALUE_FIELDS:
-        if field in result:
-            failures.append(f"result_carries_{field}")
+        if field not in result:
+            continue
+        if field == "code_verifier" and requested:
+            continue
+        failures.append(f"result_carries_{field}")
+
+    # The flag cannot be a way to smuggle one out of an operation that never
+    # asks: only a consume returns a verifier.
+    if requested and result.get("operation") != "consume":
+        failures.append("verifier_returned_by_a_non_consume_operation")
 
     if result.get("raw_state_stored") or result.get("raw_verifier_stored"):
         failures.append("raw_credential_material_reached_the_database")

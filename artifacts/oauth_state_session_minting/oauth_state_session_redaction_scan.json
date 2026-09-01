@@ -1,0 +1,33 @@
+{
+  "env_key_names_checked": [
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+    "NF_PUBLIC_ORIGIN",
+    "NF_SESSION_SIGNING_KEY"
+  ],
+  "env_key_presence": {
+    "NF_PUBLIC_ORIGIN": true,
+    "NF_SESSION_SIGNING_KEY": true,
+    "OIDC_AUDIENCE": true,
+    "OIDC_CALLBACK_URL": true,
+    "OIDC_CLIENT_ID": true,
+    "OIDC_CLIENT_SECRET": true,
+    "OIDC_ISSUER": true
+  },
+  "env_values_recorded": false,
+  "markers_checked": [
+    "id_token",
+    "access_token",
+    "refresh_token",
+    "code_verifier",
+    "client_secret",
+    "Set-Cookie",
+    "?code=",
+    "GOCSPX-"
+  ],
+  "scan_applies_to": "artifacts/oauth_state_session_minting",
+  "schema_version": "nf_oauth_state_session_artifact_v1"
+}

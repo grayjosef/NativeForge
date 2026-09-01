@@ -108,6 +108,14 @@ APPROVED_NETWORK_SITES: tuple[ApprovedSite, ...] = (
         "which carries no credential and returns no user data",
     ),
     ApprovedSite(
+        "oidc_token_exchange_client_service",
+        "the OIDC token endpoint - the one place an authorization code is "
+        "exchanged for an identity (Gate 131D)",
+        "allow_network defaults False; https enforced before the request; "
+        "the endpoint comes from the provider discovery document rather "
+        "than from a caller, and no token or credential enters a result",
+    ),
+    ApprovedSite(
         "feedback_slack_alert_service",
         "operational alert webhook",
         "live_network_guard_service (purpose=operational_alert); "

@@ -1,0 +1,15 @@
+{
+  "cookie_http_only": true,
+  "cookie_same_site": "lax",
+  "customer_auth_live": false,
+  "email_in_session_payload": false,
+  "login_live": false,
+  "org_binding_passed": false,
+  "reason": "no session was minted: the session format refuses one without an organization, and no identity has a binding",
+  "route": "/api/auth/current-user",
+  "same_site_rationale": "strict is not sent on the top-level navigation back from the provider, so the callback would arrive without the cookie",
+  "schema_version": "nf_oauth_state_session_artifact_v1",
+  "session_present": false,
+  "status": "unauthenticated",
+  "status_code": 401
+}
