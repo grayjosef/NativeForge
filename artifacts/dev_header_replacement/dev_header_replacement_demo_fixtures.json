@@ -11,12 +11,31 @@
     ],
     "auth_replacement_available": false,
     "central_replacement_module_available": true,
+    "converted_dev_header_module_names": [
+      "activation_routes.py",
+      "auth.py",
+      "form_package_routes.py",
+      "grant_spark_routes.py",
+      "isolation_routes.py",
+      "nofo_extraction_routes.py",
+      "operator_workbench_advisory_routes.py",
+      "opportunity_discovery_routes.py",
+      "pursuit_brief_routes.py",
+      "pursuit_routes.py",
+      "source_ingestion_routes.py",
+      "spark_scoring_routes.py",
+      "sprint0_routes.py",
+      "stage12_guided_demo_routes.py",
+      "tribal_profile_routes.py",
+      "trust_routes.py"
+    ],
     "current_org_id_set_by_this_gate": false,
     "customer_auth_live": false,
     "customer_persistence_live": false,
     "dev_header_is_production_safe": false,
     "dev_header_provider_modules": [
-      "deps_db.py"
+      "deps_db.py",
+      "isolation_deps.py"
     ],
     "dev_header_replacement_contract_available": true,
     "login_live": false,
@@ -35,34 +54,20 @@
     ],
     "production_safe_dev_header_uses": 0,
     "real_customer_data_written": 0,
-    "remaining_dev_header_module_names": [
-      "activation_routes.py",
-      "form_package_routes.py",
-      "grant_spark_routes.py",
-      "nofo_extraction_routes.py",
-      "operator_workbench_advisory_routes.py",
-      "opportunity_discovery_routes.py",
-      "pursuit_brief_routes.py",
-      "pursuit_routes.py",
-      "source_ingestion_routes.py",
-      "spark_scoring_routes.py",
-      "sprint0_routes.py",
-      "stage12_guided_demo_routes.py",
-      "tribal_profile_routes.py",
-      "trust_routes.py"
-    ],
-    "remaining_dev_header_modules": 14,
+    "remaining_dev_header_module_names": [],
+    "remaining_dev_header_modules": 0,
     "routes_converted": 0,
     "safe_to_disable_now": false,
     "schema_version": "nf_dev_header_replacement_artifact_v1"
   },
   "fixture": {
     "actual_central_replacement_available": true,
-    "actual_dev_header_route_module_count": 14,
-    "actual_dev_header_route_modules": [
+    "actual_converted_route_modules": [
       "activation_routes.py",
+      "auth.py",
       "form_package_routes.py",
       "grant_spark_routes.py",
+      "isolation_routes.py",
       "nofo_extraction_routes.py",
       "operator_workbench_advisory_routes.py",
       "opportunity_discovery_routes.py",
@@ -75,6 +80,8 @@
       "tribal_profile_routes.py",
       "trust_routes.py"
     ],
+    "actual_dev_header_route_module_count": 0,
+    "actual_dev_header_route_modules": [],
     "actual_safe_to_disable_now": false,
     "case_count": 9,
     "cases": [

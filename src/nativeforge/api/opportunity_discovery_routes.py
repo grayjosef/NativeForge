@@ -9,11 +9,11 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.opportunity_discovery_route_helpers import (
     body_to_discovery_seed as _body_to_discovery_seed,
 )
@@ -86,7 +86,7 @@ real_discovery_router = APIRouter(
 )
 def demo_create_source(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: OpportunitySourceCreateBody,
 ) -> dict[str, Any]:
@@ -105,7 +105,7 @@ def demo_create_source(
 @demo_discovery_router.post("/{org_id}/discovery/sources/seed-catalog")
 def demo_seed_source_catalog(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -122,7 +122,7 @@ def demo_seed_source_catalog(
 @demo_discovery_router.get("/{org_id}/discovery/coverage-summary")
 def demo_discovery_coverage_summary(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -133,7 +133,7 @@ def demo_discovery_coverage_summary(
 @demo_discovery_router.get("/{org_id}/discovery/sources/due")
 def demo_list_sources_due(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -146,7 +146,7 @@ def demo_list_sources_due(
 @demo_discovery_router.get("/{org_id}/discovery/sources/overdue")
 def demo_list_sources_overdue(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -159,7 +159,7 @@ def demo_list_sources_overdue(
 @demo_discovery_router.get("/{org_id}/discovery/sources/freshness-summary")
 def demo_discovery_sources_freshness_summary(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -170,7 +170,7 @@ def demo_discovery_sources_freshness_summary(
 @demo_discovery_router.get("/{org_id}/discovery/coverage-gap-intelligence")
 def demo_discovery_coverage_gap_intelligence(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     severity: str | None = Query(None),
     gap_type: str | None = Query(None),
@@ -202,7 +202,7 @@ def demo_discovery_coverage_gap_intelligence(
 @demo_discovery_router.get("/{org_id}/discovery/coverage-gaps")
 def demo_discovery_coverage_gaps(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     severity: str | None = Query(None),
     gap_type: str | None = Query(None),
@@ -241,7 +241,7 @@ def demo_discovery_coverage_gaps(
 @demo_discovery_router.get("/{org_id}/discovery/source-recommendations")
 def demo_discovery_source_recommendations(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     severity: str | None = Query(None),
     gap_type: str | None = Query(None),
@@ -281,7 +281,7 @@ def demo_discovery_source_recommendations(
 @demo_discovery_router.get("/{org_id}/discovery/operator-workbench")
 def demo_operator_decision_pack(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     limit: Annotated[int, Query(ge=1, le=200)] = 50,
     intake_run_limit: Annotated[int, Query(ge=1, le=200)] = 40,
@@ -310,7 +310,7 @@ def demo_operator_decision_pack(
 @demo_discovery_router.get("/{org_id}/discovery/operator-actions")
 def demo_operator_actions(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     limit: Annotated[int, Query(ge=1, le=200)] = 50,
     intake_run_limit: Annotated[int, Query(ge=1, le=200)] = 40,
@@ -339,7 +339,7 @@ def demo_operator_actions(
 @demo_discovery_router.get("/{org_id}/discovery/operator-actions-ledger/summary")
 def demo_operator_actions_ledger_summary(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -354,7 +354,7 @@ def demo_operator_actions_ledger_summary(
 @demo_discovery_router.get("/{org_id}/discovery/operator-actions-ledger")
 def demo_list_operator_actions_ledger(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     status: Annotated[str | None, Query()] = None,
     severity: Annotated[str | None, Query()] = None,
@@ -401,7 +401,7 @@ def demo_list_operator_actions_ledger(
 def demo_get_operator_action_ledger_item(
     org_id: uuid.UUID,
     operator_action_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -424,7 +424,7 @@ def demo_get_operator_action_ledger_item(
 )
 def demo_create_operator_action_manual(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: OperatorActionCreateManualBody,
 ) -> dict[str, Any]:
@@ -464,7 +464,7 @@ def demo_create_operator_action_manual(
 )
 def demo_create_operator_action_from_decision(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: OperatorActionFromDecisionBody,
 ) -> dict[str, Any]:
@@ -496,7 +496,7 @@ def demo_create_operator_action_from_decision(
 def demo_patch_operator_action_ledger_item(
     org_id: uuid.UUID,
     operator_action_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: OperatorActionLedgerPatchBody,
 ) -> dict[str, Any]:
@@ -526,7 +526,7 @@ def demo_patch_operator_action_ledger_item(
 @demo_discovery_router.get("/{org_id}/discovery/sources")
 def demo_list_sources(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -538,7 +538,7 @@ def demo_list_sources(
 def demo_get_source_freshness(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -560,7 +560,7 @@ def demo_get_source_freshness(
 def demo_create_source_check_run(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: SourceCheckRunCreateBody,
 ) -> dict[str, Any]:
@@ -608,7 +608,7 @@ def demo_create_source_check_run(
 def demo_list_source_check_runs(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -635,7 +635,7 @@ def demo_list_source_check_runs(
 )
 def demo_create_discovery_spark(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: DiscoverySparkCreateBody,
 ) -> dict[str, Any]:
@@ -666,7 +666,7 @@ def demo_create_discovery_spark(
 @demo_discovery_router.get("/{org_id}/discovery/sparks")
 def demo_list_discovery_sparks(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -680,7 +680,7 @@ def demo_list_discovery_sparks(
 def demo_discovery_intelligence(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -702,7 +702,7 @@ def demo_discovery_intelligence(
 def demo_start_intake_run(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: DiscoveryIntakeRunCreateBody,
 ) -> dict[str, Any]:
@@ -730,7 +730,7 @@ def demo_start_intake_run(
 def demo_list_intake_runs_for_source(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -747,7 +747,7 @@ def demo_list_intake_runs_for_source(
 def demo_get_intake_run(
     org_id: uuid.UUID,
     run_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -766,7 +766,7 @@ def demo_get_intake_run(
 def demo_process_intake_candidates(
     org_id: uuid.UUID,
     run_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: StructuredCandidatesBatchBody,
 ) -> dict[str, Any]:
@@ -796,7 +796,7 @@ def demo_process_intake_candidates(
 def demo_list_intake_candidates(
     org_id: uuid.UUID,
     run_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -823,7 +823,7 @@ def demo_list_intake_candidates(
 )
 def real_create_source(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: OpportunitySourceCreateBody,
 ) -> dict[str, Any]:
@@ -842,7 +842,7 @@ def real_create_source(
 @real_discovery_router.post("/{org_id}/discovery/sources/seed-catalog")
 def real_seed_source_catalog(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -859,7 +859,7 @@ def real_seed_source_catalog(
 @real_discovery_router.get("/{org_id}/discovery/coverage-summary")
 def real_discovery_coverage_summary(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -870,7 +870,7 @@ def real_discovery_coverage_summary(
 @real_discovery_router.get("/{org_id}/discovery/sources/due")
 def real_list_sources_due(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -883,7 +883,7 @@ def real_list_sources_due(
 @real_discovery_router.get("/{org_id}/discovery/sources/overdue")
 def real_list_sources_overdue(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -896,7 +896,7 @@ def real_list_sources_overdue(
 @real_discovery_router.get("/{org_id}/discovery/sources/freshness-summary")
 def real_discovery_sources_freshness_summary(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -907,7 +907,7 @@ def real_discovery_sources_freshness_summary(
 @real_discovery_router.get("/{org_id}/discovery/coverage-gap-intelligence")
 def real_discovery_coverage_gap_intelligence(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     severity: str | None = Query(None),
     gap_type: str | None = Query(None),
@@ -939,7 +939,7 @@ def real_discovery_coverage_gap_intelligence(
 @real_discovery_router.get("/{org_id}/discovery/coverage-gaps")
 def real_discovery_coverage_gaps(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     severity: str | None = Query(None),
     gap_type: str | None = Query(None),
@@ -978,7 +978,7 @@ def real_discovery_coverage_gaps(
 @real_discovery_router.get("/{org_id}/discovery/source-recommendations")
 def real_discovery_source_recommendations(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     severity: str | None = Query(None),
     gap_type: str | None = Query(None),
@@ -1018,7 +1018,7 @@ def real_discovery_source_recommendations(
 @real_discovery_router.get("/{org_id}/discovery/operator-workbench")
 def real_operator_decision_pack(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     limit: Annotated[int, Query(ge=1, le=200)] = 50,
     intake_run_limit: Annotated[int, Query(ge=1, le=200)] = 40,
@@ -1047,7 +1047,7 @@ def real_operator_decision_pack(
 @real_discovery_router.get("/{org_id}/discovery/operator-actions")
 def real_operator_actions(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     limit: Annotated[int, Query(ge=1, le=200)] = 50,
     intake_run_limit: Annotated[int, Query(ge=1, le=200)] = 40,
@@ -1076,7 +1076,7 @@ def real_operator_actions(
 @real_discovery_router.get("/{org_id}/discovery/operator-actions-ledger/summary")
 def real_operator_actions_ledger_summary(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -1091,7 +1091,7 @@ def real_operator_actions_ledger_summary(
 @real_discovery_router.get("/{org_id}/discovery/operator-actions-ledger")
 def real_list_operator_actions_ledger(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     status: Annotated[str | None, Query()] = None,
     severity: Annotated[str | None, Query()] = None,
@@ -1138,7 +1138,7 @@ def real_list_operator_actions_ledger(
 def real_get_operator_action_ledger_item(
     org_id: uuid.UUID,
     operator_action_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -1161,7 +1161,7 @@ def real_get_operator_action_ledger_item(
 )
 def real_create_operator_action_manual(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: OperatorActionCreateManualBody,
 ) -> dict[str, Any]:
@@ -1201,7 +1201,7 @@ def real_create_operator_action_manual(
 )
 def real_create_operator_action_from_decision(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: OperatorActionFromDecisionBody,
 ) -> dict[str, Any]:
@@ -1233,7 +1233,7 @@ def real_create_operator_action_from_decision(
 def real_patch_operator_action_ledger_item(
     org_id: uuid.UUID,
     operator_action_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: OperatorActionLedgerPatchBody,
 ) -> dict[str, Any]:
@@ -1263,7 +1263,7 @@ def real_patch_operator_action_ledger_item(
 @real_discovery_router.get("/{org_id}/discovery/sources")
 def real_list_sources(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -1275,7 +1275,7 @@ def real_list_sources(
 def real_get_source_freshness(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -1297,7 +1297,7 @@ def real_get_source_freshness(
 def real_create_source_check_run(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: SourceCheckRunCreateBody,
 ) -> dict[str, Any]:
@@ -1345,7 +1345,7 @@ def real_create_source_check_run(
 def real_list_source_check_runs(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -1372,7 +1372,7 @@ def real_list_source_check_runs(
 )
 def real_create_discovery_spark(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: DiscoverySparkCreateBody,
 ) -> dict[str, Any]:
@@ -1403,7 +1403,7 @@ def real_create_discovery_spark(
 @real_discovery_router.get("/{org_id}/discovery/sparks")
 def real_list_discovery_sparks(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -1417,7 +1417,7 @@ def real_list_discovery_sparks(
 def real_discovery_intelligence(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -1439,7 +1439,7 @@ def real_discovery_intelligence(
 def real_start_intake_run(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: DiscoveryIntakeRunCreateBody,
 ) -> dict[str, Any]:
@@ -1467,7 +1467,7 @@ def real_start_intake_run(
 def real_list_intake_runs_for_source(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -1484,7 +1484,7 @@ def real_list_intake_runs_for_source(
 def real_get_intake_run(
     org_id: uuid.UUID,
     run_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -1503,7 +1503,7 @@ def real_get_intake_run(
 def real_process_intake_candidates(
     org_id: uuid.UUID,
     run_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: StructuredCandidatesBatchBody,
 ) -> dict[str, Any]:
@@ -1533,7 +1533,7 @@ def real_process_intake_candidates(
 def real_list_intake_candidates(
     org_id: uuid.UUID,
     run_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -1558,7 +1558,7 @@ def real_list_intake_candidates(
 def demo_patch_source_check_run(
     org_id: uuid.UUID,
     check_run_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: SourceCheckRunPatchBody,
 ) -> dict[str, Any]:
@@ -1603,7 +1603,7 @@ def demo_patch_source_check_run(
 @demo_discovery_router.get("/{org_id}/discovery/review-items")
 def demo_list_discovery_review_items(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     review_status: Annotated[
         DiscoveryReviewQueueStatus | None,
@@ -1642,7 +1642,7 @@ def demo_list_discovery_review_items(
 def demo_get_discovery_review_item(
     org_id: uuid.UUID,
     review_item_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -1661,7 +1661,7 @@ def demo_get_discovery_review_item(
 def demo_patch_discovery_review_item(
     org_id: uuid.UUID,
     review_item_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: ReviewItemPatchBody,
 ) -> dict[str, Any]:
@@ -1696,7 +1696,7 @@ def demo_patch_discovery_review_item(
 def real_patch_source_check_run(
     org_id: uuid.UUID,
     check_run_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: SourceCheckRunPatchBody,
 ) -> dict[str, Any]:
@@ -1741,7 +1741,7 @@ def real_patch_source_check_run(
 @real_discovery_router.get("/{org_id}/discovery/review-items")
 def real_list_discovery_review_items(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     review_status: Annotated[
         DiscoveryReviewQueueStatus | None,
@@ -1780,7 +1780,7 @@ def real_list_discovery_review_items(
 def real_get_discovery_review_item(
     org_id: uuid.UUID,
     review_item_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -1799,7 +1799,7 @@ def real_get_discovery_review_item(
 def real_patch_discovery_review_item(
     org_id: uuid.UUID,
     review_item_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: ReviewItemPatchBody,
 ) -> dict[str, Any]:
@@ -1836,7 +1836,7 @@ def real_patch_discovery_review_item(
 def demo_get_intake_candidate_quality(
     org_id: uuid.UUID,
     candidate_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     create_review_item: Annotated[bool, Query()] = False,
 ) -> dict[str, Any]:
@@ -1863,7 +1863,7 @@ def demo_get_intake_candidate_quality(
 def demo_get_grant_spark_discovery_quality(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     create_review_item: Annotated[bool, Query()] = False,
 ) -> dict[str, Any]:
@@ -1892,7 +1892,7 @@ def demo_get_grant_spark_discovery_quality(
 def real_get_intake_candidate_quality(
     org_id: uuid.UUID,
     candidate_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     create_review_item: Annotated[bool, Query()] = False,
 ) -> dict[str, Any]:
@@ -1919,7 +1919,7 @@ def real_get_intake_candidate_quality(
 def real_get_grant_spark_discovery_quality(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     create_review_item: Annotated[bool, Query()] = False,
 ) -> dict[str, Any]:
@@ -1948,7 +1948,7 @@ def real_get_grant_spark_discovery_quality(
 def demo_get_evidence_pack_source(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -1974,7 +1974,7 @@ def demo_get_evidence_pack_source(
 def demo_get_evidence_pack_intake_candidate(
     org_id: uuid.UUID,
     candidate_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2000,7 +2000,7 @@ def demo_get_evidence_pack_intake_candidate(
 def demo_get_evidence_pack_grant_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2026,7 +2026,7 @@ def demo_get_evidence_pack_grant_spark(
 def demo_get_evidence_pack_review_item(
     org_id: uuid.UUID,
     review_item_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2052,7 +2052,7 @@ def demo_get_evidence_pack_review_item(
 def demo_get_evidence_pack_operator_action(
     org_id: uuid.UUID,
     operator_action_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2079,7 +2079,7 @@ def demo_get_evidence_pack_generic(
     org_id: uuid.UUID,
     subject_path: str,
     subject_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2111,7 +2111,7 @@ def demo_get_evidence_pack_generic(
 def real_get_evidence_pack_source(
     org_id: uuid.UUID,
     source_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2137,7 +2137,7 @@ def real_get_evidence_pack_source(
 def real_get_evidence_pack_intake_candidate(
     org_id: uuid.UUID,
     candidate_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2163,7 +2163,7 @@ def real_get_evidence_pack_intake_candidate(
 def real_get_evidence_pack_grant_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2189,7 +2189,7 @@ def real_get_evidence_pack_grant_spark(
 def real_get_evidence_pack_review_item(
     org_id: uuid.UUID,
     review_item_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2215,7 +2215,7 @@ def real_get_evidence_pack_review_item(
 def real_get_evidence_pack_operator_action(
     org_id: uuid.UUID,
     operator_action_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,
@@ -2242,7 +2242,7 @@ def real_get_evidence_pack_generic(
     org_id: uuid.UUID,
     subject_path: str,
     subject_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_audit_trail: Annotated[bool, Query()] = True,
     include_linked_records: Annotated[bool, Query()] = True,

@@ -59,9 +59,8 @@ def test_the_session_cookie_is_http_only():
 
     forged = dict(policy)
     forged["http_only"] = False
-    assert (
-        "session_cookie_readable_by_script"
-        in policy_svc.policy_invariant_failures(forged)
+    assert "session_cookie_readable_by_script" in policy_svc.policy_invariant_failures(
+        forged
     )
 
 
@@ -70,9 +69,7 @@ def test_production_safe_requires_secure():
     local = policy_svc.build_session_cookie_policy(app_env="local")
     assert local["secure"] is False
     assert local["production_safe"] is False
-    assert (
-        "cookie_not_marked_secure_so_not_production_safe" in local["blocked_reasons"]
-    )
+    assert "cookie_not_marked_secure_so_not_production_safe" in local["blocked_reasons"]
 
     production = policy_svc.build_session_cookie_policy(app_env="production")
     assert production["secure"] is True
@@ -101,9 +98,8 @@ def test_logout_clears_the_cookie_by_contract():
 
     forged = dict(policy)
     forged["logout_clears_cookie"] = False
-    assert (
-        "logout_does_not_clear_the_cookie"
-        in policy_svc.policy_invariant_failures(forged)
+    assert "logout_does_not_clear_the_cookie" in policy_svc.policy_invariant_failures(
+        forged
     )
 
 
@@ -263,8 +259,7 @@ def test_no_auth_route_leaks_a_secret(monkeypatch):
 
     client = _client()
     blob = "".join(
-        json.dumps(client.request(method, path).json())
-        for method, path in AUTH_ROUTES
+        json.dumps(client.request(method, path).json()) for method, path in AUTH_ROUTES
     )
     assert planted not in blob
     assert scan_for_secret_values(blob) == []
@@ -456,14 +451,15 @@ def test_the_dev_header_detector_counts_usage_not_mentions():
     usage = header.detect_dev_header_route_usage()
     assert "auth.py" not in usage["modules"]
     assert "auth.py" in usage["mention_only_modules"]
-    assert usage["module_count"] > 0
+    # Gate 134 converted every consumer, so the count is zero. The distinction
+    # this test exists for is unchanged and is what the two lines above assert:
+    # a module that explains its refusal is a mention, not a dependant.
+    assert usage["module_count"] == 0
 
 
 def test_the_auth_routes_do_not_use_the_org_context_dependency():
     """A replacement that depended on the thing it replaces is not one."""
-    source = (
-        REPO_ROOT / "src/nativeforge/api/auth.py"
-    ).read_text(encoding="utf-8")
+    source = (REPO_ROOT / "src/nativeforge/api/auth.py").read_text(encoding="utf-8")
     assert "Depends(get_org_context_with_db)" not in source
     assert "Depends(require_demo_org_db)" not in source
     assert "apply_org_rls_gucs" not in source
@@ -511,9 +507,7 @@ def test_everything_a_route_gate_can_build_still_leaves_auth_blocked():
 def test_a_dropped_case_is_reported_as_a_coverage_gap():
     short = fixtures.build_demo_route_cases()[:-1]
     covered = fixtures.measure_route_cases(short)
-    assert fixtures.REQUIRED_ROUTE_CASES - covered == {
-        "all_routes_and_policy_blocked"
-    }
+    assert fixtures.REQUIRED_ROUTE_CASES - covered == {"all_routes_and_policy_blocked"}
 
 
 # ------------------------------------------------- artifacts
@@ -572,9 +566,11 @@ def test_a_planted_secret_never_reaches_a_route_artifact(monkeypatch, tmp_path):
 def test_the_matrix_shows_enforcement_only_where_a_route_requires_it():
     """Gate 116 rendered one enforcement value for all five rows, which was
     accurate while the answer was "none of them". Gate 117 made it per route."""
-    rows = list(csv.DictReader(io.StringIO(_artifact(
-        "customer_auth_route_readiness_matrix.csv"
-    ))))
+    rows = list(
+        csv.DictReader(
+            io.StringIO(_artifact("customer_auth_route_readiness_matrix.csv"))
+        )
+    )
     assert len(rows) == 5
     enforced = set()
     for row in rows:

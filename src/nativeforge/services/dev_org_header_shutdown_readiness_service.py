@@ -64,9 +64,19 @@ DEV_HEADER_SETTING = "nf_dev_org_headers"
 
 # The dependency names that mean a route module obtains its organization from
 # the dev header path.
+# Gate 134F: five names were missing. A module depending only on
+# `require_real_org_db` - or on the `isolation_deps` chain, which resolves
+# from the settings allowlist rather than the organizations row - was not
+# counted as a consumer at all. The count that gates the shutdown decision
+# could therefore read zero while routes still read the header.
 ORG_CONTEXT_DEPENDENCIES: tuple[str, ...] = (
     "get_org_context_with_db",
     "require_demo_org_db",
+    "require_real_org_db",
+    "get_org_context_dev",
+    "require_demo_org",
+    "require_real_org",
+    "get_dev_org_context_explicit_only",
 )
 
 # Gate 116: matched as a FastAPI dependency rather than as a substring.
@@ -133,7 +143,13 @@ def _module_importable(name: str) -> bool:
 
 # The module that defines the dev-header dependency chain. It uses its own
 # providers and is not a route module.
-PROVIDER_MODULES: frozenset[str] = frozenset({"deps_db.py"})
+# Every module that DEFINES a dev-header chain. `isolation_deps.py` and
+# `deps_customer_auth.py` were missing, so widening the dependency list
+# above would have counted them as consumers - overstating the migration by
+# two and never reaching zero.
+PROVIDER_MODULES: frozenset[str] = frozenset(
+    {"deps_db.py", "isolation_deps.py", "deps_customer_auth.py"}
+)
 
 # Where the replacement lives. Detected by import: a module that can be
 # imported is a replacement that exists, which is a weaker claim than a route

@@ -11,6 +11,7 @@ from nativeforge.db.models import Organization
 from nativeforge.db.session import SessionLocal
 from nativeforge.lib.settings import get_settings
 from nativeforge.main import create_app
+from tests.session_org_helper import session_headers
 
 
 def test_demo_route_403_for_real_org_in_db(
@@ -26,6 +27,6 @@ def test_demo_route_403_for_real_org_in_db(
     client = TestClient(create_app())
     r = client.post(
         f"/v1/nf/demo/orgs/{real_id}/review-artifacts",
-        headers={"X-NF-Org-Id": str(real_id)},
+        headers=session_headers(real_id, org_type="real"),
     )
     assert r.status_code == 403

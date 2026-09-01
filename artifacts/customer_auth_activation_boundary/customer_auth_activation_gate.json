@@ -40,6 +40,8 @@
   "current_org_id_set": false,
   "customer_auth_live": false,
   "dev_header_disabled_for_production": false,
+  "dev_header_exposure_supplied": false,
+  "dev_header_routes_measured": null,
   "fabricated": false,
   "identity_provider_contacted": false,
   "invite_binding_passed": false,

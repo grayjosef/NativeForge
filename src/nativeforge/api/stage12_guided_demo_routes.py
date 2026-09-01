@@ -7,7 +7,10 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from nativeforge.api.deps_db import require_demo_org_db, require_real_org_db
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
+)
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_404
 from nativeforge.services import stage12_demo_reset_service as reset_svc
@@ -49,7 +52,7 @@ def _guided_path_handler(
 @demo_stage12_router.get("/{org_id}/discovery/stage12-guided-demo-path")
 def demo_stage12_guided_path(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_stage12_demo: bool = Query(False),
 ) -> dict[str, Any]:
     return _guided_path_handler(org_id, ctx, nf_stage12_demo)
@@ -58,7 +61,7 @@ def demo_stage12_guided_path(
 @real_stage12_router.get("/{org_id}/discovery/stage12-guided-demo-path")
 def real_stage12_guided_path(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_stage12_demo: bool = Query(False),
 ) -> dict[str, Any]:
     return _guided_path_handler(org_id, ctx, nf_stage12_demo)
@@ -67,7 +70,7 @@ def real_stage12_guided_path(
 @demo_stage12_router.get("/{org_id}/discovery/stage12-demo-reset")
 def demo_stage12_reset(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_stage12_demo: bool = Query(False),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -78,7 +81,7 @@ def demo_stage12_reset(
 @real_stage12_router.get("/{org_id}/discovery/stage12-demo-reset")
 def real_stage12_reset(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_stage12_demo: bool = Query(False),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)

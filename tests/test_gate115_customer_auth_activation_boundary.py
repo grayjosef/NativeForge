@@ -170,9 +170,7 @@ def test_a_missing_provider_blocks_activation():
 
 
 def test_a_missing_secret_blocks_activation():
-    result = _activated(
-        preflight={**FULL_PREFLIGHT, "client_secret_present": False}
-    )
+    result = _activated(preflight={**FULL_PREFLIGHT, "client_secret_present": False})
     assert result["secret_present"] is False
     assert result["customer_auth_live"] is False
     assert "auth_gate_not_satisfied:secret_present" in result["blocked_reasons"]
@@ -250,8 +248,7 @@ def test_owner_approval_is_required_even_with_every_gate_satisfied():
     result = _activated(owner_approval=False)
     assert result["customer_auth_live"] is False
     assert (
-        "owner_has_not_authorized_customer_auth_activation"
-        in result["blocked_reasons"]
+        "owner_has_not_authorized_customer_auth_activation" in result["blocked_reasons"]
     )
 
 
@@ -491,9 +488,7 @@ def test_no_role_grants_anything_without_organization_resolution():
     assert result["least_privilege_role"] == "platform_admin"
     assert result["can_view_grants"] is False
     assert result["can_verify_binding"] is False
-    assert (
-        "organization_id_not_resolved_from_the_claims" in result["blocked_reasons"]
-    )
+    assert "organization_id_not_resolved_from_the_claims" in result["blocked_reasons"]
 
 
 def test_no_role_grants_anything_without_verified_membership():
@@ -506,9 +501,7 @@ def test_no_role_grants_anything_without_verified_membership():
     )
     assert result["can_view_grants"] is False
     assert result["can_verify_binding"] is False
-    assert (
-        "membership_not_verified_for_this_organization" in result["blocked_reasons"]
-    )
+    assert "membership_not_verified_for_this_organization" in result["blocked_reasons"]
 
 
 def test_a_mapping_pointing_at_a_nonexistent_role_grants_nothing():
@@ -537,12 +530,75 @@ def test_no_role_mapping_ever_sets_an_rls_context():
 # ------------------------------------------------- dev header shutdown
 
 
-def test_the_dev_header_is_load_bearing_and_cannot_go_yet():
+def test_the_dev_header_is_no_longer_load_bearing():
+    """This asserted `dev_header_used_by_routes > 0` until Gate 134.
+
+    That was the honest state for nineteen gates: 207 routes across 14 modules
+    obtained an organization from `X-NF-Org-Id`. Gate 134 converted all of them
+    onto a session, so the count is zero - measured by walking `api/`, not
+    declared, which is why this assertion can move at all.
+
+    `safe_to_disable_now` still needs `auth_replacement_available`, and that is
+    asserted below with the evidence that makes it reachable.
+    """
     readiness = header.build_dev_header_shutdown_readiness()
-    assert readiness["dev_header_enabled_default"] is True
-    assert readiness["dev_header_used_by_routes"] > 0
-    assert readiness["auth_replacement_available"] is False
-    assert readiness["safe_to_disable_now"] is False
+    assert readiness["dev_header_used_by_routes"] == 0
+    assert readiness["dev_header_route_modules"] == []
+    # The chain that defines the header is not a consumer of it.
+    assert set(readiness["dev_header_provider_modules"]) == {
+        "deps_db.py",
+        "isolation_deps.py",
+    }
+    assert header.shutdown_readiness_invariant_failures(readiness) == []
+
+
+def test_a_returning_consumer_would_be_counted_again():
+    """The zero above is measured, so it can go back up.
+
+    Pointed at a directory where a module does use the dev-header chain, the
+    detector counts it. Without this the zero could be a detector that stopped
+    looking rather than a migration that finished.
+    """
+    import tempfile
+    from pathlib import Path as _Path
+
+    with tempfile.TemporaryDirectory() as tmp:
+        module = _Path(tmp) / "regressed_routes.py"
+        module.write_text(
+            "from nativeforge.api.deps_db import require_real_org_db\n"
+            "@router.get('/x')\n"
+            "def x(ctx=Depends(require_real_org_db)):\n"
+            "    return {}\n",
+            encoding="utf-8",
+        )
+        usage = header.detect_dev_header_route_usage(_Path(tmp))
+    assert usage["module_count"] == 1
+    assert usage["modules"] == ["regressed_routes.py"]
+
+
+def test_the_replacement_becomes_available_once_a_principal_can_exist():
+    """`safe_to_disable_now` is reachable, and only with the evidence.
+
+    Gate 134F found the chain circular: `route_org_resolution_enforced` required
+    `customer_auth_live`, which required the dev header gone, which required
+    this. It asks for `a principal can exist` now - which Gate 132's binding
+    evidence measures and Gate 133 proved in a browser.
+    """
+    from nativeforge.services.customer_auth_route_readiness_service import (
+        build_route_readiness,
+    )
+
+    routes = build_route_readiness(
+        principal_possible=True,
+        session_signing_key_present=True,
+        signing_key_readiness={"can_sign_production_session": True},
+    )
+    assert routes["ready_for_live_login"] is True
+
+    readiness = header.build_dev_header_shutdown_readiness(auth_route_readiness=routes)
+    assert readiness["dev_header_used_by_routes"] == 0
+    assert readiness["auth_replacement_available"] is True
+    assert readiness["safe_to_disable_now"] is True
     assert header.shutdown_readiness_invariant_failures(readiness) == []
 
 
@@ -773,9 +829,9 @@ def test_the_route_matrix_reports_enforcement_without_login_readiness():
     Authentication is enforced and organization resolution is not, which is the
     distinction that keeps a 401 from reading as a working login.
     """
-    rows = list(csv.reader(io.StringIO(_artifact(
-        "customer_auth_route_readiness_matrix.csv"
-    ))))[1:]
+    rows = list(
+        csv.reader(io.StringIO(_artifact("customer_auth_route_readiness_matrix.csv")))
+    )[1:]
     by_name = {row[0]: row for row in rows}
     for field in routes_svc.REQUIRED_ROUTES:
         assert by_name[field][2] == "true", field
@@ -787,17 +843,20 @@ def test_the_route_matrix_reports_enforcement_without_login_readiness():
 
 
 def test_the_role_matrix_never_grants_an_unknown_role():
-    rows = list(csv.DictReader(io.StringIO(_artifact(
-        "customer_auth_role_mapping_matrix.csv"
-    ))))
+    rows = list(
+        csv.DictReader(io.StringIO(_artifact("customer_auth_role_mapping_matrix.csv")))
+    )
     assert rows
     for row in rows:
         if row["least_privilege_role"] == "unknown":
             assert row["can_view_grants"] == "false"
             assert row["can_edit_grants"] == "false"
             assert row["can_verify_binding"] == "false"
-        if row["least_privilege_role"] in {"grants_viewer", "auditor",
-                                           "grants_manager"}:
+        if row["least_privilege_role"] in {
+            "grants_viewer",
+            "auditor",
+            "grants_manager",
+        }:
             assert row["can_verify_binding"] == "false", row["least_privilege_role"]
 
 

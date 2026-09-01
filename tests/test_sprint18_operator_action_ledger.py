@@ -21,10 +21,16 @@ from nativeforge.domain.enums import (
 )
 from nativeforge.lib.settings import get_settings
 from nativeforge.main import create_app
+from tests.session_org_helper import session_headers
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture

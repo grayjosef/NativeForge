@@ -10,11 +10,11 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 import nativeforge.services.review_gate_service as rg
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.repositories import review_artifacts as ra_repo
@@ -64,7 +64,7 @@ demo_router = APIRouter(prefix="/v1/nf/demo/orgs", tags=["sprint0-demo"])
 @demo_router.post("/{org_id}/review-artifacts", response_model=ReviewArtifactOut)
 def demo_create_artifact(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> ReviewArtifactOut:
@@ -81,7 +81,7 @@ def demo_create_artifact(
 @demo_router.get("/{org_id}/review-artifacts", response_model=list[ReviewArtifactOut])
 def demo_list_artifacts(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[ReviewArtifactOut]:
     _same_org(org_id, ctx)
@@ -93,7 +93,7 @@ def demo_list_artifacts(
 def demo_request_review(
     org_id: uuid.UUID,
     artifact_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, str]:
@@ -116,7 +116,7 @@ def demo_request_review(
 def demo_approve(
     org_id: uuid.UUID,
     artifact_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, str]:
@@ -139,7 +139,7 @@ def demo_approve(
 def demo_reject(
     org_id: uuid.UUID,
     artifact_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, str]:
@@ -162,7 +162,7 @@ def demo_reject(
 def demo_finalize(
     org_id: uuid.UUID,
     artifact_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, str]:
@@ -188,7 +188,7 @@ def demo_finalize(
 def demo_list_audit(
     org_id: uuid.UUID,
     artifact_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[AuditEventOut]:
     _same_org(org_id, ctx)
@@ -211,7 +211,7 @@ real_router = APIRouter(prefix="/v1/nf/real/orgs", tags=["sprint0-real"])
 @real_router.post("/{org_id}/review-artifacts", response_model=ReviewArtifactOut)
 def real_create_artifact(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> ReviewArtifactOut:
@@ -228,7 +228,7 @@ def real_create_artifact(
 @real_router.get("/{org_id}/review-artifacts", response_model=list[ReviewArtifactOut])
 def real_list_artifacts(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[ReviewArtifactOut]:
     _same_org(org_id, ctx)
@@ -240,7 +240,7 @@ def real_list_artifacts(
 def real_finalize(
     org_id: uuid.UUID,
     artifact_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, str]:

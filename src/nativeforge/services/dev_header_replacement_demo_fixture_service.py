@@ -249,6 +249,30 @@ def _agrees(case: dict[str, Any]) -> bool:
     )
 
 
+def _converted_route_modules() -> list[str]:
+    """Route modules on the session-backed organization dependency.
+
+    Measured by walking the registered routes and reading each one's resolved
+    dependency tree, the same way the remaining consumers are counted. A list
+    maintained by hand would drift the moment somebody converted a module
+    without editing it, and the guard that reads this would then pass a zero it
+    should have refused.
+    """
+    try:
+        from nativeforge.services.dev_header_exposure_matrix_service import (
+            build_dev_header_exposure_matrix,
+        )
+
+        matrix = build_dev_header_exposure_matrix(ingress_patterns=[])
+    except Exception:  # pragma: no cover - the app always imports here
+        return []
+    return sorted(
+        f"{row['module']}.py"
+        for row in matrix["rows"]
+        if row["replacement_available"] == "converted"
+    )
+
+
 def build_dev_header_replacement_fixture_set() -> dict[str, Any]:
     """The nine cases, measured."""
     from nativeforge.services.dev_org_header_shutdown_readiness_service import (
@@ -319,6 +343,9 @@ def build_dev_header_replacement_fixture_set() -> dict[str, Any]:
             "actual_dev_header_route_modules": list(
                 shutdown["dev_header_route_modules"]
             ),
+            # Gate 134: what the remaining count is zero *because of*. The guard
+            # below permits a zero only when this is not also empty.
+            "actual_converted_route_modules": _converted_route_modules(),
             "actual_dev_header_route_module_count": int(
                 shutdown["dev_header_used_by_routes"]
             ),
@@ -396,7 +423,18 @@ def dev_header_replacement_invariant_failures(fixture: dict[str, Any]) -> list[s
         fails.append("the_set_claimed_auth_is_live")
     if fixture.get("actual_safe_to_disable_now"):
         fails.append("the_repository_was_reported_as_safe_to_disable_the_header")
-    if not fixture.get("actual_dev_header_route_modules"):
+
+    # Gate 134. This fired whenever the repository reported no remaining route
+    # modules, which was the right guard while 207 routes read the header: a
+    # zero could only mean the detector had stopped seeing them.
+    #
+    # It is real now, so the guard is narrowed rather than dropped - a zero is
+    # permitted only when something is on the replacement. A detector gone blind
+    # reports no consumers and no converted modules; a finished migration
+    # reports no consumers and fifteen.
+    if not fixture.get("actual_dev_header_route_modules") and not fixture.get(
+        "actual_converted_route_modules"
+    ):
         fails.append("the_repository_reported_no_remaining_route_modules")
 
     return sorted(set(fails))

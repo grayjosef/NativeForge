@@ -45,10 +45,16 @@ from nativeforge.services.source_onboarding_decision_pack_service import (
 from nativeforge.services.source_onboarding_decision_pack_service import (
     build_source_onboarding_decision_pack,
 )
+from tests.session_org_helper import session_headers
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture
@@ -117,7 +123,9 @@ def test_continuity_rollup_builds_missing_child_artifacts() -> None:
     assert rollup["registry_continuity_summary"]["candidate_count"] >= 1
 
 
-def test_continuity_rollup_from_session_matches_direct_build(client_nf: TestClient) -> None:
+def test_continuity_rollup_from_session_matches_direct_build(
+    client_nf: TestClient,
+) -> None:
     oid = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="demo"))
@@ -161,9 +169,13 @@ def test_service_has_no_forbidden_imports() -> None:
     from pathlib import Path
 
     root = Path(__file__).resolve().parents[1]
-    src = (root / "src" / "nativeforge" / "services" / "discovery_operator_continuity_rollup_service.py").read_text(
-        encoding="utf-8"
-    )
+    src = (
+        root
+        / "src"
+        / "nativeforge"
+        / "services"
+        / "discovery_operator_continuity_rollup_service.py"
+    ).read_text(encoding="utf-8")
     tree = ast.parse(src)
     forbidden = {"subprocess", "requests", "httpx", "socket", "urllib"}
     for node in ast.walk(tree):

@@ -38,6 +38,7 @@ from nativeforge.services import discovery_evidence_pack_service as ev_pack
 from nativeforge.services.discovery_operator_workbench_service import (
     build_workbench_connector_intelligence,
 )
+from tests.session_org_helper import session_headers
 
 FORBIDDEN_NETWORK_TOP_LEVEL = frozenset(
     {
@@ -59,7 +60,12 @@ CONNECTOR_PKG = ROOT / "src" / "nativeforge" / "services" / "source_connectors"
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture

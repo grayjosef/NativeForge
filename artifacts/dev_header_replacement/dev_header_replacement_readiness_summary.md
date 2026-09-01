@@ -14,9 +14,9 @@ trusts needs customer auth.
 
 ```text
 before   dev_header_used_by_routes: 15
-after    route modules:     14
-         provider modules:  1
-         prose-only:        3
+after    route modules:     0
+         provider modules:  2
+         prose-only:        18
 ```
 
 `deps_db.py` defines the dev-header chain and depends on its own
@@ -52,20 +52,6 @@ routes_converted                            0
 ## The fourteen route modules that remain
 
 ```text
-activation_routes.py
-form_package_routes.py
-grant_spark_routes.py
-nofo_extraction_routes.py
-operator_workbench_advisory_routes.py
-opportunity_discovery_routes.py
-pursuit_brief_routes.py
-pursuit_routes.py
-source_ingestion_routes.py
-spark_scoring_routes.py
-sprint0_routes.py
-stage12_guided_demo_routes.py
-tribal_profile_routes.py
-trust_routes.py
 ```
 
 Each is listed in `dev_header_usage_inventory.csv` with the same

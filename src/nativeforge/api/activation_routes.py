@@ -9,11 +9,11 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Query, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.domain.enums import (
@@ -156,7 +156,7 @@ def _verify_publish_gate(
 @demo_activation_router.get("/{org_id}/operator/activation")
 def demo_get_activation_state(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     return _read_activation_state(org_id, ctx, db)
@@ -165,7 +165,7 @@ def demo_get_activation_state(
 @real_activation_router.get("/{org_id}/operator/activation")
 def real_get_activation_state(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     return _read_activation_state(org_id, ctx, db)
@@ -175,7 +175,7 @@ def real_get_activation_state(
 def demo_governed_activation_action(
     org_id: uuid.UUID,
     body: GovernedActivationBody,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_role: Annotated[
         WorkspaceActorRole | None, Depends(_parse_actor_role_header)
@@ -189,7 +189,7 @@ def demo_governed_activation_action(
 def real_governed_activation_action(
     org_id: uuid.UUID,
     body: GovernedActivationBody,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_role: Annotated[
         WorkspaceActorRole | None, Depends(_parse_actor_role_header)
@@ -202,7 +202,7 @@ def real_governed_activation_action(
 @demo_activation_router.post("/{org_id}/operator/activation/verify-live")
 def demo_verify_activation_live(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     return _verify_publish_gate(org_id, ctx, db)
@@ -211,7 +211,7 @@ def demo_verify_activation_live(
 @real_activation_router.post("/{org_id}/operator/activation/verify-live")
 def real_verify_activation_live(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     return _verify_publish_gate(org_id, ctx, db)

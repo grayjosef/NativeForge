@@ -61,7 +61,7 @@ X-NF-Org-Id          UUID-validated and existence-checked, and it establishes no
 
 ```text
 enabled by default                    true
-route modules depending on it         14
+route modules depending on it         0
 safe to disable now                   false
 must disable before production auth   true
 ```

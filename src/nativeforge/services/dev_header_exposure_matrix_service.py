@@ -82,6 +82,13 @@ AUTH_DEPENDENCIES: frozenset[str] = frozenset(
         "require_customer_real_org",
         "require_customer_session",
         "optional_customer_session",
+        # Gate 134E. The drop-in replacements every converted route module now
+        # depends on. Added here in the same change that converted them: a
+        # module that stopped consuming the header while this list did not know
+        # its new dependency would report as neither consuming nor converted.
+        "get_org_context_from_session",
+        "require_demo_org_session",
+        "require_real_org_session",
     }
 )
 

@@ -1,0 +1,30 @@
+{
+  "central_dependency": "nativeforge.api.customer_org_context_dependency",
+  "cookies_returned": false,
+  "cross_organization_cookie": {
+    "reason": "session_organization_is_not_the_member_organization",
+    "status": 403
+  },
+  "demo_org_on_a_demo_route": {
+    "status": 200
+  },
+  "demo_org_on_a_real_route": {
+    "status": 403
+  },
+  "membership_source": "nf_org_memberships",
+  "no_membership": {
+    "reason": "no_active_membership_for_this_identity",
+    "status": 403
+  },
+  "org_type_source": "organizations.org_type",
+  "proved_by": "tests/test_gate134_dev_header_kill.py, thirty cases against the registered app; the refusals were additionally measured against the running backend on the loopback",
+  "provider_subject_returned": false,
+  "rls_context_applied": true,
+  "schema_version": "nf_dev_header_kill_artifact_v1",
+  "session_source": "nf_session cookie, HMAC-verified",
+  "tokens_returned": false,
+  "unauthenticated": {
+    "reason": "no_verified_session",
+    "status": 401
+  }
+}

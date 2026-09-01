@@ -7,7 +7,10 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from nativeforge.api.deps_db import require_demo_org_db, require_real_org_db
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
+)
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_404
 from nativeforge.services import operator_workbench_advisory_service as wb_adv
@@ -50,7 +53,7 @@ def _bundle_handler(
 )
 def demo_workbench_advisory_bundle(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_workbench: bool = Query(False),
 ) -> dict[str, Any]:
     return _bundle_handler(org_id, ctx, nf_workbench)
@@ -61,7 +64,7 @@ def demo_workbench_advisory_bundle(
 )
 def real_workbench_advisory_bundle(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_workbench: bool = Query(False),
 ) -> dict[str, Any]:
     return _bundle_handler(org_id, ctx, nf_workbench)
@@ -72,7 +75,7 @@ def real_workbench_advisory_bundle(
 )
 def demo_native_relevance_advisory(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_workbench: bool = Query(False),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -85,7 +88,7 @@ def demo_native_relevance_advisory(
 )
 def real_native_relevance_advisory(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_workbench: bool = Query(False),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -98,7 +101,7 @@ def real_native_relevance_advisory(
 )
 def demo_matching_readiness_advisory(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_workbench: bool = Query(False),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -111,7 +114,7 @@ def demo_matching_readiness_advisory(
 )
 def real_matching_readiness_advisory(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_workbench: bool = Query(False),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -124,7 +127,7 @@ def real_matching_readiness_advisory(
 )
 def demo_real_grant_queues_advisory(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_workbench: bool = Query(False),
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
@@ -151,7 +154,7 @@ def demo_real_grant_queues_advisory(
 )
 def real_real_grant_queues_advisory(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_workbench: bool = Query(False),
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),

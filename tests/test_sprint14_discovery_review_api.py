@@ -22,10 +22,16 @@ from nativeforge.main import create_app
 from nativeforge.repositories import discovery_review_items as rev_repo
 from nativeforge.services import discovery_quality_service as dq
 from nativeforge.services import discovery_review_service as dr
+from tests.session_org_helper import session_headers
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture

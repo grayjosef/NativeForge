@@ -8,11 +8,11 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.repositories import organizations as org_repo
@@ -41,7 +41,7 @@ real_nofo_router = APIRouter(
 def demo_extract_stub(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -81,7 +81,7 @@ def demo_extract_stub(
 def demo_nofo_latest(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -100,7 +100,7 @@ def demo_nofo_latest(
 def demo_nofo_requirements(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -122,7 +122,7 @@ def demo_nofo_requirements(
 def real_extract_stub(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -162,7 +162,7 @@ def real_extract_stub(
 def real_nofo_latest(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -181,7 +181,7 @@ def real_nofo_latest(
 def real_nofo_requirements(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)

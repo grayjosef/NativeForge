@@ -716,16 +716,28 @@ def test_the_matrix_reads_the_preview_proxy_not_the_dev_server_proxy():
     assert "/health" not in prefixes
 
 
-def test_every_dev_header_route_is_reached_by_the_preview_proxy_alone():
+def test_the_preview_proxy_is_still_the_hop_the_containment_detector_misses():
+    """Gate 133's finding, now that there is nothing left exposed by it.
+
+    This asserted `dev_header_route_count > 0` and that every one of those
+    routes was reached through the preview proxy rather than the tunnel ingress
+    rule. Gate 134 converted all 207, so the count is zero - and the finding it
+    recorded is about the topology, not about the routes, so it is asserted
+    against the topology directly.
+    """
     matrix = matrix_svc.build_dev_header_exposure_matrix(
         repo_root=".", ingress_patterns=["^/api/.*"], behind_access=True
     )
-    assert matrix["dev_header_route_count"] > 0
-    assert matrix["exposure_hops_detected"] == ["preview_proxy"]
-    assert set(matrix["exposed_only_via_preview_proxy"]) == set(
-        matrix["dev_header_modules"]
-    )
+    assert matrix["dev_header_route_count"] == 0
+    assert matrix["exposed_only_via_preview_proxy"] == []
     assert matrix["containment_detector_models_preview_proxy"] is False
+
+    # /v1 still reaches the backend through the preview, and the ingress rule
+    # still covers only /api. A converted route is not an unreachable one.
+    assert "/v1" in matrix["preview_proxy_prefixes"]
+    v1_rows = [row for row in matrix["rows"] if row["path_root"] == "/v1"]
+    assert v1_rows
+    assert all(row["exposure_hop"] == "preview_proxy" for row in v1_rows)
     assert matrix_svc.matrix_invariant_failures(matrix) == []
 
 
@@ -772,13 +784,19 @@ def test_every_remaining_consumer_is_classified_and_ordered():
         repo_root=".", ingress_patterns=["^/api/.*"]
     )
     dev_rows = [row for row in matrix["rows"] if row["consumes_dev_header"]]
-    assert dev_rows
-
+    # Gate 134 converted every module, so there is nothing left to order. The
+    # classification still has to hold for whatever remains, which is how this
+    # keeps working if a consumer ever comes back.
     orders = sorted(row["recommended_order"] for row in dev_rows)
     assert orders == list(range(1, len(dev_rows) + 1)), "the order is a permutation"
     for row in dev_rows:
         assert row["conversion_risk"] != "unknown", row["module"]
         assert row["conversion_note"] != "not classified", row["module"]
+
+    converted = [
+        row for row in matrix["rows"] if row["replacement_available"] == "converted"
+    ]
+    assert len(converted) >= 15, "every route module is on the session dependency"
 
 
 def test_the_kill_plan_names_every_remaining_consumer():

@@ -1,0 +1,78 @@
+{
+  "deterministic_gate_no_evidence_supplied": {
+    "customer_auth_live": false,
+    "dev_header_disabled_for_production": false,
+    "login_live": false
+  },
+  "env_key_names_checked": [
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+    "NF_PUBLIC_ORIGIN",
+    "NF_SESSION_SIGNING_KEY"
+  ],
+  "env_key_presence": {
+    "NF_PUBLIC_ORIGIN": false,
+    "NF_SESSION_SIGNING_KEY": false,
+    "OIDC_AUDIENCE": false,
+    "OIDC_CALLBACK_URL": false,
+    "OIDC_CLIENT_ID": false,
+    "OIDC_CLIENT_SECRET": false,
+    "OIDC_ISSUER": false
+  },
+  "env_values_recorded": false,
+  "flags_this_gate_did_not_move": {
+    "awarded_operational_tracking": false,
+    "controlled_customer_pilot": false,
+    "customer_auth_live": false,
+    "customer_persistence_live": false,
+    "email_delivery": false,
+    "object_store_configured": false,
+    "production_rollout": false,
+    "source_monitoring_live": false,
+    "tenant_digest_operational": false,
+    "verified_operational_binding": false
+  },
+  "gate_with_measured_exposure": {
+    "customer_auth_live": false,
+    "dev_header_disabled_for_production": true,
+    "dev_header_routes_measured": 0,
+    "missing_auth_gates": [
+      "provider_configured",
+      "secret_present",
+      "issuer_configured",
+      "issuer_jwks_validated",
+      "audience_configured",
+      "callback_session_validated",
+      "invite_binding_passed",
+      "org_binding_passed",
+      "role_mapping_passed",
+      "session_signing_key_ready"
+    ]
+  },
+  "markers_checked": [
+    "id_token",
+    "access_token",
+    "refresh_token",
+    "code_verifier",
+    "client_secret",
+    "Set-Cookie",
+    "nf_session=",
+    "?code=",
+    "GOCSPX-"
+  ],
+  "scan_applies_to": "artifacts/dev_header_kill_gate134",
+  "schema_version": "nf_dev_header_kill_artifact_v1",
+  "shutdown_readiness": {
+    "dev_header_provider_modules": [
+      "deps_db.py",
+      "isolation_deps.py"
+    ],
+    "dev_header_route_modules": [],
+    "dev_header_used_by_routes": 0,
+    "safe_to_disable_now_with_a_principal": true,
+    "safe_to_disable_now_without_evidence": false
+  }
+}

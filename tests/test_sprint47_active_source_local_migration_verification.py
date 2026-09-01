@@ -31,6 +31,7 @@ from nativeforge.services.discovery_operator_workbench_service import (
 from nativeforge.services.discovery_source_quality_service import (
     build_discovery_source_quality,
 )
+from tests.session_org_helper import session_headers
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 MIGRATION_PATH = REPO_ROOT / MIGRATION_FILE_RELATIVE
@@ -38,7 +39,12 @@ VERSIONS_DIR = REPO_ROOT / "alembic" / "versions"
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture
@@ -257,9 +263,7 @@ def test_source_quality_embeds_verification_read_only(client_nf: TestClient) -> 
     assert emb["verification_scope"] == "static_embed_read_only"
     assert emb["upgrade_verification"]["execution_context"] == "not_run_embed_path"
     assert "source_quality" in pack
-    assert (
-        "active_source_local_migration_verification" in pack["source_quality"]
-    )
+    assert "active_source_local_migration_verification" in pack["source_quality"]
 
 
 def test_cross_org_isolation(client_nf: TestClient) -> None:

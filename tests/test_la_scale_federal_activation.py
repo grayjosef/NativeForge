@@ -23,6 +23,7 @@ from nativeforge.services.source_ingestion_tier1_federal_adapter_service import 
 from nativeforge.services.tier1_batch_federal_activation_service import (
     Tier1BatchConfirmationBody,
 )
+from tests.session_org_helper import session_headers
 
 _DEMO_ORG = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
 _BATCH_URL = (
@@ -37,7 +38,8 @@ _CONFIRMATION = {
 
 
 def _hdr() -> dict[str, str]:
-    return {"X-NF-Org-Id": str(_DEMO_ORG)}
+    """Gate 134: a session for a member of the demo organization."""
+    return session_headers(_DEMO_ORG)
 
 
 @pytest.fixture

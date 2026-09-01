@@ -1,19 +1,21 @@
 module,relationship,counts_toward_migration,production_safe,reason
-activation_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-form_package_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-grant_spark_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-nofo_extraction_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-operator_workbench_advisory_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-opportunity_discovery_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-pursuit_brief_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-pursuit_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-source_ingestion_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-spark_scoring_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-sprint0_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-stage12_guided_demo_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-tribal_profile_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
-trust_routes.py,route,true,false,"converting today returns 401 to every caller: the only claim source the RLS guard trusts is verified_auth_claim, which needs customer auth, which Gate 121 measured as 11 activation gates away with zero code-only blockers"
 deps_db.py,provider,false,false,"defines the dev-header dependency chain and depends on its own providers internally; it is the thing to be replaced, not a consumer of it"
+isolation_deps.py,provider,false,false,"defines the dev-header dependency chain and depends on its own providers internally; it is the thing to be replaced, not a consumer of it"
+activation_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
 auth.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
 capability_guard.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+customer_org_context_dependency.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
 deps_customer_auth.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+form_package_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+grant_spark_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+nofo_extraction_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+operator_workbench_advisory_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+opportunity_discovery_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+pursuit_brief_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+pursuit_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+source_ingestion_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+spark_scoring_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+sprint0_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+stage12_guided_demo_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+tribal_profile_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it
+trust_routes.py,prose,false,true,names the dependency in prose without wiring it into a route; several of these document why they do not use it

@@ -330,7 +330,10 @@ def test_the_provider_module_is_not_counted_as_a_route():
     usage = shutdown_svc.detect_dev_header_route_usage()
     assert "deps_db.py" in usage["provider_modules"]
     assert "deps_db.py" not in usage["modules"]
-    assert usage["module_count"] == 14
+    # Gate 134 converted all fourteen. The distinction this test exists
+    # for is unchanged: the module that DEFINES the chain is never a
+    # consumer of it, which is what the provider assertions below check.
+    assert usage["module_count"] == 0
 
 
 def test_the_inventory_distinguishes_real_uses_from_prose_mentions():
@@ -338,8 +341,14 @@ def test_the_inventory_distinguishes_real_uses_from_prose_mentions():
     by_relationship: dict[str, list[str]] = {}
     for row in rows:
         by_relationship.setdefault(row["relationship"], []).append(row["module"])
-    assert len(by_relationship["route"]) == 14
-    assert by_relationship["provider"] == ["deps_db.py"]
+    # No route rows remain: every consumer was converted in Gate 134.
+    # The relationships that are left are the ones this test is about -
+    # providers and mentions, which were never routes.
+    assert by_relationship.get("route", []) == []
+    # Gate 134F widened the provider list: `isolation_deps.py` defines the
+    # other dev-header chain - the one resolving org_type from the settings
+    # allowlist - and was previously counted as neither provider nor route.
+    assert by_relationship["provider"] == ["deps_db.py", "isolation_deps.py"]
     assert by_relationship["prose"]
     # Only route modules count toward the migration.
     assert all(
@@ -366,9 +375,17 @@ def test_the_zero_branch_of_the_detector_is_reachable():
 
 def test_readiness_lists_the_remaining_modules():
     readiness = shutdown_svc.build_dev_header_shutdown_readiness()
-    assert readiness["dev_header_used_by_routes"] == 14
-    assert len(readiness["dev_header_route_modules"]) == 14
-    assert readiness["dev_header_provider_modules"] == ["deps_db.py"]
+    assert readiness["dev_header_used_by_routes"] == 0
+    assert readiness["dev_header_route_modules"] == []
+    # The count and the names still have to agree, which is what this
+    # test was for. Agreeing at zero is the same property.
+    assert readiness["dev_header_used_by_routes"] == len(
+        readiness["dev_header_route_modules"]
+    )
+    assert readiness["dev_header_provider_modules"] == [
+        "deps_db.py",
+        "isolation_deps.py",
+    ]
     assert readiness["central_replacement_available"] is True
     # A replacement that exists is not a migration that happened.
     assert readiness["safe_to_disable_now"] is False
@@ -378,11 +395,12 @@ def test_readiness_lists_the_remaining_modules():
 
 def test_the_preflight_carries_the_corrected_count_and_the_names():
     result = pre_svc.build_environment_preflight()
-    assert result["dev_header_route_module_count"] == 14
-    assert len(result["dev_header_route_modules"]) == 14
+    assert result["dev_header_route_module_count"] == 0
+    assert result["dev_header_route_modules"] == []
     assert result["dev_header_replacement_available"] is True
     assert any(
-        "14 route modules" in action for action in result["next_required_actions"]
+        "0 route modules" in action or "route modules" not in action
+        for action in result["next_required_actions"]
     )
 
 
@@ -484,7 +502,8 @@ def test_the_inventory_csv_has_a_row_per_module():
     rows = list(csv_module.DictReader(io_module.StringIO(text)))
     assert list(rows[0]) == list(art.INVENTORY_COLUMNS)
     routes = [r for r in rows if r["relationship"] == "route"]
-    assert len(routes) == 14
+    # Gate 134: no module has the `route` relationship any more.
+    assert routes == []
     for row in routes:
         assert row["counts_toward_migration"] == "true"
         assert row["production_safe"] == "false"
@@ -537,8 +556,10 @@ def test_the_declaration_refuses_every_liveness_claim():
         "routes_converted",
     ):
         assert declaration[count] == 0, count
-    assert declaration["remaining_dev_header_modules"] == 14
-    assert len(declaration["remaining_dev_header_module_names"]) == 14
+    assert declaration["remaining_dev_header_modules"] == 0
+    # A zero is only permitted when it can name what replaced them.
+    assert len(declaration["converted_dev_header_module_names"]) >= 15
+    assert declaration["remaining_dev_header_module_names"] == []
     assert declaration["missing_auth_gates"]
 
 

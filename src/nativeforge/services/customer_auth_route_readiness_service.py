@@ -241,6 +241,7 @@ def build_route_readiness(
     openapi: dict[str, Any] | None = None,
     cloudflare_access_in_front: bool = True,
     customer_auth_live: bool | None = None,
+    principal_possible: bool | None = None,
     session_signing_key_present: bool | None = None,
     signing_key_readiness: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
@@ -305,11 +306,29 @@ def build_route_readiness(
         signing_key_readiness,
         session_signing_key_present=session_signing_key_present,
     )
-    principal_possible = (
-        _customer_auth_live()
-        if customer_auth_live is None
-        else bool(customer_auth_live)
-    )
+    # Gate 134F. This used to be `customer_auth_live`, and that made the
+    # whole chain circular: customer_auth_live needs the dev header gone,
+    # which needs auth_replacement_available, which needs
+    # ready_for_live_login, which needs this. Nothing could ever satisfy
+    # it, and the cycle was invisible because every link read as a
+    # reasonable precondition on its own.
+    #
+    # The fact this conjunct is reaching for is *can a principal exist* -
+    # which was equivalent to customer_auth_live only while nobody could
+    # log in. Gate 132 made an identity resolve to an organization through
+    # a membership row, and Gate 133 proved it in a browser, both with
+    # customer_auth_live false throughout.
+    #
+    # `customer_auth_live` still satisfies it, because a live customer
+    # auth certainly means a principal can exist. It is no longer the only
+    # way, which is what removes the cycle.
+    if principal_possible is None:
+        principal_possible = (
+            _customer_auth_live()
+            if customer_auth_live is None
+            else bool(customer_auth_live)
+        )
+    principal_possible = bool(principal_possible)
     route_org_resolution_enforced = bool(
         route_auth_enforced
         and principal_possible

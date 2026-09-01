@@ -8,11 +8,11 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.repositories import audit_events as audit_repo
@@ -38,7 +38,7 @@ real_trust_router = APIRouter(
 @demo_trust_router.get("/{org_id}/trust/manifest")
 def demo_trust_manifest(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
     return tss.build_trust_manifest(org_type=ctx.org_type)
@@ -47,7 +47,7 @@ def demo_trust_manifest(
 @demo_trust_router.get("/{org_id}/trust/audit-events")
 def demo_audit_events(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     limit: Annotated[int, Query(ge=1, le=1000)] = 200,
 ) -> dict[str, Any]:
@@ -67,7 +67,7 @@ def demo_audit_events(
 @demo_trust_router.get("/{org_id}/trust/review-summary")
 def demo_review_summary(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -81,7 +81,7 @@ def demo_review_summary(
 @demo_trust_router.get("/{org_id}/export/org-data-snapshot")
 def demo_org_export(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_sf424_previews: bool = False,
     audit_sample_limit: Annotated[int, Query(ge=1, le=500)] = 100,
@@ -106,7 +106,7 @@ def demo_org_export(
 @real_trust_router.get("/{org_id}/trust/manifest")
 def real_trust_manifest(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
     return tss.build_trust_manifest(org_type=ctx.org_type)
@@ -115,7 +115,7 @@ def real_trust_manifest(
 @real_trust_router.get("/{org_id}/trust/audit-events")
 def real_audit_events(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     limit: Annotated[int, Query(ge=1, le=1000)] = 200,
 ) -> dict[str, Any]:
@@ -135,7 +135,7 @@ def real_audit_events(
 @real_trust_router.get("/{org_id}/trust/review-summary")
 def real_review_summary(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -149,7 +149,7 @@ def real_review_summary(
 @real_trust_router.get("/{org_id}/export/org-data-snapshot")
 def real_org_export(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     include_sf424_previews: bool = False,
     audit_sample_limit: Annotated[int, Query(ge=1, le=500)] = 100,

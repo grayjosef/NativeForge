@@ -8,11 +8,11 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_404
 from nativeforge.repositories import organizations as org_repo
@@ -169,7 +169,7 @@ def _require_real_resolver_validation_query(
 )
 def demo_real_resolver_seed_preview(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -186,7 +186,7 @@ def demo_real_resolver_seed_preview(
 )
 def real_real_resolver_seed_preview(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -203,7 +203,7 @@ def real_real_resolver_seed_preview(
 )
 def demo_real_resolver_validation(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: dict[str, Any],
     nf_live_source_ingestion: bool = Query(False),
@@ -232,7 +232,7 @@ def demo_real_resolver_validation(
 )
 def real_real_resolver_validation(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: dict[str, Any],
     nf_live_source_ingestion: bool = Query(False),
@@ -261,7 +261,7 @@ def real_real_resolver_validation(
 )
 def demo_live_grants_gov_honest(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: dict[str, Any],
     nf_live_source_ingestion: bool = Query(False),
@@ -290,7 +290,7 @@ def demo_live_grants_gov_honest(
 )
 def real_live_grants_gov_honest(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: dict[str, Any],
     nf_live_source_ingestion: bool = Query(False),
@@ -319,7 +319,7 @@ def real_live_grants_gov_honest(
 )
 def demo_tier1_batch_live_pull(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: Tier1BatchConfirmationBody,
     nf_live_source_ingestion: bool = Query(False),
@@ -352,7 +352,7 @@ def demo_tier1_batch_live_pull(
 )
 def real_tier1_batch_live_pull(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: Tier1BatchConfirmationBody,
     nf_live_source_ingestion: bool = Query(False),
@@ -385,7 +385,7 @@ def real_tier1_batch_live_pull(
 )
 def demo_real_grant_classify_match(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -402,7 +402,7 @@ def demo_real_grant_classify_match(
 )
 def real_real_grant_classify_match(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -419,7 +419,7 @@ def real_real_grant_classify_match(
 )
 def demo_real_grant_workbench_queues(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -436,7 +436,7 @@ def demo_real_grant_workbench_queues(
 )
 def real_real_grant_workbench_queues(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -453,7 +453,7 @@ def real_real_grant_workbench_queues(
 )
 def demo_mixed_corpus_discrimination(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -470,7 +470,7 @@ def demo_mixed_corpus_discrimination(
 )
 def real_mixed_corpus_discrimination(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -487,7 +487,7 @@ def real_mixed_corpus_discrimination(
 )
 def demo_no_evidence_honesty_reingest(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -504,7 +504,7 @@ def demo_no_evidence_honesty_reingest(
 )
 def real_no_evidence_honesty_reingest(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -521,7 +521,7 @@ def real_no_evidence_honesty_reingest(
 )
 def demo_no_proxy_honesty(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -538,7 +538,7 @@ def demo_no_proxy_honesty(
 )
 def real_no_proxy_honesty(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_real_resolver_validation: bool = Query(False),
 ) -> dict[str, Any]:
@@ -555,7 +555,7 @@ def real_no_proxy_honesty(
 )
 def demo_staging_seed_preview_report(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_staging_activation_dry_run: bool = Query(False),
 ) -> dict[str, Any]:
@@ -572,7 +572,7 @@ def demo_staging_seed_preview_report(
 )
 def real_staging_seed_preview_report(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_staging_activation_dry_run: bool = Query(False),
 ) -> dict[str, Any]:
@@ -589,7 +589,7 @@ def real_staging_seed_preview_report(
 )
 def demo_staging_activation_dry_run(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_staging_activation_dry_run: bool = Query(False),
 ) -> dict[str, Any]:
@@ -606,7 +606,7 @@ def demo_staging_activation_dry_run(
 )
 def real_staging_activation_dry_run(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
     nf_staging_activation_dry_run: bool = Query(False),
 ) -> dict[str, Any]:
@@ -621,7 +621,7 @@ def real_staging_activation_dry_run(
 @demo_source_ingestion_router.get("/{org_id}/discovery/source-ingestion/seed-preview")
 def demo_seed_preview(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     nf_live_source_ingestion: bool = Query(False),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -632,7 +632,7 @@ def demo_seed_preview(
 @real_source_ingestion_router.get("/{org_id}/discovery/source-ingestion/seed-preview")
 def real_seed_preview(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     nf_live_source_ingestion: bool = Query(False),
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -640,10 +640,12 @@ def real_seed_preview(
     return orch.run_source_seed_ingestion_preview(org_id=org_id)
 
 
-@demo_source_ingestion_router.post("/{org_id}/discovery/source-ingestion/load-seed-candidates")
+@demo_source_ingestion_router.post(
+    "/{org_id}/discovery/source-ingestion/load-seed-candidates"
+)
 def demo_load_seed_candidates(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     nf_live_source_ingestion: bool = Query(False),
 ) -> dict[str, Any]:
@@ -673,7 +675,7 @@ def demo_load_seed_candidates(
 )
 def real_load_seed_candidates(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     nf_live_source_ingestion: bool = Query(False),
 ) -> dict[str, Any]:

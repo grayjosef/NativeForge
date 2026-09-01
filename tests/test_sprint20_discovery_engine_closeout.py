@@ -42,6 +42,7 @@ from nativeforge.services.source_freshness_service import (
     SUMMARY_SCHEMA_VERSION,
 )
 from nativeforge.services.trust_surface_service import ORG_DATA_SNAPSHOT_VERSION
+from tests.session_org_helper import session_headers
 
 ROOT = Path(__file__).resolve().parents[1]
 ALEMBIC_VERSIONS = ROOT / "alembic" / "versions"
@@ -73,7 +74,12 @@ OFFLINE_SERVICE_FILES = (
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture

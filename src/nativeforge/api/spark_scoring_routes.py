@@ -9,11 +9,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.repositories import organizations as org_repo
@@ -48,7 +48,7 @@ real_spark_scoring_router = APIRouter(
 def demo_score_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -77,7 +77,7 @@ def demo_score_spark(
 def demo_score_latest(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -97,7 +97,7 @@ def demo_score_latest(
 def demo_score_override(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: ScoreOverrideBody,
     actor_id: uuid.UUID | None = None,
@@ -129,7 +129,7 @@ def demo_score_override(
 def real_score_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -158,7 +158,7 @@ def real_score_spark(
 def real_score_latest(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -178,7 +178,7 @@ def real_score_latest(
 def real_score_override(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: ScoreOverrideBody,
     actor_id: uuid.UUID | None = None,

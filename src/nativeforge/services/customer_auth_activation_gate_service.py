@@ -221,6 +221,7 @@ def build_customer_auth_activation_gate(
     jwks_validation_evidence: dict[str, Any] | None = None,
     role_mapping_evidence: dict[str, Any] | None = None,
     login_activation_decision: dict[str, Any] | None = None,
+    dev_header_exposure: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """May customer authentication be activated? Deny by default.
 
@@ -242,13 +243,37 @@ def build_customer_auth_activation_gate(
     # Offline. jwks_network_check_enabled defaults False and is not raised here.
     pre = preflight if preflight is not None else run_auth0_preflight()
     val = validation if validation is not None else run_auth0_live_validation()
-    routes = route_readiness if route_readiness is not None else build_route_readiness()
+    # Gate 134F. `route_org_resolution_enforced` used to require
+    # `customer_auth_live`, which made the whole chain circular - see
+    # `customer_auth_route_readiness_service`. It asks for `a principal can
+    # exist` now, and Gate 132's binding evidence is exactly that measurement:
+    # a verified identity resolving to an organization through a membership.
+    if route_readiness is not None:
+        routes = route_readiness
+    elif binding_evidence is not None:
+        routes = build_route_readiness(
+            principal_possible=bool(binding_evidence.get("org_binding_passed"))
+        )
+    else:
+        routes = build_route_readiness()
 
     if dev_header_disabled_for_production is None:
         # Detected from settings rather than from the containment service, which
         # shells out to systemctl and would make committed artifacts depend on
         # the machine that generated them.
-        dev_header_disabled_for_production = not _dev_header_enabled()
+        #
+        # Gate 134F: the setting is one of two ways this can be true. The fact
+        # the gate is reaching for is that an unauthenticated header cannot set
+        # the RLS context - and a header no route reads cannot set anything,
+        # whatever the setting says. So a *measured* zero satisfies it too.
+        #
+        # Measured, never assumed: without exposure evidence only the setting
+        # decides, which keeps this deterministic for the artifacts it feeds.
+        exposure = dev_header_exposure or {}
+        measured_zero = bool(
+            exposure.get("dev_header_route_count") == 0 and exposure.get("route_total")
+        )
+        dev_header_disabled_for_production = not _dev_header_enabled() or measured_zero
 
     if owner_approval is None:
         owner_approval = _owner_approval_present()
@@ -463,6 +488,10 @@ def build_customer_auth_activation_gate(
             "login_approval_present": login_approval,
             "jwks_validation_evidence_supplied": bool(jwks_ev),
             "role_mapping_evidence_supplied": bool(role_ev),
+            "dev_header_exposure_supplied": bool(dev_header_exposure),
+            "dev_header_routes_measured": (
+                (dev_header_exposure or {}).get("dev_header_route_count")
+            ),
             "missing_auth_gates": [
                 name for name in REQUIRED_AUTH_GATES if not gates[name]
             ],

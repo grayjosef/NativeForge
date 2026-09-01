@@ -199,6 +199,30 @@ def build_dependency_contract() -> dict[str, Any]:
     )
 
 
+def _converted_route_modules() -> list[str]:
+    """Route modules on the session-backed organization dependency.
+
+    Measured by walking the registered routes and reading each one's resolved
+    dependency tree, the same way the remaining consumers are counted. A list
+    maintained by hand would drift the moment somebody converted a module
+    without editing it, and the guard that reads this would then pass a zero it
+    should have refused.
+    """
+    try:
+        from nativeforge.services.dev_header_exposure_matrix_service import (
+            build_dev_header_exposure_matrix,
+        )
+
+        matrix = build_dev_header_exposure_matrix(ingress_patterns=[])
+    except Exception:  # pragma: no cover - the app always imports here
+        return []
+    return sorted(
+        f"{row['module']}.py"
+        for row in matrix["rows"]
+        if row["replacement_available"] == "converted"
+    )
+
+
 def render_readiness_summary() -> str:
     """What remains, and the sentence to refuse."""
     from nativeforge.services.dev_header_replacement_demo_fixture_service import (
@@ -356,6 +380,8 @@ def build_replacement_declaration() -> dict[str, Any]:
             "remaining_dev_header_module_names": list(
                 shutdown["dev_header_route_modules"]
             ),
+            # Gate 134: what the remaining count is zero *because of*.
+            "converted_dev_header_module_names": _converted_route_modules(),
             "dev_header_provider_modules": list(
                 shutdown["dev_header_provider_modules"]
             ),
@@ -464,7 +490,11 @@ def replacement_artifact_invariant_failures(result: dict[str, Any]) -> list[str]
     if not declaration.get("missing_auth_gates"):
         fails.append("declaration_claims_every_activation_gate_is_satisfied")
 
-    if not declaration.get("remaining_dev_header_module_names"):
+    # Gate 134: same narrowing as the fixture service. A declaration may say
+    # none remain only when it can also name what they were converted onto.
+    if not declaration.get("remaining_dev_header_module_names") and not declaration.get(
+        "converted_dev_header_module_names"
+    ):
         fails.append("declaration_claims_no_dev_header_modules_remain")
 
     if declaration.get("remaining_dev_header_modules") != len(

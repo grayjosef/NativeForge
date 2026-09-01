@@ -10,11 +10,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.domain.enums import SamRegistrationStatus, TribalEntityType
@@ -78,7 +78,7 @@ real_profile_router = APIRouter(prefix="/v1/nf/real/orgs", tags=["tribal-profile
 )
 def demo_create_profile(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: TribalProfileBody,
     actor_id: uuid.UUID | None = None,
@@ -104,7 +104,7 @@ def demo_create_profile(
 @demo_profile_router.get("/{org_id}/tribal-profile")
 def demo_get_profile(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -117,7 +117,7 @@ def demo_get_profile(
 @demo_profile_router.put("/{org_id}/tribal-profile")
 def demo_put_profile(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: TribalProfileBody,
     actor_id: uuid.UUID | None = None,
@@ -140,7 +140,7 @@ def demo_put_profile(
 @demo_profile_router.get("/{org_id}/tribal-profile/export")
 def demo_export_profile(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -160,7 +160,7 @@ def demo_export_profile(
 )
 def real_create_profile(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: TribalProfileBody,
     actor_id: uuid.UUID | None = None,
@@ -186,7 +186,7 @@ def real_create_profile(
 @real_profile_router.get("/{org_id}/tribal-profile")
 def real_get_profile(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -199,7 +199,7 @@ def real_get_profile(
 @real_profile_router.put("/{org_id}/tribal-profile")
 def real_put_profile(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: TribalProfileBody,
     actor_id: uuid.UUID | None = None,
@@ -222,7 +222,7 @@ def real_put_profile(
 @real_profile_router.get("/{org_id}/tribal-profile/export")
 def real_export_profile(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:

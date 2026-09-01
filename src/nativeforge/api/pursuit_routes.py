@@ -10,11 +10,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.db.models import NfGrantSpark
@@ -97,7 +97,7 @@ def _handle_pursuit_create_exc(exc: Exception) -> None:
 def demo_create_pursuit(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: CreatePursuitBody | None = None,
     actor_id: uuid.UUID | None = None,
@@ -129,7 +129,7 @@ def demo_create_pursuit(
 @demo_pursuit_router.get("/{org_id}/pursuits")
 def demo_list_pursuits(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -140,7 +140,7 @@ def demo_list_pursuits(
 def demo_get_pursuit(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -159,7 +159,7 @@ def demo_get_pursuit(
 def demo_patch_pursuit(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: PursuitPatchBody,
     actor_id: uuid.UUID | None = None,
@@ -197,7 +197,7 @@ def demo_patch_pursuit(
 def demo_list_tasks(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, list[dict[str, Any]]]:
     _same_org(org_id, ctx)
@@ -227,7 +227,7 @@ def demo_list_tasks(
 def demo_create_task(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: TaskCreateBody,
     actor_id: uuid.UUID | None = None,
@@ -259,7 +259,7 @@ def demo_patch_task(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
     task_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: TaskPatchBody,
     actor_id: uuid.UUID | None = None,
@@ -299,7 +299,7 @@ def demo_patch_task(
 def demo_pursuit_calendar(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, list[dict[str, Any]]]:
     _same_org(org_id, ctx)
@@ -329,7 +329,7 @@ def demo_pursuit_calendar(
 def demo_create_calendar(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: CalendarCreateBody,
     actor_id: uuid.UUID | None = None,
@@ -363,7 +363,7 @@ def demo_create_calendar(
 @demo_pursuit_router.get("/{org_id}/calendar")
 def demo_org_calendar(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     start: Annotated[str, Query(description="ISO-8601 start (inclusive)")],
     end: Annotated[str, Query(description="ISO-8601 end (inclusive)")],
@@ -399,7 +399,7 @@ def demo_org_calendar(
 def real_create_pursuit(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: CreatePursuitBody | None = None,
     actor_id: uuid.UUID | None = None,
@@ -432,7 +432,7 @@ def real_create_pursuit(
 @real_pursuit_router.get("/{org_id}/pursuits")
 def real_list_pursuits(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -443,7 +443,7 @@ def real_list_pursuits(
 def real_get_pursuit(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -462,7 +462,7 @@ def real_get_pursuit(
 def real_patch_pursuit(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: PursuitPatchBody,
     actor_id: uuid.UUID | None = None,
@@ -500,7 +500,7 @@ def real_patch_pursuit(
 def real_list_tasks(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, list[dict[str, Any]]]:
     _same_org(org_id, ctx)
@@ -530,7 +530,7 @@ def real_list_tasks(
 def real_create_task(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: TaskCreateBody,
     actor_id: uuid.UUID | None = None,
@@ -562,7 +562,7 @@ def real_patch_task(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
     task_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: TaskPatchBody,
     actor_id: uuid.UUID | None = None,
@@ -602,7 +602,7 @@ def real_patch_task(
 def real_pursuit_calendar(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, list[dict[str, Any]]]:
     _same_org(org_id, ctx)
@@ -632,7 +632,7 @@ def real_pursuit_calendar(
 def real_create_calendar(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: CalendarCreateBody,
     actor_id: uuid.UUID | None = None,
@@ -666,7 +666,7 @@ def real_create_calendar(
 @real_pursuit_router.get("/{org_id}/calendar")
 def real_org_calendar(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     start: Annotated[str, Query(description="ISO-8601 start (inclusive)")],
     end: Annotated[str, Query(description="ISO-8601 end (inclusive)")],

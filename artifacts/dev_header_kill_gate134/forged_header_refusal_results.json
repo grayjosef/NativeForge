@@ -1,0 +1,38 @@
+{
+  "browser_positive_branch_blocked_by": "cloudflare_access_session_expired",
+  "browser_positive_branch_redriven": false,
+  "demo_only_route_with_a_real_org_session": {
+    "expected": 403
+  },
+  "dev_header_is_a_parameter_of_the_dependency": false,
+  "dev_header_read_anywhere_in_the_converted_path": false,
+  "header_alone_no_session": {
+    "expected": 401,
+    "measured": 401,
+    "reason": "the header authenticates nobody"
+  },
+  "measured_on_the_loopback": {
+    "api_auth_current_user_no_session": 401,
+    "api_auth_login": 302,
+    "grant_sparks_header_only": 401,
+    "isolation_demo_only_header_only": 401,
+    "note": "status codes only",
+    "recorded_on": "2026-09-01",
+    "stage12_guided_demo_path_header_only": 401,
+    "trust_manifest_header_only": 401,
+    "trust_manifest_no_header_at_all": 401
+  },
+  "real_only_route_with_a_demo_org_session": {
+    "expected": 403
+  },
+  "schema_version": "nf_dev_header_kill_artifact_v1",
+  "session_for_another_organization": {
+    "expected": 403,
+    "reason": "a member of B is not a member of A"
+  },
+  "session_plus_header_naming_another_org": {
+    "expected": "the session's organization, never the header's",
+    "header_changes_anything": false
+  },
+  "what_was_tried": "the old header, alone and alongside a real session for a different organization"
+}

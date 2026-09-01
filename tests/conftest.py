@@ -66,6 +66,31 @@ def _reset_settings_cache() -> None:
     get_settings.cache_clear()
 
 
+#: Environment a test may legitimately set for itself, and must not leave set.
+#:
+#: Gate 134: `tests/session_org_helper` sets NF_SESSION_SIGNING_KEY so it can
+#: sign a session for a converted route - the verifier reads the variable, so
+#: passing a key explicitly would not work. It set it process-wide and never
+#: removed it, so once one converted test ran, every later test in the process
+#: saw a configured signing key. Gates 118 and 119 assert the environment has
+#: none, and thirteen of them failed on a variable a neighbour had set.
+#:
+#: Restored per test rather than blanked: a test that sets it deliberately keeps
+#: it for its own duration, and nobody inherits it.
+_TEST_SCOPED_ENV: tuple[str, ...] = ("NF_SESSION_SIGNING_KEY",)
+
+
+@pytest.fixture(autouse=True)
+def _restore_test_scoped_env() -> None:
+    before = {name: os.environ.get(name) for name in _TEST_SCOPED_ENV}
+    yield
+    for name, value in before.items():
+        if value is None:
+            os.environ.pop(name, None)
+        else:
+            os.environ[name] = value
+
+
 @pytest.fixture(autouse=True)
 def _truncate_nf_tables() -> None:
     yield

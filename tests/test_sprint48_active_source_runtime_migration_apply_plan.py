@@ -27,6 +27,7 @@ from nativeforge.services.discovery_operator_workbench_service import (
 from nativeforge.services.discovery_source_quality_service import (
     build_discovery_source_quality,
 )
+from tests.session_org_helper import session_headers
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SERVICE_PATH = (
@@ -40,7 +41,12 @@ VERSIONS_DIR = REPO_ROOT / "alembic" / "versions"
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture
@@ -79,18 +85,14 @@ def _post_source(
 
 
 def test_artifact_type_and_core_metadata() -> None:
-    p = build_active_source_runtime_migration_apply_plan(
-        None, repo_root=REPO_ROOT
-    )
+    p = build_active_source_runtime_migration_apply_plan(None, repo_root=REPO_ROOT)
     assert p["artifact_type"] == ARTIFACT_TYPE
     assert p["target_revision_id"] == TARGET_REVISION_ID
     assert p["target_down_revision_id"] == TARGET_DOWN_REVISION_ID
 
 
 def test_target_revision_chain_and_paths() -> None:
-    p = build_active_source_runtime_migration_apply_plan(
-        None, repo_root=REPO_ROOT
-    )
+    p = build_active_source_runtime_migration_apply_plan(None, repo_root=REPO_ROOT)
     assert p["target_revision_id"] == "0019"
     assert p["target_down_revision_id"] == "0018"
     assert p["target_migration_file_path"] == TARGET_MIGRATION_FILE_PATH
@@ -245,9 +247,12 @@ def test_discovery_embed_read_only_governance_signal(
     assert plan["may_apply_runtime_migration_now"] is False
     assert plan["actual_database_write_count"] == 0
     assert plan["actual_operator_ledger_action_count"] == 0
-    assert pack["source_quality"]["active_source_runtime_migration_apply_plan"][
-        "artifact_type"
-    ] == ARTIFACT_TYPE
+    assert (
+        pack["source_quality"]["active_source_runtime_migration_apply_plan"][
+            "artifact_type"
+        ]
+        == ARTIFACT_TYPE
+    )
     actions = sq.get("recommended_operator_actions") or []
     assert isinstance(actions, list)
 

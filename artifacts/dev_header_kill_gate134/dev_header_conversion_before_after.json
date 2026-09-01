@@ -1,0 +1,66 @@
+{
+  "after": {
+    "converted_module_names": [
+      "activation_routes",
+      "auth",
+      "form_package_routes",
+      "grant_spark_routes",
+      "isolation_routes",
+      "nofo_extraction_routes",
+      "operator_workbench_advisory_routes",
+      "opportunity_discovery_routes",
+      "pursuit_brief_routes",
+      "pursuit_routes",
+      "source_ingestion_routes",
+      "spark_scoring_routes",
+      "sprint0_routes",
+      "stage12_guided_demo_routes",
+      "tribal_profile_routes",
+      "trust_routes"
+    ],
+    "converted_modules": 16,
+    "dev_header_modules": 0,
+    "dev_header_routes": 0,
+    "measured_on_every_call": true,
+    "publicly_routed_dev_header_routes": 0,
+    "route_total": 217
+  },
+  "before": {
+    "converted_modules": 1,
+    "converted_routes": 2,
+    "dev_header_modules": 14,
+    "dev_header_routes": 207,
+    "publicly_routed_dev_header_routes": 207,
+    "recorded_by": "Gate 133F"
+  },
+  "conversion_shape": "an import swap per module: deps_db.require_demo_org_db becomes customer_org_context_dependency.require_demo_org_session, same return type and same 403 semantics",
+  "converted_in_this_gate": {
+    "modules": 14,
+    "order": [
+      "stage12_guided_demo_routes",
+      "trust_routes",
+      "activation_routes",
+      "form_package_routes",
+      "nofo_extraction_routes",
+      "pursuit_brief_routes",
+      "spark_scoring_routes",
+      "tribal_profile_routes",
+      "operator_workbench_advisory_routes",
+      "grant_spark_routes",
+      "sprint0_routes",
+      "pursuit_routes",
+      "source_ingestion_routes",
+      "opportunity_discovery_routes"
+    ],
+    "routes": 207
+  },
+  "cumulative_with_gate_133": {
+    "modules": 15,
+    "routes": 209
+  },
+  "fake_sessions_created": false,
+  "fake_users_created": false,
+  "real_customer_data_written": false,
+  "rows_written_by_this_gate": 0,
+  "schema_version": "nf_dev_header_kill_artifact_v1"
+}

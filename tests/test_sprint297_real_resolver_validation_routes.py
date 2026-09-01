@@ -14,6 +14,7 @@ from nativeforge.main import create_app
 from nativeforge.services.real_tier1_live_fetch_service import (
     reset_real_tier1_fetch_rate_limit,
 )
+from tests.session_org_helper import session_headers
 
 _DEMO_ORG = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
 _CONFIRM = {
@@ -25,7 +26,12 @@ _CONFIRM = {
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture

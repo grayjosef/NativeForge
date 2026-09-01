@@ -31,10 +31,16 @@ from nativeforge.services.source_quality_operator_actions import (
     decision_id_for_source_quality_action,
     persist_source_quality_recommendations,
 )
+from tests.session_org_helper import session_headers
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
-    return {"X-NF-Org-Id": str(oid)}
+    """Gate 134: a session for a member of this organization.
+
+    Same shape as the header dict it replaces, so the call sites below do
+    not change. What changed is what the route trusts.
+    """
+    return session_headers(oid)
 
 
 @pytest.fixture

@@ -17,16 +17,20 @@ from nativeforge.services.activation_publish_gate_service import (
     assert_auto_publish_queue_permitted,
     assert_live_publish_permitted,
 )
+from tests.session_org_helper import session_headers
 
 _DEMO_ORG = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
 _ACTOR = uuid.UUID("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
 
 
 def _hdr(oid: uuid.UUID, role: str = "operator") -> dict[str, str]:
-    return {
-        "X-NF-Org-Id": str(oid),
-        "X-NF-Actor-Role": role,
-    }
+    """Gate 134: a session for the org, and the role header untouched.
+
+    `X-NF-Actor-Role` stays because this file asserts what happens to it
+    when dev headers are off - that is its subject. The organization no
+    longer travels in a header.
+    """
+    return {**session_headers(oid), "X-NF-Actor-Role": role}
 
 
 @pytest.fixture
@@ -94,8 +98,7 @@ def test_kill_switch_engage_release_audited(client_m8: TestClient) -> None:
     assert state["kill_switch_engaged"] is True
     assert state["publish_gate"]["publish_permitted"] is False
     assert any(
-        a["action"] == "activation_kill_switch_engaged"
-        for a in state["recent_audit"]
+        a["action"] == "activation_kill_switch_engaged" for a in state["recent_audit"]
     )
 
     release = client_m8.post(

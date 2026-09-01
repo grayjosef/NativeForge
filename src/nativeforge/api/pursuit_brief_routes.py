@@ -8,11 +8,11 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.repositories import organizations as org_repo
@@ -59,7 +59,7 @@ real_pursuit_brief_router = APIRouter(
 def demo_create_pursuit_brief(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     pursuit_id: uuid.UUID | None = _OPTIONAL_PURSUITS_QUERY,
     actor_id: uuid.UUID | None = None,
@@ -96,7 +96,7 @@ def demo_create_pursuit_brief(
 def demo_get_latest_pursuit_brief_for_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -118,7 +118,7 @@ def demo_get_latest_pursuit_brief_for_spark(
 def demo_get_latest_pursuit_brief_for_pursuit(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -141,7 +141,7 @@ def demo_get_latest_pursuit_brief_for_pursuit(
 def real_create_pursuit_brief(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     pursuit_id: uuid.UUID | None = _OPTIONAL_PURSUITS_QUERY,
     actor_id: uuid.UUID | None = None,
@@ -178,7 +178,7 @@ def real_create_pursuit_brief(
 def real_get_latest_pursuit_brief_for_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -200,7 +200,7 @@ def real_get_latest_pursuit_brief_for_spark(
 def real_get_latest_pursuit_brief_for_pursuit(
     org_id: uuid.UUID,
     pursuit_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)

@@ -4,10 +4,10 @@
 
 ```text
 routes total                     217
-routes reading X-NF-Org-Id       207
-modules reading it               14
+routes reading X-NF-Org-Id       0
+modules reading it               0
 converted in Gate 133F           isolation_routes (2 routes)
-publicly routed of those         207
+publicly routed of those         0
 behind Cloudflare Access         True
 ```
 
@@ -25,7 +25,7 @@ proxy, one hop further in, which that detector does not model. Its conclusion
 (`backend_publicly_exposed: true`) is right today because of the `/api/*` rule —
 which covers the five auth routes and no dev-header route. Delete that ingress
 line and it would report the backend contained while all
-207 stayed exposed.
+0 stayed exposed.
 
 Third instance of this shape in three gates: Gate 130's detector read the wrong
 cloudflared file, Gate 131's migration reader hardcoded one filename for a table
@@ -35,20 +35,7 @@ defined by two, this one models one hop of two.
 
 | # | module | routes | risk | why |
 |---|---|---:|---|---|
-| 1 | `stage12_guided_demo_routes` | 4 | low | guided demo surface, served from a committed payload; the frontend reads the payload rather than these routes |
-| 2 | `trust_routes` | 8 | low | read-only trust manifest; the demo shell calls it and would need a session first |
-| 3 | `activation_routes` | 6 | medium | workspace activation flags; writes durable state, so a wrong organization here persists |
-| 4 | `form_package_routes` | 6 | medium | review-gated packages; writes |
-| 5 | `nofo_extraction_routes` | 6 | medium | extraction runs; writes |
-| 6 | `pursuit_brief_routes` | 6 | medium | derived briefs; writes |
-| 7 | `spark_scoring_routes` | 6 | medium | deterministic scores; writes |
-| 8 | `tribal_profile_routes` | 8 | medium | customer-owned profile data. A wrong organization writes a Tribe's facts into another Tribe's row |
-| 9 | `operator_workbench_advisory_routes` | 8 | high | operator advisory surface; the demo shell reads it |
-| 10 | `grant_spark_routes` | 9 | high | the discovery surface the demo shell reads |
-| 11 | `sprint0_routes` | 10 | high | foundational org routes other modules assume |
-| 12 | `pursuit_routes` | 20 | high | pursuit workflow, 20 routes, writes throughout |
-| 13 | `source_ingestion_routes` | 26 | high | 26 routes; touches the collector boundary, which must stay off |
-| 14 | `opportunity_discovery_routes` | 84 | highest | 84 routes, the largest surface in the application and the one the demo depends on most |
+
 
 Within a risk band the smaller surface goes first. The order is derived from the
 risk classification and the measured route counts, not written out by hand.
@@ -89,4 +76,4 @@ org_type              was hardcoded "real"; it reads organizations.org_type now
 `NF_DEV_ORG_HEADERS=false`, and `dev_header_disabled_for_production` becomes
 true — the last `customer_auth_live` blocker that is engineering rather than a
 decision. Flipping it before the conversions would 401
-207 routes at once.
+0 routes at once.

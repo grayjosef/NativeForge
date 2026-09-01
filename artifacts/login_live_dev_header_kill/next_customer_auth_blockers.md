@@ -21,8 +21,8 @@ the next, and this is the fourth time this campaign has found that exact shape.
 
 ### `dev_header_disabled_for_production`
 
-207 routes across
-14 modules still read `X-NF-Org-Id`, and
+0 routes across
+0 modules still read `X-NF-Org-Id`, and
 every one of them is publicly routed through the preview proxy behind
 Cloudflare Access.
 Access gates *who reaches the app*; it does nothing about which organization a

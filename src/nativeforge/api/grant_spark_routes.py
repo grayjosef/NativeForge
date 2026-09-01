@@ -11,11 +11,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps_db import (
-    get_db_session,
-    require_demo_org_db,
-    require_real_org_db,
+from nativeforge.api.customer_org_context_dependency import (
+    require_demo_org_session,
+    require_real_org_session,
 )
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.api.tenant_guard import guard_same_org_403
 from nativeforge.domain.enums import (
@@ -116,7 +116,7 @@ real_grant_spark_router = APIRouter(
 @demo_grant_spark_router.post("/{org_id}/grant-sparks/seed-demo-catalog")
 def demo_seed_catalog(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, int]:
     """Insert the 12 deterministic demo Sparks for this org (idempotent)."""
@@ -135,7 +135,7 @@ def demo_seed_catalog(
 @demo_grant_spark_router.get("/{org_id}/grant-sparks")
 def demo_list_sparks(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -149,7 +149,7 @@ def demo_list_sparks(
 )
 def demo_create_spark(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: GrantSparkBody,
 ) -> dict[str, Any]:
@@ -173,7 +173,7 @@ def demo_create_spark(
 def demo_get_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -187,7 +187,7 @@ def demo_get_spark(
 def demo_put_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_demo_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: GrantSparkBody,
 ) -> dict[str, Any]:
@@ -209,7 +209,7 @@ def demo_put_spark(
 @real_grant_spark_router.get("/{org_id}/grant-sparks")
 def real_list_sparks(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> list[dict[str, Any]]:
     _same_org(org_id, ctx)
@@ -223,7 +223,7 @@ def real_list_sparks(
 )
 def real_create_spark(
     org_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: GrantSparkBody,
 ) -> dict[str, Any]:
@@ -247,7 +247,7 @@ def real_create_spark(
 def real_get_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -261,7 +261,7 @@ def real_get_spark(
 def real_put_spark(
     org_id: uuid.UUID,
     spark_id: uuid.UUID,
-    ctx: Annotated[OrgContext, Depends(require_real_org_db)],
+    ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
     body: GrantSparkBody,
 ) -> dict[str, Any]:
