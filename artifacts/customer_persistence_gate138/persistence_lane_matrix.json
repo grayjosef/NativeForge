@@ -1,0 +1,146 @@
+{
+  "blocked_lanes": [],
+  "capability_matrix": {
+    "controlled_dev_persistence_available_count": 6,
+    "controlled_dev_persistence_available_lanes": [
+      "tenant_profile_persistence",
+      "awarded_grants_persistence",
+      "award_requirements_persistence",
+      "proof_audit_persistence",
+      "document_library_persistence",
+      "identity_binding_persistence"
+    ],
+    "customer_persistence_live_production": false,
+    "operational_count": 0,
+    "production_persistence_ready": false,
+    "write_path_count": 6
+  },
+  "lane_routes": {
+    "award_requirements_persistence": null,
+    "awarded_grants_persistence": null,
+    "document_library_persistence": null,
+    "proof_audit_persistence": null,
+    "tenant_profile_persistence": "api/tribal_profile_routes.py"
+  },
+  "lanes_tested": [
+    "tenant_profile_persistence",
+    "awarded_grants_persistence",
+    "award_requirements_persistence",
+    "proof_audit_persistence",
+    "document_library_persistence"
+  ],
+  "repository_live_lanes": [
+    "award_requirements_persistence",
+    "awarded_grants_persistence",
+    "document_library_persistence",
+    "proof_audit_persistence",
+    "tenant_profile_persistence"
+  ],
+  "round_trip": [
+    {
+      "blocked_reasons": [],
+      "cross_org_rows_read": 0,
+      "lane": "tenant_profile_persistence",
+      "round_trip_proved": true,
+      "route_module": "api/tribal_profile_routes.py",
+      "route_persistence_available": true,
+      "rows_archived": 1,
+      "rows_written": 1,
+      "scaffold_rows_archived": 0,
+      "scaffold_rows_written": 0,
+      "steps": {
+        "cleanup": true,
+        "cross_org_refused": true,
+        "read": true,
+        "write": true
+      },
+      "this_row_read_back_by_id": true
+    },
+    {
+      "blocked_reasons": [],
+      "cross_org_rows_read": 0,
+      "lane": "awarded_grants_persistence",
+      "round_trip_proved": true,
+      "route_module": null,
+      "route_persistence_available": false,
+      "rows_archived": 1,
+      "rows_written": 1,
+      "scaffold_rows_archived": 0,
+      "scaffold_rows_written": 0,
+      "steps": {
+        "cleanup": true,
+        "cross_org_refused": true,
+        "read": true,
+        "write": true
+      },
+      "this_row_read_back_by_id": true
+    },
+    {
+      "blocked_reasons": [],
+      "cross_org_rows_read": 0,
+      "lane": "award_requirements_persistence",
+      "round_trip_proved": true,
+      "route_module": null,
+      "route_persistence_available": false,
+      "rows_archived": 1,
+      "rows_written": 1,
+      "scaffold_rows_archived": 1,
+      "scaffold_rows_written": 1,
+      "steps": {
+        "cleanup": true,
+        "cross_org_refused": true,
+        "read": true,
+        "write": true
+      },
+      "this_row_read_back_by_id": true
+    },
+    {
+      "blocked_reasons": [],
+      "cross_org_rows_read": 0,
+      "lane": "proof_audit_persistence",
+      "round_trip_proved": true,
+      "route_module": null,
+      "route_persistence_available": false,
+      "rows_archived": 1,
+      "rows_written": 1,
+      "scaffold_rows_archived": 2,
+      "scaffold_rows_written": 2,
+      "steps": {
+        "cleanup": true,
+        "cross_org_refused": true,
+        "read": true,
+        "write": true
+      },
+      "this_row_read_back_by_id": true
+    },
+    {
+      "blocked_reasons": [],
+      "cross_org_rows_read": 0,
+      "lane": "document_library_persistence",
+      "round_trip_proved": true,
+      "route_module": null,
+      "route_persistence_available": false,
+      "rows_archived": 1,
+      "rows_written": 1,
+      "scaffold_rows_archived": 2,
+      "scaffold_rows_written": 2,
+      "steps": {
+        "cleanup": true,
+        "cross_org_refused": true,
+        "read": true,
+        "write": true
+      },
+      "this_row_read_back_by_id": true
+    }
+  ],
+  "route_live_lanes": [
+    "tenant_profile_persistence"
+  ],
+  "route_missing_lanes": [
+    "award_requirements_persistence",
+    "awarded_grants_persistence",
+    "document_library_persistence",
+    "proof_audit_persistence"
+  ],
+  "schema_version": "nf_customer_persistence_gate138_artifact_v1"
+}

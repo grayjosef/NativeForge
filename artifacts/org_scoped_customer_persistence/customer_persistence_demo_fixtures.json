@@ -17,6 +17,7 @@
             "no_customer_auth_so_nobody_owns_the_row"
           ],
           "capability": "tenant_profile_persistence",
+          "controlled_dev_persistence_available": true,
           "customer_auth_live": false,
           "customer_auth_required": true,
           "demo_only": true,
@@ -26,6 +27,7 @@
           "operational": false,
           "organization_id_anchor_available": true,
           "persisted": false,
+          "production_operational": false,
           "read_path_available": true,
           "repository_available": true,
           "rls_anchor": "organization_id",
@@ -54,6 +56,7 @@
         "persistence_capability": {
           "blocked_reasons": [],
           "capability": "tenant_profile_persistence",
+          "controlled_dev_persistence_available": true,
           "customer_auth_live": true,
           "customer_auth_required": true,
           "demo_only": false,
@@ -63,6 +66,7 @@
           "operational": true,
           "organization_id_anchor_available": true,
           "persisted": false,
+          "production_operational": true,
           "read_path_available": true,
           "repository_available": true,
           "rls_anchor": "organization_id",
@@ -93,6 +97,7 @@
         "persistence_capability": {
           "blocked_reasons": [],
           "capability": "tenant_profile_persistence",
+          "controlled_dev_persistence_available": true,
           "customer_auth_live": true,
           "customer_auth_required": true,
           "demo_only": false,
@@ -102,6 +107,7 @@
           "operational": true,
           "organization_id_anchor_available": true,
           "persisted": false,
+          "production_operational": true,
           "read_path_available": true,
           "repository_available": true,
           "rls_anchor": "organization_id",
@@ -131,6 +137,7 @@
         "persistence_capability": {
           "blocked_reasons": [],
           "capability": "tenant_profile_persistence",
+          "controlled_dev_persistence_available": true,
           "customer_auth_live": true,
           "customer_auth_required": true,
           "demo_only": false,
@@ -140,6 +147,7 @@
           "operational": true,
           "organization_id_anchor_available": true,
           "persisted": false,
+          "production_operational": true,
           "read_path_available": true,
           "repository_available": true,
           "rls_anchor": "organization_id",
@@ -170,6 +178,7 @@
         "persistence_capability": {
           "blocked_reasons": [],
           "capability": "tenant_profile_persistence",
+          "controlled_dev_persistence_available": true,
           "customer_auth_live": true,
           "customer_auth_required": true,
           "demo_only": false,
@@ -179,6 +188,7 @@
           "operational": true,
           "organization_id_anchor_available": true,
           "persisted": false,
+          "production_operational": true,
           "read_path_available": true,
           "repository_available": true,
           "rls_anchor": "organization_id",
@@ -210,6 +220,7 @@
             "no_customer_auth_so_nobody_owns_the_row"
           ],
           "capability": "awarded_grants_persistence",
+          "controlled_dev_persistence_available": true,
           "customer_auth_live": false,
           "customer_auth_required": true,
           "demo_only": true,
@@ -219,6 +230,7 @@
           "operational": false,
           "organization_id_anchor_available": true,
           "persisted": false,
+          "production_operational": false,
           "read_path_available": true,
           "repository_available": true,
           "rls_anchor": "organization_id",
@@ -252,6 +264,7 @@
             "no_table_declares_this_capability:nf_tenant_digest_records"
           ],
           "capability": "tenant_digest_persistence",
+          "controlled_dev_persistence_available": false,
           "customer_auth_live": false,
           "customer_auth_required": true,
           "demo_only": false,
@@ -261,6 +274,7 @@
           "operational": false,
           "organization_id_anchor_available": false,
           "persisted": false,
+          "production_operational": false,
           "read_path_available": false,
           "repository_available": false,
           "rls_anchor": "organization_id",
@@ -292,6 +306,7 @@
             "no_customer_auth_so_nobody_owns_the_row"
           ],
           "capability": "identity_binding_persistence",
+          "controlled_dev_persistence_available": true,
           "customer_auth_live": false,
           "customer_auth_required": true,
           "demo_only": true,
@@ -301,6 +316,7 @@
           "operational": false,
           "organization_id_anchor_available": true,
           "persisted": false,
+          "production_operational": false,
           "read_path_available": true,
           "repository_available": true,
           "rls_anchor": "organization_id",
@@ -333,6 +349,7 @@
             "no_table_declares_this_capability:nf_tenant_digest_records"
           ],
           "capability": "tenant_digest_persistence",
+          "controlled_dev_persistence_available": false,
           "customer_auth_live": true,
           "customer_auth_required": true,
           "demo_only": false,
@@ -342,6 +359,7 @@
           "operational": false,
           "organization_id_anchor_available": false,
           "persisted": false,
+          "production_operational": false,
           "read_path_available": false,
           "repository_available": false,
           "rls_anchor": "organization_id",
@@ -398,6 +416,7 @@
         "blocked_reasons": [
           "customer_auth_not_live"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": false,
         "customer_auth_required": true,
@@ -431,6 +450,7 @@
           "tenant_id_is_not_a_write_authority",
           "write_without_an_organization_id"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": true,
         "customer_auth_required": true,
@@ -464,6 +484,7 @@
           "customer_org_id_is_not_a_write_authority",
           "write_without_an_organization_id"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": true,
         "customer_auth_required": true,
@@ -497,6 +518,7 @@
           "organization_profile_id_is_not_a_write_authority",
           "write_without_an_organization_id"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": true,
         "customer_auth_required": true,
@@ -531,6 +553,7 @@
           "demo_fixture_write_is_never_operational",
           "verified_binding_required_for:write_tenant_profile"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": true,
         "customer_auth_required": true,
@@ -566,6 +589,7 @@
           "demo_fixture_write_is_never_operational",
           "verified_binding_required_for:write_awarded_grant"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": false,
         "customer_auth_required": true,
@@ -603,6 +627,7 @@
           "no_schema_for:tenant_digest_persistence",
           "no_write_path_for:tenant_digest_persistence"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": false,
         "customer_auth_required": true,
@@ -635,6 +660,7 @@
         "blocked_reasons": [
           "customer_auth_not_live"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": false,
         "customer_auth_required": true,
@@ -669,6 +695,7 @@
           "no_schema_for:tenant_digest_persistence",
           "no_write_path_for:tenant_digest_persistence"
         ],
+        "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
         "customer_auth_live": true,
         "customer_auth_required": true,

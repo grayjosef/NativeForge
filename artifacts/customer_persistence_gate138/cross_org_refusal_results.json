@@ -1,0 +1,62 @@
+{
+  "cross_org_rows_read_total": 0,
+  "label_reads_refused": true,
+  "per_lane": [
+    {
+      "cross_org_rows_read": 0,
+      "lane": "tenant_profile_persistence",
+      "refused": true
+    },
+    {
+      "cross_org_rows_read": 0,
+      "lane": "awarded_grants_persistence",
+      "refused": true
+    },
+    {
+      "cross_org_rows_read": 0,
+      "lane": "award_requirements_persistence",
+      "refused": true
+    },
+    {
+      "cross_org_rows_read": 0,
+      "lane": "proof_audit_persistence",
+      "refused": true
+    },
+    {
+      "cross_org_rows_read": 0,
+      "lane": "document_library_persistence",
+      "refused": true
+    }
+  ],
+  "reader_organization_id": "cccccccc-dddd-eeee-ffff-00000000d138",
+  "reads_are_anchored_on": "organization_id",
+  "refusals": {
+    "label_offered_as_authority": {
+      "blocked_reasons": [
+        "not_an_authority_for_persistence:tenant_id"
+      ],
+      "customer_persistence_live": false,
+      "rows_written": 0
+    },
+    "no_accountable_principal": {
+      "blocked_reasons": [
+        "no_accountable_principal_resolves_to_this_organization",
+        "principal:no_identity_resolves_to_an_organization",
+        "principal:no_role_comes_from_a_membership_row",
+        "principal:no_session_has_ever_been_validated"
+      ],
+      "customer_persistence_live": false,
+      "rows_written": 0
+    },
+    "real_organization": {
+      "blocked_reasons": [
+        "organization_is_not_a_demo_organization",
+        "organization_is_the_explicitly_refused_real_org"
+      ],
+      "customer_persistence_live": false,
+      "rows_written": 0
+    }
+  },
+  "schema_version": "nf_customer_persistence_gate138_artifact_v1",
+  "writer_organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
+}

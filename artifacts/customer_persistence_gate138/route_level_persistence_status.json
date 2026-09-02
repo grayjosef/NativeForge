@@ -1,0 +1,28 @@
+{
+  "measured_at_the_route": {
+    "dev_header_cannot_override_because": "Gates 134 and 135 removed the chain that read it; the route depends on require_demo_org_session",
+    "path": "/v1/nf/demo/orgs/{organization_id}/tribal-profile",
+    "route_checks_path_org_matches_session_org": true,
+    "unauthenticated_status": 401,
+    "with_a_forged_dev_header_status": 401
+  },
+  "route_live_lanes": [
+    "tenant_profile_persistence"
+  ],
+  "route_missing_is_not_faked": true,
+  "route_missing_lanes": [
+    "award_requirements_persistence",
+    "awarded_grants_persistence",
+    "document_library_persistence",
+    "proof_audit_persistence"
+  ],
+  "route_missing_means": "repository-live is not customer-usable; five of six ready lanes have no route and this says so per lane",
+  "route_wiring": {
+    "award_requirements_persistence": null,
+    "awarded_grants_persistence": null,
+    "document_library_persistence": null,
+    "proof_audit_persistence": null,
+    "tenant_profile_persistence": "api/tribal_profile_routes.py"
+  },
+  "schema_version": "nf_customer_persistence_gate138_artifact_v1"
+}

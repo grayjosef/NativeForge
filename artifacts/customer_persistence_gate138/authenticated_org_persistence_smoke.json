@@ -1,0 +1,30 @@
+{
+  "accountable_identity_resolved": true,
+  "accountable_identity_source": "nf_org_memberships",
+  "accountable_principal_available": true,
+  "cleanup_method": "archive, because no repository offers a delete",
+  "cleanup_method_because": "these are audit surfaces; adding a hard delete for a smoke test's convenience would be the wrong primitive to introduce",
+  "customer_auth_live": false,
+  "customer_auth_live_required": false,
+  "customer_persistence_live": true,
+  "database": "in_memory_sqlite_built_for_this_call",
+  "fact_status_written": "demo_fixture",
+  "invariant_failures": [],
+  "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "organization_is_demo": true,
+  "rows_archived": 5,
+  "rows_left_live": 0,
+  "rows_left_live_per_table": {
+    "nf_award_documents": 0,
+    "nf_award_requirement_proof_events": 0,
+    "nf_award_requirements": 0,
+    "nf_awarded_grants": 0,
+    "nf_tenant_beta_profiles": 0
+  },
+  "rows_written": 5,
+  "scaffold_rows_archived": 5,
+  "scaffold_rows_written": 5,
+  "schema_version": "nf_customer_persistence_gate138_artifact_v1",
+  "scope": "controlled_dev_demo",
+  "seed_fixed_by_caller": true
+}

@@ -20,6 +20,7 @@
     "signing_key_not_fit_to_sign": true
   },
   "audience_configured": false,
+  "awarded_operational_tracking": false,
   "blocked_reasons": [
     "auth_gate_not_satisfied:audience_configured",
     "auth_gate_not_satisfied:callback_session_validated",
@@ -42,6 +43,11 @@
   "customer_auth_decision_supplied": false,
   "customer_auth_live": false,
   "customer_auth_live_scope": "none",
+  "customer_persistence_live": false,
+  "customer_persistence_proof_supplied": false,
+  "customer_persistence_repository_lanes": [],
+  "customer_persistence_route_lanes": [],
+  "customer_persistence_scope": "none",
   "dev_header_disabled_for_production": false,
   "dev_header_exposure_supplied": false,
   "dev_header_routes_measured": null,
@@ -132,11 +138,13 @@
       "gate": "owner_approval"
     }
   ],
+  "object_store_configured": false,
   "operator_actionable_blocker_count": 7,
   "org_binding_passed": false,
   "organization_id_resolution_available": true,
   "owner_approval_present": false,
   "owner_approval_source": "absent",
+  "production_persistence_ready": false,
   "production_rollout": false,
   "production_write_blockers": [
     "verified_operational_binding_absent_so_production_writes_are_refused"

@@ -232,6 +232,8 @@ CAPABILITY_FIELDS: tuple[str, ...] = (
     "customer_auth_required",
     "customer_auth_live",
     "operational",
+    "production_operational",
+    "controlled_dev_persistence_available",
     "demo_only",
     "blocked_reasons",
 )
@@ -411,11 +413,47 @@ def build_capability(
         schema_available and anchor_available and rls_backed and repository_available
     )
 
-    operational = bool(
+    # Gate 138F. Two claims, not one.
+    #
+    # `operational` has meant "a production write may happen here" since Gate
+    # 114 and keeps meaning exactly that: it needs `customer_auth_live`, and
+    # that is correct - a production row needs somebody accountable in the
+    # sense the whole auth campaign is about.
+    #
+    # What it was ALSO being read as is "anything can be written here", and
+    # that was wrong. The repositories underneath draw the line differently:
+    #
+    #     demo_fixture = bool(is_demo) or fact_status == "demo_fixture"
+    #     production_write = not demo_fixture
+    #     if production_write and not customer_auth_live: refuse
+    #
+    # A fixture-labelled write into a demo organization is not a production
+    # write and needs neither `customer_auth_live` nor a verified operational
+    # binding. The blanket `CAPABILITY_REQUIRES_AUTH` did not make that
+    # distinction, so every lane reported dead for a reason that applies only
+    # to production writes.
+    #
+    # `controlled_dev_persistence_available` is that narrower claim, and it is
+    # *availability* - the components are there and a fixture write is
+    # permitted. Whether one actually round-trips is measured by
+    # `customer_persistence_activation_service`, which writes a row and reads
+    # it back, and this service still writes nothing.
+    production_operational = bool(
         write_path_available
         and (customer_auth_live or not customer_auth_required)
         and not blocked_reasons
     )
+    controlled_dev_persistence_available = bool(
+        write_path_available
+        # Only the auth blocker is permitted here; a missing table or
+        # repository blocks both claims equally.
+        and not [
+            reason
+            for reason in blocked_reasons
+            if reason != "no_customer_auth_so_nobody_owns_the_row"
+        ]
+    )
+    operational = production_operational
 
     # Everything that exists but cannot be operated is demo-only by definition.
     demo_only = bool(write_path_available and not operational)
@@ -442,6 +480,10 @@ def build_capability(
             "customer_auth_required": customer_auth_required,
             "customer_auth_live": bool(customer_auth_live),
             "operational": operational,
+            "production_operational": production_operational,
+            "controlled_dev_persistence_available": (
+                controlled_dev_persistence_available
+            ),
             "demo_only": demo_only,
             "blocked_reasons": sorted(set(blocked_reasons)),
             # Constants: a capability report reads schema and writes nothing.
@@ -513,7 +555,21 @@ def build_capability_matrix(
             ],
             # The contract exists; what it describes does not yet operate.
             "customer_persistence_contract_available": True,
+            # Gate 138F. Unchanged in meaning: production persistence.
+            # The controlled dev/demo claim is reported separately and is
+            # measured by a round trip, not by this service.
             "customer_persistence_live": any(r["operational"] for r in rows),
+            "production_persistence_ready": any(
+                r["production_operational"] for r in rows
+            ),
+            "controlled_dev_persistence_available_count": sum(
+                1 for r in rows if r["controlled_dev_persistence_available"]
+            ),
+            "controlled_dev_persistence_available_lanes": [
+                r["capability"]
+                for r in rows
+                if r["controlled_dev_persistence_available"]
+            ],
             "customer_auth_live": (
                 bool(rows[0]["customer_auth_live"]) if rows else False
             ),

@@ -1,0 +1,20 @@
+{
+  "capability_matrix_never_wrote_a_row": true,
+  "capability_matrix_reports": {
+    "persisted": false,
+    "rows_written": 0
+  },
+  "gate": "138",
+  "invite_binding_passed_blocks_persistence": false,
+  "modules_named_for_survey_under_other_names": {
+    "award_documents_repository_service": "award_document_store_repository_service",
+    "award_requirement_proof_repository_service": "award_requirement_proof_audit_repository_service",
+    "tenant_beta_profile_repository_service": "tenant_profile_repository_service"
+  },
+  "schema_version": "nf_customer_persistence_gate138_artifact_v1",
+  "the_distinction_the_repositories_already_drew": "production_write = not demo_fixture; only a production write requires customer_auth_live or a verified operational binding",
+  "verified_operational_binding_blocks_demo_persistence": false,
+  "verified_operational_binding_blocks_production_persistence": true,
+  "what_the_blocker_actually_wanted": "somebody is accountable for the row - which is already true: org_binding_passed, callback_session_validated and role_mapping_passed are all measured true from rows",
+  "why_customer_persistence_live_was_false": "every lane's `operational` required customer_auth_live via a blanket CAPABILITY_REQUIRES_AUTH, and customer_auth_live is false because invite_binding_passed is"
+}

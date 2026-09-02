@@ -231,6 +231,7 @@ def build_customer_auth_activation_gate(
     customer_auth_activation_decision: dict[str, Any] | None = None,
     verified_binding_readback: dict[str, Any] | None = None,
     real_org_binding_activation_decision: dict[str, Any] | None = None,
+    persistence_proof: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """May customer authentication be activated? Deny by default.
 
@@ -432,6 +433,25 @@ def build_customer_auth_activation_gate(
         and not verified_binding_is_demo_org
     )
 
+    # Gate 138F. Persistence reported beside customer auth, never inside it.
+    #
+    # `customer_persistence_live` here means what Gate 138 proved: a
+    # fixture-labelled row written into a demo organization, read back by id,
+    # refused to another organization, and archived. It is CONTROLLED DEV/DEMO
+    # and the scope field says so on every result, because the same two words
+    # would otherwise be read as production persistence - which is separate,
+    # still false, and still requires customer_auth_live and a verified
+    # operational binding.
+    #
+    # Derived from a supplied proof, never from a parameter and never assumed.
+    # Absent proof it is false, which keeps this gate deterministic for the
+    # artifacts it feeds.
+    proof = persistence_proof or {}
+    persistence_live = bool(proof.get("customer_persistence_live"))
+    persistence_scope = str(proof.get("scope") or "none")
+    persistence_lanes = list(proof.get("repository_persistence_live_lanes") or [])
+    persistence_route_lanes = list(proof.get("route_persistence_live_lanes") or [])
+
     blocked_reasons: list[str] = []
     for name in REQUIRED_AUTH_GATES:
         if not gates[name]:
@@ -623,6 +643,17 @@ def build_customer_auth_activation_gate(
                 "verified_operational_binding",
             ],
             "production_write_blockers": sorted(set(production_write_blockers)),
+            # Gate 138F.
+            "customer_persistence_live": persistence_live,
+            "customer_persistence_scope": (
+                persistence_scope if persistence_live else "none"
+            ),
+            "customer_persistence_proof_supplied": bool(persistence_proof),
+            "customer_persistence_repository_lanes": persistence_lanes,
+            "customer_persistence_route_lanes": persistence_route_lanes,
+            "production_persistence_ready": False,
+            "object_store_configured": False,
+            "awarded_operational_tracking": False,
             "dev_header_routes_measured": (
                 (dev_header_exposure or {}).get("dev_header_route_count")
             ),
@@ -789,6 +820,27 @@ def activation_gate_invariant_failures(gate: dict[str, Any]) -> list[str]:
     scope = gate.get("customer_auth_live_scope")
     if gate.get("customer_auth_live") and scope != "controlled_dev_demo_org_only":
         fails.append(f"customer_auth_scope_widened:{scope}")
+
+    # Gate 138F. Persistence may be live while customer auth is not, and only
+    # under the controlled scope - the two words are otherwise a production
+    # claim nobody made.
+    if gate.get("customer_persistence_live"):
+        if gate.get("customer_persistence_scope") != "controlled_dev_demo":
+            fails.append(
+                "customer_persistence_live_outside_the_controlled_scope:"
+                f"{gate.get('customer_persistence_scope')}"
+            )
+        if not gate.get("customer_persistence_proof_supplied"):
+            fails.append("customer_persistence_live_without_a_proof")
+        if not gate.get("customer_persistence_repository_lanes"):
+            fails.append("customer_persistence_live_without_a_proved_lane")
+    for field in (
+        "production_persistence_ready",
+        "object_store_configured",
+        "awarded_operational_tracking",
+    ):
+        if gate.get(field):
+            fails.append(f"claimed:{field}")
 
     expected_missing = [name for name in REQUIRED_AUTH_GATES if not gate.get(name)]
     if list(gate.get("missing_auth_gates") or []) != expected_missing:

@@ -1,0 +1,24 @@
+{
+  "collectors_activated": false,
+  "controlled_customer_pilot": false,
+  "customer_auth_live_untouched_by_this_gate": true,
+  "customer_persistence_live_can_be_true_while_auth_is_not": true,
+  "email_sent": false,
+  "live_grant_sources_called": false,
+  "object_store_contacted": false,
+  "only_under_scope": "controlled_dev_demo",
+  "production_rollout": false,
+  "real_customer_data_written": false,
+  "real_organization_touched": false,
+  "schema_version": "nf_customer_persistence_gate138_artifact_v1",
+  "with_the_proof_supplied": {
+    "awarded_operational_tracking": false,
+    "customer_auth_live": false,
+    "customer_persistence_live": true,
+    "customer_persistence_scope": "controlled_dev_demo",
+    "login_live": false,
+    "object_store_configured": false,
+    "production_persistence_ready": false,
+    "verified_operational_binding": false
+  }
+}

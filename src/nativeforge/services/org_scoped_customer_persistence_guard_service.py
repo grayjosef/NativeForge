@@ -191,6 +191,7 @@ def _uuid_shaped(value: Any) -> bool:
 
 def evaluate_persistence_write(
     *,
+    controlled_dev_fixture_write: bool = False,
     operation: Any = None,
     organization_id: Any = None,
     tenant_id: Any = None,
@@ -201,7 +202,15 @@ def evaluate_persistence_write(
     persistence_capability: dict[str, Any] | None = None,
     is_demo_fixture: bool = False,
 ) -> dict[str, Any]:
-    """May this customer-data write proceed? Deny by default."""
+    """May this customer-data write proceed? Deny by default.
+
+    ``controlled_dev_fixture_write`` says the caller is writing a
+    fixture-labelled row into a demo organization, which the repositories
+    underneath already treat as not-a-production-write. It never relaxes the
+    anchor - `organization_id` is still the only authority and a label still
+    never substitutes - and it is reported so a reader can see which kind of
+    write was judged.
+    """
     op = str(operation).strip() if operation else "unknown"
     if op not in PERSISTENCE_OPERATIONS:
         op = "unknown"
@@ -345,6 +354,11 @@ def evaluate_persistence_write(
         {
             "schema_version": SCHEMA_VERSION,
             "operation": op,
+            # Gate 138F. Which kind of write was judged, reported rather than
+            # inferred: a fixture-labelled row into a demo organization is not
+            # a production write, and the repositories underneath already
+            # treat it that way.
+            "controlled_dev_fixture_write": bool(controlled_dev_fixture_write),
             "organization_id": anchor or None,
             "tenant_id": tenant_id,
             "customer_org_id": customer_org_id,
