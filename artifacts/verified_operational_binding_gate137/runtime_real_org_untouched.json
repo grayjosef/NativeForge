@@ -1,0 +1,12 @@
+{
+  "bindings_written_for_the_demo_organization": 0,
+  "bindings_written_for_the_real_organization": 0,
+  "hermetic_fixture_database": "in_memory_sqlite, discarded",
+  "how_this_is_known": "every write in this gate went through an engine created in _hermetic_run and disposed at the end of it; the dev database is never addressed",
+  "production_bindings_created": 0,
+  "real_customer_data_written": false,
+  "real_organization_id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "rows_written_outside_the_hermetic_fixture": 0,
+  "runtime_database_opened_by_this_gate": false,
+  "schema_version": "nf_verified_operational_binding_gate137_artifact_v1"
+}

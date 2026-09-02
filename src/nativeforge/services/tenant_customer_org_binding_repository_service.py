@@ -119,6 +119,57 @@ DEMO_STATUS = "demo_fixture"
 # look at it, and it authorizes nothing.
 CONFLICT_STATUS = "conflict"
 
+# Gate 137D. `get_active_binding` documents itself as returning "the one live
+# binding for an organization and a label pair" and nothing made that true:
+# two active verified bindings for the same triple both wrote, and the read
+# returned whichever row came back first, with no ORDER BY behind it.
+#
+# Two contradicting verified bindings is exactly what CONFLICT_STATUS exists
+# for, and nothing detected the contradiction. So the write refuses a second
+# one and the read refuses to pick.
+DUPLICATE_ACTIVE = "an_active_binding_already_exists_for_this_organization_and_labels"
+AMBIGUOUS_ACTIVE = "several_active_bindings_match_so_none_of_them_is_the_binding"
+
+# And a second, tighter rule, found because Gate 137F's artifact measured the
+# first one and disagreed with the claim above it.
+#
+# The triple-scoped refusal is right for the general case - several label pairs
+# per organization is what `list_bindings_for_organization` exists for. It is
+# not right for a VERIFIED binding: two of those for one organization are two
+# statements that this organization is verifiably bound to different tenant and
+# customer-org pairs, which contradict each other at the level the RLS anchor
+# cares about. One per organization, whatever the labels say.
+VERIFIED_ALREADY_EXISTS = (
+    "an_active_verified_binding_already_exists_for_this_organization"
+)
+
+# Gate 137D, closing the path the survey named and 137B did not reach.
+#
+# `verified_binding_workflow_service` still calls `insert_binding` directly and
+# still passes `is_demo=bool(principal["is_demo_principal"])` - a principal's
+# self-description choosing an organization's RLS partition. The new
+# preparation service derives it, but only for callers that use the new entry
+# point, and the old one was left live.
+#
+# So the check lands here, where every write path converges and where the
+# connection is. `prepare_insert` keeps its connection-free contract: a
+# refusal that needs a database belongs where the database is, which is the
+# same reason the duplicate checks are here.
+#
+# Narrow on purpose. Only `verified_binding` requires the classification to
+# succeed - that is the status where landing in the wrong partition writes an
+# unrevokable claim. Demo fixtures, pending reviews, revocations and conflicts
+# keep working against a database with no `organizations` table, which is what
+# most of this repository's tests build.
+IS_DEMO_MISMATCH = "supplied_is_demo_disagrees_with_the_organization_row"
+VERIFIED_NEEDS_CLASSIFICATION = (
+    "a_verified_binding_needs_the_organization_row_to_classify_it"
+)
+
+#: Every field a repository result carries. Declared since Gate 120B and
+#: consumed by nothing until Gate 137G asserted it against real results - a
+#: declared list nothing checks is a list that drifts, which is the shape this
+#: campaign keeps finding. `rows_matched` is new here.
 RESULT_FIELDS: tuple[str, ...] = (
     "schema_version",
     "operation",
@@ -142,9 +193,14 @@ RESULT_FIELDS: tuple[str, ...] = (
     "read_performed",
     "rows_written",
     "rows_read",
+    "rows_matched",
     "rows_deleted",
     "blocked_reasons",
 )
+
+#: Fields only a write result carries. Kept out of RESULT_FIELDS, which every
+#: result satisfies, so the declaration stays true of all of them.
+INSERT_RESULT_FIELDS: tuple[str, ...] = ("is_demo_derived_from_the_organization_row",)
 
 _METADATA = sa.MetaData()
 
@@ -246,6 +302,9 @@ def _result(**fields: Any) -> dict[str, Any]:
         "rows_deleted": 0,
         "history_preserved": True,
         "real_customer_rows_written": 0,
+        # How many rows the anchor and labels matched. Zero for a write, and
+        # the number that makes an ambiguous read say how ambiguous.
+        "rows_matched": 0,
     }
     out.update(fields)
     out["blocked_reasons"] = sorted(set(fields.get("blocked_reasons") or []))
@@ -383,8 +442,84 @@ def insert_binding(
     if connection is None:
         blocked_reasons.append("no_connection_supplied_so_nothing_was_written")
 
+    # Gate 137D. Uniqueness needs a connection, which is why it lives here and
+    # not in `prepare_insert` - and why it was absent: the decision function
+    # that owns every other refusal cannot ask this question.
+    #
+    # Scoped to the label triple rather than the organization, because
+    # `list_bindings_for_organization` exists and several label pairs per
+    # organization are legitimate. What is not legitimate is two live rows
+    # answering one read.
+    # -- is_demo, derived where a connection makes that possible ------------
+    classification: dict[str, Any] = {}
+    if connection is not None and decision["storage_allowed"]:
+        from nativeforge.services.demo_org_classification_service import (
+            classify_organization,
+        )
+
+        classification = classify_organization(
+            decision["organization_id"], connection=connection
+        )
+        classified = bool(classification.get("classification_available"))
+        derived_is_demo = bool(classification.get("is_demo"))
+        supplied_demo = bool(decision["demo_fixture"])
+
+        # Narrowed to verified bindings after the first version refused a
+        # demo_fixture binding on a real organization and broke three of Gate
+        # 120's tests - revocation, conflict marking, and a tenant-admin demo
+        # approval, none of which are about partitions.
+        #
+        # A `demo_fixture` row saying `is_demo=True` on a real organization is
+        # a fixture in a real organization, which is what a fixture IS. The
+        # disagreement is reported so it stays visible, and refused only where
+        # getting the partition wrong writes an unrevokable verified claim.
+        if decision["binding_status"] in VERIFIER_REQUIRED_STATUSES:
+            if not classified:
+                blocked_reasons.append(VERIFIED_NEEDS_CLASSIFICATION)
+            else:
+                if derived_is_demo:
+                    # The row this gate exists to stop. Refused by
+                    # classification, whatever the caller said `is_demo` was.
+                    blocked_reasons.append("demo_fixture_cannot_be_a_verified_binding")
+                if supplied_demo != derived_is_demo:
+                    blocked_reasons.append(IS_DEMO_MISMATCH)
+
+    if connection is not None and decision["storage_allowed"]:
+        existing = int(
+            connection.execute(
+                sa.select(sa.func.count())
+                .select_from(BINDINGS)
+                .where(
+                    BINDINGS.c.organization_id == _as_uuid(decision["organization_id"]),
+                    BINDINGS.c.tenant_id == str(decision["tenant_id"]),
+                    BINDINGS.c.customer_org_id == str(decision["customer_org_id"]),
+                    BINDINGS.c.revoked_at.is_(None),
+                )
+            ).scalar_one()
+        )
+        if existing:
+            blocked_reasons.append(DUPLICATE_ACTIVE)
+
+        if decision["binding_status"] in VERIFIER_REQUIRED_STATUSES:
+            verified_elsewhere = int(
+                connection.execute(
+                    sa.select(sa.func.count())
+                    .select_from(BINDINGS)
+                    .where(
+                        BINDINGS.c.organization_id
+                        == _as_uuid(decision["organization_id"]),
+                        BINDINGS.c.binding_status.in_(
+                            sorted(VERIFIER_REQUIRED_STATUSES)
+                        ),
+                        BINDINGS.c.revoked_at.is_(None),
+                    )
+                ).scalar_one()
+            )
+            if verified_elsewhere:
+                blocked_reasons.append(VERIFIED_ALREADY_EXISTS)
+
     written = 0
-    if decision["storage_allowed"] and connection is not None:
+    if decision["storage_allowed"] and connection is not None and not blocked_reasons:
         moment = created_at or datetime.now(UTC)
         connection.execute(
             sa.insert(BINDINGS).values(
@@ -422,6 +557,14 @@ def insert_binding(
             "storage_allowed": bool(decision["storage_allowed"]),
             "write_performed": bool(written),
             "rows_written": written,
+            # Reported for every status, refused only for a verified binding.
+            # A caller whose `is_demo` disagreed with the organization row can
+            # see that it did.
+            "is_demo_derived_from_the_organization_row": (
+                bool(classification.get("is_demo"))
+                if classification.get("classification_available")
+                else None
+            ),
             "blocked_reasons": blocked_reasons,
         }
     )
@@ -479,6 +622,7 @@ def get_active_binding(
         blocked_reasons.append("no_connection_supplied_so_nothing_was_read")
 
     row = None
+    matches = 0
     if not blocked_reasons:
         query = _anchored_select(organization_id).where(BINDINGS.c.revoked_at.is_(None))
         if str(tenant_id or "").strip():
@@ -487,9 +631,18 @@ def get_active_binding(
             query = query.where(
                 BINDINGS.c.customer_org_id == str(customer_org_id).strip()
             )
-        row = connection.execute(query).mappings().first()
-        if row is None:
+        rows = connection.execute(query).mappings().all()
+        matches = len(rows)
+        if matches == 0:
             blocked_reasons.append("no_active_binding_for_this_organization")
+        elif matches > 1:
+            # Gate 137D. This used to take `.first()` off an unordered query
+            # and call the result "the one live binding". Two rows contradicting
+            # each other is a conflict somebody has to resolve, not a coin toss
+            # this function should be making on their behalf.
+            blocked_reasons.append(AMBIGUOUS_ACTIVE)
+        else:
+            row = rows[0]
 
     facts = _row_to_facts(row) if row is not None else {}
     production_verified = bool(
@@ -522,6 +675,9 @@ def get_active_binding(
         read_performed=row is not None,
         rows_written=0,
         rows_read=1 if row is not None else 0,
+        # Reported, so an ambiguous read says how ambiguous rather than only
+        # that it refused.
+        rows_matched=matches,
         blocked_reasons=blocked_reasons,
     )
 

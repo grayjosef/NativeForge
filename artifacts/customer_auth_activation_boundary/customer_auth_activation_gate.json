@@ -41,6 +41,7 @@
   "current_org_id_set": false,
   "customer_auth_decision_supplied": false,
   "customer_auth_live": false,
+  "customer_auth_live_scope": "none",
   "dev_header_disabled_for_production": false,
   "dev_header_exposure_supplied": false,
   "dev_header_routes_measured": null,
@@ -137,7 +138,17 @@
   "owner_approval_present": false,
   "owner_approval_source": "absent",
   "production_rollout": false,
+  "production_write_blockers": [
+    "verified_operational_binding_absent_so_production_writes_are_refused"
+  ],
+  "production_write_readiness": false,
+  "production_write_readiness_requires": [
+    "customer_auth_live",
+    "verified_operational_binding"
+  ],
   "provider_configured": false,
+  "real_org_binding_activation_approved": false,
+  "real_org_binding_activation_decision_supplied": false,
   "real_sessions_created": false,
   "real_users_created": false,
   "rls_claim_guard_available": true,
@@ -148,5 +159,9 @@
   "secret_value_emitted": false,
   "secrets_stored": false,
   "session_cookie_policy_available": true,
-  "session_signing_key_ready": false
+  "session_signing_key_ready": false,
+  "verified_binding_is_for_the_demo_organization": false,
+  "verified_binding_organization_id": null,
+  "verified_binding_readback_supplied": false,
+  "verified_operational_binding": false
 }

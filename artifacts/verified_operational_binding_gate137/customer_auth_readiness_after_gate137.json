@@ -1,0 +1,22 @@
+{
+  "controlled_customer_pilot": false,
+  "customer_auth_live_is_not_production_readiness": true,
+  "deterministic_gate_no_evidence_supplied": {
+    "customer_auth_live": false,
+    "customer_auth_live_scope": "none",
+    "login_live": false,
+    "production_write_readiness": false,
+    "verified_operational_binding": false
+  },
+  "production_rollout": false,
+  "production_write_readiness_requires": [
+    "customer_auth_live",
+    "verified_operational_binding"
+  ],
+  "schema_version": "nf_verified_operational_binding_gate137_artifact_v1",
+  "verified_operational_binding_in_required_auth_gates": false,
+  "verified_operational_binding_in_required_auth_gates_because": "it is not; the dependency runs the other way and adding it would be a cycle",
+  "what_consumes_verified_operational_binding": [
+    "award_requirements_repository_service: a production requirement write is refused without one"
+  ]
+}

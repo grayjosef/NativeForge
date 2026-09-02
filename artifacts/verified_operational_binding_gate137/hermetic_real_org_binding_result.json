@@ -1,0 +1,61 @@
+{
+  "database": "in_memory_sqlite_built_for_this_call",
+  "does_not_prove": [
+    "anything about the runtime real organization, which was not opened"
+  ],
+  "first_write": {
+    "blocked_reasons": [],
+    "invariant_failures": [],
+    "is_demo_derived": false,
+    "readback_performed": true,
+    "verified_operational_binding": true,
+    "write_performed": true
+  },
+  "fixture_is_neither_the_demo_org_nor_the_real_one": true,
+  "fixture_org_type": "real",
+  "fixture_organization_id": "cccccccc-dddd-eeee-ffff-000000000001",
+  "proves": [
+    "the verified binding write path works end to end",
+    "is_demo is derived, and the row lands in the real partition",
+    "the row can be read back by organization_id",
+    "a second active binding for the same labels is refused",
+    "a second active VERIFIED binding for the organization is refused whatever its labels say",
+    "exactly one row exists afterwards"
+  ],
+  "readback_by_organization_id": {
+    "binding_status": "verified_binding",
+    "demo_fixture": false,
+    "production_verified_binding": true,
+    "read_performed": true,
+    "rows_matched": 1
+  },
+  "schema_version": "nf_verified_operational_binding_gate137_artifact_v1",
+  "second_write_other_labels": {
+    "blocked_reasons": [
+      "repository:an_active_verified_binding_already_exists_for_this_organization"
+    ],
+    "invariant_failures": [],
+    "is_demo_derived": false,
+    "readback_performed": false,
+    "verified_operational_binding": false,
+    "write_performed": false
+  },
+  "second_write_same_labels": {
+    "blocked_reasons": [
+      "repository:an_active_binding_already_exists_for_this_organization_and_labels",
+      "repository:an_active_verified_binding_already_exists_for_this_organization"
+    ],
+    "invariant_failures": [],
+    "is_demo_derived": false,
+    "readback_performed": false,
+    "verified_operational_binding": false,
+    "write_performed": false
+  },
+  "stored_rows": [
+    {
+      "binding_status": "verified_binding",
+      "is_demo": false,
+      "organization_id": "cccccccc-dddd-eeee-ffff-000000000001"
+    }
+  ]
+}

@@ -54,12 +54,38 @@ NOW = datetime(2026, 8, 30, 12, 0, 0, tzinfo=UTC)
 VERIFIED_AT = NOW.isoformat()
 
 
+#: Gate 137D gave `insert_binding` an `is_demo` derived from the organization
+#: row, so a *verified* binding now needs one to exist. The fixture builds it.
+#:
+#: This is not the check being worked around - it is the world the check reads.
+#: Without the row the permitted branch below became unreachable, and an
+#: unreachable permitted branch makes every refusal above it unfalsifiable,
+#: which is the defect this file was written to catch in the first place.
+_ORGANIZATIONS = sa.Table(
+    "organizations",
+    sa.MetaData(),
+    sa.Column("id", sa.Uuid(as_uuid=True), primary_key=True),
+    sa.Column("org_type", sa.String(length=16), nullable=False),
+    sa.Column("seat_cap", sa.Integer(), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+)
+
+
 @pytest.fixture
 def bindings_db():
     """A real table in a database that lives for one test."""
     engine = sa.create_engine("sqlite://")
     repo_svc.BINDINGS.create(engine)
+    _ORGANIZATIONS.create(engine)
     with engine.begin() as conn:
+        conn.execute(
+            sa.insert(_ORGANIZATIONS).values(
+                id=uuid.UUID(ORG),
+                org_type="real",
+                seat_cap=5,
+                created_at=datetime(2026, 9, 2, tzinfo=UTC),
+            )
+        )
         yield conn
     engine.dispose()
 
@@ -494,6 +520,88 @@ def test_the_operational_branch_is_reachable_with_auth_injected(bindings_db):
     assert result["verified_operational_binding"] is True
     assert result["blocked_reasons"] == []
     assert flow_svc.workflow_invariant_failures(result) == []
+
+
+def test_a_verified_binding_needs_the_organization_row_to_classify_it():
+    """Gate 137D's refusal, reached against a database with no organizations.
+
+    `verified_binding_workflow_service` passes
+    `is_demo=bool(principal["is_demo_principal"])` - a principal's
+    self-description choosing an organization's RLS partition. For a verified
+    binding that is not good enough, and an unclassifiable organization is
+    refused rather than admitted on the caller's word.
+    """
+    engine = sa.create_engine("sqlite://")
+    repo_svc.BINDINGS.create(engine)
+    with engine.begin() as conn:
+        result = flow_svc.run_binding_workflow(
+            operation="create_verified_binding",
+            principal=_principal(["tenant_admin"]),
+            connection=conn,
+            customer_auth_live=True,
+            login_live=True,
+            **_flow_row(
+                binding_status="verified_binding",
+                binding_source="admin_verified",
+                binding_confidence="verified",
+                verified_by_identity_id=VERIFIER,
+                verified_at=VERIFIED_AT,
+            ),
+        )
+    engine.dispose()
+
+    assert result["repository_write_performed"] is False
+    assert result["verified_operational_binding"] is False
+    assert (
+        f"repository:{repo_svc.VERIFIED_NEEDS_CLASSIFICATION}"
+        in result["blocked_reasons"]
+    )
+
+
+def test_a_demo_organization_refuses_a_verified_binding_whatever_the_principal_says():
+    """The hole Gate 137A measured, closed at the write path every caller uses.
+
+    The principal says `is_demo_principal: False`; the organization row says
+    demo. The row wins, and the row is what pairs with the RLS predicate.
+    """
+    engine = sa.create_engine("sqlite://")
+    repo_svc.BINDINGS.create(engine)
+    _ORGANIZATIONS.create(engine)
+    with engine.begin() as conn:
+        conn.execute(
+            sa.insert(_ORGANIZATIONS).values(
+                id=uuid.UUID(ORG),
+                org_type="demo",
+                seat_cap=5,
+                created_at=datetime(2026, 9, 2, tzinfo=UTC),
+            )
+        )
+        result = flow_svc.run_binding_workflow(
+            operation="create_verified_binding",
+            principal=_principal(["tenant_admin"]),
+            connection=conn,
+            customer_auth_live=True,
+            login_live=True,
+            **_flow_row(
+                binding_status="verified_binding",
+                binding_source="admin_verified",
+                binding_confidence="verified",
+                verified_by_identity_id=VERIFIER,
+                verified_at=VERIFIED_AT,
+            ),
+        )
+        written = conn.execute(
+            sa.select(sa.func.count()).select_from(repo_svc.BINDINGS)
+        ).scalar_one()
+    engine.dispose()
+
+    assert result["repository_write_performed"] is False
+    assert written == 0
+    assert (
+        "repository:demo_fixture_cannot_be_a_verified_binding"
+        in result["blocked_reasons"]
+    )
+    assert f"repository:{repo_svc.IS_DEMO_MISMATCH}" in result["blocked_reasons"]
 
 
 def test_an_operational_binding_claimed_without_auth_is_an_invariant_failure():

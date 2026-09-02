@@ -1,0 +1,36 @@
+{
+  "boundary_decision": {
+    "approves_real_org_binding_activation": false,
+    "blocked_reasons": [
+      "demo_organization_is_never_a_verified_operational_binding",
+      "injected_authorization_ignored_for_a_protected_organization:bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "organization_is_not_in_the_authorized_real_org_list"
+    ],
+    "organization_is_demo": true
+  },
+  "demo_organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "gate113_contract_strengthened_by": "checking the organization rather than the label the caller supplied for it",
+  "gate113_contract_weakened": false,
+  "not_refused_by": "a caller-supplied is_demo label",
+  "refused_by": "organizations.org_type, read from the row",
+  "refused_even_when_listed_as_authorized": true,
+  "refused_even_with_a_well_formed_approval": true,
+  "schema_version": "nf_verified_operational_binding_gate137_artifact_v1",
+  "write_attempt_with_is_demo_false": {
+    "blocked_reasons": [
+      "boundary:demo_organization_is_never_a_verified_operational_binding",
+      "boundary:injected_authorization_ignored_for_a_protected_organization:bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "boundary:organization_is_not_in_the_authorized_real_org_list",
+      "contract:demo_fixture_binding_cannot_carry_a_verifier",
+      "contract:demo_fixture_cannot_be_a_verified_binding",
+      "demo_organization_cannot_be_a_verified_operational_binding",
+      "real_org_binding_activation_not_approved",
+      "supplied_is_demo_disagrees_with_the_organization_row"
+    ],
+    "invariant_failures": [],
+    "is_demo_derived": true,
+    "readback_performed": false,
+    "verified_operational_binding": false,
+    "write_performed": false
+  }
+}

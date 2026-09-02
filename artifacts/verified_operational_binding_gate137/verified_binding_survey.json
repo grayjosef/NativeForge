@@ -1,0 +1,51 @@
+{
+  "ambiguous_read_refusal": "several_active_bindings_match_so_none_of_them_is_the_binding",
+  "defects_found": [
+    "prepare_insert took is_demo as a caller parameter and read no organization row, so a verified binding was written onto the demo organization with is_demo=False, production_verified_binding True, and every invariant passing",
+    "the row landed in an RLS partition matching neither a demo session nor a real one",
+    "verified_binding_workflow_service derived is_demo from the PRINCIPAL, so a principal's self-description chose an organization's partition",
+    "no approval of any kind was required to write a verified binding for the real organization; authorization is role-based and checks no organization id",
+    "two active verified bindings for one organization and label pair both wrote, and get_active_binding returned whichever came back first from an unordered query",
+    "RESULT_FIELDS was declared in Gate 120B and consumed by nothing until this gate asserted it"
+  ],
+  "direction_of_the_dependency": "verified_operational_binding requires customer_auth_live, not the reverse; it is not in REQUIRED_AUTH_GATES and adding it would close the cycle Gate 134F opened",
+  "duplicate_refusal": "an_active_binding_already_exists_for_this_organization_and_labels",
+  "gate": "137",
+  "is_demo_authority_now": "organizations.org_type",
+  "modules_named_for_survey_that_do_not_exist": [
+    "customer_identity_repository_service",
+    "org_membership_repository_service",
+    "customer_auth_current_user_service"
+  ],
+  "result_fields_declared": [
+    "schema_version",
+    "operation",
+    "table_name",
+    "rls_anchor",
+    "organization_id",
+    "tenant_id",
+    "customer_org_id",
+    "binding_status",
+    "binding_source",
+    "binding_confidence",
+    "verified_by_identity_id",
+    "verified_at",
+    "revoked_by_identity_id",
+    "revoked_at",
+    "human_review_required",
+    "production_verified_binding",
+    "demo_fixture",
+    "storage_allowed",
+    "write_performed",
+    "read_performed",
+    "rows_written",
+    "rows_read",
+    "rows_matched",
+    "rows_deleted",
+    "blocked_reasons"
+  ],
+  "schema_version": "nf_verified_operational_binding_gate137_artifact_v1",
+  "second_verified_binding_refusal": "an_active_verified_binding_already_exists_for_this_organization",
+  "what_held_it_shut_before_this_gate": "production_verified_binding_requires_live_customer_auth, and Gate 136 made customer_auth_live reachable",
+  "why_verified_operational_binding_was_false": "verified_binding_workflow_service derives it as auth_live AND repository_write_performed AND production_verified_binding AND NOT demo_fixture; auth_live was false, and that was the only reason"
+}

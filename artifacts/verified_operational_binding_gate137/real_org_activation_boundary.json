@@ -1,0 +1,60 @@
+{
+  "approval_object_required": true,
+  "approval_required_fields": [
+    "organization_id",
+    "authorized_by",
+    "authorization_scope",
+    "environment",
+    "recorded_at"
+  ],
+  "approval_scopes": [
+    "production_binding_activation",
+    "real_org_binding_activation"
+  ],
+  "authorized_list_is_empty": true,
+  "authorized_list_is_empty_because": "Mayhem's standing authorization refuses real org activation and refuses binding to this id by name",
+  "authorized_real_organization_ids": [],
+  "decision_for_the_real_org": {
+    "approves_production_binding_activation": false,
+    "approves_production_rollout": false,
+    "approves_real_org_binding_activation": false,
+    "blocked_reasons": [
+      "organization_is_the_explicitly_refused_real_org"
+    ]
+  },
+  "forbidden_authority_keys": [
+    "tenant_id",
+    "customer_org_id",
+    "organization_profile_id",
+    "profile_id",
+    "subject",
+    "email"
+  ],
+  "grant_environment_variable": null,
+  "no_environment_variable_can_approve": true,
+  "not_approved": [
+    "production_rollout",
+    "controlled_customer_pilot",
+    "live_customer_data",
+    "real_customer_persistence",
+    "email_delivery",
+    "object_store_activation",
+    "live_grant_source_monitoring"
+  ],
+  "production_needs_its_own_scope": true,
+  "real_organization_id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "refused_by_name": true,
+  "revocation_environment_variable": "NF_REAL_ORG_BINDING_ACTIVATION_REVOKED",
+  "schema_version": "nf_verified_operational_binding_gate137_artifact_v1",
+  "write_attempt_against_the_real_org": {
+    "blocked_reasons": [
+      "boundary:organization_is_the_explicitly_refused_real_org",
+      "real_org_binding_activation_not_approved"
+    ],
+    "invariant_failures": [],
+    "is_demo_derived": false,
+    "readback_performed": false,
+    "verified_operational_binding": false,
+    "write_performed": false
+  }
+}

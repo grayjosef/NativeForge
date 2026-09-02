@@ -81,6 +81,11 @@ OIDC_ENV_KEYS: tuple[str, ...] = (
 # Every gate that must be true before customer auth may be called live. Named
 # individually so a report can say which one is missing rather than only that
 # activation is refused.
+#: Gate 137E. The demo organization, named here so the reporting layer can
+#: refuse a verified-binding readback for it without importing the boundary
+#: service and taking its dependencies with it.
+DEMO_ORGANIZATION_ID = "bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
+
 REQUIRED_AUTH_GATES: tuple[str, ...] = (
     "provider_configured",
     "secret_present",
@@ -224,6 +229,8 @@ def build_customer_auth_activation_gate(
     dev_header_exposure: dict[str, Any] | None = None,
     invite_binding_evidence: dict[str, Any] | None = None,
     customer_auth_activation_decision: dict[str, Any] | None = None,
+    verified_binding_readback: dict[str, Any] | None = None,
+    real_org_binding_activation_decision: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """May customer authentication be activated? Deny by default.
 
@@ -392,10 +399,65 @@ def build_customer_auth_activation_gate(
         "session_signing_key_ready": bool(signing.get("can_sign_production_session")),
     }
 
+    # Gate 137E. `verified_operational_binding` reported beside
+    # `customer_auth_live`, never inside it.
+    #
+    # It is NOT in REQUIRED_AUTH_GATES and must not be added. The dependency
+    # runs the other way - `verified_binding_workflow_service` derives it as
+    # `auth_live and repository_write_performed and ...` - so putting it in
+    # the required set would close exactly the cycle Gate 134F spent a gate
+    # opening, and make every "not ready" claim above it unfalsifiable.
+    #
+    # Derived from a readback of the row, not from a parameter and not from
+    # the caller's word for it. Absent evidence it is false, which keeps this
+    # gate deterministic for the artifacts it feeds.
+    binding_readback = verified_binding_readback or {}
+    real_org_decision = real_org_binding_activation_decision or {}
+    verified_binding_organization = (
+        str(binding_readback.get("organization_id") or "").strip().lower() or None
+    )
+    verified_binding_is_demo_org = verified_binding_organization == DEMO_ORGANIZATION_ID
+    verified_operational_binding = bool(
+        binding_readback.get("production_verified_binding")
+        and binding_readback.get("read_performed")
+        and not binding_readback.get("demo_fixture")
+        # Gate 113's refusal applied to the BOOLEAN, not only to the blocker
+        # list. Written the other way round first: the reason was named and
+        # the flag still said true, which is the same declared-vs-derived
+        # shape this gate exists to catch - a refusal nothing acts on.
+        #
+        # `demo_fixture` above is the row's own label, and Gate 137A wrote a
+        # row onto the demo organization with that label false. So the
+        # organization is checked too, and neither check carries it alone.
+        and not verified_binding_is_demo_org
+    )
+
     blocked_reasons: list[str] = []
     for name in REQUIRED_AUTH_GATES:
         if not gates[name]:
             blocked_reasons.append(f"auth_gate_not_satisfied:{name}")
+
+    # Named precisely, and in a list of their own.
+    #
+    # These do NOT belong in `blocked_reasons`. That list has meant one thing
+    # since Gate 115 - what stops `customer_auth_live` - and putting a
+    # production-write blocker in it made a satisfied gate report a blocker,
+    # which broke Gate 115's `blocked_reasons == []` on the activated branch
+    # and was right to. A reason in the wrong list is a reason about the wrong
+    # question.
+    production_write_blockers: list[str] = []
+    if not verified_operational_binding:
+        production_write_blockers.append(
+            "verified_operational_binding_absent_so_production_writes_are_refused"
+        )
+    if verified_binding_is_demo_org:
+        # Gate 113's refusal, restated at the reporting layer. A binding on
+        # the demo organization is not a verified operational binding however
+        # its columns read - Gate 137A found one written there with
+        # `is_demo=False` and every invariant passing.
+        production_write_blockers.append(
+            "verified_binding_readback_is_for_the_demo_organization"
+        )
 
     # JWKS unvalidated is distinguished from JWKS validated-and-failed. Nothing
     # has been checked, and saying "failed" would be a fabricated measurement.
@@ -531,6 +593,36 @@ def build_customer_auth_activation_gate(
             ),
             "production_rollout": False,
             "controlled_customer_pilot": False,
+            # Gate 137E. Reported beside customer_auth_live, deliberately not
+            # inside it. See the derivation above for why adding it to
+            # REQUIRED_AUTH_GATES would be a cycle rather than a tightening.
+            "verified_operational_binding": verified_operational_binding,
+            "verified_binding_readback_supplied": bool(verified_binding_readback),
+            "verified_binding_organization_id": verified_binding_organization,
+            "verified_binding_is_for_the_demo_organization": (
+                verified_binding_is_demo_org
+            ),
+            "real_org_binding_activation_approved": bool(
+                real_org_decision.get("approves_real_org_binding_activation")
+            ),
+            "real_org_binding_activation_decision_supplied": bool(
+                real_org_binding_activation_decision
+            ),
+            # What `customer_auth_live` does and does not mean. Gate 136
+            # reached it for one demo organization with two real Google
+            # identities; that is not production readiness and this says so
+            # rather than leaving the reader to infer it.
+            "customer_auth_live_scope": (
+                "controlled_dev_demo_org_only" if customer_auth_live else "none"
+            ),
+            "production_write_readiness": bool(
+                customer_auth_live and verified_operational_binding
+            ),
+            "production_write_readiness_requires": [
+                "customer_auth_live",
+                "verified_operational_binding",
+            ],
+            "production_write_blockers": sorted(set(production_write_blockers)),
             "dev_header_routes_measured": (
                 (dev_header_exposure or {}).get("dev_header_route_count")
             ),
@@ -675,6 +767,29 @@ def activation_gate_invariant_failures(gate: dict[str, Any]) -> list[str]:
         fails.append("issuer_jwks_validated_without_a_check_being_performed")
 
     # The missing lists must agree with the gates they summarise.
+    if gate.get("verified_operational_binding"):
+        if gate.get("verified_binding_is_for_the_demo_organization"):
+            fails.append("verified_operational_binding_claimed_for_the_demo_org")
+        if not gate.get("verified_binding_readback_supplied"):
+            fails.append("verified_operational_binding_claimed_without_a_readback")
+
+    if gate.get("production_write_readiness"):
+        if not gate.get("verified_operational_binding"):
+            fails.append("production_write_readiness_without_a_verified_binding")
+        if not gate.get("customer_auth_live"):
+            fails.append("production_write_readiness_without_live_customer_auth")
+        if gate.get("production_write_blockers"):
+            fails.append("production_write_readiness_alongside_blockers")
+    elif "production_write_blockers" in gate and not gate.get(
+        "production_write_blockers"
+    ):
+        # Refused with nothing named is the state this gate exists to prevent.
+        fails.append("production_writes_refused_and_nothing_named_why")
+
+    scope = gate.get("customer_auth_live_scope")
+    if gate.get("customer_auth_live") and scope != "controlled_dev_demo_org_only":
+        fails.append(f"customer_auth_scope_widened:{scope}")
+
     expected_missing = [name for name in REQUIRED_AUTH_GATES if not gate.get(name)]
     if list(gate.get("missing_auth_gates") or []) != expected_missing:
         fails.append("missing_auth_gates_disagrees_with_the_gates")
