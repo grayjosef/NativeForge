@@ -1,0 +1,39 @@
+{
+  "collectors_activated": false,
+  "controlled_customer_pilot": false,
+  "customer_auth_live": false,
+  "email_sent": false,
+  "executable_now": true,
+  "fake_invite_acceptances": 0,
+  "fake_sessions_created": 0,
+  "fake_users_created": 0,
+  "gate": "136",
+  "invites_written_to_the_dev_database": 0,
+  "live_grant_sources_called": false,
+  "oauth_app_publishing_status": "external_testing",
+  "object_store_contacted": false,
+  "production_rollout": false,
+  "real_customer_data_written": false,
+  "real_organization_touched": false,
+  "remaining_human_step": "a second Google account, on the OAuth test-user list, signs in",
+  "schema_version": "nf_invite_activation_gate136_artifact_v1",
+  "second_account_must_be_an_oauth_test_user": true,
+  "verified_operational_binding": false,
+  "what_gate_135_left": {
+    "blockers": [
+      "invite_binding_passed"
+    ],
+    "customer_auth_live": false,
+    "why": "a completed invite needs a second real authenticated identity"
+  },
+  "what_gate_136_built": [
+    "migration 0039: invited_email_fingerprint, memberships.invite_id",
+    "record_acceptance: expiry, re-acceptance and identity-match refusals",
+    "insert_membership: invited_by and invite_id, both previously None",
+    "membership_invite_activation_service: the accept path",
+    "scripts/nativeforge_demo_invite_issue.py",
+    "scripts/nativeforge_demo_invite_accept.py",
+    "scripts/verify_nativeforge_customer_auth_live.sh",
+    "docs/operations/717_GATE136_SECOND_ACCOUNT_INVITE_EXECUTION.md"
+  ]
+}

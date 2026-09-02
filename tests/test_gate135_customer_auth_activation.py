@@ -77,15 +77,26 @@ def invite_db():
     engine.dispose()
 
 
-def _identity(conn, subject: str) -> str:
+def _identity(conn, subject: str, email: str | None = None) -> str:
+    """One identity.
+
+    Gate 136 gave acceptance an identity match, so an identity with no email
+    cannot accept anything - which is the correct refusal and means these
+    helpers have to say who they are.
+    """
     return boot_svc.upsert_identity(
         connection=conn,
         issuer=ISSUER,
         subject=subject,
+        email=email,
         email_verified=True,
         verification_source="oidc_token_signature",
         now=NOW,
     )["identity_id"]
+
+
+#: The address `_invite_fields` invites. An accepter has to hold it now.
+INVITED_EMAIL = "invitee@example.test"
 
 
 def _owner(conn) -> str:
@@ -310,7 +321,7 @@ def test_a_self_dealt_invite_is_refused_at_write_time(invite_db):
 def test_an_accepted_invite_alone_still_binds_nobody(invite_db):
     """Acceptance is not a membership."""
     owner = _owner(invite_db)
-    invitee = _identity(invite_db, "gate135-invitee")
+    invitee = _identity(invite_db, "gate135-invitee", email=INVITED_EMAIL)
     invite_repo.insert_invite(
         connection=invite_db,
         organization_id=DEMO_ORG,
@@ -344,7 +355,7 @@ def test_the_completed_branch_is_reachable(invite_db):
     cannot reach without a second real person.
     """
     owner = _owner(invite_db)
-    invitee = _identity(invite_db, "gate135-invitee")
+    invitee = _identity(invite_db, "gate135-invitee", email=INVITED_EMAIL)
     invite_repo.insert_invite(
         connection=invite_db,
         organization_id=DEMO_ORG,
@@ -366,6 +377,11 @@ def test_the_completed_branch_is_reachable(invite_db):
         role="grant_lead",
         membership_source="org_owner_approved",
         approved_by=owner,
+        # Gate 136: the membership names the invite it came through, and
+        # `memberships_from_a_completed_invite` is a join rather than an
+        # inference from a shared identity id.
+        invited_by=owner,
+        invite_id="nf-invite-1",
         now=NOW,
     )
 
@@ -415,6 +431,13 @@ def test_the_invite_vocabulary_matches_the_migration():
     source = Path("alembic/versions/0038_nf_membership_invites.py").read_text(
         encoding="utf-8"
     )
+    # Gate 136's 0039 added `invited_email_fingerprint`. The columns are
+    # checked against every migration that touches the table, not the one that
+    # created it - otherwise this test forbids the table ever being altered,
+    # which is not the drift it exists to catch.
+    columns_source = source + Path(
+        "alembic/versions/0039_invite_activation_columns.py"
+    ).read_text(encoding="utf-8")
     tree = ast.parse(source)
     found = {}
     for node in tree.body:
@@ -432,7 +455,7 @@ def test_the_invite_vocabulary_matches_the_migration():
     assert found["APPROVAL_STATES"] == set(APPROVAL_STATES)
 
     for column in invite_repo.INVITES.columns:
-        assert f'"{column.name}"' in source, column.name
+        assert f'"{column.name}"' in columns_source, column.name
 
 
 # ---------------------------------------------------------------------------

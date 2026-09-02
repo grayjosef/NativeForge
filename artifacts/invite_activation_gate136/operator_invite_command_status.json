@@ -1,0 +1,41 @@
+{
+  "address_printed": false,
+  "address_stored": false,
+  "address_written_to_an_artifact": false,
+  "argument": "--email <the invited person's address>",
+  "command": "scripts/nativeforge_demo_invite_issue.py",
+  "email_can_be_sent": false,
+  "email_sent": false,
+  "issuer_is_read_not_supplied": "the organization's active org_owner membership row",
+  "issues_and_approves_in_one_write": true,
+  "issues_and_approves_in_one_write_because": "an owner inviting somebody into their own organization is both, which is why the self-dealing refusal exists",
+  "organization_scope": {
+    "approved": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+    "environments": [
+      "dev",
+      "local",
+      "test"
+    ],
+    "refused_by_name": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  },
+  "refusals": [
+    "organization_is_the_explicitly_refused_real_org",
+    "organization_outside_the_approved_scope",
+    "environment_outside_the_approved_scope",
+    "organization_has_no_active_owner_to_invite_by"
+  ],
+  "schema_version": "nf_invite_activation_gate136_artifact_v1",
+  "what_reaches_the_database": [
+    "invited_email_domain",
+    "invited_email_fingerprint"
+  ],
+  "what_the_row_refuses": [
+    "invited_email",
+    "invited_subject",
+    "email",
+    "subject",
+    "token",
+    "id_token",
+    "access_token"
+  ]
+}

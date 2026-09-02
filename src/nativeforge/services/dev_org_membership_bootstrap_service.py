@@ -191,6 +191,10 @@ MEMBERSHIPS = sa.Table(
     sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
     sa.Column("revoked_at", sa.DateTime(timezone=True), nullable=True),
     sa.Column("expires_at", sa.DateTime(timezone=True), nullable=True),
+    # Migration 0039. How this membership came to exist, when it came through
+    # an invite. Nullable: the memberships that already exist did not, and
+    # must not claim to.
+    sa.Column("invite_id", sa.String(length=64), nullable=True),
     sa.UniqueConstraint(
         "organization_id", "identity_id", name="uq_nf_org_memberships_org_identity"
     ),
@@ -380,6 +384,8 @@ def prepare_membership_insert(
     role: Any = None,
     membership_source: Any = None,
     approved_by: Any = None,
+    invited_by: Any = None,
+    invite_id: Any = None,
     connection: Any = None,
     org_type_in_database: str | None = None,
     demo_org_ids: frozenset[uuid.UUID] | None = None,
@@ -387,6 +393,19 @@ def prepare_membership_insert(
     """Decide whether this membership may be written, and derive ``is_demo``.
 
     There is no ``is_demo`` parameter. The organization row supplies it.
+
+    ## ``invited_by`` and ``invite_id``
+
+    Gate 136. Both were hardcoded to ``None`` in the INSERT, so a membership
+    produced by a completed invite could not say so and
+    `evaluate_membership_provenance`'s refusal -
+    `completed_invite_provenance_without_invite_id` - was unfalsifiable from
+    the database.
+
+    A membership naming an invite must name who invited it. Enforced here on
+    every dialect and as a CHECK on PostgreSQL, for the same reason the
+    self-dealing rule is in two places: the dev database is SQLite, and a
+    guard that only fires in production is not a guard where it runs.
     """
     org_uuid = _as_uuid(organization_id)
     ident_uuid = _as_uuid(identity_id)
@@ -394,6 +413,8 @@ def prepare_membership_insert(
     src = _clean(membership_source).lower() or "unknown"
     rl = _clean(role).lower() or None
     approver = _as_uuid(approved_by)
+    inviter = _as_uuid(invited_by)
+    invite = _clean(invite_id) or None
 
     blocked_reasons: list[str] = []
 
@@ -443,6 +464,14 @@ def prepare_membership_insert(
     if src != SOURCE_NEEDING_NO_APPROVER and approver is None:
         blocked_reasons.append("membership_source_requires_an_approver")
 
+    if invite is not None and inviter is None:
+        blocked_reasons.append("membership_names_an_invite_without_naming_the_inviter")
+    if inviter is not None and inviter == ident_uuid:
+        # Inviting yourself into an organization is the membership half of the
+        # invite service's self-dealing gap, and it arrives here by a different
+        # road.
+        blocked_reasons.append("membership_invited_by_the_member_themselves")
+
     if self_approved:
         if connection is None or org_uuid is None:
             blocked_reasons.append(
@@ -482,6 +511,8 @@ def prepare_membership_insert(
             "role_source": ROLE_SOURCE,
             "membership_source": src,
             "approved_by": str(approver) if approver else None,
+            "invited_by": str(inviter) if inviter else None,
+            "invite_id": invite,
             "self_approved": self_approved,
             "bootstrap_membership": bootstrap,
             "existing_membership_count": existing_count,
@@ -524,7 +555,9 @@ def insert_membership(
                 membership_source=decision["membership_source"],
                 role=decision["role"],
                 role_source=ROLE_SOURCE,
-                invited_by=None,
+                # Gate 136: was hardcoded None, both of them.
+                invited_by=_as_uuid(decision["invited_by"]),
+                invite_id=decision["invite_id"],
                 approved_by=_as_uuid(decision["approved_by"]),
                 created_at=moment,
                 revoked_at=None,

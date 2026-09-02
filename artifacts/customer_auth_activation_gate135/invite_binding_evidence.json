@@ -41,6 +41,7 @@
     "requested_by_role",
     "invited_email_domain",
     "invited_subject_fingerprint",
+    "invited_email_fingerprint",
     "invite_state",
     "approval_state",
     "approved_by",

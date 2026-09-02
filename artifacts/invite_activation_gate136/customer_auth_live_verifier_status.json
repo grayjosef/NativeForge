@@ -1,0 +1,37 @@
+{
+  "checks": [
+    "backend_running",
+    "session_route_answered",
+    "measurement_available",
+    "login_live",
+    "dev_header_consumers_zero",
+    "dev_header_provider_modules",
+    "nf_dev_org_headers_false_safe",
+    "current_user_refuses_unauthenticated",
+    "invite_binding_passed",
+    "owner_activation_decision"
+  ],
+  "command": "scripts/verify_nativeforge_customer_auth_live.sh",
+  "counts_reported": [
+    "invite_rows",
+    "approved_invite_rows",
+    "accepted_invite_rows",
+    "membership_rows",
+    "memberships_from_a_completed_invite",
+    "memberships_matching_an_accepter_by_identity_only"
+  ],
+  "otherwise": "RESULT=BLOCKED with the exact blocker named",
+  "prints_cookies": false,
+  "prints_email_addresses": false,
+  "prints_pkce_verifier": false,
+  "prints_provider_subject": false,
+  "prints_secrets": false,
+  "prints_state": false,
+  "prints_tokens": false,
+  "reads_the_same_services_the_gate_reads": true,
+  "refuses_to_agree_when_the_gate_and_the_rows_disagree": true,
+  "result_pass_is_reachable": true,
+  "result_pass_only_when": "customer_auth_live is true",
+  "result_pass_proved_in": "tests/test_gate136_invite_activation_readiness.py::test_the_verifier_can_report_pass",
+  "schema_version": "nf_invite_activation_gate136_artifact_v1"
+}

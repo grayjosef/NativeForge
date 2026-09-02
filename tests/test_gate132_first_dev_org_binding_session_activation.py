@@ -1002,16 +1002,47 @@ def test_the_vocabularies_match_the_migrations_that_enforce_them():
     assert set(boot_svc.VERIFICATION_SOURCES) == {"oidc_token_signature"}
 
 
+def _migrations_touching(table_name):
+    """Every migration that names this table, creating one or altering it.
+
+    The first version of this read only the CREATE migration, which made the
+    check "the Core table matches the table as first written" - so Gate 136's
+    `nf_org_memberships.invite_id`, added by 0039, failed it. The drift this
+    exists to catch is a Core Table column the migrations never defined, and
+    that is still caught: a column defined by NO migration appears in none of
+    these files.
+    """
+    root = Path(__file__).resolve().parents[1] / "alembic" / "versions"
+    bodies = []
+    for path in sorted(root.glob("0*.py")):
+        body = path.read_text(encoding="utf-8")
+        if table_name in body:
+            bodies.append(body)
+    assert bodies, table_name
+    return "\n".join(bodies)
+
+
 def test_the_core_tables_carry_the_columns_the_migrations_define():
     """Gate 119C shipped a Core table weaker than production and passed on it."""
-    for prefix, table, skip in (
-        ("0023", boot_svc.IDENTITIES, set()),
-        ("0024", boot_svc.MEMBERSHIPS, set()),
-    ):
-        source = _migration_source(prefix)
+    for table in (boot_svc.IDENTITIES, boot_svc.MEMBERSHIPS):
+        source = _migrations_touching(table.name)
         for column in table.columns:
             assert f'"{column.name}"' in source, f"{table.name}.{column.name}"
-        assert skip == set()
+
+
+def test_a_column_no_migration_defines_would_still_be_caught():
+    """Otherwise the widening above turned the check into a formality."""
+    invented = sa.Table(
+        boot_svc.MEMBERSHIPS.name,
+        sa.MetaData(),
+        sa.Column("id", sa.Uuid(as_uuid=True), primary_key=True),
+        sa.Column("a_column_no_migration_ever_defined", sa.String(8)),
+    )
+    source = _migrations_touching(invented.name)
+    missing = [
+        column.name for column in invented.columns if f'"{column.name}"' not in source
+    ]
+    assert missing == ["a_column_no_migration_ever_defined"]
 
 
 def test_a_scratch_database_is_never_the_real_one(bootstrap_db):

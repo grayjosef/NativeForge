@@ -1,0 +1,41 @@
+{
+  "api_route_rejected": true,
+  "command": "scripts/nativeforge_demo_invite_accept.py",
+  "email_sent": false,
+  "membership_names_its_invite": true,
+  "membership_source_written": "org_owner_approved",
+  "no_override_bypasses_the_identity_match": true,
+  "one_transaction": true,
+  "one_transaction_because": "an invite marked accepted with no membership behind it reads as consumed, and its id cannot be reused",
+  "operator_can_choose_the_accepter": false,
+  "operator_cannot_choose_because": "the identity is resolved from nf_identities by address and the acceptance then requires it to match the invite's own fingerprint",
+  "provenance_written": "completed_invite",
+  "refusals": [
+    "accepting_identity_does_not_exist",
+    "accepting_identity_is_not_the_invited_identity",
+    "invite_already_accepted",
+    "invite_expired",
+    "invite_not_found",
+    "invite_requested_approved_and_accepted_by_one_identity",
+    "invite_revoked",
+    "membership_already_exists",
+    "no_identity_has_signed_in_with_that_address",
+    "organization_is_not_a_demo_organization",
+    "seat_cap_reached",
+    "several_identities_share_that_address"
+  ],
+  "refusals_added_by_gate_136": [
+    "accepting_identity_is_not_the_invited_identity",
+    "invite_already_accepted",
+    "invite_expired"
+  ],
+  "schema_version": "nf_invite_activation_gate136_artifact_v1",
+  "second_identity_must_have_authenticated": true,
+  "service": "membership_invite_activation_service",
+  "shape": "operator script",
+  "shape_chosen_because": "the callback issues a session cookie only when the identity already resolves to an organization through a membership row, so an invited person cannot hold a session and an authenticated accept route has nobody to authenticate",
+  "trusted_provenances": [
+    "completed_invite"
+  ],
+  "unauthenticated_route_rejected_because": "it would have to trust an invite id in a URL, an email in a body, or a header - the authority Gates 111 through 135 removed"
+}
