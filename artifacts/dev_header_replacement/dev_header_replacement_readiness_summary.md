@@ -15,8 +15,8 @@ trusts needs customer auth.
 ```text
 before   dev_header_used_by_routes: 15
 after    route modules:     0
-         provider modules:  2
-         prose-only:        18
+         provider modules:  0
+         prose-only:        5
 ```
 
 `deps_db.py` defines the dev-header chain and depends on its own

@@ -1,0 +1,39 @@
+{
+  "dev_header_mention_only_modules": [
+    "auth.py",
+    "capability_guard.py",
+    "customer_org_context_dependency.py",
+    "deps_customer_auth.py",
+    "deps_db.py"
+  ],
+  "dev_header_provider_modules": [],
+  "dev_header_route_consumers": 0,
+  "get_db_session_kept": true,
+  "get_db_session_kept_because": "route modules import it; it hands out a session and reads no header",
+  "get_db_session_kept_importers": [
+    "activation_routes.py",
+    "form_package_routes.py",
+    "grant_spark_routes.py",
+    "nofo_extraction_routes.py",
+    "opportunity_discovery_routes.py",
+    "pursuit_brief_routes.py",
+    "pursuit_routes.py",
+    "source_ingestion_routes.py",
+    "spark_scoring_routes.py",
+    "sprint0_routes.py",
+    "tribal_profile_routes.py",
+    "trust_routes.py"
+  ],
+  "header_declarations_remaining": 0,
+  "nf_dev_org_headers_false_safe": true,
+  "nothing_reads_the_header_now": true,
+  "removed": [
+    "deps_db.get_org_context_with_db",
+    "deps_db.require_demo_org_db",
+    "deps_db.require_real_org_db",
+    "api/isolation_deps.py (whole module)",
+    "deps_customer_auth.get_dev_org_context_explicit_only"
+  ],
+  "route_consumers_before_removal": 0,
+  "schema_version": "nf_customer_auth_activation_gate135_artifact_v1"
+}

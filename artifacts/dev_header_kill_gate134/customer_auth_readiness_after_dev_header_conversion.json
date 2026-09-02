@@ -66,10 +66,7 @@
   "scan_applies_to": "artifacts/dev_header_kill_gate134",
   "schema_version": "nf_dev_header_kill_artifact_v1",
   "shutdown_readiness": {
-    "dev_header_provider_modules": [
-      "deps_db.py",
-      "isolation_deps.py"
-    ],
+    "dev_header_provider_modules": [],
     "dev_header_route_modules": [],
     "dev_header_used_by_routes": 0,
     "safe_to_disable_now_with_a_principal": true,

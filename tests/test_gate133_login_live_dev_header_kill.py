@@ -475,29 +475,39 @@ def test_the_owner_decision_is_revocable_and_not_grantable(monkeypatch):
     assert decision["revoked"] is True
     assert decision["approves_login_live"] is False
 
-    # One environment variable is read, and it can only turn the decision off.
-    # Parsed rather than counted: the module docstring quotes the old
-    # `os.environ.get(APPROVAL_ENV, ...)` line it replaced, so a substring count
-    # sees two and means one.
+    # Every environment variable this module reads can only turn a decision
+    # off. Parsed rather than counted: the module docstring quotes the old
+    # `os.environ.get(APPROVAL_ENV, ...)` line it replaced, so a substring
+    # count sees a grant that is not there.
+    #
+    # Gate 135 added a second decision and with it a second revocation
+    # variable, so counting the reads is no longer the point - naming them is.
+    # This asserts what each read is FOR, which is the claim that matters and
+    # the one a third decision cannot quietly break.
     import ast
 
     tree = ast.parse(Path(owner_svc.__file__).read_text(encoding="utf-8"))
     env_reads = [
         node
         for node in ast.walk(tree)
-        if isinstance(node, ast.Attribute)
-        and node.attr == "environ"
-        and isinstance(node.value, ast.Name)
-        and node.value.id == "os"
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "get"
+        and isinstance(node.func.value, ast.Attribute)
+        and node.func.value.attr == "environ"
+        and isinstance(node.func.value.value, ast.Name)
+        and node.func.value.value.id == "os"
     ]
-    assert len(env_reads) == 1
-
-    names = {
-        node.id
-        for node in ast.walk(tree)
-        if isinstance(node, ast.Name) and node.id == "REVOCATION_ENV"
+    read_names = {
+        node.args[0].id for node in env_reads if isinstance(node.args[0], ast.Name)
     }
-    assert names == {"REVOCATION_ENV"}
+    assert len(read_names) == len(env_reads)
+    assert read_names == {"REVOCATION_ENV", "CUSTOMER_AUTH_REVOCATION_ENV"}
+    assert all(name.endswith("REVOCATION_ENV") for name in read_names)
+
+    # And both of them name a variable that says "revoked".
+    for constant in (owner_svc.REVOCATION_ENV, owner_svc.CUSTOMER_AUTH_REVOCATION_ENV):
+        assert constant.endswith("_REVOKED"), constant
 
 
 def test_the_decision_enumerates_what_it_does_not_approve():

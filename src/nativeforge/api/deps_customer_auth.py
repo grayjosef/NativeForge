@@ -42,17 +42,20 @@ Both needed a database session, so the two session-bearing dependencies take
 one. `get_dev_org_context_explicit_only` does not: it authenticates nobody and
 must not gain the ability to look anything up.
 
-## Three dependencies
+## Two dependencies
 
 ```text
 get_customer_org_context_required   a verified session, or 401
 get_customer_org_context_optional   a verified session, or no org context
-get_dev_org_context_explicit_only   X-NF-Org-Id, refused in production
 ```
 
-The third is named for what it is. The current behaviour is the same posture
-reached by accident — `nf_dev_org_headers` defaults true and nobody turned it
-off — and the difference between this and that is a decision.
+There was a third, `get_dev_org_context_explicit_only`, which took
+`X-NF-Org-Id` and refused it in production. Gate 122 added it to name the header
+for what it was — a convenience for an operator with curl, not authentication.
+Gate 135 deleted it: no route ever depended on it, and a function that reads the
+header is one edit from a route trusting it again.
+
+Nothing in this module reads a header now.
 
 ## optional never fabricates an organization
 
@@ -75,7 +78,7 @@ from __future__ import annotations
 import uuid
 from typing import Annotated, Any
 
-from fastapi import Cookie, Depends, Header, HTTPException, status
+from fastapi import Cookie, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from nativeforge.api.deps import get_db
@@ -83,7 +86,6 @@ from nativeforge.api.org_context import OrgContext
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.lib.settings import get_settings
 from nativeforge.services.customer_auth_org_context_dependency_service import (
-    DEV_HEADER_NAME,
     evaluate_org_context,
 )
 from nativeforge.services.customer_session_verifier_service import (
@@ -262,32 +264,6 @@ def get_customer_org_context_optional(
     if not decision["org_context_available"]:
         return None
     return _org_context_from(decision, db)
-
-
-def get_dev_org_context_explicit_only(
-    x_nf_org_id: Annotated[str | None, Header(alias=DEV_HEADER_NAME)] = None,
-) -> OrgContext:
-    """A dev-only organization context selected by header.
-
-    Refused in production with 403, and when the setting is off with 503. The
-    header is a convenience for an operator with curl; it is not authentication
-    and `production_safe` is false on every result it produces.
-    """
-    decision = evaluate_request_org_context(
-        mode="dev_demo_explicit", session_cookie=None, dev_header=x_nf_org_id
-    )
-    context = _org_context_from(decision)
-    if not decision["dev_org_context_available"] or context is None:
-        raise HTTPException(
-            status_code=decision["http_status"],
-            detail={
-                "error": "no_dev_organization_context",
-                "blocked_reasons": decision["blocked_reasons"],
-                "dependency_mode": decision["dependency_mode"],
-                "production_context": decision["production_context"],
-            },
-        )
-    return context
 
 
 def require_customer_demo_org(

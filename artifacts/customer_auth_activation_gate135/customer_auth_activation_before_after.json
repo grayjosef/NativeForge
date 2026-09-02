@@ -1,0 +1,33 @@
+{
+  "after": {
+    "blockers": [
+      "invite_binding_passed"
+    ],
+    "customer_auth_live": false,
+    "dev_header_chains_present": 0,
+    "dev_header_route_consumers": 0,
+    "login_live": true
+  },
+  "before": {
+    "blockers": [
+      "invite_binding_passed",
+      "owner_approval"
+    ],
+    "customer_auth_live": false,
+    "dev_header_chains_present": 5,
+    "login_live": true,
+    "recorded_by": "Gate 134"
+  },
+  "controlled_customer_pilot": false,
+  "production_rollout": false,
+  "real_customer_data_written": false,
+  "real_organization_touched": false,
+  "schema_version": "nf_customer_auth_activation_gate135_artifact_v1",
+  "what_cleared": [
+    "owner_approval"
+  ],
+  "what_remains": [
+    "invite_binding_passed"
+  ],
+  "why_it_remains": "a completed invite needs an invitee who authenticates, and the demo organization has one identity. Inventing a second would be faking a user."
+}

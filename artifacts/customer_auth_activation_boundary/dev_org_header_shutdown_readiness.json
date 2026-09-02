@@ -14,30 +14,14 @@
   "dev_header_is_customer_auth": false,
   "dev_header_is_production_safe": false,
   "dev_header_mention_only_modules": [
-    "activation_routes.py",
     "auth.py",
     "capability_guard.py",
     "customer_org_context_dependency.py",
     "deps_customer_auth.py",
-    "form_package_routes.py",
-    "grant_spark_routes.py",
-    "nofo_extraction_routes.py",
-    "operator_workbench_advisory_routes.py",
-    "opportunity_discovery_routes.py",
-    "pursuit_brief_routes.py",
-    "pursuit_routes.py",
-    "source_ingestion_routes.py",
-    "spark_scoring_routes.py",
-    "sprint0_routes.py",
-    "stage12_guided_demo_routes.py",
-    "tribal_profile_routes.py",
-    "trust_routes.py"
+    "deps_db.py"
   ],
   "dev_header_name": "X-NF-Org-Id",
-  "dev_header_provider_modules": [
-    "deps_db.py",
-    "isolation_deps.py"
-  ],
+  "dev_header_provider_modules": [],
   "dev_header_route_modules": [],
   "dev_header_setting": "nf_dev_org_headers",
   "dev_header_used_by_routes": 0,

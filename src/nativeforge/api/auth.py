@@ -99,6 +99,7 @@ from nativeforge.services.customer_auth_jwks_validation_evidence_service import 
     record_validation_evidence,
 )
 from nativeforge.services.customer_auth_owner_activation_decision_service import (
+    build_customer_auth_activation_decision,
     build_owner_activation_decision,
 )
 from nativeforge.services.customer_auth_redirect_flow_service import (
@@ -145,6 +146,9 @@ from nativeforge.services.dev_org_membership_bootstrap_service import (
 from nativeforge.services.identity_org_session_resolution_service import (
     resolve_session_organization,
 )
+from nativeforge.services.membership_invite_repository_service import (
+    build_invite_binding_evidence,
+)
 from nativeforge.services.oidc_provider_discovery_service import (
     build_provider_endpoints,
 )
@@ -186,7 +190,9 @@ def _gate(db: Session | None = None) -> dict[str, Any]:
     evidence = None
     jwks_evidence = None
     role_evidence = None
+    invite_evidence = None
     decision = None
+    customer_auth_decision = None
 
     if db is not None:
         try:
@@ -194,15 +200,25 @@ def _gate(db: Session | None = None) -> dict[str, Any]:
             evidence = build_binding_evidence(connection=connection)
             jwks_evidence = build_jwks_validation_evidence(connection=connection)
             role_evidence = build_role_mapping_evidence(connection=connection)
+            invite_evidence = build_invite_binding_evidence(connection=connection)
         except Exception:
             db.rollback()
             evidence = jwks_evidence = role_evidence = None
+            invite_evidence = None
 
     if role_evidence is not None:
         mapped = list(role_evidence.get("mapped_organizations") or [])
+        organization = mapped[0] if len(mapped) == 1 else None
+        provider = (auth_environment_overlay().get("OIDC_ISSUER") or "").strip()
         decision = build_owner_activation_decision(
-            organization_id=mapped[0] if len(mapped) == 1 else None,
-            provider=(auth_environment_overlay().get("OIDC_ISSUER") or "").strip(),
+            organization_id=organization, provider=provider
+        )
+        # Gate 135D. The second decision, checked against the same
+        # organization the membership resolved to - not one this function
+        # supplies. Approving a login is not approving customer auth, and
+        # these two say so separately.
+        customer_auth_decision = build_customer_auth_activation_decision(
+            organization_id=organization, provider=provider
         )
 
     return build_customer_auth_activation_gate(
@@ -210,6 +226,8 @@ def _gate(db: Session | None = None) -> dict[str, Any]:
         jwks_validation_evidence=jwks_evidence,
         role_mapping_evidence=role_evidence,
         login_activation_decision=decision,
+        invite_binding_evidence=invite_evidence,
+        customer_auth_activation_decision=customer_auth_decision,
     )
 
 

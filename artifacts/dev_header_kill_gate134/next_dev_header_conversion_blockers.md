@@ -32,7 +32,7 @@ change.
 
 ```text
 route consumers                  0
-provider modules                 ['deps_db.py', 'isolation_deps.py']
+provider modules                 []
 ```
 
 The providers are the chains themselves — `deps_db.get_org_context_with_db` and

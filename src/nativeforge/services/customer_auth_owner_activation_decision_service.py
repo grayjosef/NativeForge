@@ -92,6 +92,31 @@ AUTHORIZATION_SOURCE = (
     "the facts prove it.'"
 )
 
+#: What the Gate 135 decision covers, quoted from the instruction granting it.
+CUSTOMER_AUTH_AUTHORIZATION_SOURCE = (
+    "Gate 135: 'AUTHORIZE CONTROLLED DEV CUSTOMER AUTH ACTIVATION. Scope is "
+    "limited to: demo org only; organization_id: "
+    "bbbbbbbb-cccc-dddd-eeee-ffffffffffff; environment: dev/demo; provider: "
+    "Google; controlled customer-auth activation only.'"
+)
+
+#: Named individually, from the same instruction. Each is refused by a branch
+#: below rather than merely absent from a list.
+CUSTOMER_AUTH_NOT_APPROVED: tuple[str, ...] = (
+    "production_rollout",
+    "controlled_customer_pilot",
+    "real_organization_activation",
+    "live_customer_data",
+    "live_grant_source_monitoring",
+    "email_delivery",
+    "object_store_activation",
+    "binding_to_the_real_organization",
+)
+
+#: Off, and only off, like the login decision's.
+CUSTOMER_AUTH_REVOCATION_ENV = "NF_DEV_CUSTOMER_AUTH_ACTIVATION_REVOKED"
+
+
 #: Every claim this decision explicitly does not make. Enumerated so a test can
 #: assert each one is refused, rather than trusting that none was mentioned.
 NOT_APPROVED: tuple[str, ...] = (
@@ -252,6 +277,124 @@ def decision_invariant_failures(decision: dict[str, Any]) -> list[str]:
             fails.append("login_live_approved_alongside_blockers")
 
     missing = set(NOT_APPROVED) - set(decision.get("not_approved") or [])
+    if missing:
+        fails.append(f"not_approved_list_lost_entries:{sorted(missing)}")
+
+    return fails
+
+
+def build_customer_auth_activation_decision(
+    *,
+    organization_id: Any = None,
+    provider: Any = None,
+    app_env: str | None = None,
+) -> dict[str, Any]:
+    """Does Mayhem's Gate 135 decision cover this organization, provider and env?
+
+    Separate from `build_owner_activation_decision`, which covers the demo login
+    only. Approving a login is not approving customer authentication, and Gate
+    133D split them for that reason; this is the second half arriving, and it is
+    narrower than the `NF_CUSTOMER_AUTH_ACTIVATION_APPROVAL` env var it sits
+    beside rather than a replacement for it.
+
+    What it approves is *controlled dev* customer auth on one demo organization.
+    It does not approve production rollout or a controlled customer pilot, and
+    there is no parameter by which it could: both are reported False with no
+    branch that changes them.
+    """
+    requested_org = str(organization_id or "").strip().lower()
+    requested_provider = str(provider or "").strip().lower()
+    environment = _environment(app_env)
+
+    blocked_reasons: list[str] = []
+
+    org_in_scope = requested_org == APPROVED_ORGANIZATION_ID
+    if not requested_org:
+        blocked_reasons.append("no_organization_id_supplied")
+    elif requested_org == REFUSED_ORGANIZATION_ID:
+        blocked_reasons.append("organization_is_the_explicitly_refused_real_org")
+    elif not org_in_scope:
+        blocked_reasons.append("organization_outside_the_approved_scope")
+
+    provider_in_scope = requested_provider in {APPROVED_PROVIDER, APPROVED_ISSUER}
+    if not requested_provider:
+        blocked_reasons.append("no_provider_supplied")
+    elif not provider_in_scope:
+        blocked_reasons.append(
+            f"provider_outside_the_approved_scope:{requested_provider}"
+        )
+
+    env_in_scope = environment in APPROVED_ENVIRONMENTS
+    if not env_in_scope:
+        blocked_reasons.append(
+            f"environment_outside_the_approved_scope:{environment or 'unset'}"
+        )
+
+    revoked = str(os.environ.get(CUSTOMER_AUTH_REVOCATION_ENV, "")).strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    if revoked:
+        blocked_reasons.append("decision_revoked_by_environment")
+
+    approves = bool(
+        org_in_scope
+        and provider_in_scope
+        and env_in_scope
+        and not revoked
+        and not blocked_reasons
+    )
+
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "decision_recorded": True,
+            "approves_customer_auth_live": approves,
+            # No parameter reaches either of these. They are the shape of the
+            # decision, not defaults a caller may change.
+            "approves_production_rollout": False,
+            "approves_controlled_customer_pilot": False,
+            "organization_id": requested_org or None,
+            "organization_in_scope": org_in_scope,
+            "provider": requested_provider or None,
+            "provider_in_scope": provider_in_scope,
+            "environment": environment or None,
+            "environment_in_scope": env_in_scope,
+            "revoked": revoked,
+            "authorization_source": CUSTOMER_AUTH_AUTHORIZATION_SOURCE,
+            "not_approved": list(CUSTOMER_AUTH_NOT_APPROVED),
+            "blocked_reasons": sorted(set(blocked_reasons)),
+        }
+    )
+
+
+def customer_auth_decision_invariant_failures(
+    decision: dict[str, Any],
+) -> list[str]:
+    fails: list[str] = []
+
+    if decision.get("approves_production_rollout"):
+        fails.append("decision_approved_production_rollout")
+    if decision.get("approves_controlled_customer_pilot"):
+        fails.append("decision_approved_a_controlled_customer_pilot")
+
+    if decision.get("approves_customer_auth_live"):
+        if not decision.get("organization_in_scope"):
+            fails.append("customer_auth_approved_for_an_organization_out_of_scope")
+        if decision.get("organization_id") == REFUSED_ORGANIZATION_ID:
+            fails.append("customer_auth_approved_for_the_refused_real_org")
+        if not decision.get("provider_in_scope"):
+            fails.append("customer_auth_approved_for_a_provider_out_of_scope")
+        if not decision.get("environment_in_scope"):
+            fails.append("customer_auth_approved_in_an_environment_out_of_scope")
+        if decision.get("revoked"):
+            fails.append("customer_auth_approved_while_revoked")
+        if decision.get("blocked_reasons"):
+            fails.append("customer_auth_approved_alongside_blockers")
+
+    missing = set(CUSTOMER_AUTH_NOT_APPROVED) - set(decision.get("not_approved") or [])
     if missing:
         fails.append(f"not_approved_list_lost_entries:{sorted(missing)}")
 

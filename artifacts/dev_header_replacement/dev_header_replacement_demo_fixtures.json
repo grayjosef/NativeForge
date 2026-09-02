@@ -33,10 +33,7 @@
     "customer_auth_live": false,
     "customer_persistence_live": false,
     "dev_header_is_production_safe": false,
-    "dev_header_provider_modules": [
-      "deps_db.py",
-      "isolation_deps.py"
-    ],
+    "dev_header_provider_modules": [],
     "dev_header_replacement_contract_available": true,
     "login_live": false,
     "missing_auth_gates": [

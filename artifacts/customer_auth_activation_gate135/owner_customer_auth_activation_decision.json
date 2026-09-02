@@ -1,0 +1,40 @@
+{
+  "approved_organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "authorization_source": "Gate 135: 'AUTHORIZE CONTROLLED DEV CUSTOMER AUTH ACTIVATION. Scope is limited to: demo org only; organization_id: bbbbbbbb-cccc-dddd-eeee-ffffffffffff; environment: dev/demo; provider: Google; controlled customer-auth activation only.'",
+  "environment_token_present": false,
+  "environment_token_still_honoured": true,
+  "in_scope_demo_dev": {
+    "approves_controlled_customer_pilot": false,
+    "approves_customer_auth_live": true,
+    "approves_production_rollout": false,
+    "blocked_reasons": []
+  },
+  "not_approved": [
+    "production_rollout",
+    "controlled_customer_pilot",
+    "real_organization_activation",
+    "live_customer_data",
+    "live_grant_source_monitoring",
+    "email_delivery",
+    "object_store_activation",
+    "binding_to_the_real_organization"
+  ],
+  "out_of_scope_production_environment": {
+    "approves_customer_auth_live": false,
+    "blocked_reasons": [
+      "environment_outside_the_approved_scope:production"
+    ]
+  },
+  "out_of_scope_real_org": {
+    "approves_customer_auth_live": false,
+    "blocked_reasons": [
+      "organization_is_the_explicitly_refused_real_org"
+    ]
+  },
+  "refused_organization_id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "schema_version": "nf_customer_auth_activation_gate135_artifact_v1",
+  "the_login_decision_is_a_different_decision": {
+    "approves_customer_auth_live": false,
+    "approves_login_live": true
+  }
+}

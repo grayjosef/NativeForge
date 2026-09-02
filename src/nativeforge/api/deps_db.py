@@ -1,20 +1,47 @@
-"""DB session + org context from `organizations` and dev headers (Sprint 0)."""
+"""Database session dependency.
+
+## What used to be here
+
+Three functions that turned `X-NF-Org-Id` into an organization context, and
+through it into `app.current_org_id` — the session variable every row-level
+security policy reads:
+
+```text
+get_org_context_with_db   an unauthenticated header -> OrgContext + RLS GUCs
+require_demo_org_db       the same, refusing a real organization
+require_real_org_db       the same, refusing a demo one
+```
+
+Gate 111A named this as the one code path in the tree that set the RLS context
+from an unauthenticated request. Gates 122 through 134 replaced it: 207 routes
+across 14 modules now derive their organization from a membership row through
+`api/customer_org_context_dependency.py`, and Gate 135 deleted these.
+
+## Why deleting was the right end and not the fix
+
+They were correct for what they were — a development convenience, honestly
+named, gated by `NF_DEV_ORG_HEADERS`. What made them dangerous was that they
+were *load-bearing*: 207 routes could not answer without them, so the header
+could not be turned off, so `dev_header_disabled_for_production` could not pass,
+so customer auth could not go live. Removing the setting would have broken the
+application without making anything safer.
+
+Converting first and deleting second is the order that works. A deletion here in
+Gate 122 would have returned 401 to every caller.
+
+## `get_db_session` stays
+
+Twelve route modules import it. It hands out a database session and reads no
+header; it was never part of the chain that made the header authority.
+"""
 
 from __future__ import annotations
 
-import uuid
 from collections.abc import Generator
-from typing import Annotated
 
-from fastapi import Depends, Header, HTTPException, status
 from sqlalchemy.orm import Session
 
-from nativeforge.api.org_context import OrgContext
-from nativeforge.db.rls import apply_org_rls_gucs
 from nativeforge.db.session import SessionLocal
-from nativeforge.lib.demo_isolation import OrgType
-from nativeforge.lib.settings import get_settings
-from nativeforge.repositories import organizations as org_repo
 
 
 def get_db_session() -> Generator[Session, None, None]:
@@ -23,66 +50,3 @@ def get_db_session() -> Generator[Session, None, None]:
         yield db
     finally:
         db.close()
-
-
-async def get_org_context_with_db(
-    db: Annotated[Session, Depends(get_db_session)],
-    x_nf_org_id: str | None = Header(default=None, alias="X-NF-Org-Id"),
-) -> OrgContext:
-    """
-    Resolve org type from persisted `organizations` row (source of truth for Sprint 0+).
-
-    Requires `X-NF-Org-Id` and NF_DEV_ORG_HEADERS=true
-    (same contract as NF-001 smoke routes).
-    """
-    settings = get_settings()
-    if not settings.nf_dev_org_headers:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="org context headers disabled (NF_DEV_ORG_HEADERS=false)",
-        )
-    if not x_nf_org_id or not str(x_nf_org_id).strip():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="missing X-NF-Org-Id",
-        )
-    try:
-        oid = uuid.UUID(str(x_nf_org_id).strip())
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="invalid X-NF-Org-Id",
-        ) from e
-
-    org = org_repo.get_organization(db, oid)
-    if org is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="organization not found",
-        )
-
-    ot: OrgType = "demo" if org.org_type == "demo" else "real"
-    apply_org_rls_gucs(db, oid, ot)
-    return OrgContext(org_id=oid, org_type=ot)
-
-
-def require_demo_org_db(
-    ctx: Annotated[OrgContext, Depends(get_org_context_with_db)],
-) -> OrgContext:
-    if ctx.org_type != "demo":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="demo-only route requires a demo organization",
-        )
-    return ctx
-
-
-def require_real_org_db(
-    ctx: Annotated[OrgContext, Depends(get_org_context_with_db)],
-) -> OrgContext:
-    if ctx.org_type != "real":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="real-data route requires a real organization",
-        )
-    return ctx

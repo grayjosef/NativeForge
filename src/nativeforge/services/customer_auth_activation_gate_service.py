@@ -222,6 +222,8 @@ def build_customer_auth_activation_gate(
     role_mapping_evidence: dict[str, Any] | None = None,
     login_activation_decision: dict[str, Any] | None = None,
     dev_header_exposure: dict[str, Any] | None = None,
+    invite_binding_evidence: dict[str, Any] | None = None,
+    customer_auth_activation_decision: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """May customer authentication be activated? Deny by default.
 
@@ -276,7 +278,20 @@ def build_customer_auth_activation_gate(
         dev_header_disabled_for_production = not _dev_header_enabled() or measured_zero
 
     if owner_approval is None:
-        owner_approval = _owner_approval_present()
+        # Gate 135D. Two ways to authorize, and the env var is still one of
+        # them. The recorded decision is the narrower: it names one demo
+        # organization, one provider and dev/demo, checks all three per
+        # call, and `approves_production_rollout` has no branch that
+        # returns True.
+        #
+        # `or`, not replacement: a deployment that sets the token still
+        # gets what it always got.
+        owner_approval = bool(
+            _owner_approval_present()
+            or (customer_auth_activation_decision or {}).get(
+                "approves_customer_auth_live"
+            )
+        )
 
     # Injectable, so this gate's true branch is reachable without setting a
     # process-wide signing key. Gates 117 and 118 each shipped a conjunct whose
@@ -300,6 +315,11 @@ def build_customer_auth_activation_gate(
     login_decision = (
         login_activation_decision if login_activation_decision is not None else {}
     )
+
+    # Gate 135. The last two blockers, on the same terms as the rest:
+    # supplied by a caller that measured them, absent and therefore false
+    # for a caller that did not. Nothing here opens a connection.
+    invite_ev = invite_binding_evidence if invite_binding_evidence is not None else {}
 
     gates: dict[str, bool] = {
         # -- provider configuration, presence only -------------------------
@@ -328,7 +348,16 @@ def build_customer_auth_activation_gate(
             val.get("callback_session_validated")
             or evidence.get("callback_session_validated")
         ),
-        "invite_binding_passed": bool(val.get("invite_binding_passed")),
+        # Gate 135C. This was a parameter of `run_auth0_live_validation`
+        # that no caller passed - the fifth instance in this campaign of a
+        # gate reading a value nobody supplies. It is measured now, from
+        # nf_membership_invites joined to the memberships they produced:
+        # an invite that was accepted, by an identity that actually holds
+        # the membership. An invite issued and approved and never accepted
+        # has bound nobody.
+        "invite_binding_passed": bool(
+            val.get("invite_binding_passed") or invite_ev.get("invite_binding_passed")
+        ),
         "org_binding_passed": bool(
             val.get("org_binding_passed") or evidence.get("org_binding_passed")
         ),
@@ -489,6 +518,19 @@ def build_customer_auth_activation_gate(
             "jwks_validation_evidence_supplied": bool(jwks_ev),
             "role_mapping_evidence_supplied": bool(role_ev),
             "dev_header_exposure_supplied": bool(dev_header_exposure),
+            "invite_binding_evidence_supplied": bool(invite_binding_evidence),
+            "customer_auth_decision_supplied": bool(customer_auth_activation_decision),
+            "owner_approval_source": (
+                "environment_token"
+                if _owner_approval_present()
+                else "recorded_decision"
+                if (customer_auth_activation_decision or {}).get(
+                    "approves_customer_auth_live"
+                )
+                else "absent"
+            ),
+            "production_rollout": False,
+            "controlled_customer_pilot": False,
             "dev_header_routes_measured": (
                 (dev_header_exposure or {}).get("dev_header_route_count")
             ),
@@ -607,6 +649,13 @@ def activation_gate_invariant_failures(gate: dict[str, Any]) -> list[str]:
     # The narrow decision must never reach the broad claim.
     if gate.get("customer_auth_live") and not gate.get("owner_approval_present"):
         fails.append("customer_auth_live_on_a_login_only_decision")
+
+    # Gate 135: neither of these has a branch that sets it, and customer
+    # auth being live says nothing about either. Named so a future edit
+    # that wires one to the other fails here.
+    for claim in ("production_rollout", "controlled_customer_pilot"):
+        if gate.get(claim):
+            fails.append(f"activation_gate_claimed:{claim}")
 
     # Activation is exactly customer auth being live; two names, one decision.
     if gate.get("activation_allowed") is not gate.get("customer_auth_live"):

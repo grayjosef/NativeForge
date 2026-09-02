@@ -185,9 +185,16 @@ def detect_dev_header_route_usage(api_dir: Path | None = None) -> dict[str, Any]
                 provider_modules.append(path.name)
             elif uses:
                 modules.append(path.name)
-            elif any(dep in body for dep in ORG_CONTEXT_DEPENDENCIES):
+            elif any(
+                re.search(rf"\b{dep}\b", body) for dep in ORG_CONTEXT_DEPENDENCIES
+            ):
                 # Named so the difference between using and discussing the
                 # header is visible rather than silently dropped.
+                #
+                # Word-bounded: `require_demo_org` is a prefix of
+                # `require_demo_org_session`, the replacement every converted
+                # module depends on, so a substring test reported all fourteen
+                # of them as discussing the header they had just been moved off.
                 mentions_only.append(path.name)
 
     return {

@@ -1,0 +1,65 @@
+{
+  "acceptance_requires": "an accepted_by_identity_id that is a real nf_identities row and is neither the requester nor the approver",
+  "decision_service": "membership_invite_approval_service",
+  "deterministic_gate_no_evidence_supplied": {
+    "invite_binding_passed": false
+  },
+  "email_sent": false,
+  "invited_email_domain_stored": true,
+  "invited_email_stored": false,
+  "measured_live": {
+    "accepted_invite_rows": 0,
+    "approved_invite_rows": 0,
+    "blocked_reasons": [
+      "no_invite_has_been_recorded"
+    ],
+    "invite_binding_passed": false,
+    "invite_rows": 0,
+    "membership_rows": 1,
+    "memberships_from_a_completed_invite": 0,
+    "recorded_on": "2026-09-02"
+  },
+  "migration": "0038",
+  "provider_subject_fingerprint_stored": true,
+  "provider_subject_stored": false,
+  "repository_seam": "membership_invite_repository_service",
+  "schema_version": "nf_customer_auth_activation_gate135_artifact_v1",
+  "self_dealing_caught_by_the_decision_service": false,
+  "self_dealing_refusal": "invite_requested_approved_and_accepted_by_one_identity",
+  "service_callers_in_src_before": 0,
+  "service_had_a_write_path_before": false,
+  "table": "nf_membership_invites",
+  "trusted_provenances": [
+    "completed_invite"
+  ],
+  "what_the_row_holds": [
+    "invite_id",
+    "organization_id",
+    "is_demo",
+    "requested_role",
+    "requested_by",
+    "requested_by_role",
+    "invited_email_domain",
+    "invited_subject_fingerprint",
+    "invite_state",
+    "approval_state",
+    "approved_by",
+    "approved_by_role",
+    "accepted_by_identity_id",
+    "seat_cap",
+    "seat_count",
+    "expires_at",
+    "accepted_at",
+    "revoked_at",
+    "blocked_reasons"
+  ],
+  "what_the_row_refuses": [
+    "invited_email",
+    "invited_subject",
+    "email",
+    "subject",
+    "token",
+    "id_token",
+    "access_token"
+  ]
+}

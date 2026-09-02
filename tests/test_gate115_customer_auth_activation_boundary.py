@@ -540,15 +540,16 @@ def test_the_dev_header_is_no_longer_load_bearing():
 
     `safe_to_disable_now` still needs `auth_replacement_available`, and that is
     asserted below with the evidence that makes it reachable.
+
+    Gate 135 deleted the chain, so there is no provider either. Both zeroes are
+    walked out of `api/`; the test below puts a consumer back and watches the
+    count rise, which is what stops this reading as a detector that gave up.
     """
     readiness = header.build_dev_header_shutdown_readiness()
     assert readiness["dev_header_used_by_routes"] == 0
     assert readiness["dev_header_route_modules"] == []
-    # The chain that defines the header is not a consumer of it.
-    assert set(readiness["dev_header_provider_modules"]) == {
-        "deps_db.py",
-        "isolation_deps.py",
-    }
+    # Gate 134 emptied the consumer list; Gate 135 emptied the provider list.
+    assert readiness["dev_header_provider_modules"] == []
     assert header.shutdown_readiness_invariant_failures(readiness) == []
 
 

@@ -1,0 +1,97 @@
+{
+  "deterministic_gate_no_evidence_supplied": {
+    "customer_auth_live": false,
+    "invite_binding_passed": false,
+    "login_live": false,
+    "missing_auth_gates": [
+      "provider_configured",
+      "secret_present",
+      "issuer_configured",
+      "issuer_jwks_validated",
+      "audience_configured",
+      "callback_session_validated",
+      "invite_binding_passed",
+      "org_binding_passed",
+      "role_mapping_passed",
+      "dev_header_disabled_for_production",
+      "session_signing_key_ready"
+    ],
+    "owner_approval_present": false,
+    "owner_approval_source": "absent"
+  },
+  "env_key_names_checked": [
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+    "NF_PUBLIC_ORIGIN",
+    "NF_SESSION_SIGNING_KEY"
+  ],
+  "env_key_presence": {
+    "NF_PUBLIC_ORIGIN": false,
+    "NF_SESSION_SIGNING_KEY": false,
+    "OIDC_AUDIENCE": false,
+    "OIDC_CALLBACK_URL": false,
+    "OIDC_CLIENT_ID": false,
+    "OIDC_CLIENT_SECRET": false,
+    "OIDC_ISSUER": false
+  },
+  "env_values_recorded": false,
+  "flags_this_gate_did_not_move": {
+    "awarded_operational_tracking": false,
+    "controlled_customer_pilot": false,
+    "customer_auth_live": false,
+    "customer_persistence_live": false,
+    "email_delivery": false,
+    "object_store_configured": false,
+    "production_rollout": false,
+    "source_monitoring_live": false,
+    "tenant_digest_operational": false,
+    "verified_operational_binding": false
+  },
+  "markers_checked": [
+    "id_token",
+    "access_token",
+    "refresh_token",
+    "code_verifier",
+    "client_secret",
+    "Set-Cookie",
+    "nf_session=",
+    "?code=",
+    "GOCSPX-"
+  ],
+  "measured_against_the_dev_deployment": {
+    "api_auth_login": 302,
+    "blocked_reasons": [
+      "auth_gate_not_satisfied:invite_binding_passed"
+    ],
+    "converted_route_with_header_only": 401,
+    "current_user_no_session": 401,
+    "customer_auth_live": false,
+    "dev_header_disabled_for_production": true,
+    "login_live": true,
+    "owner_approval_source": "recorded_decision",
+    "recorded_on": "2026-09-02"
+  },
+  "required_auth_gates": [
+    "provider_configured",
+    "secret_present",
+    "issuer_configured",
+    "issuer_jwks_validated",
+    "audience_configured",
+    "callback_route_available",
+    "callback_session_validated",
+    "session_cookie_policy_available",
+    "invite_binding_passed",
+    "org_binding_passed",
+    "role_mapping_passed",
+    "organization_id_resolution_available",
+    "membership_verification_available",
+    "rls_claim_guard_available",
+    "dev_header_disabled_for_production",
+    "session_signing_key_ready"
+  ],
+  "scan_applies_to": "artifacts/customer_auth_activation_gate135",
+  "schema_version": "nf_customer_auth_activation_gate135_artifact_v1"
+}

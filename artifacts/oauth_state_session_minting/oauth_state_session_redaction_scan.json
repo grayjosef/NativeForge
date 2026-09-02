@@ -9,13 +9,13 @@
     "NF_SESSION_SIGNING_KEY"
   ],
   "env_key_presence": {
-    "NF_PUBLIC_ORIGIN": true,
-    "NF_SESSION_SIGNING_KEY": true,
-    "OIDC_AUDIENCE": true,
-    "OIDC_CALLBACK_URL": true,
-    "OIDC_CLIENT_ID": true,
-    "OIDC_CLIENT_SECRET": true,
-    "OIDC_ISSUER": true
+    "NF_PUBLIC_ORIGIN": false,
+    "NF_SESSION_SIGNING_KEY": false,
+    "OIDC_AUDIENCE": false,
+    "OIDC_CALLBACK_URL": false,
+    "OIDC_CLIENT_ID": false,
+    "OIDC_CLIENT_SECRET": false,
+    "OIDC_ISSUER": false
   },
   "env_values_recorded": false,
   "markers_checked": [

@@ -19,11 +19,11 @@
     "storage_scope"
   ],
   "durable_scope": "database",
-  "encryption_available": true,
+  "encryption_available": false,
   "expiry_enforced": true,
   "key_derivation": "hkdf_sha256_from_NF_SESSION_SIGNING_KEY",
   "key_stored_in_database": false,
-  "migration": "0036",
+  "migration": "0037",
   "one_time_use": true,
   "pkce_verifier_key_scheme": "fernet_hkdf_sha256_v1",
   "pkce_verifier_stored_as": "fernet_ciphertext_plus_sha256_digest",

@@ -1,0 +1,25 @@
+{
+  "browser_session_blocked_by": "cloudflare_access_session_expired",
+  "browser_session_redriven": false,
+  "cookies_returned": false,
+  "email_returned": false,
+  "forged_header_changes_the_organization": false,
+  "measured_on_the_loopback": {
+    "api_auth_login": 302,
+    "blocked_reasons": [
+      "auth_gate_not_satisfied:invite_binding_passed"
+    ],
+    "converted_route_with_header_only": 401,
+    "current_user_no_session": 401,
+    "customer_auth_live": false,
+    "dev_header_disabled_for_production": true,
+    "login_live": true,
+    "owner_approval_source": "recorded_decision",
+    "recorded_on": "2026-09-02"
+  },
+  "organization_from_membership_row": true,
+  "provider_subject_returned": false,
+  "role_from_membership_row": true,
+  "schema_version": "nf_customer_auth_activation_gate135_artifact_v1",
+  "tokens_returned": false
+}

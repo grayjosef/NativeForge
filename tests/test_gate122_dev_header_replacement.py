@@ -256,15 +256,23 @@ def test_nothing_in_the_contract_sets_the_rls_context():
 # ------------------------------------------------- the central dependency
 
 
-def test_the_central_dependency_module_exists_with_three_functions():
+def test_the_central_dependency_module_exists_with_two_functions():
+    """Gate 122 shipped three. Gate 135 deleted the third.
+
+    `get_dev_org_context_explicit_only` was the migration's escape hatch - a
+    module that could not be converted yet could ask for the header by name
+    instead of inheriting it. Gate 134 converted all fourteen without one
+    caller reaching for it, so it was an unused way of reading `X-NF-Org-Id`
+    left in the tree, and this asserts it is gone rather than merely unused.
+    """
     from nativeforge.api import deps_customer_auth as deps
 
     for name in (
         "get_customer_org_context_required",
         "get_customer_org_context_optional",
-        "get_dev_org_context_explicit_only",
     ):
         assert callable(getattr(deps, name)), name
+    assert not hasattr(deps, "get_dev_org_context_explicit_only")
 
 
 def test_the_required_dependency_refuses_with_a_named_reason():
@@ -325,15 +333,40 @@ def test_only_the_converted_routes_import_the_central_dependency():
 # ------------------------------------------------- counting
 
 
-def test_the_provider_module_is_not_counted_as_a_route():
-    """Gate 122A: deps_db.py depends on its own providers and is not a route."""
+def test_the_provider_module_is_not_counted_as_a_route(tmp_path):
+    """Gate 122A: deps_db.py depends on its own providers and is not a route.
+
+    Gate 135 deleted the chain, so there is no provider in `api/` any more and
+    the distinction cannot be shown there. It is shown against a directory that
+    does have one, which is the only way this test still means anything: a
+    module defining the chain is a provider and never a consumer, and both
+    counts move for the right reason.
+    """
     usage = shutdown_svc.detect_dev_header_route_usage()
-    assert "deps_db.py" in usage["provider_modules"]
-    assert "deps_db.py" not in usage["modules"]
-    # Gate 134 converted all fourteen. The distinction this test exists
-    # for is unchanged: the module that DEFINES the chain is never a
-    # consumer of it, which is what the provider assertions below check.
+    assert usage["provider_modules"] == []
     assert usage["module_count"] == 0
+
+    # A provider is a module that both defines the chain and wires it into
+    # itself - which is exactly what made `deps_db.py` neither a route nor
+    # innocent. Written faithfully, or it would not be the case under test.
+    (tmp_path / "deps_db.py").write_text(
+        "async def get_org_context_with_db(x_nf_org_id=Header(None)):\n"
+        "    return x_nf_org_id\n"
+        "async def require_demo_org_db(ctx=Depends(get_org_context_with_db)):\n"
+        "    return ctx\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "regressed_routes.py").write_text(
+        "from nativeforge.api.deps_db import require_real_org_db\n"
+        "@router.get('/x')\n"
+        "def x(ctx=Depends(require_real_org_db)):\n"
+        "    return {}\n",
+        encoding="utf-8",
+    )
+    regressed = shutdown_svc.detect_dev_header_route_usage(tmp_path)
+    assert "deps_db.py" in regressed["provider_modules"]
+    assert "deps_db.py" not in regressed["modules"]
+    assert regressed["modules"] == ["regressed_routes.py"]
 
 
 def test_the_inventory_distinguishes_real_uses_from_prose_mentions():
@@ -345,10 +378,12 @@ def test_the_inventory_distinguishes_real_uses_from_prose_mentions():
     # The relationships that are left are the ones this test is about -
     # providers and mentions, which were never routes.
     assert by_relationship.get("route", []) == []
-    # Gate 134F widened the provider list: `isolation_deps.py` defines the
-    # other dev-header chain - the one resolving org_type from the settings
-    # allowlist - and was previously counted as neither provider nor route.
-    assert by_relationship["provider"] == ["deps_db.py", "isolation_deps.py"]
+    # Gate 134F widened the provider list to `deps_db.py` and
+    # `isolation_deps.py`; Gate 135 deleted both chains, so the only
+    # relationship left in the inventory is prose. The rows still exist -
+    # several modules name the header to explain why they do not use it -
+    # which is what keeps this a measurement rather than an empty file.
+    assert by_relationship.get("provider", []) == []
     assert by_relationship["prose"]
     # Only route modules count toward the migration.
     assert all(
@@ -382,10 +417,11 @@ def test_readiness_lists_the_remaining_modules():
     assert readiness["dev_header_used_by_routes"] == len(
         readiness["dev_header_route_modules"]
     )
-    assert readiness["dev_header_provider_modules"] == [
-        "deps_db.py",
-        "isolation_deps.py",
-    ]
+    # Gate 135 deleted both chains, so there is no provider left either. The
+    # detector is exercised against a directory that has one in
+    # `test_the_provider_module_is_not_counted_as_a_route`, which is what
+    # keeps this zero a measurement.
+    assert readiness["dev_header_provider_modules"] == []
     assert readiness["central_replacement_available"] is True
     # A replacement that exists is not a migration that happened.
     assert readiness["safe_to_disable_now"] is False

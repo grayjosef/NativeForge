@@ -381,11 +381,9 @@ def test_the_shutdown_readiness_sees_no_consumers():
     readiness = shutdown.build_dev_header_shutdown_readiness()
     assert readiness["dev_header_used_by_routes"] == 0
     assert readiness["dev_header_route_modules"] == []
-    # The chains themselves remain, and are not consumers of themselves.
-    assert set(readiness["dev_header_provider_modules"]) == {
-        "deps_db.py",
-        "isolation_deps.py",
-    }
+    # Gate 134 left the chains standing with nobody calling them. Gate 135
+    # deleted them, which is why the provider list is empty too.
+    assert readiness["dev_header_provider_modules"] == []
     assert shutdown.shutdown_readiness_invariant_failures(readiness) == []
 
 
