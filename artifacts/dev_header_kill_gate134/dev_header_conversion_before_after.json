@@ -3,6 +3,10 @@
     "converted_module_names": [
       "activation_routes",
       "auth",
+      "award_document_routes",
+      "award_requirement_proof_routes",
+      "award_requirements_routes",
+      "awarded_grants_routes",
       "form_package_routes",
       "grant_spark_routes",
       "isolation_routes",
@@ -18,12 +22,12 @@
       "tribal_profile_routes",
       "trust_routes"
     ],
-    "converted_modules": 16,
+    "converted_modules": 20,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 217
+    "route_total": 234
   },
   "before": {
     "converted_modules": 1,

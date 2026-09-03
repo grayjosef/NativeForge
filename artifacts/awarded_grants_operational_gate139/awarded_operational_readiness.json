@@ -1,0 +1,37 @@
+{
+  "awarded_operational_tracking": true,
+  "blocked_lanes": [],
+  "blocked_reasons": [],
+  "customer_auth_live": false,
+  "customer_persistence_live": true,
+  "document_body_storage_ready": false,
+  "document_metadata_readiness_requires_object_store": false,
+  "end_to_end_proved": true,
+  "invariant_failures": [],
+  "not_approved": [
+    "production_awarded_tracking",
+    "production_rollout",
+    "controlled_customer_pilot",
+    "object_store_configured",
+    "document_body_storage",
+    "live_source_monitoring",
+    "email_delivery"
+  ],
+  "object_store_configured": false,
+  "production_awarded_tracking": false,
+  "repository_live_lanes": [
+    "award_requirements",
+    "awarded_grants",
+    "document_metadata",
+    "proof_audit"
+  ],
+  "route_live_lanes": [
+    "award_requirements",
+    "awarded_grants",
+    "document_metadata",
+    "proof_audit"
+  ],
+  "schema_version": "nf_awarded_operational_gate139_artifact_v1",
+  "scope": "controlled_dev_demo",
+  "verified_operational_binding": false
+}

@@ -1,0 +1,43 @@
+{
+  "blocked_reasons": [],
+  "capability": "award_requirements_persistence",
+  "lane": "award_requirements",
+  "readiness": {
+    "blocked_reasons": [],
+    "capability": "award_requirements_persistence",
+    "cross_org_refused": true,
+    "lane": "award_requirements",
+    "operational": true,
+    "repository_live": true,
+    "route_live": true,
+    "route_module": "src/nativeforge/api/award_requirements_routes.py",
+    "route_module_available": true,
+    "route_reads_dev_header": false,
+    "route_session_wired": true,
+    "schema_version": "nf_awarded_operational_tracking_readiness_v1",
+    "scope": "controlled_dev_demo",
+    "unauthenticated_refused": true
+  },
+  "request_body_shape": {
+    "due_date_status": "verified",
+    "proof_status": "not_submitted",
+    "recurrence_rule": "one_time",
+    "requirement_due_date": "2026-06-30",
+    "requirement_source": "human_entered",
+    "requirement_status": "not_started",
+    "requirement_title": "Gate 139 fixture requirement",
+    "requirement_type": "financial_report",
+    "submission_status": "not_submitted"
+  },
+  "route_module": "src/nativeforge/api/award_requirements_routes.py",
+  "route_operational": true,
+  "schema_version": "nf_awarded_operational_gate139_artifact_v1",
+  "steps": {
+    "archived": true,
+    "created": true,
+    "cross_org_refused": true,
+    "read_back": true
+  },
+  "unauthenticated_refused": true,
+  "update_path_available": false
+}

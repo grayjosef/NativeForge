@@ -1,0 +1,64 @@
+{
+  "blocked_lanes": [],
+  "database": "migrated_sqlite_built_for_this_call",
+  "document_body_written": false,
+  "email_sent": false,
+  "end_to_end_proved": true,
+  "fake_sessions_created": 0,
+  "fake_users_created": 0,
+  "invariant_failures": [],
+  "live_source_called": false,
+  "object_store_contacted": false,
+  "refusals": {
+    "caller_relabelling_the_write": true,
+    "cross_organization": {
+      "award_requirements": true,
+      "awarded_grants": true,
+      "document_metadata": true,
+      "proof_audit": true
+    },
+    "document_body": true,
+    "forged_dev_header": true,
+    "unauthenticated": {
+      "award_requirements": true,
+      "awarded_grants": true,
+      "document_metadata": true,
+      "proof_audit": true
+    }
+  },
+  "route_operational_lanes": [
+    "award_requirements",
+    "awarded_grants",
+    "document_metadata",
+    "proof_audit"
+  ],
+  "rows_left_live_per_table": {
+    "nf_award_documents": 0,
+    "nf_award_requirement_proof_events": 0,
+    "nf_award_requirements": 0,
+    "nf_awarded_grants": 0
+  },
+  "schema_version": "nf_awarded_operational_gate139_artifact_v1",
+  "sequence": [
+    "create an awarded grant",
+    "attach a requirement to it",
+    "attach a proof event to the requirement",
+    "attach a document reference to the award",
+    "read each back, anchored on organization_id",
+    "read each as another organization -> refused",
+    "archive all four, reverse dependency order"
+  ],
+  "session": "real, signed, for a real membership row",
+  "unsupported_requirement_body": {
+    "due_date_status": null,
+    "proof_status": "not_submitted",
+    "recurrence_rule": "one_time",
+    "requirement_due_date": null,
+    "requirement_source": "unsupported_document_type",
+    "requirement_status": "needs_human_review",
+    "requirement_title": "Gate 139 unreadable requirement",
+    "requirement_type": "financial_report",
+    "submission_status": "not_submitted"
+  },
+  "unsupported_requirement_stayed_unresolved": true
+}

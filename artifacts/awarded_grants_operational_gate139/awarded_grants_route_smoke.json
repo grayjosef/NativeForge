@@ -1,0 +1,45 @@
+{
+  "blocked_reasons": [],
+  "capability": "awarded_grants_persistence",
+  "lane": "awarded_grants",
+  "readiness": {
+    "blocked_reasons": [],
+    "capability": "awarded_grants_persistence",
+    "cross_org_refused": true,
+    "lane": "awarded_grants",
+    "operational": true,
+    "repository_live": true,
+    "route_live": true,
+    "route_module": "src/nativeforge/api/awarded_grants_routes.py",
+    "route_module_available": true,
+    "route_reads_dev_header": false,
+    "route_session_wired": true,
+    "schema_version": "nf_awarded_operational_tracking_readiness_v1",
+    "scope": "controlled_dev_demo",
+    "unauthenticated_refused": true
+  },
+  "request_body_shape": {
+    "active_obligation_status": "no_obligations_established",
+    "award_amount": "1000.00",
+    "award_currency": "USD",
+    "award_number": "NF-G139-FIXTURE",
+    "award_status": "active_award",
+    "award_title": "Gate 139 fixture award",
+    "awarded_at": "2026-01-01",
+    "funder_name": "Gate 139 fixture funder",
+    "period_end": "2026-12-31",
+    "period_start": "2026-01-01",
+    "requirements_extraction_status": "not_attempted"
+  },
+  "route_module": "src/nativeforge/api/awarded_grants_routes.py",
+  "route_operational": true,
+  "schema_version": "nf_awarded_operational_gate139_artifact_v1",
+  "steps": {
+    "archived": true,
+    "created": true,
+    "cross_org_refused": true,
+    "read_back": true
+  },
+  "unauthenticated_refused": true,
+  "update_path_available": false
+}

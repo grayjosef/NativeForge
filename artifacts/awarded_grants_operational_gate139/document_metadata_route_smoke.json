@@ -1,0 +1,39 @@
+{
+  "blocked_reasons": [],
+  "capability": "document_library_persistence",
+  "lane": "document_metadata",
+  "readiness": {
+    "blocked_reasons": [],
+    "capability": "document_library_persistence",
+    "cross_org_refused": true,
+    "lane": "document_metadata",
+    "operational": true,
+    "repository_live": true,
+    "route_live": true,
+    "route_module": "src/nativeforge/api/award_document_routes.py",
+    "route_module_available": true,
+    "route_reads_dev_header": false,
+    "route_session_wired": true,
+    "schema_version": "nf_awarded_operational_tracking_readiness_v1",
+    "scope": "controlled_dev_demo",
+    "unauthenticated_refused": true
+  },
+  "request_body_shape": {
+    "document_kind": "financial_report",
+    "document_source": "human_entered",
+    "document_status": "reference_recorded",
+    "document_title": "Gate 139 fixture document reference",
+    "retention_class": "retain_7_days"
+  },
+  "route_module": "src/nativeforge/api/award_document_routes.py",
+  "route_operational": true,
+  "schema_version": "nf_awarded_operational_gate139_artifact_v1",
+  "steps": {
+    "archived": true,
+    "created": true,
+    "cross_org_refused": true,
+    "read_back": true
+  },
+  "unauthenticated_refused": true,
+  "update_path_available": false
+}

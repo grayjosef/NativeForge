@@ -14,6 +14,10 @@
     "converted_dev_header_module_names": [
       "activation_routes.py",
       "auth.py",
+      "award_document_routes.py",
+      "award_requirement_proof_routes.py",
+      "award_requirements_routes.py",
+      "awarded_grants_routes.py",
       "form_package_routes.py",
       "grant_spark_routes.py",
       "isolation_routes.py",
@@ -62,6 +66,10 @@
     "actual_converted_route_modules": [
       "activation_routes.py",
       "auth.py",
+      "award_document_routes.py",
+      "award_requirement_proof_routes.py",
+      "award_requirements_routes.py",
+      "awarded_grants_routes.py",
       "form_package_routes.py",
       "grant_spark_routes.py",
       "isolation_routes.py",

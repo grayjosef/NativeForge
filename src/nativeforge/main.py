@@ -11,6 +11,20 @@ from nativeforge.api.activation_routes import (
 )
 from nativeforge.api.auth import install_auth_security_scheme
 from nativeforge.api.auth import router as auth_router
+
+# Gate 139. The four post-award lanes, demo-scoped.
+#
+# There is deliberately no real-organization counterpart: building one would
+# create a route to aaaaaaaa-… that nobody has authorized, and Gate 137's
+# activation boundary exists precisely because that authorization does not.
+from nativeforge.api.award_document_routes import router as award_document_router
+from nativeforge.api.award_requirement_proof_routes import (
+    router as award_proof_router,
+)
+from nativeforge.api.award_requirements_routes import (
+    router as award_requirements_router,
+)
+from nativeforge.api.awarded_grants_routes import router as awarded_grants_router
 from nativeforge.api.backend_runtime_routes import router as backend_runtime_router
 from nativeforge.api.form_package_routes import (
     demo_form_pkg_router,
@@ -125,6 +139,10 @@ def create_app() -> FastAPI:
     # Gate 116: five customer auth routes that authenticate nobody and
     # say so. The security scheme is advertised and applied to no
     # operation - see api/auth.py.
+    app.include_router(awarded_grants_router)
+    app.include_router(award_requirements_router)
+    app.include_router(award_proof_router)
+    app.include_router(award_document_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

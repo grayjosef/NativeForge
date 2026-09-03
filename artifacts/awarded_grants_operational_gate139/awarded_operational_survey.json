@@ -1,0 +1,64 @@
+{
+  "gate": "139",
+  "lane_capabilities": {
+    "award_requirements": "award_requirements_persistence",
+    "awarded_grants": "awarded_grants_persistence",
+    "document_metadata": "document_library_persistence",
+    "proof_audit": "proof_audit_persistence"
+  },
+  "no_update_path_anywhere": true,
+  "no_update_path_because": "an award is a discrete event: a correction is a new row and the mistaken one is archived, so the audit trail shows what was believed and when",
+  "object_store_required_for_metadata": false,
+  "proof_events_correct_by": "supersede, never update",
+  "real_organization_route_built": false,
+  "real_organization_route_not_built_because": "it would create a route to aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee that nobody has authorized",
+  "repository_live_before_this_gate": [
+    "award_requirements_persistence",
+    "awarded_grants_persistence",
+    "document_library_persistence",
+    "proof_audit_persistence"
+  ],
+  "route_live_before_this_gate": [],
+  "route_modules_after": {
+    "award_requirements": {
+      "blocked_reasons": [],
+      "lane": "award_requirements",
+      "reads_dev_header": false,
+      "route_module": "src/nativeforge/api/award_requirements_routes.py",
+      "route_module_available": true,
+      "session_wired": true
+    },
+    "awarded_grants": {
+      "blocked_reasons": [],
+      "lane": "awarded_grants",
+      "reads_dev_header": false,
+      "route_module": "src/nativeforge/api/awarded_grants_routes.py",
+      "route_module_available": true,
+      "session_wired": true
+    },
+    "document_metadata": {
+      "blocked_reasons": [],
+      "lane": "document_metadata",
+      "reads_dev_header": false,
+      "route_module": "src/nativeforge/api/award_document_routes.py",
+      "route_module_available": true,
+      "session_wired": true
+    },
+    "proof_audit": {
+      "blocked_reasons": [],
+      "lane": "proof_audit",
+      "reads_dev_header": false,
+      "route_module": "src/nativeforge/api/award_requirement_proof_routes.py",
+      "route_module_available": true,
+      "session_wired": true
+    }
+  },
+  "route_modules_before": {
+    "award_requirements": "ABSENT",
+    "awarded_grants": "ABSENT",
+    "document_metadata": "ABSENT",
+    "proof_audit": "ABSENT"
+  },
+  "schema_version": "nf_awarded_operational_gate139_artifact_v1",
+  "why_awarded_operational_tracking_was_false": "it was a literal False in nine places and no service derived it; same family Gate 114A removed for customer_persistence_live"
+}
