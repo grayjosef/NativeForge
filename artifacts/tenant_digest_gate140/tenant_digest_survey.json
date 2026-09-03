@@ -1,0 +1,52 @@
+{
+  "anything_able_to_ask_for_a_preview_before_this_gate": false,
+  "email_not_required_because": "delivery_status may only be preview_only; there is no email service in this repository and none was written",
+  "email_required_for_preview_readiness": false,
+  "gate": "140",
+  "migration_added": "0040_tenant_watchlist_and_suppression",
+  "ready_for_demo_preview_before_this_gate": true,
+  "real_organization_route_built": false,
+  "real_organization_route_not_built_because": "it would create a route to aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee that nobody has authorized",
+  "route_modules_after": {
+    "source_watchlist": {
+      "blocked_reasons": [],
+      "lane": "source_watchlist",
+      "reads_dev_header": false,
+      "route_module": "src/nativeforge/api/tenant_watchlist_routes.py",
+      "route_module_available": true,
+      "session_wired": true
+    },
+    "tenant_digest": {
+      "blocked_reasons": [],
+      "lane": "tenant_digest",
+      "reads_dev_header": false,
+      "route_module": "src/nativeforge/api/tenant_digest_routes.py",
+      "route_module_available": true,
+      "session_wired": true
+    }
+  },
+  "route_modules_before": {
+    "source_watchlist": "ABSENT",
+    "tenant_digest": "ABSENT"
+  },
+  "schema_version": "nf_tenant_digest_gate140_artifact_v1",
+  "source_monitoring_not_required_because": "the candidates are labelled fixture snapshots; requiring a live check would make the preview lane permanently unreachable and every 'not ready' above it unfalsifiable",
+  "source_monitoring_required_for_a_fixture_preview": false,
+  "suppression_persistence_before": "ABSENT",
+  "tables_added": [
+    "nf_source_watchlist_entries",
+    "nf_tenant_pursuit_suppressions"
+  ],
+  "watchlist_service_before": "ABSENT",
+  "watchlist_table_before": "ABSENT",
+  "what_gate_104_built": [
+    "tenant_nofo_digest_snapshot_service",
+    "tenant_nofo_digest_change_detection_service",
+    "tenant_nofo_digest_item_explanation_service",
+    "tenant_pursuit_suppression_service",
+    "tenant_nofo_digest_builder_service",
+    "tenant_nofo_digest_demo_fixture_service"
+  ],
+  "what_gate_104_wired": [],
+  "why_tenant_digest_operational_was_false": "it was a literal False in six places and no service derived it; same family Gate 114A removed for customer_persistence_live and Gate 139A for awarded_operational_tracking"
+}

@@ -30,6 +30,8 @@
       "spark_scoring_routes.py",
       "sprint0_routes.py",
       "stage12_guided_demo_routes.py",
+      "tenant_digest_routes.py",
+      "tenant_watchlist_routes.py",
       "tribal_profile_routes.py",
       "trust_routes.py"
     ],
@@ -82,6 +84,8 @@
       "spark_scoring_routes.py",
       "sprint0_routes.py",
       "stage12_guided_demo_routes.py",
+      "tenant_digest_routes.py",
+      "tenant_watchlist_routes.py",
       "tribal_profile_routes.py",
       "trust_routes.py"
     ],

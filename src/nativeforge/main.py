@@ -63,6 +63,10 @@ from nativeforge.api.stage12_guided_demo_routes import (
     demo_stage12_router,
     real_stage12_router,
 )
+from nativeforge.api.tenant_digest_routes import router as tenant_digest_router
+from nativeforge.api.tenant_watchlist_routes import (
+    router as tenant_watchlist_router,
+)
 from nativeforge.api.tribal_profile_routes import (
     demo_profile_router,
     real_profile_router,
@@ -143,6 +147,11 @@ def create_app() -> FastAPI:
     app.include_router(award_requirements_router)
     app.include_router(award_proof_router)
     app.include_router(award_document_router)
+    # Gate 140: the source watchlist and the matched-NOFO digest, behind an
+    # authenticated demo organization context. Neither calls a live source;
+    # neither sends mail.
+    app.include_router(tenant_watchlist_router)
+    app.include_router(tenant_digest_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

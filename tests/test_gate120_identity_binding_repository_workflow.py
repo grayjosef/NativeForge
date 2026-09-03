@@ -859,5 +859,5 @@ def test_the_repository_bridges_gate_109s_vocabulary_rather_than_restating_it():
 
 def test_alembic_head_is_unchanged_by_this_gate():
     contract = art.build_repository_contract()
-    assert contract["alembic_head"] == "0039"
+    assert contract["alembic_head"] == "0040"
     assert contract["migration_revision"] == "0029"

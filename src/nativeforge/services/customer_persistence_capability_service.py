@@ -56,6 +56,7 @@ and an unreachable branch is an untested one.
 
 from __future__ import annotations
 
+import ast
 import json
 import re
 from pathlib import Path
@@ -137,6 +138,14 @@ CAPABILITY_REPOSITORY_MODULES: dict[str, str] = {
     # its mere existence, with no bytes stored anywhere.
     "document_library_persistence": (
         "nativeforge.services.award_document_store_repository_service"
+    ),
+    # Gate 140D. The contract and the repository are the same module here, as
+    # they are for the document lane: the thing that decides what may be
+    # watched is the thing that writes the row. Naming a separate
+    # `source_watchlist_repository_service` would have been a second file whose
+    # existence, not whose behaviour, this map reports on.
+    "source_watchlist_persistence": (
+        "nativeforge.services.tenant_source_watchlist_service"
     ),
 }
 
@@ -257,6 +266,63 @@ def _module_importable(name: str) -> bool:
         return False
 
 
+def _migration_string_constants(body: str) -> dict[str, str]:
+    """Module-level `NAME = "literal"` in one migration, by name.
+
+    Parsed with `ast` rather than matched, because a regex that read
+    `NAME\\s*=\\s*"(\\w+)"` would also pick up an assignment inside a
+    function and a keyword argument that happens to look like one.
+    """
+    constants: dict[str, str] = {}
+    try:
+        tree = ast.parse(body)
+    except SyntaxError:
+        return constants
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        if not isinstance(node.value, ast.Constant) or not isinstance(
+            node.value.value, str
+        ):
+            continue
+        for target in node.targets:
+            if isinstance(target, ast.Name):
+                constants[target.id] = node.value.value
+    return constants
+
+
+def _rls_tables_in(body: str, constants: dict[str, str]) -> set[str]:
+    """Which tables this migration enables row level security on.
+
+    Three shapes appear in this repository, and all three are real:
+
+    ```text
+    ALTER TABLE nf_thing ENABLE ROW LEVEL SECURITY      a literal
+    ALTER TABLE {TABLE} ENABLE ROW LEVEL SECURITY       one constant
+    for table in (A, B): ALTER TABLE {table} ...        a loop over two
+    ```
+
+    The third is what Gate 140's migration does. Reading only the first two
+    left both of its policied tables reported as unprotected.
+    """
+    found: set[str] = set()
+    for token in re.findall(r"ALTER TABLE \{?(\w+)\}? ENABLE ROW LEVEL SECURITY", body):
+        if token in constants:
+            found.add(constants[token])
+            continue
+        if token.isupper() or token in constants:
+            continue
+        # A loop variable: find what it iterates over.
+        loop = re.search(rf"for\s+{re.escape(token)}\s+in\s+\(([^)]*)\)", body)
+        if loop:
+            for name in re.findall(r"\w+", loop.group(1)):
+                if name in constants:
+                    found.add(constants[name])
+            continue
+        found.add(token)
+    return found
+
+
 def detect_schema_facts(
     *, models_path: Path | None = None, versions_dir: Path | None = None
 ) -> dict[str, dict[str, bool]]:
@@ -289,23 +355,23 @@ def detect_schema_facts(
     if versions.is_dir():
         for path in sorted(versions.glob("*.py")):
             body = path.read_text(encoding="utf-8", errors="replace")
+            constants = _migration_string_constants(body)
+
             for match in re.finditer(r'op\.create_table\(\s*"?(\w+)"?', body):
                 token = match.group(1)
-                # Migrations that name their table through a module constant.
-                if token in {"TABLE", "table", "TABLE_NAME"}:
-                    const = re.search(rf'{token}\s*=\s*"(\w+)"', body)
-                    if const:
-                        token = const.group(1)
+                # A migration may name its table through ANY module constant.
+                #
+                # This resolved exactly three blessed names - TABLE, table,
+                # TABLE_NAME - and Gate 140's migration used WATCHLIST and
+                # SUPPRESSIONS, so both of its tables read as absent while
+                # both existed. That is the twelfth time this campaign has
+                # found a probe reporting on a NAME instead of a capability,
+                # and the fix is the same every time: derive it.
+                token = constants.get(token, token)
                 migration_tables[token] = body
+
             if "ROW LEVEL SECURITY" in body:
-                for name in re.findall(
-                    r"ALTER TABLE (\w+) ENABLE ROW LEVEL SECURITY", body
-                ):
-                    rls_tables.add(name)
-                if "{TABLE}" in body:
-                    const = re.search(r'TABLE\s*=\s*"(\w+)"', body)
-                    if const:
-                        rls_tables.add(const.group(1))
+                rls_tables |= _rls_tables_in(body, constants)
 
     facts: dict[str, dict[str, bool]] = {}
     for table in set(modelled) | set(migration_tables):

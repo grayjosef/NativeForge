@@ -1,0 +1,20 @@
+{
+  "a_daily_alert_nobody_receives_is_still_not_delivery": true,
+  "blocked_reasons": [],
+  "cadence_change_archives_the_previous_profile": true,
+  "cadence_restored_to_weekly_after_the_smoke": true,
+  "cadences_recognised": [
+    "daily",
+    "weekly"
+  ],
+  "daily_is_off_until_the_tenant_enables_it": true,
+  "daily_is_optional": true,
+  "daily_refusal_reason": "daily_digest_requested_but_the_profile_has_not_enabled_it",
+  "daily_refused_before_opt_in": true,
+  "daily_setting_proved": true,
+  "email_delivery_live": false,
+  "emails_sent": 0,
+  "schema_version": "nf_tenant_digest_gate140_artifact_v1",
+  "setting_is_a_stored_column_not_a_service_flag": true,
+  "setting_lives_in": "nf_tenant_beta_profiles.digest_frequency"
+}

@@ -777,8 +777,10 @@ def test_the_awarded_grants_lane_has_a_write_path_and_is_not_operational():
 # the point. An exemption list that quietly outlives its reason is how a typo
 # passes as a planned absence, so the test asserts the named absences are still
 # absent as well as that mapped modules import.
+# `source_watchlist_persistence` left this list in Gate 140, and this test
+# failed the moment `tenant_source_watchlist_service` appeared - which is the
+# point, twice over now.
 KNOWN_ABSENT_CONTRACT_LANES: dict[str, str] = {
-    "source_watchlist_persistence": "no tenant source watchlist has been built",
     "beta_onboarding_persistence": "no beta onboarding service has been built",
 }
 

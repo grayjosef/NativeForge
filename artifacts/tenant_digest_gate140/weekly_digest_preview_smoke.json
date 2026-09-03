@@ -1,0 +1,55 @@
+{
+  "blocked_reasons": [],
+  "candidate_provenance": "labelled_fixture_snapshots",
+  "default_cadence": "weekly",
+  "delivery_status": "preview_only",
+  "digest_preview_operational": true,
+  "email_delivery_live": false,
+  "emails_sent": 0,
+  "improvement_claims": [],
+  "item_counts": {
+    "suppressed_after": 1,
+    "total_after": 9,
+    "total_before": 9,
+    "visible_after": 8,
+    "visible_before": 9
+  },
+  "item_fields": [
+    "opportunity_id",
+    "source",
+    "title",
+    "jurisdiction",
+    "program_area",
+    "due_date",
+    "due_date_status",
+    "match_reason",
+    "eligibility_status",
+    "eligibility_evidence",
+    "blockers",
+    "recommended_action",
+    "pursuit_status",
+    "digest_visibility_status"
+  ],
+  "live_source_coverage": false,
+  "needs_human_review_preserved": true,
+  "no_deadline_was_inferred": true,
+  "no_eligibility_was_fabricated": true,
+  "no_opportunity_was_fabricated": true,
+  "refusals": {
+    "cross_organization_read": true,
+    "forged_dev_header": true,
+    "unauthenticated": true,
+    "unrecognised_cadence": true
+  },
+  "route_module": "src/nativeforge/api/tenant_digest_routes.py",
+  "schema_version": "nf_tenant_digest_gate140_artifact_v1",
+  "source_monitoring_live": false,
+  "unknown_preserved": true,
+  "unresolved_statuses_that_survive": [
+    "needs_human_review",
+    "unknown",
+    "unsupported"
+  ],
+  "weekly_is_the_default": true,
+  "weekly_needed_no_setting": true
+}

@@ -1,0 +1,48 @@
+{
+  "blocked_reasons": [],
+  "cross_org_refused": true,
+  "customer_auth_live": false,
+  "customer_persistence_live": true,
+  "daily_setting_available": true,
+  "digest_preview_available": true,
+  "email_delivery_available": false,
+  "email_required_for_preview": false,
+  "invariant_failures": [],
+  "not_approved": [
+    "production_tenant_digest",
+    "source_monitoring_live",
+    "email_delivery",
+    "live_source_coverage",
+    "production_rollout",
+    "controlled_customer_pilot"
+  ],
+  "production_tenant_digest": false,
+  "profile_available": true,
+  "route_modules": {
+    "source_watchlist": {
+      "blocked_reasons": [],
+      "lane": "source_watchlist",
+      "reads_dev_header": false,
+      "route_module": "src/nativeforge/api/tenant_watchlist_routes.py",
+      "route_module_available": true,
+      "session_wired": true
+    },
+    "tenant_digest": {
+      "blocked_reasons": [],
+      "lane": "tenant_digest",
+      "reads_dev_header": false,
+      "route_module": "src/nativeforge/api/tenant_digest_routes.py",
+      "route_module_available": true,
+      "session_wired": true
+    }
+  },
+  "schema_version": "nf_tenant_digest_gate140_artifact_v1",
+  "scope": "controlled_dev_demo",
+  "source_monitoring_live": false,
+  "source_monitoring_required_for_preview": false,
+  "suppression_available": true,
+  "tenant_digest_operational": true,
+  "unauthenticated_refused": true,
+  "watchlist_available": true,
+  "weekly_default_available": true
+}

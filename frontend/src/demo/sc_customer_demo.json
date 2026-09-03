@@ -13581,10 +13581,7 @@
       },
       {
         "blocked_reasons": [
-          "no_customer_auth_so_nobody_owns_the_row",
-          "no_repository_can_address_this_capability",
-          "no_service_decides_what_may_be_written",
-          "no_table_declares_this_capability:nf_source_watchlist_entries"
+          "no_customer_auth_so_nobody_owns_the_row"
         ],
         "capability": "source_watchlist_persistence"
       },
@@ -13658,12 +13655,9 @@
       },
       {
         "blocked_reasons": [
-          "no_customer_auth_so_nobody_owns_the_row",
-          "no_repository_can_address_this_capability",
-          "no_service_decides_what_may_be_written",
-          "no_table_declares_this_capability:nf_source_watchlist_entries"
+          "no_customer_auth_so_nobody_owns_the_row"
         ],
-        "built": false,
+        "built": true,
         "capability": "source_watchlist_persistence",
         "data_source": "controlled_demo",
         "expected_table": "nf_source_watchlist_entries",
@@ -38616,7 +38610,7 @@
       ],
       "collaboration_matching_claimed": false,
       "collaboration_status": "dark_off",
-      "current_head": "334169a",
+      "current_head": "27aaa63",
       "customer_data_persistence_claimed": false,
       "customer_next_actions": [
         "Provide missing org evidence when durable upload path is approved",
@@ -38837,7 +38831,7 @@
         "Review evidence intake storage proposal before any migration",
         "Keep collaboration and final export OFF"
       ],
-      "operator_readiness_id": "or_23eff23f0773c2b7",
+      "operator_readiness_id": "or_860eb76475858e42",
       "package_readiness_reference": "package_readiness_queue",
       "pen_test_passed_claimed": false,
       "pen_test_readiness_reference": "docs/operations/152_PEN_TEST_READINESS_REPORT.md",

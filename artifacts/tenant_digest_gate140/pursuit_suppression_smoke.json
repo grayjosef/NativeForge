@@ -1,0 +1,29 @@
+{
+  "audit_row_is_appended_before_the_suppression": true,
+  "audit_rows_written": 1,
+  "blocked_reasons": [],
+  "item_counts": {
+    "suppressed_after": 1,
+    "total_after": 9,
+    "total_before": 9,
+    "visible_after": 8,
+    "visible_before": 9
+  },
+  "lift_proved": true,
+  "lift_sets_lifted_at_and_deletes_nothing": true,
+  "preserved_by": "a CHECK constraint: source_history_preserved AND provenance_preserved",
+  "provenance_preserved": true,
+  "rows_for_another_organization": 0,
+  "rows_for_the_real_organization": 0,
+  "rows_left_live": 0,
+  "rows_total": 1,
+  "schema_version": "nf_tenant_digest_gate140_artifact_v1",
+  "source_history_preserved": true,
+  "suppression_is_audit_backed": true,
+  "suppression_is_org_scoped": true,
+  "suppression_proved": true,
+  "suppression_refusal_reason_without_audit": "contract:no_audit_event_recorded",
+  "suppression_without_audit_evidence_is_refused": true,
+  "the_item_moved_rather_than_vanishing": true,
+  "the_opportunity_is_not_deleted": true
+}

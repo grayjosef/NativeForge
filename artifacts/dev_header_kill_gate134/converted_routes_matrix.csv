@@ -17,5 +17,7 @@ source_ingestion_routes,/v1,26,False,True,preview_proxy,True,True,converted,none
 spark_scoring_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0
 sprint0_routes,/v1,10,False,True,preview_proxy,True,True,converted,none,0
 stage12_guided_demo_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
+tenant_digest_routes,/v1,5,False,True,preview_proxy,True,True,converted,none,0
+tenant_watchlist_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 tribal_profile_routes,/v1,8,False,True,preview_proxy,True,True,converted,none,0
 trust_routes,/v1,8,False,True,preview_proxy,True,True,converted,none,0

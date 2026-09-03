@@ -1,0 +1,35 @@
+{
+  "blocked_reasons": [],
+  "collectors_activated": 0,
+  "live_grant_sources_called": false,
+  "network_calls_to_grant_sources": 0,
+  "refusals": {
+    "caller_relabelling_the_write": true,
+    "cross_organization_read": true,
+    "fixture_id_without_the_fixture_prefix": {
+      "refused": true,
+      "source_id": "totally-a-fixture-honest"
+    },
+    "forged_dev_header": true,
+    "registry_id_not_in_the_registry": {
+      "refused": true,
+      "source_id": "nf-seed-2026-fed-999999"
+    },
+    "unauthenticated": true
+  },
+  "route_module": "src/nativeforge/api/tenant_watchlist_routes.py",
+  "rows_for_another_organization": 0,
+  "rows_for_the_real_organization": 0,
+  "rows_left_live": 0,
+  "rows_total": 2,
+  "schema_version": "nf_tenant_digest_gate140_artifact_v1",
+  "source_monitoring_live": false,
+  "steps": {
+    "added_a_federal_registry_source": "nf-seed-2026-fed-001",
+    "added_a_state_registry_source": "nf-seed-2026-st-041",
+    "archived_one_entry_without_deleting_it": true,
+    "read_the_watchlist_back_anchored_on_organization_id": true
+  },
+  "watching_is_not_monitoring": true,
+  "watchlist_route_operational": true
+}

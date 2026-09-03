@@ -538,8 +538,10 @@ def test_the_capability_matrix_separates_production_from_controlled_dev():
     # Production persistence is unchanged and still false.
     assert matrix["customer_persistence_live"] is False
     assert matrix["production_persistence_ready"] is False
-    # And six lanes are available for a controlled dev/demo fixture write.
-    assert matrix["controlled_dev_persistence_available_count"] == 6
+    # And seven lanes are available for a controlled dev/demo fixture write.
+    # Six at Gate 138; Gate 140B built `nf_source_watchlist_entries` and 140D
+    # the service that writes it, which is the seventh.
+    assert matrix["controlled_dev_persistence_available_count"] == 7
     assert capability_matrix_invariant_failures(matrix) == []
 
 
@@ -554,9 +556,12 @@ def test_a_lane_with_no_table_is_available_for_neither():
     absent = {
         row["capability"] for row in matrix["rows"] if not row["schema_available"]
     }
+    # `source_watchlist_persistence` left this set in Gate 140: 140B built the
+    # table and 140D the repository. `tenant_digest_persistence` stays, because
+    # Gate 140 makes a digest PREVIEWABLE and does not persist one - there is
+    # still no `nf_tenant_digest_records`.
     assert absent == {
         "tenant_digest_persistence",
-        "source_watchlist_persistence",
         "beta_onboarding_persistence",
     }
     for row in matrix["rows"]:

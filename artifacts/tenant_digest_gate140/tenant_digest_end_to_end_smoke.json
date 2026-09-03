@@ -1,0 +1,124 @@
+{
+  "blocked_reasons": [],
+  "collectors_activated": 0,
+  "database": "migrated_sqlite_built_for_this_call",
+  "emails_sent": 0,
+  "end_to_end_completed": true,
+  "every_stored_row_is_fixture_labelled": true,
+  "fake_sessions_created": 0,
+  "fake_users_created": 0,
+  "invariant_failures": [],
+  "item_counts": {
+    "suppressed_after": 1,
+    "total_after": 9,
+    "total_before": 9,
+    "visible_after": 8,
+    "visible_before": 9
+  },
+  "live_grant_sources_called": false,
+  "network_calls_to_grant_sources": 0,
+  "notes": [],
+  "object_store_calls": 0,
+  "proved": {
+    "cross_org_refused": true,
+    "daily_refused_before_opt_in": true,
+    "daily_setting_proved": true,
+    "digest_preview_operational": true,
+    "end_to_end_completed": true,
+    "forged_header_refused": true,
+    "live_grant_sources_called": false,
+    "readiness_route_operational": true,
+    "real_customer_data_written": false,
+    "real_organization_touched": false,
+    "suppression_audit_backed": true,
+    "suppression_lift_proved": true,
+    "suppression_preserves_the_opportunity": true,
+    "suppression_proved": true,
+    "unauthenticated_refused": true,
+    "unknown_cadence_refused": true,
+    "watchlist_archive_preserves_the_row": true,
+    "watchlist_caller_supplied_fields_refused": true,
+    "watchlist_fixture_prefix_enforced": true,
+    "watchlist_registry_check_enforced": true,
+    "watchlist_route_operational": true,
+    "weekly_default_proved": true
+  },
+  "real_customer_data_written": false,
+  "real_organization_touched": false,
+  "row_counts": {
+    "nf_audit_events_for_suppression": 1,
+    "nf_source_watchlist_entries_for_other_org": 0,
+    "nf_source_watchlist_entries_for_real_org": 0,
+    "nf_source_watchlist_entries_live": 0,
+    "nf_source_watchlist_entries_total": 2,
+    "nf_tenant_pursuit_suppressions_for_other_org": 0,
+    "nf_tenant_pursuit_suppressions_for_real_org": 0,
+    "nf_tenant_pursuit_suppressions_live": 0,
+    "nf_tenant_pursuit_suppressions_total": 1,
+    "non_fixture_rows_written": 0
+  },
+  "schema_version": "nf_tenant_digest_gate140_artifact_v1",
+  "sequence": [
+    "add two real registry sources to the watchlist",
+    "read the watchlist back, anchored on organization_id",
+    "ask for the weekly digest -> the default, no setting needed",
+    "ask for the daily digest -> refused, the profile has not enabled it",
+    "enable daily on the profile",
+    "ask for the daily digest -> produced",
+    "restore weekly",
+    "suppress one opportunity -> an audit row, then a suppression",
+    "ask for the digest -> the item moved to suppressed_items",
+    "lift the suppression -> the item comes back",
+    "read readiness",
+    "read everything as another organization -> refused",
+    "archive a watchlist entry -> the row stays"
+  ],
+  "session": "real, signed, for a real membership row",
+  "unauthenticated_probes": [
+    {
+      "method": "GET",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/source-watchlist",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/source-watchlist",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/source-watchlist/00000000-0000-0000-0000-000000000140",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/source-watchlist/00000000-0000-0000-0000-000000000140/archive",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/digest",
+      "status": 401
+    },
+    {
+      "method": "GET",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/digest/readiness",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/digest/cadence",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/digest/suppress",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/v1/nf/demo/orgs/bbbbbbbb-cccc-dddd-eeee-ffffffffffff/digest/lift",
+      "status": 401
+    }
+  ]
+}
