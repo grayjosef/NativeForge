@@ -1,0 +1,92 @@
+{
+  "absent_key_names": [
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_bucket",
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_secret_access_key"
+  ],
+  "any_path_can_contact_object_storage": false,
+  "body_storage_fields_refused": [
+    "object_key",
+    "object_bucket",
+    "content",
+    "body",
+    "bytes",
+    "sha256_digest",
+    "content_length"
+  ],
+  "body_upload_blocked_at_the_route_boundary": true,
+  "constants_replaced_by_measurement": {
+    "award_document_routes.object_store_configured": "was a literal False at three envelope sites",
+    "awarded_operational_tracking_readiness_service": "document_body_storage_ready was a literal False",
+    "post_award_common.refuse_body_storage": "was a literal False in the refusal detail"
+  },
+  "credential_values_read_into_a_result": false,
+  "external_adapter_is_inert_without_all_three": [
+    "an injected client",
+    "object storage configured",
+    "allow_external=True"
+  ],
+  "gate": "141",
+  "metadata_only_operation_route_live": true,
+  "metadata_route_module": {
+    "blocked_reasons": [],
+    "derives_object_store_configured": true,
+    "refuses_body_storage": true,
+    "route_module": "src/nativeforge/api/award_document_routes.py",
+    "route_module_available": true,
+    "session_wired": true
+  },
+  "object_store_client_exists": false,
+  "object_store_sdk_installed": false,
+  "present_key_names": [],
+  "real_organization_route_built": false,
+  "real_organization_route_not_built_because": "it would create a route to aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee that nobody has authorized",
+  "required_key_names": [
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_bucket",
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_secret_access_key"
+  ],
+  "schema_version": "nf_document_storage_gate141_artifact_v1",
+  "sdks_checked": [
+    "boto3",
+    "botocore",
+    "minio",
+    "s3fs",
+    "aioboto3"
+  ],
+  "what_a_fake_adapter_cannot_prove": [
+    "durability",
+    "that a bucket exists",
+    "that credentials work",
+    "cross-process retrieval",
+    "bucket policy or region"
+  ],
+  "what_a_fake_adapter_proves": [
+    "caller_supplied_key_refused",
+    "delete_removed_it",
+    "digest_verified",
+    "empty_body_refused",
+    "every_unsafe_key_refused",
+    "external_adapter_is_inert_by_default",
+    "head_found_it",
+    "key_is_generated",
+    "key_is_safe",
+    "nothing_left_in_the_fake",
+    "oversized_body_refused",
+    "round_trip_bytes_match",
+    "stored",
+    "wrong_digest_refused"
+  ],
+  "what_real_activation_requires": [
+    "five settings with real values",
+    "an injected client (no SDK is present and none was added)",
+    "an owner decision",
+    "an external verifier, explicitly allowed and run by a person",
+    "secret scanning before promotion"
+  ],
+  "why_object_store_configured_is_false": "five required settings are absent; detect_body_store_mode() reports 'unconfigured' and PRODUCTION_CAPABLE_MODES contains only 's3_compatible_configured'"
+}

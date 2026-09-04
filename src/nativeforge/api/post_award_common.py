@@ -163,6 +163,24 @@ def refuse_caller_supplied(body: Any) -> None:
         )
 
 
+def object_store_configured() -> bool:
+    """Is there anywhere for a document's bytes to live? Measured, not asserted.
+
+    Gate 141 replaced a literal `False` here and at three envelope sites. It was
+    correct - the store is unconfigured - and it was a constant, so configuring
+    a bucket would have left every route still telling callers there was none.
+    Same family Gate 114A removed for `customer_persistence_live`.
+
+    The answer comes from Gate 127's detector, which asks Gate 96's
+    `detect_body_store_mode()`. It reads settings; it opens no socket.
+    """
+    from nativeforge.services.award_document_store_persistence_validation_service import (  # noqa: E501
+        detect_object_store_configured,
+    )
+
+    return bool(detect_object_store_configured())
+
+
 def refuse_body_storage(body: Any) -> None:
     """No bytes. The store is unconfigured and the schema refuses a key."""
     offered = _model_fields(body)
@@ -173,7 +191,7 @@ def refuse_body_storage(body: Any) -> None:
             detail={
                 "error": BODY_STORAGE_UNAVAILABLE,
                 "fields": named,
-                "object_store_configured": False,
+                "object_store_configured": object_store_configured(),
                 "because": (
                     "nf_award_documents refuses an object_key while no store "
                     "is configured; a document row is a reference and nothing "

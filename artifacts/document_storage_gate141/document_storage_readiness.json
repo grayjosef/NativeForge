@@ -1,0 +1,41 @@
+{
+  "blocked_reasons": [
+    "no_body_route_proof_was_supplied"
+  ],
+  "body_bytes_required_for_metadata": false,
+  "body_route_operational_in_runtime": false,
+  "body_route_operational_under_the_fake": true,
+  "customer_auth_live": false,
+  "document_body_storage_ready": false,
+  "document_metadata_operational": true,
+  "hermetic_fake_passed": true,
+  "invariant_failures": [],
+  "max_body_bytes": 16777216,
+  "metadata_route": {
+    "blocked_reasons": [],
+    "derives_object_store_configured": true,
+    "refuses_body_storage": true,
+    "route_module": "src/nativeforge/api/award_document_routes.py",
+    "route_module_available": true,
+    "session_wired": true
+  },
+  "not_approved": [
+    "production_storage",
+    "external_object_storage_activation",
+    "document_body_upload_in_runtime",
+    "customer_file_ingestion",
+    "signed_url_issuance"
+  ],
+  "object_store_configured": false,
+  "object_store_required_for_metadata": false,
+  "preflight_passes": true,
+  "preflight_state": "hermetic_fake_verified",
+  "production_storage": false,
+  "schema_version": "nf_document_storage_gate141_artifact_v1",
+  "scope": "none",
+  "scopes": [
+    "none",
+    "hermetic_fake",
+    "production"
+  ]
+}

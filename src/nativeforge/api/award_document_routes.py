@@ -61,6 +61,7 @@ from nativeforge.api.post_award_common import (
     declared_fields,
     envelope,
     fixture_fields,
+    object_store_configured,
     refuse_body_storage,
     refuse_caller_supplied,
     refuse_if_absent,
@@ -152,7 +153,7 @@ def create_document_reference(
             "rows_written": int(result["rows_written"]),
         },
         metadata_only=True,
-        object_store_configured=False,
+        object_store_configured=object_store_configured(),
         body_storage_unavailable_reason=BODY_STORAGE_UNAVAILABLE,
     )
 
@@ -180,7 +181,7 @@ def list_documents(
             "documents": list(result.get("documents") or []),
         },
         metadata_only=True,
-        object_store_configured=False,
+        object_store_configured=object_store_configured(),
     )
 
 
@@ -209,7 +210,7 @@ def get_document(
             "rows_read": int(result["rows_read"]),
         },
         metadata_only=True,
-        object_store_configured=False,
+        object_store_configured=object_store_configured(),
         # There is no download. The row describes a document; it does not
         # contain one, and no route here will pretend otherwise.
         body_available=False,
@@ -245,4 +246,204 @@ def archive_document(
             "rows_written": int(result["rows_written"]),
         },
         metadata_only=True,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Gate 141D: the body, which this deployment cannot store
+# ---------------------------------------------------------------------------
+#
+# An EXPLICIT refusal, not a silent absence. Gate 139 left no route at all for
+# a document's bytes, which meant a caller asking for one got a 404 that reads
+# as "wrong URL" rather than "this deployment has nowhere to put a file". A
+# refusal that names itself is the difference between a missing feature and a
+# feature that was decided against.
+#
+# The permitted branch is REACHABLE, through `get_document_body_adapter`. In
+# runtime that dependency yields nothing and every upload is refused; a test
+# overrides it with the in-memory fake and proves the storing path works. An
+# unreachable permitted branch makes every refusal above it unfalsifiable -
+# Gate 134F removed exactly that from the customer-auth chain.
+#
+# Runtime cannot reach the storing branch by any configuration of its own:
+# nothing constructs an adapter for this dependency, and there is no SDK in
+# this project to construct an external one from.
+
+
+def get_document_body_adapter() -> Any:
+    """The adapter this deployment stores document bytes through.
+
+    ``None`` — and that is the answer, not a placeholder. Overridden in a test
+    with `InMemoryObjectStorageAdapter` so the storing branch is reachable and
+    provable without a bucket, a credential or a network.
+    """
+    return None
+
+
+class DocumentBodyRequest(BaseModel):
+    """What a caller may say when asking to store a document's bytes.
+
+    No field carries content. `content_length` and `sha256_digest` describe
+    bytes the caller has; they are not the bytes, and the route refuses before
+    anything could be read from them anyway.
+    """
+
+    content_type: str | None = Field(default=None, max_length=128)
+    content_length: int | None = Field(default=None, ge=0)
+    sha256_digest: str | None = Field(default=None, max_length=64)
+
+    model_config = {"extra": "allow"}
+
+
+@router.get("/{org_id}/documents/{document_id}/body-storage")
+def get_document_body_storage_readiness(
+    org_id: uuid.UUID,
+    document_id: uuid.UUID,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
+    adapter: Annotated[Any, Depends(get_document_body_adapter)],
+) -> dict[str, Any]:
+    """Can this document's bytes be stored, and if not, what is missing?
+
+    Answered without touching the document row: whether an object store exists
+    is a property of the deployment, not of one document, and reading the row
+    first would make an unconfigured store look like a missing document.
+    """
+    same_org(org_id, ctx)
+
+    from nativeforge.services.object_storage_configuration_preflight_service import (
+        build_object_storage_preflight,
+    )
+
+    preflight = build_object_storage_preflight()
+    available = adapter is not None and bool(preflight["object_store_configured"])
+
+    return envelope(
+        {
+            "document_id": str(document_id),
+            "organization_id": str(org_id),
+            "body_storage_available": available,
+            "adapter_available": adapter is not None,
+            "adapter_kind": getattr(adapter, "adapter_kind", None),
+            "object_store_configured": preflight["object_store_configured"],
+            "preflight_state": preflight["state"],
+            # Key NAMES, never values. A reader needs to know what to fill in.
+            "missing_configuration": preflight["absent_key_names"],
+            "unavailable_reason": None if available else BODY_STORAGE_UNAVAILABLE,
+        },
+        metadata_only=True,
+        production_storage=False,
+    )
+
+
+@router.post(
+    "/{org_id}/documents/{document_id}/body",
+    status_code=status.HTTP_201_CREATED,
+)
+def store_document_body(
+    org_id: uuid.UUID,
+    document_id: uuid.UUID,
+    body: DocumentBodyRequest,
+    ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
+    db: Annotated[Session, Depends(get_db_session)],
+    adapter: Annotated[Any, Depends(get_document_body_adapter)],
+) -> dict[str, Any]:
+    """Store a document's bytes. Refused, with the reason, unless an adapter exists.
+
+    No request body carries content and none is read. The route exists to give
+    the refusal a name and to keep the storing branch reachable for a test; it
+    is not a stub that pretends a file was saved.
+    """
+    same_org(org_id, ctx)
+    refuse_caller_supplied(body)
+
+    from nativeforge.services.object_storage_adapter_service import (
+        MAX_BODY_BYTES,
+        body_digest,
+    )
+    from nativeforge.services.object_storage_configuration_preflight_service import (
+        build_object_storage_preflight,
+    )
+
+    # A caller may not name the location. Refused before anything else, because
+    # a caller-chosen key is how one tenant writes into another's prefix.
+    offered = getattr(body, "model_extra", None) or {}
+    if "object_key" in offered or "object_bucket" in offered:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error": "caller_supplied_object_keys_are_not_accepted",
+                "because": (
+                    "an object key is derived from the organization and "
+                    "document ids; accepting one lets a caller choose which "
+                    "tenant's prefix their bytes land in"
+                ),
+            },
+        )
+
+    preflight = build_object_storage_preflight()
+    if adapter is None or not preflight["object_store_configured"]:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error": BODY_STORAGE_UNAVAILABLE,
+                "object_store_configured": preflight["object_store_configured"],
+                "adapter_available": adapter is not None,
+                "preflight_state": preflight["state"],
+                "missing_configuration": preflight["absent_key_names"],
+                "because": (
+                    "this deployment has no object store; a document row is a "
+                    "reference and its bytes live nowhere"
+                ),
+            },
+        )
+
+    found = repo.get_award_document(
+        connection=db.connection(),
+        organization_id=str(org_id),
+        document_id=str(document_id),
+    )
+    refuse_if_absent(found, what="award_document")
+
+    # Synthetic, and only reachable when a test injected an adapter. Runtime
+    # never gets here: no real customer file is read, opened or hashed.
+    payload = f"gate141 body placeholder for {document_id}".encode()
+    stored = adapter.put(
+        organization_id=str(org_id),
+        document_id=str(document_id),
+        body=payload,
+        content_type=body.content_type,
+        declared_digest=body_digest(payload),
+    )
+    if not stored.get("stored"):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error": "document_body_was_not_stored",
+                # The adapter's own reasons, unchanged. Paraphrasing them into
+                # an HTTP message would be a second, worse contract.
+                "blocked_reasons": sorted(stored.get("blocked_reasons") or []),
+                "max_body_bytes": MAX_BODY_BYTES,
+            },
+        )
+
+    return envelope(
+        {
+            "document_id": str(document_id),
+            "organization_id": str(org_id),
+            # The key, the length and the digest. Never the bytes.
+            "object_key": stored["object_key"],
+            "content_length": stored["content_length"],
+            "sha256_digest": stored["sha256_digest"],
+            "max_body_bytes": MAX_BODY_BYTES,
+            "adapter_kind": stored["adapter_kind"],
+            "storage_scope": (
+                "production" if getattr(adapter, "external", False) else "hermetic_fake"
+            ),
+        },
+        metadata_only=False,
+        document_body_written=True,
+        object_store_contacted=bool(stored["external_object_store_contacted"]),
+        object_store_configured=preflight["object_store_configured"],
+        production_storage=False,
+        body_bytes_returned=False,
     )

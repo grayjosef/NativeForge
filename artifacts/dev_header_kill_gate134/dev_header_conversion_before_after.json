@@ -29,7 +29,7 @@
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 243
+    "route_total": 245
   },
   "before": {
     "converted_modules": 1,

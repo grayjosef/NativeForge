@@ -1,0 +1,38 @@
+{
+  "all_body_storage_fields_refused": true,
+  "blocked_reasons": [],
+  "blocker_reason": "document_body_storage_is_not_configured",
+  "body_bytes_sent": 0,
+  "body_bytes_written": 0,
+  "body_route_exists": true,
+  "body_route_is_an_explicit_refusal_not_an_absence": true,
+  "body_storage_fields_refused_on_metadata_create": [
+    "object_key",
+    "object_bucket",
+    "content",
+    "body",
+    "bytes",
+    "sha256_digest",
+    "content_length"
+  ],
+  "body_storage_readiness_route_operational": true,
+  "caller_supplied_object_key_refused": true,
+  "documents_claiming_a_configured_store": 0,
+  "external_object_store_contacted": false,
+  "missing_configuration_reported_as_key_names_only": true,
+  "network_calls_to_object_storage": 0,
+  "real_customer_files_hashed": 0,
+  "real_customer_files_read": 0,
+  "refusal_reasons_available": [
+    "object_storage_not_configured",
+    "external_object_storage_not_allowed",
+    "no_object_store_client_injected",
+    "object_key_is_not_safe",
+    "body_exceeds_the_maximum",
+    "body_is_empty",
+    "declared_digest_does_not_match_the_bytes",
+    "caller_supplied_object_keys_are_not_accepted"
+  ],
+  "schema_version": "nf_document_storage_gate141_artifact_v1",
+  "unconfigured_blocker_correct": true
+}

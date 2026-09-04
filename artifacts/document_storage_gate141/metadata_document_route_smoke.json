@@ -1,0 +1,38 @@
+{
+  "blocked_reasons": [],
+  "body_bytes_not_required": true,
+  "documents_with_an_object_key": 0,
+  "invariant_failures": [],
+  "metadata_route_operational": true,
+  "object_store_required_for_metadata": false,
+  "org_scoped_read_write_proved": true,
+  "refusals": {
+    "caller_relabelling_the_write": true,
+    "cross_organization_read": true,
+    "forged_dev_header": true,
+    "unauthenticated": true
+  },
+  "request_body_shape": {
+    "document_description": "A reference. The bytes live nowhere.",
+    "document_kind": "award_letter",
+    "document_source": "human_entered",
+    "document_source_ref": "gate141-fixture-reference",
+    "document_status": "reference_recorded",
+    "document_title": "Gate 141 fixture award letter",
+    "retention_class": "retain_7_days"
+  },
+  "route_module": "src/nativeforge/api/award_document_routes.py",
+  "row_counts": {
+    "documents_claiming_a_configured_store": 0,
+    "documents_with_an_object_key": 0,
+    "nf_award_documents_live": 0,
+    "nf_award_documents_total": 2
+  },
+  "schema_version": "nf_document_storage_gate141_artifact_v1",
+  "steps": {
+    "archived_it_without_deleting_it": true,
+    "created_a_document_reference": true,
+    "listed_the_award_documents": true,
+    "read_it_back_anchored_on_organization_id": true
+  }
+}

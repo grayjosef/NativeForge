@@ -1,0 +1,50 @@
+{
+  "absent_key_names": [
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_bucket",
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_secret_access_key"
+  ],
+  "blocked_reasons": [
+    "object_store_settings_absent:raw_payload_object_store_access_key_id,raw_payload_object_store_bucket,raw_payload_object_store_endpoint,raw_payload_object_store_region,raw_payload_object_store_secret_access_key"
+  ],
+  "detected_body_store_mode": "unconfigured",
+  "external_object_store_contacted": false,
+  "external_verification_allowed": false,
+  "external_verification_passed": false,
+  "fully_configured": false,
+  "implementation_available": true,
+  "invariant_failures": [],
+  "network_calls": 0,
+  "object_store_configured": false,
+  "placeholder_key_names": [],
+  "present_key_names": [],
+  "production_evidence_fields": [
+    "external_verification_allowed",
+    "external_verification_passed"
+  ],
+  "required_key_names": [
+    "raw_payload_object_store_endpoint",
+    "raw_payload_object_store_bucket",
+    "raw_payload_object_store_region",
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_secret_access_key"
+  ],
+  "schema_version": "nf_document_storage_gate141_artifact_v1",
+  "secret_key_names": [
+    "raw_payload_object_store_access_key_id",
+    "raw_payload_object_store_secret_access_key"
+  ],
+  "state": "hermetic_fake_verified",
+  "states": [
+    "no_config",
+    "partial_config",
+    "configured_but_unverified",
+    "hermetic_fake_verified",
+    "production_verified"
+  ],
+  "value_lengths_reported": false,
+  "values_read": false,
+  "values_reported": false
+}
