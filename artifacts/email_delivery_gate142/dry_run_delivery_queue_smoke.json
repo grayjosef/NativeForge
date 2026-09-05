@@ -1,0 +1,55 @@
+{
+  "an_intent_is_not_a_queue_position": true,
+  "blocked_reasons": [],
+  "cancel_preserves_the_row": true,
+  "database_checks": [
+    "NOT send_attempted",
+    "NOT provider_contacted",
+    "emails_sent = 0",
+    "delivery_status <> 'queued' AND delivery_status <> 'sent'",
+    "length(recipient_fingerprint) = 32",
+    "recipient_fingerprint NOT LIKE '%@%'"
+  ],
+  "delivery_audit_event_created": true,
+  "delivery_intent_recorded": true,
+  "duplicate_run_refused": true,
+  "emails_sent": 0,
+  "gate_104_reserved_statuses": [
+    "failed",
+    "queued",
+    "sent"
+  ],
+  "intent_counts": {
+    "dry_run_recorded": 0,
+    "intents_after_cancel": 0,
+    "intents_read": 1,
+    "send_disabled": 1
+  },
+  "intents_claiming_a_send": 0,
+  "intents_for_the_real_org": 0,
+  "intents_with_an_address_shaped_fingerprint": 0,
+  "invariant_failures": [],
+  "non_fixture_intents": 0,
+  "provider_contacted": false,
+  "queue_states": [
+    "cancelled",
+    "dry_run_recorded",
+    "needs_human_review",
+    "recipient_refused",
+    "send_disabled",
+    "unknown"
+  ],
+  "row_counts": {
+    "delivery_audit_events": 1,
+    "intents_claiming_a_send": 0,
+    "intents_for_another_org": 0,
+    "intents_for_the_real_org": 0,
+    "intents_live": 0,
+    "intents_total": 1,
+    "intents_with_an_address_shaped_fingerprint": 0,
+    "non_fixture_intents": 0
+  },
+  "schema_version": "nf_email_delivery_gate142_artifact_v1",
+  "send_disabled_blocker_explicit": true,
+  "smoke_invariant_failures": []
+}

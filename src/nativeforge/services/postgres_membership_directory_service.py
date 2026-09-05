@@ -121,7 +121,7 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # *targets*, which alters none of them. Neither nf_org_memberships nor
 # nf_identities gains, loses or changes a column, and the 0027 policies this
 # adapter relies on are untouched. The adapter's schema is unchanged.
-EXPECTED_MIGRATION_HEAD = "0040"
+EXPECTED_MIGRATION_HEAD = "0041"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.

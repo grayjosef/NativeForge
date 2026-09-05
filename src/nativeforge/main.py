@@ -26,6 +26,9 @@ from nativeforge.api.award_requirements_routes import (
 )
 from nativeforge.api.awarded_grants_routes import router as awarded_grants_router
 from nativeforge.api.backend_runtime_routes import router as backend_runtime_router
+from nativeforge.api.digest_delivery_routes import (
+    router as digest_delivery_router,
+)
 from nativeforge.api.form_package_routes import (
     demo_form_pkg_router,
     real_form_pkg_router,
@@ -152,6 +155,9 @@ def create_app() -> FastAPI:
     # neither sends mail.
     app.include_router(tenant_watchlist_router)
     app.include_router(tenant_digest_router)
+    # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
+    # provider is contacted.
+    app.include_router(digest_delivery_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

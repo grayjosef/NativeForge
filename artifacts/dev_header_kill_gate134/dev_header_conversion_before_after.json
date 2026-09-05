@@ -7,6 +7,7 @@
       "award_requirement_proof_routes",
       "award_requirements_routes",
       "awarded_grants_routes",
+      "digest_delivery_routes",
       "form_package_routes",
       "grant_spark_routes",
       "isolation_routes",
@@ -24,12 +25,12 @@
       "tribal_profile_routes",
       "trust_routes"
     ],
-    "converted_modules": 22,
+    "converted_modules": 23,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 245
+    "route_total": 251
   },
   "before": {
     "converted_modules": 1,

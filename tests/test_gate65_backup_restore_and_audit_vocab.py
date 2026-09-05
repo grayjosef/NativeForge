@@ -475,6 +475,19 @@ PREEXISTING_VERBS = {
 }
 
 
+# Verbs added after Gate 65, each by a gate that had to justify it. Listed
+# here rather than folded into PREEXISTING_VERBS so the two sets keep meaning
+# what their names say, and so the closed-set assertion below stays closed.
+#
+# Gate 142 added both of these for digest delivery. Neither is a security verb:
+# a tenant digest in the security event stream teaches every reader filtering
+# for security events to ignore it.
+POST_GATE_65_VERBS = {
+    "digest_delivery_intent_recorded",
+    "digest_delivery_refused",
+}
+
+
 @pytest.mark.parametrize("verb", sorted(EXPECTED_SECURITY_VERBS))
 def test_all_thirteen_security_verbs_exist(verb: str) -> None:
     assert AuditAction(verb).value == verb
@@ -492,7 +505,21 @@ def test_preexisting_verbs_are_not_removed(verb: str) -> None:
 def test_member_count_is_the_sum_and_nothing_extra() -> None:
     assert len(PREEXISTING_VERBS) == 37
     assert len(EXPECTED_SECURITY_VERBS) == 13
-    assert {a.value for a in AuditAction} == PREEXISTING_VERBS | EXPECTED_SECURITY_VERBS
+    assert len(POST_GATE_65_VERBS) == 2
+    assert {a.value for a in AuditAction} == (
+        PREEXISTING_VERBS | EXPECTED_SECURITY_VERBS | POST_GATE_65_VERBS
+    )
+
+
+@pytest.mark.parametrize("verb", sorted(POST_GATE_65_VERBS))
+def test_a_later_verb_exists_and_is_not_a_security_verb(verb: str) -> None:
+    assert AuditAction(verb).value == verb
+    assert verb not in EXPECTED_SECURITY_VERBS
+
+
+def test_no_audit_verb_asserts_that_something_was_sent() -> None:
+    """`digest_delivery_sent` does not exist; nothing can produce it."""
+    assert not [a.value for a in AuditAction if a.value.endswith("_sent")]
 
 
 def test_every_verb_fits_the_action_column() -> None:

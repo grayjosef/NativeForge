@@ -1,0 +1,44 @@
+{
+  "blocked_reasons": [],
+  "customer_auth_live": false,
+  "customer_persistence_live": true,
+  "delivery_audit_event_created": true,
+  "delivery_intent_recorded": true,
+  "digest_renders_for_delivery": true,
+  "email_delivery": false,
+  "email_delivery_readiness": true,
+  "invariant_failures": [],
+  "not_approved": [
+    "email_delivery",
+    "production_email_delivery",
+    "send_activation",
+    "real_recipient_delivery",
+    "provider_activation",
+    "unsubscribe_handling",
+    "bounce_handling"
+  ],
+  "preflight_state": "dry_run_verified",
+  "production_email_delivery": false,
+  "provider_configured": false,
+  "provider_required_for_readiness": false,
+  "real_recipient_required_for_readiness": false,
+  "recipient_validation_works": true,
+  "route_module": {
+    "blocked_reasons": [],
+    "route_module": "src/nativeforge/api/digest_delivery_routes.py",
+    "route_module_available": true,
+    "sends_no_email": true,
+    "session_wired": true
+  },
+  "schema_version": "nf_email_delivery_gate142_artifact_v1",
+  "scope": "controlled_dev_demo",
+  "scopes": [
+    "none",
+    "controlled_dev_demo",
+    "production"
+  ],
+  "send_activated": false,
+  "send_activation_required_for_readiness": false,
+  "send_disabled_blocker": "no_email_provider_configured",
+  "tenant_digest_operational": true
+}

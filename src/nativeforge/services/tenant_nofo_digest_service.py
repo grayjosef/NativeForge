@@ -252,6 +252,12 @@ def build_org_digest_preview(
         current_snapshot=current,
     )
 
+    # The span this digest is about: from when the previous snapshot was
+    # observed to when the current one was. Read off the snapshots rather than
+    # computed from a clock, so two runs over the same pair agree.
+    period_start = previous.get("observed_at")
+    period_end = current.get("observed_at")
+
     digest: dict[str, Any] = {}
     if not blocked:
         digest = build_tenant_digest(
@@ -266,6 +272,8 @@ def build_org_digest_preview(
             suppressions=suppressions,
             cadence=requested,
             daily_alerts_enabled=daily_enabled,
+            period_start=period_start,
+            period_end=period_end,
         )
         # The Gate 104 builder's `blocked_reasons` are CAVEATS about the
         # digest's content, not reasons it was not produced:
@@ -324,6 +332,8 @@ def build_org_digest_preview(
             "items_with_unresolved_eligibility": unresolved_eligibility,
             "items_with_unverified_deadlines": unverified_deadlines,
             "digest_id": digest.get("digest_id"),
+            "period_start": period_start,
+            "period_end": period_end,
             "delivery_status": digest.get("delivery_status", "preview_only"),
             # Constants, and an invariant refuses each of them.
             "live_source_coverage": False,

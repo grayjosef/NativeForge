@@ -96,6 +96,11 @@ class AuditAction(StrEnum):
     source_candidate_blocked = "source_candidate_blocked"
     feedback_alert_attempted = "feedback_alert_attempted"
     feedback_alert_failed = "feedback_alert_failed"
+    # Gate 142. An INTENT to deliver, and a refusal to. Neither asserts that
+    # anything left the building - `digest_delivery_sent` is deliberately not
+    # here, because nothing in this system can produce it.
+    digest_delivery_intent_recorded = "digest_delivery_intent_recorded"
+    digest_delivery_refused = "digest_delivery_refused"
 
 
 # The security verbs, named as a set so callers can ask "is this a security

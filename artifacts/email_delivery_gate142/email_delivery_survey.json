@@ -1,0 +1,110 @@
+{
+  "absent_setting_names": [
+    "nf_email_api_endpoint",
+    "nf_email_api_key",
+    "nf_email_provider",
+    "nf_email_sender_address",
+    "nf_email_sender_domain"
+  ],
+  "audit_verbs_added": [
+    "digest_delivery_intent_recorded",
+    "digest_delivery_refused"
+  ],
+  "audit_verbs_added_to_the_security_stream": false,
+  "constant_replaced_by_measurement": {
+    "tenant_beta_feature_entitlement_service": "digest_email_delivery_live was a literal False; entitlement is permission and stays separate from delivery, which is a capability"
+  },
+  "credential_values_read_into_a_result": false,
+  "gate": "142",
+  "gate_104_reserved_words": [
+    "failed",
+    "queued",
+    "sent"
+  ],
+  "mail_libraries_watched": [
+    "aiohttp",
+    "aiosmtplib",
+    "boto3",
+    "email",
+    "http",
+    "httpx",
+    "mailgun",
+    "postmarker",
+    "requests",
+    "sendgrid",
+    "smtplib",
+    "socket",
+    "urllib",
+    "urllib3"
+  ],
+  "mail_library_imports": {
+    "any_mail_library_imported": false,
+    "mail_libraries_watched": [
+      "aiohttp",
+      "aiosmtplib",
+      "boto3",
+      "email",
+      "http",
+      "httpx",
+      "mailgun",
+      "postmarker",
+      "requests",
+      "sendgrid",
+      "smtplib",
+      "socket",
+      "urllib",
+      "urllib3"
+    ],
+    "mail_library_imports": {},
+    "modules_checked": [
+      "src/nativeforge/services/digest_delivery_renderer_service.py",
+      "src/nativeforge/services/digest_recipient_validation_service.py",
+      "src/nativeforge/services/digest_delivery_dry_run_queue_service.py",
+      "src/nativeforge/services/email_provider_configuration_preflight_service.py"
+    ],
+    "modules_missing": []
+  },
+  "migration_added": "0041_digest_delivery_dry_run_queue",
+  "no_mail_library_is_imported": true,
+  "queue_blocked_reasons": [
+    "cancelled_by_tenant",
+    "digest_not_deliverable",
+    "human_review_required",
+    "no_email_provider_configured",
+    "recipient_domain_not_allowed",
+    "recipient_not_verified",
+    "recipient_shape_invalid",
+    "send_activation_absent",
+    "unknown"
+  ],
+  "queue_uses_queued_or_sent": false,
+  "queue_vocabulary": [
+    "cancelled",
+    "dry_run_recorded",
+    "needs_human_review",
+    "recipient_refused",
+    "send_disabled",
+    "unknown"
+  ],
+  "real_organization_route_built": false,
+  "real_organization_route_not_built_because": "it would create a route to aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee that nobody has authorized",
+  "recipient_address_column_exists": false,
+  "recipient_is_stored_as": "sha256[:32] fingerprint plus domain",
+  "required_setting_names": [
+    "nf_email_provider",
+    "nf_email_api_endpoint",
+    "nf_email_api_key",
+    "nf_email_sender_address",
+    "nf_email_sender_domain"
+  ],
+  "route_module": {
+    "blocked_reasons": [],
+    "route_module": "src/nativeforge/api/digest_delivery_routes.py",
+    "route_module_available": true,
+    "sends_no_email": true,
+    "session_wired": true
+  },
+  "schema_version": "nf_email_delivery_gate142_artifact_v1",
+  "smtplib_is_stdlib_so_absence_is_proved_by_parsing": true,
+  "why_email_delivery_is_false": "there is no email_delivery_service module, no provider configuration, and no send activation; tenant_beta_readiness_service derives it by import and has always answered honestly"
+}

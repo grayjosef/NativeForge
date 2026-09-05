@@ -1,0 +1,78 @@
+{
+  "address_reported": false,
+  "address_stored": false,
+  "blocked_reasons": [],
+  "cases": {
+    "domain_not_allowed": {
+      "blocked_reasons": [
+        "recipient_domain_not_allowed"
+      ],
+      "deliverable": false,
+      "fingerprint_length": 32,
+      "invariant_failures": [],
+      "is_fixture_recipient": true,
+      "recipient_domain": "fixture.invalid",
+      "recipient_verified": true
+    },
+    "malformed": {
+      "blocked_reasons": [
+        "recipient_shape_invalid"
+      ],
+      "deliverable": false,
+      "fingerprint_length": 0,
+      "invariant_failures": [],
+      "is_fixture_recipient": false,
+      "recipient_domain": null,
+      "recipient_verified": true
+    },
+    "unrecognised_source": {
+      "blocked_reasons": [
+        "recipient_source_not_recognised"
+      ],
+      "deliverable": false,
+      "fingerprint_length": 32,
+      "invariant_failures": [],
+      "is_fixture_recipient": true,
+      "recipient_domain": "fixture.invalid",
+      "recipient_verified": true
+    },
+    "unverified": {
+      "blocked_reasons": [
+        "recipient_not_verified"
+      ],
+      "deliverable": false,
+      "fingerprint_length": 32,
+      "invariant_failures": [],
+      "is_fixture_recipient": true,
+      "recipient_domain": "fixture.invalid",
+      "recipient_verified": false
+    },
+    "verified_fixture": {
+      "blocked_reasons": [],
+      "deliverable": true,
+      "fingerprint_length": 32,
+      "invariant_failures": [],
+      "is_fixture_recipient": true,
+      "recipient_domain": "fixture.invalid",
+      "recipient_verified": true
+    }
+  },
+  "dns_checked": false,
+  "fixture_domain": "invalid",
+  "fixture_domain_is_reserved_by_rfc_2606": true,
+  "local_part_reported": false,
+  "mx_checked": false,
+  "no_address_in_any_response": true,
+  "provider_validation_called": false,
+  "recipient_validation_works": true,
+  "refusal_reasons_available": [
+    "recipient_shape_invalid",
+    "recipient_not_verified",
+    "recipient_domain_not_allowed",
+    "recipient_address_too_long",
+    "recipient_source_not_recognised",
+    "no_recipient_supplied"
+  ],
+  "schema_version": "nf_email_delivery_gate142_artifact_v1",
+  "verified_is_a_fact_not_a_shape": true
+}

@@ -1,0 +1,53 @@
+{
+  "absent_setting_names": [
+    "nf_email_api_endpoint",
+    "nf_email_api_key",
+    "nf_email_provider",
+    "nf_email_sender_address",
+    "nf_email_sender_domain"
+  ],
+  "blocked_reasons": [
+    "email_settings_absent:nf_email_api_endpoint,nf_email_api_key,nf_email_provider,nf_email_sender_address,nf_email_sender_domain",
+    "no_email_provider_configured",
+    "send_activation_absent"
+  ],
+  "email_delivery": false,
+  "emails_sent": 0,
+  "invariant_failures": [],
+  "network_calls": 0,
+  "placeholder_setting_names": [],
+  "present_setting_names": [],
+  "provider_configured": false,
+  "provider_contacted": false,
+  "required_setting_names": [
+    "nf_email_provider",
+    "nf_email_api_endpoint",
+    "nf_email_api_key",
+    "nf_email_sender_address",
+    "nf_email_sender_domain"
+  ],
+  "schema_version": "nf_email_delivery_gate142_artifact_v1",
+  "secret_setting_names": [
+    "nf_email_api_key",
+    "nf_email_sender_address"
+  ],
+  "send_activated": false,
+  "send_activation_setting_name": "nf_email_send_activated",
+  "send_evidence_fields": [
+    "provider_verification_allowed",
+    "provider_verification_passed",
+    "send_activation_approved"
+  ],
+  "sender_domain_fingerprint": null,
+  "state": "dry_run_verified",
+  "states": [
+    "no_config",
+    "partial_config",
+    "configured_but_unverified",
+    "dry_run_verified",
+    "send_activated"
+  ],
+  "value_lengths_reported": false,
+  "values_read": false,
+  "values_reported": false
+}
