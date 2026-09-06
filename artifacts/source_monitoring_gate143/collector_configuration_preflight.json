@@ -1,0 +1,126 @@
+{
+  "api_key_values_reported": false,
+  "attribution_needing_verbatim": [
+    "attribution_required"
+  ],
+  "cases": {
+    "attribution_required_without_verbatim": {
+      "activation_approval": true,
+      "blocked_reasons": [
+        "attribution_required_but_no_verbatim_text_is_carried"
+      ],
+      "collector_may_run_live": false,
+      "fetch_mode": "dry_run",
+      "invariant_failures": [],
+      "missing_config_keys": [],
+      "raw_payload_storage_policy": "local_dev_ignored",
+      "source_permitted": true,
+      "state": "configured_but_unapproved"
+    },
+    "dry_run_reviewed": {
+      "activation_approval": true,
+      "blocked_reasons": [],
+      "collector_may_run_live": false,
+      "fetch_mode": "dry_run",
+      "invariant_failures": [],
+      "missing_config_keys": [],
+      "raw_payload_storage_policy": "local_dev_ignored",
+      "source_permitted": true,
+      "state": "configured_dry_run_only"
+    },
+    "incomplete_configuration": {
+      "activation_approval": false,
+      "blocked_reasons": [
+        "attribution_requirement_is_unknown",
+        "collector_config_missing:activation_approval",
+        "collector_config_missing:attribution_requirement",
+        "collector_config_missing:fetch_mode",
+        "collector_config_missing:rate_limit_policy",
+        "collector_config_missing:raw_payload_storage_policy",
+        "collector_config_missing:user_agent_policy",
+        "rate_limit_policy_not_declared:unknown",
+        "user_agent_policy_not_acceptable:unknown"
+      ],
+      "collector_may_run_live": false,
+      "fetch_mode": "dry_run",
+      "invariant_failures": [],
+      "missing_config_keys": [
+        "activation_approval",
+        "attribution_requirement",
+        "fetch_mode",
+        "rate_limit_policy",
+        "raw_payload_storage_policy",
+        "user_agent_policy"
+      ],
+      "raw_payload_storage_policy": "unconfigured",
+      "source_permitted": true,
+      "state": "incomplete_configuration"
+    },
+    "live_fully_configured": {
+      "activation_approval": true,
+      "blocked_reasons": [],
+      "collector_may_run_live": true,
+      "fetch_mode": "live_fetch",
+      "invariant_failures": [],
+      "missing_config_keys": [],
+      "raw_payload_storage_policy": "s3_compatible_configured",
+      "source_permitted": true,
+      "state": "activation_approved"
+    },
+    "live_without_a_payload_store": {
+      "activation_approval": true,
+      "blocked_reasons": [
+        "raw_payload_storage_not_live_capable:local_dev_ignored"
+      ],
+      "collector_may_run_live": false,
+      "fetch_mode": "live_fetch",
+      "invariant_failures": [],
+      "missing_config_keys": [],
+      "raw_payload_storage_policy": "local_dev_ignored",
+      "source_permitted": true,
+      "state": "configured_but_unapproved"
+    },
+    "live_without_approval": {
+      "activation_approval": false,
+      "blocked_reasons": [
+        "collector_config_missing:activation_approval",
+        "live_fetch_requested_without_an_activation_approval",
+        "raw_payload_storage_not_live_capable:local_dev_ignored"
+      ],
+      "collector_may_run_live": false,
+      "fetch_mode": "live_fetch",
+      "invariant_failures": [],
+      "missing_config_keys": [
+        "activation_approval"
+      ],
+      "raw_payload_storage_policy": "local_dev_ignored",
+      "source_permitted": true,
+      "state": "incomplete_configuration"
+    }
+  },
+  "collector_activated": false,
+  "configuration_is_not_activation": true,
+  "fetch_performed": false,
+  "live_capable_payload_policies": [
+    "s3_compatible_configured"
+  ],
+  "live_fetch_is_a_request_not_a_permission": true,
+  "network_calls": 0,
+  "required_config_keys": [
+    "source_id",
+    "fetch_mode",
+    "rate_limit_policy",
+    "attribution_requirement",
+    "user_agent_policy",
+    "raw_payload_storage_policy",
+    "activation_approval"
+  ],
+  "schema_version": "nf_source_monitoring_gate143_artifact_v1",
+  "states": [
+    "incomplete_configuration",
+    "source_not_permitted",
+    "configured_dry_run_only",
+    "configured_but_unapproved",
+    "activation_approved"
+  ]
+}

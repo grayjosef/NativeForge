@@ -1,0 +1,34 @@
+{
+  "any_network_library_imported": false,
+  "chokepoint_clean": true,
+  "collector_activated": false,
+  "distinction_owned_by": "hermetic_network_enforcement_service",
+  "files_scanned": 1089,
+  "finding_count": 0,
+  "invariant_failures": [],
+  "monitoring_modules_checked": [
+    "src/nativeforge/services/source_monitoring_approved_source_service.py",
+    "src/nativeforge/services/source_collector_configuration_preflight_service.py",
+    "src/nativeforge/services/source_monitoring_readiness_service.py"
+  ],
+  "network_imports": {},
+  "network_libraries_watched": [
+    "aiohttp",
+    "ftplib",
+    "httpx",
+    "playwright",
+    "requests",
+    "selenium",
+    "socket",
+    "telnetlib",
+    "urllib3"
+  ],
+  "runtime_mode": "dry_run_in_process",
+  "schema_version": "nf_source_monitoring_gate143_artifact_v1",
+  "source_monitoring_live": false,
+  "sources_cleared_for_collection": 0,
+  "this_guard_made_network_calls": 0,
+  "unapproved_call_sites": 0,
+  "urllib_parse_is_inert": true,
+  "urllib_request_is_not": true
+}

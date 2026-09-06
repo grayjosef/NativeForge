@@ -1,0 +1,84 @@
+{
+  "by_state": {
+    "activation_approved": 0,
+    "api_key_missing": 0,
+    "fixture_allowed": 0,
+    "human_review_blocked": 6,
+    "registry_known": 0,
+    "terms_blocked": 171,
+    "unknown_source": 0
+  },
+  "credential_required_domains": [
+    "sam.gov"
+  ],
+  "domains_matched_by_suffix_because": "the registry has 128 distinct hosts across 177 rows; simpler.grants.gov, www.grants.gov and grants.gov are one publisher, and an exact-match list missed four rows",
+  "domains_matched_by_suffix_not_exact_host": true,
+  "evaluation_states": [
+    "unknown_source",
+    "registry_known",
+    "fixture_allowed",
+    "terms_blocked",
+    "human_review_blocked",
+    "api_key_missing",
+    "activation_approved"
+  ],
+  "gate": "143",
+  "human_review_domains": [
+    "grants.gov",
+    "regulations.gov",
+    "reporter.nih.gov",
+    "usaspending.gov"
+  ],
+  "monitoring_modules": [
+    "src/nativeforge/services/source_monitoring_approved_source_service.py",
+    "src/nativeforge/services/source_collector_configuration_preflight_service.py",
+    "src/nativeforge/services/source_monitoring_readiness_service.py"
+  ],
+  "network_imports": {
+    "any_network_library_imported": false,
+    "modules_checked": [
+      "src/nativeforge/services/source_monitoring_approved_source_service.py",
+      "src/nativeforge/services/source_collector_configuration_preflight_service.py",
+      "src/nativeforge/services/source_monitoring_readiness_service.py"
+    ],
+    "modules_missing": [],
+    "network_imports": {},
+    "network_libraries_watched": [
+      "aiohttp",
+      "ftplib",
+      "httpx",
+      "playwright",
+      "requests",
+      "selenium",
+      "socket",
+      "telnetlib",
+      "urllib3"
+    ]
+  },
+  "no_network_library_imported": true,
+  "readiness_route_module": {
+    "blocked_reasons": [],
+    "makes_no_live_call": true,
+    "route_module": "src/nativeforge/api/source_monitoring_readiness_routes.py",
+    "route_module_available": true,
+    "session_wired": true
+  },
+  "real_organization_route_built": false,
+  "real_organization_route_not_built_because": "it would create a route to aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee that nobody has authorized",
+  "registry_has_a_terms_column": false,
+  "registry_has_no_terms_column_so": "every unreviewed row is UNKNOWN, and live_network_guard_service already classifies UNKNOWN as blocking - deny by default falls out of the data rather than being imposed on it",
+  "registry_row_count": 177,
+  "sam_gov_rows_in_the_registry": 0,
+  "scheduler_components_missing": [
+    "background_worker",
+    "periodic_trigger",
+    "persistent_backend",
+    "production_raw_payload_store",
+    "scheduler_runtime"
+  ],
+  "scheduler_runtime_executes_jobs": false,
+  "scheduler_runtime_mode": "dry_run_in_process",
+  "schema_version": "nf_source_monitoring_gate143_artifact_v1",
+  "urllib_parse_is_not_a_network_client": true,
+  "why_source_monitoring_live_is_false": "source_scheduler_readiness_service derives it from four conjuncts - runtime mode, background worker, periodic trigger, persistent backend - and five components are absent"
+}

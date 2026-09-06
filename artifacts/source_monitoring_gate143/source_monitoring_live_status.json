@@ -1,0 +1,29 @@
+{
+  "background_worker_available": false,
+  "collectors_activated": 0,
+  "components_missing": [
+    "background_worker",
+    "periodic_trigger",
+    "persistent_backend",
+    "production_raw_payload_store",
+    "scheduler_runtime"
+  ],
+  "derived_by": "source_scheduler_readiness_service",
+  "derived_from": [
+    "runtime_mode in LIVE_RUNTIME_MODES",
+    "background_worker_available",
+    "periodic_trigger_available",
+    "persistent_backend_live"
+  ],
+  "improvement_claims": [],
+  "live_source_calls": 0,
+  "live_source_coverage": false,
+  "persistent_backend_live": false,
+  "production_source_monitoring": false,
+  "ready_to_start_monitoring": false,
+  "runtime_executes_jobs": false,
+  "runtime_mode": "dry_run_in_process",
+  "schema_version": "nf_source_monitoring_gate143_artifact_v1",
+  "source_monitoring_live": false,
+  "sources_cleared_for_collection": 0
+}

@@ -1,0 +1,41 @@
+{
+  "blocked_reasons": [],
+  "chokepoint_clean": true,
+  "chokepoint_files_scanned": 1089,
+  "collector_preflight_state": "configured_dry_run_only",
+  "collector_required_for_readiness": false,
+  "every_row_classified": true,
+  "invariant_failures": [],
+  "live_source_access_required_for_readiness": false,
+  "monitorable_source_required_for_readiness": false,
+  "not_approved": [
+    "source_monitoring_live",
+    "production_source_monitoring",
+    "collector_activation",
+    "live_source_coverage",
+    "scraping",
+    "robots_bypass",
+    "terms_review_bypass"
+  ],
+  "registry_loaded": true,
+  "registry_row_count": 177,
+  "route_module": {
+    "blocked_reasons": [],
+    "makes_no_live_call": true,
+    "route_module": "src/nativeforge/api/source_monitoring_readiness_routes.py",
+    "route_module_available": true,
+    "session_wired": true
+  },
+  "scheduler_runtime_required_for_readiness": false,
+  "schema_version": "nf_source_monitoring_gate143_artifact_v1",
+  "scope": "controlled_dev_demo",
+  "scopes": [
+    "none",
+    "controlled_dev_demo",
+    "production"
+  ],
+  "source_monitoring_live": false,
+  "source_monitoring_preflight_ready": true,
+  "tenant_digest_operational": true,
+  "watchlist_can_name_sources": true
+}

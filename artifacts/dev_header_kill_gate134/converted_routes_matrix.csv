@@ -15,6 +15,7 @@ opportunity_discovery_routes,/v1,84,False,True,preview_proxy,True,True,converted
 pursuit_brief_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0
 pursuit_routes,/v1,20,False,True,preview_proxy,True,True,converted,none,0
 source_ingestion_routes,/v1,26,False,True,preview_proxy,True,True,converted,none,0
+source_monitoring_readiness_routes,/v1,3,False,True,preview_proxy,True,True,converted,none,0
 spark_scoring_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0
 sprint0_routes,/v1,10,False,True,preview_proxy,True,True,converted,none,0
 stage12_guided_demo_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0

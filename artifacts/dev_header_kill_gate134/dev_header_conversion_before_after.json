@@ -17,6 +17,7 @@
       "pursuit_brief_routes",
       "pursuit_routes",
       "source_ingestion_routes",
+      "source_monitoring_readiness_routes",
       "spark_scoring_routes",
       "sprint0_routes",
       "stage12_guided_demo_routes",
@@ -25,12 +26,12 @@
       "tribal_profile_routes",
       "trust_routes"
     ],
-    "converted_modules": 23,
+    "converted_modules": 24,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 251
+    "route_total": 254
   },
   "before": {
     "converted_modules": 1,

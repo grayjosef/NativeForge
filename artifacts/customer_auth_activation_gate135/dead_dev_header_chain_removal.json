@@ -24,6 +24,7 @@
     "pursuit_brief_routes.py",
     "pursuit_routes.py",
     "source_ingestion_routes.py",
+    "source_monitoring_readiness_routes.py",
     "spark_scoring_routes.py",
     "sprint0_routes.py",
     "tenant_digest_routes.py",

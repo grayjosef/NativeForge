@@ -57,6 +57,9 @@ from nativeforge.api.source_ingestion_routes import (
     demo_source_ingestion_router,
     real_source_ingestion_router,
 )
+from nativeforge.api.source_monitoring_readiness_routes import (
+    router as source_monitoring_router,
+)
 from nativeforge.api.spark_scoring_routes import (
     demo_spark_scoring_router,
     real_spark_scoring_router,
@@ -158,6 +161,9 @@ def create_app() -> FastAPI:
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)
+    # Gate 143: source monitoring readiness. Nothing here fetches a source
+    # and no collector is started.
+    app.include_router(source_monitoring_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

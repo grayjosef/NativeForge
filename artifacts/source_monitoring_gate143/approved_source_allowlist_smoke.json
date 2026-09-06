@@ -1,0 +1,145 @@
+{
+  "a_fixture_is_never_monitorable": true,
+  "an_approval_never_clears_a_blocker": true,
+  "by_state": {
+    "activation_approved": 0,
+    "api_key_missing": 0,
+    "fixture_allowed": 0,
+    "human_review_blocked": 6,
+    "registry_known": 0,
+    "terms_blocked": 171,
+    "unknown_source": 0
+  },
+  "cases": {
+    "approved_but_review_says_no": {
+      "activation_approved": true,
+      "blocked_reasons": [
+        "recorded_terms_review_does_not_permit_collection:TERMS_REVIEW_REQUIRED"
+      ],
+      "credential_required": false,
+      "human_review_required": false,
+      "invariant_failures": [],
+      "monitorable": false,
+      "registry_known": true,
+      "source_id": "nf-seed-2026-fed-001",
+      "state": "terms_blocked",
+      "terms_status": "TERMS_REVIEW_REQUIRED"
+    },
+    "credential_required": {
+      "activation_approved": false,
+      "blocked_reasons": [
+        "registry_has_no_terms_column_for_this_source",
+        "source_requires_an_api_key_and_a_role_that_are_not_present"
+      ],
+      "credential_required": true,
+      "human_review_required": false,
+      "invariant_failures": [],
+      "monitorable": false,
+      "registry_known": true,
+      "source_id": "nf-seed-sam-probe",
+      "state": "api_key_missing",
+      "terms_status": "UNKNOWN"
+    },
+    "fixture_in_a_test": {
+      "activation_approved": false,
+      "blocked_reasons": [
+        "fixture_sources_are_never_monitored"
+      ],
+      "credential_required": false,
+      "human_review_required": false,
+      "invariant_failures": [],
+      "monitorable": false,
+      "registry_known": false,
+      "source_id": "nf-fixture-gate143",
+      "state": "fixture_allowed",
+      "terms_status": "not_applicable_fixture"
+    },
+    "fixture_outside_a_test": {
+      "activation_approved": false,
+      "blocked_reasons": [
+        "fixture_sources_are_not_permitted_outside_hermetic_tests"
+      ],
+      "credential_required": false,
+      "human_review_required": false,
+      "invariant_failures": [],
+      "monitorable": false,
+      "registry_known": false,
+      "source_id": "nf-fixture-gate143",
+      "state": "unknown_source",
+      "terms_status": "not_applicable_fixture"
+    },
+    "grants_gov_human_review_only": {
+      "activation_approved": false,
+      "blocked_reasons": [
+        "terms_page_is_client_rendered_and_served_no_policy_text:grants.gov"
+      ],
+      "credential_required": false,
+      "human_review_required": true,
+      "invariant_failures": [],
+      "monitorable": false,
+      "registry_known": true,
+      "source_id": "nf-seed-2026-fed-013",
+      "state": "human_review_blocked",
+      "terms_status": "HUMAN_REVIEW_ONLY"
+    },
+    "registry_row_unreviewed": {
+      "activation_approved": false,
+      "blocked_reasons": [
+        "registry_has_no_terms_column_for_this_source"
+      ],
+      "credential_required": false,
+      "human_review_required": false,
+      "invariant_failures": [],
+      "monitorable": false,
+      "registry_known": true,
+      "source_id": "nf-seed-2026-fed-001",
+      "state": "terms_blocked",
+      "terms_status": "UNKNOWN"
+    },
+    "reviewed_and_approved": {
+      "activation_approved": true,
+      "blocked_reasons": [],
+      "credential_required": false,
+      "human_review_required": false,
+      "invariant_failures": [],
+      "monitorable": true,
+      "registry_known": true,
+      "source_id": "nf-seed-2026-fed-001",
+      "state": "activation_approved",
+      "terms_status": "NO_REVIEW_REQUIRED"
+    },
+    "unknown_source_id": {
+      "activation_approved": false,
+      "blocked_reasons": [
+        "source_id_is_not_in_the_source_registry"
+      ],
+      "credential_required": false,
+      "human_review_required": false,
+      "invariant_failures": [],
+      "monitorable": false,
+      "registry_known": false,
+      "source_id": "nf-seed-9999-not-real",
+      "state": "unknown_source",
+      "terms_status": "UNKNOWN"
+    }
+  },
+  "dns_resolved": false,
+  "evaluated_count": 177,
+  "fetch_performed": false,
+  "invariant_failures": [],
+  "monitorable_count": 0,
+  "monitorable_source_ids": [],
+  "network_calls": 0,
+  "registry_row_count": 177,
+  "robots_fetched": false,
+  "schema_version": "nf_source_monitoring_gate143_artifact_v1",
+  "states": [
+    "unknown_source",
+    "registry_known",
+    "fixture_allowed",
+    "terms_blocked",
+    "human_review_blocked",
+    "api_key_missing",
+    "activation_approved"
+  ]
+}

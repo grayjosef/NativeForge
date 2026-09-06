@@ -1,0 +1,72 @@
+{
+  "approved_count": 0,
+  "automation_blocked_count": 5,
+  "by_risk_type": {
+    "credential_and_role_required": 1,
+    "human_review_only": 0,
+    "login_required": 0,
+    "terms_review_required": 0,
+    "terms_text_unretrievable": 4
+  },
+  "credential_required_count": 1,
+  "fetch_performed": false,
+  "human_review_bypassed": false,
+  "invariant_failures": [],
+  "items": [
+    {
+      "automation_blocked": true,
+      "credential_required": true,
+      "human_review_only": false,
+      "priority": 1,
+      "review_item_id": "REVIEW-SAM-CREDENTIAL-ROLE",
+      "review_status": "pending",
+      "risk_type": "credential_and_role_required",
+      "source_id": "SAM-CREDENTIAL-ROLE"
+    },
+    {
+      "automation_blocked": true,
+      "credential_required": false,
+      "human_review_only": true,
+      "priority": 1,
+      "review_item_id": "REVIEW-SPA-TERMS-GRANTS-GOV",
+      "review_status": "pending",
+      "risk_type": "terms_text_unretrievable",
+      "source_id": "SPA-TERMS-GRANTS-GOV"
+    },
+    {
+      "automation_blocked": true,
+      "credential_required": false,
+      "human_review_only": true,
+      "priority": 1,
+      "review_item_id": "REVIEW-SPA-TERMS-REGULATIONS-GOV",
+      "review_status": "pending",
+      "risk_type": "terms_text_unretrievable",
+      "source_id": "SPA-TERMS-REGULATIONS-GOV"
+    },
+    {
+      "automation_blocked": true,
+      "credential_required": false,
+      "human_review_only": true,
+      "priority": 1,
+      "review_item_id": "REVIEW-SPA-TERMS-REPORTER-NIH",
+      "review_status": "pending",
+      "risk_type": "terms_text_unretrievable",
+      "source_id": "SPA-TERMS-REPORTER-NIH"
+    },
+    {
+      "automation_blocked": true,
+      "credential_required": false,
+      "human_review_only": true,
+      "priority": 1,
+      "review_item_id": "REVIEW-SPA-TERMS-USASPENDING",
+      "review_status": "pending",
+      "risk_type": "terms_text_unretrievable",
+      "source_id": "SPA-TERMS-USASPENDING"
+    }
+  ],
+  "pending_count": 5,
+  "queue_length": 5,
+  "schema_version": "nf_source_monitoring_gate143_artifact_v1",
+  "sources_activated": 0,
+  "terms_review_bypassed": false
+}
