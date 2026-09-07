@@ -1,0 +1,84 @@
+{
+  "backend_only_before_this_gate": [
+    "customer_persistence_activation_service",
+    "awarded_operational_tracking_readiness_service",
+    "tenant_digest_operational_readiness_service",
+    "document_storage_readiness_service",
+    "email_delivery_readiness_service",
+    "source_monitoring_readiness_service"
+  ],
+  "existing_frontend_surfaces": [
+    "workspace",
+    "workbench",
+    "activation",
+    "nm_wa_operator_demo",
+    "sc_customer_demo"
+  ],
+  "frontend_surface_added": "beta_onboarding_cockpit",
+  "gate": "144",
+  "lane_evidence": {
+    "awarded_grants": "needs_a_route_smoke",
+    "controlled_customer_pilot": "self_evidencing",
+    "customer_auth": "self_evidencing",
+    "customer_persistence": "needs_a_database_round_trip",
+    "document_body_storage": "self_evidencing",
+    "document_metadata": "needs_a_route_smoke",
+    "email_delivery": "self_evidencing",
+    "email_delivery_readiness": "needs_a_route_smoke",
+    "login": "self_evidencing",
+    "object_storage": "self_evidencing",
+    "production_rollout": "self_evidencing",
+    "source_monitoring": "self_evidencing",
+    "source_monitoring_preflight": "self_evidencing",
+    "tenant_digest": "needs_a_route_smoke",
+    "verified_operational_binding": "self_evidencing"
+  },
+  "lane_keys": [
+    "login",
+    "customer_persistence",
+    "awarded_grants",
+    "tenant_digest",
+    "document_metadata",
+    "document_body_storage",
+    "email_delivery_readiness",
+    "email_delivery",
+    "source_monitoring_preflight",
+    "source_monitoring",
+    "object_storage",
+    "customer_auth",
+    "verified_operational_binding",
+    "controlled_customer_pilot",
+    "production_rollout"
+  ],
+  "lane_statuses": [
+    "operational",
+    "readiness_only",
+    "preview_only",
+    "blocked",
+    "not_configured",
+    "requires_human_approval",
+    "production_false"
+  ],
+  "lanes_needing_outside_evidence": [
+    "awarded_grants",
+    "customer_persistence",
+    "document_metadata",
+    "email_delivery_readiness",
+    "tenant_digest"
+  ],
+  "never_true_lanes": [
+    "controlled_customer_pilot",
+    "customer_auth",
+    "email_delivery",
+    "object_storage",
+    "production_rollout",
+    "source_monitoring",
+    "verified_operational_binding"
+  ],
+  "real_organization_route_built": false,
+  "real_organization_route_not_built_because": "it would create a route to aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee that nobody has authorized",
+  "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1",
+  "self_evidencing_lane_count": 10,
+  "what_the_cockpit_reports": "the deployment, not a tenant",
+  "why_evidence_matters": "a summary that supplied a lane its own proof would be grading its own homework - reporting true for a lane whose evidence it invented"
+}

@@ -1,0 +1,224 @@
+{
+  "lanes": [
+    {
+      "blockers": [],
+      "evidence": "self_evidencing",
+      "lane": "login",
+      "owner": null,
+      "scope": "controlled_dev_demo",
+      "status": "operational",
+      "usable_today": true,
+      "value": true
+    },
+    {
+      "blockers": [],
+      "evidence": "needs_a_database_round_trip",
+      "lane": "customer_persistence",
+      "owner": null,
+      "scope": "controlled_dev_demo",
+      "status": "operational",
+      "usable_today": true,
+      "value": true
+    },
+    {
+      "blockers": [],
+      "evidence": "needs_a_route_smoke",
+      "lane": "awarded_grants",
+      "owner": null,
+      "scope": "controlled_dev_demo",
+      "status": "operational",
+      "usable_today": true,
+      "value": true
+    },
+    {
+      "blockers": [],
+      "evidence": "needs_a_route_smoke",
+      "lane": "tenant_digest",
+      "owner": null,
+      "scope": "controlled_dev_demo",
+      "status": "operational",
+      "usable_today": true,
+      "value": true
+    },
+    {
+      "blockers": [],
+      "evidence": "needs_a_route_smoke",
+      "lane": "document_metadata",
+      "owner": null,
+      "scope": "controlled_dev_demo",
+      "status": "operational",
+      "usable_today": true,
+      "value": true
+    },
+    {
+      "blockers": [
+        "no_body_route_proof_was_supplied",
+        "no_metadata_route_smoke_was_supplied"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "document_body_storage",
+      "owner": "whoever chooses and configures an object store",
+      "scope": null,
+      "status": "not_configured",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [],
+      "evidence": "needs_a_route_smoke",
+      "lane": "email_delivery_readiness",
+      "owner": null,
+      "scope": "controlled_dev_demo",
+      "status": "operational",
+      "usable_today": true,
+      "value": true
+    },
+    {
+      "blockers": [
+        "email_settings_absent:nf_email_api_endpoint,nf_email_api_key,nf_email_provider,nf_email_sender_address,nf_email_sender_domain",
+        "no_email_provider_configured",
+        "send_activation_absent"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "email_delivery",
+      "owner": "whoever chooses a provider and decides to send",
+      "scope": null,
+      "status": "not_configured",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [],
+      "evidence": "self_evidencing",
+      "lane": "source_monitoring_preflight",
+      "owner": null,
+      "scope": "controlled_dev_demo",
+      "status": "operational",
+      "usable_today": true,
+      "value": true
+    },
+    {
+      "blockers": [
+        "scheduler_component_absent:background_worker",
+        "scheduler_component_absent:periodic_trigger",
+        "scheduler_component_absent:persistent_backend",
+        "scheduler_component_absent:production_raw_payload_store",
+        "scheduler_component_absent:scheduler_runtime",
+        "terms_review_incomplete"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "source_monitoring",
+      "owner": "a human reviewing terms, then a later gate for the scheduler",
+      "scope": null,
+      "status": "blocked",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "no_owner_decision",
+        "object_storage_settings_absent"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "object_storage",
+      "owner": "whoever chooses and configures an object store",
+      "scope": null,
+      "status": "not_configured",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "invite_binding_passed"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "customer_auth",
+      "owner": "a second person, and the owner who invites them",
+      "scope": null,
+      "status": "requires_human_approval",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "owner_decision_absent"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "verified_operational_binding",
+      "owner": "the owner",
+      "scope": null,
+      "status": "requires_human_approval",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "pilot_not_approved"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "controlled_customer_pilot",
+      "owner": "the owner",
+      "scope": null,
+      "status": "production_false",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "production_not_approved"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "production_rollout",
+      "owner": "the owner",
+      "scope": null,
+      "status": "production_false",
+      "usable_today": false,
+      "value": false
+    }
+  ],
+  "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1",
+  "unaided": {
+    "blocked_lanes": [
+      "login",
+      "source_monitoring"
+    ],
+    "invariant_failures": [],
+    "not_configured_lanes": [
+      "document_body_storage",
+      "email_delivery",
+      "object_storage"
+    ],
+    "operational_lanes": [],
+    "requires_human_approval_lanes": [
+      "customer_auth",
+      "verified_operational_binding"
+    ]
+  },
+  "unaided_reports_fewer_operational_lanes": true,
+  "unaided_reports_no_forbidden_lane_true": true,
+  "with_the_full_battery": {
+    "blocked_lanes": [
+      "source_monitoring"
+    ],
+    "invariant_failures": [],
+    "not_configured_lanes": [
+      "document_body_storage",
+      "email_delivery",
+      "object_storage"
+    ],
+    "operational_lanes": [
+      "awarded_grants",
+      "customer_persistence",
+      "document_metadata",
+      "email_delivery_readiness",
+      "login",
+      "source_monitoring_preflight",
+      "tenant_digest"
+    ],
+    "requires_human_approval_lanes": [
+      "customer_auth",
+      "verified_operational_binding"
+    ],
+    "usable_today_count": 7
+  }
+}

@@ -26,6 +26,9 @@ from nativeforge.api.award_requirements_routes import (
 )
 from nativeforge.api.awarded_grants_routes import router as awarded_grants_router
 from nativeforge.api.backend_runtime_routes import router as backend_runtime_router
+from nativeforge.api.beta_onboarding_cockpit_routes import (
+    router as beta_cockpit_router,
+)
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
 )
@@ -164,6 +167,9 @@ def create_app() -> FastAPI:
     # Gate 143: source monitoring readiness. Nothing here fetches a source
     # and no collector is started.
     app.include_router(source_monitoring_router)
+    # Gate 144: the beta onboarding cockpit. Reports the deployment's own
+    # readiness; activates nothing and names no customer.
+    app.include_router(beta_cockpit_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

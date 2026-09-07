@@ -1,0 +1,161 @@
+{
+  "blocked_lane_count": 14,
+  "blockers": [
+    {
+      "blockers": [
+        "no_login_proof_was_supplied"
+      ],
+      "lane": "login",
+      "owner": "the live stack verifier",
+      "status": "blocked",
+      "summary": "sign-in was not proved by this run"
+    },
+    {
+      "blockers": [
+        "no_persistence_round_trip_was_run"
+      ],
+      "lane": "customer_persistence",
+      "owner": "the persistence verifier",
+      "status": "readiness_only",
+      "summary": "the round trip needs a database and was not run here"
+    },
+    {
+      "blockers": [
+        "no_route_smoke_was_supplied"
+      ],
+      "lane": "awarded_grants",
+      "owner": "the awarded verifier",
+      "status": "readiness_only",
+      "summary": "the four lanes need a route smoke and none was supplied"
+    },
+    {
+      "blockers": [
+        "no_route_smoke_was_supplied"
+      ],
+      "lane": "tenant_digest",
+      "owner": "the tenant digest verifier",
+      "status": "readiness_only",
+      "summary": "the digest needs a route smoke and none was supplied"
+    },
+    {
+      "blockers": [
+        "no_route_smoke_was_supplied"
+      ],
+      "lane": "document_metadata",
+      "owner": "the document storage verifier",
+      "status": "readiness_only",
+      "summary": "the metadata lane needs a route smoke and none was supplied"
+    },
+    {
+      "blockers": [
+        "no_body_route_proof_was_supplied",
+        "no_metadata_route_smoke_was_supplied"
+      ],
+      "lane": "document_body_storage",
+      "owner": "whoever chooses and configures an object store",
+      "status": "not_configured",
+      "summary": "there is nowhere for a document's bytes to live; the route refuses by name and names the missing settings"
+    },
+    {
+      "blockers": [
+        "no_route_smoke_was_supplied"
+      ],
+      "lane": "email_delivery_readiness",
+      "owner": "the email readiness verifier",
+      "status": "readiness_only",
+      "summary": "the rehearsal needs a route smoke and none was supplied"
+    },
+    {
+      "blockers": [
+        "email_settings_absent:nf_email_api_endpoint,nf_email_api_key,nf_email_provider,nf_email_sender_address,nf_email_sender_domain",
+        "no_email_provider_configured",
+        "send_activation_absent"
+      ],
+      "lane": "email_delivery",
+      "owner": "whoever chooses a provider and decides to send",
+      "status": "not_configured",
+      "summary": "no provider is configured and nobody has activated sending; a rehearsal cannot make this true"
+    },
+    {
+      "blockers": [
+        "scheduler_component_absent:background_worker",
+        "scheduler_component_absent:periodic_trigger",
+        "scheduler_component_absent:persistent_backend",
+        "scheduler_component_absent:production_raw_payload_store",
+        "scheduler_component_absent:scheduler_runtime",
+        "terms_review_incomplete"
+      ],
+      "lane": "source_monitoring",
+      "owner": "a human reviewing terms, then a later gate for the scheduler",
+      "status": "blocked",
+      "summary": "no source is cleared for collection and nothing could run a check; the runtime mode is a dry run"
+    },
+    {
+      "blockers": [
+        "no_owner_decision",
+        "object_storage_settings_absent"
+      ],
+      "lane": "object_storage",
+      "owner": "whoever chooses and configures an object store",
+      "status": "not_configured",
+      "summary": "five settings are absent and no SDK is installed"
+    },
+    {
+      "blockers": [
+        "invite_binding_passed"
+      ],
+      "lane": "customer_auth",
+      "owner": "a second person, and the owner who invites them",
+      "status": "requires_human_approval",
+      "summary": "a second real person has to accept a real invite; nothing in code can stand in for that"
+    },
+    {
+      "blockers": [
+        "owner_decision_absent"
+      ],
+      "lane": "verified_operational_binding",
+      "owner": "the owner",
+      "status": "requires_human_approval",
+      "summary": "Gate 137's two-part owner decision has not been made"
+    },
+    {
+      "blockers": [
+        "pilot_not_approved"
+      ],
+      "lane": "controlled_customer_pilot",
+      "owner": "the owner",
+      "status": "production_false",
+      "summary": "not approved, and this gate does not approve it"
+    },
+    {
+      "blockers": [
+        "production_not_approved"
+      ],
+      "lane": "production_rollout",
+      "owner": "the owner",
+      "status": "production_false",
+      "summary": "not approved, and no lane above is a production claim"
+    }
+  ],
+  "every_false_lane_names_a_blocker": true,
+  "lanes_without_a_blocker": [],
+  "not_approved": [
+    "production_rollout",
+    "controlled_customer_pilot",
+    "customer_auth_live",
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured",
+    "verified_operational_binding"
+  ],
+  "not_configured_lanes": [
+    "document_body_storage",
+    "email_delivery",
+    "object_storage"
+  ],
+  "requires_human_approval_lanes": [
+    "customer_auth",
+    "verified_operational_binding"
+  ],
+  "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1"
+}

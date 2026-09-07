@@ -50,6 +50,7 @@ import {
 import { readSurface, type AppSurface } from "./viewSurface";
 import { NmWaOperatorDemoPage } from "./pages/NmWaOperatorDemoPage";
 import { ScCustomerDemoPage } from "./pages/ScCustomerDemoPage";
+import { BetaOnboardingCockpitPage } from "./pages/BetaOnboardingCockpitPage";
 
 const LS_ORG = "nf-m0-org-id";
 const LS_PLANE = "nf-m0-plane";
@@ -140,7 +141,9 @@ export default function App() {
      THEIR OWN machine — which can never succeed, is mixed content on an https
      page, and puts eight red errors in front of a buyer who opens DevTools. */
   const offlineDemoSurface =
-    surface === "sc_customer_demo" || surface === "nm_wa_operator_demo";
+    surface === "sc_customer_demo" ||
+    surface === "nm_wa_operator_demo" ||
+    surface === "beta_onboarding_cockpit";
 
   const setSurface = useCallback((s: AppSurface) => {
     setSurfaceState(s);
@@ -154,6 +157,8 @@ export default function App() {
         u.searchParams.set("view", "nm_wa_operator_demo");
       } else if (s === "sc_customer_demo") {
         u.searchParams.set("view", "sc_customer_demo");
+      } else if (s === "beta_onboarding_cockpit") {
+        u.searchParams.set("view", "beta_onboarding_cockpit");
       } else {
         u.searchParams.delete("view");
       }
@@ -943,6 +948,8 @@ export default function App() {
         <NmWaOperatorDemoPage />
       ) : surface === "sc_customer_demo" ? (
         <ScCustomerDemoPage />
+      ) : surface === "beta_onboarding_cockpit" ? (
+        <BetaOnboardingCockpitPage orgId={orgId.trim()} />
       ) : (
         <ActivationPage
           plane={plane}

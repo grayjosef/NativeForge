@@ -1,0 +1,26 @@
+{
+  "activates_nothing": true,
+  "next_safe_action": {
+    "action": "finish_the_controlled_beta_readiness_matrix",
+    "not_this_yet": [
+      "activating a controlled customer pilot",
+      "binding the real organization",
+      "configuring an email provider",
+      "configuring an object store",
+      "starting a collector"
+    ],
+    "safe_because": "it activates nothing, contacts nothing and changes no lane's value",
+    "why": "every controlled_dev_demo lane that can be proved is proved; the remaining lanes need a human decision or an external activation, and neither is a code change"
+  },
+  "not_this_yet": [
+    "activating a controlled customer pilot",
+    "binding the real organization",
+    "configuring an email provider",
+    "configuring an object store",
+    "starting a collector"
+  ],
+  "one_action_because": "an operator reading a cockpit needs to know what to do next, not everything that could eventually be done",
+  "one_action_not_a_backlog": true,
+  "route_next_safe_action": "finish_the_controlled_beta_readiness_matrix",
+  "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1"
+}

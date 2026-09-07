@@ -1,0 +1,63 @@
+{
+  "authenticated_status": {
+    "blockers": 200,
+    "capabilities": 200,
+    "next-actions": 200,
+    "readiness": 200
+  },
+  "collectors_activated": 0,
+  "controlled_customer_pilot": false,
+  "cross_org_refused": true,
+  "cross_org_status": 404,
+  "customer_auth_live": false,
+  "customer_names_reported": false,
+  "email_delivery": false,
+  "emails_sent": 0,
+  "every_lane_reported": true,
+  "expected_lane_count": 15,
+  "forged_header_refused": true,
+  "forged_header_status": 401,
+  "lanes_reported_by_the_route": [
+    "awarded_grants",
+    "controlled_customer_pilot",
+    "customer_auth",
+    "customer_persistence",
+    "document_body_storage",
+    "document_metadata",
+    "email_delivery",
+    "email_delivery_readiness",
+    "login",
+    "object_storage",
+    "production_rollout",
+    "source_monitoring",
+    "source_monitoring_preflight",
+    "tenant_digest",
+    "verified_operational_binding"
+  ],
+  "live_source_calls": 0,
+  "object_store_calls": 0,
+  "object_store_configured": false,
+  "production_rollout": false,
+  "route_invariant_failures": [],
+  "route_lane_count": 15,
+  "route_operational_lanes": [
+    "source_monitoring_preflight"
+  ],
+  "route_reports_fewer_because": "a request measures what a request can measure; the wider set needs the lane verifiers, and a route that assumed them would be reporting a proof it did not have",
+  "route_reports_fewer_than_the_battery": true,
+  "routes": [
+    "blockers",
+    "capabilities",
+    "next-actions",
+    "readiness"
+  ],
+  "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1",
+  "source_monitoring_live": false,
+  "unauthenticated_refused": true,
+  "unauthenticated_status": {
+    "blockers": 401,
+    "capabilities": 401,
+    "next-actions": 401,
+    "readiness": 401
+  }
+}

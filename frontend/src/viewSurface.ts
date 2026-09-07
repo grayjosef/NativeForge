@@ -5,7 +5,8 @@ export type AppSurface =
   | "workbench"
   | "activation"
   | "nm_wa_operator_demo"
-  | "sc_customer_demo";
+  | "sc_customer_demo"
+  | "beta_onboarding_cockpit";
 
 export function readSurface(): AppSurface {
   try {
@@ -14,6 +15,7 @@ export function readSurface(): AppSurface {
     if (q === "activation") return "activation";
     if (q === "nm_wa_operator_demo") return "nm_wa_operator_demo";
     if (q === "sc_customer_demo") return "sc_customer_demo";
+    if (q === "beta_onboarding_cockpit") return "beta_onboarding_cockpit";
     return "workspace";
   } catch {
     return "workspace";

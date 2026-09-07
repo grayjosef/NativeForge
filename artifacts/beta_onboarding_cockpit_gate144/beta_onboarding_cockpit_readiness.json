@@ -1,0 +1,61 @@
+{
+  "blocked_lanes": [
+    "source_monitoring"
+  ],
+  "blocked_reasons": [],
+  "cockpit_foundation_route_live": true,
+  "controlled_customer_pilot": false,
+  "customer_auth_live": false,
+  "customer_names_reported": false,
+  "deadlines_reported": false,
+  "eligibility_reported": false,
+  "email_delivery": false,
+  "every_never_true_lane_is_false": true,
+  "frontend_surface_exists": true,
+  "invariant_failures": [],
+  "lane_count": 15,
+  "never_true_lanes": [
+    "controlled_customer_pilot",
+    "customer_auth",
+    "email_delivery",
+    "object_storage",
+    "production_rollout",
+    "source_monitoring",
+    "verified_operational_binding"
+  ],
+  "not_approved": [
+    "production_rollout",
+    "controlled_customer_pilot",
+    "customer_auth_live",
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured",
+    "verified_operational_binding"
+  ],
+  "not_configured_lanes": [
+    "document_body_storage",
+    "email_delivery",
+    "object_storage"
+  ],
+  "object_store_configured": false,
+  "operational_lanes": [
+    "awarded_grants",
+    "customer_persistence",
+    "document_metadata",
+    "email_delivery_readiness",
+    "login",
+    "source_monitoring_preflight",
+    "tenant_digest"
+  ],
+  "production_rollout": false,
+  "real_customer_data_written": false,
+  "real_organization_touched": false,
+  "requires_human_approval_lanes": [
+    "customer_auth",
+    "verified_operational_binding"
+  ],
+  "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1",
+  "scope": "controlled_dev_demo",
+  "source_monitoring_live": false,
+  "verified_operational_binding": false
+}

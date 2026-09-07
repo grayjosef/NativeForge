@@ -157,12 +157,38 @@ def _repo_root(detect_root: Any = None) -> Path:
     return Path(detect_root) if detect_root else Path(__file__).resolve().parents[3]
 
 
+#: Surfaces that name every readiness lane by definition, and are therefore not
+#: evidence of any one lane's UI.
+#:
+#: Gate 144's beta onboarding cockpit has a status card labelled "Awarded
+#: Grants" because that is what the lane is called. It contains no award, no
+#: requirement, no proof event and no document - it reports whether the lane is
+#: operational. Counting it as an awarded-grants surface flipped
+#: `operational_component_missing:ui_available` off in three gates' artifacts on
+#: the strength of a caption.
+READINESS_SURFACE_STEMS: frozenset[str] = frozenset({"betaonboardingcockpitpage"})
+
+
+def _is_readiness_surface(path: Any) -> bool:
+    """Does this file name every lane rather than implement one?"""
+    stem = str(getattr(path, "stem", "")).lower().replace(".test", "")
+    return stem in READINESS_SURFACE_STEMS
+
+
 def _detect_awarded_ui(detect_root: Any = None) -> bool:
-    """Is there an awarded-grants surface in the frontend? Looked for, not assumed."""
+    """Is there an awarded-grants surface in the frontend? Looked for, not assumed.
+
+    A readiness cockpit naming the lane is not the lane's UI. Excluded by name,
+    with the reason on `READINESS_SURFACE_STEMS`, rather than by renaming a card
+    that is correctly captioned - a probe that could not tell a caption from a
+    surface would be fooled by the next one too.
+    """
     src = _repo_root(detect_root) / "frontend" / "src"
     if not src.is_dir():
         return False
     for path in src.rglob("*.tsx"):
+        if _is_readiness_surface(path):
+            continue
         try:
             text = path.read_text(encoding="utf-8", errors="ignore").lower()
         except OSError:

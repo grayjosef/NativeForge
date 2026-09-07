@@ -1,0 +1,21 @@
+{
+  "dispatched_in_app": true,
+  "existing_surfaces_intact": true,
+  "no_public_bypass_added": true,
+  "no_public_bypass_because": "the page fetches the cockpit routes with credentials and those routes require a demo org session; a signed-out visitor is told to sign in rather than shown a readiness summary",
+  "page_claims_production": false,
+  "page_exists": true,
+  "page_fetches_with_credentials": true,
+  "page_handles_signed_out": true,
+  "page_names_a_tribe": false,
+  "page_shows_blockers": true,
+  "page_shows_false_lanes": true,
+  "page_source_scanned_with_comments_stripped": true,
+  "sc_customer_demo_still_dispatched": true,
+  "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1",
+  "surface_in_union": true,
+  "surface_name": "beta_onboarding_cockpit",
+  "surface_readable_from_query": true,
+  "test_exists": true,
+  "wired_the_existing_way": true
+}
