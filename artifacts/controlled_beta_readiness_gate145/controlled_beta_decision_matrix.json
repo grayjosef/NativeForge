@@ -1,0 +1,121 @@
+{
+  "by_scope": {
+    "controlled_customer_beta": {
+      "blockers": [
+        "approval_absent:consent_and_data_boundary_documented",
+        "approval_absent:customer_auth_live",
+        "approval_absent:customer_beta_scope_approved",
+        "approval_absent:verified_operational_binding"
+      ],
+      "conditions_met": [],
+      "conditions_missing": [
+        "consent_and_data_boundary_documented",
+        "customer_auth_live",
+        "customer_beta_scope_approved",
+        "verified_operational_binding"
+      ],
+      "constraints": [
+        "demo organization scope only, until verified_operational_binding",
+        "no real customer data until a consent and data boundary is documented",
+        "no email is sent under any scope",
+        "no live source is monitored under any scope",
+        "no document bytes are stored under any scope",
+        "every product surface must avoid the unsafe claims listed here"
+      ],
+      "decision": "LIMITED_GO",
+      "scope": "controlled_customer_beta",
+      "summary": "the software supports a controlled beta in the demo organization; a REAL customer beta needs decisions no code change can make"
+    },
+    "internal_demo_beta": {
+      "blockers": [],
+      "conditions_met": [
+        "awarded_operational_tracking",
+        "beta_onboarding_cockpit_route_live",
+        "customer_persistence_live",
+        "document_metadata_operational",
+        "email_delivery_readiness",
+        "login_live",
+        "source_monitoring_preflight_ready",
+        "tenant_digest_operational"
+      ],
+      "conditions_missing": [],
+      "constraints": [
+        "demo organization only (bbbbbbbb-cccc-dddd-eeee-ffffffffffff)",
+        "fixture-labelled rows only",
+        "no real customer data",
+        "digest is preview_only; nothing is sent",
+        "no source is monitored and none is cleared for collection",
+        "document references only; no bytes are stored"
+      ],
+      "decision": "GO",
+      "scope": "internal_demo_beta",
+      "summary": "every lane an internal operator needs is proved, in the demo organization, with fixture-labelled rows and every capability flag honestly false"
+    },
+    "production_rollout": {
+      "blockers": [
+        "approval_absent:consent_and_data_boundary_documented",
+        "approval_absent:customer_auth_live",
+        "approval_absent:customer_beta_scope_approved",
+        "approval_absent:production_rollout_decision",
+        "approval_absent:verified_operational_binding",
+        "capability_absent:email_delivery",
+        "capability_absent:object_store_configured",
+        "capability_absent:source_monitoring_live"
+      ],
+      "conditions_met": [],
+      "conditions_missing": [
+        "production_rollout_decision"
+      ],
+      "constraints": [
+        "not approved, and this service cannot approve it"
+      ],
+      "decision": "NO_GO",
+      "scope": "production_rollout",
+      "summary": "production is not the sum of the technical gates; it is those gates and somebody saying yes, and nobody has"
+    }
+  },
+  "conflation_count": 5,
+  "conflations": [
+    {
+      "capability": "email_delivery",
+      "difference": "a digest can be rendered, a recipient validated and an intent recorded - and no mail has anywhere to go",
+      "readiness": "email_delivery_readiness"
+    },
+    {
+      "capability": "source_monitoring_live",
+      "difference": "every source can be evaluated and classified - and none is cleared for collection, because nobody has read their terms",
+      "readiness": "source_monitoring_preflight_ready"
+    },
+    {
+      "capability": "document_body_storage_ready",
+      "difference": "a document reference records and reads back - and its bytes have nowhere to live",
+      "readiness": "document_metadata_operational"
+    },
+    {
+      "capability": "customer_auth_live",
+      "difference": "rows persist against an organization - and no second real person has ever signed in",
+      "readiness": "customer_persistence_live"
+    },
+    {
+      "capability": "a customer organization",
+      "difference": "bbbbbbbb-... is a demo org with fixture-labelled rows; treating it as a customer org is the substitution Gates 110-113 prevented",
+      "readiness": "the demo organization"
+    }
+  ],
+  "controlled_customer_beta": "LIMITED_GO",
+  "internal_demo_beta": "GO",
+  "invariant_failures": [],
+  "production_rollout": "NO_GO",
+  "schema_version": "nf_controlled_beta_gate145_artifact_v1",
+  "scopes": [
+    "internal_demo_beta",
+    "controlled_customer_beta",
+    "production_rollout"
+  ],
+  "unaided_is_never_more_permissive": true,
+  "with_no_evidence_supplied": {
+    "controlled_customer_beta": "NO_GO",
+    "internal_demo_beta": "NO_GO",
+    "production_rollout": "NO_GO"
+  }
+}

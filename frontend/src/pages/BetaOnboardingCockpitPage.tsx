@@ -39,6 +39,25 @@ export type CockpitReadiness = {
   controlled_customer_pilot: boolean;
 };
 
+export type BetaScopeDecision = {
+  scope: string;
+  decision: string;
+  conditions_met: string[];
+  conditions_missing: string[];
+  blockers: string[];
+  constraints: string[];
+  summary: string;
+};
+
+export type BetaDecision = {
+  internal_demo_beta: string;
+  controlled_customer_beta: string;
+  production_rollout: string;
+  by_scope: Record<string, BetaScopeDecision>;
+  conflations: { readiness: string; capability: string; difference: string }[];
+  invariant_failures: string[];
+};
+
 export type CockpitNextActions = {
   next_safe_action: string;
   why: string;
@@ -76,10 +95,25 @@ const STATUS_LABELS: Record<string, string> = {
   production_false: "Not approved",
 };
 
+/** What each scope is, in words an operator can act on. */
+const SCOPE_LABELS: Record<string, string> = {
+  internal_demo_beta: "Internal / demo beta",
+  controlled_customer_beta: "Controlled customer beta",
+  production_rollout: "Production rollout",
+};
+
+/** A decision is a verdict, not a score. These are the only three. */
+const DECISION_LABELS: Record<string, string> = {
+  GO: "GO",
+  LIMITED_GO: "LIMITED GO",
+  NO_GO: "NO-GO",
+};
+
 export type BetaOnboardingCockpitPageProps = {
   orgId: string;
   readiness?: CockpitReadiness | null;
   nextActions?: CockpitNextActions | null;
+  decision?: BetaDecision | null;
   loading?: boolean;
   error?: string | null;
 };
@@ -96,6 +130,7 @@ export function BetaOnboardingCockpitPage({
   orgId,
   readiness: readinessProp,
   nextActions: nextActionsProp,
+  decision: decisionProp,
   loading: loadingProp,
   error: errorProp,
 }: BetaOnboardingCockpitPageProps) {
@@ -106,6 +141,9 @@ export function BetaOnboardingCockpitPage({
   const [nextActions, setNextActions] = useState<CockpitNextActions | null>(
     nextActionsProp ?? null,
   );
+  const [decision, setDecision] = useState<BetaDecision | null>(
+    decisionProp ?? null,
+  );
   const [loading, setLoading] = useState<boolean>(loadingProp ?? !injected);
   const [error, setError] = useState<string | null>(errorProp ?? null);
 
@@ -114,10 +152,12 @@ export function BetaOnboardingCockpitPage({
     setLoading(true);
     setError(null);
     try {
-      const base = `${apiFetchBase()}/v1/nf/demo/orgs/${orgId}/beta-cockpit`;
-      const [r, a] = await Promise.all([
+      const root = `${apiFetchBase()}/v1/nf/demo/orgs/${orgId}`;
+      const base = `${root}/beta-cockpit`;
+      const [r, a, d] = await Promise.all([
         fetch(`${base}/readiness`, { credentials: "include" }),
         fetch(`${base}/next-actions`, { credentials: "include" }),
+        fetch(`${root}/beta-decision/readiness`, { credentials: "include" }),
       ]);
       if (!r.ok) {
         // 401 is the honest answer for a signed-out operator, not an error to
@@ -132,6 +172,7 @@ export function BetaOnboardingCockpitPage({
       }
       setReadiness((await r.json()) as CockpitReadiness);
       if (a.ok) setNextActions((await a.json()) as CockpitNextActions);
+      if (d.ok) setDecision((await d.json()) as BetaDecision);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Readiness unavailable.");
     } finally {
@@ -178,6 +219,74 @@ export function BetaOnboardingCockpitPage({
           .
         </p>
       </header>
+
+      {decision ? (
+        <section
+          aria-label="Controlled beta decision"
+          data-testid="beta-decision"
+        >
+          <h2>Controlled beta decision</h2>
+          <ul className="nf-beta-decisions">
+            {["internal_demo_beta", "controlled_customer_beta", "production_rollout"].map(
+              (scope) => {
+                const entry = decision.by_scope?.[scope];
+                const verdict =
+                  scope === "internal_demo_beta"
+                    ? decision.internal_demo_beta
+                    : scope === "controlled_customer_beta"
+                      ? decision.controlled_customer_beta
+                      : decision.production_rollout;
+                return (
+                  <li
+                    key={scope}
+                    className={`nf-beta-decision nf-beta-decision--${verdict}`}
+                    data-testid={`beta-decision-${scope}`}
+                    data-decision={verdict}
+                  >
+                    <h3>{SCOPE_LABELS[scope] ?? scope}</h3>
+                    <p data-testid={`beta-decision-verdict-${scope}`}>
+                      {DECISION_LABELS[verdict] ?? verdict}
+                    </p>
+                    {entry ? (
+                      <>
+                        <p className="nf-muted">{entry.summary}</p>
+                        {entry.constraints.length > 0 ? (
+                          <ul
+                            data-testid={`beta-decision-constraints-${scope}`}
+                            className="nf-beta-constraints"
+                          >
+                            {entry.constraints.map((constraint) => (
+                              <li key={constraint}>{constraint}</li>
+                            ))}
+                          </ul>
+                        ) : null}
+                        {entry.blockers.length > 0 ? (
+                          <ul
+                            data-testid={`beta-decision-blockers-${scope}`}
+                            className="nf-beta-blockers"
+                          >
+                            {entry.blockers.map((blocker) => (
+                              <li key={blocker}>{blocker}</li>
+                            ))}
+                          </ul>
+                        ) : null}
+                      </>
+                    ) : null}
+                  </li>
+                );
+              },
+            )}
+          </ul>
+          <h3>Do not say</h3>
+          <ul data-testid="beta-decision-conflations">
+            {decision.conflations.map((c) => (
+              <li key={c.readiness}>
+                {c.readiness} is not {c.capability} — {c.difference}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section aria-label="Readiness lanes">
         <ul className="nf-cockpit-lanes" data-testid="beta-cockpit-lanes">

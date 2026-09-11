@@ -11,6 +11,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   BetaOnboardingCockpitPage,
+  type BetaDecision,
   type CockpitNextActions,
   type CockpitReadiness,
 } from "./BetaOnboardingCockpitPage";
@@ -81,6 +82,49 @@ const NEXT_ACTIONS: CockpitNextActions = {
   not_this_yet: ["activating a controlled customer pilot"],
 };
 
+const DECISION: BetaDecision = {
+  internal_demo_beta: "GO",
+  controlled_customer_beta: "LIMITED_GO",
+  production_rollout: "NO_GO",
+  by_scope: {
+    internal_demo_beta: {
+      scope: "internal_demo_beta",
+      decision: "GO",
+      conditions_met: ["login_live"],
+      conditions_missing: [],
+      blockers: [],
+      constraints: ["demo organization only", "no real customer data"],
+      summary: "every lane an internal operator needs is proved",
+    },
+    controlled_customer_beta: {
+      scope: "controlled_customer_beta",
+      decision: "LIMITED_GO",
+      conditions_met: [],
+      conditions_missing: ["customer_auth_live"],
+      blockers: ["approval_absent:customer_auth_live"],
+      constraints: ["demo organization scope only", "no email is sent"],
+      summary: "a real customer beta needs decisions no code change can make",
+    },
+    production_rollout: {
+      scope: "production_rollout",
+      decision: "NO_GO",
+      conditions_met: [],
+      conditions_missing: ["production_rollout_decision"],
+      blockers: ["approval_absent:production_rollout_decision"],
+      constraints: ["not approved, and this service cannot approve it"],
+      summary: "production is a decision and nobody has made it",
+    },
+  },
+  conflations: [
+    {
+      readiness: "email_delivery_readiness",
+      capability: "email_delivery",
+      difference: "nothing is sent",
+    },
+  ],
+  invariant_failures: [],
+};
+
 function renderCockpit(
   overrides: Partial<React.ComponentProps<typeof BetaOnboardingCockpitPage>> = {},
 ) {
@@ -89,6 +133,7 @@ function renderCockpit(
       orgId="bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
       readiness={READINESS}
       nextActions={NEXT_ACTIONS}
+      decision={DECISION}
       loading={false}
       error={null}
       {...overrides}
@@ -158,6 +203,47 @@ describe("BetaOnboardingCockpitPage", () => {
     );
     expect(screen.getByTestId("beta-cockpit-not-yet").textContent).toContain(
       "controlled customer pilot",
+    );
+  });
+
+  it("shows all three decisions, production as NO-GO", () => {
+    renderCockpit();
+    expect(
+      screen.getByTestId("beta-decision-verdict-internal_demo_beta").textContent,
+    ).toContain("GO");
+    expect(
+      screen.getByTestId("beta-decision-verdict-controlled_customer_beta")
+        .textContent,
+    ).toContain("LIMITED GO");
+    expect(
+      screen.getByTestId("beta-decision-verdict-production_rollout").textContent,
+    ).toContain("NO-GO");
+  });
+
+  it("shows the constraints on a LIMITED GO rather than only the verdict", () => {
+    renderCockpit();
+    const constraints = screen.getByTestId(
+      "beta-decision-constraints-controlled_customer_beta",
+    ).textContent;
+    expect(constraints).toContain("demo organization scope only");
+    expect(
+      screen.getByTestId("beta-decision-blockers-controlled_customer_beta")
+        .textContent,
+    ).toContain("customer_auth_live");
+  });
+
+  it("names what must not be conflated", () => {
+    renderCockpit();
+    expect(screen.getByTestId("beta-decision-conflations").textContent).toContain(
+      "email_delivery_readiness is not email_delivery",
+    );
+  });
+
+  it("renders the decision before the lanes", () => {
+    const { container } = renderCockpit();
+    const text = container.textContent ?? "";
+    expect(text.indexOf("Controlled beta decision")).toBeLessThan(
+      text.indexOf("Login"),
     );
   });
 

@@ -1,0 +1,38 @@
+{
+  "blocker_count": 6,
+  "each_names_what_it_blocks": true,
+  "schema_version": "nf_controlled_beta_gate145_artifact_v1",
+  "separated_from_human_approvals_because": "an operator reading a blocker needs to know whether to write code or to make a decision",
+  "technical_blockers": [
+    {
+      "blocker": "five scheduler components absent",
+      "blocks": "source_monitoring_live",
+      "detail": "background worker, periodic trigger, persistent backend, production raw payload store, scheduler runtime"
+    },
+    {
+      "blocker": "no email delivery service module",
+      "blocks": "email_delivery",
+      "detail": "tenant_beta_readiness_service already looks for one"
+    },
+    {
+      "blocker": "no object storage client",
+      "blocks": "object_store_configured",
+      "detail": "no SDK is installed and this campaign added none"
+    },
+    {
+      "blocker": "no digest persistence table",
+      "blocks": "auditing a digest after a missed deadline",
+      "detail": "delivery intents are persisted and name a digest nobody kept; nf_tenant_digest_records does not exist"
+    },
+    {
+      "blocker": "no consent record model",
+      "blocks": "real customer data",
+      "detail": "named in Gate 142, deliberately not filled"
+    },
+    {
+      "blocker": "robots.txt never fetched",
+      "blocks": "source_monitoring_live",
+      "detail": "unknown is not in ROBOTS_SATISFYING, so it blocks"
+    }
+  ]
+}

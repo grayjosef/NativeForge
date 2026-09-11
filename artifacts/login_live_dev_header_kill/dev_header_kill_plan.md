@@ -3,7 +3,7 @@
 ## Where it stands
 
 ```text
-routes total                     258
+routes total                     262
 routes reading X-NF-Org-Id       0
 modules reading it               0
 converted in Gate 133F           isolation_routes (2 routes)

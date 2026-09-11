@@ -1,0 +1,24 @@
+{
+  "blockers": [
+    "approval_absent:consent_and_data_boundary_documented",
+    "approval_absent:customer_auth_live",
+    "approval_absent:customer_beta_scope_approved",
+    "approval_absent:production_rollout_decision",
+    "approval_absent:verified_operational_binding",
+    "capability_absent:email_delivery",
+    "capability_absent:object_store_configured",
+    "capability_absent:source_monitoring_live"
+  ],
+  "constraints": [
+    "not approved, and this service cannot approve it"
+  ],
+  "controlled_customer_pilot_activated": false,
+  "decision": "NO_GO",
+  "decision_is_always": "NO_GO",
+  "no_branch_returns_anything_else": true,
+  "production_approved": false,
+  "schema_version": "nf_controlled_beta_gate145_artifact_v1",
+  "scope": "production_rollout",
+  "summary": "production is not the sum of the technical gates; it is those gates and somebody saying yes, and nobody has",
+  "why": "production is not the sum of the technical gates; it is those gates and somebody saying yes, and a service that could compute its way to GO would have mistaken one for the other"
+}

@@ -11,7 +11,7 @@ session_route_available              true
 current_user_route_available         true
 logout_route_available               true
 
-application routes                   219
+application routes                   223
 ```
 
 ## Declared is not enforced

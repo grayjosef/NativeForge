@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "controlled_customer_beta": "LIMITED_GO",
+    "internal_demo_beta": "GO",
+    "production_rollout": "NO_GO"
+  },
+  "demo_organization": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "gate": "145",
+  "improvement_claims": [],
+  "lane_provenance": {
+    "awarded_operational_tracking": "Gate 139",
+    "beta_onboarding_cockpit_route_live": "Gate 144",
+    "customer_persistence_live": "Gate 138",
+    "document_metadata_operational": "Gate 141",
+    "email_delivery_readiness": "Gate 142",
+    "login_live": "Gate 133",
+    "source_monitoring_preflight_ready": "Gate 143",
+    "tenant_digest_operational": "Gate 140"
+  },
+  "measured_capabilities": {
+    "controlled_customer_pilot": false,
+    "customer_auth_live": false,
+    "document_body_storage_ready": false,
+    "email_delivery": false,
+    "object_store_configured": false,
+    "production_rollout": false,
+    "source_monitoring_live": false,
+    "verified_operational_binding": false
+  },
+  "operational_lanes": [
+    "awarded_operational_tracking",
+    "beta_onboarding_cockpit_route_live",
+    "customer_persistence_live",
+    "document_metadata_operational",
+    "email_delivery_readiness",
+    "login_live",
+    "source_monitoring_preflight_ready",
+    "tenant_digest_operational"
+  ],
+  "question": "can NativeForge enter a controlled customer beta now?",
+  "real_organization_not_touched_because": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee was never authorized, and no route in this campaign reaches it",
+  "real_organization_touched": false,
+  "schema_version": "nf_controlled_beta_gate145_artifact_v1",
+  "what_is_blocked": [
+    "source_monitoring_live"
+  ],
+  "what_is_explicitly_not_production": [
+    "controlled_customer_pilot",
+    "production_rollout"
+  ],
+  "what_is_operational": [
+    "awarded_operational_tracking",
+    "beta_onboarding_cockpit_route_live",
+    "customer_persistence_live",
+    "document_metadata_operational",
+    "email_delivery_readiness",
+    "login_live",
+    "source_monitoring_preflight_ready",
+    "tenant_digest_operational"
+  ],
+  "what_is_preview_only": [
+    "tenant_digest"
+  ],
+  "what_is_readiness_only": [
+    "email_delivery_readiness",
+    "source_monitoring_preflight_ready",
+    "document_metadata_operational"
+  ],
+  "what_requires_human_approval": [
+    "customer_auth_live",
+    "verified_operational_binding"
+  ]
+}

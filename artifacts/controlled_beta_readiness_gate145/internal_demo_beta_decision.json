@@ -1,0 +1,56 @@
+{
+  "all_must_be_false_are_false": true,
+  "blockers": [],
+  "conditions_met": [
+    "awarded_operational_tracking",
+    "beta_onboarding_cockpit_route_live",
+    "customer_persistence_live",
+    "document_metadata_operational",
+    "email_delivery_readiness",
+    "login_live",
+    "source_monitoring_preflight_ready",
+    "tenant_digest_operational"
+  ],
+  "conditions_missing": [],
+  "constraints": [
+    "demo organization only (bbbbbbbb-cccc-dddd-eeee-ffffffffffff)",
+    "fixture-labelled rows only",
+    "no real customer data",
+    "digest is preview_only; nothing is sent",
+    "no source is monitored and none is cleared for collection",
+    "document references only; no bytes are stored"
+  ],
+  "decision": "GO",
+  "lane_provenance": {
+    "awarded_operational_tracking": "Gate 139",
+    "beta_onboarding_cockpit_route_live": "Gate 144",
+    "customer_persistence_live": "Gate 138",
+    "document_metadata_operational": "Gate 141",
+    "email_delivery_readiness": "Gate 142",
+    "login_live": "Gate 133",
+    "source_monitoring_preflight_ready": "Gate 143",
+    "tenant_digest_operational": "Gate 140"
+  },
+  "must_be_false": [
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "controlled_customer_pilot",
+    "production_rollout"
+  ],
+  "required_conditions": [
+    "login_live",
+    "customer_persistence_live",
+    "awarded_operational_tracking",
+    "tenant_digest_operational",
+    "document_metadata_operational",
+    "email_delivery_readiness",
+    "source_monitoring_preflight_ready",
+    "beta_onboarding_cockpit_route_live"
+  ],
+  "schema_version": "nf_controlled_beta_gate145_artifact_v1",
+  "scope": "internal_demo_beta",
+  "summary": "every lane an internal operator needs is proved, in the demo organization, with fixture-labelled rows and every capability flag honestly false"
+}

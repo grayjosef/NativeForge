@@ -29,6 +29,9 @@ from nativeforge.api.backend_runtime_routes import router as backend_runtime_rou
 from nativeforge.api.beta_onboarding_cockpit_routes import (
     router as beta_cockpit_router,
 )
+from nativeforge.api.controlled_beta_readiness_routes import (
+    router as controlled_beta_router,
+)
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
 )
@@ -170,6 +173,9 @@ def create_app() -> FastAPI:
     # Gate 144: the beta onboarding cockpit. Reports the deployment's own
     # readiness; activates nothing and names no customer.
     app.include_router(beta_cockpit_router)
+    # Gate 145: the controlled beta decision matrix. Reports a decision;
+    # approves nothing and activates nothing.
+    app.include_router(controlled_beta_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

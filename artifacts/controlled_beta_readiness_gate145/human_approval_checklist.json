@@ -1,0 +1,58 @@
+{
+  "approval_count": 8,
+  "approvals_granted_by_this_gate": 0,
+  "each_names_an_owner": true,
+  "each_says_why_not_automatable": true,
+  "human_approvals": [
+    {
+      "approval": "a second real person accepts a real invite",
+      "owner": "the organization owner, and the person invited",
+      "unlocks": "customer_auth_live",
+      "why_not_automatable": "Gate 136 built the path and refused to fake the person; an invite accepted by nobody is not an invite"
+    },
+    {
+      "approval": "the two-part verified operational binding decision",
+      "owner": "the owner",
+      "unlocks": "verified_operational_binding",
+      "why_not_automatable": "Gate 137 made it a decision on purpose"
+    },
+    {
+      "approval": "a documented consent and data boundary",
+      "owner": "the owner, with whoever advises on data handling",
+      "unlocks": "real customer data",
+      "why_not_automatable": "Gate 142 named this gap and did not fill it: nothing in this repository records that a tenant asked for anything"
+    },
+    {
+      "approval": "a terms review per source",
+      "owner": "a human reading each publisher's terms",
+      "unlocks": "source_monitoring_live",
+      "why_not_automatable": "171 sources are UNKNOWN and 6 served no policy text at all; 'we could not read them' is not permission"
+    },
+    {
+      "approval": "an email provider choice and a send activation",
+      "owner": "the owner",
+      "unlocks": "email_delivery",
+      "why_not_automatable": "Gate 142's preflight refuses an activation setting that arrives without an approval"
+    },
+    {
+      "approval": "an object store choice and an external verification",
+      "owner": "the owner",
+      "unlocks": "object_store_configured",
+      "why_not_automatable": "five settings being filled in and five settings reaching a bucket that accepts writes are different claims"
+    },
+    {
+      "approval": "the controlled customer pilot decision",
+      "owner": "Mayhem",
+      "unlocks": "controlled_customer_pilot",
+      "why_not_automatable": "it is a business decision about real people"
+    },
+    {
+      "approval": "the production rollout decision",
+      "owner": "Mayhem",
+      "unlocks": "production_rollout",
+      "why_not_automatable": "production is not the sum of the technical gates; it is those gates and somebody saying yes"
+    }
+  ],
+  "none_is_automatable": true,
+  "schema_version": "nf_controlled_beta_gate145_artifact_v1"
+}

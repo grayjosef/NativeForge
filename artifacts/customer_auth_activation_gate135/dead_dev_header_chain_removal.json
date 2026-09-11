@@ -17,6 +17,7 @@
     "award_requirements_routes.py",
     "awarded_grants_routes.py",
     "beta_onboarding_cockpit_routes.py",
+    "controlled_beta_readiness_routes.py",
     "digest_delivery_routes.py",
     "form_package_routes.py",
     "grant_spark_routes.py",

@@ -1,0 +1,48 @@
+{
+  "blockers": [
+    "approval_absent:consent_and_data_boundary_documented",
+    "approval_absent:customer_auth_live",
+    "approval_absent:customer_beta_scope_approved",
+    "approval_absent:verified_operational_binding"
+  ],
+  "cannot_be_unconditional_go_because": "customer_auth_live is false; no second real person has accepted an invite, and Gate 136 refused to fake one",
+  "conditions_met": [],
+  "conditions_missing": [
+    "consent_and_data_boundary_documented",
+    "customer_auth_live",
+    "customer_beta_scope_approved",
+    "verified_operational_binding"
+  ],
+  "constraints": [
+    "demo organization scope only, until verified_operational_binding",
+    "no real customer data until a consent and data boundary is documented",
+    "no email is sent under any scope",
+    "no live source is monitored under any scope",
+    "no document bytes are stored under any scope",
+    "every product surface must avoid the unsafe claims listed here"
+  ],
+  "customer_auth_live": false,
+  "decision": "LIMITED_GO",
+  "is_unconditional_go": false,
+  "required_conditions": [
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_and_data_boundary_documented",
+    "customer_beta_scope_approved"
+  ],
+  "schema_version": "nf_controlled_beta_gate145_artifact_v1",
+  "scope": "controlled_customer_beta",
+  "summary": "the software supports a controlled beta in the demo organization; a REAL customer beta needs decisions no code change can make",
+  "verified_operational_binding": false,
+  "what_limited_go_does_not_permit": [
+    "a real customer signing in",
+    "writing real customer data",
+    "sending any email",
+    "monitoring any live source",
+    "storing any document bytes"
+  ],
+  "what_limited_go_permits": [
+    "the demo organization, with fixture-labelled rows",
+    "an operator walking a customer through the product"
+  ]
+}

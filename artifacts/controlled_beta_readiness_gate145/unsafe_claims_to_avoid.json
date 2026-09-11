@@ -1,0 +1,72 @@
+{
+  "conflation_count": 5,
+  "conflations": [
+    {
+      "capability": "email_delivery",
+      "difference": "a digest can be rendered, a recipient validated and an intent recorded - and no mail has anywhere to go",
+      "readiness": "email_delivery_readiness"
+    },
+    {
+      "capability": "source_monitoring_live",
+      "difference": "every source can be evaluated and classified - and none is cleared for collection, because nobody has read their terms",
+      "readiness": "source_monitoring_preflight_ready"
+    },
+    {
+      "capability": "document_body_storage_ready",
+      "difference": "a document reference records and reads back - and its bytes have nowhere to live",
+      "readiness": "document_metadata_operational"
+    },
+    {
+      "capability": "customer_auth_live",
+      "difference": "rows persist against an organization - and no second real person has ever signed in",
+      "readiness": "customer_persistence_live"
+    },
+    {
+      "capability": "a customer organization",
+      "difference": "bbbbbbbb-... is a demo org with fixture-labelled rows; treating it as a customer org is the substitution Gates 110-113 prevented",
+      "readiness": "the demo organization"
+    }
+  ],
+  "each_paired_with_a_true_statement": true,
+  "improvement_claims": [],
+  "schema_version": "nf_controlled_beta_gate145_artifact_v1",
+  "unsafe_claim_count": 7,
+  "unsafe_claims": [
+    {
+      "claim": "we monitor grant sources for you",
+      "true_statement": "every source in the registry can be evaluated, and none has been cleared for collection",
+      "why_unsafe": "source_monitoring_live is false; zero sources are cleared"
+    },
+    {
+      "claim": "you will get a weekly digest by email",
+      "true_statement": "a weekly digest can be previewed in the product, and nothing is sent anywhere",
+      "why_unsafe": "email_delivery is false; no provider exists"
+    },
+    {
+      "claim": "upload your award documents",
+      "true_statement": "a document reference can be recorded; its bytes are not stored",
+      "why_unsafe": "document body storage is not configured"
+    },
+    {
+      "claim": "sign your team in",
+      "true_statement": "one owner identity signs in through Google; a second person has not yet accepted an invite",
+      "why_unsafe": "customer_auth_live is false"
+    },
+    {
+      "claim": "your data is in our system",
+      "true_statement": "the demo organization holds fixture-labelled rows",
+      "why_unsafe": "no real customer data is written anywhere"
+    },
+    {
+      "claim": "we cover N grant sources",
+      "true_statement": "177 sources are catalogued and none is monitored",
+      "why_unsafe": "the registry lists 177 sources and covers none of them; a catalogue is not coverage"
+    },
+    {
+      "claim": "a 65% improvement in anything",
+      "true_statement": "no improvement figure is claimed",
+      "why_unsafe": "never measured, not measurable from this system, and this campaign has refused it at every gate"
+    }
+  ],
+  "why_these_matter": "each is something somebody could reasonably say after reading a green cockpit, and each is false today"
+}
