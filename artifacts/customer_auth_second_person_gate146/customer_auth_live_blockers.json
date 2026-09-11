@@ -1,0 +1,76 @@
+{
+  "blocker": "invite_binding_passed",
+  "blocker_kind": "an event, not a decision",
+  "customer_auth_live": false,
+  "not_observable_from_here": [
+    {
+      "must_not": "publish the app to work around it",
+      "observable_from_here": false,
+      "state": "UNKNOWN",
+      "step": "enrol the second Google account as an OAuth test user",
+      "who": "Mayhem, in the Google console",
+      "why_unknown": "the app is External/Testing and Google refuses an unenrolled account before NativeForge sees the request, so the failure is indistinguishable from several others and nothing here can read the console"
+    }
+  ],
+  "readiness_is_not_the_event": "readiness_passed says the path is correct and runnable; customer_auth_live says somebody walked it",
+  "refused_shortcuts": [
+    {
+      "refused_because": "the accepter is resolved from nf_identities and must then match the invite's own fingerprint; a typed row satisfies neither half",
+      "shortcut": "insert an nf_identities row by hand"
+    },
+    {
+      "refused_because": "a session writes no identity row at all",
+      "shortcut": "mint a session cookie for a second person"
+    },
+    {
+      "refused_because": "it is the faked user this gate exists to avoid",
+      "shortcut": "synthesize a provider subject"
+    },
+    {
+      "refused_because": "invite_binding_passed joins the membership to the invite and to the accepter; a membership that merely shares an identity is counted separately as the near-miss it is",
+      "shortcut": "write a membership directly, without an invite"
+    },
+    {
+      "refused_because": "the owner cannot accept their own invite, and the accepter must be an identity distinct from the org owner",
+      "shortcut": "count the owner's own login as the second person"
+    },
+    {
+      "refused_because": "both scripts refuse aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee by name and exit non-zero in a production environment",
+      "shortcut": "run the path against the real organization"
+    }
+  ],
+  "schema_version": "nf_customer_auth_second_person_artifacts_v1",
+  "stages": [
+    {
+      "command_exists": false,
+      "proved_by": "nf_identities gains a row for a subject the provider verified. Counted, never selected.",
+      "requires_human": true,
+      "stage": "second_identity_signed_in",
+      "what": "signs in once through real Google OAuth, in a clean browser profile. Expect no session: the callback writes an identity and issues a cookie only once a membership resolves, and the membership is stage 3. That is correct, not a failure.",
+      "who": "the second person"
+    },
+    {
+      "command_exists": true,
+      "proved_by": "nf_membership_invites gains a row for the demo organization, holding the domain half and two fingerprints and no address.",
+      "requires_human": true,
+      "stage": "invite_issued",
+      "what": "./scripts/nativeforge_demo_invite_issue.py --email <address>",
+      "who": "the operator"
+    },
+    {
+      "command_exists": true,
+      "proved_by": "the invite is accepted AND an active membership names that invite AND the member is the accepter. A join, not a coincidence.",
+      "requires_human": true,
+      "stage": "invite_accepted_and_bound",
+      "what": "./scripts/nativeforge_demo_invite_accept.py --invite-id <from stage 2> --email <the same address>",
+      "who": "the operator"
+    }
+  ],
+  "stays_false_after_this_gate": [
+    "customer_auth_live",
+    "invite_binding_passed",
+    "verified_operational_binding",
+    "controlled_customer_pilot",
+    "production_rollout"
+  ]
+}

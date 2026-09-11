@@ -1,0 +1,48 @@
+{
+  "answer": "one blocker, which is an event rather than a decision",
+  "blocker": "invite_binding_passed",
+  "blocker_is_a_conjunction_of": [
+    "second_identity_signed_in",
+    "invite_issued",
+    "invite_accepted_and_bound"
+  ],
+  "gates_passing": 16,
+  "gates_total": 17,
+  "never_printed": [
+    {
+      "instead": "the domain half and a fingerprint, on the invite row",
+      "value": "the invited address",
+      "where_it_lives": "nf_identities.email"
+    },
+    {
+      "instead": "a fingerprint, on the invite row",
+      "value": "the provider subject",
+      "where_it_lives": "nf_identities.subject"
+    },
+    {
+      "instead": "a boolean saying whether a session was issued",
+      "value": "the session cookie",
+      "where_it_lives": "the browser"
+    },
+    {
+      "instead": "nothing; no readout needs them",
+      "value": "the OAuth state and PKCE verifier",
+      "where_it_lives": "the redirect state store"
+    }
+  ],
+  "organization": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "owner_activation_decision": "already approves customer_auth_live",
+  "question": "what is left before customer_auth_live can be true?",
+  "refused_organization": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+  "safe_to_print": {
+    "value": "the invite id",
+    "why": "the operator needs it for the accept command and it identifies no person; the issue script prints it on purpose"
+  },
+  "schema_version": "nf_customer_auth_second_person_artifacts_v1",
+  "stage_proof": {
+    "invite_accepted_and_bound": "the invite is accepted AND an active membership names that invite AND the member is the accepter. A join, not a coincidence.",
+    "invite_issued": "nf_membership_invites gains a row for the demo organization, holding the domain half and two fingerprints and no address.",
+    "second_identity_signed_in": "nf_identities gains a row for a subject the provider verified. Counted, never selected."
+  },
+  "why_the_name_does_not_locate_it": "an operator told invite_binding_passed is false looks for an invite to accept; the checklist reports which of the three stages is actually outstanding"
+}

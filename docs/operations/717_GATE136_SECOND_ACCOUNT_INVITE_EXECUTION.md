@@ -1,6 +1,14 @@
 # 717 — Gate 136: second account invite execution
 
-Not theoretical. Every command below exists and has been run end to end.
+Every command below exists and each was exercised when Gate 136 built it.
+That is not the same as the event having happened here, and as of Gate 146
+it has not: the live database holds one identity, no invite, and one
+membership that did not come through one. Read the current stage rather
+than inferring it from this page:
+
+```bash
+./scripts/verify_nativeforge_customer_auth_second_person_event.sh
+```
 
 ```text
 organization  bbbbbbbb-cccc-dddd-eeee-ffffffffffff   the demo org, only

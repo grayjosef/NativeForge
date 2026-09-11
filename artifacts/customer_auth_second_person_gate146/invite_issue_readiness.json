@@ -1,0 +1,28 @@
+{
+  "command": "./scripts/nativeforge_demo_invite_issue.py --email <address>",
+  "does_not_record": [
+    "the address",
+    "the provider subject"
+  ],
+  "email_sent": false,
+  "prerequisite": "none technically; the runbook orders it after the second person has signed in so the accept step can follow immediately",
+  "prints": "the invite id, on purpose",
+  "records": [
+    "invited_email_domain",
+    "invited_email_fingerprint",
+    "invited_subject_fingerprint"
+  ],
+  "safe_to_run": true,
+  "safeguards": [
+    "demo organization only; the real organization is refused by name",
+    "production environment exits 2",
+    "is_demo derived from organizations.org_type, not from a flag",
+    "the issuer is read from the org's active org_owner row, never supplied, so an operator cannot forge who authorized a membership",
+    "the address is read at runtime, never printed, never stored",
+    "no email is sent; the table has no column for an address to send to"
+  ],
+  "schema_version": "nf_customer_auth_second_person_artifacts_v1",
+  "stage": "invite_issued",
+  "who": "the operator",
+  "writes": "one nf_membership_invites row"
+}

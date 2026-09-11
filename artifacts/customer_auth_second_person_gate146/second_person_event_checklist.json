@@ -1,0 +1,79 @@
+{
+  "accepted_by_this_gate": false,
+  "activated_by_this_gate": false,
+  "issued_by_this_gate": false,
+  "never_printed": [
+    {
+      "instead": "the domain half and a fingerprint, on the invite row",
+      "value": "the invited address",
+      "where_it_lives": "nf_identities.email"
+    },
+    {
+      "instead": "a fingerprint, on the invite row",
+      "value": "the provider subject",
+      "where_it_lives": "nf_identities.subject"
+    },
+    {
+      "instead": "a boolean saying whether a session was issued",
+      "value": "the session cookie",
+      "where_it_lives": "the browser"
+    },
+    {
+      "instead": "nothing; no readout needs them",
+      "value": "the OAuth state and PKCE verifier",
+      "where_it_lives": "the redirect state store"
+    }
+  ],
+  "organization": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "safe_to_print": {
+    "value": "the invite id",
+    "why": "the operator needs it for the accept command and it identifies no person; the issue script prints it on purpose"
+  },
+  "schema_version": "nf_customer_auth_second_person_artifacts_v1",
+  "second_identity_must_be_distinct_from_owner": true,
+  "second_identity_required": true,
+  "stage_order": [
+    "second_identity_signed_in",
+    "invite_issued",
+    "invite_accepted_and_bound"
+  ],
+  "stages": [
+    {
+      "command_exists": false,
+      "position": 1,
+      "proved_by": "nf_identities gains a row for a subject the provider verified. Counted, never selected.",
+      "requires_human": true,
+      "stage": "second_identity_signed_in",
+      "what": "signs in once through real Google OAuth, in a clean browser profile. Expect no session: the callback writes an identity and issues a cookie only once a membership resolves, and the membership is stage 3. That is correct, not a failure.",
+      "who": "the second person"
+    },
+    {
+      "command_exists": true,
+      "position": 2,
+      "proved_by": "nf_membership_invites gains a row for the demo organization, holding the domain half and two fingerprints and no address.",
+      "requires_human": true,
+      "stage": "invite_issued",
+      "what": "./scripts/nativeforge_demo_invite_issue.py --email <address>",
+      "who": "the operator"
+    },
+    {
+      "command_exists": true,
+      "position": 3,
+      "proved_by": "the invite is accepted AND an active membership names that invite AND the member is the accepter. A join, not a coincidence.",
+      "requires_human": true,
+      "stage": "invite_accepted_and_bound",
+      "what": "./scripts/nativeforge_demo_invite_accept.py --invite-id <from stage 2> --email <the same address>",
+      "who": "the operator"
+    }
+  ],
+  "unobservable_prerequisite": {
+    "must_not": "publish the app to work around it",
+    "observable_from_here": false,
+    "state": "UNKNOWN",
+    "step": "enrol the second Google account as an OAuth test user",
+    "who": "Mayhem, in the Google console",
+    "why_unknown": "the app is External/Testing and Google refuses an unenrolled account before NativeForge sees the request, so the failure is indistinguishable from several others and nothing here can read the console"
+  },
+  "verifier": "scripts/verify_nativeforge_customer_auth_second_person_event.sh",
+  "verifier_passes_on_readiness_not_on_the_event": true
+}

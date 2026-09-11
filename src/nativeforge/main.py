@@ -32,6 +32,9 @@ from nativeforge.api.beta_onboarding_cockpit_routes import (
 from nativeforge.api.controlled_beta_readiness_routes import (
     router as controlled_beta_router,
 )
+from nativeforge.api.customer_auth_readiness_routes import (
+    router as customer_auth_readiness_router,
+)
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
 )
@@ -176,6 +179,11 @@ def create_app() -> FastAPI:
     # Gate 145: the controlled beta decision matrix. Reports a decision;
     # approves nothing and activates nothing.
     app.include_router(controlled_beta_router)
+    # Gate 146: the second-person invite checklist. Read-only by design - there
+    # is no POST here, because issuing and accepting an invite are the two
+    # operator commands Gate 136 built and neither belongs one request away
+    # from anybody holding a session.
+    app.include_router(customer_auth_readiness_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

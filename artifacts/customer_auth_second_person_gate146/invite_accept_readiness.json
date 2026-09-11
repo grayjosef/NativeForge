@@ -1,0 +1,21 @@
+{
+  "clears": "invite_binding_passed",
+  "command": "./scripts/nativeforge_demo_invite_accept.py --invite-id <from the issue step> --email <the same address>",
+  "has_a_bypass_flag": false,
+  "refusal": "no_identity_has_signed_in_with_that_address",
+  "refusal_is_the_honest_answer": true,
+  "refuses_when_the_person_has_not_signed_in": true,
+  "safe_to_run": true,
+  "safeguards": [
+    "the accepter is resolved from nf_identities and must then match the invite's own fingerprint, so a different address refuses rather than redirecting the membership",
+    "the owner cannot accept their own invite",
+    "both writes are one transaction; a membership failure rolls the acceptance back, because an invite marked accepted with nobody behind it reads as consumed and its id cannot be reused"
+  ],
+  "schema_version": "nf_customer_auth_second_person_artifacts_v1",
+  "stage": "invite_accepted_and_bound",
+  "who": "the operator",
+  "writes": [
+    "the acceptance on the invite row",
+    "one membership row"
+  ]
+}
