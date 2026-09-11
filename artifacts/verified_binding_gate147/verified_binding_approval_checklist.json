@@ -1,0 +1,43 @@
+{
+  "approval_fields_required": [
+    "organization_id",
+    "authorized_by",
+    "authorization_scope",
+    "environment",
+    "recorded_at"
+  ],
+  "customer_auth_live_required_for": "any status asserting verification",
+  "derived_never_supplied": [
+    "verified_operational_binding",
+    "classification",
+    "customer_auth_live"
+  ],
+  "environment_variables": {
+    "can_grant": [],
+    "can_revoke": [
+      "NF_REAL_ORG_BINDING_ACTIVATION_REVOKED"
+    ]
+  },
+  "schema_version": "nf_verified_binding_gate147_artifacts_v1",
+  "scope_note": "the narrow scope does not reach production; binding a real organization in dev is a different decision from binding one in production",
+  "scopes": {
+    "production_binding_activation": [
+      "production",
+      "prod"
+    ],
+    "real_org_binding_activation": [
+      "dev",
+      "local",
+      "test"
+    ]
+  },
+  "verifier_principal_must_also_be": [
+    "authenticated",
+    "verified_org"
+  ],
+  "verifier_roles": [
+    "platform_admin",
+    "tenant_admin"
+  ],
+  "why": "a verified binding is a row asserting somebody verified something; writing one while nobody can authenticate leaves that assertion with no verifier behind it"
+}

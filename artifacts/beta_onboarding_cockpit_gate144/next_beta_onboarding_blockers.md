@@ -30,7 +30,7 @@ Every one is `controlled_dev_demo`. None is a production claim.
 
 ```text
   customer_auth                    ['invite_binding_passed']
-  verified_operational_binding     ['owner_decision_absent']
+  verified_operational_binding     ['demo_organization_is_never_a_verified_operational_binding', 'no_authorized_real_organization', 'owner_decision_absent', 'production_verified_binding_requires_live_customer_auth', 'real_organization_refused_by_name']
 ```
 
 No code change moves either of these. That is why they are

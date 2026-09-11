@@ -424,3 +424,154 @@ def activation_boundary_invariant_failures(decision: dict[str, Any]) -> list[str
         fails.append("nothing_approved_and_nothing_blocked_it")
 
     return fails
+
+
+# ---------------------------------------------------------------------------
+# Gate 147C: the dry-run composite
+# ---------------------------------------------------------------------------
+#: Every layer whose refusal must be consulted before a binding is attempted.
+#: Named so a caller can see that three separate modules have a say, and a test
+#: can assert none of them was dropped.
+DECISION_LAYERS: tuple[str, ...] = (
+    "activation_boundary",
+    "customer_auth_liveness",
+    "active_binding_uniqueness",
+    "verifier_principal",
+)
+
+
+def build_verified_binding_dry_run_decision(
+    *,
+    organization_id: Any = None,
+    approval: Any = None,
+    app_env: str | None = None,
+    org_type_in_database: str | None = None,
+    principal: dict[str, Any] | None = None,
+    binding_read: dict[str, Any] | None = None,
+    customer_auth_live: bool | None = None,
+    authorized_organization_ids: frozenset[str] | None = None,
+    **offered: Any,
+) -> dict[str, Any]:
+    """Decide, without writing anything, whether a binding could be attempted.
+
+    Composes Gate 137's activation decision with Gate 147's checklist, so all
+    of the refusals are reported together rather than one layer at a time.
+
+    There is no connection parameter and no write path. `mutation_enabled` is
+    derived and is false unless a well-formed approval object exists alongside
+    an otherwise clear decision - and even then this function does not act on
+    it. Enabling mutation is a separate, reviewed call.
+    """
+    from nativeforge.services.verified_operational_binding_approval_checklist_service import (  # noqa: E501
+        approval_checklist_invariant_failures,
+        build_approval_checklist,
+    )
+
+    boundary = build_real_org_binding_activation_decision(
+        organization_id=organization_id,
+        approval=approval,
+        app_env=app_env,
+        org_type_in_database=org_type_in_database,
+        authorized_organization_ids=authorized_organization_ids,
+        **offered,
+    )
+    checklist = build_approval_checklist(
+        organization_id=organization_id,
+        approval=approval,
+        org_type_in_database=org_type_in_database,
+        app_env=app_env,
+        principal=principal,
+        binding_read=binding_read,
+        customer_auth_live=customer_auth_live,
+        authorized_organization_ids=authorized_organization_ids,
+        **offered,
+    )
+
+    blockers = sorted(
+        {
+            *(str(r) for r in (boundary.get("blocked_reasons") or [])),
+            *(str(r) for r in (checklist.get("blockers") or [])),
+        }
+    )
+
+    # Both layers must agree, and the conjunction is deliberate: either one
+    # refusing is enough, and neither one approving is sufficient alone.
+    may_attempt = bool(
+        boundary.get("approves_real_org_binding_activation")
+        and checklist.get("verified_operational_binding")
+        and not blockers
+    )
+
+    # Mutation is a further step and this function never takes it. Reported so
+    # a caller can see that a clear decision still does not write a row.
+    mutation_enabled = bool(may_attempt and checklist.get("approval_well_formed"))
+
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "dry_run": True,
+            "decision_layers": list(DECISION_LAYERS),
+            "may_attempt_binding": may_attempt,
+            "mutation_enabled": mutation_enabled,
+            "mutation_performed": False,
+            "rows_written": 0,
+            "connection_supplied": False,
+            "blockers": blockers,
+            "boundary_blocked_reasons": sorted(
+                str(r) for r in (boundary.get("blocked_reasons") or [])
+            ),
+            "checklist_blockers": list(checklist.get("blockers") or []),
+            "checklist_invariant_failures": approval_checklist_invariant_failures(
+                checklist
+            ),
+            "boundary_invariant_failures": activation_boundary_invariant_failures(
+                boundary
+            ),
+            "organization_id": checklist.get("organization_id"),
+            "classification": checklist.get("classification"),
+            "classification_source": checklist.get("classification_source"),
+            "customer_auth_live": checklist.get("customer_auth_live"),
+            "verifier_principal_qualified": checklist.get(
+                "verifier_principal_qualified"
+            ),
+            "duplicate_active_binding": checklist.get("duplicate_active_binding"),
+            "ambiguous_active_binding": checklist.get("ambiguous_active_binding"),
+            "next_human_action": checklist.get("next_human_action"),
+            "not_approved": list(NOT_APPROVED),
+            "real_organization_touched": False,
+        }
+    )
+
+
+def dry_run_decision_invariant_failures(decision: dict[str, Any]) -> list[str]:
+    """A dry run that wrote something, or approved past a blocker, is refused."""
+    fails: list[str] = []
+
+    if not decision.get("dry_run"):
+        fails.append("dry_run_decision_that_is_not_a_dry_run")
+    if decision.get("mutation_performed"):
+        fails.append("dry_run_performed_a_mutation")
+    if decision.get("rows_written"):
+        fails.append("dry_run_wrote_rows")
+    if decision.get("connection_supplied"):
+        fails.append("dry_run_was_handed_a_connection")
+    if decision.get("real_organization_touched"):
+        fails.append("dry_run_touched_the_real_organization")
+
+    if decision.get("may_attempt_binding") and decision.get("blockers"):
+        fails.append("may_attempt_alongside_blockers")
+    if decision.get("mutation_enabled") and not decision.get("may_attempt_binding"):
+        fails.append("mutation_enabled_without_a_clear_decision")
+    if decision.get("mutation_enabled") and decision.get("blockers"):
+        fails.append("mutation_enabled_alongside_blockers")
+
+    missing = set(DECISION_LAYERS) - set(decision.get("decision_layers") or [])
+    if missing:
+        fails.append(f"decision_layers_lost_entries:{sorted(missing)}")
+
+    for name in decision.get("checklist_invariant_failures") or []:
+        fails.append(f"checklist:{name}")
+    for name in decision.get("boundary_invariant_failures") or []:
+        fails.append(f"boundary:{name}")
+
+    return sorted(set(fails))

@@ -1,0 +1,92 @@
+{
+  "caller_labels_refused_by_name": true,
+  "never_clears": [
+    "demo_organization_is_never_a_verified_operational_binding"
+  ],
+  "refusals": [
+    {
+      "clears_by": "nothing. The demo organization is never a verified operational binding, in any environment, with any approval, with any principal. Derived from organizations.org_type.",
+      "kind": "never_clears",
+      "owner": "nobody",
+      "refusal": "demo_organization_is_never_a_verified_operational_binding"
+    },
+    {
+      "clears_by": "nothing available here. The standing authorization refuses real org activation and refuses this id by name.",
+      "kind": "never_clears_without_a_reviewed_code_change",
+      "owner": "Mayhem",
+      "refusal": "organization_is_the_explicitly_refused_real_org"
+    },
+    {
+      "clears_by": "adding the organization id to AUTHORIZED_REAL_ORGANIZATION_IDS, which is a code change somebody reads - not an environment variable, and not the injectable test set, which strips both the demo and the real organization ids",
+      "kind": "reviewed_code_change",
+      "owner": "Mayhem",
+      "refusal": "organization_is_not_in_the_authorized_real_org_list"
+    },
+    {
+      "clears_by": "recording an approval object with all five fields and a scope that covers the environment",
+      "kind": "recorded_decision",
+      "owner": "Mayhem",
+      "refusal": "no_approval_object_supplied"
+    },
+    {
+      "clears_by": "the second-person invite event - see Gate 146. A verified binding asserts somebody verified something; writing one while nobody can authenticate leaves that assertion with no verifier behind it.",
+      "kind": "an_event",
+      "owner": "the second person, then the operator",
+      "refusal": "production_verified_binding_requires_live_customer_auth"
+    },
+    {
+      "clears_by": "acting as an authenticated platform_admin or tenant_admin with verified-org status",
+      "kind": "authenticated_role",
+      "owner": "the acting principal",
+      "refusal": "verifier_principal_is_not_qualified"
+    },
+    {
+      "clears_by": "revoking or resolving one of the contradicting rows. Two active bindings for one organization is a conflict a person resolves.",
+      "kind": "human_resolution",
+      "owner": "an operator",
+      "refusal": "more_than_one_active_binding_for_this_organization"
+    },
+    {
+      "clears_by": "resolving the conflict so one active row remains",
+      "kind": "human_resolution",
+      "owner": "an operator",
+      "refusal": "active_binding_is_ambiguous"
+    }
+  ],
+  "refused_shortcuts": [
+    {
+      "refused_because": "classification is read from organizations.org_type, never from the caller",
+      "shortcut": "pass is_demo=False for the demo organization"
+    },
+    {
+      "refused_because": "same - the label is refused, not merged",
+      "shortcut": "pass org_type='real' for the demo organization"
+    },
+    {
+      "refused_because": "refused by name as authority, rather than silently dropped - Gates 110-113's subject",
+      "shortcut": "offer tenant_id or customer_org_id as the authority"
+    },
+    {
+      "refused_because": "both the demo and real ids are stripped from the injectable set; Gate 137G's own test found this reaching the real org and writing the row",
+      "shortcut": "list the real organization in the injectable authorized set"
+    },
+    {
+      "refused_because": "a verified_binding status requires a verifier identity and a verified_at, and the database CHECK constraint refuses the row",
+      "shortcut": "write a binding row directly and call it verified"
+    },
+    {
+      "refused_because": "demo_fixture is not in VERIFIER_REQUIRED_STATUSES, so it asserts no verification at all",
+      "shortcut": "treat the demo fixture row as a verified binding"
+    },
+    {
+      "refused_because": "the verifier identity must be a real authenticated principal, and customer_auth_live is false so there is none",
+      "shortcut": "use a synthetic provider subject as the verifier identity"
+    },
+    {
+      "refused_because": "the one variable in this path can only revoke; none can grant",
+      "shortcut": "set an environment variable to grant activation"
+    }
+  ],
+  "schema_version": "nf_verified_binding_gate147_artifacts_v1",
+  "why_refused_rather_than_ignored": "a caller offering a label as authority learns it was refused rather than having it silently dropped - Gates 110-113's subject, restated at a new entry point"
+}

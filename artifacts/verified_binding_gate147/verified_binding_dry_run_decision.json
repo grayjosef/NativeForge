@@ -1,0 +1,23 @@
+{
+  "blockers": [
+    "demo_organization_is_never_a_verified_operational_binding",
+    "organization_is_the_explicitly_refused_real_org",
+    "organization_is_not_in_the_authorized_real_org_list",
+    "no_approval_object_supplied",
+    "production_verified_binding_requires_live_customer_auth",
+    "verifier_principal_is_not_qualified"
+  ],
+  "connection_supplied": false,
+  "dry_run": true,
+  "imports_no_repository": true,
+  "may_attempt_binding": false,
+  "mutation_enabled": false,
+  "mutation_performed": false,
+  "permitted_branch_reachable": true,
+  "permitted_branch_still_writes_nothing": true,
+  "permitted_branch_subject": "a fixture organization that is neither the demo organization nor the refused real one - kept reachable so every refusal above it stays falsifiable",
+  "rows_written": 0,
+  "schema_version": "nf_verified_binding_gate147_artifacts_v1",
+  "takes_no_connection": true,
+  "what_it_is": "an evaluation of a hypothetical approval, so an operator can ask whether one would be enough without recording it"
+}

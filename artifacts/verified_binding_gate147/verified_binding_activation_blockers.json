@@ -1,0 +1,53 @@
+{
+  "approval_boundary_ready": true,
+  "blocker_count": 6,
+  "blockers": [
+    {
+      "clears_by": "nothing. The demo organization is never a verified operational binding, in any environment, with any approval, with any principal. Derived from organizations.org_type.",
+      "kind": "never_clears",
+      "owner": "nobody",
+      "refusal": "demo_organization_is_never_a_verified_operational_binding"
+    },
+    {
+      "clears_by": "nothing available here. The standing authorization refuses real org activation and refuses this id by name.",
+      "kind": "never_clears_without_a_reviewed_code_change",
+      "owner": "Mayhem",
+      "refusal": "organization_is_the_explicitly_refused_real_org"
+    },
+    {
+      "clears_by": "adding the organization id to AUTHORIZED_REAL_ORGANIZATION_IDS, which is a code change somebody reads - not an environment variable, and not the injectable test set, which strips both the demo and the real organization ids",
+      "kind": "reviewed_code_change",
+      "owner": "Mayhem",
+      "refusal": "organization_is_not_in_the_authorized_real_org_list"
+    },
+    {
+      "clears_by": "recording an approval object with all five fields and a scope that covers the environment",
+      "kind": "recorded_decision",
+      "owner": "Mayhem",
+      "refusal": "no_approval_object_supplied"
+    },
+    {
+      "clears_by": "the second-person invite event - see Gate 146. A verified binding asserts somebody verified something; writing one while nobody can authenticate leaves that assertion with no verifier behind it.",
+      "kind": "an_event",
+      "owner": "the second person, then the operator",
+      "refusal": "production_verified_binding_requires_live_customer_auth"
+    },
+    {
+      "clears_by": "acting as an authenticated platform_admin or tenant_admin with verified-org status",
+      "kind": "authenticated_role",
+      "owner": "the acting principal",
+      "refusal": "verifier_principal_is_not_qualified"
+    }
+  ],
+  "boundary_ready_is_not_the_binding": "approval_boundary_ready says the boundary evaluates and refuses correctly; verified_operational_binding says somebody satisfied it. They are different questions and both are reported.",
+  "real_organization_binding_rows": 0,
+  "real_organization_touched": false,
+  "schema_version": "nf_verified_binding_gate147_artifacts_v1",
+  "stays_false_after_this_gate": [
+    "verified_operational_binding",
+    "customer_auth_live",
+    "controlled_customer_pilot",
+    "production_rollout"
+  ],
+  "verified_operational_binding": false
+}

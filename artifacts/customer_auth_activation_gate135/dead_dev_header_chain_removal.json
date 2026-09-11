@@ -33,7 +33,8 @@
     "tenant_digest_routes.py",
     "tenant_watchlist_routes.py",
     "tribal_profile_routes.py",
-    "trust_routes.py"
+    "trust_routes.py",
+    "verified_binding_readiness_routes.py"
   ],
   "header_declarations_remaining": 0,
   "nf_dev_org_headers_false_safe": true,

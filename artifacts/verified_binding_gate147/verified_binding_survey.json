@@ -1,0 +1,39 @@
+{
+  "answer": "five refusals, any one of which is sufficient",
+  "classification_source": "organizations.org_type, never the caller",
+  "conditional_refusals": [
+    "more_than_one_active_binding_for_this_organization",
+    "active_binding_is_ambiguous"
+  ],
+  "decision_layers": [
+    "activation_boundary",
+    "customer_auth_liveness",
+    "active_binding_uniqueness",
+    "verifier_principal"
+  ],
+  "measured_state": {
+    "real_organization_binding_rows": 0,
+    "rows_asserting_verification": 0,
+    "the_one_existing_row": "a demo fixture, which asserts nothing"
+  },
+  "not_approved": [
+    "verified_operational_binding",
+    "customer_auth_live",
+    "controlled_customer_pilot",
+    "production_rollout",
+    "live_customer_data",
+    "real_customer_persistence"
+  ],
+  "question": "what stands between today and verified_operational_binding?",
+  "schema_version": "nf_verified_binding_gate147_artifacts_v1",
+  "standing_refusals": [
+    "demo_organization_is_never_a_verified_operational_binding",
+    "organization_is_the_explicitly_refused_real_org",
+    "organization_is_not_in_the_authorized_real_org_list",
+    "no_approval_object_supplied",
+    "production_verified_binding_requires_live_customer_auth",
+    "verifier_principal_is_not_qualified"
+  ],
+  "verified_operational_binding": false,
+  "why_three_layers": "the activation boundary owns the authorized list, the approval object and the two organization refusals; the workflow service owns the customer-auth guard; the repository owns duplicate and ambiguous active bindings. Each is correct where it lives and none sees the other two, so nothing before this gate could say how far the lane is from true."
+}

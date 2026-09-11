@@ -38,7 +38,8 @@
       "tenant_digest_routes.py",
       "tenant_watchlist_routes.py",
       "tribal_profile_routes.py",
-      "trust_routes.py"
+      "trust_routes.py",
+      "verified_binding_readiness_routes.py"
     ],
     "current_org_id_set_by_this_gate": false,
     "customer_auth_live": false,
@@ -97,7 +98,8 @@
       "tenant_digest_routes.py",
       "tenant_watchlist_routes.py",
       "tribal_profile_routes.py",
-      "trust_routes.py"
+      "trust_routes.py",
+      "verified_binding_readiness_routes.py"
     ],
     "actual_dev_header_route_module_count": 0,
     "actual_dev_header_route_modules": [],

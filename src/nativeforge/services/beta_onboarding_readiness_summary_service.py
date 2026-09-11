@@ -469,9 +469,23 @@ def build_beta_onboarding_summary(
             status=REQUIRES_HUMAN_APPROVAL,
             value=False,
             scope=None,
-            summary="Gate 137's two-part owner decision has not been made",
-            blockers=["owner_decision_absent"],
-            owner="the owner",
+            summary=(
+                "five refusals stand, and any one is sufficient. The owner "
+                "decision is one of them; the demo organization never being "
+                "a verified operational binding is another, and that one "
+                "never clears"
+            ),
+            # Gate 147A. Naming only the owner decision invited a reader to
+            # think one decision would move the lane. It would not: there is
+            # no organization it could apply to.
+            blockers=[
+                "owner_decision_absent",
+                "no_authorized_real_organization",
+                "demo_organization_is_never_a_verified_operational_binding",
+                "real_organization_refused_by_name",
+                "production_verified_binding_requires_live_customer_auth",
+            ],
+            owner="Mayhem, and only after a real customer organization exists",
         )
     )
 

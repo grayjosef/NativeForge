@@ -111,12 +111,16 @@
     },
     {
       "blockers": [
-        "owner_decision_absent"
+        "demo_organization_is_never_a_verified_operational_binding",
+        "no_authorized_real_organization",
+        "owner_decision_absent",
+        "production_verified_binding_requires_live_customer_auth",
+        "real_organization_refused_by_name"
       ],
       "lane": "verified_operational_binding",
-      "owner": "the owner",
+      "owner": "Mayhem, and only after a real customer organization exists",
       "status": "requires_human_approval",
-      "summary": "Gate 137's two-part owner decision has not been made"
+      "summary": "five refusals stand, and any one is sufficient. The owner decision is one of them; the demo organization never being a verified operational binding is another, and that one never clears"
     },
     {
       "blockers": [

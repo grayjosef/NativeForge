@@ -87,6 +87,9 @@ from nativeforge.api.tribal_profile_routes import (
     real_profile_router,
 )
 from nativeforge.api.trust_routes import demo_trust_router, real_trust_router
+from nativeforge.api.verified_binding_readiness_routes import (
+    router as verified_binding_readiness_router,
+)
 from nativeforge.lib.settings import get_settings
 from nativeforge.services.backend_lifespan_hook_service import (
     record_shutdown,
@@ -184,6 +187,10 @@ def create_app() -> FastAPI:
     # operator commands Gate 136 built and neither belongs one request away
     # from anybody holding a session.
     app.include_router(customer_auth_readiness_router)
+    # Gate 147: the verified-binding approval boundary. Its one POST evaluates
+    # a hypothetical approval and records nothing - the mutation path stays
+    # where Gate 137 put it, behind an approval object that does not exist.
+    app.include_router(verified_binding_readiness_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

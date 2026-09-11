@@ -1,0 +1,19 @@
+{
+  "blockers": [
+    "demo_organization_is_never_a_verified_operational_binding",
+    "organization_is_the_explicitly_refused_real_org",
+    "organization_is_not_in_the_authorized_real_org_list",
+    "no_approval_object_supplied",
+    "production_verified_binding_requires_live_customer_auth",
+    "verifier_principal_is_not_qualified"
+  ],
+  "demo_organization_can_ever_satisfy_this": false,
+  "lane": "verified_operational_binding",
+  "operational": false,
+  "owner": "Mayhem, and only after a real customer organization exists",
+  "production_ready": false,
+  "schema_version": "nf_verified_binding_gate147_artifacts_v1",
+  "status": "REQUIRES_HUMAN_APPROVAL",
+  "value": false,
+  "what_changed_in_gate_147": "the lane named one refusal - owner_decision_absent - where five stand. A reader took that to mean one decision would move it. It would not: there is no organization the decision could apply to, because the demo org is refused categorically and the real org by name."
+}
