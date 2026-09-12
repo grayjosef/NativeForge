@@ -38,6 +38,9 @@ from nativeforge.api.controlled_customer_pilot_routes import (
 from nativeforge.api.customer_auth_readiness_routes import (
     router as customer_auth_readiness_router,
 )
+from nativeforge.api.customer_beta_reassessment_routes import (
+    router as customer_beta_reassessment_router,
+)
 from nativeforge.api.customer_data_boundary_routes import (
     router as customer_data_boundary_router,
 )
@@ -205,6 +208,9 @@ def create_app() -> FastAPI:
     # decides and records nothing - there is no table, no flag and no code path
     # that activates a pilot, and this gate deliberately builds none.
     app.include_router(controlled_customer_pilot_router)
+    # Gate 150: the customer beta reassessment. GET only - it compares two
+    # decisions and reports the difference, which today is none.
+    app.include_router(customer_beta_reassessment_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

@@ -1,0 +1,22 @@
+{
+  "activation_mechanism_exists": false,
+  "controlled_customer_beta": "LIMITED_GO",
+  "controlled_customer_pilot": false,
+  "customer_beta_approvals": [
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_and_data_boundary_documented",
+    "customer_beta_scope_approved"
+  ],
+  "customer_beta_approvals_outstanding": [
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_and_data_boundary_documented",
+    "customer_beta_scope_approved"
+  ],
+  "internal_demo_beta": "GO",
+  "no_outstanding_customer_blocker_is_technical": true,
+  "production_is_never_computed": true,
+  "production_rollout": "NO_GO",
+  "schema_version": "nf_customer_beta_reassessment_gate150_artifacts_v1"
+}

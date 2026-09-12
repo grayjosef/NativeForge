@@ -1,0 +1,15 @@
+{
+  "count": 6,
+  "each_is": "true as measured today",
+  "safe_claims": [
+    "this is a controlled demonstration in a demo environment",
+    "the awarded-grants workspace, requirements and audit trail work against fixture data",
+    "177 grant sources are catalogued; none is being monitored yet",
+    "nothing you see here is sent, monitored, or stored as your data",
+    "a weekly digest can be previewed in the product; it is not sent",
+    "we can show you exactly what would have to be true before your organization could use this, and who has to decide each part"
+  ],
+  "schema_version": "nf_customer_beta_reassessment_gate150_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "the_most_useful_one": "we can show you exactly what would have to be true before your organization could use this, and who has to decide each part"
+}

@@ -10,6 +10,7 @@ beta_onboarding_cockpit_routes,/v1,4,False,True,preview_proxy,True,True,converte
 controlled_beta_readiness_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 controlled_customer_pilot_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 customer_auth_readiness_routes,/v1,3,False,True,preview_proxy,True,True,converted,none,0
+customer_beta_reassessment_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 customer_data_boundary_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 digest_delivery_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0
 form_package_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0

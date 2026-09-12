@@ -20,6 +20,7 @@
     "controlled_beta_readiness_routes.py",
     "controlled_customer_pilot_routes.py",
     "customer_auth_readiness_routes.py",
+    "customer_beta_reassessment_routes.py",
     "customer_data_boundary_routes.py",
     "digest_delivery_routes.py",
     "form_package_routes.py",

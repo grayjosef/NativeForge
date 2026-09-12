@@ -1,0 +1,50 @@
+{
+  "clarified": [
+    {
+      "gate": "146",
+      "is_actually": "a conjunction of three sequential events, none of which has started. One identity exists - the owner - and no invite has been recorded, so the state was never an invite waiting to be accepted.",
+      "lane_moved": "no",
+      "subject": "customer auth",
+      "was_reported_as": "invite_binding_passed"
+    },
+    {
+      "gate": "147",
+      "is_actually": "five refusals, any one sufficient, one of which never clears. Granting the owner decision moves nothing, because there is no organization it could apply to.",
+      "lane_moved": "no",
+      "subject": "verified binding",
+      "was_reported_as": "owner_decision_absent"
+    },
+    {
+      "gate": "148",
+      "is_actually": "every post-award production write is gated on customer_auth_live and verified_operational_binding, both identity facts and neither consent - so the day those turn true, a customer write becomes permitted with nothing recording that a tenant agreed",
+      "lane_moved": "no",
+      "subject": "consent and customer data",
+      "was_reported_as": "a named gap"
+    },
+    {
+      "gate": "149",
+      "is_actually": "not a value at all - no table records a pilot approval, no flag exists, and no code path assigns it. Nine prerequisites, one satisfied.",
+      "lane_moved": "no",
+      "subject": "pilot activation",
+      "was_reported_as": "not approved"
+    }
+  ],
+  "external_or_human": [
+    "a real customer organization",
+    "the second person signing in",
+    "Google OAuth test-user enrolment",
+    "the consent document, then a record",
+    "the customer beta scope approval",
+    "the verified binding authorization",
+    "a support and rollback owner",
+    "171 source terms reviews"
+  ],
+  "note": "nothing blocking the customer beta is technical - all four of its approvals are human",
+  "schema_version": "nf_customer_beta_reassessment_gate150_artifacts_v1",
+  "technical": [
+    "source_monitoring_live: robots.txt per source, an activation approval per source, five scheduler components",
+    "email_delivery: a provider, a verified sender domain, unsubscribe and bounce handling",
+    "object_store_configured: five settings, an injected client, an external verification",
+    "digest persistence: delivery intents name a digest nobody kept"
+  ]
+}

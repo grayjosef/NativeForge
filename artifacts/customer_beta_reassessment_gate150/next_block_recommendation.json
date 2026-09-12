@@ -1,0 +1,31 @@
+{
+  "block": "Gates 151-155, operational durability",
+  "first_gate": "151 - digest persistence",
+  "first_gate_why": "delivery intents name a digest nobody kept, and a digest that cannot be re-read cannot be audited after a missed deadline",
+  "gates": [
+    {
+      "gate": "151",
+      "subject": "digest persistence"
+    },
+    {
+      "gate": "152",
+      "note": "171 sources need a human decision each; unblocked today",
+      "subject": "source terms review tooling"
+    },
+    {
+      "gate": "153",
+      "subject": "backup and restore proof"
+    },
+    {
+      "gate": "154",
+      "note": "the support and rollback owner Gate 149 asked for needs something to hand them",
+      "subject": "operational runbook and on-call"
+    },
+    {
+      "gate": "155",
+      "subject": "the block close"
+    }
+  ],
+  "schema_version": "nf_customer_beta_reassessment_gate150_artifacts_v1",
+  "why": "every remaining customer-beta blocker is an approval, a document, or a person signing in. Nothing further in engineering advances that block, and waiting leaves the campaign idle on work only Mayhem and a second person can do."
+}

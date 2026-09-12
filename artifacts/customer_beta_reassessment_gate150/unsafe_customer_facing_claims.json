@@ -1,0 +1,62 @@
+{
+  "an_inventory_is_not_a_saying": true,
+  "count": 10,
+  "each_has_a_true_alternative": true,
+  "schema_version": "nf_customer_beta_reassessment_gate150_artifacts_v1",
+  "the_dangerous_one": {
+    "claim": "the binding is in place, we just need an approval",
+    "why": "nearly true and entirely wrong - the approval is not what is missing, a customer organization is"
+  },
+  "unsafe_claims": [
+    {
+      "claim": "we monitor grant sources for you",
+      "true_statement": "177 sources are catalogued and none is monitored yet",
+      "why_unsafe": "source_monitoring_live is false; no collector runs"
+    },
+    {
+      "claim": "you will get a weekly digest by email",
+      "true_statement": "a digest can be previewed in the product",
+      "why_unsafe": "email_delivery is false; nothing can send mail"
+    },
+    {
+      "claim": "your data is in our system",
+      "true_statement": "the demo organization holds fixture-labelled rows",
+      "why_unsafe": "no customer data has been written and consent does not exist"
+    },
+    {
+      "claim": "your organization is set up",
+      "true_statement": "there is one demo organization and one refused real one",
+      "why_unsafe": "no real customer organization exists in this deployment"
+    },
+    {
+      "claim": "we have verified your organization",
+      "true_statement": "no organization has been verified; the path refuses",
+      "why_unsafe": "verified_operational_binding is false behind five refusals"
+    },
+    {
+      "claim": "the binding is in place, we just need an approval",
+      "true_statement": "a customer organization has to exist first",
+      "why_unsafe": "nearly true and entirely wrong - the approval is not what is missing, a customer organization is"
+    },
+    {
+      "claim": "we can turn email on as part of the pilot",
+      "true_statement": "the pilot gives a digest in the product, not by mail",
+      "why_unsafe": "bundling is refused; email is a separate activation"
+    },
+    {
+      "claim": "we guarantee your eligibility",
+      "true_statement": "we surface sources and requirements; you decide",
+      "why_unsafe": "no eligibility determination is ever reported to a tenant"
+    },
+    {
+      "claim": "we guarantee these deadlines",
+      "true_statement": "published dates are shown with their source",
+      "why_unsafe": "deadlines are not reported as guaranteed by any surface"
+    },
+    {
+      "claim": "a 65% improvement in anything",
+      "true_statement": "no improvement figure is claimed",
+      "why_unsafe": "no such measurement exists"
+    }
+  ]
+}

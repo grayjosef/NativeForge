@@ -1,0 +1,96 @@
+{
+  "answer": "no, and that is the correct answer",
+  "clarifications": [
+    {
+      "gate": "146",
+      "is_actually": "a conjunction of three sequential events, none of which has started. One identity exists - the owner - and no invite has been recorded, so the state was never an invite waiting to be accepted.",
+      "lane_moved": "no",
+      "subject": "customer auth",
+      "was_reported_as": "invite_binding_passed"
+    },
+    {
+      "gate": "147",
+      "is_actually": "five refusals, any one sufficient, one of which never clears. Granting the owner decision moves nothing, because there is no organization it could apply to.",
+      "lane_moved": "no",
+      "subject": "verified binding",
+      "was_reported_as": "owner_decision_absent"
+    },
+    {
+      "gate": "148",
+      "is_actually": "every post-award production write is gated on customer_auth_live and verified_operational_binding, both identity facts and neither consent - so the day those turn true, a customer write becomes permitted with nothing recording that a tenant agreed",
+      "lane_moved": "no",
+      "subject": "consent and customer data",
+      "was_reported_as": "a named gap"
+    },
+    {
+      "gate": "149",
+      "is_actually": "not a value at all - no table records a pilot approval, no flag exists, and no code path assigns it. Nine prerequisites, one satisfied.",
+      "lane_moved": "no",
+      "subject": "pilot activation",
+      "was_reported_as": "not approved"
+    }
+  ],
+  "conflations": [
+    {
+      "capability": "customer_auth_live",
+      "difference": "the path is correct; nobody has walked it",
+      "gate": "146",
+      "readiness": "second_person_readiness_passed"
+    },
+    {
+      "capability": "verified_operational_binding",
+      "difference": "the boundary refuses correctly; nobody satisfied it",
+      "gate": "147",
+      "readiness": "approval_boundary_ready"
+    },
+    {
+      "capability": "customer data writes allowed",
+      "difference": "a future write path has something right to call",
+      "gate": "148",
+      "readiness": "customer_data_write_guard_ready"
+    },
+    {
+      "capability": "controlled_customer_pilot",
+      "difference": "the prerequisites are stated; a pilot is not running",
+      "gate": "149",
+      "readiness": "activation_package_ready"
+    },
+    {
+      "capability": "may_activate",
+      "difference": "the prerequisites would allow it; nothing exists to act on that",
+      "gate": "149",
+      "readiness": "prerequisites_would_permit"
+    },
+    {
+      "capability": "a customer organization",
+      "difference": "a fixture is not a Tribe",
+      "gate": "145",
+      "readiness": "the demo organization"
+    }
+  ],
+  "lanes_moved_by_this_block": 0,
+  "not_approved": [
+    "controlled_customer_pilot",
+    "production_rollout",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_boundary_documented",
+    "customer_beta_scope_approved",
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured"
+  ],
+  "question": "did the customer beta decision change?",
+  "schema_version": "nf_customer_beta_reassessment_gate150_artifacts_v1",
+  "throughline": {
+    "finding": "a real customer organization has to exist, and no approval supplies one",
+    "found_by": [
+      "147",
+      "148",
+      "149"
+    ],
+    "why_it_matters": "the campaign had been describing each remaining blocker as one decision away. None of them was, and the front of the queue is not a decision at all."
+  },
+  "what_changed": "what is understood, not what is true",
+  "why": "Gates 146-149 were boundary gates, built to make refusals exact rather than to clear them. A block of four gates that moved a lane without a new external approval would mean one of them had granted itself something."
+}

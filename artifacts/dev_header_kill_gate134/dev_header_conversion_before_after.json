@@ -11,6 +11,7 @@
       "controlled_beta_readiness_routes",
       "controlled_customer_pilot_routes",
       "customer_auth_readiness_routes",
+      "customer_beta_reassessment_routes",
       "customer_data_boundary_routes",
       "digest_delivery_routes",
       "form_package_routes",
@@ -32,12 +33,12 @@
       "trust_routes",
       "verified_binding_readiness_routes"
     ],
-    "converted_modules": 30,
+    "converted_modules": 31,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 277
+    "route_total": 281
   },
   "before": {
     "converted_modules": 1,

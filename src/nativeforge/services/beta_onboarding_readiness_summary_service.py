@@ -613,6 +613,21 @@ def build_beta_onboarding_summary(
             "verified_operational_binding": False,
             "consent_boundary_documented": False,
             "customer_beta_scope_approved": False,
+            # Gate 150. The block-level reading of the lanes above: four gates
+            # made the boundaries exact and moved no lane, which is the correct
+            # outcome for boundary gates and was the expected one.
+            "gate_145_baseline_decision": {
+                "internal_demo_beta": "GO",
+                "controlled_customer_beta": "LIMITED_GO",
+                "production_rollout": "NO_GO",
+            },
+            "customer_beta_decision_changed_since_gate_145": False,
+            "lanes_moved_by_gates_146_to_149": 0,
+            "customer_beta_approvals_outstanding": 4,
+            "no_outstanding_customer_blocker_is_technical": True,
+            "customer_beta_full_go": False,
+            "pilot_active": False,
+            "production_ready": False,
             "demo_fixture_writes_still_allowed": True,
             "customer_data_writes_allowed": False,
             "live_source_calls": 0,

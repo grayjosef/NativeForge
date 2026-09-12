@@ -1,0 +1,16 @@
+{
+  "a_change_would_require": "a new external approval - a second person signing in, an owner authorizing an organization, a consent document, or a scope approval. No gate can grant any of them.",
+  "distrust_a_report_of": "controlled_customer_beta GO without all four approvals recorded",
+  "expected_change": "none",
+  "expected_now": {
+    "controlled_customer_beta": "LIMITED_GO",
+    "internal_demo_beta": "GO",
+    "production_rollout": "NO_GO"
+  },
+  "gate_145_baseline": {
+    "controlled_customer_beta": "LIMITED_GO",
+    "internal_demo_beta": "GO",
+    "production_rollout": "NO_GO"
+  },
+  "schema_version": "nf_customer_beta_reassessment_gate150_artifacts_v1"
+}
