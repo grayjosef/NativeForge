@@ -9,6 +9,7 @@
       "awarded_grants_routes",
       "beta_onboarding_cockpit_routes",
       "controlled_beta_readiness_routes",
+      "controlled_customer_pilot_routes",
       "customer_auth_readiness_routes",
       "customer_data_boundary_routes",
       "digest_delivery_routes",
@@ -31,12 +32,12 @@
       "trust_routes",
       "verified_binding_readiness_routes"
     ],
-    "converted_modules": 29,
+    "converted_modules": 30,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 273
+    "route_total": 277
   },
   "before": {
     "converted_modules": 1,

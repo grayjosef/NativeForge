@@ -185,11 +185,17 @@
     },
     {
       "blockers": [
-        "pilot_not_approved"
+        "consent_boundary_not_documented",
+        "customer_auth_live_false",
+        "customer_beta_scope_not_approved",
+        "no_activation_mechanism_exists",
+        "real_customer_organization_missing",
+        "support_and_rollback_owner_not_named",
+        "verified_operational_binding_false"
       ],
       "evidence": "self_evidencing",
       "lane": "controlled_customer_pilot",
-      "owner": "the owner",
+      "owner": "Mayhem, and only after a real customer organization exists",
       "scope": null,
       "status": "production_false",
       "usable_today": false,

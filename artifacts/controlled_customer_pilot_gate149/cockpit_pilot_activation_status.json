@@ -1,0 +1,13 @@
+{
+  "email_included": false,
+  "lane": "controlled_customer_pilot",
+  "object_storage_included": false,
+  "operational": false,
+  "pilot_active": false,
+  "production_ready": false,
+  "schema_version": "nf_controlled_customer_pilot_gate149_artifacts_v1",
+  "source_monitoring_included": false,
+  "status": "PRODUCTION_FALSE",
+  "value": false,
+  "what_changed_in_gate_149": "the lane said the pilot was not approved, which is true and invites a reader to look for the approval. It now says there are eight prerequisites outstanding, one of which is a customer, and that no mechanism exists to record an activation."
+}

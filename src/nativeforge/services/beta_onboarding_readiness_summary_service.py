@@ -546,9 +546,22 @@ def build_beta_onboarding_summary(
             status=PRODUCTION_FALSE,
             value=False,
             scope=None,
-            summary="not approved, and this gate does not approve it",
-            blockers=["pilot_not_approved"],
-            owner="the owner",
+            summary=(
+                "eight prerequisites outstanding, one of which is a customer. "
+                "There is also nothing to approve with: no table records a "
+                "pilot approval, no flag exists, and no code path sets this "
+                "true. Gate 149 states the package and builds no switch."
+            ),
+            blockers=[
+                "real_customer_organization_missing",
+                "customer_auth_live_false",
+                "verified_operational_binding_false",
+                "consent_boundary_not_documented",
+                "customer_beta_scope_not_approved",
+                "support_and_rollback_owner_not_named",
+                "no_activation_mechanism_exists",
+            ],
+            owner="Mayhem, and only after a real customer organization exists",
         )
     )
     lanes.append(

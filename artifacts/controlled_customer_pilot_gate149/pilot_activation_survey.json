@@ -1,0 +1,23 @@
+{
+  "answer": "nine prerequisites, one of which is a customer",
+  "controlled_customer_pilot": false,
+  "dead_go_branches_left_alone": "several older assembler services hardcode a NO_GO status and then branch on == GO. Read as code those branches are dead; read as policy they are the deliberate modelling gate Gate 115 described. Rewriting them to be reachable would manufacture the switch this gate declined to build.",
+  "no_environment_flag_exists": true,
+  "no_route_can_activate_a_pilot": true,
+  "no_table_records_a_pilot_approval": true,
+  "not_approved": [
+    "controlled_customer_pilot",
+    "production_rollout",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_boundary_documented",
+    "customer_beta_scope_approved",
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured"
+  ],
+  "question": "what must be true before a controlled customer pilot starts?",
+  "schema_version": "nf_controlled_customer_pilot_gate149_artifacts_v1",
+  "the_finding": "controlled_customer_pilot is not a value that is false. It is not a value at all: no table records a pilot approval, no environment flag exists, and no code path sets it true. Every occurrence is a literal False written into a response.",
+  "why_that_matters": "a reader given prerequisites assumes satisfying them flips a switch, and goes looking for it. There isn't one, and building one before its prerequisites exist is how one gets flipped early."
+}

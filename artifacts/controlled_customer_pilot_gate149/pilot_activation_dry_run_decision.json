@@ -1,0 +1,24 @@
+{
+  "activation_approval_fields_required": [
+    "organization_id",
+    "approved_by",
+    "approved_at",
+    "pilot_scope",
+    "support_contact",
+    "rollback_owner",
+    "expires_at"
+  ],
+  "connection_supplied": false,
+  "dry_run": true,
+  "imports_no_repository": true,
+  "may_activate": false,
+  "may_activate_is_always_false": true,
+  "mutation_enabled": false,
+  "mutation_performed": false,
+  "permitted_branch_still_activates_nothing": true,
+  "permitted_prerequisites_branch_reachable": true,
+  "rows_written": 0,
+  "schema_version": "nf_controlled_customer_pilot_gate149_artifacts_v1",
+  "takes_no_connection": true,
+  "why": "no mechanism exists to record a pilot activation. prerequisites_would_permit answers the question worth asking; may_activate answers whether anything could act on it."
+}

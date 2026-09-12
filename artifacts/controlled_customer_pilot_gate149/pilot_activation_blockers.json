@@ -1,0 +1,85 @@
+{
+  "blockers": [
+    {
+      "gate": "147",
+      "kind": "a_customer",
+      "owner": "nobody in this repository",
+      "prerequisite": "real_customer_organization_exists",
+      "satisfied_by": "a real customer organization existing. There is none in this deployment other than the refused one, and no approval supplies a customer."
+    },
+    {
+      "gate": "146",
+      "kind": "an_event",
+      "owner": "the second person, then the operator",
+      "prerequisite": "second_person_event_complete",
+      "satisfied_by": "a real second Google account completing real OAuth, being invited, and having that invite accepted"
+    },
+    {
+      "gate": "146",
+      "kind": "derived_from_an_event",
+      "owner": "follows the second-person event",
+      "prerequisite": "customer_auth_live",
+      "satisfied_by": "invite_binding_passed becoming true"
+    },
+    {
+      "gate": "147",
+      "kind": "five_refusals",
+      "owner": "Mayhem, and only after a real customer organization exists",
+      "prerequisite": "verified_operational_binding",
+      "satisfied_by": "all five refusals clearing; one of them never does"
+    },
+    {
+      "gate": "148",
+      "kind": "a_document_then_a_record",
+      "owner": "Mayhem writes it; each tenant agrees to it",
+      "prerequisite": "consent_boundary_documented",
+      "satisfied_by": "deciding what is collected, retained, exported and deleted, writing it down, and recording that a tenant agreed"
+    },
+    {
+      "gate": "145",
+      "kind": "recorded_decision",
+      "owner": "Mayhem",
+      "prerequisite": "customer_beta_scope_approved",
+      "satisfied_by": "approving the controlled customer beta scope"
+    },
+    {
+      "gate": "149",
+      "kind": "two_names",
+      "owner": "Mayhem",
+      "prerequisite": "support_and_rollback_owner_named",
+      "satisfied_by": "naming who a pilot customer calls when something breaks, and who can end the pilot. The cheapest of the missing prerequisites, and worth doing early: a pilot without a named owner is a pilot whose first incident has no addressee."
+    },
+    {
+      "gate": "149",
+      "kind": "a_document",
+      "owner": "Mayhem",
+      "prerequisite": "pilot_scope_limitations_documented",
+      "satisfied_by": "this gate's docs, plus an owner accepting them"
+    }
+  ],
+  "cheapest_outstanding": {
+    "gate": "149",
+    "kind": "two_names",
+    "owner": "Mayhem",
+    "satisfied_by": "naming who a pilot customer calls when something breaks, and who can end the pilot. The cheapest of the missing prerequisites, and worth doing early: a pilot without a named owner is a pilot whose first incident has no addressee."
+  },
+  "controlled_customer_pilot": false,
+  "front_of_the_queue": {
+    "gate": "147",
+    "kind": "a_customer",
+    "owner": "nobody in this repository",
+    "satisfied_by": "a real customer organization existing. There is none in this deployment other than the refused one, and no approval supplies a customer."
+  },
+  "schema_version": "nf_controlled_customer_pilot_gate149_artifacts_v1",
+  "stays_false_after_this_gate": [
+    "controlled_customer_pilot",
+    "production_rollout",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_boundary_documented",
+    "customer_beta_scope_approved",
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured"
+  ]
+}

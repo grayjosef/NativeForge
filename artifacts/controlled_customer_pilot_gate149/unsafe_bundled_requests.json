@@ -1,0 +1,48 @@
+{
+  "bundle_targets": {
+    "activate_email": "email_delivery",
+    "activate_object_storage": "object_store_configured",
+    "activate_production": "production_rollout",
+    "activate_source_monitoring": "source_monitoring_live",
+    "email_delivery": "email_delivery",
+    "go_live": "production_rollout",
+    "object_store_configured": "object_store_configured",
+    "production_rollout": "production_rollout",
+    "send_email": "email_delivery",
+    "source_monitoring_live": "source_monitoring_live"
+  },
+  "each_bundled_request_names_its_target": true,
+  "refused_even_when_every_prerequisite_is_met": true,
+  "schema_version": "nf_controlled_customer_pilot_gate149_artifacts_v1",
+  "separately_gated": {
+    "email_delivery": {
+      "gate": "142",
+      "why_separate": "a provider, a verified sender domain, unsubscribe and bounce handling"
+    },
+    "object_store_configured": {
+      "gate": "141",
+      "why_separate": "five settings, an injected client, an owner decision and an external verification"
+    },
+    "production_rollout": {
+      "gate": "145",
+      "why_separate": "always NO_GO; not a computation"
+    },
+    "source_monitoring_live": {
+      "gate": "143",
+      "why_separate": "171 sources need a human terms review, robots.txt per source, and an activation approval per source"
+    }
+  },
+  "unsafe_bundle_keys": [
+    "source_monitoring_live",
+    "activate_source_monitoring",
+    "email_delivery",
+    "activate_email",
+    "send_email",
+    "object_store_configured",
+    "activate_object_storage",
+    "production_rollout",
+    "activate_production",
+    "go_live"
+  ],
+  "why": "a pilot that quietly turned on email because a pilot obviously needs notifications would undo four gates in one sentence. Being allowed to start a pilot is not being allowed to start anything else."
+}

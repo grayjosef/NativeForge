@@ -1,0 +1,31 @@
+{
+  "activation_mechanism_exists": false,
+  "activation_package_ready": true,
+  "controlled_customer_pilot": false,
+  "mutation_path_enabled": false,
+  "pilot_activation_allowed": false,
+  "prerequisite_count": 9,
+  "production_is_never_computed": true,
+  "production_rollout": "NO_GO",
+  "real_organization_touched": false,
+  "rows_written": 0,
+  "schema_version": "nf_controlled_customer_pilot_gate149_artifacts_v1",
+  "separately_gated": [
+    "email_delivery",
+    "object_store_configured",
+    "production_rollout",
+    "source_monitoring_live"
+  ],
+  "separately_gated_are_not_pilot_blockers": true,
+  "stays_false_after_this_gate": [
+    "controlled_customer_pilot",
+    "production_rollout",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_boundary_documented",
+    "customer_beta_scope_approved",
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured"
+  ]
+}

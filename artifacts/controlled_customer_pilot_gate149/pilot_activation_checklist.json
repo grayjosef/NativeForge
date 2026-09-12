@@ -1,0 +1,87 @@
+{
+  "activation_package_ready": true,
+  "already_satisfied": [
+    "customer_data_write_guard_ready"
+  ],
+  "package_ready_is_not_an_activated_pilot": "activation_package_ready says the prerequisites are stated and measurable; controlled_customer_pilot says a pilot is running",
+  "prerequisite_count": 9,
+  "prerequisites": [
+    {
+      "gate": "147",
+      "kind": "a_customer",
+      "owner": "nobody in this repository",
+      "prerequisite": "real_customer_organization_exists",
+      "satisfied_by": "a real customer organization existing. There is none in this deployment other than the refused one, and no approval supplies a customer."
+    },
+    {
+      "gate": "146",
+      "kind": "an_event",
+      "owner": "the second person, then the operator",
+      "prerequisite": "second_person_event_complete",
+      "satisfied_by": "a real second Google account completing real OAuth, being invited, and having that invite accepted"
+    },
+    {
+      "gate": "146",
+      "kind": "derived_from_an_event",
+      "owner": "follows the second-person event",
+      "prerequisite": "customer_auth_live",
+      "satisfied_by": "invite_binding_passed becoming true"
+    },
+    {
+      "gate": "147",
+      "kind": "five_refusals",
+      "owner": "Mayhem, and only after a real customer organization exists",
+      "prerequisite": "verified_operational_binding",
+      "satisfied_by": "all five refusals clearing; one of them never does"
+    },
+    {
+      "gate": "148",
+      "kind": "a_document_then_a_record",
+      "owner": "Mayhem writes it; each tenant agrees to it",
+      "prerequisite": "consent_boundary_documented",
+      "satisfied_by": "deciding what is collected, retained, exported and deleted, writing it down, and recording that a tenant agreed"
+    },
+    {
+      "gate": "145",
+      "kind": "recorded_decision",
+      "owner": "Mayhem",
+      "prerequisite": "customer_beta_scope_approved",
+      "satisfied_by": "approving the controlled customer beta scope"
+    },
+    {
+      "gate": "148",
+      "kind": "code",
+      "owner": "done",
+      "prerequisite": "customer_data_write_guard_ready",
+      "satisfied_by": "already satisfied - the guard is built and proved"
+    },
+    {
+      "gate": "149",
+      "kind": "two_names",
+      "owner": "Mayhem",
+      "prerequisite": "support_and_rollback_owner_named",
+      "satisfied_by": "naming who a pilot customer calls when something breaks, and who can end the pilot. The cheapest of the missing prerequisites, and worth doing early: a pilot without a named owner is a pilot whose first incident has no addressee."
+    },
+    {
+      "gate": "149",
+      "kind": "a_document",
+      "owner": "Mayhem",
+      "prerequisite": "pilot_scope_limitations_documented",
+      "satisfied_by": "this gate's docs, plus an owner accepting them"
+    }
+  ],
+  "schema_version": "nf_controlled_customer_pilot_gate149_artifacts_v1",
+  "would_not_unlock": [
+    "any email leaving the system",
+    "any live grant source being monitored",
+    "any document body being stored",
+    "production rollout",
+    "a second customer, unless separately scoped"
+  ],
+  "would_unlock": [
+    "a real customer organization using the product, with their own data",
+    "customer identifying and operational data writes, under a recorded consent and an approved scope",
+    "the awarded-grants workspace, requirements, proof events and audit trail against real awards",
+    "a weekly digest preview - rendered and read in the product, not sent"
+  ]
+}

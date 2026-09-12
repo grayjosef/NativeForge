@@ -32,6 +32,9 @@ from nativeforge.api.beta_onboarding_cockpit_routes import (
 from nativeforge.api.controlled_beta_readiness_routes import (
     router as controlled_beta_router,
 )
+from nativeforge.api.controlled_customer_pilot_routes import (
+    router as controlled_customer_pilot_router,
+)
 from nativeforge.api.customer_auth_readiness_routes import (
     router as customer_auth_readiness_router,
 )
@@ -198,6 +201,10 @@ def create_app() -> FastAPI:
     # a hypothetical write and records nothing - no consent, no approval, no
     # row. Customer data writes are refused; demo fixtures are unaffected.
     app.include_router(customer_data_boundary_router)
+    # Gate 149: the controlled customer pilot activation package. Its one POST
+    # decides and records nothing - there is no table, no flag and no code path
+    # that activates a pilot, and this gate deliberately builds none.
+    app.include_router(controlled_customer_pilot_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app
