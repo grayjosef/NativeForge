@@ -1,0 +1,55 @@
+{
+  "controlled_scope": "controlled_dev_demo",
+  "decisions": [
+    {
+      "case": "demo fixture, demo organization, controlled demo scope",
+      "why": "unchanged by this gate; the fixture lane is unaffected",
+      "write_allowed": true
+    },
+    {
+      "case": "customer data, demo organization, controlled demo scope",
+      "why": "customer data in the demo scope is the substitution this block exists to prevent",
+      "write_allowed": false
+    },
+    {
+      "case": "an unclassified data class",
+      "why": "deny by default; it cannot inherit permission from a neighbouring class",
+      "write_allowed": false
+    },
+    {
+      "case": "consent offered as a login, membership or invite",
+      "why": "refused by name rather than ignored",
+      "write_allowed": false
+    },
+    {
+      "case": "customer document body, object storage off",
+      "why": "consent does not substitute for the capability",
+      "write_allowed": false
+    },
+    {
+      "case": "customer recipient, email delivery off",
+      "why": "the same, for a different capability",
+      "write_allowed": false
+    },
+    {
+      "case": "a provider subject, everything else granted",
+      "why": "never stored; not a class anybody can agree to",
+      "write_allowed": false
+    },
+    {
+      "case": "the refused real organization, everything granted",
+      "why": "refused by name",
+      "write_allowed": false
+    },
+    {
+      "case": "a fixture customer organization, everything granted",
+      "why": "the permitted branch, kept reachable so every refusal above it stays falsifiable - and it still writes nothing",
+      "write_allowed": true
+    }
+  ],
+  "guard": "customer_data_write_guard_service.evaluate_write",
+  "opens_a_connection": false,
+  "rows_written": 0,
+  "schema_version": "nf_customer_data_boundary_gate148_artifacts_v1",
+  "writes": false
+}

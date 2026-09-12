@@ -1,0 +1,68 @@
+{
+  "a_partial_record_is": "no record, not a weak one",
+  "blocker": "consent_boundary_not_documented",
+  "consent_boundary_documented": false,
+  "inferred_consent_keys_refused_by_name": [
+    "login",
+    "logged_in",
+    "membership",
+    "is_member",
+    "invite",
+    "invite_accepted",
+    "operator_note",
+    "verbal_consent",
+    "verbally_agreed",
+    "implied_consent",
+    "assumed_consent"
+  ],
+  "not_consent": [
+    {
+      "actually_says": "a person authenticated",
+      "looks_like_consent": "a login",
+      "why_not": "authenticating is not agreeing to anything"
+    },
+    {
+      "actually_says": "somebody was added to an organization",
+      "looks_like_consent": "a membership",
+      "why_not": "an owner added them; the member did not decide"
+    },
+    {
+      "actually_says": "a person accepted a seat",
+      "looks_like_consent": "an accepted invite",
+      "why_not": "the invite carries a role and an expiry and no terms"
+    },
+    {
+      "actually_says": "somebody wrote something down, or said it",
+      "looks_like_consent": "an operator note or a verbal yes",
+      "why_not": "it records what an operator believes, not what a Tribe agreed to, and a verbal yes is not in the system at all"
+    }
+  ],
+  "not_engineering": true,
+  "owner": {
+    "clears_by": "deciding what NativeForge collects, retains, exports and deletes, writing it down, and recording that a tenant agreed to it",
+    "kind": "a_document_then_a_record",
+    "owner": "Mayhem, then each tenant"
+  },
+  "record_fields_required": [
+    "organization_id",
+    "agreed_by",
+    "agreed_at",
+    "what_is_collected",
+    "what_is_retained",
+    "retention_period",
+    "what_is_exported",
+    "how_it_is_deleted",
+    "withdrawal_method",
+    "document_version"
+  ],
+  "schema_version": "nf_customer_data_boundary_gate148_artifacts_v1",
+  "what_has_to_be_decided_first": [
+    "what NativeForge collects",
+    "what it retains, and for how long",
+    "what it exports",
+    "how it deletes on request",
+    "how a tenant withdraws agreement"
+  ],
+  "who_decides": "Mayhem writes it; each tenant agrees to it",
+  "why_refused_by_name": "an omission here would be read as permission; somebody offering a login as consent learns their reasoning was rejected"
+}

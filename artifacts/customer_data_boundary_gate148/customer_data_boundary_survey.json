@@ -1,0 +1,36 @@
+{
+  "answer": "no, and no record of agreement exists anywhere",
+  "consent_boundary_documented": false,
+  "consent_service_before_this_gate": false,
+  "consent_table_in_any_migration": false,
+  "customer_beta_scope_approved": false,
+  "existing_vocabulary": {
+    "fact_status": [
+      "demo_fixture",
+      "tenant_supplied",
+      "verified",
+      "unknown"
+    ],
+    "note": "tenant_supplied is already permitted by every post-award CHECK constraint, so the schema is open to customer data; what keeps it out is that no write path chooses it"
+  },
+  "not_approved": [
+    "controlled_customer_pilot",
+    "production_rollout",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "email_delivery",
+    "object_store_configured",
+    "source_monitoring_live"
+  ],
+  "question": "may customer data be written, and has anybody agreed to it?",
+  "schema_version": "nf_customer_data_boundary_gate148_artifacts_v1",
+  "the_finding": "every post-award repository gates a production write on exactly customer_auth_live and verified_operational_binding. Both are identity facts. Neither is consent - so on the day Gates 146 and 147 make both true, a production customer write becomes permitted with no consent recorded anywhere.",
+  "what_protects_data_today": [
+    "the post-award routes force fact_status=demo_fixture and refuse a caller-supplied label",
+    "object_store_configured is false, so document bodies are refused",
+    "the delivery table has a recipient fingerprint and domain and no column for an address",
+    "source_monitoring_live is false, so no collector runs"
+  ],
+  "why_that_is_not_a_boundary": "each is a capability being off, which is a different thing from a boundary, and each disappears the moment its capability is on",
+  "why_the_boundary_comes_first": "it has to exist before those lanes turn, not after"
+}

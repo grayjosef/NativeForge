@@ -13,10 +13,12 @@
   "every_never_true_lane_is_false": true,
   "frontend_surface_exists": true,
   "invariant_failures": [],
-  "lane_count": 15,
+  "lane_count": 17,
   "never_true_lanes": [
+    "consent_and_data_boundary",
     "controlled_customer_pilot",
     "customer_auth",
+    "customer_beta_scope",
     "email_delivery",
     "object_storage",
     "production_rollout",
@@ -51,7 +53,9 @@
   "real_customer_data_written": false,
   "real_organization_touched": false,
   "requires_human_approval_lanes": [
+    "consent_and_data_boundary",
     "customer_auth",
+    "customer_beta_scope",
     "verified_operational_binding"
   ],
   "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1",

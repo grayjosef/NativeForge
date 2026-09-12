@@ -1,0 +1,37 @@
+{
+  "additional_activation_required": {
+    "customer_contact_or_recipient": "email_delivery",
+    "customer_document_body": "object_store_configured"
+  },
+  "consent_boundary_documented": false,
+  "customer_beta_scope_approved": false,
+  "customer_data_classes": [
+    "customer_contact_or_recipient",
+    "customer_document_body",
+    "customer_identifying_data",
+    "customer_operational_data"
+  ],
+  "customer_data_write_guard_ready": true,
+  "data_classes": 9,
+  "guard_ready_is_not_permission": "the guard being correct says a future write path has something right to call; it does not say any write is allowed",
+  "never_stored_classes": [
+    "provider_identity_secret_or_subject"
+  ],
+  "pre_consent_classes": [
+    "demo_fixture",
+    "operator_runtime_input",
+    "synthetic_test"
+  ],
+  "real_organization_touched": false,
+  "rows_written": 0,
+  "schema_version": "nf_customer_data_boundary_gate148_artifacts_v1",
+  "stays_false_after_this_gate": [
+    "consent_boundary_documented",
+    "customer_beta_scope_approved",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "controlled_customer_pilot",
+    "production_rollout"
+  ],
+  "unknown_is_blocked": true
+}

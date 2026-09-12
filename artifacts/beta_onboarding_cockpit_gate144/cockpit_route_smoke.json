@@ -14,13 +14,15 @@
   "email_delivery": false,
   "emails_sent": 0,
   "every_lane_reported": true,
-  "expected_lane_count": 15,
+  "expected_lane_count": 17,
   "forged_header_refused": true,
   "forged_header_status": 401,
   "lanes_reported_by_the_route": [
     "awarded_grants",
+    "consent_and_data_boundary",
     "controlled_customer_pilot",
     "customer_auth",
+    "customer_beta_scope",
     "customer_persistence",
     "document_body_storage",
     "document_metadata",
@@ -39,7 +41,7 @@
   "object_store_configured": false,
   "production_rollout": false,
   "route_invariant_failures": [],
-  "route_lane_count": 15,
+  "route_lane_count": 17,
   "route_operational_lanes": [
     "source_monitoring_preflight"
   ],

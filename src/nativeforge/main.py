@@ -35,6 +35,9 @@ from nativeforge.api.controlled_beta_readiness_routes import (
 from nativeforge.api.customer_auth_readiness_routes import (
     router as customer_auth_readiness_router,
 )
+from nativeforge.api.customer_data_boundary_routes import (
+    router as customer_data_boundary_router,
+)
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
 )
@@ -191,6 +194,10 @@ def create_app() -> FastAPI:
     # a hypothetical approval and records nothing - the mutation path stays
     # where Gate 137 put it, behind an approval object that does not exist.
     app.include_router(verified_binding_readiness_router)
+    # Gate 148: the consent and customer data boundary. Its one POST evaluates
+    # a hypothetical write and records nothing - no consent, no approval, no
+    # row. Customer data writes are refused; demo fixtures are unaffected.
+    app.include_router(customer_data_boundary_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     return app

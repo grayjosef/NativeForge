@@ -1,0 +1,15 @@
+{
+  "customer_beta_approved": false,
+  "customer_data_writes_allowed": false,
+  "demo_fixture_writes_still_allowed": true,
+  "lanes_added": [
+    "consent_and_data_boundary",
+    "customer_beta_scope"
+  ],
+  "operational": false,
+  "production_ready": false,
+  "schema_version": "nf_customer_data_boundary_gate148_artifacts_v1",
+  "status": "REQUIRES_HUMAN_APPROVAL",
+  "value": false,
+  "what_changed": "the cockpit had fifteen lanes and none of them was consent, so a reader could see customer auth and the verified binding false and take those for the last two things in the way. They are two of four."
+}

@@ -1,0 +1,157 @@
+{
+  "additional_activation_required": {
+    "customer_contact_or_recipient": "email_delivery",
+    "customer_document_body": "object_store_configured"
+  },
+  "customer_data_classes": [
+    "customer_contact_or_recipient",
+    "customer_document_body",
+    "customer_identifying_data",
+    "customer_operational_data"
+  ],
+  "data_classes": [
+    "demo_fixture",
+    "synthetic_test",
+    "operator_runtime_input",
+    "customer_identifying_data",
+    "customer_operational_data",
+    "customer_document_body",
+    "customer_contact_or_recipient",
+    "provider_identity_secret_or_subject",
+    "unknown"
+  ],
+  "definitions": {
+    "customer_contact_or_recipient": {
+      "examples": [
+        "an address",
+        "a phone number",
+        "a delivery recipient"
+      ],
+      "is_customer_data": true,
+      "means": "how to reach a person",
+      "not_examples": [
+        "a recipient fingerprint and domain half, which is what the delivery table stores instead and which cannot be reached"
+      ]
+    },
+    "customer_document_body": {
+      "examples": [
+        "an uploaded award letter, report or budget"
+      ],
+      "is_customer_data": true,
+      "means": "bytes a Tribe supplied",
+      "not_examples": [
+        "document metadata with no body, which Gate 141 made operational on purpose and which is a different class"
+      ]
+    },
+    "customer_identifying_data": {
+      "examples": [
+        "a Tribe name",
+        "a real organization name, address or identifier",
+        "a person's name at a Tribe"
+      ],
+      "is_customer_data": true,
+      "means": "who a Tribe is",
+      "not_examples": [
+        "the demo organization id, which identifies a fixture"
+      ]
+    },
+    "customer_operational_data": {
+      "examples": [
+        "a real awarded grant, its amount, its deadlines",
+        "a real pursuit, requirement, proof event or obligation",
+        "a real eligibility determination"
+      ],
+      "is_customer_data": true,
+      "means": "what a Tribe is doing",
+      "not_examples": [
+        "the same shapes carrying fact_status=demo_fixture",
+        "a public grant notice, which the funder published"
+      ]
+    },
+    "demo_fixture": {
+      "examples": [
+        "an awarded grant written by the post-award routes with fact_status=demo_fixture",
+        "a watchlist entry in the demo organization"
+      ],
+      "is_customer_data": false,
+      "means": "a fixture row, labelled as one and forced by the route",
+      "not_examples": [
+        "a row a Tribe supplied that somebody labelled demo_fixture - the label is forced by the route, not accepted from a caller"
+      ]
+    },
+    "operator_runtime_input": {
+      "examples": [
+        "a cadence, a role, a period key, a source id"
+      ],
+      "is_customer_data": false,
+      "means": "an operator typed it at a terminal and it names no customer",
+      "not_examples": [
+        "an address an operator typed, which is contact data whoever typed it",
+        "a Tribe name an operator typed, which is identifying data"
+      ]
+    },
+    "provider_identity_secret_or_subject": {
+      "examples": [
+        "an OIDC sub",
+        "a session cookie",
+        "a client secret"
+      ],
+      "is_customer_data": true,
+      "means": "a provider subject, token, cookie, state, PKCE or secret",
+      "not_examples": [
+        "a fingerprint derived from one, which is what every table stores"
+      ]
+    },
+    "synthetic_test": {
+      "examples": [
+        "a fixture organization id used in a test"
+      ],
+      "is_customer_data": false,
+      "means": "data a hermetic test invented; it refers to nobody",
+      "not_examples": [
+        "a real organization id used in a test, which is the real organization whatever the test calls it"
+      ]
+    },
+    "unknown": {
+      "examples": [
+        "a new field on a new table nobody has decided about"
+      ],
+      "is_customer_data": true,
+      "means": "nobody has classified it",
+      "not_examples": []
+    }
+  },
+  "never_stored_classes": [
+    "provider_identity_secret_or_subject"
+  ],
+  "not_consent": [
+    {
+      "actually_says": "a person authenticated",
+      "looks_like_consent": "a login",
+      "why_not": "authenticating is not agreeing to anything"
+    },
+    {
+      "actually_says": "somebody was added to an organization",
+      "looks_like_consent": "a membership",
+      "why_not": "an owner added them; the member did not decide"
+    },
+    {
+      "actually_says": "a person accepted a seat",
+      "looks_like_consent": "an accepted invite",
+      "why_not": "the invite carries a role and an expiry and no terms"
+    },
+    {
+      "actually_says": "somebody wrote something down, or said it",
+      "looks_like_consent": "an operator note or a verbal yes",
+      "why_not": "it records what an operator believes, not what a Tribe agreed to, and a verbal yes is not in the system at all"
+    }
+  ],
+  "pre_consent_classes": [
+    "demo_fixture",
+    "operator_runtime_input",
+    "synthetic_test"
+  ],
+  "schema_version": "nf_customer_data_classification_v1",
+  "unknown_is_blocked": true,
+  "why_unknown_is_blocked": "a data class nobody has classified cannot silently inherit permission from a neighbouring one; adding a new kind of customer data is a decision somebody makes rather than an omission that defaults open"
+}

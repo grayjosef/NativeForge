@@ -157,6 +157,34 @@
     },
     {
       "blockers": [
+        "consent_boundary_not_documented",
+        "customer_auth_live_false",
+        "real_customer_organization_missing",
+        "verified_operational_binding_false"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "consent_and_data_boundary",
+      "owner": "Mayhem writes the document; each tenant agrees to it",
+      "scope": null,
+      "status": "requires_human_approval",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "customer_beta_scope_not_approved",
+        "real_customer_organization_missing"
+      ],
+      "evidence": "self_evidencing",
+      "lane": "customer_beta_scope",
+      "owner": "Mayhem",
+      "scope": null,
+      "status": "requires_human_approval",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
         "pilot_not_approved"
       ],
       "evidence": "self_evidencing",
@@ -194,7 +222,9 @@
     ],
     "operational_lanes": [],
     "requires_human_approval_lanes": [
+      "consent_and_data_boundary",
       "customer_auth",
+      "customer_beta_scope",
       "verified_operational_binding"
     ]
   },
@@ -220,7 +250,9 @@
       "tenant_digest"
     ],
     "requires_human_approval_lanes": [
+      "consent_and_data_boundary",
       "customer_auth",
+      "customer_beta_scope",
       "verified_operational_binding"
     ],
     "usable_today_count": 7

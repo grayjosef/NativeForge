@@ -5,7 +5,7 @@
 ```text
 cockpit foundation route-live   TRUE
 frontend surface exists         TRUE
-lanes reported                  15
+lanes reported                  17
 scope                           controlled_dev_demo
 ```
 
@@ -29,7 +29,9 @@ Every one is `controlled_dev_demo`. None is a production claim.
 ## What needs a person
 
 ```text
+  consent_and_data_boundary        ['consent_boundary_not_documented', 'customer_auth_live_false', 'real_customer_organization_missing', 'verified_operational_binding_false']
   customer_auth                    ['invite_binding_passed']
+  customer_beta_scope              ['customer_beta_scope_not_approved', 'real_customer_organization_missing']
   verified_operational_binding     ['demo_organization_is_never_a_verified_operational_binding', 'no_authorized_real_organization', 'owner_decision_absent', 'production_verified_binding_requires_live_customer_auth', 'real_organization_refused_by_name']
 ```
 

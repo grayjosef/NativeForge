@@ -1,5 +1,5 @@
 {
-  "blocked_lane_count": 14,
+  "blocked_lane_count": 16,
   "blockers": [
     {
       "blockers": [
@@ -124,6 +124,28 @@
     },
     {
       "blockers": [
+        "consent_boundary_not_documented",
+        "customer_auth_live_false",
+        "real_customer_organization_missing",
+        "verified_operational_binding_false"
+      ],
+      "lane": "consent_and_data_boundary",
+      "owner": "Mayhem writes the document; each tenant agrees to it",
+      "status": "requires_human_approval",
+      "summary": "nothing in this repository records that a tenant was told what is collected, retained, exported and deleted, and agreed to it. A login, a membership and an accepted invite are each not that."
+    },
+    {
+      "blockers": [
+        "customer_beta_scope_not_approved",
+        "real_customer_organization_missing"
+      ],
+      "lane": "customer_beta_scope",
+      "owner": "Mayhem",
+      "status": "requires_human_approval",
+      "summary": "the fourth approval the controlled customer beta needs, recorded nowhere"
+    },
+    {
+      "blockers": [
         "pilot_not_approved"
       ],
       "lane": "controlled_customer_pilot",
@@ -158,7 +180,9 @@
     "object_storage"
   ],
   "requires_human_approval_lanes": [
+    "consent_and_data_boundary",
     "customer_auth",
+    "customer_beta_scope",
     "verified_operational_binding"
   ],
   "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1"

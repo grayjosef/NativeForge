@@ -1,0 +1,29 @@
+{
+  "approval_fields_required": [
+    "organization_id",
+    "approved_by",
+    "approved_at",
+    "scope",
+    "data_classes_permitted",
+    "expires_at"
+  ],
+  "blocker": "customer_beta_scope_not_approved",
+  "customer_beta_scope_approved": false,
+  "front_of_the_queue": {
+    "clears_by": "a real customer organization existing. There is none in this deployment other than the refused one - Gate 147's finding",
+    "kind": "a_customer",
+    "owner": "nobody in this repository"
+  },
+  "is_one_of": "the four approvals Gate 145 says the customer beta needs",
+  "owner": {
+    "clears_by": "approving the controlled customer beta scope",
+    "kind": "recorded_decision",
+    "owner": "Mayhem"
+  },
+  "schema_version": "nf_customer_data_boundary_gate148_artifacts_v1",
+  "the_other_three": [
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_and_data_boundary_documented"
+  ]
+}

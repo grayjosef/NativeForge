@@ -80,6 +80,8 @@ LANE_KEYS: tuple[str, ...] = (
     "object_storage",
     "customer_auth",
     "verified_operational_binding",
+    "consent_and_data_boundary",
+    "customer_beta_scope",
     "controlled_customer_pilot",
     "production_rollout",
 )
@@ -104,6 +106,8 @@ LANE_EVIDENCE: dict[str, str] = {
     "object_storage": "self_evidencing",
     "customer_auth": "self_evidencing",
     "verified_operational_binding": "self_evidencing",
+    "consent_and_data_boundary": "self_evidencing",
+    "customer_beta_scope": "self_evidencing",
     "controlled_customer_pilot": "self_evidencing",
     "production_rollout": "self_evidencing",
 }
@@ -116,6 +120,8 @@ NEVER_TRUE_LANES: frozenset[str] = frozenset(
         "object_storage",
         "customer_auth",
         "verified_operational_binding",
+        "consent_and_data_boundary",
+        "customer_beta_scope",
         "controlled_customer_pilot",
         "production_rollout",
     }
@@ -489,6 +495,50 @@ def build_beta_onboarding_summary(
         )
     )
 
+    # -- consent and the customer beta scope -----------------------------------
+    #
+    # Gate 148. The cockpit had fifteen lanes and none of them was consent, so
+    # a reader could see customer auth and the verified binding false and take
+    # those for the last two things in the way. They are two of four.
+    lanes.append(
+        _lane(
+            "consent_and_data_boundary",
+            status=REQUIRES_HUMAN_APPROVAL,
+            value=False,
+            scope=None,
+            summary=(
+                "nothing in this repository records that a tenant was told "
+                "what is collected, retained, exported and deleted, and "
+                "agreed to it. A login, a membership and an accepted invite "
+                "are each not that."
+            ),
+            blockers=[
+                "consent_boundary_not_documented",
+                "real_customer_organization_missing",
+                "customer_auth_live_false",
+                "verified_operational_binding_false",
+            ],
+            owner="Mayhem writes the document; each tenant agrees to it",
+        )
+    )
+    lanes.append(
+        _lane(
+            "customer_beta_scope",
+            status=REQUIRES_HUMAN_APPROVAL,
+            value=False,
+            scope=None,
+            summary=(
+                "the fourth approval the controlled customer beta needs, "
+                "recorded nowhere"
+            ),
+            blockers=[
+                "customer_beta_scope_not_approved",
+                "real_customer_organization_missing",
+            ],
+            owner="Mayhem",
+        )
+    )
+
     # -- the two that are simply not approved -----------------------------------
     lanes.append(
         _lane(
@@ -548,6 +598,10 @@ def build_beta_onboarding_summary(
             "email_delivery": False,
             "object_store_configured": False,
             "verified_operational_binding": False,
+            "consent_boundary_documented": False,
+            "customer_beta_scope_approved": False,
+            "demo_fixture_writes_still_allowed": True,
+            "customer_data_writes_allowed": False,
             "live_source_calls": 0,
             "emails_sent": 0,
             "object_store_calls": 0,
