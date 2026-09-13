@@ -1,0 +1,21 @@
+{
+  "caller_supplied_label": 422,
+  "email_sent": false,
+  "forged_dev_header": 401,
+  "listing_omits_the_payload": {
+    "value": true,
+    "why": "the payload is available by id; a list of them would make a listing route the largest response in the API"
+  },
+  "live_source_called": false,
+  "missing_record": 404,
+  "object_store_contacted": false,
+  "real_organization_route": null,
+  "routes": [
+    "POST   /v1/nf/demo/orgs/{org}/digest/persist",
+    "GET    /v1/nf/demo/orgs/{org}/digest/records",
+    "GET    /v1/nf/demo/orgs/{org}/digest/records/{digest_id}",
+    "POST   /v1/nf/demo/orgs/{org}/digest/records/{digest_id}/archive"
+  ],
+  "schema_version": "nf_tenant_digest_persistence_gate151_artifacts_v1",
+  "unauthenticated": 401
+}

@@ -1,0 +1,18 @@
+{
+  "absent_table_answers_false_rather_than_raising": {
+    "value": true,
+    "why": "an older database is an environment fact, not a caller defect; an intent recorded against one should get 'no persisted digest', not a stack trace"
+  },
+  "answerable_before_this_gate": false,
+  "blocker_when_enforced": "digest_id_names_no_persisted_digest",
+  "enforced_opt_in": "require_persisted_digest=True adds a blocker",
+  "legacy_intents_are_not_backfilled": {
+    "value": true,
+    "why": "the digests they named cannot be reconstructed - the snapshots they were built from are not guaranteed unchanged. Manufacturing a digest for a past intent would produce a record that looks like evidence and is not."
+  },
+  "linkage_is_org_scoped": true,
+  "measured_always": "digest_record_persisted, on every record_delivery_intent",
+  "schema_version": "nf_tenant_digest_persistence_gate151_artifacts_v1",
+  "the_question": "does the digest a delivery intent names actually exist?",
+  "why_opt_in": "the 71 existing intents predate the table, and a blocker applied unconditionally would retroactively invalidate history that is not wrong, only un-storable at the time. Gate 142's callers pass no persisted digest and are correct as written."
+}

@@ -1,12 +1,13 @@
 {
   "blocked_lanes": [],
   "capability_matrix": {
-    "controlled_dev_persistence_available_count": 7,
+    "controlled_dev_persistence_available_count": 8,
     "controlled_dev_persistence_available_lanes": [
       "tenant_profile_persistence",
       "awarded_grants_persistence",
       "award_requirements_persistence",
       "proof_audit_persistence",
+      "tenant_digest_persistence",
       "document_library_persistence",
       "source_watchlist_persistence",
       "identity_binding_persistence"
@@ -14,7 +15,7 @@
     "customer_persistence_live_production": false,
     "operational_count": 0,
     "production_persistence_ready": false,
-    "write_path_count": 7
+    "write_path_count": 8
   },
   "lane_routes": {
     "award_requirements_persistence": null,

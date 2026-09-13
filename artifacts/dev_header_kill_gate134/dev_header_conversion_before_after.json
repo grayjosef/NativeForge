@@ -27,18 +27,19 @@
       "spark_scoring_routes",
       "sprint0_routes",
       "stage12_guided_demo_routes",
+      "tenant_digest_persistence_routes",
       "tenant_digest_routes",
       "tenant_watchlist_routes",
       "tribal_profile_routes",
       "trust_routes",
       "verified_binding_readiness_routes"
     ],
-    "converted_modules": 31,
+    "converted_modules": 32,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 281
+    "route_total": 285
   },
   "before": {
     "converted_modules": 1,

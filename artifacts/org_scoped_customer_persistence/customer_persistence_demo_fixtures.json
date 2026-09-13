@@ -259,33 +259,31 @@
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "persistence_capability": {
           "blocked_reasons": [
-            "no_customer_auth_so_nobody_owns_the_row",
-            "no_repository_can_address_this_capability",
-            "no_table_declares_this_capability:nf_tenant_digest_records"
+            "no_customer_auth_so_nobody_owns_the_row"
           ],
           "capability": "tenant_digest_persistence",
-          "controlled_dev_persistence_available": false,
+          "controlled_dev_persistence_available": true,
           "customer_auth_live": false,
           "customer_auth_required": true,
-          "demo_only": false,
+          "demo_only": true,
           "expected_table": "nf_tenant_digest_records",
           "fabricated": false,
           "live_fetch_performed": false,
           "operational": false,
-          "organization_id_anchor_available": false,
+          "organization_id_anchor_available": true,
           "persisted": false,
           "production_operational": false,
-          "read_path_available": false,
-          "repository_available": false,
+          "read_path_available": true,
+          "repository_available": true,
           "rls_anchor": "organization_id",
-          "rls_backed": false,
+          "rls_backed": true,
           "rows_written": 0,
-          "schema_available": false,
+          "schema_available": true,
           "schema_version": "nf_customer_persistence_capability_v1",
           "service_contract_available": true,
           "tenant_beta_profile_repository_available": true,
           "tenant_beta_profile_table": "nf_tenant_beta_profiles",
-          "write_path_available": false
+          "write_path_available": true
         }
       },
       "why": "the lane furthest from ready: no table, no sources, no delivery. Gate 104's preview-only boundary, restated as a row"
@@ -341,19 +339,20 @@
       "request": {
         "auth_principal_status": "authenticated_verified_org",
         "binding_status": "verified_binding",
-        "operation": "write_digest_record",
+        "operation": "write_beta_onboarding_record",
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "persistence_capability": {
           "blocked_reasons": [
             "no_repository_can_address_this_capability",
-            "no_table_declares_this_capability:nf_tenant_digest_records"
+            "no_service_decides_what_may_be_written",
+            "no_table_declares_this_capability:nf_beta_onboarding_records"
           ],
-          "capability": "tenant_digest_persistence",
+          "capability": "beta_onboarding_persistence",
           "controlled_dev_persistence_available": false,
           "customer_auth_live": true,
           "customer_auth_required": true,
           "demo_only": false,
-          "expected_table": "nf_tenant_digest_records",
+          "expected_table": "nf_beta_onboarding_records",
           "fabricated": false,
           "live_fetch_performed": false,
           "operational": false,
@@ -367,7 +366,7 @@
           "rows_written": 0,
           "schema_available": false,
           "schema_version": "nf_customer_persistence_capability_v1",
-          "service_contract_available": true,
+          "service_contract_available": false,
           "tenant_beta_profile_repository_available": true,
           "tenant_beta_profile_table": "nf_tenant_beta_profiles",
           "write_path_available": false
@@ -622,10 +621,7 @@
         "blocked_reasons": [
           "auth_principal_not_operational:authenticated_demo",
           "customer_auth_not_live",
-          "demo_fixture_write_is_never_operational",
-          "no_rls_policy_for:tenant_digest_persistence",
-          "no_schema_for:tenant_digest_persistence",
-          "no_write_path_for:tenant_digest_persistence"
+          "demo_fixture_write_is_never_operational"
         ],
         "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
@@ -688,12 +684,12 @@
         "auth_principal_status": "authenticated_verified_org",
         "binding_present": true,
         "binding_repository_available": true,
-        "binding_required": false,
+        "binding_required": true,
         "binding_status": "verified_binding",
         "blocked_reasons": [
-          "no_rls_policy_for:tenant_digest_persistence",
-          "no_schema_for:tenant_digest_persistence",
-          "no_write_path_for:tenant_digest_persistence"
+          "no_rls_policy_for:beta_onboarding_persistence",
+          "no_schema_for:beta_onboarding_persistence",
+          "no_write_path_for:beta_onboarding_persistence"
         ],
         "controlled_dev_fixture_write": false,
         "cross_tenant_risk": true,
@@ -705,11 +701,11 @@
         "human_review_required": true,
         "identities_assumed_equivalent": false,
         "live_fetch_performed": false,
-        "operation": "write_digest_record",
+        "operation": "write_beta_onboarding_record",
         "organization_id": "00000000-0000-4000-8000-000000000114",
         "organization_profile_id": null,
         "persisted": false,
-        "persistence_capability": "tenant_digest_persistence",
+        "persistence_capability": "beta_onboarding_persistence",
         "read_allowed": false,
         "real_customer_data": false,
         "rls_anchor": "organization_id",
@@ -904,10 +900,7 @@
       "blocked_reasons": [
         "auth_principal_not_operational:authenticated_demo",
         "customer_auth_not_live",
-        "demo_fixture_write_is_never_operational",
-        "no_rls_policy_for:tenant_digest_persistence",
-        "no_schema_for:tenant_digest_persistence",
-        "no_write_path_for:tenant_digest_persistence"
+        "demo_fixture_write_is_never_operational"
       ],
       "case": "demo_fixture_digest",
       "cross_tenant_risk": true,
@@ -950,12 +943,12 @@
     },
     {
       "agrees_with_expectation": true,
-      "binding_required": false,
+      "binding_required": true,
       "binding_status": "verified_binding",
       "blocked_reasons": [
-        "no_rls_policy_for:tenant_digest_persistence",
-        "no_schema_for:tenant_digest_persistence",
-        "no_write_path_for:tenant_digest_persistence"
+        "no_rls_policy_for:beta_onboarding_persistence",
+        "no_schema_for:beta_onboarding_persistence",
+        "no_write_path_for:beta_onboarding_persistence"
       ],
       "case": "missing_capability_schema",
       "cross_tenant_risk": true,
@@ -966,9 +959,9 @@
       "fixture_label": "demo_fixture",
       "forges_customer_auth": true,
       "human_review_required": true,
-      "operation": "write_digest_record",
+      "operation": "write_beta_onboarding_record",
       "organization_id": "00000000-0000-4000-8000-000000000114",
-      "persistence_capability": "tenant_digest_persistence",
+      "persistence_capability": "beta_onboarding_persistence",
       "read_allowed": false,
       "rls_compatible": true,
       "write_allowed": false

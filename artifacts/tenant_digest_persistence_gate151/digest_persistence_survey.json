@@ -1,0 +1,11 @@
+{
+  "answer_before_this_gate": "no, and none ever could",
+  "migration": "0042",
+  "question": "can a delivery intent re-read the digest it names?",
+  "schema_version": "nf_tenant_digest_persistence_gate151_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "table": "nf_tenant_digest_records",
+  "the_measurement": "71 delivery intents, all 71 naming a digest, and zero of those digests stored anywhere",
+  "what_already_worked": "build_digest_id has been deterministic with no clock in it since Gate 142, so a records table could use it as a real key rather than inventing a surrogate",
+  "why_it_mattered": "a tenant misses a deadline and asks what NativeForge told them. The intent could say a digest was queued with four items visible and two suppressed; the digest could say nothing, because it did not exist. For a product whose purpose is award compliance, that is the wrong half of the record to have kept."
+}

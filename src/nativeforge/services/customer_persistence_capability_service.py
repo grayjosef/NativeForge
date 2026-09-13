@@ -147,6 +147,14 @@ CAPABILITY_REPOSITORY_MODULES: dict[str, str] = {
     "source_watchlist_persistence": (
         "nativeforge.services.tenant_source_watchlist_service"
     ),
+    # Gate 151C. The first entry here pointing at `repositories/` rather than
+    # `services/` - the probe looks for `repositories/tenant_digest.py` and the
+    # repository is named `tenant_digest_records_repository` for what it holds.
+    # Renaming a file to satisfy a filename probe would be the wrong half of
+    # this map's own lesson.
+    "tenant_digest_persistence": (
+        "nativeforge.repositories.tenant_digest_records_repository"
+    ),
 }
 
 # Gate 123: the *behaviour* profile, which is a different object from the

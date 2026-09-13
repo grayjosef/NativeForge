@@ -286,6 +286,38 @@ def prepare_delivery_intent(
     )
 
 
+#: The table a `digest_id` should resolve to, since Gate 151B.
+DIGEST_RECORDS_TABLE = "nf_tenant_digest_records"
+
+
+def digest_record_exists(
+    *, connection: Any = None, organization_id: Any = None, digest_id: Any = None
+) -> bool:
+    """Does the digest this intent names actually exist?
+
+    Gate 150 found 71 intents naming digests stored nowhere. Migration 0042
+    gave them somewhere to be, so this is now answerable. Returns False rather
+    than raising when the table is absent, because an older database is a fact
+    about the environment and not a defect in the caller.
+    """
+    if connection is None or not str(digest_id or "").strip():
+        return False
+    anchor = _as_uuid(organization_id)
+    if anchor is None:
+        return False
+    try:
+        found = connection.execute(
+            sa.text(
+                f"SELECT count(*) FROM {DIGEST_RECORDS_TABLE} "
+                "WHERE organization_id = :org AND digest_id = :digest"
+            ),
+            {"org": anchor.hex, "digest": str(digest_id).strip()},
+        ).scalar()
+    except Exception:  # noqa: BLE001
+        return False
+    return bool(found)
+
+
 def record_delivery_intent(
     *,
     connection: Any = None,
@@ -297,6 +329,7 @@ def record_delivery_intent(
     digest_id: Any = None,
     audit_event_id: Any = None,
     created_by_identity_id: Any = None,
+    require_persisted_digest: bool = False,
     **fields: Any,
 ) -> dict[str, Any]:
     """Write one intent. An INSERT; nothing is sent and nothing is updated."""
@@ -305,6 +338,15 @@ def record_delivery_intent(
 
     if connection is None:
         blocked.append("no_connection_supplied_so_nothing_was_written")
+
+    # Measured on every call; a blocker only when the caller asked for one.
+    digest_persisted = digest_record_exists(
+        connection=connection,
+        organization_id=decision["organization_id"],
+        digest_id=digest_id,
+    )
+    if require_persisted_digest and not digest_persisted:
+        blocked.append("digest_id_names_no_persisted_digest")
 
     moment = now or datetime.now(UTC)
     written = 0
@@ -373,6 +415,10 @@ def record_delivery_intent(
             "emails_sent": 0,
             "provider_contacted": False,
             "send_attempted": False,
+            # Gate 151. The question Gate 150 could not answer: does the
+            # digest this intent names exist?
+            "digest_record_persisted": digest_persisted,
+            "digest_linkage_enforced": bool(require_persisted_digest),
             "blocked_reasons": sorted(set(blocked)),
         }
     )

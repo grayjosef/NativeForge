@@ -1,0 +1,86 @@
+{
+  "caller_may_not_set": [
+    "is_demo",
+    "fact_status",
+    "email_delivery_live",
+    "source_monitoring_live",
+    "payload_sha256"
+  ],
+  "constraints": {
+    "capabilities_off": [
+      "NOT email_delivery_live",
+      "NOT source_monitoring_live"
+    ],
+    "counts_agree": "items_total >= items_visible + items_suppressed",
+    "counts_non_negative": "all four, and the three honesty counts",
+    "demo_is_fixture": "(NOT is_demo) OR fact_status = 'demo_fixture'",
+    "hash_shape": "length(payload_sha256) = 64",
+    "never_sent": "delivery_status <> 'sent'"
+  },
+  "forbidden_payload_fields": [
+    "recipient",
+    "recipient_email",
+    "email",
+    "address",
+    "to",
+    "rendered_body",
+    "body",
+    "html",
+    "mime"
+  ],
+  "key": "organization_id + digest_id, unique where archived_at IS NULL",
+  "migration": "0042",
+  "not_stored": {
+    "absent_columns": [
+      "recipient",
+      "recipient_email",
+      "email",
+      "address",
+      "rendered_body",
+      "body",
+      "html",
+      "document_body"
+    ],
+    "the_rendering": "the payload is what the digest IS; the body is one rendering of it, for one channel, at one moment. A table holding something email-shaped is how a preview-only lane quietly becomes a delivery lane.",
+    "why": "a column that does not exist cannot be filled by a later mistake. Gate 142 wrote the rule for the delivery queue and it applies one table upstream."
+  },
+  "organization_id_is_authoritative_not_forbidden": true,
+  "required_digest_fields": [
+    "digest_id",
+    "cadence",
+    "items_total",
+    "items_visible",
+    "items_suppressed"
+  ],
+  "row_level_security": "org isolation policy on postgresql, as 0041",
+  "schema_version": "nf_tenant_digest_persistence_gate151_artifacts_v1",
+  "stored": {
+    "the_caveats": [
+      "caveats_json",
+      "blocked_reasons"
+    ],
+    "the_counts": [
+      "items_total",
+      "items_visible",
+      "items_suppressed",
+      "items_unchanged"
+    ],
+    "the_digest": "digest_payload_json, normalized",
+    "the_hash": "payload_sha256 over a canonical serialisation",
+    "the_honesty_counts": [
+      "items_human_review",
+      "items_with_unverified_deadlines",
+      "items_with_unknown_reporting_burden"
+    ],
+    "the_labelling": [
+      "is_demo",
+      "fact_status"
+    ],
+    "the_lifecycle": [
+      "archived_at",
+      "created_at",
+      "updated_at"
+    ]
+  },
+  "table": "nf_tenant_digest_records"
+}

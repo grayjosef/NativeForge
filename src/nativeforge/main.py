@@ -87,6 +87,9 @@ from nativeforge.api.stage12_guided_demo_routes import (
     demo_stage12_router,
     real_stage12_router,
 )
+from nativeforge.api.tenant_digest_persistence_routes import (
+    router as tenant_digest_persistence_router,
+)
 from nativeforge.api.tenant_digest_routes import router as tenant_digest_router
 from nativeforge.api.tenant_watchlist_routes import (
     router as tenant_watchlist_router,
@@ -179,6 +182,9 @@ def create_app() -> FastAPI:
     # neither sends mail.
     app.include_router(tenant_watchlist_router)
     app.include_router(tenant_digest_router)
+    # Gate 151: the digest a delivery intent names, stored and readable back.
+    # Nothing here sends, renders to a stored body, or keeps a recipient.
+    app.include_router(tenant_digest_persistence_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

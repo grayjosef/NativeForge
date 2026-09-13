@@ -326,10 +326,11 @@ def build_persistence_spine_decision(
     # The three constraints the brief names, checked against the sequence rather
     # than trusted to the ordering. Each is a claim that could otherwise be made
     # by a reader skimming for a green line.
-    digest = by_name.get("tenant_digest_persistence", {})
+    # Gate 151 removed the `digest` binding that used to live here. It read the
+    # capability matrix, which carries no prerequisites, and that is exactly
+    # what made the digest recommendation wrong; the corrected version reads
+    # `sequenced` below.
     onboarding = by_name.get("beta_onboarding_persistence", {})
-
-    operational_digest_recommended = bool(digest.get("operational"))
 
     # "Awarded tracking" is two lanes and two questions, and this line has been
     # wrong about both in turn.
@@ -365,6 +366,20 @@ def build_persistence_spine_decision(
         all(lane.get("operational") for lane in awarded_lanes)
         and not any(lane.get("operational_out_of_sequence") for lane in awarded_lanes)
     )
+    # Gate 151. Same fix as the awarded lanes above, and for the same reason:
+    # this read `digest.get("operational")` off the capability matrix, which
+    # carries no prerequisites, so it reported the digest lane recommendable
+    # the moment the lane became operable - while `live_source_collection` was
+    # still unmet. Invisible until Gate 151B built the table.
+    sequenced_digest = sequenced.get("tenant_digest_persistence", {})
+    operational_digest_recommended = bool(
+        sequenced_digest.get("operational")
+        and not sequenced_digest.get("operational_out_of_sequence")
+    )
+
+    # Still the unfixed shape, deliberately: nf_beta_onboarding_records does
+    # not exist, so this branch is unreachable and fixing it would be untested
+    # code. The gate that builds that table inherits the correction above.
     beta_onboarding_recommended = bool(onboarding.get("operational"))
 
     requires_migrations = sorted(

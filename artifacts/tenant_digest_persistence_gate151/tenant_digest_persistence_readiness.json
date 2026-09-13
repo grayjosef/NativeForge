@@ -1,0 +1,48 @@
+{
+  "condition_evidence": {
+    "counts_preserved": "items_total, visible, suppressed and unchanged came back agreeing",
+    "cross_org_read_refused": "a read for the same digest id under another organization returned nothing, with the same answer it gives for a digest that does not exist",
+    "delivery_intent_references_a_persisted_digest": "an intent's digest_id resolves to a stored record - the gap Gate 150 found, where 71 intents named digests that existed nowhere",
+    "honesty_fields_preserved": "human review, unverified deadlines and unknown reporting burden survived the round trip",
+    "payload_hash_stable": "the stored sha256 equals a hash recomputed over the stored payload",
+    "repository_round_trip": "a digest was written and read back by its id",
+    "table_exists": "migration 0042 applied and the table is inspectable"
+  },
+  "conditions": [
+    "table_exists",
+    "repository_round_trip",
+    "payload_hash_stable",
+    "counts_preserved",
+    "honesty_fields_preserved",
+    "cross_org_read_refused",
+    "delivery_intent_references_a_persisted_digest"
+  ],
+  "derived_not_supplied": true,
+  "lane": "tenant_digest_persistence_live",
+  "must_stay_false": [
+    "email_delivery",
+    "source_monitoring_live",
+    "object_store_configured",
+    "production_digest_persistence"
+  ],
+  "production_digest_persistence": false,
+  "production_is_never_computed": true,
+  "schema_version": "nf_tenant_digest_persistence_gate151_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "stays_false_after_this_gate": [
+    "production_digest_persistence",
+    "email_delivery",
+    "source_monitoring_live",
+    "object_store_configured",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "controlled_customer_pilot",
+    "production_rollout"
+  ],
+  "what_this_does_not_mean": [
+    "that any digest was sent",
+    "that any live source was called",
+    "that any real tenant's digest was stored",
+    "that production digest persistence is available"
+  ]
+}

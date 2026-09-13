@@ -1,0 +1,20 @@
+{
+  "algorithm": "sha256 over json.dumps(payload, sort_keys, compact)",
+  "different_payload_hashes_differently": true,
+  "digest_id_is_separately_deterministic": {
+    "clock_free": true,
+    "formula": "sha256(tenant_id|cadence|period_start|period_end)",
+    "since": "Gate 142, which fixed an assembler that passed no period and produced an identical id every week"
+  },
+  "schema_version": "nf_tenant_digest_persistence_gate151_artifacts_v1",
+  "stable_over": [
+    "key order",
+    "whitespace"
+  ],
+  "verify_rendering": {
+    "body_stored": false,
+    "different_payload": "payload_hash_mismatch",
+    "matching_payload": "verified"
+  },
+  "what_it_proves": "a given rendering came from this stored digest, without the rendering being kept"
+}

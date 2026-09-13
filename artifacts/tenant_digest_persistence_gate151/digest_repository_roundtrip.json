@@ -1,0 +1,31 @@
+{
+  "a_dialect_split_found_and_fixed": {
+    "fix": "explicit coercion in the repository",
+    "what": "period_start and period_end are DATE columns and the digest carries ISO strings",
+    "why_it_mattered": "SQLite refuses a string outright and Postgres coerces it, so the insert would have passed in one environment and failed in the other - the same split Gate 142 hit when an untyped column bound a UUID on one dialect and not the other"
+  },
+  "archive_is_a_state": {
+    "archived_row_in_the_live_list": false,
+    "archived_row_readable_by_id": true,
+    "archiving_twice_refused": true,
+    "why": "an audit of a missed deadline needs the digest that was current at the time, not only the current one"
+  },
+  "proved": [
+    "a digest persists and reads back by its id",
+    "the stored hash equals a hash recomputed over the stored payload",
+    "the four counts come back agreeing",
+    "human review, unverified deadlines and unknown reporting burden survive",
+    "the caveats and blocked reasons survive",
+    "the labelling is derived from the organization, not the caller",
+    "the record states the capabilities were off when it was written"
+  ],
+  "refused": [
+    "persisting the same period twice",
+    "counts that do not agree, before the database says so",
+    "a payload carrying a recipient or a rendering",
+    "a caller-supplied is_demo, fact_status or payload hash",
+    "the real organization, by name",
+    "a cross-org read, list or archive"
+  ],
+  "schema_version": "nf_tenant_digest_persistence_gate151_artifacts_v1"
+}
