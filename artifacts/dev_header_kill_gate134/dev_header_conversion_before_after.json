@@ -2,6 +2,7 @@
   "after": {
     "converted_module_names": [
       "activation_routes",
+      "audit_replay_routes",
       "auth",
       "award_document_routes",
       "award_requirement_proof_routes",
@@ -34,12 +35,12 @@
       "trust_routes",
       "verified_binding_readiness_routes"
     ],
-    "converted_modules": 32,
+    "converted_modules": 33,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 285
+    "route_total": 289
   },
   "before": {
     "converted_modules": 1,

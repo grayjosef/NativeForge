@@ -1,0 +1,28 @@
+{
+  "dangling_audit_event_id": {
+    "expected_status": "missing_record",
+    "is_a_negative_test_case": true,
+    "where": "the test suite, against a fixture - not the verifier"
+  },
+  "fully_linked_chain": {
+    "audit_event": "linked_record_found",
+    "delivery_intent": "linked_record_found",
+    "digest_record": "linked_record_found",
+    "payload_hash": "hash_verified"
+  },
+  "legacy_intent_status": "legacy_gap",
+  "links_checked": [
+    "delivery_intent",
+    "digest_record",
+    "payload_hash",
+    "audit_event"
+  ],
+  "schema_version": "nf_audit_replay_gate152_artifacts_v1",
+  "subject": "delivery_intent",
+  "verifier_happy_path_uses_a_real_audit_event": {
+    "value": true,
+    "why": "referencing a random audit id would be manufacturing a broken link and then congratulating the verifier for detecting it"
+  },
+  "why_not_missing_record": "it is not wrong; it was un-storable at the time",
+  "writes": 0
+}

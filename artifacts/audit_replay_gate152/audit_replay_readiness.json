@@ -1,0 +1,51 @@
+{
+  "condition_evidence": {
+    "cross_org_replay_refused": "a replay for another organization's record returns the same answer as one that does not exist",
+    "delivery_intent_linkage_works": "an intent recorded with require_persisted_digest=True resolves to the digest record it names",
+    "digest_hash_verification_works": "a stored payload hash equals one recomputed over the stored payload, and a tampered payload fails",
+    "evidence_ledger_generates": "one normalized entry per record, each carrying its status and what a replay still cannot say about it",
+    "legacy_gaps_reported": "the intents whose digest was never written are counted and surfaced as legacy_gap rather than backfilled. A replay that produced a digest for them would score better here and be worthless.",
+    "tenant_digest_persistence_live": "Gate 151's lane; without a persisted digest there is nothing to replay"
+  },
+  "conditions": [
+    "tenant_digest_persistence_live",
+    "digest_hash_verification_works",
+    "delivery_intent_linkage_works",
+    "legacy_gaps_reported",
+    "evidence_ledger_generates",
+    "cross_org_replay_refused"
+  ],
+  "derived_not_supplied": true,
+  "lane": "audit_replay_ready",
+  "must_stay_false": [
+    "email_delivery",
+    "source_monitoring_live",
+    "object_store_configured",
+    "production_audit_ready"
+  ],
+  "production_audit_ready": false,
+  "production_is_never_computed": true,
+  "reporting_a_gap_is_a_condition": {
+    "value": true,
+    "why": "a replay that quietly produced a digest for the legacy intents would score better on every other condition and be worthless. A backfill fails this lane rather than passing it."
+  },
+  "schema_version": "nf_audit_replay_gate152_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "stays_false_after_this_gate": [
+    "production_audit_ready",
+    "email_delivery",
+    "source_monitoring_live",
+    "object_store_configured",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "controlled_customer_pilot",
+    "production_rollout"
+  ],
+  "what_this_does_not_mean": [
+    "that this would satisfy an auditor or a court",
+    "that any digest was delivered",
+    "that any tenant read anything",
+    "that the legacy gaps were closed",
+    "that any real tenant's evidence exists"
+  ]
+}

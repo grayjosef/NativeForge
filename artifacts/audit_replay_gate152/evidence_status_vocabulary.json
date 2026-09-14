@@ -1,0 +1,121 @@
+{
+  "chain_status_rule": "the weakest link, never an average",
+  "definitions": {
+    "attested": {
+      "becomes_proof_when": "already is, within controlled_dev_demo",
+      "is_proof": true,
+      "means": "the record was found and every check on it passed"
+    },
+    "blocked": {
+      "becomes_proof_when": "the refusal clears",
+      "is_proof": false,
+      "means": "a refusal stopped the replay before it could look"
+    },
+    "hash_verified": {
+      "becomes_proof_when": "already is",
+      "is_proof": true,
+      "means": "the stored payload hash equals a hash recomputed over the stored payload"
+    },
+    "legacy_gap": {
+      "becomes_proof_when": "never, for this record. The digest it referred to cannot be reconstructed and regenerating one would produce a different digest for the same period.",
+      "is_proof": false,
+      "means": "the record predates the table that would have held it. It is not wrong, it was un-storable at the time."
+    },
+    "linked_record_found": {
+      "becomes_proof_when": "already is",
+      "is_proof": true,
+      "means": "the record this one points at exists and is readable"
+    },
+    "missing_record": {
+      "becomes_proof_when": "the record is written by the path that owes it",
+      "is_proof": false,
+      "means": "the record should exist and does not"
+    },
+    "not_attestable": {
+      "becomes_proof_when": "never, in controlled_dev_demo",
+      "is_proof": false,
+      "means": "this system cannot speak to it at all, in this scope. Production and legal standing are the usual subjects."
+    },
+    "not_attributable": {
+      "becomes_proof_when": "an actor or source is recorded at write time",
+      "is_proof": false,
+      "means": "nothing records who or what this came from"
+    },
+    "not_replayable": {
+      "becomes_proof_when": "the capability is activated and the event occurs",
+      "is_proof": false,
+      "means": "the event did not happen, so there is nothing to replay - a delivery that was never sent has no delivery to attest"
+    },
+    "unknown": {
+      "becomes_proof_when": "somebody determines it. An unknown link proves nothing and is ranked below every gap so a chain cannot read green through one.",
+      "is_proof": false,
+      "means": "nobody has determined it"
+    }
+  },
+  "empty_chain_is": "unknown",
+  "non_proving": [
+    "blocked",
+    "legacy_gap",
+    "missing_record",
+    "not_attestable",
+    "not_attributable",
+    "not_replayable",
+    "unknown"
+  ],
+  "non_proving_statuses": [
+    "blocked",
+    "legacy_gap",
+    "missing_record",
+    "not_attestable",
+    "not_attributable",
+    "not_replayable",
+    "unknown"
+  ],
+  "not_claimed": [
+    "legal_grade_audit",
+    "production_audit_ready",
+    "delivery_occurred",
+    "tenant_read_the_digest",
+    "real_customer_evidence"
+  ],
+  "proving": [
+    "attested",
+    "hash_verified",
+    "linked_record_found"
+  ],
+  "proving_statuses": [
+    "attested",
+    "hash_verified",
+    "linked_record_found"
+  ],
+  "rank": {
+    "attested": 0,
+    "blocked": 9,
+    "hash_verified": 1,
+    "legacy_gap": 3,
+    "linked_record_found": 2,
+    "missing_record": 4,
+    "not_attestable": 7,
+    "not_attributable": 5,
+    "not_replayable": 6,
+    "unknown": 8
+  },
+  "schema_version": "nf_evidence_status_vocabulary_v1",
+  "scope": "controlled_dev_demo",
+  "status_count": 10,
+  "status_is_per_link_not_per_record": true,
+  "statuses": [
+    "attested",
+    "hash_verified",
+    "linked_record_found",
+    "legacy_gap",
+    "missing_record",
+    "not_attributable",
+    "not_replayable",
+    "not_attestable",
+    "unknown",
+    "blocked"
+  ],
+  "statuses_total": 10,
+  "why": "every one of the 85 delivery intents has an audit link that resolves and a digest link that never will. One status per record would have to pick one and be wrong about the other."
+}

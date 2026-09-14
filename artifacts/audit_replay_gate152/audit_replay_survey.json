@@ -1,0 +1,25 @@
+{
+  "answer": "two of three links already worked; the third now does",
+  "gate_151_defect": {
+    "fixed_in_gate": "152",
+    "how_it_briefly_read_green_here": "an invalid recipient fingerprint was refusing the write for an unrelated reason; fixing the fingerprint removed the real blocker and the unpersisted-digest intent was accepted",
+    "lesson": "a blocker that gates nothing is a comment",
+    "reported_without_enforcing": true,
+    "the_fix": "the merged verdict gates the write AND overrides the reported storage_allowed, so blocked_reasons, storage_allowed and rows_written all say the same thing",
+    "what": "the persisted-digest delivery guard reported without enforcing",
+    "why": "record_delivery_intent gates its write on decision['storage_allowed'], which prepare_delivery_intent computes from its own blocked list and cannot know about persistence - it takes no connection, deliberately. Gate 151 appended digest_id_names_no_persisted_digest to the caller's list instead, so the reason appeared and the row was written.",
+    "why_it_shipped_looking_correct": "Gate 151's verifier exercised digest_record_exists directly rather than driving record_delivery_intent end to end"
+  },
+  "join_direction": "the intent points at the audit event; nf_audit_events has no digest_id or intent_id column. A replay looking for the link on the event would report a gap that is not there.",
+  "question": "can this system replay what it recorded?",
+  "schema_version": "nf_audit_replay_gate152_artifacts_v1",
+  "scope": "controlled_dev_demo audit replay, not legal-grade audit",
+  "the_measurement": {
+    "digest_delivery_intent_recorded_events": 85,
+    "intents_naming_a_digest": 85,
+    "intents_whose_audit_event_resolves": 85,
+    "intents_whose_digest_record_existed": 0
+  },
+  "what_that_reframed": "Gate 150 said intents name a digest nobody kept, which was true and was one link. The intents themselves are properly attributed: every audit_event_id resolves. The chain was two-thirds intact, and describing it as absent would understate the system as badly as calling it complete would overstate it.",
+  "why_status_is_per_link": "every legacy intent is simultaneously linked_record_found on its audit link and legacy_gap on its digest link. One status per record would have to pick one and be wrong about the other."
+}

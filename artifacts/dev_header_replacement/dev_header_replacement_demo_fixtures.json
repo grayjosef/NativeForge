@@ -13,6 +13,7 @@
     "central_replacement_module_available": true,
     "converted_dev_header_module_names": [
       "activation_routes.py",
+      "audit_replay_routes.py",
       "auth.py",
       "award_document_routes.py",
       "award_requirement_proof_routes.py",
@@ -77,6 +78,7 @@
     "actual_central_replacement_available": true,
     "actual_converted_route_modules": [
       "activation_routes.py",
+      "audit_replay_routes.py",
       "auth.py",
       "award_document_routes.py",
       "award_requirement_proof_routes.py",

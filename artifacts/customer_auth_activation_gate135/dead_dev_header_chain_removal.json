@@ -12,6 +12,7 @@
   "get_db_session_kept_because": "route modules import it; it hands out a session and reads no header",
   "get_db_session_kept_importers": [
     "activation_routes.py",
+    "audit_replay_routes.py",
     "award_document_routes.py",
     "award_requirement_proof_routes.py",
     "award_requirements_routes.py",

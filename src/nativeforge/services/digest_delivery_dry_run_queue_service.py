@@ -345,14 +345,21 @@ def record_delivery_intent(
         organization_id=decision["organization_id"],
         digest_id=digest_id,
     )
-    if require_persisted_digest and not digest_persisted:
+    # This blocker must gate the write, not merely appear beside it.
+    # `decision["storage_allowed"]` is computed by prepare_delivery_intent from
+    # its own list and knows nothing about this one, so the two are combined
+    # below rather than the reason being appended and forgotten.
+    digest_linkage_refused = bool(require_persisted_digest and not digest_persisted)
+    if digest_linkage_refused:
         blocked.append("digest_id_names_no_persisted_digest")
 
     moment = now or datetime.now(UTC)
     written = 0
     row_id = intent_id or uuid.uuid4()
 
-    if decision["storage_allowed"] and connection is not None:
+    storage_allowed = bool(decision["storage_allowed"] and not digest_linkage_refused)
+
+    if storage_allowed and connection is not None:
         anchor = _as_uuid(decision["organization_id"])
         existing = int(
             connection.execute(
@@ -408,6 +415,19 @@ def record_delivery_intent(
     return _json_safe(
         {
             **decision,
+            # The merged verdict, overriding the one `decision` carries.
+            #
+            # `prepare_delivery_intent` cannot check persistence - it takes no
+            # connection, deliberately - so its `storage_allowed` is computed
+            # before the digest linkage is known. Spreading it unchanged left
+            # the reported field saying True beside a blocked_reasons list
+            # containing `digest_id_names_no_persisted_digest` and
+            # `rows_written: 0`. Three fields, two of them right.
+            #
+            # A caller reading `storage_allowed` to decide whether the write
+            # happened would have been wrong, which is the same report-only
+            # defect one field further along.
+            "storage_allowed": storage_allowed,
             "intent_id": str(row_id) if written else None,
             "rows_written": written,
             "rows_deleted": 0,

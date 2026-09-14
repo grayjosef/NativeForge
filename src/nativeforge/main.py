@@ -9,6 +9,9 @@ from nativeforge.api.activation_routes import (
     demo_activation_router,
     real_activation_router,
 )
+from nativeforge.api.audit_replay_routes import (
+    router as audit_replay_router,
+)
 from nativeforge.api.auth import install_auth_security_scheme
 from nativeforge.api.auth import router as auth_router
 
@@ -185,6 +188,10 @@ def create_app() -> FastAPI:
     # Gate 151: the digest a delivery intent names, stored and readable back.
     # Nothing here sends, renders to a stored body, or keeps a recipient.
     app.include_router(tenant_digest_persistence_router)
+    # Gate 152: audit replay and the evidence ledger. GET only - a replay
+    # reads, fabricates nothing, and reports legacy gaps rather than filling
+    # them.
+    app.include_router(audit_replay_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

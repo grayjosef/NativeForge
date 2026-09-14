@@ -1,0 +1,58 @@
+{
+  "a_defect_found_building_it": {
+    "effect": "the ledger hashed the JSON string while the stored hash was over the parsed dict, and reported a sound digest as missing_record - a false negative in an audit ledger, which is the worst direction for this kind of error",
+    "family": "Gate 151's DATE coercion - an untyped read diverging from the typed one",
+    "fix": "read the payload through the repository that owns it, so the two paths agree by construction rather than by coincidence",
+    "what": "a raw sa.text() read of a JSON column returns a str on SQLite; only the typed sa.Table path deserializes it"
+  },
+  "entry_fields": [
+    "organization_id",
+    "evidence_type",
+    "record_id",
+    "related_record_ids",
+    "evidence_status",
+    "is_proof",
+    "payload_hash",
+    "created_at",
+    "fact_status",
+    "is_demo",
+    "replay_limitations"
+  ],
+  "evidence_types": [
+    "digest_record",
+    "delivery_intent",
+    "audit_event"
+  ],
+  "excluded_sources": [
+    {
+      "source": "nf_award_requirement_proof_events",
+      "why": "award compliance evidence is a different subject from whether a digest was shown and an intention recorded; one ledger answering both would have summary counts that answer neither"
+    },
+    {
+      "source": "nf_award_documents",
+      "why": "document metadata, and no body is stored anywhere"
+    }
+  ],
+  "exposes": "counts, hashes, statuses and ids",
+  "never_exposes": [
+    "a recipient address",
+    "a provider subject",
+    "a rendered body",
+    "a document body"
+  ],
+  "overall_status_rule": "the weakest entry, never an average",
+  "schema_version": "nf_audit_replay_gate152_artifacts_v1",
+  "type_limitations": {
+    "audit_event": [
+      "an audit event records an action, not what a tenant saw"
+    ],
+    "delivery_intent": [
+      "an intent is a plan; nothing was sent and there is no delivery to attest",
+      "the intent stores counts, not the items the digest showed"
+    ],
+    "digest_record": [
+      "nothing records whether a tenant read this digest",
+      "an archived digest is still readable; archive is a state"
+    ]
+  }
+}

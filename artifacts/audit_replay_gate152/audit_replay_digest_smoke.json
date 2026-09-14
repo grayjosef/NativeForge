@@ -1,0 +1,23 @@
+{
+  "fabricates": false,
+  "links_checked": [
+    "digest_record",
+    "payload_hash",
+    "delivery_intent"
+  ],
+  "proved": [
+    "a persisted digest reads back by organization and id",
+    "the stored hash equals one recomputed over the stored payload",
+    "a tampered payload fails verification",
+    "a digest no intent names reads not_replayable, honestly",
+    "an archived digest is still replayable by id"
+  ],
+  "refused": [
+    "a digest that does not exist - missing_record, not fabricated",
+    "another organization's digest - the same answer as absent",
+    "the real organization, by name"
+  ],
+  "schema_version": "nf_audit_replay_gate152_artifacts_v1",
+  "subject": "digest",
+  "writes": 0
+}

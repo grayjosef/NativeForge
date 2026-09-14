@@ -1,0 +1,20 @@
+{
+  "backfilled": false,
+  "enforcement": {
+    "default": false,
+    "enforced_end_to_end_since": "Gate 152",
+    "flag": "require_persisted_digest",
+    "why_default_off": "the existing intents predate the table and Gate 142's callers are correct as written; a blocker applied unconditionally would retroactively invalidate history that is not wrong"
+  },
+  "remedy": "new intents recorded against persisted digests. The count falls visibly as they are, and the verifier prints it on every run.",
+  "schema_version": "nf_audit_replay_gate152_artifacts_v1",
+  "status": "legacy_gap",
+  "what": "delivery intents whose digest was never persisted",
+  "what_would_close_them": [
+    "every live intent resolving to a persisted digest",
+    "the legacy rows archived, or accepted as pre-table history",
+    "the flag default flipped, in a change somebody reviews"
+  ],
+  "why_not_backfilled": "the digests cannot be reconstructed - the snapshots they were built from are not guaranteed unchanged, so a regenerated digest would be a digest for that period and not the one the intent referred to. Storing one would produce a record that looks like evidence and is not.",
+  "why_not_missing_record": "a legacy gap is not an error. These intents recorded a real intention accurately; what they could not do was keep the thing they referred to, because there was nothing to keep it in."
+}
