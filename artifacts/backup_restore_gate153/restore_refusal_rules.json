@@ -1,0 +1,67 @@
+{
+  "forbidden_fields": [
+    "access_token",
+    "address",
+    "body_bytes",
+    "client_secret",
+    "code_challenge",
+    "cookie",
+    "document_body",
+    "email",
+    "id_token",
+    "object_bytes",
+    "pkce_verifier",
+    "pkce_verifier_encrypted",
+    "pkce_verifier_hash",
+    "recipient",
+    "recipient_email",
+    "refresh_token",
+    "rendered_body",
+    "state_hash",
+    "subject"
+  ],
+  "nothing_is_invented": "a row whose link points outside the payload is restored with the dangling link intact. A restore that filled in the missing end would be manufacturing evidence; the verification reports it.",
+  "only_target_kind_accepted": "isolated_temporary_database",
+  "production_backup_ready": false,
+  "refusals": [
+    {
+      "blocker": "restore_target_is_not_isolated",
+      "exercised_by": "the verifier runs this call and asserts the block",
+      "means": "the target was not declared an isolated database"
+    },
+    {
+      "blocker": "restore_target_is_the_source_database",
+      "exercised_by": "the verifier runs this call and asserts the block",
+      "means": "the target URL equals the source URL"
+    },
+    {
+      "blocker": "payload_hash_mismatch",
+      "checked": "BEFORE any row is written, never after",
+      "means": "a table does not hash to what the payload claims"
+    },
+    {
+      "blocker": "payload_contains_a_forbidden_field",
+      "means": "a field arrived that no manifest table carries"
+    },
+    {
+      "blocker": "payload_contains_a_non_fixture_row",
+      "means": "refused as a whole rather than filtered. A mixed payload means the export that produced it was wrong, and loading half of it would hide that."
+    },
+    {
+      "blocker": "real_organization_refused_by_name",
+      "means": "the payload names the real organization"
+    },
+    {
+      "blocker": "migration_head_mismatch",
+      "means": "the payload and the target disagree on schema version"
+    }
+  ],
+  "restore_limitations": [
+    "rows are written through sa.text so the stored representation survives; a PostgreSQL target would need per-type coercion this does not do",
+    "the organizations row is a precondition the target must already have; it is never restored, so the real organization cannot arrive this way",
+    "a row whose link points outside the payload is restored with the dangling link intact - the verification reports it, the restore does not fix it",
+    "this is not production backup, and proves nothing about a managed instance"
+  ],
+  "schema_version": "nf_backup_restore_gate153_artifacts_v1",
+  "why_a_refusal_is_run_not_asserted": "Gate 134F: a permitted branch nobody can reach makes a refusal unfalsifiable. Both target refusals are called by the verifier and by a test, and each must refuse AND write zero rows."
+}

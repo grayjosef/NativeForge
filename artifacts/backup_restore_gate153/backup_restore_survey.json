@@ -1,0 +1,40 @@
+{
+  "a_second_defect_found_while_building": {
+    "a_third": "the same check then measured the whole chain's evidence_status, which is the WEAKEST link. On the one persisted fixture digest that link is not_replayable, because no delivery intent names it - an honest Gate 152 finding about queueing that says nothing about whether the payload hashes. It does. The check now reads the payload_hash link.",
+    "what": "the restore verification read the digest primary key `id` and asked the replay about it, but `replay_digest` resolves the separate tenant-facing `digest_id` column",
+    "what_it_looked_like": "missing_record for a digest sitting in the table - a lookup key mistake wearing the costume of a data integrity failure"
+  },
+  "gate": "153",
+  "migration_head": "0042",
+  "production_backup_ready": false,
+  "schema_version": "nf_backup_restore_gate153_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "subject": "operational backup and restore readiness",
+  "the_defect_this_gate_found_in_its_own_first_draft": {
+    "the_fix": "classify by meaning with a declared reason per table. The name matcher survives only as review_hint_columns, documented as a review aid and never a gate.",
+    "the_shape_of_the_mistake": "substring versus meaning - the defect class this campaign has now hit about eighteen times, committed here by the tool built to prevent an information leak",
+    "what": "the table classifier matched column NAMES against a list of unsafe words including `state`",
+    "what_it_flagged": [
+      "nf_org_memberships.state - VARCHAR(32), holds 'active'",
+      "nf_authority_proof_records.state - VARCHAR(32), Gate 52 lifecycle"
+    ],
+    "why_both_are_false_positives": "both are row lifecycle states. The word also names an OAuth state, and a name-matching scan cannot tell them apart."
+  },
+  "two_different_harnesses": {
+    "data_path": {
+      "gate": "153",
+      "question": "can this system export its own controlled dev/demo operational state, load it into an isolated database, and still pass the Gate 152 replay?",
+      "result": "runnable today, on the dev database, with no provider",
+      "verifier": "scripts/verify_nativeforge_backup_restore_readiness.sh"
+    },
+    "infrastructure_path": {
+      "gate": "61/65",
+      "question": "can the provider dump and restore a database?",
+      "result": "SKIP",
+      "unblocked_by_gate_153": false,
+      "verifier": "scripts/verify_nativeforge_backup_restore.sh",
+      "why": "no managed instance exists. Every substantive check is SKIP and has been since it was written."
+    }
+  },
+  "why_the_data_path_is_worth_having_on_its_own": "a provider dump proves bytes survive a round trip. It proves nothing about whether a digest still hashes, an intent still resolves, or an archived row still reads - which is what a restore has to be good for."
+}

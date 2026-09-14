@@ -27,6 +27,7 @@
     "form_package_routes.py",
     "grant_spark_routes.py",
     "nofo_extraction_routes.py",
+    "operational_backup_routes.py",
     "opportunity_discovery_routes.py",
     "pursuit_brief_routes.py",
     "pursuit_routes.py",

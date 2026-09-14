@@ -1,0 +1,75 @@
+{
+  "excluded_count": 8,
+  "excluded_tables": [
+    {
+      "detail": "email is a real address and subject is the provider subject. Fifteen gates have kept both out of logs, artifacts and terminals; a backup is not the place to put them back.",
+      "exclusion_reason": "carries_the_two_values_this_campaign_protects",
+      "included": false,
+      "table": "nf_identities"
+    },
+    {
+      "detail": "state_hash, pkce_verifier_hash, pkce_verifier_encrypted and code_challenge. No organization_id either, so it is unscopeable as well as unsafe.",
+      "exclusion_reason": "oauth_state_and_pkce_verifier",
+      "included": false,
+      "table": "nf_auth_redirect_states"
+    },
+    {
+      "detail": "no organization_id, so an export could not be scoped",
+      "exclusion_reason": "auth_flow_evidence_without_an_org_partition",
+      "included": false,
+      "table": "nf_auth_validation_events"
+    },
+    {
+      "detail": "includes the real organization. A restore target must already have the organization row; recreating it from a backup would be how the real org arrives somewhere it was never authorized.",
+      "exclusion_reason": "a_restore_precondition_not_a_payload",
+      "included": false,
+      "table": "organizations"
+    },
+    {
+      "detail": "recorded as export metadata and compared on restore",
+      "exclusion_reason": "schema_state_not_data",
+      "included": false,
+      "table": "alembic_version"
+    },
+    {
+      "detail": "NOT because a column is called `state` - that column holds 'active', a row lifecycle state. It is excluded because a membership joins an identity to an organization, and identities are excluded, so restoring memberships would produce rows pointing at people the backup does not contain.",
+      "exclusion_reason": "membership_is_identity_adjacent",
+      "included": false,
+      "table": "nf_org_memberships"
+    },
+    {
+      "detail": "no organization_id; and a restore must contact no source",
+      "exclusion_reason": "source_response_evidence",
+      "included": false,
+      "table": "nf_raw_source_payloads"
+    },
+    {
+      "detail": "no organization_id, so an export could not be scoped",
+      "exclusion_reason": "no_org_partition",
+      "included": false,
+      "table": "nf_evidence_intake_records"
+    }
+  ],
+  "organizations_is_a_precondition_not_a_payload": "a restore target must already hold the organization row. Recreating it from a backup is how the real organization would arrive somewhere nobody authorized it.",
+  "review_hint_columns": [
+    "email",
+    "subject",
+    "recipient",
+    "address",
+    "token",
+    "cookie",
+    "state",
+    "verifier",
+    "secret",
+    "body",
+    "content",
+    "bytes"
+  ],
+  "review_hints_are_not_a_gate": "`state` matches both an OAuth state and a row lifecycle state. Every exclusion here is a reason a person wrote, not a word a scanner matched.",
+  "schema_version": "nf_backup_restore_gate153_artifacts_v1",
+  "the_three_that_must_never_be_exported": [
+    "nf_identities",
+    "nf_auth_redirect_states",
+    "organizations"
+  ]
+}

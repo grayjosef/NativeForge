@@ -1,0 +1,277 @@
+{
+  "classified_by": "meaning, per table",
+  "excluded_count": 8,
+  "excluded_tables": [
+    {
+      "detail": "email is a real address and subject is the provider subject. Fifteen gates have kept both out of logs, artifacts and terminals; a backup is not the place to put them back.",
+      "exclusion_reason": "carries_the_two_values_this_campaign_protects",
+      "included": false,
+      "table": "nf_identities"
+    },
+    {
+      "detail": "state_hash, pkce_verifier_hash, pkce_verifier_encrypted and code_challenge. No organization_id either, so it is unscopeable as well as unsafe.",
+      "exclusion_reason": "oauth_state_and_pkce_verifier",
+      "included": false,
+      "table": "nf_auth_redirect_states"
+    },
+    {
+      "detail": "no organization_id, so an export could not be scoped",
+      "exclusion_reason": "auth_flow_evidence_without_an_org_partition",
+      "included": false,
+      "table": "nf_auth_validation_events"
+    },
+    {
+      "detail": "includes the real organization. A restore target must already have the organization row; recreating it from a backup would be how the real org arrives somewhere it was never authorized.",
+      "exclusion_reason": "a_restore_precondition_not_a_payload",
+      "included": false,
+      "table": "organizations"
+    },
+    {
+      "detail": "recorded as export metadata and compared on restore",
+      "exclusion_reason": "schema_state_not_data",
+      "included": false,
+      "table": "alembic_version"
+    },
+    {
+      "detail": "NOT because a column is called `state` - that column holds 'active', a row lifecycle state. It is excluded because a membership joins an identity to an organization, and identities are excluded, so restoring memberships would produce rows pointing at people the backup does not contain.",
+      "exclusion_reason": "membership_is_identity_adjacent",
+      "included": false,
+      "table": "nf_org_memberships"
+    },
+    {
+      "detail": "no organization_id; and a restore must contact no source",
+      "exclusion_reason": "source_response_evidence",
+      "included": false,
+      "table": "nf_raw_source_payloads"
+    },
+    {
+      "detail": "no organization_id, so an export could not be scoped",
+      "exclusion_reason": "no_org_partition",
+      "included": false,
+      "table": "nf_evidence_intake_records"
+    }
+  ],
+  "forbidden_value_kinds": [
+    "email_address",
+    "provider_subject",
+    "bearer_token",
+    "session_cookie",
+    "oauth_state",
+    "pkce_verifier",
+    "client_secret",
+    "document_body",
+    "object_bytes"
+  ],
+  "included_count": 11,
+  "included_tables": [
+    {
+      "archive_field": "archived_at",
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "151",
+      "hash_fields": [
+        "payload_sha256"
+      ],
+      "included": true,
+      "link_fields": [
+        "digest_id"
+      ],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_tenant_digest_records",
+      "why_included": "the digest a delivery intent names, and the hash that proves it"
+    },
+    {
+      "archive_field": "cancelled_at",
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "142",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [
+        "digest_id",
+        "audit_event_id"
+      ],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_digest_delivery_intents",
+      "why_included": "the intent, its counts, and the two links a replay follows"
+    },
+    {
+      "archive_field": null,
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "65",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [
+        "id"
+      ],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_audit_events",
+      "why_included": "the third link in the replay chain; an action, not a payload"
+    },
+    {
+      "archive_field": null,
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "140",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_source_watchlist_entries",
+      "why_included": "what a tenant asked to watch; no source is contacted by a restore"
+    },
+    {
+      "archive_field": null,
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "140",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_tenant_pursuit_suppressions",
+      "why_included": "a suppression and its audit trail"
+    },
+    {
+      "archive_field": null,
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "139",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_awarded_grants",
+      "why_included": "the award a compliance record hangs from"
+    },
+    {
+      "archive_field": null,
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "125",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_award_requirements",
+      "why_included": "what an award obliges"
+    },
+    {
+      "archive_field": null,
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "126",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_award_requirement_proof_events",
+      "why_included": "what was filed against a requirement"
+    },
+    {
+      "archive_field": null,
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "127",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_award_documents",
+      "why_included": "document METADATA. The table has no body column - Gate 141 kept bytes out of the database entirely - so there is nothing here to exclude."
+    },
+    {
+      "archive_field": null,
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "123",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_tenant_beta_profiles",
+      "why_included": "how a tenant asked NativeForge to behave"
+    },
+    {
+      "archive_field": "revoked_at",
+      "demo_marker": "is_demo",
+      "excluded_fields": [],
+      "gate": "113",
+      "hash_fields": [],
+      "included": true,
+      "link_fields": [],
+      "org_partition": "organization_id",
+      "primary_key": [
+        "id"
+      ],
+      "table": "nf_tenant_customer_org_bindings",
+      "why_included": "which organization a binding names, and its state"
+    }
+  ],
+  "migration_head": "0042",
+  "production_backup_is_a_different_harness": "scripts/verify_nativeforge_backup_restore.sh, which needs a managed instance and returns SKIP until one exists",
+  "production_backup_ready": false,
+  "reads_a_live_schema": false,
+  "review_hint_columns": [
+    "email",
+    "subject",
+    "recipient",
+    "address",
+    "token",
+    "cookie",
+    "state",
+    "verifier",
+    "secret",
+    "body",
+    "content",
+    "bytes"
+  ],
+  "review_hints_are_not_a_gate": "`state` matches both an OAuth state and a row lifecycle state. A name-matching scan flagged nf_org_memberships and nf_authority_proof_records on exactly that, and both hold lifecycle values. Every inclusion and exclusion here is a reason a person wrote.",
+  "schema_version": "nf_operational_backup_manifest_v1",
+  "scope": "controlled_dev_demo",
+  "table_names": [
+    "nf_audit_events",
+    "nf_award_documents",
+    "nf_award_requirement_proof_events",
+    "nf_award_requirements",
+    "nf_awarded_grants",
+    "nf_digest_delivery_intents",
+    "nf_source_watchlist_entries",
+    "nf_tenant_beta_profiles",
+    "nf_tenant_customer_org_bindings",
+    "nf_tenant_digest_records",
+    "nf_tenant_pursuit_suppressions"
+  ],
+  "why_not": "a manifest that changed with the database could not be reviewed; the point of a manifest is that somebody reads it once and the export obeys it"
+}

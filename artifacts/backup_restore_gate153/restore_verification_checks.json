@@ -1,0 +1,20 @@
+{
+  "a_gap_is_supposed_to_survive": "legacy delivery intents whose digest predates persistence must still be legacy_gap afterwards. A restore that reduced the count invented a digest, and fails the lane rather than passing it.",
+  "a_hash_check_with_nothing_to_check_is_not_a_pass": "the verifier requires at least one digest to be hash-proven. Nothing to preserve is not the same as preserved.",
+  "check_count": 9,
+  "checks": [
+    "restored_row_counts_match_the_export",
+    "restored_table_hashes_match_the_export",
+    "restored_digest_payloads_still_hash",
+    "restored_intents_still_resolve_to_a_digest",
+    "gate_152_replay_agrees_on_both_sides",
+    "evidence_ledger_statuses_are_identical",
+    "archived_rows_are_still_archived_and_readable",
+    "a_cross_organization_read_is_still_refused",
+    "legacy_gaps_survived_as_legacy_gaps"
+  ],
+  "equal_is_not_the_same_as_good": "the comparison is source versus restored, not restored versus healthy. A source holding a missing_record must restore to a missing_record: that is a pass here and a finding in the ledger.",
+  "runs_the_gate_152_code_unmodified": "audit_replay_service and evidence_ledger_service, against the restored connection and against the source, compared. If restored state needed its own special replay to pass, the restore would not have restored anything worth having.",
+  "schema_version": "nf_backup_restore_gate153_artifacts_v1",
+  "unknown_is_not_a_pass": "a check that could not run is UNKNOWN, and `verified` is false while any check is UNKNOWN"
+}

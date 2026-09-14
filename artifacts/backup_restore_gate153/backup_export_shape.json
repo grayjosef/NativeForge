@@ -1,0 +1,33 @@
+{
+  "an_export_writes_nothing": true,
+  "every_row_must_be_a_fixture": "is_demo true or fact_status demo_fixture. A row that is neither is counted as skipped_non_fixture_rows rather than silently dropped, because a non-fixture row in a controlled export is a finding.",
+  "hash_is_order_independent": "rows are sorted by their serialised form before hashing, so two exports of the same data hash the same whatever order the database returned them in. An unordered SELECT is not a guarantee, and a hash that changed with row order would fail a restore for no reason.",
+  "included_count": 11,
+  "included_tables": [
+    "nf_tenant_digest_records",
+    "nf_digest_delivery_intents",
+    "nf_audit_events",
+    "nf_source_watchlist_entries",
+    "nf_tenant_pursuit_suppressions",
+    "nf_awarded_grants",
+    "nf_award_requirements",
+    "nf_award_requirement_proof_events",
+    "nf_award_documents",
+    "nf_tenant_beta_profiles",
+    "nf_tenant_customer_org_bindings"
+  ],
+  "no_route_returns_the_rows": "the four GET routes return counts, columns, exclusions and hashes. An export exists to be handed to a restore, not to a browser.",
+  "organization_scoped": true,
+  "per_table_fields": [
+    "rows",
+    "row_count",
+    "payload_sha256",
+    "columns",
+    "excluded_fields",
+    "hash_fields",
+    "archive_field"
+  ],
+  "schema_version": "nf_backup_restore_gate153_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "the_gate_is_the_value_scan_not_the_column_name": "every exported payload is scanned for the SHAPES that must never leave: an address, a provider subject, a token, an OAuth state, a PKCE verifier"
+}

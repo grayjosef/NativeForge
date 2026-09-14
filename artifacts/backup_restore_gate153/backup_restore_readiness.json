@@ -1,0 +1,43 @@
+{
+  "condition_count": 8,
+  "condition_evidence": {
+    "export_carries_a_hash_per_table": "a sha256 over the sorted serialised rows, so a restore can tell whether it received what was sent and row order cannot change it",
+    "export_scoped_to_one_organization": "every manifest table is partitioned by organization_id, the real organization is refused by name, and a non-fixture row is counted rather than silently dropped",
+    "legacy_gaps_preserved": "the legacy gap count is identical after a restore. A restore that reduced it would have invented a digest.",
+    "manifest_classified_by_meaning": "every included and excluded table carries a reason a person wrote. A name-matching pass flagged nf_org_memberships because a column is called `state` and that column holds 'active', so the name matcher survives only as a review hint.",
+    "restore_into_isolated_target_works": "the export loads into a freshly migrated temporary database and the row counts and per-table hashes come back equal",
+    "restore_into_live_refused": "a target not declared an isolated temporary database is blocked. The verifier runs this call too, so neither refusal is unfalsifiable.",
+    "restore_into_source_refused": "a restore whose target URL equals the source URL is blocked before a row is written. The verifier runs this call and asserts the block.",
+    "restored_state_passes_the_gate_152_replay": "audit_replay_service and evidence_ledger_service, unmodified, answer identically against the restored database and the source"
+  },
+  "conditions": [
+    "manifest_classified_by_meaning",
+    "export_scoped_to_one_organization",
+    "export_carries_a_hash_per_table",
+    "restore_into_isolated_target_works",
+    "restore_into_source_refused",
+    "restore_into_live_refused",
+    "restored_state_passes_the_gate_152_replay",
+    "legacy_gaps_preserved"
+  ],
+  "derived_never_supplied": true,
+  "lane": "operational_backup_restore_ready",
+  "must_stay_false": [
+    "email_delivery",
+    "source_monitoring_live",
+    "object_store_configured",
+    "customer_data_backed_up",
+    "production_backup_ready"
+  ],
+  "production_backup_ready": false,
+  "production_is_never_computed": true,
+  "schema_version": "nf_backup_restore_gate153_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "what_this_lane_does_not_mean": [
+    "that production is backed up",
+    "that any customer data was backed up; none exists",
+    "that object storage was backed up; none is configured",
+    "that an RPO or RTO is enforced by anything",
+    "that a real organization was exported, restored or touched"
+  ]
+}
