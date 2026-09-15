@@ -283,6 +283,22 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         note="this registry's own verifier",
     ),
     _verifier(
+        "source_scheduler_runtime",
+        lane="scheduler_runtime_ready",
+        kind=KIND_READINESS,
+        gate="156",
+        blocking=True,
+        depends_on=("no_live_source_calls", "source_monitoring_preflight"),
+        note=(
+            "a scheduler that evaluates every registry source and refuses "
+            "every one. It does NOT clear "
+            "`scheduler_component_absent:scheduler_runtime`, which is find_spec "
+            "over eight third-party packages: installing one would clear the "
+            "blocker without computing a single due date. "
+            "source_monitoring_live stays false."
+        ),
+    ),
+    _verifier(
         "operational_durability_reassessment",
         lane="operational_durability_reassessment",
         kind=KIND_READINESS,

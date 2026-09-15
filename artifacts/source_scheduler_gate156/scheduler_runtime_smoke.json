@@ -1,0 +1,66 @@
+{
+  "clock_is_injected": true,
+  "collectors_invoked": 0,
+  "cycle": {
+    "jobs_by_state": {
+      "blocked": 3,
+      "disabled": 0,
+      "due": 0,
+      "scheduled": 0,
+      "unknown": 0,
+      "waiting": 0
+    },
+    "jobs_due": 1,
+    "jobs_executable": 0,
+    "jobs_known": 3,
+    "jobs_refused": 3,
+    "refusal_reasons": {
+      "no_check_interval_recorded": 1,
+      "no_collector_is_registered_for_this_source": 3,
+      "source_activation_not_approved": 3,
+      "source_requires_human_review": 3,
+      "source_terms_not_approved": 2
+    }
+  },
+  "deterministic": true,
+  "evaluated_at": "2026-09-15T12:00:00Z",
+  "live_source_calls": 0,
+  "next_run_computation": [
+    {
+      "case": "interval and a last check",
+      "check_interval_days": 7,
+      "computed_next_run_at": "2026-09-08T12:00:00+00:00",
+      "disagrees": false,
+      "last_checked_at": "2026-09-01T12:00:00+00:00",
+      "next_run_at": "2026-09-08T12:00:00+00:00",
+      "no_cadence_means_never_due": false,
+      "recorded_next_check_due_at": null,
+      "source_of_truth": "computed"
+    },
+    {
+      "case": "no interval recorded",
+      "check_interval_days": null,
+      "computed_next_run_at": null,
+      "disagrees": false,
+      "last_checked_at": "2026-09-01T12:00:00+00:00",
+      "next_run_at": null,
+      "no_cadence_means_never_due": true,
+      "recorded_next_check_due_at": null,
+      "source_of_truth": "undetermined"
+    },
+    {
+      "case": "a recorded due date disagrees with the computed one",
+      "check_interval_days": 7,
+      "computed_next_run_at": "2026-09-08T12:00:00+00:00",
+      "disagrees": true,
+      "last_checked_at": "2026-09-01T12:00:00+00:00",
+      "next_run_at": "2026-10-01T00:00:00+00:00",
+      "no_cadence_means_never_due": false,
+      "recorded_next_check_due_at": "2026-10-01T00:00:00+00:00",
+      "source_of_truth": "recorded"
+    }
+  ],
+  "no_cadence_means_never_due": "a source nobody set an interval for is a source nobody decided the cadence for. Reading that as 'check it now' is backwards.",
+  "schema_version": "nf_source_scheduler_gate156_artifacts_v1",
+  "threads_started": 0
+}

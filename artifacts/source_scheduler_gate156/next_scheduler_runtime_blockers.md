@@ -1,0 +1,45 @@
+# Gate 156 — what still blocks source collection
+
+`scheduler_runtime_ready` is true. `source_monitoring_live` is false,
+and nothing in this gate can change that.
+
+## Cleared by this gate
+
+```text
+nothing computes a next run time      -> compute_next_run_at()
+nothing runs a cycle                  -> run_scheduler_cycle()
+no machine-readable scheduler health  -> build_scheduler_health()
+```
+
+## NOT cleared by this gate
+
+```text
+scheduler_package_installed    still false, deliberately. Gate 143's
+                               blocker is find_spec over eight
+                               packages; installing one would clear
+                               it without computing a due date.
+background_worker              Gate 157
+persistent collection job store Gate 158
+periodic_trigger               Gate 159 - no .timer or .cron exists
+production_raw_payload_store   Gate 160
+a collector                    Gate 161
+source activation approval     Gate 162, and a human before it
+```
+
+## The two blockers no gate in this block clears
+
+```text
+171 sources terms_blocked   a human must read each source's terms
+  6 sources human_review    a human must look
+```
+
+Building the entire 156-165 block leaves both untouched. When they
+clear, activation is one approval away instead of a runtime away.
+
+## The claim this gate must not support
+
+> NativeForge monitors grant sources.
+
+It does not. It can now evaluate 177 sources against a clock and
+refuse all 177, which is a scheduler that works and a system that
+polls nothing.

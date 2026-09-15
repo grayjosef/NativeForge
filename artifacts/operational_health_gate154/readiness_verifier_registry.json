@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 25,
+  "blocking_count": 26,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -32,6 +32,7 @@
       "operational_durability_reassessment",
       "operational_health_runbook",
       "source_monitoring_preflight",
+      "source_scheduler_runtime",
       "tenant_digest_operational",
       "tenant_digest_persistence",
       "verified_binding_approval_boundary"
@@ -63,7 +64,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 29,
+  "verifier_count": 30,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -90,6 +91,7 @@
     "postgres_rls",
     "rls_isolation",
     "source_monitoring_preflight",
+    "source_scheduler_runtime",
     "tenant_digest_operational",
     "tenant_digest_persistence",
     "test_selection_coverage",
@@ -400,6 +402,22 @@
       "production": false,
       "script": "scripts/verify_nativeforge_operational_health_runbook.sh",
       "verifier": "operational_health_runbook"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "no_live_source_calls",
+        "source_monitoring_preflight"
+      ],
+      "expected_result": "PASS",
+      "gate": "156",
+      "kind": "readiness_lane",
+      "lane": "scheduler_runtime_ready",
+      "note": "a scheduler that evaluates every registry source and refuses every one. It does NOT clear `scheduler_component_absent:scheduler_runtime`, which is find_spec over eight third-party packages: installing one would clear the blocker without computing a single due date. source_monitoring_live stays false.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_source_scheduler_runtime.sh",
+      "verifier": "source_scheduler_runtime"
     },
     {
       "blocking": true,

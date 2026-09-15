@@ -1,0 +1,36 @@
+{
+  "gate": "156",
+  "no_migration_was_added": {
+    "alembic_head_unchanged": true,
+    "what_a_new_table_would_cost": "ten duplicated columns and two places to ask when a source is due, which is how they come to disagree",
+    "why": "nf_opportunity_sources already carries check_interval_days, next_check_due_at, last_checked_at, last_check_status and consecutive_failure_count"
+  },
+  "no_scheduling_package_added": true,
+  "schema_version": "nf_source_scheduler_gate156_artifacts_v1",
+  "source_monitoring_live": false,
+  "subject": "hermetic source scheduler runtime",
+  "the_two_things_called_scheduler_runtime": {
+    "is_this_a_defect": "no. Gate 99D found it and split the field deliberately, reporting both side by side. This gate says so rather than claiming a finding it does not have.",
+    "scheduler_package_installed": "False - find_spec over apscheduler, dramatiq, arq, huey, schedule, croniter, taskiq, procrastinate",
+    "scheduler_runtime_available": "True - a runtime MODE exists (dry_run_in_process)",
+    "the_consequence": "Gate 143's blocker `scheduler_component_absent:scheduler_runtime` means NO PACKAGE IS INSTALLED. Installing one would clear the blocker without computing a single due date, so this gate installs none and the blocker stays listed."
+  },
+  "two_registries_exist_and_nothing_joins_them": {
+    "consequence": "terms state and schedule state live in different places. Joining them is what a persistent job store would be for, which is Gate 158.",
+    "database_table": "nf_opportunity_sources, 40 rows, carries the cadence",
+    "file_registry": "177 rows, carries no terms column - every row UNKNOWN"
+  },
+  "uv_lock_untouched": true,
+  "what_already_existed": {
+    "100C_dry_run_worker": "run_dry_run_worker() - marks jobs",
+    "98B_schedule_decision": "evaluate_schedule() - takes a due date, compares to a clock",
+    "98E_scheduler_readiness": "detects components by import",
+    "99B_job_model": "build_source_job() - identity and execution mode",
+    "99C_queue": "build_dry_run_queue() - a list of work"
+  },
+  "what_was_missing": [
+    "nothing computed a next run time from an interval and a last check",
+    "nothing walked sources against a clock and reported what is due",
+    "nothing reported scheduler health as a machine-readable lane"
+  ]
+}

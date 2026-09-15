@@ -1,0 +1,20 @@
+{
+  "activation_state": "activation_blocked",
+  "blockers": [
+    "no_collector_is_registered_for_this_source",
+    "source_activation_not_approved",
+    "source_requires_human_review",
+    "source_terms_not_approved"
+  ],
+  "collector_invoked": false,
+  "collector_registered": false,
+  "due": true,
+  "executable": false,
+  "fetch_performed": false,
+  "human_review_state": "human_review_required",
+  "runtime_state": "blocked",
+  "schema_version": "nf_source_scheduler_gate156_artifacts_v1",
+  "source_id": "nf-fixture-gate156-terms-blocked",
+  "terms_state": "terms_unknown",
+  "why_it_refuses": "every prerequisite must be affirmatively the permitting value. This one has none of them."
+}

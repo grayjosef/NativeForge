@@ -83,6 +83,9 @@ from nativeforge.api.pursuit_brief_routes import (
     real_pursuit_brief_router,
 )
 from nativeforge.api.pursuit_routes import demo_pursuit_router, real_pursuit_router
+from nativeforge.api.source_collection_scheduler_routes import (
+    router as source_scheduler_router,
+)
 from nativeforge.api.source_ingestion_routes import (
     demo_source_ingestion_router,
     real_source_ingestion_router,
@@ -213,6 +216,10 @@ def create_app() -> FastAPI:
     # GET only. Nothing here activates a capability or changes a lane - a
     # reassessment that could change what it reassesses would not be one.
     app.include_router(durability_reassessment_router)
+    # Gate 156: the source scheduler runtime. It evaluates a schedule and
+    # refuses every source; no route can dispatch, fetch or approve anything,
+    # and source_monitoring_live is a constant false.
+    app.include_router(source_scheduler_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

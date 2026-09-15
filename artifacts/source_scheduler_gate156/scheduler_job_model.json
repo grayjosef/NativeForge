@@ -1,0 +1,35 @@
+{
+  "built_on": "source_scheduler_job_model_service.build_source_job (Gate 99B) - composed rather than duplicated, because a second job model gives the repository two places to ask whether a job may run",
+  "due_is_not_executable": "`due` is a fact about a clock. `executable` is a fact about approvals. A job may be overdue and still refuse, and reporting only the refusal would make a backlog invisible.",
+  "executable_requires_every_prerequisite_affirmatively_true": "not 'no blockers found'. Absence of evidence is not permission, and a source whose terms nobody has read is UNKNOWN.",
+  "expected_executable_count_today": 0,
+  "job_fields": [
+    "job_id",
+    "source_id",
+    "organization_id",
+    "schedule",
+    "next_run_at",
+    "last_run_at",
+    "runtime_state",
+    "activation_state",
+    "terms_state",
+    "human_review_state",
+    "blockers",
+    "executable",
+    "fact_status"
+  ],
+  "permitting_values": {
+    "activation_state": "activation_approved",
+    "human_review_state": "human_review_cleared",
+    "terms_state": "terms_approved"
+  },
+  "runtime_states": [
+    "scheduled",
+    "due",
+    "waiting",
+    "blocked",
+    "disabled",
+    "unknown"
+  ],
+  "schema_version": "nf_source_scheduler_gate156_artifacts_v1"
+}

@@ -1,0 +1,36 @@
+{
+  "condition_evidence": {
+    "clock_is_injected": "there is no datetime.now() in the runtime or the loop, so the same inputs give the same counts",
+    "cycle_completed": "a cycle returned counts and its own invariants were clean",
+    "every_job_has_a_state": "jobs_by_state accounts for every job; a job with no state would mean the evaluator fell through",
+    "no_collector_invoked": "collectors_invoked is 0 and no code path can reach one",
+    "no_live_source_call": "live_source_calls is 0; with zero approved sources there is no URL to fetch even if something wanted to",
+    "runtime_module_evaluates": "a next run time was computed from an interval and a last check - the one thing Gates 98-100 do not do"
+  },
+  "conditions": [
+    "runtime_module_evaluates",
+    "cycle_completed",
+    "every_job_has_a_state",
+    "clock_is_injected",
+    "no_collector_invoked",
+    "no_live_source_call"
+  ],
+  "conditions_met": {
+    "clock_is_injected": true,
+    "cycle_completed": true,
+    "every_job_has_a_state": true,
+    "no_collector_invoked": true,
+    "no_live_source_call": true,
+    "runtime_module_evaluates": true
+  },
+  "jobs_blocked": 3,
+  "jobs_due": 1,
+  "jobs_executable": 0,
+  "jobs_known": 3,
+  "runtime_ready_is_not_monitoring_live": "scheduler_runtime_ready says the machinery evaluates a schedule. source_monitoring_live says something is polling a source. Nothing is. With 0 approved sources every job refuses.",
+  "scheduler_process_active": null,
+  "scheduler_process_is_gate_157": true,
+  "scheduler_runtime_ready": true,
+  "schema_version": "nf_source_scheduler_gate156_artifacts_v1",
+  "source_monitoring_live": false
+}
