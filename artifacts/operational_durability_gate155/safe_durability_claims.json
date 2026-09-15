@@ -1,0 +1,14 @@
+{
+  "read_with": "unsafe_durability_claims.json",
+  "safe_claim_count": 7,
+  "safe_claims": [
+    "a digest this system wrote can be read back, and its payload hash checked",
+    "the evidence chain this system recorded can be replayed",
+    "the gaps in that chain are counted and reported, and were not filled in",
+    "controlled dev/demo operational state can be exported, restored into an isolated database, and re-verified there",
+    "this deployment can say which services are up, whether its database matches its migrations, whether the built frontend matches HEAD, and whether the running backend predates the code",
+    "ten named operational failure modes are detected and given an exact action",
+    "no readiness lane above required a new approval, and none granted one"
+  ],
+  "schema_version": "nf_operational_durability_gate155_artifacts_v1"
+}

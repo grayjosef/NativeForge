@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 24,
+  "blocking_count": 25,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -29,6 +29,7 @@
       "customer_persistence_live",
       "document_storage_readiness",
       "email_delivery_readiness",
+      "operational_durability_reassessment",
       "operational_health_runbook",
       "source_monitoring_preflight",
       "tenant_digest_operational",
@@ -62,7 +63,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 28,
+  "verifier_count": 29,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -84,6 +85,7 @@
     "fixture_cleanliness",
     "no_live_source_calls",
     "oidc_mode_b",
+    "operational_durability_reassessment",
     "operational_health_runbook",
     "postgres_rls",
     "rls_isolation",
@@ -398,6 +400,24 @@
       "production": false,
       "script": "scripts/verify_nativeforge_operational_health_runbook.sh",
       "verifier": "operational_health_runbook"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "tenant_digest_persistence",
+        "audit_replay_readiness",
+        "backup_restore_readiness",
+        "operational_health_runbook"
+      ],
+      "expected_result": "PASS",
+      "gate": "155",
+      "kind": "readiness_lane",
+      "lane": "operational_durability_reassessment",
+      "note": "the Gates 151-155 close. It RUNS the four block verifiers and the Gate 61/65 production backup harness rather than assuming their results, because a closeout that reported the block green while one of its own gates had regressed would be the whole failure mode of a closeout gate",
+      "production": false,
+      "script": "scripts/verify_nativeforge_operational_durability_reassessment.sh",
+      "verifier": "operational_durability_reassessment"
     },
     {
       "blocking": true,

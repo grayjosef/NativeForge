@@ -1,0 +1,15 @@
+{
+  "a_real_customer_organization_still_does_not_exist": true,
+  "changed": false,
+  "controlled_customer_beta": "LIMITED_GO",
+  "gate_145": "LIMITED_GO",
+  "gate_150": "LIMITED_GO",
+  "outstanding_approvals": [
+    "customer_auth_live - a real person must sign in as themselves",
+    "verified_operational_binding - an approval must be signed",
+    "consent_and_data_boundary_documented - the customer must consent",
+    "customer_beta_scope_approved - an approver must approve the scope"
+  ],
+  "schema_version": "nf_operational_durability_gate155_artifacts_v1",
+  "why_unchanged": "the four outstanding approvals are unchanged and none is technical. Gates 151-154 touched none of them, and a durability block that moved a customer decision would mean one of its gates had granted itself an approval."
+}

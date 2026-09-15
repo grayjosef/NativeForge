@@ -282,6 +282,26 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         depends_on=("backup_restore_readiness",),
         note="this registry's own verifier",
     ),
+    _verifier(
+        "operational_durability_reassessment",
+        lane="operational_durability_reassessment",
+        kind=KIND_READINESS,
+        gate="155",
+        blocking=True,
+        depends_on=(
+            "tenant_digest_persistence",
+            "audit_replay_readiness",
+            "backup_restore_readiness",
+            "operational_health_runbook",
+        ),
+        note=(
+            "the Gates 151-155 close. It RUNS the four block verifiers and the "
+            "Gate 61/65 production backup harness rather than assuming their "
+            "results, because a closeout that reported the block green while "
+            "one of its own gates had regressed would be the whole failure "
+            "mode of a closeout gate"
+        ),
+    ),
     # ---- repository hygiene ---------------------------------------------
     _verifier(
         "test_selection_coverage",

@@ -709,6 +709,45 @@ def build_beta_onboarding_summary(
                     "src/nativeforge/services/runbook_health_service.py"
                 ),
             },
+            "durability_closeout_card": {
+                "block": "Gates 151-155, operational durability",
+                "scope": CONTROLLED_SCOPE,
+                "lanes_created_by_this_block": [
+                    "tenant_digest_persistence_live",
+                    "audit_replay_ready",
+                    "operational_backup_restore_ready",
+                    "operational_health_ready",
+                ],
+                "lanes_that_were_false_and_became_true": [],
+                "why_that_list_is_empty": (
+                    "none of the four existed at Gate 150. They were created "
+                    "and proved; nothing that was false became true."
+                ),
+                # Stated on the card, so four green rows cannot be read as
+                # the product being ready for anyone.
+                "internal_demo_beta": "GO",
+                "controlled_customer_beta": "LIMITED_GO",
+                "production_rollout": "NO_GO",
+                "decisions_unchanged_since_gate_145": True,
+                "production_monitoring_active": False,
+                "production_backup_ready": False,
+                "controlled_customer_pilot_active": False,
+                "activation_mechanism_exists": False,
+                "next_block": "source_collection_runtime",
+                "next_block_why": (
+                    "five of its seven blockers are absent components rather "
+                    "than absent approvals; every other candidate would be "
+                    "another readiness wrapper around a human blocker"
+                ),
+                "next_block_first_gate": (
+                    "the scheduler runtime itself, hermetic, with an empty "
+                    "allowlist - it polls nothing and contacts nothing"
+                ),
+                "next_block_does_not_mean": (
+                    "source_monitoring_live becoming true. 171 sources are "
+                    "terms_blocked and 0 are approved."
+                ),
+            },
             "lane_keys": list(LANE_KEYS),
             "lane_statuses": list(LANE_STATUSES),
             "lanes": [by_lane[key] for key in LANE_KEYS if key in by_lane],

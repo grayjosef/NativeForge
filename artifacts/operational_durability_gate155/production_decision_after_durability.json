@@ -1,0 +1,20 @@
+{
+  "blocked_on": "a managed database instance, which is procurement",
+  "changed": false,
+  "gate_153_did_not_move_this": true,
+  "gate_154_did_not_move_this": true,
+  "harness": "scripts/verify_nativeforge_backup_restore.sh (SKIP)",
+  "no_branch_computes_it": true,
+  "production_backup_ready": false,
+  "production_monitoring_active": false,
+  "production_rollout": "NO_GO",
+  "schema_version": "nf_operational_durability_gate155_artifacts_v1",
+  "status": "unchanged; nothing in this block touched production",
+  "what_would_have_to_happen_first": [
+    "a managed database instance (procurement)",
+    "backup automation, which needs the instance",
+    "point-in-time recovery, which needs a provider that has it",
+    "an executed provider restore, which needs all three",
+    "monitoring and alerting, none of which exists"
+  ]
+}

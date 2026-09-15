@@ -1,0 +1,23 @@
+{
+  "block": "Gates 151-155, operational durability",
+  "gate": "155",
+  "gate_150_predicted_this_block_and_got_two_of_five_wrong": {
+    "actual_152": "audit replay and the evidence ledger",
+    "actual_154": "observability and runbook health",
+    "predicted_152": "source terms review tooling",
+    "predicted_154": "operational runbook and on-call",
+    "the_point": "a prediction is not a measurement"
+  },
+  "how_the_lane_delta_was_measured": "git grep for each lane name across src/ at commit 4d336d1, the Gate 150 commit. All four returned zero files, so the four lanes were CREATED by this block rather than flipped from false.",
+  "how_the_next_block_was_chosen": "by counting, for each candidate, how many of its blockers are absent components rather than absent approvals. Measured from each lane's own verifier output, not estimated.",
+  "no_activation_mechanism_was_created": true,
+  "nothing_was_activated": true,
+  "schema_version": "nf_operational_durability_gate155_artifacts_v1",
+  "subject": "what the block moved, and what comes next",
+  "two_next_step_constants_have_gone_stale_in_this_repository": {
+    "beta_onboarding_readiness_summary_service.NEXT_SAFE_ACTION": "recommended finishing a matrix that was finished at Gate 145; found by Gate 154",
+    "customer_beta_reassessment_service.NEXT_BLOCK": "recommends Gates 151-155, which this gate closes. Spent.",
+    "what_gate_155_does_about_it": "the ranking is derived from supplied blocker counts, so a candidate whose blockers change gets a different answer with nobody editing anything",
+    "why_neither_failed": "a constant cannot go stale loudly"
+  }
+}

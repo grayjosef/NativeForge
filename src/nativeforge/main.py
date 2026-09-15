@@ -64,6 +64,9 @@ from nativeforge.api.nofo_extraction_routes import demo_nofo_router, real_nofo_r
 from nativeforge.api.operational_backup_routes import (
     router as operational_backup_router,
 )
+from nativeforge.api.operational_durability_reassessment_routes import (
+    router as durability_reassessment_router,
+)
 from nativeforge.api.operational_health_routes import (
     router as operational_health_router,
 )
@@ -206,6 +209,10 @@ def create_app() -> FastAPI:
     # GET only, and no route shells out - a health route that ran systemctl
     # would be a command execution surface reachable with a session cookie.
     app.include_router(operational_health_router)
+    # Gate 155: the durability reassessment and the next-activation decision.
+    # GET only. Nothing here activates a capability or changes a lane - a
+    # reassessment that could change what it reassesses would not be one.
+    app.include_router(durability_reassessment_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

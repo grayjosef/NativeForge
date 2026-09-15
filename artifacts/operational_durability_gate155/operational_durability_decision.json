@@ -1,0 +1,387 @@
+{
+  "activation_mechanism_created": false,
+  "any_decision_changed": false,
+  "anything_activated": false,
+  "block": "Gates 151-155, operational durability",
+  "conflations": [
+    {
+      "is_not": "production_backup_ready",
+      "readiness": "operational_backup_restore_ready",
+      "why": "Gate 153 exports controlled dev/demo state and reloads it into an isolated database. The Gate 61/65 harness asks whether a provider can dump and restore a database, needs a managed instance, and returns SKIP. Different harnesses, opposite questions."
+    },
+    {
+      "is_not": "production monitoring",
+      "readiness": "operational_health_ready",
+      "why": "Gate 154 models state from measured facts. There is no APM, no alerting, no external monitor, no uptime record and no error budget, and nothing leaves this host."
+    },
+    {
+      "is_not": "a legally sufficient audit trail",
+      "readiness": "audit_replay_ready",
+      "why": "the records this system wrote can be found, joined and checked against their own hashes. That is not legal standing, and 85 legacy intents still refer to digests nobody kept."
+    },
+    {
+      "is_not": "a digest was delivered or read",
+      "readiness": "tenant_digest_persistence_live",
+      "why": "a digest is stored. Nothing records that a tenant received one, and email_delivery is false."
+    },
+    {
+      "is_not": "ready for production",
+      "readiness": "durable in controlled_dev_demo",
+      "why": "every lane above is scoped to one demo organization holding fixture data. No customer data exists to be durable."
+    }
+  ],
+  "controlled_dev_demo_durability": {
+    "deployment_can_report_its_own_state": true,
+    "evidence_can_be_replayed": true,
+    "evidence_can_be_reread": true,
+    "state_can_be_restored_elsewhere": true,
+    "status": "materially improved"
+  },
+  "customer_beta_decision": "LIMITED_GO",
+  "decision_delta": {
+    "controlled_customer_beta": {
+      "changed": false,
+      "gate_150": "LIMITED_GO",
+      "now": "LIMITED_GO"
+    },
+    "internal_demo_beta": {
+      "changed": false,
+      "gate_150": "GO",
+      "now": "GO"
+    },
+    "production_rollout": {
+      "changed": false,
+      "gate_150": "NO_GO",
+      "now": "NO_GO"
+    }
+  },
+  "email_sent": false,
+  "internal_demo_decision": "GO",
+  "invariant_failures": [],
+  "lane_delta": {
+    "lanes_created_by_this_block": [
+      {
+        "existed_at_gate_150": "no",
+        "gate": "151",
+        "lane": "tenant_digest_persistence_live",
+        "now": true,
+        "what": "a digest is persisted and reads back with its hash intact"
+      },
+      {
+        "existed_at_gate_150": "no",
+        "gate": "152",
+        "lane": "audit_replay_ready",
+        "now": true,
+        "what": "recorded evidence replays, and legacy gaps are reported rather than backfilled"
+      },
+      {
+        "existed_at_gate_150": "no",
+        "gate": "153",
+        "lane": "operational_backup_restore_ready",
+        "now": true,
+        "what": "controlled dev/demo state exports, restores into an isolated database, and still passes the Gate 152 replay"
+      },
+      {
+        "existed_at_gate_150": "no",
+        "gate": "154",
+        "lane": "operational_health_ready",
+        "now": true,
+        "what": "service, migration and code-freshness state is modelled, ten failure modes are named, and the next safe action is derived"
+      }
+    ],
+    "lanes_created_count": 4,
+    "lanes_not_proved": [],
+    "lanes_proved": [
+      "audit_replay_ready",
+      "operational_backup_restore_ready",
+      "operational_health_ready",
+      "tenant_digest_persistence_live"
+    ],
+    "lanes_that_were_false_and_became_true": [],
+    "unchanged_false_count": 8,
+    "unchanged_false_lanes": {
+      "consent_boundary_documented": false,
+      "controlled_customer_pilot": false,
+      "customer_auth_live": false,
+      "customer_beta_scope_approved": false,
+      "email_delivery": false,
+      "object_store_configured": false,
+      "source_monitoring_live": false,
+      "verified_operational_binding": false
+    },
+    "why_that_list_is_empty": "none of the four lanes existed at Gate 150 - measured across src/ at 4d336d1, zero files mentioned any of them. They were created and proved. Nothing that was false became true."
+  },
+  "leaked_shapes": [],
+  "live_source_called": false,
+  "next_block": {
+    "activation_mechanism_created": false,
+    "anything_activated": false,
+    "customer_prerequisites": {
+      "consent_decision_available": false,
+      "real_customer_org_exists": false,
+      "second_identity_available": false
+    },
+    "customer_prerequisites_available_now": false,
+    "external_call_made": false,
+    "first_gate": "the scheduler runtime itself, hermetic, with an empty allowlist",
+    "ranked_candidates": [
+      {
+        "blocker_count": 7,
+        "blockers": [
+          {
+            "blocker": "terms_review_incomplete",
+            "detail": "171 registry sources are terms_blocked; each needs a decision",
+            "kind": "human_or_approval"
+          },
+          {
+            "blocker": "human_review_only_sources",
+            "detail": "6 sources are human_review_blocked",
+            "kind": "human_or_approval"
+          },
+          {
+            "blocker": "scheduler_component_absent:scheduler_runtime",
+            "detail": "no scheduler exists. Gate 102 added the attach point and recorded that nothing is attached.",
+            "kind": "absent_component"
+          },
+          {
+            "blocker": "scheduler_component_absent:background_worker",
+            "detail": "nothing runs work outside a request",
+            "kind": "absent_component"
+          },
+          {
+            "blocker": "scheduler_component_absent:periodic_trigger",
+            "detail": "nothing fires on a schedule",
+            "kind": "absent_component"
+          },
+          {
+            "blocker": "scheduler_component_absent:persistent_backend",
+            "detail": "no durable queue or job record exists",
+            "kind": "absent_component"
+          },
+          {
+            "blocker": "scheduler_component_absent:production_raw_payload_store",
+            "detail": "nowhere to put a source response",
+            "kind": "absent_component"
+          }
+        ],
+        "candidate": "source_collection_runtime",
+        "customer_value": "high - a grant intelligence system whose sources are never polled shows a tenant the same data forever",
+        "engineering_blocker_count": 5,
+        "engineering_can_advance": true,
+        "human_blocker_count": 2,
+        "prerequisite": "none. It can be built and proved hermetically today.",
+        "risk": "low if built with an empty allowlist: a scheduler with zero approved sources polls nothing and contacts nothing",
+        "subject": "the scheduler that would poll approved sources",
+        "unlock_score": 5,
+        "verdict": "engineering_can_clear_blockers"
+      },
+      {
+        "blocker_count": 0,
+        "blockers": [],
+        "candidate": "additional_durability",
+        "customer_value": "low - the four lanes are proved",
+        "engineering_blocker_count": 0,
+        "engineering_can_advance": false,
+        "human_blocker_count": 0,
+        "prerequisite": "none, which is the problem: nothing here is blocked",
+        "risk": "low, and so is the return",
+        "subject": "more of what Gates 151-154 did",
+        "unlock_score": 0,
+        "verdict": "nothing_is_blocked_here"
+      },
+      {
+        "blocker_count": 1,
+        "blockers": [
+          {
+            "blocker": "no_email_provider_configured",
+            "detail": "an approver, then a provider admin. Configuring a provider sends mail on someone's behalf.",
+            "kind": "human_or_approval"
+          }
+        ],
+        "candidate": "email_activation",
+        "customer_value": "medium - a digest nobody receives is a preview",
+        "engineering_blocker_count": 0,
+        "engineering_can_advance": false,
+        "human_blocker_count": 1,
+        "prerequisite": "an approval, then provider credentials",
+        "risk": "medium; the first send is irreversible",
+        "subject": "actually send a digest",
+        "unlock_score": 0,
+        "verdict": "another_readiness_wrapper_around_a_human_blocker"
+      },
+      {
+        "blocker_count": 1,
+        "blockers": [
+          {
+            "blocker": "document_body_storage_is_not_configured",
+            "detail": "an approver, then a provisioning decision. Gate 141 kept bytes out of the database deliberately.",
+            "kind": "human_or_approval"
+          }
+        ],
+        "candidate": "object_storage_activation",
+        "customer_value": "medium - metadata without bytes is a catalogue",
+        "engineering_blocker_count": 0,
+        "engineering_can_advance": false,
+        "human_blocker_count": 1,
+        "prerequisite": "an approval, then a provisioned store",
+        "risk": "medium; it is where customer documents would live",
+        "subject": "store document bytes",
+        "unlock_score": 0,
+        "verdict": "another_readiness_wrapper_around_a_human_blocker"
+      },
+      {
+        "blocker_count": 1,
+        "blockers": [
+          {
+            "blocker": "no_managed_database_instance",
+            "detail": "procurement. It unblocks the Gate 61/65 backup harness and the Postgres RLS verifier, both of which return SKIP.",
+            "kind": "human_or_approval"
+          }
+        ],
+        "candidate": "production_infrastructure",
+        "customer_value": "low today - nothing is in production",
+        "engineering_blocker_count": 0,
+        "engineering_can_advance": false,
+        "human_blocker_count": 1,
+        "prerequisite": "a purchase",
+        "risk": "low to build, high to depend on before it exists",
+        "subject": "a managed database instance",
+        "unlock_score": 0,
+        "verdict": "another_readiness_wrapper_around_a_human_blocker"
+      },
+      {
+        "blocker_count": 4,
+        "blockers": [
+          {
+            "blocker": "customer_auth_live",
+            "detail": "a real person at a customer organization must sign in as themselves; no code change causes that",
+            "kind": "human_or_approval"
+          },
+          {
+            "blocker": "verified_operational_binding",
+            "detail": "an approval must be signed. Gate 147 built the boundary.",
+            "kind": "human_or_approval"
+          },
+          {
+            "blocker": "consent_and_data_boundary_documented",
+            "detail": "the customer organization must consent; consent cannot be inferred or pre-supplied",
+            "kind": "human_or_approval"
+          },
+          {
+            "blocker": "customer_beta_scope_approved",
+            "detail": "an approver must approve the scope Gate 150 reassessed",
+            "kind": "human_or_approval"
+          }
+        ],
+        "candidate": "customer_activation",
+        "customer_value": "highest - it is the product reaching a customer",
+        "engineering_blocker_count": 0,
+        "engineering_can_advance": false,
+        "human_blocker_count": 4,
+        "prerequisite": "a real customer organization must exist. None does.",
+        "risk": "high; it is the first time real data would exist",
+        "subject": "start the controlled customer beta",
+        "unlock_score": 0,
+        "verdict": "another_readiness_wrapper_around_a_human_blocker"
+      }
+    ],
+    "ranking_is_derived": "from supplied blocker counts, so a candidate whose blockers change gets a different answer without anyone editing a constant. Two next-step constants in this repository have already gone stale unnoticed.",
+    "recommended_block": "source_collection_runtime",
+    "recommended_subject": "the scheduler that would poll approved sources",
+    "rejected": [
+      {
+        "candidate": "additional_durability",
+        "verdict": "nothing_is_blocked_here",
+        "why_not": "nothing here is blocked, so a gate would harden something already hard"
+      },
+      {
+        "candidate": "email_activation",
+        "verdict": "another_readiness_wrapper_around_a_human_blocker",
+        "why_not": "all 1 blockers need a person or an approval; building more would describe the same refusal in more detail"
+      },
+      {
+        "candidate": "object_storage_activation",
+        "verdict": "another_readiness_wrapper_around_a_human_blocker",
+        "why_not": "all 1 blockers need a person or an approval; building more would describe the same refusal in more detail"
+      },
+      {
+        "candidate": "production_infrastructure",
+        "verdict": "another_readiness_wrapper_around_a_human_blocker",
+        "why_not": "all 1 blockers need a person or an approval; building more would describe the same refusal in more detail"
+      },
+      {
+        "candidate": "customer_activation",
+        "verdict": "another_readiness_wrapper_around_a_human_blocker",
+        "why_not": "all 4 blockers need a person or an approval; building more would describe the same refusal in more detail"
+      }
+    ],
+    "rows_written": 0,
+    "schema_version": "nf_next_activation_decision_v1",
+    "scope": "controlled_dev_demo",
+    "the_rule": "do not recommend another readiness wrapper around a blocker only a person or an approval can clear",
+    "what_the_recommendation_does_not_mean": [
+      "that source_monitoring_live would become true",
+      "that any source would be polled; 171 are terms_blocked and 0 are approved",
+      "that the two human source blockers are cleared",
+      "that a collector is activated",
+      "that anything is activated at all"
+    ],
+    "why": "no real customer organization exists, no second identity is available and no consent decision can be made, so the customer lane cannot move. source_collection_runtime is the only candidate where engineering can clear blockers - 5 of 7 - and every other candidate would produce another readiness wrapper around a blocker only a person can clear."
+  },
+  "object_store_contacted": false,
+  "operational_durability_improved": true,
+  "production_decision": "NO_GO",
+  "production_durability": {
+    "blocked_on": "a managed database instance, which is procurement",
+    "harness": "scripts/verify_nativeforge_backup_restore.sh (SKIP)",
+    "production_backup_ready": false,
+    "production_monitoring_active": false,
+    "status": "unchanged; nothing in this block touched production"
+  },
+  "real_organization_touched": false,
+  "rows_written": 0,
+  "safe_claims": [
+    "a digest this system wrote can be read back, and its payload hash checked",
+    "the evidence chain this system recorded can be replayed",
+    "the gaps in that chain are counted and reported, and were not filled in",
+    "controlled dev/demo operational state can be exported, restored into an isolated database, and re-verified there",
+    "this deployment can say which services are up, whether its database matches its migrations, whether the built frontend matches HEAD, and whether the running backend predates the code",
+    "ten named operational failure modes are detected and given an exact action",
+    "no readiness lane above required a new approval, and none granted one"
+  ],
+  "schema_version": "nf_operational_durability_reassessment_v1",
+  "scope": "controlled_dev_demo",
+  "unsafe_claims": [
+    {
+      "claim": "NativeForge has backups",
+      "what_is_true": "controlled dev/demo state can be exported and restored into an isolated database",
+      "why_unsafe": "no managed database instance exists, no backup automation, no PITR, and no provider restore has ever run. The Gate 61/65 verifier says so and still returns SKIP."
+    },
+    {
+      "claim": "NativeForge is monitored",
+      "what_is_true": "the deployment can report its own state when asked, and names what it cannot observe",
+      "why_unsafe": "nothing watches this system. There is no alerting, no external monitor and no uptime record; a person runs a verifier."
+    },
+    {
+      "claim": "customer data is safe / durable / backed up",
+      "what_is_true": "fixture data for one demo organization is durable",
+      "why_unsafe": "no customer data exists. Nothing has been made durable for a customer."
+    },
+    {
+      "claim": "the audit trail would satisfy an auditor",
+      "what_is_true": "records can be joined and checked against their own hashes",
+      "why_unsafe": "replay proves internal consistency, not legal standing, and 85 legacy intents name digests that were never written"
+    },
+    {
+      "claim": "the controlled customer beta is ready to start",
+      "what_is_true": "LIMITED_GO, unchanged since Gate 145",
+      "why_unsafe": "four approvals are outstanding and none is technical. Gates 151-154 did not touch any of them."
+    },
+    {
+      "claim": "operational durability moves the product toward production",
+      "what_is_true": "the controlled dev/demo system is materially harder to lose data in and easier to diagnose",
+      "why_unsafe": "production is blocked on procurement and approvals. Durability work does not shorten that queue."
+    }
+  ],
+  "why_no_decision_changed": "Gates 151-154 were durability gates, not approval gates. A block that moved a customer or production decision without a new external approval would mean one of them had granted itself something."
+}

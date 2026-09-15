@@ -1,0 +1,95 @@
+{
+  "baseline": {
+    "controlled_customer_beta": "LIMITED_GO",
+    "internal_demo_beta": "GO",
+    "production_rollout": "NO_GO"
+  },
+  "lanes_created_by_this_block": [
+    {
+      "existed_at_gate_150": "no",
+      "gate": "151",
+      "lane": "tenant_digest_persistence_live",
+      "now": true,
+      "what": "a digest is persisted and reads back with its hash intact"
+    },
+    {
+      "existed_at_gate_150": "no",
+      "gate": "152",
+      "lane": "audit_replay_ready",
+      "now": true,
+      "what": "recorded evidence replays, and legacy gaps are reported rather than backfilled"
+    },
+    {
+      "existed_at_gate_150": "no",
+      "gate": "153",
+      "lane": "operational_backup_restore_ready",
+      "now": true,
+      "what": "controlled dev/demo state exports, restores into an isolated database, and still passes the Gate 152 replay"
+    },
+    {
+      "existed_at_gate_150": "no",
+      "gate": "154",
+      "lane": "operational_health_ready",
+      "now": true,
+      "what": "service, migration and code-freshness state is modelled, ten failure modes are named, and the next safe action is derived"
+    }
+  ],
+  "lanes_created_count": 4,
+  "lanes_declared_by_this_block": [
+    {
+      "existed_at_gate_150": "no",
+      "gate": "151",
+      "lane": "tenant_digest_persistence_live",
+      "what": "a digest is persisted and reads back with its hash intact"
+    },
+    {
+      "existed_at_gate_150": "no",
+      "gate": "152",
+      "lane": "audit_replay_ready",
+      "what": "recorded evidence replays, and legacy gaps are reported rather than backfilled"
+    },
+    {
+      "existed_at_gate_150": "no",
+      "gate": "153",
+      "lane": "operational_backup_restore_ready",
+      "what": "controlled dev/demo state exports, restores into an isolated database, and still passes the Gate 152 replay"
+    },
+    {
+      "existed_at_gate_150": "no",
+      "gate": "154",
+      "lane": "operational_health_ready",
+      "what": "service, migration and code-freshness state is modelled, ten failure modes are named, and the next safe action is derived"
+    }
+  ],
+  "lanes_not_proved": [],
+  "lanes_proved": [
+    "audit_replay_ready",
+    "operational_backup_restore_ready",
+    "operational_health_ready",
+    "tenant_digest_persistence_live"
+  ],
+  "lanes_that_must_stay_false": [
+    "controlled_customer_pilot",
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_boundary_documented",
+    "customer_beta_scope_approved",
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured"
+  ],
+  "lanes_that_were_false_and_became_true": [],
+  "schema_version": "nf_operational_durability_gate155_artifacts_v1",
+  "unchanged_false_count": 8,
+  "unchanged_false_lanes": {
+    "consent_boundary_documented": false,
+    "controlled_customer_pilot": false,
+    "customer_auth_live": false,
+    "customer_beta_scope_approved": false,
+    "email_delivery": false,
+    "object_store_configured": false,
+    "source_monitoring_live": false,
+    "verified_operational_binding": false
+  },
+  "why_that_list_is_empty": "none of the four lanes existed at Gate 150 - measured across src/ at 4d336d1, zero files mentioned any of them. They were created and proved. Nothing that was false became true."
+}
