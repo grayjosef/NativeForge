@@ -20,6 +20,7 @@
       "isolation_routes",
       "nofo_extraction_routes",
       "operational_backup_routes",
+      "operational_health_routes",
       "operator_workbench_advisory_routes",
       "opportunity_discovery_routes",
       "pursuit_brief_routes",
@@ -36,12 +37,12 @@
       "trust_routes",
       "verified_binding_readiness_routes"
     ],
-    "converted_modules": 34,
+    "converted_modules": 35,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 293
+    "route_total": 297
   },
   "before": {
     "converted_modules": 1,

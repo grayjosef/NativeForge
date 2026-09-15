@@ -1,0 +1,36 @@
+{
+  "alerting_configured": false,
+  "any_blocker_closes_the_lane": "required-ness governs how much UNKNOWN is tolerated; it does not decide which faults count. A first draft weighed only required components and ignored an unexpected verifier result it had already named.",
+  "backup_lane_separation": {
+    "gate_153_did_not_move_the_production_harness": true,
+    "operational_expected_result": "PASS",
+    "operational_harness": "backup_restore_readiness",
+    "operational_lane": "operational_backup_restore_ready",
+    "production_expected_result": "SKIP",
+    "production_harness": "backup_restore",
+    "production_lane": "production_backup_ready",
+    "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
+  },
+  "external_monitoring_configured": false,
+  "lane": "operational_health_ready",
+  "production_monitoring_active": false,
+  "required_components": [
+    "backend_service",
+    "preview_service",
+    "tunnel_service",
+    "migration_head",
+    "frontend_stamp",
+    "backend_code_freshness"
+  ],
+  "schema_version": "nf_operational_health_gate154_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "unknown_is_not_a_pass": true,
+  "what_it_does_not_mean": [
+    "that production is monitored; nothing is",
+    "that alerting exists; nothing sends mail, SMS or a page",
+    "that an external monitor is configured; nothing leaves this host",
+    "that uptime, an SLO or an error budget is recorded; none is",
+    "that incident response exists; there is a document, not a rota"
+  ],
+  "what_it_means": "the services, the migration state and the code freshness of this controlled_dev_demo deployment are modelled from measured facts, every named failure mode is detected and named, and the next safe action is derived rather than declared"
+}

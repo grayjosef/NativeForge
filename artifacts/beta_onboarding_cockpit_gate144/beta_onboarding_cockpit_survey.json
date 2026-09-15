@@ -17,6 +17,7 @@
   "frontend_surface_added": "beta_onboarding_cockpit",
   "gate": "144",
   "lane_evidence": {
+    "audit_replay": "needs_a_verifier_run",
     "awarded_grants": "needs_a_route_smoke",
     "consent_and_data_boundary": "self_evidencing",
     "controlled_customer_pilot": "self_evidencing",
@@ -29,10 +30,13 @@
     "email_delivery_readiness": "needs_a_route_smoke",
     "login": "self_evidencing",
     "object_storage": "self_evidencing",
+    "operational_backup_restore": "needs_a_verifier_run",
+    "operational_health": "needs_a_verifier_run",
     "production_rollout": "self_evidencing",
     "source_monitoring": "self_evidencing",
     "source_monitoring_preflight": "self_evidencing",
     "tenant_digest": "needs_a_route_smoke",
+    "tenant_digest_persistence": "needs_a_verifier_run",
     "verified_operational_binding": "self_evidencing"
   },
   "lane_keys": [
@@ -52,7 +56,11 @@
     "consent_and_data_boundary",
     "customer_beta_scope",
     "controlled_customer_pilot",
-    "production_rollout"
+    "production_rollout",
+    "tenant_digest_persistence",
+    "audit_replay",
+    "operational_backup_restore",
+    "operational_health"
   ],
   "lane_statuses": [
     "operational",
@@ -64,11 +72,15 @@
     "production_false"
   ],
   "lanes_needing_outside_evidence": [
+    "audit_replay",
     "awarded_grants",
     "customer_persistence",
     "document_metadata",
     "email_delivery_readiness",
-    "tenant_digest"
+    "operational_backup_restore",
+    "operational_health",
+    "tenant_digest",
+    "tenant_digest_persistence"
   ],
   "never_true_lanes": [
     "consent_and_data_boundary",

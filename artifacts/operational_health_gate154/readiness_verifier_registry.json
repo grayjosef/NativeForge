@@ -1,0 +1,481 @@
+{
+  "backup_lane_separation": {
+    "gate_153_did_not_move_the_production_harness": true,
+    "operational_expected_result": "PASS",
+    "operational_harness": "backup_restore_readiness",
+    "operational_lane": "operational_backup_restore_ready",
+    "production_expected_result": "SKIP",
+    "production_harness": "backup_restore",
+    "production_lane": "production_backup_ready",
+    "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
+  },
+  "blocking_count": 24,
+  "by_kind": {
+    "production_infrastructure": [
+      "backup_restore",
+      "postgres_rls"
+    ],
+    "readiness_lane": [
+      "audit_replay_readiness",
+      "awarded_operational_tracking",
+      "backup_restore_readiness",
+      "beta_onboarding_cockpit",
+      "controlled_beta_readiness",
+      "controlled_customer_pilot_activation_package",
+      "customer_auth_live",
+      "customer_auth_second_person_event",
+      "customer_beta_reassessment",
+      "customer_data_boundary",
+      "customer_persistence_live",
+      "document_storage_readiness",
+      "email_delivery_readiness",
+      "operational_health_runbook",
+      "source_monitoring_preflight",
+      "tenant_digest_operational",
+      "tenant_digest_persistence",
+      "verified_binding_approval_boundary"
+    ],
+    "repository_hygiene": [
+      "demo_payload_determinism",
+      "fixture_cleanliness",
+      "no_live_source_calls",
+      "rls_isolation",
+      "test_selection_coverage"
+    ],
+    "stack_or_deployment": [
+      "demo_deployment",
+      "demo_live_stack",
+      "oidc_mode_b"
+    ]
+  },
+  "executes_verifiers": false,
+  "expected_result_is_per_verifier": "a SKIP from the Gate 61/65 production backup harness is correct; a SKIP from a readiness verifier would be a finding. A registry that expected PASS from everything would report the production harness as broken forever",
+  "expected_skip": [
+    "backup_restore",
+    "postgres_rls"
+  ],
+  "external_call_made": false,
+  "production_verifiers": [
+    "backup_restore",
+    "postgres_rls"
+  ],
+  "schema_version": "nf_readiness_verifier_registry_v1",
+  "scope": "controlled_dev_demo",
+  "shell_executed": false,
+  "verifier_count": 28,
+  "verifier_names": [
+    "audit_replay_readiness",
+    "awarded_operational_tracking",
+    "backup_restore",
+    "backup_restore_readiness",
+    "beta_onboarding_cockpit",
+    "controlled_beta_readiness",
+    "controlled_customer_pilot_activation_package",
+    "customer_auth_live",
+    "customer_auth_second_person_event",
+    "customer_beta_reassessment",
+    "customer_data_boundary",
+    "customer_persistence_live",
+    "demo_deployment",
+    "demo_live_stack",
+    "demo_payload_determinism",
+    "document_storage_readiness",
+    "email_delivery_readiness",
+    "fixture_cleanliness",
+    "no_live_source_calls",
+    "oidc_mode_b",
+    "operational_health_runbook",
+    "postgres_rls",
+    "rls_isolation",
+    "source_monitoring_preflight",
+    "tenant_digest_operational",
+    "tenant_digest_persistence",
+    "test_selection_coverage",
+    "verified_binding_approval_boundary"
+  ],
+  "verifiers": [
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "129",
+      "kind": "stack_or_deployment",
+      "lane": "live_stack",
+      "note": "nothing else is meaningful if the stack is down",
+      "production": false,
+      "script": "scripts/verify_nativeforge_demo_live_stack.sh",
+      "verifier": "demo_live_stack"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "demo_live_stack"
+      ],
+      "expected_result": "PASS",
+      "gate": "36B",
+      "kind": "stack_or_deployment",
+      "lane": "public_edge",
+      "note": "run with --strict-public. It checks the build stamp TAG exists; it does not compare the stamped sha to HEAD, so a stamp from an older commit passes here - see the frontend_stamp component of the Gate 154 health model",
+      "production": false,
+      "script": "scripts/verify_nativeforge_demo_deployment.sh",
+      "verifier": "demo_deployment"
+    },
+    {
+      "blocking": false,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "130",
+      "kind": "stack_or_deployment",
+      "lane": "auth_configuration",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_oidc_mode_b.sh",
+      "verifier": "oidc_mode_b"
+    },
+    {
+      "blocking": false,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "135",
+      "kind": "readiness_lane",
+      "lane": "customer_auth_live",
+      "note": "the lane is false; a human has to sign in as themselves",
+      "production": false,
+      "script": "scripts/verify_nativeforge_customer_auth_live.sh",
+      "verifier": "customer_auth_live"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "138",
+      "kind": "readiness_lane",
+      "lane": "customer_persistence_live",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_customer_persistence_live.sh",
+      "verifier": "customer_persistence_live"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "customer_persistence_live"
+      ],
+      "expected_result": "PASS",
+      "gate": "139",
+      "kind": "readiness_lane",
+      "lane": "awarded_operational_tracking",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_awarded_operational_tracking.sh",
+      "verifier": "awarded_operational_tracking"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "140",
+      "kind": "readiness_lane",
+      "lane": "tenant_digest_operational",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_tenant_digest_operational.sh",
+      "verifier": "tenant_digest_operational"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "141",
+      "kind": "readiness_lane",
+      "lane": "document_metadata_operational",
+      "note": "metadata only; no object store is configured and none is contacted",
+      "production": false,
+      "script": "scripts/verify_nativeforge_document_storage_readiness.sh",
+      "verifier": "document_storage_readiness"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "142",
+      "kind": "readiness_lane",
+      "lane": "email_delivery_readiness",
+      "note": "readiness, not delivery. email_delivery stays false",
+      "production": false,
+      "script": "scripts/verify_nativeforge_email_delivery_readiness.sh",
+      "verifier": "email_delivery_readiness"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "143",
+      "kind": "readiness_lane",
+      "lane": "source_monitoring_preflight_ready",
+      "note": "preflight only. source_monitoring_live stays false",
+      "production": false,
+      "script": "scripts/verify_nativeforge_source_monitoring_preflight.sh",
+      "verifier": "source_monitoring_preflight"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "143",
+      "kind": "repository_hygiene",
+      "lane": "no_live_source_calls",
+      "note": "a chokepoint scan; proves no code path can reach a live source",
+      "production": false,
+      "script": "scripts/verify_nativeforge_no_live_source_calls.sh",
+      "verifier": "no_live_source_calls"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "customer_persistence_live",
+        "tenant_digest_operational"
+      ],
+      "expected_result": "PASS",
+      "gate": "144",
+      "kind": "readiness_lane",
+      "lane": "beta_onboarding_cockpit",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_beta_onboarding_cockpit.sh",
+      "verifier": "beta_onboarding_cockpit"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "beta_onboarding_cockpit"
+      ],
+      "expected_result": "PASS",
+      "gate": "145",
+      "kind": "readiness_lane",
+      "lane": "controlled_beta_readiness",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_controlled_beta_readiness.sh",
+      "verifier": "controlled_beta_readiness"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "146",
+      "kind": "readiness_lane",
+      "lane": "customer_auth_second_person_readiness",
+      "note": "readiness for an event only a second person can cause",
+      "production": false,
+      "script": "scripts/verify_nativeforge_customer_auth_second_person_event.sh",
+      "verifier": "customer_auth_second_person_event"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "147",
+      "kind": "readiness_lane",
+      "lane": "verified_binding_approval_boundary",
+      "note": "verified_operational_binding stays false; it needs a signature",
+      "production": false,
+      "script": "scripts/verify_nativeforge_verified_binding_approval_boundary.sh",
+      "verifier": "verified_binding_approval_boundary"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "148",
+      "kind": "readiness_lane",
+      "lane": "customer_data_write_guard_ready",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_customer_data_boundary.sh",
+      "verifier": "customer_data_boundary"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "149",
+      "kind": "readiness_lane",
+      "lane": "pilot_activation_package_ready",
+      "note": "the package is ready; the pilot is NOT activated and no activation mechanism exists",
+      "production": false,
+      "script": "scripts/verify_nativeforge_controlled_customer_pilot_activation_package.sh",
+      "verifier": "controlled_customer_pilot_activation_package"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "controlled_beta_readiness"
+      ],
+      "expected_result": "PASS",
+      "gate": "150",
+      "kind": "readiness_lane",
+      "lane": "customer_beta_reassessment",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_customer_beta_reassessment.sh",
+      "verifier": "customer_beta_reassessment"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "tenant_digest_operational"
+      ],
+      "expected_result": "PASS",
+      "gate": "151",
+      "kind": "readiness_lane",
+      "lane": "tenant_digest_persistence_live",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_tenant_digest_persistence.sh",
+      "verifier": "tenant_digest_persistence"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "tenant_digest_persistence"
+      ],
+      "expected_result": "PASS",
+      "gate": "152",
+      "kind": "readiness_lane",
+      "lane": "audit_replay_ready",
+      "note": "legacy evidence gaps are REPORTED here, never backfilled",
+      "production": false,
+      "script": "scripts/verify_nativeforge_audit_replay_readiness.sh",
+      "verifier": "audit_replay_readiness"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "audit_replay_readiness"
+      ],
+      "expected_result": "PASS",
+      "gate": "153",
+      "kind": "readiness_lane",
+      "lane": "operational_backup_restore_ready",
+      "note": "the DATA path: export controlled dev/demo state, restore it into an isolated database, re-run the Gate 152 replay. NOT the production backup harness - that is `backup_restore`, which returns SKIP",
+      "production": false,
+      "script": "scripts/verify_nativeforge_backup_restore_readiness.sh",
+      "verifier": "backup_restore_readiness"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "backup_restore_readiness"
+      ],
+      "expected_result": "PASS",
+      "gate": "154",
+      "kind": "readiness_lane",
+      "lane": "operational_health_ready",
+      "note": "this registry's own verifier",
+      "production": false,
+      "script": "scripts/verify_nativeforge_operational_health_runbook.sh",
+      "verifier": "operational_health_runbook"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "coverage guard",
+      "kind": "repository_hygiene",
+      "lane": "test_selection_coverage",
+      "note": "each gate must extend GATE_K keywords and its critical node ids",
+      "production": false,
+      "script": "scripts/verify_nativeforge_test_selection_coverage.sh",
+      "verifier": "test_selection_coverage"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "determinism guard",
+      "kind": "repository_hygiene",
+      "lane": "demo_payload_determinism",
+      "note": "regenerate artifacts with the suite's environment before running",
+      "production": false,
+      "script": "scripts/verify_nativeforge_demo_payload_determinism.sh",
+      "verifier": "demo_payload_determinism"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "fixture guard",
+      "kind": "repository_hygiene",
+      "lane": "fixture_cleanliness",
+      "note": "readiness verifiers write fixture rows into the dev database. Row counts and legacy gap counts MOVE between runs; that is residue, not drift in a lane",
+      "production": false,
+      "script": "scripts/verify_nativeforge_fixture_cleanliness.sh",
+      "verifier": "fixture_cleanliness"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "64",
+      "kind": "repository_hygiene",
+      "lane": "rls_isolation",
+      "note": "",
+      "production": false,
+      "script": "scripts/verify_nativeforge_rls_isolation.sh",
+      "verifier": "rls_isolation"
+    },
+    {
+      "blocking": false,
+      "controlled_dev_demo_only": false,
+      "depends_on": [],
+      "expected_result": "SKIP",
+      "gate": "64",
+      "kind": "production_infrastructure",
+      "lane": "production_postgres_rls",
+      "note": "needs a managed PostgreSQL instance; SKIP is the correct answer",
+      "production": true,
+      "script": "scripts/verify_nativeforge_postgres_rls.sh",
+      "verifier": "postgres_rls"
+    },
+    {
+      "blocking": false,
+      "controlled_dev_demo_only": false,
+      "depends_on": [],
+      "expected_result": "SKIP",
+      "gate": "61/65",
+      "kind": "production_infrastructure",
+      "lane": "production_backup_ready",
+      "note": "the INFRASTRUCTURE path: pg_dump, PITR, an executed provider restore. Needs a managed instance, so SKIP is the correct answer and a PASS here would be a surprise. NOT Gate 153's `backup_restore_readiness`, which is the data path and returns PASS",
+      "production": true,
+      "script": "scripts/verify_nativeforge_backup_restore.sh",
+      "verifier": "backup_restore"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "blocked_lane_count": 16,
+  "blocked_lane_count": 20,
   "blockers": [
     {
       "blockers": [
@@ -167,6 +167,42 @@
       "owner": "the owner",
       "status": "production_false",
       "summary": "not approved, and no lane above is a production claim"
+    },
+    {
+      "blockers": [
+        "needs_a_verifier_run:tenant_digest_persistence"
+      ],
+      "lane": "tenant_digest_persistence",
+      "owner": "engineering",
+      "status": "readiness_only",
+      "summary": "Gate 151: a digest is written and reads back with its hash intact"
+    },
+    {
+      "blockers": [
+        "needs_a_verifier_run:audit_replay"
+      ],
+      "lane": "audit_replay",
+      "owner": "engineering",
+      "status": "readiness_only",
+      "summary": "Gate 152: recorded evidence replays, and legacy gaps are reported not filled"
+    },
+    {
+      "blockers": [
+        "needs_a_verifier_run:operational_backup_restore"
+      ],
+      "lane": "operational_backup_restore",
+      "owner": "engineering",
+      "status": "readiness_only",
+      "summary": "Gate 153: controlled dev/demo state exports, restores into an isolated database and still passes the Gate 152 replay. NOT production backup - that is the Gate 61/65 harness, which returns SKIP"
+    },
+    {
+      "blockers": [
+        "needs_a_verifier_run:operational_health"
+      ],
+      "lane": "operational_health",
+      "owner": "engineering",
+      "status": "readiness_only",
+      "summary": "Gate 154: service, migration and code-freshness state is modelled and the next safe action is derived. NOT production monitoring"
     }
   ],
   "every_false_lane_names_a_blocker": true,

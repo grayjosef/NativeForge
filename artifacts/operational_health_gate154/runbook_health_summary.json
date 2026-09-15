@@ -1,0 +1,42 @@
+{
+  "action_kinds": [
+    "OPERATOR_RUNNABLE",
+    "HUMAN_APPROVAL_REQUIRED",
+    "NO_ACTION"
+  ],
+  "approval_gated_actions_carry_no_command": "a runbook that prints the command next to the words 'needs approval' has already handed it over",
+  "commands_are_checked_by": "customer_auth_activation_runbook_service.command_is_secret_safe, Gate 121D's rule, imported rather than reimplemented",
+  "human_blockers": [
+    "lane_false:consent_boundary_ready",
+    "lane_false:controlled_customer_pilot",
+    "lane_false:customer_auth_live",
+    "lane_false:customer_beta_scope_approved",
+    "lane_false:email_delivery",
+    "lane_false:object_store_configured",
+    "lane_false:production_backup_ready",
+    "lane_false:source_monitoring_live",
+    "lane_false:verified_operational_binding"
+  ],
+  "note": "every component here is `unknown` because this artifact supplies no facts. That is the shape of the model, not a health reading. The live reading comes from scripts/verify_nativeforge_operational_health_runbook.sh.",
+  "production_monitoring_active": false,
+  "remedied_blockers": [
+    "backend_code_freshness_not_reported",
+    "backend_code_unknown_because_tree_is_dirty",
+    "backend_service_not_active",
+    "backend_started_before_head_was_committed",
+    "database_is_ahead_of_the_repository_head",
+    "database_is_behind_the_repository_head",
+    "frontend_stamp_is_absent_or_unstamped",
+    "frontend_stamp_is_older_than_head",
+    "migration_state_unknown",
+    "preview_service_not_active",
+    "tracked_code_changed_after_the_process_started",
+    "tunnel_service_not_active"
+  ],
+  "schema_version": "nf_operational_health_gate154_artifacts_v1",
+  "unmeasured_runbook": {
+    "action_count": 6,
+    "human_approval_required_count": 3,
+    "operator_runnable_count": 3
+  }
+}

@@ -64,6 +64,9 @@ from nativeforge.api.nofo_extraction_routes import demo_nofo_router, real_nofo_r
 from nativeforge.api.operational_backup_routes import (
     router as operational_backup_router,
 )
+from nativeforge.api.operational_health_routes import (
+    router as operational_health_router,
+)
 from nativeforge.api.operator_workbench_advisory_routes import (
     demo_workbench_advisory_router,
     real_workbench_advisory_router,
@@ -199,6 +202,10 @@ def create_app() -> FastAPI:
     # GET only, and no route returns the exported rows - an export exists to
     # be handed to a restore, not to a browser.
     app.include_router(operational_backup_router)
+    # Gate 154: operational health, the verifier registry and the runbook.
+    # GET only, and no route shells out - a health route that ran systemctl
+    # would be a command execution surface reachable with a session cookie.
+    app.include_router(operational_health_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

@@ -1,0 +1,25 @@
+{
+  "derived_not_declared": "every action comes from a component status in the health model. The one that was written down as a constant went stale nine gates ago and nothing failed.",
+  "live_reading_comes_from": "scripts/verify_nativeforge_operational_health_runbook.sh",
+  "next_safe_action_when_nothing_is_supplied": {
+    "activates_a_capability": false,
+    "blocker": "backend_code_freshness_not_reported",
+    "command": "systemctl --user show -p ActiveEnterTimestamp nativeforge-backend.service",
+    "destructive": false,
+    "kind": "OPERATOR_RUNNABLE",
+    "title": "backend code freshness was not measured",
+    "who": null,
+    "why": "the health model needs the process start time to answer this"
+  },
+  "note": "every component here is `unknown` because this artifact supplies no facts. That is the shape of the model, not a health reading. The live reading comes from scripts/verify_nativeforge_operational_health_runbook.sh.",
+  "schema_version": "nf_operational_health_gate154_artifacts_v1",
+  "the_constant_it_replaces": {
+    "constant": "NEXT_SAFE_ACTION",
+    "finished_at": "Gate 145",
+    "gates_since": "146 through 154",
+    "module": "beta_onboarding_readiness_summary_service",
+    "true_at": "Gate 144",
+    "value": "finish_the_controlled_beta_readiness_matrix",
+    "why_nothing_failed": "a constant cannot go stale loudly"
+  }
+}

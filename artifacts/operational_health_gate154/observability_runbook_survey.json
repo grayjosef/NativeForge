@@ -1,0 +1,30 @@
+{
+  "gate": "154",
+  "not_production_monitoring": true,
+  "schema_version": "nf_operational_health_gate154_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "subject": "observability and runbook health",
+  "the_declaration_driven_services_this_gate_does_not_extend": {
+    "gate32_observability_service": "`resolve_observability` returns `production_monitoring: true` when a caller passes healthcheck_ready, support_owner_assigned, incident_escalation_ready and default_status='alert_ready'. Every input is a keyword argument. It measures nothing.",
+    "gate33_runbook_service": "returns a hardcoded dict of six True values and a checklist whose evidence refs are `nf://` strings that point at nothing",
+    "why_not_extended": "Gate 65 drew this line first and said so in its own module: those services model what a demo surface should display and will promote a status on any non-empty string. Gate 154 cannot produce a production_monitoring claim by any path."
+  },
+  "what_is_observable_today": [
+    "process liveness, from outside the app",
+    "the repository HEAD, the build stamp sha, the backend runtime mode",
+    "per-lane readiness, via each lane's own service",
+    "27 verifiers, each answering one question when run by hand"
+  ],
+  "what_remains_manual": [
+    "restarting services",
+    "running verifiers, in an order the registry now records",
+    "noticing that a result is hours old; nothing records result age"
+  ],
+  "what_was_not_observable_before_this_gate": {
+    "backend_stale_code": "the surface built to answer it does not. `/backend/health` calls `detect_git_identity` at REQUEST time, so it reports the repository's HEAD, not the commit the process loaded. Proved by editing a tracked file and watching `source_dirty` flip with no restart. Nothing records a process-scoped commit.",
+    "migration_drift": "nothing compared the repository's highest revision to the database's current one. Gate 151 hit it at 0041 vs 0042 and found it by hand.",
+    "next_safe_action": "a module constant in the Gate 144 summary, reading `finish_the_controlled_beta_readiness_matrix`. That was true at Gate 144; the matrix was finished at Gate 145 and nine gates have happened since. A constant cannot go stale loudly.",
+    "stale_build_stamp": "`--strict-public` checks the stamp TAG exists. It never compares the stamped sha to HEAD, so a build from an older commit passes every check while serving old JavaScript.",
+    "verifier_dependency_order": "no registry existed. An operator learned the order by running things and reading failures."
+  }
+}

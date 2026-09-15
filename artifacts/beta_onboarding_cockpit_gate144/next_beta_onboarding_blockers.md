@@ -5,7 +5,7 @@
 ```text
 cockpit foundation route-live   TRUE
 frontend surface exists         TRUE
-lanes reported                  17
+lanes reported                  21
 scope                           controlled_dev_demo
 ```
 

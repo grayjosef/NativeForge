@@ -212,6 +212,54 @@
       "status": "production_false",
       "usable_today": false,
       "value": false
+    },
+    {
+      "blockers": [
+        "needs_a_verifier_run:tenant_digest_persistence"
+      ],
+      "evidence": "needs_a_verifier_run",
+      "lane": "tenant_digest_persistence",
+      "owner": "engineering",
+      "scope": "controlled_dev_demo",
+      "status": "readiness_only",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "needs_a_verifier_run:audit_replay"
+      ],
+      "evidence": "needs_a_verifier_run",
+      "lane": "audit_replay",
+      "owner": "engineering",
+      "scope": "controlled_dev_demo",
+      "status": "readiness_only",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "needs_a_verifier_run:operational_backup_restore"
+      ],
+      "evidence": "needs_a_verifier_run",
+      "lane": "operational_backup_restore",
+      "owner": "engineering",
+      "scope": "controlled_dev_demo",
+      "status": "readiness_only",
+      "usable_today": false,
+      "value": false
+    },
+    {
+      "blockers": [
+        "needs_a_verifier_run:operational_health"
+      ],
+      "evidence": "needs_a_verifier_run",
+      "lane": "operational_health",
+      "owner": "engineering",
+      "scope": "controlled_dev_demo",
+      "status": "readiness_only",
+      "usable_today": false,
+      "value": false
     }
   ],
   "schema_version": "nf_beta_onboarding_cockpit_gate144_artifact_v1",

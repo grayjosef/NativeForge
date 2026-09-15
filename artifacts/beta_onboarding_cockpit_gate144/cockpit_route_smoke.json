@@ -14,10 +14,11 @@
   "email_delivery": false,
   "emails_sent": 0,
   "every_lane_reported": true,
-  "expected_lane_count": 17,
+  "expected_lane_count": 21,
   "forged_header_refused": true,
   "forged_header_status": 401,
   "lanes_reported_by_the_route": [
+    "audit_replay",
     "awarded_grants",
     "consent_and_data_boundary",
     "controlled_customer_pilot",
@@ -30,10 +31,13 @@
     "email_delivery_readiness",
     "login",
     "object_storage",
+    "operational_backup_restore",
+    "operational_health",
     "production_rollout",
     "source_monitoring",
     "source_monitoring_preflight",
     "tenant_digest",
+    "tenant_digest_persistence",
     "verified_operational_binding"
   ],
   "live_source_calls": 0,
@@ -41,7 +45,7 @@
   "object_store_configured": false,
   "production_rollout": false,
   "route_invariant_failures": [],
-  "route_lane_count": 17,
+  "route_lane_count": 21,
   "route_operational_lanes": [
     "source_monitoring_preflight"
   ],

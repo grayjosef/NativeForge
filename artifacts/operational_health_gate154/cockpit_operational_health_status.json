@@ -1,0 +1,28 @@
+{
+  "blocked_lanes_shown": [
+    "customer_auth_live",
+    "verified_operational_binding",
+    "consent_boundary_ready",
+    "customer_beta_scope_approved",
+    "source_monitoring_live",
+    "email_delivery",
+    "object_store_configured",
+    "controlled_customer_pilot",
+    "production_rollout"
+  ],
+  "card": "operational_health",
+  "controlled_customer_pilot_active": false,
+  "durability_lanes_shown": [
+    "tenant_digest_persistence_live",
+    "audit_replay_ready",
+    "operational_backup_restore_ready",
+    "operational_health_ready"
+  ],
+  "lane_evidence": "needs_a_verifier_run",
+  "production_monitoring_active": false,
+  "production_monitoring_statement_on_card": true,
+  "schema_version": "nf_operational_health_gate154_artifacts_v1",
+  "scope": "controlled_dev_demo",
+  "verifier_registry_summary_on_card": true,
+  "why_not_self_evidencing": "a summary that supplied its own proof would be grading its own homework. Unsupplied means readiness_only, never operational."
+}

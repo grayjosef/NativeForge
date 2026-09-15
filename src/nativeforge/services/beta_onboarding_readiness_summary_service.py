@@ -84,6 +84,12 @@ LANE_KEYS: tuple[str, ...] = (
     "customer_beta_scope",
     "controlled_customer_pilot",
     "production_rollout",
+    # Gates 151-154: operational durability. Not customer lanes - these are
+    # the parts of the system that are not waiting on a person.
+    "tenant_digest_persistence",
+    "audit_replay",
+    "operational_backup_restore",
+    "operational_health",
 )
 
 #: What this summary is allowed to conclude on its own, per lane.
@@ -110,6 +116,10 @@ LANE_EVIDENCE: dict[str, str] = {
     "customer_beta_scope": "self_evidencing",
     "controlled_customer_pilot": "self_evidencing",
     "production_rollout": "self_evidencing",
+    "tenant_digest_persistence": "needs_a_verifier_run",
+    "audit_replay": "needs_a_verifier_run",
+    "operational_backup_restore": "needs_a_verifier_run",
+    "operational_health": "needs_a_verifier_run",
 }
 
 #: Lanes this gate may never report as true, whatever it is handed.
@@ -198,6 +208,10 @@ def build_beta_onboarding_summary(
     document_metadata_operational: bool | None = None,
     email_delivery_readiness: bool | None = None,
     source_monitoring_preflight_ready: bool | None = None,
+    tenant_digest_persistence_live: bool | None = None,
+    audit_replay_ready: bool | None = None,
+    operational_backup_restore_ready: bool | None = None,
+    operational_health_ready: bool | None = None,
 ) -> dict[str, Any]:
     """Every lane, measured. Activates nothing and contacts nothing.
 
@@ -576,6 +590,56 @@ def build_beta_onboarding_summary(
         )
     )
 
+    # -- operational durability, Gates 151-154 -----------------------------
+    #
+    # Each needs a verifier run to be proved. Unsupplied means readiness_only,
+    # not operational: a summary that supplied its own proof would be grading
+    # its own homework, which is the defect this module opens by naming.
+    for key, supplied, gate, what in (
+        (
+            "tenant_digest_persistence",
+            tenant_digest_persistence_live,
+            "151",
+            "a digest is written and reads back with its hash intact",
+        ),
+        (
+            "audit_replay",
+            audit_replay_ready,
+            "152",
+            "recorded evidence replays, and legacy gaps are reported not filled",
+        ),
+        (
+            "operational_backup_restore",
+            operational_backup_restore_ready,
+            "153",
+            (
+                "controlled dev/demo state exports, restores into an isolated "
+                "database and still passes the Gate 152 replay. NOT production "
+                "backup - that is the Gate 61/65 harness, which returns SKIP"
+            ),
+        ),
+        (
+            "operational_health",
+            operational_health_ready,
+            "154",
+            (
+                "service, migration and code-freshness state is modelled and "
+                "the next safe action is derived. NOT production monitoring"
+            ),
+        ),
+    ):
+        lanes.append(
+            _lane(
+                key,
+                status=OPERATIONAL if supplied else READINESS_ONLY,
+                value=bool(supplied),
+                scope=CONTROLLED_SCOPE,
+                summary=f"Gate {gate}: {what}",
+                blockers=[] if supplied else [f"needs_a_verifier_run:{key}"],
+                owner="engineering",
+            )
+        )
+
     by_lane = {lane["lane"]: lane for lane in lanes}
     operational = sorted(k for k, v in by_lane.items() if v["status"] == OPERATIONAL)
     blocked = sorted(k for k, v in by_lane.items() if v["status"] == BLOCKED)
@@ -593,6 +657,58 @@ def build_beta_onboarding_summary(
         {
             "schema_version": SCHEMA_VERSION,
             "scope": CONTROLLED_SCOPE,
+            "operational_health_card": {
+                "scope": CONTROLLED_SCOPE,
+                "durability_lanes": {
+                    "tenant_digest_persistence_live": bool(
+                        tenant_digest_persistence_live
+                    ),
+                    "audit_replay_ready": bool(audit_replay_ready),
+                    "operational_backup_restore_ready": bool(
+                        operational_backup_restore_ready
+                    ),
+                    "operational_health_ready": bool(operational_health_ready),
+                },
+                "blocked_customer_and_production_lanes": [
+                    "customer_auth_live",
+                    "verified_operational_binding",
+                    "consent_boundary_ready",
+                    "customer_beta_scope_approved",
+                    "source_monitoring_live",
+                    "email_delivery",
+                    "object_store_configured",
+                    "controlled_customer_pilot",
+                    "production_rollout",
+                ],
+                # Stated on the card itself, so a reader of the cockpit cannot
+                # take a green durability row for an operations capability.
+                "production_monitoring_active": False,
+                "production_monitoring_statement": (
+                    "production monitoring is NOT active. There is no APM, no "
+                    "alerting, no external monitor and no uptime record. This "
+                    "card is controlled_dev_demo observability."
+                ),
+                "controlled_customer_pilot_active": False,
+                "verifier_registry": {
+                    "registry": (
+                        "src/nativeforge/services/"
+                        "readiness_verifier_registry_service.py"
+                    ),
+                    "production_backup_harness": "backup_restore (expects SKIP)",
+                    "operational_restore_harness": (
+                        "backup_restore_readiness (expects PASS)"
+                    ),
+                    "they_are_different_lanes": True,
+                },
+                "next_safe_action": (
+                    "run scripts/verify_nativeforge_operational_health_runbook.sh; "
+                    "it derives the next action from measured state rather than "
+                    "reading a constant"
+                ),
+                "next_safe_action_is_derived_by": (
+                    "src/nativeforge/services/runbook_health_service.py"
+                ),
+            },
             "lane_keys": list(LANE_KEYS),
             "lane_statuses": list(LANE_STATUSES),
             "lanes": [by_lane[key] for key in LANE_KEYS if key in by_lane],

@@ -1,0 +1,65 @@
+{
+  "a_lane_false_by_design_is_not_a_health_problem": "customer_auth_live, verified_operational_binding and the rest of EXPECTED_FALSE_LANES are false because a person has not decided. Counting those as blockers would keep this lane shut forever and send an operator to fix something unbroken.",
+  "alerting_configured": false,
+  "expected_false_lanes": [
+    "consent_boundary_ready",
+    "controlled_customer_pilot",
+    "customer_auth_live",
+    "customer_beta_scope_approved",
+    "email_delivery",
+    "object_store_configured",
+    "production_backup_ready",
+    "production_monitoring",
+    "production_rollout",
+    "source_monitoring_live",
+    "verified_operational_binding"
+  ],
+  "external_monitoring_configured": false,
+  "note": "every component here is `unknown` because this artifact supplies no facts. That is the shape of the model, not a health reading. The live reading comes from scripts/verify_nativeforge_operational_health_runbook.sh.",
+  "production_monitoring_active": false,
+  "required_components": [
+    "backend_service",
+    "preview_service",
+    "tunnel_service",
+    "migration_head",
+    "frontend_stamp",
+    "backend_code_freshness"
+  ],
+  "schema_version": "nf_operational_health_gate154_artifacts_v1",
+  "shell_executed": false,
+  "statuses": [
+    "operational",
+    "degraded",
+    "blocked",
+    "skipped",
+    "unknown"
+  ],
+  "unknown_is_not_a_pass": "a component nobody supplied is unknown, never operational, and a required unknown keeps the lane closed",
+  "unmeasured_model": {
+    "blockers": [
+      "backend_code_freshness_not_reported",
+      "backend_service_state_unknown",
+      "frontend_stamp_is_absent_or_unstamped",
+      "migration_state_unknown",
+      "preview_service_state_unknown",
+      "tunnel_service_state_unknown"
+    ],
+    "by_status": {
+      "blocked": 0,
+      "degraded": 0,
+      "operational": 0,
+      "skipped": 0,
+      "unknown": 6
+    },
+    "operational_health_ready": false,
+    "overall_status": "unknown",
+    "required_unknown": [
+      "backend_code_freshness",
+      "backend_service",
+      "frontend_stamp",
+      "migration_head",
+      "preview_service",
+      "tunnel_service"
+    ]
+  }
+}

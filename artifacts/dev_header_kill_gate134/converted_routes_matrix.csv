@@ -18,6 +18,7 @@ grant_spark_routes,/v1,9,False,True,preview_proxy,True,True,converted,none,0
 isolation_routes,/v1,2,False,True,preview_proxy,True,True,converted,none,0
 nofo_extraction_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0
 operational_backup_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
+operational_health_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 operator_workbench_advisory_routes,/v1,8,False,True,preview_proxy,True,True,converted,none,0
 opportunity_discovery_routes,/v1,84,False,True,preview_proxy,True,True,converted,none,0
 pursuit_brief_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0

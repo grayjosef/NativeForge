@@ -1,0 +1,86 @@
+{
+  "modes": [
+    {
+      "action": "./scripts/build_frontend_stamped.sh",
+      "detected_by": "Gate 154 health model, frontend_stamp component",
+      "detected_by_strict_public": false,
+      "human_approval_required": false,
+      "mode": "stale_frontend_stamp",
+      "state": "frontend_stamp_is_older_than_head",
+      "why_not": "strict-public checks that the stamp tag EXISTS. It never compares the sha, so an older stamp passes."
+    },
+    {
+      "action": "./scripts/build_frontend_stamped.sh",
+      "detected_by": "strict-public, as identity_meta_present",
+      "detected_by_strict_public": true,
+      "human_approval_required": false,
+      "mode": "unstamped_build",
+      "state": "frontend_stamp_is_absent_or_unstamped",
+      "why": "a plain `npm run build` overwrites dist/index.html"
+    },
+    {
+      "action": "systemctl --user restart nativeforge-backend.service",
+      "detected_by": "Gate 154 health model, by comparing process start time to HEAD commit time",
+      "human_approval_required": false,
+      "mode": "backend_stale_code",
+      "not_detectable_from": "/backend/health git_sha, which is measured at request time from the repository and always agrees with HEAD",
+      "state": "backend_started_before_head_was_committed"
+    },
+    {
+      "action": "git status --porcelain --untracked-files=no",
+      "detected_by": "Gate 154 health model",
+      "human_approval_required": false,
+      "mode": "dirty_tree",
+      "state": "backend_code_unknown_because_tree_is_dirty"
+    },
+    {
+      "action": "alembic upgrade head",
+      "detected_by": "Gate 154 health model, migration_head component",
+      "human_approval_required": false,
+      "mode": "migration_not_applied",
+      "previously_detected_by": "nothing; Gate 151 found it by hand",
+      "state": "database_is_behind_the_repository_head"
+    },
+    {
+      "action": null,
+      "detected_by": "Gate 154 health model",
+      "human_approval_required": true,
+      "mode": "migration_ahead_of_repository",
+      "state": "database_is_ahead_of_the_repository_head",
+      "why": "downgrading destroys data and which direction is correct depends on why the branches differ"
+    },
+    {
+      "action": "run that verifier alone and read its blocker line",
+      "detected_by": "Gate 154 health model, read against the registry's expected_result for that verifier",
+      "human_approval_required": false,
+      "mode": "prior_verifier_failed",
+      "state": "verifier_result_unexpected",
+      "why_expected_result_matters": "a SKIP from the Gate 61/65 production backup harness is correct; a SKIP from a readiness verifier would be a finding. One universal PASS expectation would report the production harness as broken forever."
+    },
+    {
+      "detected_by": "verify_nativeforge_fixture_cleanliness.sh",
+      "human_approval_required": false,
+      "mode": "fixture_residue",
+      "note": "readiness verifiers write fixture rows into the dev database. Row counts and legacy gap counts MOVE between runs: Gate 153 measured 6580 rows and 93 gaps, then 6842 and 97 an hour later. That is residue, not drift in a lane.",
+      "state": "fixture_residue_present"
+    },
+    {
+      "detected_by": "Gate 152 audit replay, Gate 153 restore",
+      "human_approval_required": false,
+      "mode": "legacy_evidence_gaps",
+      "must_not_be_backfilled": true,
+      "state": "legacy_evidence_gaps_present",
+      "why": "producing a digest for an intent that never had one is fabricating evidence. A FALL in the count fails the lane."
+    },
+    {
+      "detected_by": "Gate 154 health model, as awaiting_human_decision",
+      "human_approval_required": true,
+      "mode": "customer_activation_blockers",
+      "not_a_blocker": true,
+      "state": "awaiting_human_decision",
+      "why": "these lanes are false by design. Counting them as health blockers would keep the lane shut forever and send an operator to fix something that is not broken."
+    }
+  ],
+  "production_monitoring_active": false,
+  "schema_version": "nf_operational_health_gate154_artifacts_v1"
+}

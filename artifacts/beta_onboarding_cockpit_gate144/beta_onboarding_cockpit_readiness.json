@@ -13,7 +13,7 @@
   "every_never_true_lane_is_false": true,
   "frontend_surface_exists": true,
   "invariant_failures": [],
-  "lane_count": 17,
+  "lane_count": 21,
   "never_true_lanes": [
     "consent_and_data_boundary",
     "controlled_customer_pilot",
