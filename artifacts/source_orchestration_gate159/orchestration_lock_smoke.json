@@ -1,0 +1,53 @@
+{
+  "acquisition": {
+    "enforced_by": "ux_nf_source_orchestration_cycles_cycle_id",
+    "how": "insert, catch the integrity error",
+    "not": "check, then insert",
+    "unique_over": [
+      "organization_id",
+      "cycle_id"
+    ],
+    "why": "check-then-insert has a window between the two halves that two processes can both pass through"
+  },
+  "artifact": "orchestration_lock_smoke.json",
+  "database_refuses": [
+    "jobs_completed <> 0",
+    "collectors_invoked <> 0",
+    "live_source_calls <> 0",
+    "an acquired row with no expires_at",
+    "a released row with no released_at"
+  ],
+  "default_lease_seconds": 600,
+  "migration": "0045",
+  "outcomes": [
+    "completed_normally",
+    "none",
+    "operator_stopped",
+    "reclaimed_from_an_expired_owner",
+    "refused_duplicate_slot",
+    "released_early",
+    "trigger_not_due",
+    "unknown"
+  ],
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "staleness_is_derived": "a row is stale when expires_at has passed and nothing released it, computed against an injected clock on read. A stored `stale` status would need a sweeper to stay true, and would be wrong between sweeps.",
+  "status_when_finished": "released",
+  "status_when_owned": "acquired",
+  "statuses": [
+    "abandoned",
+    "acquired",
+    "expired",
+    "released",
+    "unknown"
+  ],
+  "table": "nf_source_orchestration_cycles",
+  "the_defect_this_gate_found_in_itself": {
+    "the_fix": "a slot with a crashed owner is UNFINISHED, not served. History counts released slots and actively-owned ones, and excludes acquired-but-expired.",
+    "what": "read_last_served_slot counted a row in ANY status as served, so a process that acquired a slot and crashed left an `acquired` row, every later process was told already_triggered, and the expired ownership was never reclaimed - for that slot, forever",
+    "why_it_mattered": "the expiry existed and the reclaim existed; the trigger made the reclaim unreachable. An unreachable recovery is worse than an unreachable refusal, because the system looks like it has a safety net it cannot use."
+  },
+  "the_two_branches": {
+    "a_live_owner": "refused with ownership_has_not_expired_and_cannot_be_stolen",
+    "an_expired_owner": "reclaimable, and reclaim_count is incremented so `this keeps happening` is measurable rather than an impression"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "artifact": "orchestration_runtime_survey.json",
+  "measured_before_building": {
+    "advisory_lock_primitives_in_src": 0,
+    "database_backend": "sqlite",
+    "period_key_builders_in_the_repository": 0,
+    "systemd_timers_for_nativeforge": 0,
+    "systemd_units_installed_for_nativeforge": 3,
+    "tables_naming_an_orchestration_cycle": 0,
+    "units_in_the_repo_for_a_scheduler_or_worker": 0
+  },
+  "migration": "0045",
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "the_gap": "nothing woke the scheduler. scripts/run_source_collection_worker.py had a bounded loop and nothing invoked it; a cycle happened when a person ran a command.",
+  "the_measurement_that_makes_a_trigger_safe": {
+    "claim": "next_run_at does not move with the observer's clock",
+    "measured": "same next_run_at at 12:00:00, 12:00:01, 18:44:13 and the following day",
+    "why_it_matters": "Gate 158's job_id digests scheduled_for, which IS next_run_at. If it moved with the clock, every poll would mint a new id and the idempotency Gate 158 proved would be worthless the moment anything polled."
+  },
+  "why_a_new_table_was_needed": "there was no locking primitive to compose. SQLite has no pg_advisory_lock, so the portable atomic primitive is a unique index - the third use of it in this block, after Gate 157's job claim and Gate 158's enqueue idempotency.",
+  "why_it_is_not_a_second_job_lease": {
+    "job_columns_declared_on_the_cycle_table": [],
+    "lease_columns_declared_on_the_cycle_table": [],
+    "nf_source_collection_job_leases": "per JOB - who is working this one piece of work",
+    "nf_source_orchestration_cycles": "per CYCLE - who is running the loop"
+  },
+  "why_missed_windows_come_from_the_TRIGGER_not_the_source": "last_checked_at is eleven weeks stale and nothing advances it, because advancing it is what an actual source check does. Every source sits permanently due in a slot that never moves, so there is no sequence of missed SOURCE windows to walk."
+}

@@ -1,0 +1,44 @@
+{
+  "a_cycle_without_a_connection": {
+    "blocked_reasons": [
+      "no_connection_supplied"
+    ],
+    "invariant_failures": [],
+    "jobs_created": 0,
+    "ran": false
+  },
+  "artifact": "orchestration_cycle_smoke.json",
+  "composes": [
+    "source_collection_periodic_trigger_service.evaluate_trigger",
+    "source_collection_orchestration_lock_repository.acquire_cycle",
+    "source_collection_scheduler_loop_service.run_scheduler_cycle",
+    "source_collection_job_repository.enqueue_job (via the scheduler)",
+    "source_collection_worker_runtime_service.run_worker_cycle",
+    "source_collection_missed_window_service.recover_missed_windows",
+    "source_collection_orchestration_lock_repository.release_cycle"
+  ],
+  "constants": {
+    "collectors_invoked": 0,
+    "emails_sent": 0,
+    "last_checked_at_advanced": false,
+    "live_source_calls": 0,
+    "network_calls": 0,
+    "object_store_calls": 0,
+    "source_monitoring_live": false
+  },
+  "mode": "evaluate_and_persist",
+  "modes_not_implemented": [
+    "dispatch: needs a collector, which is Gate 161",
+    "advance_schedule: needs a real source check, which no gate has built"
+  ],
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "the_order": [
+    "evaluate the trigger against the last served slot",
+    "acquire the cycle for this slot, atomically, or refuse",
+    "run Gate 156 into Gate 158 in evaluate_and_enqueue mode",
+    "run Gate 157 over the persisted backlog",
+    "recover missed slots, bounded",
+    "release the cycle, recording what it did"
+  ],
+  "what_the_orchestrator_adds": "ordering, exclusivity and recovery. It adds no capability to the three gates it calls: after a cycle the same sources are blocked for the same reasons."
+}

@@ -1,0 +1,35 @@
+{
+  "a_five_hour_gap": {
+    "catchup_was_bounded": true,
+    "missed_slot_count": 6,
+    "recoverable_slot_count": 4,
+    "slots_dropped_by_the_bound": 2,
+    "state": "missed_window"
+  },
+  "a_forty_two_hour_outage": {
+    "catchup_was_bounded": true,
+    "missed_slot_count": 54,
+    "note": "the bound serves the most RECENT slots, because the oldest describe work the newest already covers",
+    "recoverable_slot_count": 4,
+    "slots_dropped_by_the_bound": 50,
+    "state": "missed_window"
+  },
+  "a_recovered_slot_may_create_no_work": "source schedules do not advance until a check happens, so every recovered slot computes the same Gate 158 job ids. Recovery records that the slot was served; it does not fabricate copies of a backlog.",
+  "artifact": "missed_window_recovery.json",
+  "default_max_catchup_slots": 6,
+  "recovery_does_not_compete_for_the_present": "the recovery pass acquires with allow_reclaim=False, so catching up on history cannot steal a slot another process is serving",
+  "recovery_without_a_connection": {
+    "blocked_reasons": [
+      "no_connection_supplied"
+    ],
+    "invariant_failures": [],
+    "ran": false
+  },
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "slot_results": [
+    "recovered",
+    "already_served",
+    "refused"
+  ],
+  "why_unbounded_would_be_wrong": "a process down for a month at hourly cadence would wake and replay seven hundred slots, each a full scheduler pass over 177 sources, all producing the same deduplicated rows"
+}

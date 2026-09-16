@@ -86,6 +86,9 @@ from nativeforge.api.pursuit_routes import demo_pursuit_router, real_pursuit_rou
 from nativeforge.api.source_collection_job_store_routes import (
     router as source_job_store_router,
 )
+from nativeforge.api.source_collection_orchestration_routes import (
+    router as source_orchestration_router,
+)
 from nativeforge.api.source_collection_scheduler_routes import (
     router as source_scheduler_router,
 )
@@ -230,6 +233,11 @@ def create_app() -> FastAPI:
     # one; no route claims a lease, and source_monitoring_live is constant.
     app.include_router(source_worker_router)
     app.include_router(source_job_store_router)
+    # Gate 159: the periodic orchestration runtime. GET routes report the
+    # trigger, the missed-window state and the lane; the POST runs a full
+    # cycle inside a SAVEPOINT and rolls it back, so a read endpoint
+    # cannot consume the real slot and suppress the next genuine cycle.
+    app.include_router(source_orchestration_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

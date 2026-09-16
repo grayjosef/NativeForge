@@ -1,0 +1,33 @@
+{
+  "a_running_timer_is_not_live_monitoring": true,
+  "a_trigger_is_not_a_source_check": true,
+  "approved_source_count": 0,
+  "artifact": "source_monitoring_status.json",
+  "claimed_job_means_source_contacted": false,
+  "collectors_invoked": 0,
+  "collectors_registered": 0,
+  "emails_sent": 0,
+  "jobs_completed": 0,
+  "last_checked_at_advanced": false,
+  "live_source_calls": 0,
+  "network_calls": 0,
+  "object_store_calls": 0,
+  "orchestrator_unit_enabled_by_this_gate": false,
+  "orchestrator_unit_written": true,
+  "persisted_job_means_collection_occurred": false,
+  "raw_payloads_written": 0,
+  "rows_with_execution_proof": 0,
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "source_monitoring_live": false,
+  "urls_fetched": 0,
+  "what_gate_159_added": "something that wakes on a cadence, takes one slot at a time, and recovers the slots it missed while it was down",
+  "what_it_did_not_add": [
+    "a collector",
+    "an approved source",
+    "accepted source terms",
+    "a completed job",
+    "an execution proof",
+    "a schedule advance",
+    "live monitoring"
+  ]
+}

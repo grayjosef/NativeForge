@@ -1,0 +1,45 @@
+{
+  "a_cycle_id_is_not_a_job_id": false,
+  "an_id_is_not_a_cycle_that_ran": false,
+  "artifact": "orchestration_cycle_identity.json",
+  "cadences": {
+    "daily": 86400,
+    "every_fifteen_minutes": 900,
+    "every_five_minutes": 300,
+    "every_six_hours": 21600,
+    "hourly": 3600
+  },
+  "default_cadence": "hourly",
+  "derived_from": [
+    "orchestration_version",
+    "cadence",
+    "slot_index"
+  ],
+  "invariant_failures": {
+    "unusable": [],
+    "usable": []
+  },
+  "measured": {
+    "a_different_cadence_is_a_different_id": true,
+    "a_different_slot_is_a_different_id": true,
+    "no_clock_yields_no_id": true,
+    "same_slot_twice_is_the_same_id": true,
+    "the_slot_is_a_floor": true
+  },
+  "not_derived_from": [
+    "pid",
+    "worker_id",
+    "owner_id",
+    "startup_timestamp",
+    "random_uuid",
+    "wall_clock_position_within_the_slot"
+  ],
+  "orchestration_version": "gate159.v1",
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "slot_epoch": "2026-01-01 00:00:00+00:00",
+  "the_owner_id_is_the_opposite": {
+    "example_shape": "example-host-1234-fixednonce00",
+    "why": "two processes contending for one cycle must be distinguishable, or the loser would believe it had won. So an owner DOES carry a nonce, and it is never part of a cycle id."
+  },
+  "why_not_a_pid_or_a_uuid": "suppression works by RECOGNISING that a slot has already been served. An identity that cannot repeat cannot be recognised, so every restart would re-serve every slot."
+}

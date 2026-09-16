@@ -1,0 +1,16 @@
+{
+  "artifact": "restart_idempotency.json",
+  "enforced_by": [
+    "ux_nf_source_orchestration_cycles_cycle_id  (the slot)",
+    "ux_nf_source_collection_jobs_job_id  (the work, Gate 158)"
+  ],
+  "five_evaluations_of_one_slot": {
+    "distinct_cycle_ids": 1,
+    "expected": 1
+  },
+  "measured_by_the_verifier": "phases A and B run in SEPARATE python processes; phase B reads rows phase A committed and then exited - scripts/verify_nativeforge_source_orchestration_runtime.sh",
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "the_decision_on_a_replay": "already_triggered",
+  "two_layers": "even if a cycle row were somehow re-acquired, the work it does is idempotent on Gate 158's deterministic job_id. The store would deduplicate, so a duplicated cycle costs time and not correctness.",
+  "what_a_crash_costs": "a cycle killed mid-pass leaves its ownership row acquired with an expiry. Another process reclaims it once the expiry lapses, so an ungraceful death costs one lease window - not the slot forever."
+}

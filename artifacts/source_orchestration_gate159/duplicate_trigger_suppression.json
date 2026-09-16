@@ -1,0 +1,85 @@
+{
+  "artifact": "duplicate_trigger_suppression.json",
+  "decisions": {
+    "a_five_hour_gap": {
+      "blocked_reasons": [],
+      "invariant_failures": [],
+      "missed_slot_count": 6,
+      "should_run_a_cycle": true,
+      "state": "missed_window"
+    },
+    "later_in_the_same_slot": {
+      "blocked_reasons": [],
+      "invariant_failures": [],
+      "missed_slot_count": 0,
+      "should_run_a_cycle": false,
+      "state": "already_triggered"
+    },
+    "nothing_ever_served": {
+      "blocked_reasons": [],
+      "invariant_failures": [],
+      "missed_slot_count": 0,
+      "should_run_a_cycle": true,
+      "state": "due"
+    },
+    "the_clock_went_backwards": {
+      "blocked_reasons": [
+        "last_served_slot_is_in_the_future"
+      ],
+      "invariant_failures": [],
+      "missed_slot_count": 0,
+      "should_run_a_cycle": false,
+      "state": "blocked"
+    },
+    "the_next_slot": {
+      "blocked_reasons": [],
+      "invariant_failures": [],
+      "missed_slot_count": 1,
+      "should_run_a_cycle": true,
+      "state": "due"
+    },
+    "the_trigger_is_disabled": {
+      "blocked_reasons": [
+        "periodic_trigger_is_not_enabled"
+      ],
+      "invariant_failures": [],
+      "missed_slot_count": 0,
+      "should_run_a_cycle": false,
+      "state": "blocked"
+    },
+    "this_slot_already_served": {
+      "blocked_reasons": [],
+      "invariant_failures": [],
+      "missed_slot_count": 0,
+      "should_run_a_cycle": false,
+      "state": "already_triggered"
+    }
+  },
+  "next_wake_is_a_boundary_not_an_interval": {
+    "from": "2026-09-15T12:59:59Z",
+    "next_wake_at": "2026-09-15 13:00:00+00:00",
+    "upcoming": [
+      "2026-09-15T13:00:00Z",
+      "2026-09-15T14:00:00Z",
+      "2026-09-15T15:00:00Z",
+      "2026-09-15T16:00:00Z"
+    ],
+    "why": "a process that slept for `interval` from an arbitrary wake time would drift off the boundary and eventually serve two slots in one window, or none"
+  },
+  "repeated_polling": "the slot is a floor over an injected clock, so a hundred polls inside one hourly window decide `due` once and `already_triggered` ninety-nine times",
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "states": [
+    "not_due",
+    "due",
+    "already_triggered",
+    "missed_window",
+    "recovered",
+    "blocked",
+    "unknown"
+  ],
+  "states_that_permit_a_cycle": [
+    "due",
+    "missed_window"
+  ],
+  "why_not_due_and_already_triggered_are_different": "not_due is a statement about the clock; already_triggered is a statement about history. Collapsing them would make a duplicate attempt indistinguishable from a poll that arrived early."
+}

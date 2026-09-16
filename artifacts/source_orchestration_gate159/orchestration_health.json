@@ -1,0 +1,45 @@
+{
+  "any_blocker_closes_the_lane": "ready is all(conditions) and not blockers. Gate 154 shipped a ready that weighed only the conditions it expected to matter.",
+  "artifact": "orchestration_health.json",
+  "condition_evidence": {
+    "catchup_is_bounded": "the trigger's recoverable set never exceeded max_catchup_slots, and catchup_was_bounded agrees with whether any slots were dropped. Measured against the bound rather than by comparing a count with itself, which is what the first version of this condition did.",
+    "cycle_completed": "an orchestration cycle ran end to end and its own invariants were clean",
+    "cycle_identity_is_deterministic": "the same trigger slot produced the same cycle id, and a different slot a different one, recomputed rather than asserted",
+    "duplicate_trigger_suppressed": "a second trigger attempt inside one slot did no work and was refused by name, rather than silently doing the work twice",
+    "expired_owner_reclaimable": "a slot whose owner lapsed without releasing was taken by another process, so one crashed orchestrator does not block its slot forever. Gate 159 measured this path unreachable at first: the history read counted a crashed slot as served, so the trigger refused before acquisition was ever attempted.",
+    "missed_window_recovered": "a trigger slot that went unserved during downtime was served once on the next wake",
+    "nothing_collected": "zero completed jobs and zero execution proofs, counted from the job store, and zero rows in the cycle table claiming a collector or a live call - values the database refuses to let grow",
+    "restart_is_idempotent": "running the same instant again recovered nothing new and wrote no cycle row",
+    "single_active_owner": "a second process could not own a slot whose owner had not expired, refused by a unique index rather than by a check with a race window in front of it"
+  },
+  "conditions": [
+    "cycle_completed",
+    "cycle_identity_is_deterministic",
+    "duplicate_trigger_suppressed",
+    "single_active_owner",
+    "expired_owner_reclaimable",
+    "missed_window_recovered",
+    "catchup_is_bounded",
+    "restart_is_idempotent",
+    "nothing_collected"
+  ],
+  "lane": "orchestration_runtime_ready",
+  "not_measurable_by_a_request": [
+    "expired_owner_reclaimable",
+    "missed_window_recovered",
+    "restart_is_idempotent"
+  ],
+  "process_state_is_supplied": "whether a process is running is a fact about the host. The verifier reads systemd; the route reports the absence honestly.",
+  "ready_does_not_mean": [
+    "a source was contacted",
+    "a collector ran",
+    "a source is approved",
+    "source terms were accepted",
+    "a schedule advanced",
+    "monitoring is live",
+    "a job was completed"
+  ],
+  "schema_version": "nf_source_orchestration_gate159_artifacts_v1",
+  "what_a_request_CAN_measure": "cycle_completed, duplicate_trigger_suppressed and single_active_owner, inside a SAVEPOINT that is rolled back. The savepoint matters: a committed probe would consume the real slot and the next genuine wake would be told already_triggered - a READ endpoint would have suppressed a real cycle.",
+  "why": "reclaiming an expired owner needs a process to die and a lease to lapse; recovering a missed window needs downtime; restart idempotency needs a second process. A request has none of those, so the route reports those three red and names the verifier."
+}

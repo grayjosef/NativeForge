@@ -338,6 +338,33 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "source_orchestration_runtime",
+        lane="orchestration_runtime_ready",
+        kind=KIND_READINESS,
+        gate="159",
+        blocking=True,
+        depends_on=(
+            "no_live_source_calls",
+            "source_scheduler_runtime",
+            "source_worker_runtime",
+            "collection_job_store",
+        ),
+        note=(
+            "a loop that wakes on a cadence, takes exactly one slot at a time, "
+            "and recovers the slots it missed while it was down. Cycle "
+            "identity is deterministic over (version, cadence, slot) and is "
+            "NOT Gate 158's job id. Ownership is atomic on a unique index: a "
+            "live owner cannot be stolen from, an expired one is reclaimable, "
+            "and a crashed slot reads as UNFINISHED rather than served - "
+            "without which the reclaim path is unreachable, which is the "
+            "defect this gate found in its own first draft. Catch-up is "
+            "bounded and the dropped count is reported. The systemd unit is "
+            "written and deliberately NOT enabled. source_monitoring_live "
+            "stays false, and the cycle table's CHECK constraints refuse any "
+            "row claiming a completion, a collector or a live call."
+        ),
+    ),
+    _verifier(
         "operational_durability_reassessment",
         lane="operational_durability_reassessment",
         kind=KIND_READINESS,

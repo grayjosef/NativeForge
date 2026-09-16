@@ -1,0 +1,114 @@
+[Unit]
+# NativeForge source collection orchestrator — TEMPLATE. NOT INSTALLED, NOT
+# ENABLED, and no script in this repository installs or enables it.
+#
+# Gate 159H wrote this unit. Gate 159 deliberately did NOT enable it.
+#
+# Enabling it is a host decision, and the campaign's own preconditions for that
+# decision are listed under "Before enabling" below. They are all currently
+# satisfied EXCEPT the one that matters: nobody has asked for a process that
+# wakes on its own. Writing the unit proves the runtime is supervisable;
+# starting it is a separate, human choice.
+#
+# What this process does when it runs:
+#
+#   wakes, computes the trigger slot for the current instant
+#   takes ownership of that slot, atomically, or refuses
+#   runs the Gate 156 scheduler over the source registry
+#   persists the result into the Gate 158 job store, idempotently
+#   runs the Gate 157 worker, which refuses every job
+#   recovers missed slots, bounded
+#   releases the slot and exits
+#
+# What it does NOT do:
+#
+#   contact a source          zero sources are approved
+#   invoke a collector        none exists; that is Gate 161
+#   advance a schedule        writing last_checked_at would assert a check
+#   complete a job            the database refuses a completed row
+#   send email                nothing here has a recipient
+#   touch an object store     nothing here has bytes to put anywhere
+#
+# Health:  the orchestration health route, or
+#          scripts/verify_nativeforge_source_orchestration_runtime.sh
+# Docs:    docs/operations/828_GATE159_SOURCE_ORCHESTRATION_RUNTIME.md
+#
+# Before enabling, all of these must hold and be re-verified on the host:
+#
+#   duplicate trigger suppression proven   verifier check 2 and 3
+#   missed-window recovery proven          verifier checks 6, 7, 8
+#   concurrent ownership refused           verifier check 4
+#   expired ownership reclaimable          verifier check 5
+#   zero live source calls                 verifier check 16
+#   source_monitoring_live = false         verifier check 17
+#
+# The orchestrator is SEPARATE from the FastAPI backend on purpose. A loop that
+# wakes on a cadence must not share a lifecycle with the API: restarting the API
+# to deploy a route should not abort a cycle, and a wedged cycle should not take
+# the API down with it. It is separate from the worker for the same reason -
+# the orchestrator calls the worker in-process per cycle, and a standalone
+# worker service would be a second thing claiming the same job leases.
+Description=NativeForge source collection orchestrator (periodic, contacts nothing)
+Documentation=file:///home/josefgray/projects/nativeforge/docs/operations/828_GATE159_SOURCE_ORCHESTRATION_RUNTIME.md
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/josefgray/projects/nativeforge
+
+# No secrets in this unit, and none on the command line. There is nothing to
+# authenticate to: this process contacts no source and no provider. The
+# environment file is NOT in the repository and NOT created by any gate; `-`
+# means the service still starts without it, which is correct for a process
+# that holds no credentials.
+EnvironmentFile=-/home/josefgray/projects/nativeforge/.env
+
+# --loop with an explicit bound. There is no unbounded mode, and the process
+# exits after --max-cycles so systemd restarts it rather than it running
+# forever unsupervised. The sleep between cycles is computed from the next slot
+# BOUNDARY, so a restart rejoins the cadence instead of drifting off it.
+#
+# --once would also be correct here, paired with a .timer. A timer is the
+# better shape once somebody decides to enable this; the loop is kept so the
+# unit is testable without also installing a timer.
+ExecStart=/home/josefgray/projects/nativeforge/.venv/bin/python \
+    scripts/run_source_collection_orchestrator.py \
+    --loop --max-cycles 12 --cadence hourly
+
+# SIGTERM sets a stop flag; the current cycle finishes and the process exits.
+# A cycle killed mid-pass leaves its ownership row `acquired` with an expiry,
+# which another process reclaims once that expiry lapses - so an ungraceful
+# death costs one cadence window, not the slot forever.
+KillSignal=SIGTERM
+TimeoutStopSec=90
+
+# Restart on failure and back off, rather than thrash. An orchestrator that
+# cannot start should stop and be visible.
+#
+# Deliberately `on-failure`, NOT `always`: this process is SUPPOSED to exit
+# zero after --max-cycles, and `always` would make a clean completion
+# indistinguishable from a crash loop. The backend unit uses `always` for the
+# opposite reason, documented there.
+Restart=on-failure
+RestartSec=30
+StartLimitIntervalSec=600
+StartLimitBurst=5
+
+# It holds no credentials and reaches no network, but there is no reason for it
+# to write outside its own tree or gain privileges.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+
+# The dev database is the SQLite file at the repository root, and SQLite writes
+# its journal beside that file, so the DIRECTORY must be writable - naming only
+# the .db fails namespace setup on a journal that does not exist yet. Same
+# reasoning as the backend unit, and the same narrow fix applies: move the dev
+# database out of the source tree.
+ReadWritePaths=/home/josefgray/projects/nativeforge
+
+[Install]
+# Present so the unit is installable by hand. Nothing here enables it, and no
+# gate in this campaign has run `systemctl --user enable` on it.
+WantedBy=default.target

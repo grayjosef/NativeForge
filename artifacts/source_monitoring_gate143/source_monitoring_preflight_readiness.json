@@ -1,7 +1,7 @@
 {
   "blocked_reasons": [],
   "chokepoint_clean": true,
-  "chokepoint_files_scanned": 1157,
+  "chokepoint_files_scanned": 1165,
   "collector_preflight_state": "configured_dry_run_only",
   "collector_required_for_readiness": false,
   "every_row_classified": true,

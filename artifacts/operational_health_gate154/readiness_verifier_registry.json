@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 28,
+  "blocking_count": 29,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -33,6 +33,7 @@
       "operational_durability_reassessment",
       "operational_health_runbook",
       "source_monitoring_preflight",
+      "source_orchestration_runtime",
       "source_scheduler_runtime",
       "source_worker_runtime",
       "tenant_digest_operational",
@@ -66,7 +67,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 32,
+  "verifier_count": 33,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -94,6 +95,7 @@
     "postgres_rls",
     "rls_isolation",
     "source_monitoring_preflight",
+    "source_orchestration_runtime",
     "source_scheduler_runtime",
     "source_worker_runtime",
     "tenant_digest_operational",
@@ -455,6 +457,24 @@
       "production": false,
       "script": "scripts/verify_nativeforge_collection_job_store.sh",
       "verifier": "collection_job_store"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "no_live_source_calls",
+        "source_scheduler_runtime",
+        "source_worker_runtime",
+        "collection_job_store"
+      ],
+      "expected_result": "PASS",
+      "gate": "159",
+      "kind": "readiness_lane",
+      "lane": "orchestration_runtime_ready",
+      "note": "a loop that wakes on a cadence, takes exactly one slot at a time, and recovers the slots it missed while it was down. Cycle identity is deterministic over (version, cadence, slot) and is NOT Gate 158's job id. Ownership is atomic on a unique index: a live owner cannot be stolen from, an expired one is reclaimable, and a crashed slot reads as UNFINISHED rather than served - without which the reclaim path is unreachable, which is the defect this gate found in its own first draft. Catch-up is bounded and the dropped count is reported. The systemd unit is written and deliberately NOT enabled. source_monitoring_live stays false, and the cycle table's CHECK constraints refuse any row claiming a completion, a collector or a live call.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_source_orchestration_runtime.sh",
+      "verifier": "source_orchestration_runtime"
     },
     {
       "blocking": true,
