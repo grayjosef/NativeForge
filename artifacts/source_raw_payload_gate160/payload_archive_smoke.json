@@ -1,0 +1,31 @@
+{
+  "an_archived_payload_is_still_replayable": true,
+  "archive_is_not_deletion": "archive is a lifecycle state. Nothing in this gate deletes, because deletion needs an approved policy and none exists.",
+  "artifact": "payload_archive_smoke.json",
+  "body_storage_modes": [
+    "body_not_stored",
+    "controlled_dev_demo_database",
+    "object_store_reference"
+  ],
+  "default_retention_policy": "retention_unknown",
+  "measured_by_the_verifier": "archiving needs a persisted row - scripts/verify_nativeforge_source_raw_payload_persistence.sh",
+  "payload_statuses": [
+    "active",
+    "archived",
+    "refused",
+    "unknown"
+  ],
+  "retention_policies": [
+    "retain_1_year",
+    "retain_7_days",
+    "retain_90_days",
+    "retain_indefinite",
+    "retention_unknown"
+  ],
+  "schema_version": "nf_source_raw_payload_gate160_artifacts_v1",
+  "the_database_enforces": [
+    "an archived row carries archived_at",
+    "a live row does not"
+  ],
+  "why_unknown_is_the_default": "nobody has approved a retention policy for source evidence. Defaulting to retain_90_days would be inventing one. UNKNOWN stays UNKNOWN."
+}

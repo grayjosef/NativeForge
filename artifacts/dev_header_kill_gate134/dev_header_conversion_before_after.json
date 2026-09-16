@@ -32,6 +32,7 @@
       "source_collection_worker_routes",
       "source_ingestion_routes",
       "source_monitoring_readiness_routes",
+      "source_raw_payload_routes",
       "spark_scoring_routes",
       "sprint0_routes",
       "stage12_guided_demo_routes",
@@ -42,12 +43,12 @@
       "trust_routes",
       "verified_binding_readiness_routes"
     ],
-    "converted_modules": 40,
+    "converted_modules": 41,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 318
+    "route_total": 322
   },
   "before": {
     "converted_modules": 1,

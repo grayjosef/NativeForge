@@ -1,0 +1,34 @@
+{
+  "artifact": "raw_payload_persistence_survey.json",
+  "composed_not_rebuilt": {
+    "body_hash": "s3_raw_payload_body_store_service.body_hash",
+    "retention_policies": [
+      "retain_1_year",
+      "retain_7_days",
+      "retain_90_days",
+      "retain_indefinite",
+      "retention_unknown"
+    ],
+    "secret_scan": "raw_payload_secret_scan_service, for header VALUES"
+  },
+  "max_payload_bytes": 1048576,
+  "measured_before_building": {
+    "body_store_configured": false,
+    "compression_utilities_in_the_repo": 0,
+    "nf_raw_source_payloads_exists": true,
+    "nf_raw_source_payloads_has_a_body_column": false,
+    "nf_raw_source_payloads_rows": 0,
+    "object_store_bucket": "",
+    "object_store_endpoint": "",
+    "production_raw_payload_store_available": false,
+    "raw_payload_ref_is_a_pointer": true,
+    "response_header_filters_in_the_repo": 0
+  },
+  "migration": "0046",
+  "schema_version": "nf_source_raw_payload_gate160_artifacts_v1",
+  "storage_mode_chosen": "controlled_dev_demo_database",
+  "the_gap": "response METADATA had a home and response BODIES did not. raw_payload_ref is a VARCHAR pointer to an object store that has no bucket, endpoint or credential, and Gate 96C's repository rejects store_body=True outright.",
+  "why_a_new_table": "Gate 96C's docstring gives the reason a body does not belong in nf_raw_source_payloads - 'a table that sometimes holds bodies is a table whose size nobody can predict' - and Gate 160 does not get to overturn that by widening the same table.",
+  "why_not_a_second_object_store": "Option B is already implemented by Gate 97C and blocked on configuration rather than on code. A second abstraction would produce two stores, one of them fake.",
+  "why_one_megabyte": "Gate 141's object adapter allows 16 MiB, but that is an OBJECT adapter's limit and a database row is not an object. 1 MiB holds a synthetic fixture or a realistic API page and makes clear this is not the production path."
+}

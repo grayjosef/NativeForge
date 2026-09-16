@@ -1,0 +1,33 @@
+{
+  "algorithm": "sha256",
+  "artifact": "payload_hash_smoke.json",
+  "composed_from": "s3_raw_payload_body_store_service.body_hash",
+  "fixture": {
+    "encoding": {
+      "character_count": 91,
+      "declared_encoding": "utf-8",
+      "decodes_as_utf8": true,
+      "is_text": true
+    },
+    "sha256": "c47dce8851e095bb49b39c02b77013404d2003101b14fbcde8140eb1e18d4e63",
+    "size_bytes": 91
+  },
+  "invariant_failures": [],
+  "max_payload_bytes": 1048576,
+  "measured": {
+    "a_reserialized_structure_hashes_differently": true,
+    "a_wrong_hash_is_refused": true,
+    "empty_is_hashable": true,
+    "non_utf8_is_hashable": true,
+    "non_utf8_is_not_text": true,
+    "one_byte_changes_the_hash": true,
+    "oversize_is_refused": true,
+    "readback_verifies": true,
+    "same_bytes_same_hash": true
+  },
+  "oversize_refusal": [
+    "payload_exceeds_max_bytes:1048577>1048576"
+  ],
+  "schema_version": "nf_source_raw_payload_gate160_artifacts_v1",
+  "the_rule": "never hash a reserialized structure. If a collector receives 412 bytes of JSON, the evidence hash is of those 412 bytes - not of json.dumps(json.loads(body)), which reorders keys and produces a digest that no longer identifies what arrived."
+}

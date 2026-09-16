@@ -1,0 +1,27 @@
+{
+  "artifact": "payload_tamper_refusal.json",
+  "cross_organization": "every query is scoped to organization_id, so another organization's payload is NOT FOUND rather than found-and-refused. A refusal that has to compare two values is a refusal somebody can forget to write.",
+  "measured": {
+    "tampered_bytes_do_not": false,
+    "the_refusal": [
+      "stored_bytes_do_not_match_the_recorded_hash"
+    ],
+    "untouched_bytes_verify": true
+  },
+  "replay_without_a_connection": {
+    "blocked_reasons": [
+      "no_connection_supplied"
+    ],
+    "invariant_failures": [],
+    "replayable": false
+  },
+  "schema_version": "nf_source_raw_payload_gate160_artifacts_v1",
+  "the_order_that_matters": [
+    "read the row",
+    "re-hash the stored bytes",
+    "compare with the recorded hash",
+    "match -> return the bytes",
+    "mismatch -> return NOTHING, and say why"
+  ],
+  "why_no_bytes_at_all": "returning bytes and reporting hash_verified:false beside them would put the caller in the position of noticing, and a caller that forgets has replayed evidence that changed underneath the row."
+}

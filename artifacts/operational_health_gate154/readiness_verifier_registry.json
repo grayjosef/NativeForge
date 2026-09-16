@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 29,
+  "blocking_count": 30,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -34,6 +34,7 @@
       "operational_health_runbook",
       "source_monitoring_preflight",
       "source_orchestration_runtime",
+      "source_raw_payload_persistence",
       "source_scheduler_runtime",
       "source_worker_runtime",
       "tenant_digest_operational",
@@ -67,7 +68,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 33,
+  "verifier_count": 34,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -96,6 +97,7 @@
     "rls_isolation",
     "source_monitoring_preflight",
     "source_orchestration_runtime",
+    "source_raw_payload_persistence",
     "source_scheduler_runtime",
     "source_worker_runtime",
     "tenant_digest_operational",
@@ -475,6 +477,25 @@
       "production": false,
       "script": "scripts/verify_nativeforge_source_orchestration_runtime.sh",
       "verifier": "source_orchestration_runtime"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "no_live_source_calls",
+        "source_scheduler_runtime",
+        "source_worker_runtime",
+        "collection_job_store",
+        "source_orchestration_runtime"
+      ],
+      "expected_result": "PASS",
+      "gate": "160",
+      "kind": "readiness_lane",
+      "lane": "raw_payload_persistence_ready",
+      "note": "a durable, size-capped, hash-verified landing zone for response bytes in controlled_dev_demo. Exact bytes round-trip, including non-UTF-8 bodies; the hash is verified on write AND on readback; a tampered body fails replay and NO bytes are returned. A retry is a separate attempt, so attempt 2 never overwrites attempt 1's evidence, and the same attempt offering different bytes is refused with both hashes named. Response headers are kept by an ALLOWLIST of header names - Authorization, Cookie, Set-Cookie and X-API-Key are refused, and so is any header nobody has classified. The URL is never stored, only a sha256 fingerprint, because query strings carry api keys. object_store_configured is measured from Gate 97C's own config and stays false: this lane is the dev/demo spine, NOT production raw payload storage. A stored payload is not a fetched payload, no execution proof is created, and source_monitoring_live stays false.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_source_raw_payload_persistence.sh",
+      "verifier": "source_raw_payload_persistence"
     },
     {
       "blocking": true,

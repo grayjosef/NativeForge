@@ -1,0 +1,34 @@
+{
+  "artifact": "attempt_identity.json",
+  "attempt_version": "gate160.v1",
+  "default_collector_version": "no_collector_registered",
+  "derived_from": [
+    "attempt_version",
+    "job_id",
+    "source_id",
+    "attempt_number",
+    "collector_version"
+  ],
+  "invariant_failures": {
+    "unusable": [],
+    "usable": []
+  },
+  "measured": {
+    "a_different_collector_is_a_different_attempt": true,
+    "a_different_job_is_a_different_attempt": true,
+    "a_retry_is_a_DIFFERENT_attempt": true,
+    "an_attempt_id_is_not_a_job_id": false,
+    "no_job_id_yields_no_attempt_id": true,
+    "same_attempt_twice_is_the_same_id": true
+  },
+  "not_derived_from": [
+    "random_uuid",
+    "pid",
+    "worker_id",
+    "wall_clock",
+    "response_body"
+  ],
+  "schema_version": "nf_source_raw_payload_gate160_artifacts_v1",
+  "why_a_retry_must_differ": "a job retried three times is one job and three attempts. If the ids collided, attempt 2 would overwrite attempt 1's evidence - and the whole point of a raw payload spine is that the bytes from two attempts are separately inspectable when they disagree.",
+  "why_collector_version_is_in_the_digest": "when a collector changes, the bytes it produces for the same slot may legitimately differ. Without it the store would have to choose between refusing the new bytes and silently overwriting the old."
+}

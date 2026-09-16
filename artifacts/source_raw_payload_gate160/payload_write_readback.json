@@ -1,0 +1,41 @@
+{
+  "a_write_without_a_connection": {
+    "blocked_reasons": [
+      "no_connection_supplied"
+    ],
+    "invariant_failures": [],
+    "persisted": false
+  },
+  "artifact": "payload_write_readback.json",
+  "composes": [
+    "source_collection_attempt_identity_service.build_attempt_identity",
+    "source_response_metadata_filter_service.filter_response_metadata",
+    "source_raw_payload_hash_service.hash_payload",
+    "source_collection_raw_payload_repository.persist_payload",
+    "source_collection_raw_payload_repository.get_payload"
+  ],
+  "conflict_semantics": {
+    "different_attempts_same_bytes": "allowed; the hash index shows the pair",
+    "same_attempt_different_bytes": "REFUSED, and both hashes named",
+    "same_attempt_same_bytes": "idempotent, the existing row is returned"
+  },
+  "measured_by_the_verifier": "the write, readback, conflict and idempotency cases all need a connection - scripts/verify_nativeforge_source_raw_payload_persistence.sh",
+  "schema_version": "nf_source_raw_payload_gate160_artifacts_v1",
+  "storage_mode": "controlled_dev_demo_database",
+  "table": "nf_source_collection_raw_payloads",
+  "the_six_steps": [
+    "validate the attempt identity",
+    "filter the response metadata",
+    "hash the EXACT bytes",
+    "persist",
+    "re-read through the store",
+    "verify the readback hash"
+  ],
+  "url_handling": {
+    "example_fingerprint_length": 64,
+    "not_stored": "the URL",
+    "stored": "a sha256 fingerprint",
+    "why": "query strings carry api keys. A fingerprint answers 'is this the same endpoint as last time' without storing what the endpoint was."
+  },
+  "why_a_conflict_is_refused": "two different byte strings claiming to be the same attempt is a contradiction. Overwriting would destroy the evidence that they disagreed; skipping would silently keep whichever arrived first."
+}

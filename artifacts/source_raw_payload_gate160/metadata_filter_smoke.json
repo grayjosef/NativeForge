@@ -1,0 +1,103 @@
+{
+  "a_clean_allowed_header_survives": {
+    "decision": "kept",
+    "header": "cache-control"
+  },
+  "a_credential_inside_an_allowed_header": {
+    "decision": "kept",
+    "header": "cache-control",
+    "why": "on the allowlist, value inspected and clean"
+  },
+  "allowlist": [
+    "age",
+    "cache-control",
+    "content-encoding",
+    "content-language",
+    "content-length",
+    "content-type",
+    "date",
+    "etag",
+    "expires",
+    "last-modified",
+    "ratelimit-limit",
+    "ratelimit-remaining",
+    "ratelimit-reset",
+    "retry-after",
+    "vary",
+    "x-ratelimit-limit",
+    "x-ratelimit-remaining",
+    "x-ratelimit-reset"
+  ],
+  "an_oversize_value": "refused_header_value_too_long",
+  "artifact": "metadata_filter_smoke.json",
+  "decisions": [
+    "kept",
+    "refused_known_credential_header",
+    "refused_not_on_the_allowlist",
+    "refused_value_looked_like_a_credential",
+    "refused_header_value_too_long"
+  ],
+  "invariant_failures": [],
+  "known_credential_headers": [
+    "access-token",
+    "api-key",
+    "apikey",
+    "auth-token",
+    "authentication-info",
+    "authorization",
+    "cookie",
+    "proxy-authenticate",
+    "proxy-authorization",
+    "set-cookie",
+    "www-authenticate",
+    "x-access-token",
+    "x-amz-security-token",
+    "x-api-key",
+    "x-auth-token",
+    "x-csrf-token",
+    "x-goog-iam-authorization-token",
+    "x-session-id",
+    "x-session-token",
+    "x-xsrf-token"
+  ],
+  "max_header_value_length": 1024,
+  "measured": {
+    "by_decision": {
+      "kept": 3,
+      "refused_header_value_too_long": 0,
+      "refused_known_credential_header": 4,
+      "refused_not_on_the_allowlist": 2,
+      "refused_value_looked_like_a_credential": 0
+    },
+    "headers_supplied": 9,
+    "kept": 3,
+    "kept_names": [
+      "cache-control",
+      "content-type",
+      "etag"
+    ],
+    "refused": 6,
+    "refused_names": [
+      "authorization",
+      "cookie",
+      "server",
+      "set-cookie",
+      "x-acme-session",
+      "x-api-key"
+    ]
+  },
+  "policy": "allowlist_by_header_name",
+  "schema_version": "nf_source_raw_payload_gate160_artifacts_v1",
+  "substring_traps_a_naive_scan_gets_wrong": {
+    "x-acme-session": "refused_not_on_the_allowlist",
+    "x-cache-key": "refused_not_on_the_allowlist",
+    "x-ratelimit-remaining": "kept"
+  },
+  "the_four_required_refusals": {
+    "api_key": true,
+    "authorization": true,
+    "cookie": true,
+    "set_cookie": true
+  },
+  "why_an_allowlist": "a denylist keeps a header because nothing on a list of bad words matched it. A new provider invents X-Acme-Session, no pattern matches, and it is persisted forever. An allowlist refuses it by default, which is correct for a header nobody has looked at."
+}

@@ -365,6 +365,37 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "source_raw_payload_persistence",
+        lane="raw_payload_persistence_ready",
+        kind=KIND_READINESS,
+        gate="160",
+        blocking=True,
+        depends_on=(
+            "no_live_source_calls",
+            "source_scheduler_runtime",
+            "source_worker_runtime",
+            "collection_job_store",
+            "source_orchestration_runtime",
+        ),
+        note=(
+            "a durable, size-capped, hash-verified landing zone for response "
+            "bytes in controlled_dev_demo. Exact bytes round-trip, including "
+            "non-UTF-8 bodies; the hash is verified on write AND on readback; "
+            "a tampered body fails replay and NO bytes are returned. A retry "
+            "is a separate attempt, so attempt 2 never overwrites attempt 1's "
+            "evidence, and the same attempt offering different bytes is "
+            "refused with both hashes named. Response headers are kept by an "
+            "ALLOWLIST of header names - Authorization, Cookie, Set-Cookie and "
+            "X-API-Key are refused, and so is any header nobody has "
+            "classified. The URL is never stored, only a sha256 fingerprint, "
+            "because query strings carry api keys. object_store_configured is "
+            "measured from Gate 97C's own config and stays false: this lane is "
+            "the dev/demo spine, NOT production raw payload storage. A stored "
+            "payload is not a fetched payload, no execution proof is created, "
+            "and source_monitoring_live stays false."
+        ),
+    ),
+    _verifier(
         "operational_durability_reassessment",
         lane="operational_durability_reassessment",
         kind=KIND_READINESS,

@@ -32,6 +32,7 @@ source_collection_scheduler_routes,/v1,4,False,True,preview_proxy,True,True,conv
 source_collection_worker_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 source_ingestion_routes,/v1,26,False,True,preview_proxy,True,True,converted,none,0
 source_monitoring_readiness_routes,/v1,3,False,True,preview_proxy,True,True,converted,none,0
+source_raw_payload_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 spark_scoring_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0
 sprint0_routes,/v1,10,False,True,preview_proxy,True,True,converted,none,0
 stage12_guided_demo_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0

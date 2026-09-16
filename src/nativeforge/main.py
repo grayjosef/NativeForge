@@ -102,6 +102,9 @@ from nativeforge.api.source_ingestion_routes import (
 from nativeforge.api.source_monitoring_readiness_routes import (
     router as source_monitoring_router,
 )
+from nativeforge.api.source_raw_payload_routes import (
+    router as source_raw_payload_router,
+)
 from nativeforge.api.spark_scoring_routes import (
     demo_spark_scoring_router,
     real_spark_scoring_router,
@@ -238,6 +241,11 @@ def create_app() -> FastAPI:
     # cycle inside a SAVEPOINT and rolls it back, so a read endpoint
     # cannot consume the real slot and suppress the next genuine cycle.
     app.include_router(source_orchestration_router)
+    # Gate 160: the raw payload spine. GET routes report the lane and
+    # replay stored bytes as base64; the POST persists a FIXED synthetic
+    # fixture inside a SAVEPOINT and rolls it back. No route accepts
+    # caller bytes and no route fetches a URL.
+    app.include_router(source_raw_payload_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)
