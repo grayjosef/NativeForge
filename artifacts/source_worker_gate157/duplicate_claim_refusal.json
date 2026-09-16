@@ -1,0 +1,10 @@
+{
+  "a_live_lease_cannot_be_stolen": "not by another worker, and not by a second process sharing the same worker id",
+  "blocked_reasons": [
+    "job_is_already_claimed_by_another_worker",
+    "lease_has_not_expired_and_cannot_be_stolen"
+  ],
+  "outcome": "refused",
+  "scenario": "worker-1 holds a live lease; worker-2 claims the same job",
+  "schema_version": "nf_source_worker_gate157_artifacts_v1"
+}

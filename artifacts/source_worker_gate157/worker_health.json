@@ -1,0 +1,30 @@
+{
+  "condition_evidence": {
+    "claim_is_atomic": "a second worker's claim on a held job was refused, by a unique index rather than by a check with a race window in front of it",
+    "cycle_completed": "a worker cycle ran and its own invariants were clean",
+    "expired_lease_reclaimed": "a lease past its expiry was taken by another worker, so a worker that dies holding a claim does not block a job forever",
+    "no_collector_invoked": "zero, and no code path in this gate reaches one",
+    "only_transient_retries": "activation, terms and human-review refusals are not retried. Retrying them would burn the budget on jobs no worker can ever run.",
+    "retries_are_bounded": "a retry decision at the attempt budget returned should_retry false"
+  },
+  "conditions": [
+    "cycle_completed",
+    "claim_is_atomic",
+    "expired_lease_reclaimed",
+    "retries_are_bounded",
+    "only_transient_retries",
+    "no_collector_invoked"
+  ],
+  "note": "built with no cycle supplied, so worker_runtime_ready is false here. That is the shape of the lane, not a health reading - the live reading comes from scripts/verify_nativeforge_source_worker_runtime.sh.",
+  "schema_version": "nf_source_worker_gate157_artifacts_v1",
+  "source_monitoring_live": false,
+  "unmeasured_health": {
+    "blockers": [
+      "condition_not_met:cycle_completed",
+      "cycle_invariant:no_cycle_supplied"
+    ],
+    "worker_runtime_ready": false
+  },
+  "worker_process_active": null,
+  "worker_ready_is_not_monitoring_live": "worker_runtime_ready says a worker claims jobs and records outcomes. source_monitoring_live says something is polling a source. Nothing is: every job refuses, because none is approved."
+}

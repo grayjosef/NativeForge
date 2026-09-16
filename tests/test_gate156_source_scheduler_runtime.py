@@ -521,13 +521,19 @@ def test_no_scheduling_package_was_added():
     assert "scheduler_runtime" in readiness["components_missing"]
 
 
-def test_no_migration_was_added():
-    """nf_opportunity_sources already carries the scheduling columns."""
+def test_gate_156_added_no_migration():
+    """nf_opportunity_sources already carried the scheduling columns.
+
+    Gate 157 later added 0043 for job LEASES, which is a different thing: a
+    lease records that a worker claimed the right to attempt a job, and no
+    existing table had those semantics. Gate 156 needed none, and this test
+    asserts that no migration exists for scheduling state.
+    """
     versions = sorted(
         path.name for path in (REPO_ROOT / "alembic" / "versions").glob("0*.py")
     )
-    assert versions[-1].startswith("0042")
     assert not any("scheduler" in name for name in versions)
+    assert not any("schedule" in name and "check" not in name for name in versions)
 
 
 @pytest.mark.parametrize("module", GATE_156_MODULES)

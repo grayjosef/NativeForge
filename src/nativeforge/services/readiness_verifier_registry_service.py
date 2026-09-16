@@ -299,6 +299,21 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "source_worker_runtime",
+        lane="worker_runtime_ready",
+        kind=KIND_READINESS,
+        gate="157",
+        blocking=True,
+        depends_on=("no_live_source_calls", "source_scheduler_runtime"),
+        note=(
+            "a worker that claims a job with an expiring lease, classifies why "
+            "it refuses, and retries only genuine transient failures. It does "
+            "NOT clear `scheduler_component_absent:background_worker`, which "
+            "looks for a nativeforge.workers module or a console entry point; "
+            "this gate adds a script. source_monitoring_live stays false."
+        ),
+    ),
+    _verifier(
         "operational_durability_reassessment",
         lane="operational_durability_reassessment",
         kind=KIND_READINESS,

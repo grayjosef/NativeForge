@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 26,
+  "blocking_count": 27,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -33,6 +33,7 @@
       "operational_health_runbook",
       "source_monitoring_preflight",
       "source_scheduler_runtime",
+      "source_worker_runtime",
       "tenant_digest_operational",
       "tenant_digest_persistence",
       "verified_binding_approval_boundary"
@@ -64,7 +65,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 30,
+  "verifier_count": 31,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -92,6 +93,7 @@
     "rls_isolation",
     "source_monitoring_preflight",
     "source_scheduler_runtime",
+    "source_worker_runtime",
     "tenant_digest_operational",
     "tenant_digest_persistence",
     "test_selection_coverage",
@@ -418,6 +420,22 @@
       "production": false,
       "script": "scripts/verify_nativeforge_source_scheduler_runtime.sh",
       "verifier": "source_scheduler_runtime"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "no_live_source_calls",
+        "source_scheduler_runtime"
+      ],
+      "expected_result": "PASS",
+      "gate": "157",
+      "kind": "readiness_lane",
+      "lane": "worker_runtime_ready",
+      "note": "a worker that claims a job with an expiring lease, classifies why it refuses, and retries only genuine transient failures. It does NOT clear `scheduler_component_absent:background_worker`, which looks for a nativeforge.workers module or a console entry point; this gate adds a script. source_monitoring_live stays false.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_source_worker_runtime.sh",
+      "verifier": "source_worker_runtime"
     },
     {
       "blocking": true,

@@ -86,6 +86,9 @@ from nativeforge.api.pursuit_routes import demo_pursuit_router, real_pursuit_rou
 from nativeforge.api.source_collection_scheduler_routes import (
     router as source_scheduler_router,
 )
+from nativeforge.api.source_collection_worker_routes import (
+    router as source_worker_router,
+)
 from nativeforge.api.source_ingestion_routes import (
     demo_source_ingestion_router,
     real_source_ingestion_router,
@@ -220,6 +223,9 @@ def create_app() -> FastAPI:
     # refuses every source; no route can dispatch, fetch or approve anything,
     # and source_monitoring_live is a constant false.
     app.include_router(source_scheduler_router)
+    # Gate 157: the source collection worker. It claims jobs and refuses every
+    # one; no route claims a lease, and source_monitoring_live is constant.
+    app.include_router(source_worker_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

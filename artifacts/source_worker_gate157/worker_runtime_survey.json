@@ -1,0 +1,51 @@
+{
+  "could_two_workers_race_before_this_gate": {
+    "answer": "yes, trivially",
+    "why": "nothing recorded that a worker looked at a job, so two processes both classified every job and neither could tell. It did not matter while the classification wrote nothing."
+  },
+  "gate": "157",
+  "schema_version": "nf_source_worker_gate157_artifacts_v1",
+  "source_monitoring_live": false,
+  "subject": "background worker runtime",
+  "the_worker_that_already_existed": {
+    "its_own_docstring": "a dry-run worker is not a worker. It is the shape a worker would have, exercised against jobs that cannot run.",
+    "module": "source_scheduler_dry_run_worker_service (Gate 100C)",
+    "what_it_is": "a pure function that classifies a list of jobs",
+    "what_it_lacks": [
+      "worker identity",
+      "job claiming",
+      "lease semantics",
+      "retry accounting",
+      "failure classes",
+      "persistence",
+      "restart recovery",
+      "a process"
+    ]
+  },
+  "three_columns_the_database_refuses_to_set_true": [
+    "collector_invoked",
+    "url_fetched",
+    "raw_payload_written"
+  ],
+  "what_the_table_cannot_hold": [
+    "a response body",
+    "a url",
+    "a credential or api key",
+    "a provider subject",
+    "customer data",
+    "an address"
+  ],
+  "why_a_new_table_was_required": {
+    "candidates_considered": [
+      "nf_discovery_intake_runs",
+      "nf_nofo_extraction_runs",
+      "nf_pursuit_tasks",
+      "nf_source_check_runs"
+    ],
+    "closest": "nf_source_check_runs",
+    "contrast_with_gate_156": "Gate 156 needed no migration because nf_opportunity_sources already carried the scheduling columns. There is no equivalent for a lease.",
+    "migration": "0043",
+    "table": "nf_source_collection_job_leases",
+    "why_it_does_not_fit": "its check_status vocabulary is scheduled/running/succeeded/succeeded_with_warnings/failed/canceled, beside opportunities_seen_count and accepted_count. That is the lifecycle of a check that happened. Writing a lease there would assert a check ran when nothing did."
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "a_claim_is_not_an_attempt": "claiming records the right to decide. The attempt count moves only when something was actually attempted, or a job nobody can run would exhaust its budget and then look permanently failed.",
+  "atomicity": "a unique index on (organization_id, job_id). Two workers racing both insert; one wins and the other receives an IntegrityError, which this service turns into a refusal rather than an exception.",
+  "lease_seconds_default": 300,
+  "lease_statuses": [
+    "pending",
+    "claimed",
+    "completed",
+    "refused",
+    "retryable",
+    "failed",
+    "expired",
+    "unknown"
+  ],
+  "max_attempts_default": 3,
+  "schema_version": "nf_source_worker_gate157_artifacts_v1",
+  "why_not_select_then_insert": "a SELECT-then-INSERT leaves a window between the two statements, and the window is where the race lives. The check that matters is the one the database makes.",
+  "worker_statuses": [
+    "pending",
+    "claimed",
+    "completed",
+    "refused",
+    "retryable",
+    "failed",
+    "expired",
+    "unknown"
+  ]
+}

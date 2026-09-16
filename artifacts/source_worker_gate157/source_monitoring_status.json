@@ -1,0 +1,19 @@
+{
+  "api_key_required": false,
+  "collectors_activated": 0,
+  "live_source_calls": 0,
+  "raw_payloads_written": 0,
+  "schema_version": "nf_source_worker_gate157_artifacts_v1",
+  "source_monitoring_live": false,
+  "sources_approved_for_activation": 0,
+  "urls_fetched": 0,
+  "what_gate_157_changed": "a worker claims jobs with an expiring lease, classifies why each one refuses, retries only genuine transient failures, and survives a restart",
+  "what_gate_157_did_not_change": [
+    "source_monitoring_live is still false",
+    "no source is approved",
+    "no terms review was completed",
+    "no collector exists to invoke",
+    "no network call was made",
+    "no systemd worker unit was installed or enabled"
+  ]
+}

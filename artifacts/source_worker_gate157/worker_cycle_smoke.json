@@ -1,0 +1,25 @@
+{
+  "a_refusal_is_not_a_failure": "the worker claimed the job, asked whether it may run it, was told no, recorded the reason and released the claim. That is the worker working.",
+  "a_truncated_batch_says_so": "jobs_offered, jobs_seen and jobs_not_reached_this_cycle must add up. A batch limit nobody can see is how a backlog goes unnoticed.",
+  "classification_of_those_blockers": "terms_blocked",
+  "collectors_invoked": 0,
+  "evaluated_at": "2026-09-15T12:00:00Z",
+  "expected": {
+    "jobs_claimed": 5,
+    "jobs_completed": 0,
+    "jobs_refused": 5,
+    "jobs_retryable": 0
+  },
+  "handler": "evaluate_only",
+  "handlers_not_implemented": [
+    "fetch: needs a collector, which is Gate 161",
+    "persist_payload: needs a raw payload store, which is Gate 160",
+    "activate: needs an approved source, which is Gate 162 and a human first"
+  ],
+  "live_source_calls": 0,
+  "permission_is_read_not_recomputed": "the scheduler decided `executable`; the worker reads it. Two places for one answer is how they come to disagree.",
+  "scenario": "five jobs, none executable, every permission absent",
+  "schema_version": "nf_source_worker_gate157_artifacts_v1",
+  "threads_started": 0,
+  "why_terms_wins_over_activation": "the terms review is the thing a person does first; naming the later blocker would send them to the wrong queue"
+}

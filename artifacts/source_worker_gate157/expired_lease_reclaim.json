@@ -1,0 +1,8 @@
+{
+  "expiry_is_derived_at_read_time": "storing 'expired' would need something to run and write it, and nothing runs",
+  "outcome": "reclaimed",
+  "scenario": "worker-1 claims at 2026-09-15T12:00:00Z for 300s; worker-2 claims the same job at 2026-09-15T12:10:00Z",
+  "schema_version": "nf_source_worker_gate157_artifacts_v1",
+  "why_a_live_lease_is_not_reclaimable": "a claim anybody can take is not a claim, and the lease would be decorative",
+  "why_expiry_exists": "a worker that dies holding a claim would block that job forever. Expiry is the only release that does not need its owner."
+}

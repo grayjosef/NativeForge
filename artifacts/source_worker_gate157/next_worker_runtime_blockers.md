@@ -1,0 +1,45 @@
+# Gate 157 — what still blocks source collection
+
+`worker_runtime_ready` is true. `source_monitoring_live` is false.
+
+## Cleared by this gate
+
+```text
+no worker identity          -> an explicit worker_id on every claim
+no job claiming             -> an atomic lease on a unique index
+no retry accounting         -> bounded, classified, persisted
+no restart recovery         -> the lease table is the state
+no process                  -> scripts/run_source_collection_worker.py
+```
+
+## NOT cleared by this gate
+
+```text
+background_worker           Gate 98E looks for nativeforge.workers
+  (the detector)            or a console entry point. This gate adds
+                            a script, not a package module, so the
+                            detector still reports it absent - the
+                            same shape as Gate 156 and the scheduler
+                            package.
+persistent job store        Gate 158 - leases exist; a queue does not
+periodic trigger            Gate 159 - no .timer or .cron exists
+raw payload store           Gate 160
+a collector                 Gate 161
+source activation approval  Gate 162, and a human before it
+```
+
+## The two blockers no gate in this block clears
+
+```text
+171 sources terms_blocked   a human must read each source's terms
+  6 sources human_review    a human must look
+```
+
+## The claim this gate must not support
+
+> NativeForge has a worker collecting grant data.
+
+It has a worker. The worker claims a job, asks whether it may run
+it, is told no by every one of 177 sources, records the reason and
+releases the claim. Nothing is collected, and nothing can be until
+a person reads some terms.

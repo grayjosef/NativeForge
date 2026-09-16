@@ -32,6 +32,7 @@
     "opportunity_discovery_routes.py",
     "pursuit_brief_routes.py",
     "pursuit_routes.py",
+    "source_collection_worker_routes.py",
     "source_ingestion_routes.py",
     "source_monitoring_readiness_routes.py",
     "spark_scoring_routes.py",

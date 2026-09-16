@@ -1,0 +1,73 @@
+{
+  "backoff": {
+    "attempt_1": 60,
+    "attempt_2": 120,
+    "attempt_3": 240,
+    "base_seconds": 60,
+    "cap_seconds": 3600,
+    "deterministic": true,
+    "jitter": false,
+    "why_no_jitter": "jitter buys herd-avoidance among many workers. There is one worker, and a reproducible next-retry time is worth more."
+  },
+  "blocker_to_class": {
+    "no_check_interval_recorded": "refused_by_activation",
+    "no_collector_is_registered_for_this_source": "refused_by_activation",
+    "source_activation_not_approved": "refused_by_activation",
+    "source_is_disabled": "refused_by_activation",
+    "source_is_not_in_the_registry": "permanent_worker_failure",
+    "source_requires_human_review": "human_review_blocked",
+    "source_terms_not_approved": "terms_blocked"
+  },
+  "bounded_in_the_database": "max_attempts lives on the lease row. A worker holding its budget in memory would reset it on every crash - precisely when a bound matters most.",
+  "decisions": {
+    "human_review_blocked": {
+      "backoff_seconds": null,
+      "should_retry": false,
+      "why_not_retried": "a human must look at this source"
+    },
+    "permanent_worker_failure": {
+      "backoff_seconds": null,
+      "should_retry": false,
+      "why_not_retried": "the handler is wrong. Retrying a deterministic failure produces the same failure, more often."
+    },
+    "refused_by_activation": {
+      "backoff_seconds": null,
+      "should_retry": false,
+      "why_not_retried": "no activation approval exists. Trying again changes nothing, and a retry queue full of unapprovable jobs hides the real backlog."
+    },
+    "terms_blocked": {
+      "backoff_seconds": null,
+      "should_retry": false,
+      "why_not_retried": "a human must read this source's terms of use"
+    },
+    "transient_worker_failure": {
+      "backoff_seconds": 60,
+      "should_retry": true,
+      "why_not_retried": null
+    }
+  },
+  "failure_classes": [
+    "none",
+    "refused_by_activation",
+    "terms_blocked",
+    "human_review_blocked",
+    "transient_worker_failure",
+    "permanent_worker_failure",
+    "unknown"
+  ],
+  "matched_by_exact_value_not_substring": "source_terms_not_approved and source_activation_not_approved differ by one word; a substring match over either would catch the other",
+  "only_one_class_retries": true,
+  "retryable_classes": [
+    "transient_worker_failure"
+  ],
+  "schema_version": "nf_source_worker_gate157_artifacts_v1",
+  "why_not_retried": {
+    "human_review_blocked": "a human must look at this source",
+    "none": "nothing failed",
+    "permanent_worker_failure": "the handler is wrong. Retrying a deterministic failure produces the same failure, more often.",
+    "refused_by_activation": "no activation approval exists. Trying again changes nothing, and a retry queue full of unapprovable jobs hides the real backlog.",
+    "terms_blocked": "a human must read this source's terms of use",
+    "unknown": "the failure was not classified, and an unclassified failure is not assumed transient - assuming it would make UNKNOWN a retry loop"
+  },
+  "with_zero_approved_sources_every_job_lands_in_a_non_retrying_class": true
+}
