@@ -1,0 +1,34 @@
+{
+  "artifact": "scheduler_persistence_smoke.json",
+  "cycle_modes": [
+    "evaluate_only",
+    "evaluate_and_enqueue"
+  ],
+  "default_mode": "evaluate_only",
+  "enqueue_without_a_connection": {
+    "enqueue_blocked_reasons": [
+      "enqueue_requested_without_a_connection"
+    ],
+    "enqueue_performed": false,
+    "invariant_failures": [],
+    "mode": "evaluate_and_enqueue",
+    "rows_written": 0
+  },
+  "evaluate_only": {
+    "enqueue_requested": false,
+    "invariant_failures": [],
+    "jobs_known": 3,
+    "mode": "evaluate_only",
+    "rows_written": 0
+  },
+  "persisting_is_not_executing": {
+    "collectors_invoked": 0,
+    "live_source_calls": 0,
+    "network_calls": 0,
+    "raw_payloads_written": 0,
+    "urls_fetched": 0
+  },
+  "rows_written_is_derived": "through Gate 157 this was a declared 0, which was true only because the cycle could not write. It is now counted, so a cycle that writes cannot report that it did not - and cycle_invariant_failures checks it AGREES with the per-job results rather than simply dropping the old must-be-zero check.",
+  "schema_version": "nf_source_job_store_gate158_artifacts_v1",
+  "why_the_default_did_not_change": "nothing that called run_scheduler_cycle before Gate 158 writes a row now. Persisting is opt-in."
+}

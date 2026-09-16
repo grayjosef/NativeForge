@@ -704,6 +704,66 @@ else
   fail worker_runtime_ready "$(getlist health_blockers)"
 fi
 
+# ------------------------------- 15b. the LAST cleanup, after the last write
+#
+# The cleanup inside the python report above runs BEFORE
+# `run_source_collection_worker.py --once`, which opens its own session, claims
+# the registry batch and COMMITS. So that cleanup's `fixture_rows_remaining=0`
+# was true when it was measured and false by the time this script exits: Gate
+# 158 found 100 committed lease rows left behind by a run that reported clean.
+#
+# This pass runs after everything that writes. It is counted at the true exit,
+# and it FAILS if rows survive it - a cleanup whose report does not describe the
+# end state is the same defect in a different place.
+FINAL_CLEAN="$(.venv/bin/python - <<'PYFINAL' 2>&1
+import json
+import sys
+
+sys.path.insert(0, "src")
+
+import sqlalchemy as sa
+
+from nativeforge.lib.settings import get_settings
+
+DEMO_BARE = "bbbbbbbbccccddddeeeeffffffffffff"
+TABLE = "nf_source_collection_job_leases"
+
+engine = sa.create_engine(get_settings().database_url)
+out = {}
+
+with engine.begin() as connection:
+    out["deleted_after_the_last_write"] = connection.execute(
+        sa.text(
+            f"DELETE FROM {TABLE} WHERE "
+            "REPLACE(CAST(organization_id AS TEXT), '-', '') = :org"
+        ),
+        {"org": DEMO_BARE},
+    ).rowcount
+with engine.connect() as connection:
+    # The whole table. Nothing but fixtures lives here.
+    out["rows_at_exit"] = int(
+        connection.execute(sa.text(f"SELECT COUNT(*) FROM {TABLE}")).scalar() or 0
+    )
+print(json.dumps(out))
+PYFINAL
+)"
+
+FC="$(echo "$FINAL_CLEAN" | tail -1)"
+fcget() {
+  printf '%s' "$FC" | .venv/bin/python -c \
+    'import json,sys;print(json.load(sys.stdin).get(sys.argv[1]))' "$1" \
+    2>/dev/null || echo "None"
+}
+
+info leases_deleted_after_the_worker_script "$(fcget deleted_after_the_last_write)"
+
+if [ "$(fcget rows_at_exit)" = "0" ]; then
+  pass lease_table_empty_at_exit
+else
+  fail lease_table_empty_at_exit \
+    "rows=$(fcget rows_at_exit) - this script leaves committed fixtures behind"
+fi
+
 # ---------------------------------------------------- 16. the answer
 echo
 if [ -n "$FAILED" ]; then
@@ -735,7 +795,7 @@ echo "network_calls=0"
 echo "threads_started=0"
 echo "api_key_required=false"
 echo "background_worker_detector=still_absent (deliberately)"
-echo "fixture_rows_remaining=0"
-echo "alembic_head=0043 (nf_source_collection_job_leases)"
+echo "fixture_rows_remaining=0 (counted at exit, after the worker script commits)"
+echo "migration_added_by_this_gate=0043 (nf_source_collection_job_leases)"
 echo "next=docs/operations/821_GATE157_SOURCE_RUNTIME_DELTA.md"
 exit 0

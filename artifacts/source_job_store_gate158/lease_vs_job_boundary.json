@@ -1,0 +1,17 @@
+{
+  "artifact": "lease_vs_job_boundary.json",
+  "claim_is_owned_by": "nf_source_collection_job_leases",
+  "lease_columns_declared_on_the_job_table": [],
+  "lifecycle_is_owned_by": "nf_source_collection_jobs",
+  "schema_version": "nf_source_job_store_gate158_artifacts_v1",
+  "the_table_gate_158_declined": {
+    "table": "nf_source_check_runs",
+    "why": "its check_status vocabulary is scheduled|running|succeeded|succeeded_with_warnings|failed|canceled, beside opportunities_seen_count and accepted_count. That is the record of a check that HAPPENED. A queue row written there would assert a source was contacted when none was - the reason Gate 157 declined it for leases, and the reason Gate 158 declines it again."
+  },
+  "the_worker_writes_both": "a lease to take the claim, a job transition to record the outcome. Gate 158 measured the worker OVERWRITING the four blockers the scheduler had recorded with a single runtime note, which made `how long have 171 sources been terms-blocked` unanswerable after one pass. It now unions them.",
+  "what_each_answers": {
+    "a job": "does this work still need doing, until done or archived",
+    "a lease": "who holds this right now, and expires in five minutes"
+  },
+  "why_they_cannot_be_one_row": "they have different lifetimes, and one row cannot have two. Gate 157 put attempt accounting on the lease row because the worker had nowhere else to write it, and that was the right call for one gate: a lease without an attempt count cannot bound a retry across a crash."
+}

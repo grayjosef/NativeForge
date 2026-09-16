@@ -2,7 +2,6 @@
   "activation_allowlist_count": 0,
   "execution_modes_not_implemented": [
     "dispatch: needs a collector, which is Gate 161",
-    "persist: needs a job store, which is Gate 158",
     "trigger: needs a timer, which is Gate 159"
   ],
   "is_there_a_special_case_for_an_empty_allowlist": false,

@@ -38,6 +38,9 @@ from nativeforge.services.source_collection_scheduler_runtime_service import (
     schedule_evaluation_invariant_failures,
 )
 from nativeforge.services.source_scheduler_job_model_service import (
+    DEFAULT_JOB_TYPE as GATE_99B_DEFAULT_JOB_TYPE,
+)
+from nativeforge.services.source_scheduler_job_model_service import (
     build_source_job,
 )
 
@@ -108,7 +111,11 @@ def build_collection_job(
     # here overrides either.
     base = build_source_job(
         source_id=source_id,
-        job_type="scheduled_check",
+        # Gate 158 measured that this read `"scheduled_check"`, which is not in
+        # Gate 99B's `JOB_TYPES`, so it was normalized to `"source_check"` and
+        # that is what every job_id has always digested. Passing the real word
+        # changes no id and removes a silent coercion.
+        job_type=GATE_99B_DEFAULT_JOB_TYPE,
         scheduled_for=evaluation["next_run_at"],
         execution_mode="dry_run",
         activation_status=(

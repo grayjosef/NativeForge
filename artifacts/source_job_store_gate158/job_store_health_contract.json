@@ -1,0 +1,36 @@
+{
+  "any_blocker_closes_the_lane": "ready is all(conditions) and not blockers. Gate 154 shipped a ready that weighed only the conditions it expected to matter, and then named a real failure in blockers and ignored it.",
+  "artifact": "job_store_health_contract.json",
+  "condition_evidence": {
+    "completed_unreachable": "transition_job accepts no execution proof, and the database refuses a completed row whose execution_proof_ref is null. Derived from the function signature, not declared here.",
+    "enqueue_is_idempotent": "the same slot enqueued twice produced one row, refused by a unique index rather than by a check with a race window in front of it",
+    "illegal_transition_refused": "a move outside the state machine was refused and the row was left alone, rather than coerced to the nearest legal state",
+    "lifecycle_is_not_on_the_lease": "the job table declares no lease_owner, lease_acquired_at or lease_expires_at. Gate 157 owns the claim; a column that does not exist cannot drift from the table that owns it.",
+    "nothing_collected": "zero completed rows and zero execution proofs, counted from the table rather than assumed from the absence of a collector",
+    "survives_restart": "a row written by one connection was read back by another after the writing connection closed, with its status unchanged. This one cannot be measured by a request: proving it needs a commit and a reconnect, and a GET that commits fixture rows is worse than a GET that defers. scripts/verify_nativeforge_collection_job_store.sh measures it.",
+    "table_exists": "nf_source_collection_jobs, created by migration 0044"
+  },
+  "conditions": [
+    "table_exists",
+    "enqueue_is_idempotent",
+    "survives_restart",
+    "illegal_transition_refused",
+    "completed_unreachable",
+    "lifecycle_is_not_on_the_lease",
+    "nothing_collected"
+  ],
+  "lane": "collection_job_store_ready",
+  "not_measurable_by_a_request": [
+    "survives_restart"
+  ],
+  "ready_does_not_mean": [
+    "a source was contacted",
+    "a collector ran",
+    "a source is approved",
+    "source terms were accepted",
+    "monitoring is live",
+    "a job was completed"
+  ],
+  "schema_version": "nf_source_job_store_gate158_artifacts_v1",
+  "why": "proving a row survives a restart needs a commit and a reconnect. A GET that commits fixture rows into the demo org would be worse than a GET that defers, so the route reports that condition red and names the verifier. Reading back through the connection that wrote would have turned it green for the wrong reason - a green check with two possible causes has only been half-tested."
+}

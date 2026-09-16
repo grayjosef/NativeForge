@@ -1,0 +1,17 @@
+{
+  "a_re_enqueue_does_not_reset_a_refusal": "enqueue is create-if-absent and never an update, so a later cycle cannot erase an outcome a worker recorded.",
+  "artifact": "enqueue_idempotency.json",
+  "enforced_by": "ux_nf_source_collection_jobs_job_id",
+  "five_computations_of_one_slot": {
+    "distinct_job_ids": 1,
+    "expected": 1
+  },
+  "how_enqueue_uses_it": "insert first, catch the integrity error. NOT check-then-insert, which is a race two scheduler processes lose together.",
+  "measured_by_the_verifier": "five cycles over three sources leave three rows - scripts/verify_nativeforge_collection_job_store.sh",
+  "schema_version": "nf_source_job_store_gate158_artifacts_v1",
+  "the_bound": "177 registry sources with no cadence have one perpetual slot each, so repeated cycles hold the store at 177 rows rather than adding 177 a cycle. A source that DOES have a cadence gets a new row per slot, which is correct: last week's missed window and this week's pending one are different work.",
+  "unique_over": [
+    "organization_id",
+    "job_id"
+  ]
+}

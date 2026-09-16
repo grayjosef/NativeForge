@@ -1,0 +1,83 @@
+{
+  "artifact": "job_state_machine.json",
+  "legal_transitions": {
+    "archived": [],
+    "canceled": [
+      "archived"
+    ],
+    "claimed": [
+      "canceled",
+      "completed",
+      "failed",
+      "refused",
+      "retry_wait"
+    ],
+    "completed": [
+      "archived"
+    ],
+    "failed": [
+      "archived",
+      "queued"
+    ],
+    "queued": [
+      "archived",
+      "canceled",
+      "claimed"
+    ],
+    "refused": [
+      "archived",
+      "canceled",
+      "queued"
+    ],
+    "retry_wait": [
+      "archived",
+      "canceled",
+      "claimed",
+      "failed"
+    ]
+  },
+  "live_statuses": [
+    "claimed",
+    "queued",
+    "retry_wait"
+  ],
+  "notable": {
+    "*->retry_wait": "only with terminal_reason=transient_worker_failure. An activation or terms refusal parked in a retry queue would burn attempts on work no worker can ever run.",
+    "archived->*": "nothing. Reviving an archived job would rewrite a closed history.",
+    "claimed->completed": "in the table, and unreachable. transition_job accepts no execution proof and the database refuses a completed row without one.",
+    "failed->queued": "legal, for an operator requeue after a fix. Nothing in this gate calls it.",
+    "queued->refused": "NOT legal. An outcome without a claim never happened.",
+    "refused->queued": "legal, and the one that matters for this campaign. When somebody finally reads the terms, 171 blocked jobs become runnable work again rather than needing to be recreated."
+  },
+  "resting_statuses": [
+    "archived",
+    "canceled",
+    "completed",
+    "failed",
+    "refused"
+  ],
+  "schema_version": "nf_source_job_store_gate158_artifacts_v1",
+  "statuses": [
+    "archived",
+    "canceled",
+    "claimed",
+    "completed",
+    "failed",
+    "queued",
+    "refused",
+    "retry_wait"
+  ],
+  "table": "nf_source_collection_jobs",
+  "terminal_reasons": [
+    "attempt_budget_exhausted",
+    "canceled_by_operator",
+    "human_review_blocked",
+    "none",
+    "permanent_worker_failure",
+    "refused_by_activation",
+    "superseded_by_a_newer_slot",
+    "terms_blocked",
+    "transient_worker_failure",
+    "unknown"
+  ]
+}

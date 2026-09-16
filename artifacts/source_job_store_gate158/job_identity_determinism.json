@@ -1,0 +1,30 @@
+{
+  "artifact": "job_identity_determinism.json",
+  "composed_from": [
+    "source_scheduler_job_model_service.build_job_id",
+    "source_scheduler_job_model_service.build_idempotency_key"
+  ],
+  "identity_is_not_permission": {
+    "implies_collection_permitted": false,
+    "implies_source_approval": false,
+    "why": "an id can be computed for a source nobody approved. That is the point: counting how long blocked work has waited is what eventually makes somebody read the terms."
+  },
+  "invariant_failures": {
+    "perpetual": [],
+    "same_slot": []
+  },
+  "measured": {
+    "a_different_slot_is_a_different_id": true,
+    "job_id_is_not_the_idempotency_key": true,
+    "no_cadence_is_one_perpetual_slot": true,
+    "same_slot_twice_is_the_same_id": true
+  },
+  "schema_version": "nf_source_job_store_gate158_artifacts_v1",
+  "the_out_of_vocabulary_job_type": {
+    "digested": "source_check",
+    "requested": "scheduled_check",
+    "was_normalized": true,
+    "why_it_matters": "Gate 156 passed `scheduled_check`, which is not in Gate 99B's JOB_TYPES, so it was normalized to `source_check` and THAT is what every job_id has always digested. An identity service carrying its own copy of the word produced a different id in all four measured cases - ids the store would have held and the scheduler would never have reported."
+  },
+  "the_stray_strip": "a `.strip()` on the source_id before digesting also produced a different id than the scheduler reports, for a padded source_id. Gate 99B does not strip, so neither does this. Two normalizations of one fact is how two parts of a system come to disagree about whether two jobs are the same job."
+}

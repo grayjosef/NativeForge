@@ -163,7 +163,10 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
     # nf_auth_redirect_states. Gate 123: re-pinned 0030 -> 0031 for
     # nf_tenant_beta_profiles. Gate 151: re-pinned 0041 -> 0042 for
     # nf_tenant_digest_records. Gate 157: re-pinned 0042 -> 0043 for
-    # nf_source_collection_job_leases. This assertion still protects a real
+    # nf_source_collection_job_leases. Gate 158: re-pinned 0043 -> 0044 for
+    # nf_source_collection_jobs - found on the first pass this time, by running
+    # the `grep -rn "(head)"` this comment asks for. This assertion still
+    # protects a real
     # invariant (single head, no duplicate revision ids); only the expected
     # value moves. Update it deliberately when a migration is approved.
     #
@@ -181,7 +184,7 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
     #     grep -rn "004[0-9]" --include=*.py --include=*.sh src/ scripts/ tests/
     #
     # Unquoted, unanchored, and read every hit rather than filtering.
-    assert result.stdout.strip() == "0043 (head)"
+    assert result.stdout.strip() == "0044 (head)"
 
     sprint_discovery_files = [
         "0010_nf_opportunity_sources_discovery.py",

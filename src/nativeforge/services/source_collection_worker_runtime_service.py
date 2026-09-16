@@ -54,6 +54,30 @@ import json
 from datetime import UTC, datetime
 from typing import Any
 
+from nativeforge.repositories.source_collection_job_repository import (
+    CLAIMED as JOB_CLAIMED,
+)
+from nativeforge.repositories.source_collection_job_repository import (
+    FAILED as JOB_FAILED,
+)
+from nativeforge.repositories.source_collection_job_repository import (
+    QUEUED as JOB_QUEUED,
+)
+from nativeforge.repositories.source_collection_job_repository import (
+    REFUSED as JOB_REFUSED,
+)
+from nativeforge.repositories.source_collection_job_repository import (
+    RETRY_WAIT as JOB_RETRY_WAIT,
+)
+from nativeforge.repositories.source_collection_job_repository import (
+    TERMINAL_REASONS as JOB_TERMINAL_REASONS,
+)
+from nativeforge.repositories.source_collection_job_repository import (
+    get_job,
+    job_store_invariant_failures,
+    list_jobs,
+    transition_job,
+)
 from nativeforge.services.source_collection_job_lease_service import (
     CLAIMED,
     COMPLETED,
@@ -76,6 +100,24 @@ from nativeforge.services.source_collection_retry_policy_service import (
 )
 
 SCHEMA_VERSION = "nf_source_collection_worker_runtime_v1"
+
+#: Why a job read out of the durable store cannot be run by this worker.
+#:
+#: The store records WHY a job was blocked. It does not record that a job is
+#: permitted, and an empty `blocked_reasons` is the absence of a recorded
+#: objection rather than the presence of an approval. Inferring permission from
+#: it would be inferring source approval, so a store-loaded job is refused by
+#: name and the permitted path stays reachable only for a job a scheduler pass
+#: handed over directly.
+STORE_LOADED_IS_NOT_PERMITTED = "executable_is_not_a_persisted_fact_in_gate_158"
+
+#: Lease outcome -> durable job status. `completed` appears in neither column:
+#: no worker in this campaign can complete a job, and the store would refuse it.
+LEASE_STATUS_TO_JOB_STATUS = {
+    REFUSED: JOB_REFUSED,
+    RETRYABLE: JOB_RETRY_WAIT,
+    FAILED: JOB_FAILED,
+}
 
 CONTROLLED_SCOPE = "controlled_dev_demo"
 
@@ -129,11 +171,21 @@ def run_worker_cycle(
     now: Any = None,
     handler: str = HANDLER_EVALUATE_ONLY,
     max_jobs: int = 100,
+    load_jobs_from_store: bool = False,
+    record_job_transitions: bool = True,
 ) -> dict[str, Any]:
     """One worker pass: claim, decide, record, release. Executes nothing.
 
     `jobs` are the scheduler's output. Their `executable` flag is read, never
     recomputed.
+
+    Gate 158 adds two things, and neither grants a permission:
+
+    - `load_jobs_from_store` reads the durable backlog when no scheduler output
+      was handed over. Those jobs are refused by name, because the store holds
+      why a job was blocked and never holds that it is permitted.
+    - `record_job_transitions` writes the outcome onto the durable job row as
+      well as the lease, so a refusal outlives the pass that produced it.
     """
     moment = _as_datetime(now)
     blocked: list[str] = []
@@ -173,10 +225,54 @@ def run_worker_cycle(
         )
 
     results: list[dict[str, Any]] = []
+    # Hoisted above the store read, which contributes to it.
     failures: list[str] = []
     claim_denied = 0
+    job_rows_transitioned = 0
+    job_rows_missing = 0
 
     offered = list(jobs or [])
+
+    # The durable backlog, when nobody handed over a scheduler pass. Read as
+    # identities and lifecycle - never as permission.
+    store_loaded = 0
+    if load_jobs_from_store and not offered:
+        for status in (JOB_QUEUED, JOB_RETRY_WAIT):
+            listed = list_jobs(
+                connection=connection,
+                organization_id=organization_id,
+                status=status,
+                limit=int(max_jobs),
+            )
+            failures.extend(job_store_invariant_failures(listed))
+            for row in listed.get("jobs") or []:
+                offered.append(
+                    {
+                        "job_id": row["job_id"],
+                        "source_id": row["source_id"],
+                        # Hardcoded False, and NOT derived from the blockers
+                        # below. See STORE_LOADED_IS_NOT_PERMITTED: reading why
+                        # a source is blocked is not deciding that it is
+                        # permitted.
+                        "executable": False,
+                        # The scheduler's recorded reasons come along, with
+                        # this worker's own reason APPENDED rather than
+                        # substituted. Replacing them was measured erasing four
+                        # real blockers - including the terms refusal this
+                        # campaign counts - and downgrading a classifiable
+                        # reason to `unknown` on the first worker pass.
+                        "blockers": [
+                            *(row.get("blocked_reasons") or []),
+                            STORE_LOADED_IS_NOT_PERMITTED,
+                        ],
+                        "loaded_from_store": True,
+                        "persisted_blocked_reasons": list(
+                            row.get("blocked_reasons") or []
+                        ),
+                    }
+                )
+                store_loaded += 1
+
     batch = offered[: int(max_jobs)]
     # A batch limit is reasonable. A batch limit nobody can see is how a
     # backlog goes unnoticed, so the truncation is reported rather than
@@ -209,6 +305,11 @@ def run_worker_cycle(
                     "blocked_reasons": claim["blocked_reasons"],
                     "should_retry": False,
                     "collector_invoked": False,
+                    "loaded_from_store": bool(job.get("loaded_from_store")),
+                    # A denied claim touches no job row. Saying so keeps every
+                    # result the same shape.
+                    "job_row_status": None,
+                    "job_row_blocked_reasons": [],
                 }
             )
             continue
@@ -258,6 +359,73 @@ def run_worker_cycle(
         )
         failures.extend(lease_invariant_failures(outcome))
 
+        # ---- and now the durable row ---------------------------------------
+        #
+        # The lease says who held this for five minutes. The job row is what
+        # survives, so the outcome is recorded on both. A job row that does not
+        # exist is COUNTED rather than created here: inventing one would make
+        # the worker a second enqueue path, and the scheduler is the only thing
+        # that decides what work exists.
+        job_row_status = None
+        job_row_blocked: list[str] = []
+        if record_job_transitions:
+            present = get_job(
+                connection=connection,
+                organization_id=organization_id,
+                job_id=job_id,
+            )
+            if present.get("job") is None:
+                job_rows_missing += 1
+                job_row_blocked = present["blocked_reasons"]
+            else:
+                current = str((present["job"] or {}).get("status") or "")
+                target = LEASE_STATUS_TO_JOB_STATUS.get(status)
+                reason = (
+                    failure_class
+                    if failure_class in JOB_TERMINAL_REASONS
+                    else "unknown"
+                )
+                steps: list[tuple[str, str]] = []
+                # A queued job must pass through `claimed` to reach an
+                # outcome, which is the state machine saying that an outcome
+                # without a claim never happened.
+                if current == JOB_QUEUED and target is not None:
+                    steps.append((JOB_CLAIMED, NONE))
+                if target is not None:
+                    steps.append((target, reason))
+
+                for to_status, step_reason in steps:
+                    moved = transition_job(
+                        connection=connection,
+                        organization_id=organization_id,
+                        job_id=job_id,
+                        to_status=to_status,
+                        terminal_reason=step_reason,
+                        # Union with what the row already held. A transition
+                        # records what happened; it does not get to forget why
+                        # the work was blocked in the first place.
+                        blocked_reasons=sorted(
+                            set(reasons)
+                            | set((present["job"] or {}).get("blocked_reasons") or [])
+                        ),
+                        next_retry_at=(
+                            retry["next_retry_at"]
+                            if to_status == JOB_RETRY_WAIT
+                            else None
+                        ),
+                        increment_attempt=(
+                            to_status == JOB_RETRY_WAIT
+                            and failure_class == TRANSIENT_WORKER_FAILURE
+                        ),
+                        now=now,
+                    )
+                    failures.extend(job_store_invariant_failures(moved))
+                    if moved["transitioned"]:
+                        job_row_status = moved["to_status"]
+                        job_rows_transitioned += 1
+                    else:
+                        job_row_blocked.extend(moved["blocked_reasons"])
+
         results.append(
             {
                 "job_id": job_id,
@@ -270,6 +438,9 @@ def run_worker_cycle(
                 "why_not_retried": retry["why_not_retried"],
                 "next_retry_at": retry["next_retry_at"],
                 "collector_invoked": False,
+                "loaded_from_store": bool(job.get("loaded_from_store")),
+                "job_row_status": job_row_status,
+                "job_row_blocked_reasons": sorted(set(job_row_blocked)),
             }
         )
 
@@ -288,6 +459,10 @@ def run_worker_cycle(
             "jobs_not_reached_this_cycle": truncated,
             "batch_was_truncated": bool(truncated),
             "max_jobs_per_cycle": int(max_jobs),
+            "jobs_loaded_from_store": store_loaded,
+            "job_rows_transitioned": job_rows_transitioned,
+            "job_rows_missing": job_rows_missing,
+            "job_transitions_recorded": bool(record_job_transitions),
             "jobs_claimed": sum(1 for r in results if r["claimed"]),
             "jobs_claim_denied": claim_denied,
             "jobs_completed": sum(1 for r in results if r["status"] == COMPLETED),
@@ -305,6 +480,15 @@ def run_worker_cycle(
             "threads_started": 0,
             "source_monitoring_live": False,
             "api_key_required": False,
+            # Said plainly, because a row that moved to `claimed` is the most
+            # plausible thing to mistake for a source having been contacted.
+            "claimed_job_means_source_contacted": False,
+            "persisted_job_means_collection_occurred": False,
+            "store_loaded_jobs_are_never_permitted": (
+                "the job store records why a job was blocked, never that it is "
+                "permitted. An empty blocked_reasons is the absence of a "
+                "recorded objection, not an approval."
+            ),
             "permission_is_read_not_recomputed": (
                 "the scheduler decided `executable`; this worker reads it. Two "
                 "places for one answer is how they come to disagree."

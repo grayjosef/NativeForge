@@ -1,0 +1,73 @@
+{
+  "artifact": "job_store_capability.json",
+  "capability": {
+    "claim_is_owned_by": "nf_source_collection_job_leases",
+    "claimed_job_means_source_contacted": false,
+    "completed_is_reachable": false,
+    "declares_lease_columns": [],
+    "enqueue_is_idempotent": true,
+    "idempotency_enforced_by": "ux_nf_source_collection_jobs_job_id",
+    "legal_transitions": {
+      "archived": [],
+      "canceled": [
+        "archived"
+      ],
+      "claimed": [
+        "canceled",
+        "completed",
+        "failed",
+        "refused",
+        "retry_wait"
+      ],
+      "completed": [
+        "archived"
+      ],
+      "failed": [
+        "archived",
+        "queued"
+      ],
+      "queued": [
+        "archived",
+        "canceled",
+        "claimed"
+      ],
+      "refused": [
+        "archived",
+        "canceled",
+        "queued"
+      ],
+      "retry_wait": [
+        "archived",
+        "canceled",
+        "claimed",
+        "failed"
+      ]
+    },
+    "lifecycle_is_owned_by": "nf_source_collection_jobs",
+    "live_statuses": [
+      "claimed",
+      "queued",
+      "retry_wait"
+    ],
+    "persisted_job_means_collection_occurred": false,
+    "schema_version": "nf_source_collection_job_store_v1",
+    "scope": "controlled_dev_demo",
+    "source_monitoring_live": false,
+    "statuses": [
+      "archived",
+      "canceled",
+      "claimed",
+      "completed",
+      "failed",
+      "queued",
+      "refused",
+      "retry_wait"
+    ],
+    "table": "nf_source_collection_jobs",
+    "transition_accepts_an_execution_proof": false,
+    "why_completed_is_unreachable": "transition_job has no execution proof parameter, and the database refuses a completed row whose execution_proof_ref is null"
+  },
+  "migration": "0044",
+  "schema_version": "nf_source_job_store_gate158_artifacts_v1",
+  "why_this_is_derived": "`completed_is_reachable` is computed by reading whether transition_job accepts an execution proof, and `declares_lease_columns` by reading the declared table. Both change by themselves if the code changes, rather than going stale as constants somebody has to remember."
+}

@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 27,
+  "blocking_count": 28,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -20,6 +20,7 @@
       "awarded_operational_tracking",
       "backup_restore_readiness",
       "beta_onboarding_cockpit",
+      "collection_job_store",
       "controlled_beta_readiness",
       "controlled_customer_pilot_activation_package",
       "customer_auth_live",
@@ -65,13 +66,14 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 31,
+  "verifier_count": 32,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
     "backup_restore",
     "backup_restore_readiness",
     "beta_onboarding_cockpit",
+    "collection_job_store",
     "controlled_beta_readiness",
     "controlled_customer_pilot_activation_package",
     "customer_auth_live",
@@ -436,6 +438,23 @@
       "production": false,
       "script": "scripts/verify_nativeforge_source_worker_runtime.sh",
       "verifier": "source_worker_runtime"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "no_live_source_calls",
+        "source_scheduler_runtime",
+        "source_worker_runtime"
+      ],
+      "expected_result": "PASS",
+      "gate": "158",
+      "kind": "readiness_lane",
+      "lane": "collection_job_store_ready",
+      "note": "queued collection work that survives a restart, proven by a SECOND python process reading rows the first committed and then exited. Enqueue is idempotent on a deterministic job id plus a unique index, so five cycles over three sources leave three rows. A transition to `completed` is refused by the repository - which has no execution proof parameter - and again by the database, checked with the repository bypassed. This verifier is what the health ROUTE defers to: proving durability needs a commit and a reconnect, so the route reports that lane red and names this script. source_monitoring_live stays false.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_collection_job_store.sh",
+      "verifier": "collection_job_store"
     },
     {
       "blocking": true,

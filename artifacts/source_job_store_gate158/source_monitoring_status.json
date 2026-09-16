@@ -1,0 +1,28 @@
+{
+  "approved_source_count": 0,
+  "artifact": "source_monitoring_status.json",
+  "claimed_job_means_source_contacted": false,
+  "collectors_invoked": 0,
+  "collectors_registered": 0,
+  "emails_sent": 0,
+  "jobs_completed": 0,
+  "live_source_calls": 0,
+  "network_calls": 0,
+  "object_store_calls": 0,
+  "persisted_job_means_collection_occurred": false,
+  "raw_payloads_written": 0,
+  "rows_with_execution_proof": 0,
+  "schema_version": "nf_source_job_store_gate158_artifacts_v1",
+  "source_monitoring_live": false,
+  "urls_fetched": 0,
+  "what_gate_158_added": "a durable place to record that collection work is waiting, and the lifecycle transitions that record why it is not running.",
+  "what_it_did_not_add": [
+    "a collector",
+    "an approved source",
+    "accepted source terms",
+    "a completed job",
+    "an execution proof",
+    "a timer that fires on its own",
+    "live monitoring"
+  ]
+}

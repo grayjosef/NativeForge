@@ -314,6 +314,30 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "collection_job_store",
+        lane="collection_job_store_ready",
+        kind=KIND_READINESS,
+        gate="158",
+        blocking=True,
+        depends_on=(
+            "no_live_source_calls",
+            "source_scheduler_runtime",
+            "source_worker_runtime",
+        ),
+        note=(
+            "queued collection work that survives a restart, proven by a "
+            "SECOND python process reading rows the first committed and then "
+            "exited. Enqueue is idempotent on a deterministic job id plus a "
+            "unique index, so five cycles over three sources leave three rows. "
+            "A transition to `completed` is refused by the repository - which "
+            "has no execution proof parameter - and again by the database, "
+            "checked with the repository bypassed. This verifier is what the "
+            "health ROUTE defers to: proving durability needs a commit and a "
+            "reconnect, so the route reports that lane red and names this "
+            "script. source_monitoring_live stays false."
+        ),
+    ),
+    _verifier(
         "operational_durability_reassessment",
         lane="operational_durability_reassessment",
         kind=KIND_READINESS,
