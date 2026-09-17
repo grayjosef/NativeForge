@@ -1,0 +1,38 @@
+{
+  "approval_permitting_guard_statuses": [
+    "ATTRIBUTION_REQUIRED",
+    "NO_REVIEW_REQUIRED"
+  ],
+  "database_refuses": [
+    "an approved decision with no reviewed_by",
+    "an approved decision with no reviewed_at",
+    "an approved decision with no evidence_fingerprint",
+    "a denied decision with no reviewed_by",
+    "an approved TERMS decision carrying a blocking guard status",
+    "any decision for the real organization (refused by name)"
+  ],
+  "decision_kind": "human_review",
+  "decision_vocabulary": [
+    "approved",
+    "denied",
+    "needs_review",
+    "unknown"
+  ],
+  "freshness_applies": true,
+  "guard_status_vocabulary": [
+    "ATTRIBUTION_REQUIRED",
+    "HUMAN_REVIEW_ONLY",
+    "NOT_APPLICABLE",
+    "NO_REVIEW_REQUIRED",
+    "TERMS_REVIEW_REQUIRED",
+    "UNKNOWN"
+  ],
+  "one_answer_per_source_per_question": "unique on (organization_id, source_id, decision_kind). A re-review replaces the answer, because two live answers to one question have no defined winner.",
+  "recorded_approvals_for_real_sources": 0,
+  "recorded_for_real_sources": 0,
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "source_monitoring_live": false,
+  "stale_affirmative_answers_do_not_permit": "a decision about a document that may have changed since is not evidence about the current document",
+  "table": "nf_source_authorization_decisions",
+  "why_the_check_and_not_only_the_service": "a service can be bypassed and a CHECK cannot, and this is the single row whose forgery would unlock a live source call"
+}

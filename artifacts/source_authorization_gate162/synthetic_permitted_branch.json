@@ -1,0 +1,331 @@
+{
+  "all_facts_permit": true,
+  "authorization_complete_is_not_a_permitted_request": true,
+  "authorization_status_would_be": "approved",
+  "evidence_fingerprint_is_of": "a string in source_authorization_fixture_registry_service, not a fetched document",
+  "facts": {
+    "activation_status": {
+      "decision_authority": "an operator, recorded with attribution",
+      "decision_verdict": "approved",
+      "derivation_strength": "recorded_decision",
+      "evidence_ref": "29d079b391096cb237d5f5ef4cb1b179d0cae06fef8951382c4891f4ffeb4c02",
+      "expires_at": null,
+      "fact_name": "activation_status",
+      "fact_status": "recorded",
+      "freshness_required": false,
+      "guard_input": "activation_status",
+      "permits": true,
+      "permitting_values": [
+        "activation_allowed"
+      ],
+      "recorded_at": "2026-09-17T12:00:00+00:00",
+      "recorded_by": "operator:nf162-artifact",
+      "refusal_meaning": null,
+      "source_of_truth": "nf_active_opportunity_sources.activation_approved_*",
+      "value": "activation_allowed",
+      "vocabulary": [
+        "activation_allowed",
+        "activation_blocked",
+        "activation_requires_human_review",
+        "activation_unknown"
+      ],
+      "why_this_fact_exists": "whether an operator activated this source, recorded with who and when. Already persisted by nf_active_opportunity_sources; this gate composes it rather than adding a second approval column."
+    },
+    "attribution_status": {
+      "decision_authority": null,
+      "decision_verdict": "approved",
+      "derivation_strength": "recorded_decision",
+      "evidence_ref": "29d079b391096cb237d5f5ef4cb1b179d0cae06fef8951382c4891f4ffeb4c02",
+      "expires_at": null,
+      "fact_name": "attribution_status",
+      "fact_status": "recorded",
+      "freshness_required": false,
+      "guard_input": "attribution_status",
+      "permits": true,
+      "permitting_values": [
+        "not_required",
+        "present_and_verbatim"
+      ],
+      "recorded_at": "2026-09-17T12:00:00+00:00",
+      "recorded_by": "reviewer:nf162-artifact",
+      "refusal_meaning": null,
+      "source_of_truth": "source_monitoring_approved_source_service.load_registry_rows",
+      "value": "not_required",
+      "vocabulary": [
+        "altered",
+        "missing",
+        "not_required",
+        "present_and_verbatim",
+        "unknown"
+      ],
+      "why_this_fact_exists": "whether required attribution is present and verbatim. Applies where the source's terms demand it."
+    },
+    "collector_status": {
+      "decision_authority": null,
+      "decision_verdict": null,
+      "derivation_strength": "measured_runtime",
+      "evidence_ref": null,
+      "expires_at": null,
+      "fact_name": "collector_status",
+      "fact_status": "recorded",
+      "freshness_required": false,
+      "guard_input": "collector_status",
+      "permits": true,
+      "permitting_values": [
+        "active"
+      ],
+      "recorded_at": null,
+      "recorded_by": null,
+      "refusal_meaning": null,
+      "source_of_truth": "phase1_collector_activation_policy_service",
+      "value": "active",
+      "vocabulary": [
+        "activating",
+        "active",
+        "halted",
+        "not_active"
+      ],
+      "why_this_fact_exists": "whether a collector for this source is running at all"
+    },
+    "credential_status": {
+      "decision_authority": null,
+      "decision_verdict": null,
+      "derivation_strength": "measured_runtime",
+      "evidence_ref": null,
+      "expires_at": null,
+      "fact_name": "credential_status",
+      "fact_status": "recorded",
+      "freshness_required": false,
+      "guard_input": "credential_status",
+      "permits": true,
+      "permitting_values": [
+        "not_required",
+        "present_and_valid"
+      ],
+      "recorded_at": null,
+      "recorded_by": null,
+      "refusal_meaning": null,
+      "source_of_truth": "measured at resolve time",
+      "value": "not_required",
+      "vocabulary": [
+        "expired",
+        "missing",
+        "not_required",
+        "present_and_valid",
+        "unknown"
+      ],
+      "why_this_fact_exists": "whether a required credential is present. Measured from settings; the VALUE is never read, recorded or reported."
+    },
+    "human_review_status": {
+      "decision_authority": "a human reviewer",
+      "decision_verdict": "approved",
+      "derivation_strength": "recorded_decision",
+      "evidence_ref": "29d079b391096cb237d5f5ef4cb1b179d0cae06fef8951382c4891f4ffeb4c02",
+      "expires_at": "2027-09-17T12:00:00+00:00",
+      "fact_name": "human_review_status",
+      "fact_status": "recorded",
+      "freshness_required": true,
+      "guard_input": null,
+      "permits": true,
+      "permitting_values": [
+        "approved"
+      ],
+      "recorded_at": "2026-09-17T12:00:00+00:00",
+      "recorded_by": "reviewer:nf162-artifact",
+      "refusal_meaning": null,
+      "source_of_truth": "nf_discovery_review_items[source_verification]",
+      "value": "approved",
+      "vocabulary": [
+        "approved",
+        "rejected",
+        "open",
+        "in_review",
+        "deferred"
+      ],
+      "why_this_fact_exists": "the guard exposes `human_review_required` as an OUTPUT rather than taking a review verdict as input, so the review decision gates authorization here instead. 6 of 177 sources block on this."
+    },
+    "rate_limit_status": {
+      "decision_authority": null,
+      "decision_verdict": null,
+      "derivation_strength": "declared_policy",
+      "evidence_ref": null,
+      "expires_at": null,
+      "fact_name": "rate_limit_status",
+      "fact_status": "recorded",
+      "freshness_required": false,
+      "guard_input": "rate_limit_status",
+      "permits": true,
+      "permitting_values": [
+        "policy_declared"
+      ],
+      "recorded_at": null,
+      "recorded_by": null,
+      "refusal_meaning": null,
+      "source_of_truth": "source_monitoring_approved_source_service.load_registry_rows",
+      "value": "policy_declared",
+      "vocabulary": [
+        "missing",
+        "policy_declared",
+        "unknown"
+      ],
+      "why_this_fact_exists": "whether a per-host rate limit policy is declared. Politeness is not optional, so an undeclared policy refuses."
+    },
+    "robots_status": {
+      "decision_authority": null,
+      "decision_verdict": null,
+      "derivation_strength": "unresolvable",
+      "evidence_ref": null,
+      "expires_at": "2027-09-17T12:00:00+00:00",
+      "fact_name": "robots_status",
+      "fact_status": "recorded",
+      "freshness_required": true,
+      "guard_input": "robots_status",
+      "permits": true,
+      "permitting_values": [
+        "absent",
+        "allowed"
+      ],
+      "recorded_at": null,
+      "recorded_by": null,
+      "refusal_meaning": null,
+      "source_of_truth": "measured at resolve time",
+      "value": "absent",
+      "vocabulary": [
+        "absent",
+        "allowed",
+        "disallowed",
+        "fetch_failed",
+        "unknown"
+      ],
+      "why_this_fact_exists": "whether robots.txt permits the path. Requires FETCHING robots.txt, which is itself a live call - so this fact is unresolvable in Gate 162 and refuses as missing. Gate 163 is where that fetch is first permitted, and it is the first live call the campaign makes."
+    },
+    "runtime_status": {
+      "decision_authority": null,
+      "decision_verdict": null,
+      "derivation_strength": "measured_runtime",
+      "evidence_ref": null,
+      "expires_at": null,
+      "fact_name": "runtime_status",
+      "fact_status": "recorded",
+      "freshness_required": false,
+      "guard_input": null,
+      "permits": true,
+      "permitting_values": [
+        "ready"
+      ],
+      "recorded_at": null,
+      "recorded_by": null,
+      "refusal_meaning": null,
+      "source_of_truth": "gates 156-161 readiness verifiers",
+      "value": "ready",
+      "vocabulary": [
+        "ready",
+        "not_ready",
+        "unknown"
+      ],
+      "why_this_fact_exists": "whether the Gates 156-161 runtime can actually carry a collection. Necessary and emphatically not sufficient: a ready runtime authorizes nothing, which is the distinction this whole block exists to keep."
+    },
+    "source_registered": {
+      "decision_authority": null,
+      "decision_verdict": null,
+      "derivation_strength": "recorded_registry",
+      "evidence_ref": null,
+      "expires_at": null,
+      "fact_name": "source_registered",
+      "fact_status": "recorded",
+      "freshness_required": false,
+      "guard_input": null,
+      "permits": true,
+      "permitting_values": [
+        "registered"
+      ],
+      "recorded_at": null,
+      "recorded_by": null,
+      "refusal_meaning": null,
+      "source_of_truth": "source_monitoring_approved_source_service.load_registry_rows",
+      "value": "registered",
+      "vocabulary": [
+        "registered",
+        "unknown_source"
+      ],
+      "why_this_fact_exists": "the registry knowing a source is the precondition for every other fact. It is NOT an approval - 177 sources are registered and none is approved."
+    },
+    "terms_status": {
+      "decision_authority": "a human reviewer",
+      "decision_verdict": "approved",
+      "derivation_strength": "recorded_decision",
+      "evidence_ref": "29d079b391096cb237d5f5ef4cb1b179d0cae06fef8951382c4891f4ffeb4c02",
+      "expires_at": "2027-09-17T12:00:00+00:00",
+      "fact_name": "terms_status",
+      "fact_status": "recorded",
+      "freshness_required": true,
+      "guard_input": "terms_status",
+      "permits": true,
+      "permitting_values": [
+        "ATTRIBUTION_REQUIRED",
+        "NO_REVIEW_REQUIRED"
+      ],
+      "recorded_at": "2026-09-17T12:00:00+00:00",
+      "recorded_by": "reviewer:nf162-artifact",
+      "refusal_meaning": null,
+      "source_of_truth": "nf_source_terms_decisions",
+      "value": "NO_REVIEW_REQUIRED",
+      "vocabulary": [
+        "ATTRIBUTION_REQUIRED",
+        "HUMAN_REVIEW_ONLY",
+        "NO_REVIEW_REQUIRED",
+        "TERMS_REVIEW_REQUIRED",
+        "UNKNOWN"
+      ],
+      "why_this_fact_exists": "whether the source's terms permit automated collection. A human decision; 171 of 177 sources block here because there was nowhere to record one until this gate."
+    },
+    "user_agent_status": {
+      "decision_authority": null,
+      "decision_verdict": null,
+      "derivation_strength": "declared_policy",
+      "evidence_ref": null,
+      "expires_at": null,
+      "fact_name": "user_agent_status",
+      "fact_status": "recorded",
+      "freshness_required": false,
+      "guard_input": "user_agent_status",
+      "permits": true,
+      "permitting_values": [
+        "canonical"
+      ],
+      "recorded_at": null,
+      "recorded_by": null,
+      "refusal_meaning": null,
+      "source_of_truth": "nativeforge_user_agent_service.canonical_user_agent",
+      "value": "canonical",
+      "vocabulary": [
+        "canonical",
+        "forbidden_ai_crawler",
+        "non_canonical",
+        "not_required",
+        "unknown"
+      ],
+      "why_this_fact_exists": "whether the request would identify itself canonically. Derived by comparing against the one canonical string, not by a caller asserting it."
+    }
+  },
+  "facts_recorded": 11,
+  "fixture_source_id": "nf162.fixture.permittable",
+  "host_resolves_nowhere": "`.invalid` is reserved by RFC 2606 precisely so it cannot exist",
+  "invariant_failures": [],
+  "is_synthetic": true,
+  "live_fetch_opted_in": false,
+  "live_transport_permitted": false,
+  "not_implied": [
+    "an authorized source is not a called source",
+    "an authorized source has no live transport to be called with",
+    "authorization is per-source and is not a global switch",
+    "a fabricated guard decision authorizes nothing and cannot be dispatched"
+  ],
+  "proves_nothing_about_a_real_source": true,
+  "required_fact_count": 11,
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "source_monitoring_live": false,
+  "undecided_fixture_source_id": "nf162.fixture.undecided",
+  "why_the_guard_still_refuses": "authorize_source_for_live_access hardcodes allow_live_fetch=False, so a fully authorized source sits at live_fetch_not_opted_in. Gate 163 is where that becomes a code change rather than an argument.",
+  "why_this_fixture_exists": "an unreachable permitted branch makes every refusal unfalsifiable. Something must be able to reach approved, and it must not be one of the 177 real sources."
+}

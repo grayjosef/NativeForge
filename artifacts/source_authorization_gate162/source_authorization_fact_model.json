@@ -1,0 +1,255 @@
+{
+  "artifact_schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "decision_facts": [
+    "terms_status",
+    "human_review_status",
+    "activation_status"
+  ],
+  "fact_count": 11,
+  "fact_names": [
+    "source_registered",
+    "terms_status",
+    "human_review_status",
+    "activation_status",
+    "collector_status",
+    "robots_status",
+    "credential_status",
+    "rate_limit_status",
+    "user_agent_status",
+    "attribution_status",
+    "runtime_status"
+  ],
+  "fact_statuses": [
+    "recorded",
+    "denied",
+    "needs_review",
+    "missing",
+    "unknown",
+    "stale"
+  ],
+  "facts": [
+    {
+      "decision_authority": null,
+      "fact_name": "source_registered",
+      "freshness_required": false,
+      "guard_input": null,
+      "permitting": [
+        "registered"
+      ],
+      "source_of_truth": "source_monitoring_approved_source_service.load_registry_rows",
+      "vocabulary": [
+        "registered",
+        "unknown_source"
+      ],
+      "why": "the registry knowing a source is the precondition for every other fact. It is NOT an approval - 177 sources are registered and none is approved."
+    },
+    {
+      "decision_authority": "a human reviewer",
+      "fact_name": "terms_status",
+      "freshness_required": true,
+      "guard_input": "terms_status",
+      "permitting": [
+        "ATTRIBUTION_REQUIRED",
+        "NO_REVIEW_REQUIRED"
+      ],
+      "source_of_truth": "nf_source_terms_decisions",
+      "vocabulary": [
+        "ATTRIBUTION_REQUIRED",
+        "HUMAN_REVIEW_ONLY",
+        "NO_REVIEW_REQUIRED",
+        "TERMS_REVIEW_REQUIRED",
+        "UNKNOWN"
+      ],
+      "why": "whether the source's terms permit automated collection. A human decision; 171 of 177 sources block here because there was nowhere to record one until this gate."
+    },
+    {
+      "decision_authority": "a human reviewer",
+      "fact_name": "human_review_status",
+      "freshness_required": true,
+      "guard_input": null,
+      "permitting": [
+        "approved"
+      ],
+      "source_of_truth": "nf_discovery_review_items[source_verification]",
+      "vocabulary": [
+        "approved",
+        "rejected",
+        "open",
+        "in_review",
+        "deferred"
+      ],
+      "why": "the guard exposes `human_review_required` as an OUTPUT rather than taking a review verdict as input, so the review decision gates authorization here instead. 6 of 177 sources block on this."
+    },
+    {
+      "decision_authority": "an operator, recorded with attribution",
+      "fact_name": "activation_status",
+      "freshness_required": false,
+      "guard_input": "activation_status",
+      "permitting": [
+        "activation_allowed"
+      ],
+      "source_of_truth": "nf_active_opportunity_sources.activation_approved_*",
+      "vocabulary": [
+        "activation_allowed",
+        "activation_blocked",
+        "activation_requires_human_review",
+        "activation_unknown"
+      ],
+      "why": "whether an operator activated this source, recorded with who and when. Already persisted by nf_active_opportunity_sources; this gate composes it rather than adding a second approval column."
+    },
+    {
+      "decision_authority": null,
+      "fact_name": "collector_status",
+      "freshness_required": false,
+      "guard_input": "collector_status",
+      "permitting": [
+        "active"
+      ],
+      "source_of_truth": "phase1_collector_activation_policy_service",
+      "vocabulary": [
+        "activating",
+        "active",
+        "halted",
+        "not_active"
+      ],
+      "why": "whether a collector for this source is running at all"
+    },
+    {
+      "decision_authority": null,
+      "fact_name": "robots_status",
+      "freshness_required": true,
+      "guard_input": "robots_status",
+      "permitting": [
+        "absent",
+        "allowed"
+      ],
+      "source_of_truth": "measured at resolve time",
+      "vocabulary": [
+        "absent",
+        "allowed",
+        "disallowed",
+        "fetch_failed",
+        "unknown"
+      ],
+      "why": "whether robots.txt permits the path. Requires FETCHING robots.txt, which is itself a live call - so this fact is unresolvable in Gate 162 and refuses as missing. Gate 163 is where that fetch is first permitted, and it is the first live call the campaign makes."
+    },
+    {
+      "decision_authority": null,
+      "fact_name": "credential_status",
+      "freshness_required": false,
+      "guard_input": "credential_status",
+      "permitting": [
+        "not_required",
+        "present_and_valid"
+      ],
+      "source_of_truth": "measured at resolve time",
+      "vocabulary": [
+        "expired",
+        "missing",
+        "not_required",
+        "present_and_valid",
+        "unknown"
+      ],
+      "why": "whether a required credential is present. Measured from settings; the VALUE is never read, recorded or reported."
+    },
+    {
+      "decision_authority": null,
+      "fact_name": "rate_limit_status",
+      "freshness_required": false,
+      "guard_input": "rate_limit_status",
+      "permitting": [
+        "policy_declared"
+      ],
+      "source_of_truth": "source_monitoring_approved_source_service.load_registry_rows",
+      "vocabulary": [
+        "missing",
+        "policy_declared",
+        "unknown"
+      ],
+      "why": "whether a per-host rate limit policy is declared. Politeness is not optional, so an undeclared policy refuses."
+    },
+    {
+      "decision_authority": null,
+      "fact_name": "user_agent_status",
+      "freshness_required": false,
+      "guard_input": "user_agent_status",
+      "permitting": [
+        "canonical"
+      ],
+      "source_of_truth": "nativeforge_user_agent_service.canonical_user_agent",
+      "vocabulary": [
+        "canonical",
+        "forbidden_ai_crawler",
+        "non_canonical",
+        "not_required",
+        "unknown"
+      ],
+      "why": "whether the request would identify itself canonically. Derived by comparing against the one canonical string, not by a caller asserting it."
+    },
+    {
+      "decision_authority": null,
+      "fact_name": "attribution_status",
+      "freshness_required": false,
+      "guard_input": "attribution_status",
+      "permitting": [
+        "not_required",
+        "present_and_verbatim"
+      ],
+      "source_of_truth": "source_monitoring_approved_source_service.load_registry_rows",
+      "vocabulary": [
+        "altered",
+        "missing",
+        "not_required",
+        "present_and_verbatim",
+        "unknown"
+      ],
+      "why": "whether required attribution is present and verbatim. Applies where the source's terms demand it."
+    },
+    {
+      "decision_authority": null,
+      "fact_name": "runtime_status",
+      "freshness_required": false,
+      "guard_input": null,
+      "permitting": [
+        "ready"
+      ],
+      "source_of_truth": "gates 156-161 readiness verifiers",
+      "vocabulary": [
+        "ready",
+        "not_ready",
+        "unknown"
+      ],
+      "why": "whether the Gates 156-161 runtime can actually carry a collection. Necessary and emphatically not sufficient: a ready runtime authorizes nothing, which is the distinction this whole block exists to keep."
+    }
+  ],
+  "freshness_facts": [
+    "terms_status",
+    "human_review_status",
+    "robots_status"
+  ],
+  "live_source_call": false,
+  "missing_is_not_denied": "nobody has decided and somebody decided against are opposite operational situations with the same effect on permission. A boolean cannot tell them apart, so this model does not use one.",
+  "not_an_approval": [
+    "a registered source is not an approved source",
+    "an available adapter is not an approved source",
+    "a queued job is not an approved source",
+    "a schedulable source is not an approved source",
+    "a ready runtime is not an approved source",
+    "a successful hermetic execution is not an approved source",
+    "an execution proof is not an approved source"
+  ],
+  "permitting_fact_statuses": [
+    "recorded"
+  ],
+  "refusal_meaning": {
+    "denied": "a decision exists and it says no. Changing this needs a new decision.",
+    "missing": "no record exists. Nobody has decided this, which is not the same as somebody deciding against it.",
+    "needs_review": "a decision exists and defers to a human who has not answered yet",
+    "stale": "a record answered and the answer expired. The evidence is about a document or state that may have changed since.",
+    "unknown": "a record exists but does not answer the question - usually a column that was never populated"
+  },
+  "schema_version": "nf_source_authorization_fact_model_v1",
+  "scope": "controlled_dev_demo",
+  "source_monitoring_live": false,
+  "vocabularies_are_read_from": "live_network_guard_service. This module restates none of them; a second copy of a vocabulary is a second thing to drift."
+}

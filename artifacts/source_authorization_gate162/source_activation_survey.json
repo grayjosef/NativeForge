@@ -1,0 +1,37 @@
+{
+  "activation_approved_count": 0,
+  "decision_kinds": [
+    "human_review",
+    "terms"
+  ],
+  "gate": "162",
+  "human_review_blocked_count": 6,
+  "live_source_call": false,
+  "migration": "0048",
+  "monitorable_count": 0,
+  "registry_row_count": 177,
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "second_activation_system_created": false,
+  "shipped_registry_count": 177,
+  "source_monitoring_live": false,
+  "terms_blocked_count": 171,
+  "what_already_existed": {
+    "activation_approval_storage": "nf_active_opportunity_sources.activation_approved_*",
+    "allowlist_evaluator": "source_monitoring_approved_source_service",
+    "human_activation_gates": [
+      "seed_source_human_activation_service",
+      "tier1_batch_federal_activation_service",
+      "tier3_foundation_batch_activation_service"
+    ],
+    "live_network_guard": "live_network_guard_service",
+    "per_source_activation_policy": "phase1_collector_activation_policy_service",
+    "terms_review_queue": "source_terms_review_queue_service"
+  },
+  "what_was_genuinely_missing": [
+    "a per-source TERMS decision record - only a legal_tos_review_required requirement flag existed",
+    "a per-source HUMAN REVIEW decision record - likewise only a broad_eligibility_human_review_required flag",
+    "any path from recorded facts to the live guard's inputs"
+  ],
+  "why_discovery_review_items_was_not_reused": "its source_registry_id is a UUID foreign key into nf_opportunity_sources, which holds 0 rows, while the 177-row source registry is file-backed and string-keyed. The id spaces do not join, and bridging them would invent registry identity as a side effect of recording a decision.",
+  "why_one_table_for_two_questions": "terms review and source review are different decisions by potentially different authorities, and they have identical shape: an answer, a signer, a time, an evidence reference, an expiry. Two near-identical tables is not minimum persistence, so decision_kind discriminates and the constraints are written once."
+}

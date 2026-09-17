@@ -24,6 +24,7 @@ operator_workbench_advisory_routes,/v1,8,False,True,preview_proxy,True,True,conv
 opportunity_discovery_routes,/v1,84,False,True,preview_proxy,True,True,converted,none,0
 pursuit_brief_routes,/v1,6,False,True,preview_proxy,True,True,converted,none,0
 pursuit_routes,/v1,20,False,True,preview_proxy,True,True,converted,none,0
+source_authorization_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 source_collection_job_store_routes,/v1,5,False,True,preview_proxy,True,True,converted,none,0
 source_collection_orchestration_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0
 source_collection_scheduler_routes,/v1,4,False,True,preview_proxy,True,True,converted,none,0

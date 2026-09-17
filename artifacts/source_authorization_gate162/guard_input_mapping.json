@@ -1,0 +1,57 @@
+{
+  "authorizing_strengths": [
+    "recorded_decision"
+  ],
+  "before_this_gate": "the guard's ten status inputs had to be handed in by a caller, and eight of them had no record anywhere to come from - so the only way to reach allowed=true was to invent them.",
+  "derivation_strengths": {
+    "activation_status": "recorded_decision",
+    "attribution_status": "recorded_decision",
+    "collector_status": "measured_runtime",
+    "credential_status": "measured_runtime",
+    "human_review_status": "recorded_decision",
+    "rate_limit_status": "declared_policy",
+    "robots_status": "unresolvable",
+    "runtime_status": "measured_runtime",
+    "source_registered": "recorded_registry",
+    "terms_status": "recorded_decision",
+    "user_agent_status": "declared_policy"
+  },
+  "guard_input_from_fact": {
+    "activation_status": "activation_status",
+    "attribution_status": "attribution_status",
+    "collector_status": "collector_status",
+    "credential_status": "credential_status",
+    "rate_limit_status": "rate_limit_status",
+    "robots_status": "robots_status",
+    "terms_status": "terms_status",
+    "user_agent_status": "user_agent_status"
+  },
+  "guard_inputs_supplied_from_records": 8,
+  "no_parameter_can_assert_a_fact": true,
+  "not_an_approval": [
+    "a registered source is not an approved source",
+    "an available adapter is not an approved source",
+    "a queued job is not an approved source",
+    "a schedulable source is not an approved source",
+    "a ready runtime is not an approved source",
+    "a successful hermetic execution is not an approved source",
+    "an execution proof is not an approved source"
+  ],
+  "only_a_signed_decision_authorizes": "a ready runtime, a registered source, an available adapter, a queued job and a hermetic execution proof are prerequisites. None of them is permission.",
+  "resolver_parameters": [
+    "connection",
+    "organization_id",
+    "source_id",
+    "now"
+  ],
+  "robots_is_unresolvable_for_a_real_source": "answering this requires fetching robots.txt from the source, which is the live HTTP call we are asking permission to make. Gate 162 cannot make one. Gate 163 must fetch robots.txt first and record the answer before anything else is permitted.",
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "source_monitoring_live": false,
+  "strength_vocabulary": [
+    "recorded_decision",
+    "recorded_registry",
+    "measured_runtime",
+    "declared_policy",
+    "unresolvable"
+  ]
+}

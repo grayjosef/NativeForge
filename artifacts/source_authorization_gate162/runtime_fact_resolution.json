@@ -1,0 +1,126 @@
+{
+  "authorizes_nothing": true,
+  "collection_runtime_ready": false,
+  "invariant_failures": [],
+  "lane_names": [
+    "scheduler_runtime_ready",
+    "worker_runtime_ready",
+    "collection_job_store_ready",
+    "orchestration_runtime_ready",
+    "raw_payload_persistence_ready",
+    "collector_execution_envelope_ready"
+  ],
+  "lanes": {
+    "collection_job_store_ready": {
+      "conditions_not_met": [
+        "enqueue_is_idempotent",
+        "illegal_transition_refused",
+        "nothing_collected",
+        "survives_restart",
+        "table_exists"
+      ],
+      "observed": true,
+      "source_of_truth": "source_collection_job_store_health_service.build_job_store_health",
+      "status": "not_ready",
+      "why": "5 condition(s) unobserved from here"
+    },
+    "collector_execution_envelope_ready": {
+      "conditions_not_met": [
+        "attempt_table_exists"
+      ],
+      "observed": true,
+      "source_of_truth": "source_collector_execution_health_service.build_execution_health",
+      "status": "not_ready",
+      "why": "1 condition(s) unobserved from here"
+    },
+    "orchestration_runtime_ready": {
+      "conditions_not_met": [
+        "catchup_is_bounded",
+        "cycle_completed",
+        "cycle_identity_is_deterministic",
+        "duplicate_trigger_suppressed",
+        "expired_owner_reclaimable",
+        "missed_window_recovered",
+        "nothing_collected",
+        "restart_is_idempotent",
+        "single_active_owner"
+      ],
+      "observed": true,
+      "source_of_truth": "source_collection_orchestration_health_service.build_orchestration_health",
+      "status": "not_ready",
+      "why": "9 condition(s) unobserved from here"
+    },
+    "raw_payload_persistence_ready": {
+      "conditions_not_met": [
+        "archived_still_readable",
+        "attempt_conflict_refused",
+        "exact_bytes_round_trip",
+        "nothing_was_fetched",
+        "oversize_refused",
+        "readback_hash_verified",
+        "safe_headers_survive",
+        "secret_headers_refused",
+        "table_exists",
+        "tamper_detected",
+        "write_hash_verified"
+      ],
+      "observed": true,
+      "source_of_truth": "source_raw_payload_health_service.build_raw_payload_health",
+      "status": "not_ready",
+      "why": "11 condition(s) unobserved from here"
+    },
+    "scheduler_runtime_ready": {
+      "conditions_not_met": [
+        "component_missing:background_worker",
+        "component_missing:periodic_trigger",
+        "component_missing:persistent_backend",
+        "component_missing:production_raw_payload_store",
+        "component_missing:scheduler_runtime"
+      ],
+      "observed": true,
+      "source_of_truth": "source_scheduler_readiness_service.build_scheduler_readiness",
+      "status": "ready",
+      "why": null
+    },
+    "worker_runtime_ready": {
+      "conditions_not_met": [],
+      "observed": true,
+      "source_of_truth": "source_collection_worker_health_service.build_worker_health",
+      "status": "not_ready",
+      "why": "the lane reported not ready without naming a condition"
+    }
+  },
+  "monitoring_runtime_ready": false,
+  "not_derived_from_module_existence": "each lane's own health service OBSERVES evidence - rows, restart proofs, hashes that verify. A file on disk is not a runtime, and a lane reporting not_ready from a process that has not exercised it is reporting that correctly.",
+  "not_implied": [
+    "a ready runtime is not an approved source",
+    "a ready runtime is not a terms decision",
+    "a ready runtime is not a human review",
+    "a ready runtime has contacted nothing",
+    "if every lane were ready tomorrow, zero sources would become approved"
+  ],
+  "repairs": "phase1_collector_activation_policy_service read Gate 98E's `background_worker_available`, which detects a third-party scheduler package and a broker. The Gates 157-161 runtime is in-process, so that detector answers a question about celery and phase1 read it as a question about whether work can run.",
+  "required_for_collection": [
+    "worker_runtime_ready",
+    "collection_job_store_ready",
+    "raw_payload_persistence_ready",
+    "collector_execution_envelope_ready"
+  ],
+  "required_for_monitoring": [
+    "worker_runtime_ready",
+    "collection_job_store_ready",
+    "raw_payload_persistence_ready",
+    "collector_execution_envelope_ready",
+    "scheduler_runtime_ready",
+    "orchestration_runtime_ready"
+  ],
+  "runtime_status": "not_ready",
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "source_monitoring_live": false,
+  "unmet_for_collection": [
+    "collection_job_store_ready",
+    "collector_execution_envelope_ready",
+    "raw_payload_persistence_ready",
+    "worker_runtime_ready"
+  ]
+}

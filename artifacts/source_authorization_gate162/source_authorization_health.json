@@ -1,0 +1,74 @@
+{
+  "activation_composed": true,
+  "approved_source_count": 0,
+  "authorization_boundary_ready": true,
+  "caller_supplied_facts_accepted": 0,
+  "customer_data_persisted": false,
+  "decision_facts": [
+    "terms_status",
+    "human_review_status",
+    "activation_status"
+  ],
+  "emails_sent": 0,
+  "fabricated_caller_bypass_possible": false,
+  "fact_statuses": [
+    "recorded",
+    "denied",
+    "needs_review",
+    "missing",
+    "unknown",
+    "stale"
+  ],
+  "freshness_facts": [
+    "terms_status",
+    "human_review_status",
+    "robots_status"
+  ],
+  "human_review_blocked_count": 6,
+  "human_review_decisions_persisted": true,
+  "live_fetch_opted_in": false,
+  "live_source_calls": 0,
+  "live_transport_dispatchable": false,
+  "live_transport_enabled": false,
+  "monitorable_count": 0,
+  "mutation_endpoints": 0,
+  "network_calls": 0,
+  "not_an_approval": [
+    "a registered source is not an approved source",
+    "an available adapter is not an approved source",
+    "a queued job is not an approved source",
+    "a schedulable source is not an approved source",
+    "a ready runtime is not an approved source",
+    "a successful hermetic execution is not an approved source",
+    "an execution proof is not an approved source"
+  ],
+  "not_implied": [
+    "an authorized source is not a called source",
+    "an authorized source has no live transport to be called with",
+    "authorization is per-source and is not a global switch",
+    "a fabricated guard decision authorizes nothing and cannot be dispatched"
+  ],
+  "object_store_calls": 0,
+  "permitting_fact_statuses": [
+    "recorded"
+  ],
+  "real_allowlisted_sources": 0,
+  "real_approved_sources": 0,
+  "real_org_touched": false,
+  "refusal_meaning": {
+    "denied": "a decision exists and it says no. Changing this needs a new decision.",
+    "missing": "no record exists. Nobody has decided this, which is not the same as somebody deciding against it.",
+    "needs_review": "a decision exists and defers to a human who has not answered yet",
+    "stale": "a record answered and the answer expired. The evidence is about a document or state that may have changed since.",
+    "unknown": "a record exists but does not answer the question - usually a column that was never populated"
+  },
+  "required_fact_count": 11,
+  "runtime_derivation_repaired": true,
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "second_activation_system_created": false,
+  "shipped_registry_count": 177,
+  "source_monitoring_live": false,
+  "sources_evaluated": 179,
+  "terms_blocked_count": 171,
+  "terms_decisions_persisted": true
+}

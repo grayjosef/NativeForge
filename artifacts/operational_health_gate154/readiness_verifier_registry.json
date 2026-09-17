@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 31,
+  "blocking_count": 32,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -32,6 +32,7 @@
       "email_delivery_readiness",
       "operational_durability_reassessment",
       "operational_health_runbook",
+      "source_authorization_boundary",
       "source_collector_execution_envelope",
       "source_monitoring_preflight",
       "source_orchestration_runtime",
@@ -69,7 +70,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 35,
+  "verifier_count": 36,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -96,6 +97,7 @@
     "operational_health_runbook",
     "postgres_rls",
     "rls_isolation",
+    "source_authorization_boundary",
     "source_collector_execution_envelope",
     "source_monitoring_preflight",
     "source_orchestration_runtime",
@@ -479,6 +481,27 @@
       "production": false,
       "script": "scripts/verify_nativeforge_source_orchestration_runtime.sh",
       "verifier": "source_orchestration_runtime"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "no_live_source_calls",
+        "source_scheduler_runtime",
+        "source_worker_runtime",
+        "collection_job_store",
+        "source_orchestration_runtime",
+        "source_raw_payload_persistence",
+        "source_collector_execution_envelope"
+      ],
+      "expected_result": "PASS",
+      "gate": "162",
+      "kind": "readiness_lane",
+      "lane": "authorization_boundary_ready",
+      "note": "the live network guard's permitted branch, made reachable ONLY from recorded, attributable facts. Before this gate its ten status inputs had to be handed in by a caller, and eight of them had no record anywhere to come from - so the only way to reach allowed=true was to invent them. Gate 134F's rule was that an unreachable permitted branch makes a refusal unfalsifiable; the converse is worse, because a permitted branch reachable only by fabrication makes an approval unaccountable. Eleven facts now resolve from records through a resolver whose four parameters cannot assert anything, and a fact can fail in five distinguishable ways - denied, needs_review, missing, unknown, stale - because nobody decided and somebody decided against are opposite problems with the same effect on permission. Only a signed decision authorizes: a ready runtime, a registered source, an available adapter, a queued job and a hermetic execution proof are prerequisites and none is permission. Terms and source review persist in ONE table discriminated by decision_kind, because both are a human's answer with the same shape; activation composes nf_active_opportunity_sources rather than adding a second approval column; and no second activation system was created. The database refuses an approval without a signer, a time and an evidence fingerprint. A SYNTHETIC fixture under a reserved prefix reaches authorized=true with all eleven facts recorded, which is what makes every refusal falsifiable - and it still sits at live_fetch_not_opted_in, because authorization complete is not a permitted request. 177 real sources resolve, 171 terms-blocked, 6 human-review-blocked, 0 approved, 0 allowlisted. Four GET routes, zero mutation endpoints, no route that accepts a fact. live_source_calls stays 0 and source_monitoring_live stays false.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_source_authorization_boundary.sh",
+      "verifier": "source_authorization_boundary"
     },
     {
       "blocking": true,

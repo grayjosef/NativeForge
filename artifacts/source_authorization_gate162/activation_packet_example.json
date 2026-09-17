@@ -1,0 +1,45 @@
+{
+  "authority_for_each_requirement": {
+    "activation_status": "an operator, recorded with attribution",
+    "attribution_status": "derived from the terms decision",
+    "collector_status": "an operator, by starting a collector",
+    "credential_status": "an operator, by configuring a credential",
+    "human_review_status": "a human reviewer",
+    "rate_limit_status": "already satisfied by the declared politeness policy",
+    "robots_status": "a live fetch of robots.txt - Gate 163's FIRST act, before any collection request to that host",
+    "runtime_status": "the platform, by having the Gates 157-161 lanes ready",
+    "source_registered": "the registry curator",
+    "terms_status": "a human reviewer, against the source's actual terms",
+    "user_agent_status": "already satisfied by the canonical user agent"
+  },
+  "authorization_invariant_failures": [],
+  "authorization_status": "missing_fact",
+  "authorized": false,
+  "blocking_decisions": [
+    "activation_status:missing",
+    "attribution_status:missing",
+    "human_review_status:missing",
+    "terms_status:missing"
+  ],
+  "blocking_prerequisites": [
+    "collector_status:denied",
+    "robots_status:missing",
+    "runtime_status:denied"
+  ],
+  "example_source_id": "nf-seed-2026-fed-001",
+  "gate_163_sequence": [
+    "a human reads the source's terms and records a signed terms decision",
+    "a human records a signed source review decision",
+    "an operator records an activation with attribution",
+    "a live robots.txt fetch is performed and its result recorded - this is the first live HTTP request the campaign makes",
+    "only then may a collection request to that host be permitted",
+    "and the live transport must still be implemented and made dispatchable, which Gate 161 deliberately did not do"
+  ],
+  "grants_nothing": true,
+  "is_a_read_model": "this reads recorded facts and reports what is missing. It writes nothing and sets no flag.",
+  "live_transport_permitted": false,
+  "resolver_invariant_failures": [],
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "source_monitoring_live": false,
+  "source_name_fingerprint": "acdb0432bfdb5b8368d97d056efefec6563a60f5dd460c90f049d3962436082d"
+}

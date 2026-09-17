@@ -1,0 +1,21 @@
+{
+  "caller_supplied_facts_accepted": 0,
+  "forged_guard_inputs_change_the_authorization": false,
+  "resolver_parameters": [
+    "connection",
+    "organization_id",
+    "source_id",
+    "now"
+  ],
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "source_monitoring_live": false,
+  "the_low_level_guard_allowed_it": true,
+  "the_only_runtime_path": "source_live_authorization_service.authorize_source_for_live_access",
+  "what_a_forged_opinion_cannot_do": [
+    "it cannot change authorize_source_for_live_access, which resolves every fact from records",
+    "it cannot be recorded - the database refuses an approval with no signer, no time and no evidence",
+    "it cannot be dispatched - Gate 161 built no live transport and `live` is not in DISPATCHABLE_KINDS",
+    "it cannot produce an attempt row - migration 0047 refuses transport_kind='live' and live_source_call=1"
+  ],
+  "why_that_is_not_a_problem": "build_live_network_decision is a pure decision function over named inputs, and answering its inputs honestly is what it is for. A caller who invents them gets an OPINION."
+}

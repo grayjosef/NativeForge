@@ -26,6 +26,7 @@
       "opportunity_discovery_routes",
       "pursuit_brief_routes",
       "pursuit_routes",
+      "source_authorization_routes",
       "source_collection_job_store_routes",
       "source_collection_orchestration_routes",
       "source_collection_scheduler_routes",
@@ -44,12 +45,12 @@
       "trust_routes",
       "verified_binding_readiness_routes"
     ],
-    "converted_modules": 42,
+    "converted_modules": 43,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 326
+    "route_total": 330
   },
   "before": {
     "converted_modules": 1,

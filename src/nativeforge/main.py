@@ -83,6 +83,9 @@ from nativeforge.api.pursuit_brief_routes import (
     real_pursuit_brief_router,
 )
 from nativeforge.api.pursuit_routes import demo_pursuit_router, real_pursuit_router
+from nativeforge.api.source_authorization_routes import (
+    router as source_authorization_router,
+)
 from nativeforge.api.source_collection_job_store_routes import (
     router as source_job_store_router,
 )
@@ -255,6 +258,11 @@ def create_app() -> FastAPI:
     # parameter, not as a default, not as an allowlist a caller selects
     # from - so there is no address a caller could point it at.
     app.include_router(source_collector_execution_router)
+    # Gate 162: the recorded source authorization boundary. FOUR READS and no
+    # writes - no route approves a source, records a terms decision, records a
+    # human review, flips an allowlist entry or executes anything. Every value
+    # is resolved from records; no route accepts a fact.
+    app.include_router(source_authorization_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

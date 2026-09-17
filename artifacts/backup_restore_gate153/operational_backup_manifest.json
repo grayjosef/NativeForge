@@ -239,7 +239,7 @@
       "why_included": "which organization a binding names, and its state"
     }
   ],
-  "migration_head": "0047",
+  "migration_head": "0048",
   "production_backup_is_a_different_harness": "scripts/verify_nativeforge_backup_restore.sh, which needs a managed instance and returns SKIP until one exists",
   "production_backup_ready": false,
   "reads_a_live_schema": false,

@@ -1,0 +1,25 @@
+{
+  "allowlisted_means": "authorization_status == approved, and nothing else",
+  "approved_source_count": 0,
+  "authorization_statuses": [
+    "approved",
+    "denied",
+    "needs_review",
+    "missing_fact",
+    "stale",
+    "unknown"
+  ],
+  "fixture_count": 2,
+  "fixture_prefix": "nf162.fixture.",
+  "is_a_projection": "allowlisted is computed from recorded facts every time it is asked. No column stores it, so it cannot disagree with the facts underneath it.",
+  "live_transport_permitted": false,
+  "no_fixture_shadows_a_real_source": true,
+  "no_stored_allowlist_flag": "nf_active_opportunity_sources.activation_approved_* remains the one place an activation decision is STORED. A second boolean beside it would be a second truth to drift.",
+  "prefix_is_reserved": true,
+  "real_sources_allowlisted": 0,
+  "schema_version": "nf_source_authorization_gate162_artifacts_v1",
+  "shipped_registry_count": 177,
+  "source_monitoring_live": false,
+  "sources_evaluated": 179,
+  "why_a_fixture_exists": "an unreachable permitted branch makes a refusal unfalsifiable. Something must be able to reach approved, and it must not be one of the 177 real sources."
+}
