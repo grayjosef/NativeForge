@@ -1,0 +1,27 @@
+{
+  "approved_source_count": 0,
+  "collectors_invoked": 0,
+  "credentials_required": false,
+  "customer_data_persisted": false,
+  "dns_resolved": false,
+  "emails_sent": 0,
+  "execution_envelope_exists": true,
+  "jobs_completed": 0,
+  "live_source_calls": 0,
+  "live_transport_dispatchable": false,
+  "live_transport_implemented": false,
+  "network_calls": 0,
+  "object_store_calls": 0,
+  "real_org_touched": false,
+  "runtime_existence_is_not_live_monitoring": "Gate 161 builds machinery that could make a source request and refuses to make one. The envelope existing, an execution proof existing, and a source being approved are three separate facts, and only the first two are true.",
+  "schema_version": "nf_source_collector_execution_gate161_artifacts_v1",
+  "source_monitoring_live": false,
+  "urls_fetched": 0,
+  "what_would_have_to_change_for_a_live_call": [
+    "a live transport implementation, which does not exist",
+    "LIVE added to DISPATCHABLE_KINDS",
+    "the execution policy permitting a live transport",
+    "migration 0047's hermetic_only and no_live_call constraints relaxed",
+    "an approved source, which needs a human first"
+  ]
+}

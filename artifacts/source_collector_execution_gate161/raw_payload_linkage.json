@@ -1,0 +1,13 @@
+{
+  "a_persisted_payload_is_not_a_successful_execution": true,
+  "bytes_match": true,
+  "bytes_received": 87,
+  "fixture_body_bytes": 87,
+  "fixture_body_sha256": "ea4b2cb68f6dabcfa12b4164fbf19281b4b97db0cf8ac79d28fdfa2364b05649",
+  "hashed_before_decoding": "the exact response bytes are hashed by s3_raw_payload_body_store_service.body_hash, which takes bytes, before any parse or normalisation",
+  "schema_version": "nf_source_collector_execution_gate161_artifacts_v1",
+  "source_monitoring_live": false,
+  "the_attempt_points_at_the_payload": "by sha256 and by shared attempt_id, not by copying the body",
+  "the_store_is_gate_160s": "source_raw_payload_persistence_service. Gate 161 adds no second payload store and duplicates no byte of one.",
+  "verified_against_a_database_by": "scripts/verify_nativeforge_source_collector_execution_envelope.sh, which writes real rows, replays them and removes them"
+}

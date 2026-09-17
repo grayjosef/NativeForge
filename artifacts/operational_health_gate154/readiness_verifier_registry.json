@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 30,
+  "blocking_count": 31,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -32,6 +32,7 @@
       "email_delivery_readiness",
       "operational_durability_reassessment",
       "operational_health_runbook",
+      "source_collector_execution_envelope",
       "source_monitoring_preflight",
       "source_orchestration_runtime",
       "source_raw_payload_persistence",
@@ -68,7 +69,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 34,
+  "verifier_count": 35,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -95,6 +96,7 @@
     "operational_health_runbook",
     "postgres_rls",
     "rls_isolation",
+    "source_collector_execution_envelope",
     "source_monitoring_preflight",
     "source_orchestration_runtime",
     "source_raw_payload_persistence",
@@ -477,6 +479,26 @@
       "production": false,
       "script": "scripts/verify_nativeforge_source_orchestration_runtime.sh",
       "verifier": "source_orchestration_runtime"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "no_live_source_calls",
+        "source_scheduler_runtime",
+        "source_worker_runtime",
+        "collection_job_store",
+        "source_orchestration_runtime",
+        "source_raw_payload_persistence"
+      ],
+      "expected_result": "PASS",
+      "gate": "161",
+      "kind": "readiness_lane",
+      "lane": "collector_execution_envelope_ready",
+      "note": "the first gate whose code could in principle make an outbound source request, and it does not. The envelope composes orchestration, job, policy, request construction, transport boundary, Gate 160's payload store and an execution proof, against a REGISTERED FIXTURE. Live is refused four independent times - by the policy, by the transport boundary, by DISPATCHABLE_KINDS, and by migration 0047's CHECK constraints - and none of the four takes caller input, so a caller who satisfies the guard still reaches three further stops. The exact response bytes are hashed before any decoding. An attempt row is written for EVERY outcome including refusals, because a refusal and a timeout produce no payload and would otherwise leave no record they happened. A malformed body is persisted and is NOT a failure: parsing is a later gate's problem and discarding the bytes would lose the only copy. The proof defines seven requirements, each read from a record rather than passed as a verdict, and reports proves_the_envelope_works and proves_a_source_responded as two separate fields - a 404 satisfies all seven and completes nothing. The Gate 157 worker gained an OPT-IN hermetic handler behind seven conditions, each of which is exercised alone; the default handler is unchanged. No envelope module imports a network module, proved by parsing imports rather than by searching text, and the scan is shown to FAIL on an injected import. No route takes a URL - not as a parameter, not as a default, not as an allowlist - so there is no address a caller can name. jobs_completed, collectors_invoked, live_source_calls and network_calls stay 0, approved_source_count stays 0 against a registry of 177 KNOWN sources, and source_monitoring_live stays false.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_source_collector_execution_envelope.sh",
+      "verifier": "source_collector_execution_envelope"
     },
     {
       "blocking": true,

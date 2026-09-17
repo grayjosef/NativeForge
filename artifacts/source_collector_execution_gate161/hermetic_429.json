@@ -1,0 +1,38 @@
+{
+  "request": {
+    "body_size_bytes": 0,
+    "has_body": false,
+    "header_names": [],
+    "method": "GET",
+    "timeout_seconds": 20.0,
+    "url_fingerprint": "673ce6a583addc1fdbb52b67ae182e312f117a3ba28aeb6ad4c45ba5c893cd09"
+  },
+  "transport": {
+    "blocked_reasons": [],
+    "bytes_received": 24,
+    "dispatched": true,
+    "elapsed_seconds": 0.0,
+    "live_source_call": false,
+    "live_transport_enabled": false,
+    "network_module_imported_here": false,
+    "outcome": "response_received",
+    "request": {
+      "body_size_bytes": 0,
+      "has_body": false,
+      "header_names": [],
+      "method": "GET",
+      "timeout_seconds": 20.0,
+      "url_fingerprint": "673ce6a583addc1fdbb52b67ae182e312f117a3ba28aeb6ad4c45ba5c893cd09"
+    },
+    "response_headers": {
+      "Content-Type": "application/json",
+      "Retry-After": "120"
+    },
+    "schema_version": "nf_source_collection_transport_v1",
+    "scope": "controlled_dev_demo",
+    "source_monitoring_live": false,
+    "status_code": 429,
+    "transport_kind": "hermetic"
+  },
+  "transport_invariant_failures": []
+}

@@ -35,6 +35,7 @@
     "source_collection_job_store_routes.py",
     "source_collection_orchestration_routes.py",
     "source_collection_worker_routes.py",
+    "source_collector_execution_routes.py",
     "source_ingestion_routes.py",
     "source_monitoring_readiness_routes.py",
     "source_raw_payload_routes.py",

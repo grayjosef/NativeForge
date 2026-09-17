@@ -1,0 +1,147 @@
+{
+  "allowed_methods": [
+    "GET",
+    "HEAD",
+    "POST"
+  ],
+  "allowed_request_headers": [
+    "accept",
+    "accept-encoding",
+    "accept-language",
+    "content-type",
+    "if-modified-since",
+    "if-none-match",
+    "user-agent"
+  ],
+  "chokepoint_findings": [],
+  "chokepoint_invariant_failures": [],
+  "composes": [
+    "source_collection_attempt_identity_service.build_attempt_identity",
+    "source_collection_execution_policy_service.build_execution_policy",
+    "source_collection_request_builder_service.build_source_request",
+    "source_collection_transport_service.execute_request",
+    "source_raw_payload_persistence_service.persist_raw_payload",
+    "source_raw_payload_replay_service.replay_payload",
+    "source_collection_execution_proof_service.build_execution_proof",
+    "source_collection_execution_attempt_repository.record_attempt"
+  ],
+  "dispatchable_kinds": [
+    "hermetic"
+  ],
+  "envelope_modules": [
+    "source_collector_execution_service",
+    "source_collection_transport_service",
+    "hermetic_source_transport_service",
+    "source_collection_execution_policy_service",
+    "source_collection_request_builder_service",
+    "source_collection_execution_proof_service",
+    "source_collection_execution_retry_service",
+    "source_collector_execution_health_service",
+    "source_collection_execution_chokepoint_service"
+  ],
+  "envelope_reaches_no_host": true,
+  "execution_statuses": [
+    "refused_by_policy",
+    "request_build_failed",
+    "response_persisted",
+    "response_received",
+    "transport_failed",
+    "transport_refused",
+    "unknown"
+  ],
+  "gate": "161",
+  "hermetic_transport": {
+    "an_unregistered_url_returns": "connection_failed",
+    "fixture_kinds": [
+      "ok_200",
+      "not_found_404",
+      "rate_limited_429_with_retry_after",
+      "server_error_5xx",
+      "timeout",
+      "malformed_200_body"
+    ],
+    "malformed_bytes_still_persist": "parsing success is not a prerequisite for preserving evidence",
+    "network_modules_imported": [],
+    "reaches_a_host": false,
+    "schema_version": "nf_hermetic_source_transport_v1",
+    "scope": "controlled_dev_demo",
+    "sleeps": false,
+    "why": "an unregistered host does not exist in this world. Returning a connection failure is the honest answer; anything else could hide a real call."
+  },
+  "how_this_is_measured": "ast.Import and ast.ImportFrom nodes, and dotted callee paths resolved from Name/Attribute nodes. No substring search: a module whose docstring says it never imports httpx fails a grep for httpx.",
+  "legacy_transports_not_refactored": [
+    "grants_gov_search_api_adapter_service",
+    "polite_http_fetch_service",
+    "real_url_resolver_service"
+  ],
+  "live_source_call": false,
+  "live_transport_dispatchable": false,
+  "max_response_bytes": 1048576,
+  "migration": "0047",
+  "modules_expected": 11,
+  "modules_found": 11,
+  "modules_that_reach_a_host": [],
+  "network_calls": 0,
+  "refusal_reasons": [
+    "human_review_blocked",
+    "live_transport_not_implemented",
+    "live_transport_not_permitted",
+    "none",
+    "not_a_synthetic_fixture",
+    "permanent_worker_failure",
+    "refused_by_activation",
+    "request_build_refused",
+    "response_too_large",
+    "scope_not_permitted",
+    "terms_blocked",
+    "transient_worker_failure",
+    "transport_connection_failed",
+    "transport_timeout",
+    "unknown"
+  ],
+  "schema_version": "nf_source_collector_execution_gate161_artifacts_v1",
+  "source_monitoring_live": false,
+  "transport_boundary": {
+    "allowed_methods": [
+      "GET",
+      "HEAD",
+      "POST"
+    ],
+    "allowed_request_headers": [
+      "accept",
+      "accept-encoding",
+      "accept-language",
+      "content-type",
+      "if-modified-since",
+      "if-none-match",
+      "user-agent"
+    ],
+    "dispatchable_kinds": [
+      "hermetic"
+    ],
+    "legacy_transports_not_refactored": [
+      "polite_http_fetch_service",
+      "grants_gov_search_api_adapter_service",
+      "real_url_resolver_service"
+    ],
+    "live_transport_enabled": false,
+    "live_transport_implemented_here": false,
+    "max_response_bytes": 1048576,
+    "network_modules_imported": [],
+    "reaches_a_host": false,
+    "schema_version": "nf_source_collection_transport_v1",
+    "scope": "controlled_dev_demo",
+    "the_guard_that_decides": "live_network_guard_service.build_live_network_decision, via source_collection_execution_policy_service",
+    "transport_is_injected_not_imported": true,
+    "transport_kinds": [
+      "hermetic",
+      "live"
+    ],
+    "why_not_refactored": "each is already guarded, already injectable, already on the approved list with a reason, and none is on the execution envelope's path. Rewriting three working transports to route through a boundary with no live implementation would move code and defer the benefit. See doc 837."
+  },
+  "transport_kinds": [
+    "hermetic",
+    "live"
+  ],
+  "why_legacy_transports_stay": "each imports httpx under two guards, each is already injectable, each is on the approved-site list with a recorded reason, and none is on the envelope's import path. Doc 837 records the decision. What matters is their ABSENCE from this graph, not that they were rewritten."
+}

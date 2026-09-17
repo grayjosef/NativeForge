@@ -1,0 +1,59 @@
+{
+  "a_real_source_is_refused_by_the_worker": [
+    "source_id_is_not_a_synthetic_fixture"
+  ],
+  "approved_source_count": 0,
+  "collectors_invoked": 0,
+  "conditions_expected": [
+    "attempt_table_exists",
+    "transport_boundary_reaches_no_host",
+    "hermetic_transport_reaches_no_host",
+    "live_transport_is_not_dispatchable",
+    "no_attempt_claims_a_live_call",
+    "no_live_attempt_rows_exist",
+    "proof_requirements_are_defined"
+  ],
+  "hermetic_fixture_prefix": "nf161.fixture.",
+  "hermetic_refusal_conditions": [
+    "handler_is_not_hermetic_execution",
+    "no_hermetic_transport_was_injected",
+    "job_is_not_declared_a_hermetic_fixture",
+    "executable_is_not_a_persisted_fact_in_gate_158",
+    "the_scheduler_did_not_mark_this_job_executable",
+    "job_carries_no_source_definition",
+    "source_id_is_not_a_synthetic_fixture"
+  ],
+  "human_review_blocked_source_count": 6,
+  "jobs_completed": 0,
+  "knowing_is_not_approving": "the registry holds many sources and has approved none. Counting its rows reported every one of them as approved until the lane's own invariant refused it.",
+  "known_source_count": 177,
+  "live_source_calls": 0,
+  "live_transport_available": false,
+  "max_retry_after_seconds": 3600,
+  "monitorable_source_count": 0,
+  "network_calls": 0,
+  "not_implied": [
+    "a ready envelope is not an approved source",
+    "a hermetic proof is not a source having responded",
+    "a persisted payload is not a successful collection",
+    "an attempt row is not a network call",
+    "zero live attempts is not a live transport that refused - there is none"
+  ],
+  "retry_classification": {
+    "400_422": "permanent",
+    "401_403": "permanent",
+    "404_410": "permanent",
+    "429": "transient, and Retry-After wins over the computed backoff",
+    "5xx": "transient",
+    "activation_terms_human_review": "not retried - a human decides",
+    "connection_failed": "transient",
+    "malformed_body": "not a failure - the bytes are persisted",
+    "refused_before_dispatch": "not retried - a refusal is a decision",
+    "timeout": "transient"
+  },
+  "schema_version": "nf_source_collector_execution_gate161_artifacts_v1",
+  "source_monitoring_live": false,
+  "terms_blocked_source_count": 171,
+  "worker_default_handler": "evaluate_only",
+  "worker_handler": "hermetic_execution"
+}

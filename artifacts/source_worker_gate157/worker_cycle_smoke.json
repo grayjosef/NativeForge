@@ -12,8 +12,7 @@
   },
   "handler": "evaluate_only",
   "handlers_not_implemented": [
-    "fetch: needs a collector, which is Gate 161",
-    "persist_payload: needs a raw payload store, which is Gate 160",
+    "fetch_a_live_source: needs an approved source, which is Gate 162",
     "activate: needs an approved source, which is Gate 162 and a human first"
   ],
   "live_source_calls": 0,

@@ -365,6 +365,52 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "source_collector_execution_envelope",
+        lane="collector_execution_envelope_ready",
+        kind=KIND_READINESS,
+        gate="161",
+        blocking=True,
+        depends_on=(
+            "no_live_source_calls",
+            "source_scheduler_runtime",
+            "source_worker_runtime",
+            "collection_job_store",
+            "source_orchestration_runtime",
+            "source_raw_payload_persistence",
+        ),
+        note=(
+            "the first gate whose code could in principle make an outbound "
+            "source request, and it does not. The envelope composes "
+            "orchestration, job, policy, request construction, transport "
+            "boundary, Gate 160's payload store and an execution proof, "
+            "against a REGISTERED FIXTURE. Live is refused four independent "
+            "times - by the policy, by the transport boundary, by "
+            "DISPATCHABLE_KINDS, and by migration 0047's CHECK constraints - "
+            "and none of the four takes caller input, so a caller who "
+            "satisfies the guard still reaches three further stops. The exact "
+            "response bytes are hashed before any decoding. An attempt row is "
+            "written for EVERY outcome including refusals, because a refusal "
+            "and a timeout produce no payload and would otherwise leave no "
+            "record they happened. A malformed body is persisted and is NOT a "
+            "failure: parsing is a later gate's problem and discarding the "
+            "bytes would lose the only copy. The proof defines seven "
+            "requirements, each read from a record rather than passed as a "
+            "verdict, and reports proves_the_envelope_works and "
+            "proves_a_source_responded as two separate fields - a 404 "
+            "satisfies all seven and completes nothing. The Gate 157 worker "
+            "gained an OPT-IN hermetic handler behind seven conditions, each "
+            "of which is exercised alone; the default handler is unchanged. "
+            "No envelope module imports a network module, proved by parsing "
+            "imports rather than by searching text, and the scan is shown to "
+            "FAIL on an injected import. No route takes a URL - not as a "
+            "parameter, not as a default, not as an allowlist - so there is no "
+            "address a caller can name. jobs_completed, collectors_invoked, "
+            "live_source_calls and network_calls stay 0, approved_source_count "
+            "stays 0 against a registry of 177 KNOWN sources, and "
+            "source_monitoring_live stays false."
+        ),
+    ),
+    _verifier(
         "source_raw_payload_persistence",
         lane="raw_payload_persistence_ready",
         kind=KIND_READINESS,

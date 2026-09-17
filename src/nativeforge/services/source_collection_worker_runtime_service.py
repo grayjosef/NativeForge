@@ -98,6 +98,13 @@ from nativeforge.services.source_collection_retry_policy_service import (
     evaluate_retry,
     retry_invariant_failures,
 )
+from nativeforge.services.source_collection_transport_service import (
+    HERMETIC as HERMETIC_TRANSPORT_KIND,
+)
+from nativeforge.services.source_collector_execution_service import (
+    execute_collection,
+    execution_invariant_failures,
+)
 
 SCHEMA_VERSION = "nf_source_collection_worker_runtime_v1"
 
@@ -135,12 +142,89 @@ WORKER_STATUSES: tuple[str, ...] = (
 #: What a Gate 157 worker is allowed to do with a claimed job.
 HANDLER_EVALUATE_ONLY = "evaluate_only"
 
+#: Gate 161: run the collector execution envelope against a REGISTERED FIXTURE.
+#:
+#: Opt-in by name. A caller that does not ask for this handler gets exactly the
+#: Gate 157 behaviour, and a caller that does still has to satisfy six further
+#: conditions per job. See `hermetic_execution_refusals`.
+HANDLER_HERMETIC_EXECUTION = "hermetic_execution"
+
+HANDLERS: tuple[str, ...] = (HANDLER_EVALUATE_ONLY, HANDLER_HERMETIC_EXECUTION)
+
 #: There is no live handler, and naming its absence is the point.
 HANDLERS_NOT_IMPLEMENTED: tuple[str, ...] = (
-    "fetch: needs a collector, which is Gate 161",
-    "persist_payload: needs a raw payload store, which is Gate 160",
+    "fetch_a_live_source: needs an approved source, which is Gate 162",
     "activate: needs an approved source, which is Gate 162 and a human first",
 )
+
+#: The id prefix a hermetic fixture source must carry.
+#:
+#: Necessary, never sufficient - see `_is_synthetic_fixture_source`.
+HERMETIC_FIXTURE_PREFIX = "nf161.fixture."
+
+#: Why a claimed job may not reach the hermetic envelope. Every one of these is
+#: a refusal; there is no reason in this list that grants anything.
+HERMETIC_REFUSALS: tuple[str, ...] = (
+    "handler_is_not_hermetic_execution",
+    "no_hermetic_transport_was_injected",
+    "job_is_not_declared_a_hermetic_fixture",
+    STORE_LOADED_IS_NOT_PERMITTED,
+    "the_scheduler_did_not_mark_this_job_executable",
+    "job_carries_no_source_definition",
+    "source_id_is_not_a_synthetic_fixture",
+)
+
+#: Said on the way out of a SUCCESSFUL hermetic execution.
+HERMETIC_IS_NOT_A_COLLECTION = (
+    "hermetic_execution_succeeded_and_a_fixture_is_not_a_collection"
+)
+
+
+def _is_synthetic_fixture_source(source_id: Any) -> bool:
+    """Two independent facts, both required.
+
+    The prefix alone would let a caller name a real source
+    `nf161.fixture.grants.gov`. The registry absence alone would pass every
+    source in the world, the approved registry being empty. So: the id declares
+    itself a fixture AND the approved registry has never heard of it.
+    """
+    text = str(source_id or "").strip()
+    if not text.startswith(HERMETIC_FIXTURE_PREFIX):
+        return False
+    if len(text) <= len(HERMETIC_FIXTURE_PREFIX):
+        return False
+    try:
+        from nativeforge.services.source_monitoring_approved_source_service import (
+            load_registry_rows,
+        )
+
+        return text not in set(load_registry_rows())
+    except Exception:  # noqa: BLE001 - an unanswerable registry refuses
+        return False
+
+
+def hermetic_execution_refusals(
+    job: dict[str, Any], *, handler: str, transport: Any
+) -> list[str]:
+    """Every reason this job may not reach the envelope. Empty means it may."""
+    refusals: list[str] = []
+    if handler != HANDLER_HERMETIC_EXECUTION:
+        refusals.append("handler_is_not_hermetic_execution")
+    if not callable(transport):
+        refusals.append("no_hermetic_transport_was_injected")
+    if job.get("hermetic_fixture") is not True:
+        refusals.append("job_is_not_declared_a_hermetic_fixture")
+    if job.get("loaded_from_store"):
+        refusals.append(STORE_LOADED_IS_NOT_PERMITTED)
+    if not job.get("executable"):
+        refusals.append("the_scheduler_did_not_mark_this_job_executable")
+    if not isinstance(job.get("source_definition"), dict):
+        refusals.append("job_carries_no_source_definition")
+    if not _is_synthetic_fixture_source(
+        job.get("source_id") or (job.get("source_definition") or {}).get("source_id")
+    ):
+        refusals.append("source_id_is_not_a_synthetic_fixture")
+    return sorted(set(refusals))
 
 
 def _json_safe(value: Any) -> Any:
@@ -170,6 +254,7 @@ def run_worker_cycle(
     jobs: list[dict[str, Any]] | None = None,
     now: Any = None,
     handler: str = HANDLER_EVALUATE_ONLY,
+    transport: Any = None,
     max_jobs: int = 100,
     load_jobs_from_store: bool = False,
     record_job_transitions: bool = True,
@@ -195,7 +280,7 @@ def run_worker_cycle(
         blocked.append("no_worker_id_supplied")
     if moment is None:
         blocked.append("no_clock_supplied")
-    if handler != HANDLER_EVALUATE_ONLY:
+    if handler not in HANDLERS:
         blocked.append(f"handler_not_implemented:{handler}")
 
     if blocked:
@@ -230,6 +315,9 @@ def run_worker_cycle(
     claim_denied = 0
     job_rows_transitioned = 0
     job_rows_missing = 0
+    hermetic_executions = 0
+    hermetic_payloads = 0
+    hermetic_proofs = 0
 
     offered = list(jobs or [])
 
@@ -318,14 +406,55 @@ def run_worker_cycle(
         executable = bool(job.get("executable"))
         blockers = list(job.get("blockers") or [])
 
-        if executable:
-            # There is no handler that can run a job. With zero approved
-            # sources this branch is unreachable today, and it is written as a
-            # refusal rather than an execution so that it stays safe if a
-            # source is ever approved before Gate 161 exists.
+        hermetic_refused = hermetic_execution_refusals(
+            job, handler=handler, transport=transport
+        )
+        execution = None
+
+        if not hermetic_refused:
+            # Gate 161. Every one of the seven conditions held, so the envelope
+            # runs against a REGISTERED FIXTURE. `is_synthetic_fixture` is
+            # derived above, not forwarded from the caller: a worker that
+            # passed on a caller's claim would be the way to declare a real
+            # source synthetic.
+            execution = execute_collection(
+                connection=connection,
+                organization_id=organization_id,
+                job_id=job_id,
+                source_definition=job["source_definition"],
+                attempt_number=int(
+                    (claim.get("lease") or {}).get("attempt_count") or 1
+                ),
+                transport=transport,
+                now=now,
+                is_synthetic_fixture=True,
+                scope=CONTROLLED_SCOPE,
+            )
+            failures.extend(execution_invariant_failures(execution))
+            hermetic_executions += 1
+            if execution["raw_payload_sha256"]:
+                hermetic_payloads += 1
+            if execution["execution_proof_available"]:
+                hermetic_proofs += 1
+
+            # The envelope ran; the JOB is still not done. It asked for source
+            # X to be collected and a fixture answered instead, so the lease
+            # outcome is a refusal with nothing having failed - which is also
+            # what keeps `jobs_completed = 0` true and honest.
             failure_class = NONE
             status = REFUSED
-            reasons = ["no_handler_implemented_in_gate_157"]
+            reasons = [
+                HERMETIC_IS_NOT_A_COLLECTION,
+                f"execution_status:{execution['execution_status']}",
+            ]
+        elif executable:
+            # A permitted job the hermetic handler would not take. With zero
+            # approved sources this is unreachable today, and it is written as
+            # a refusal rather than an execution so that it stays safe if a
+            # source is ever approved before Gate 162 says it may be called.
+            failure_class = NONE
+            status = REFUSED
+            reasons = ["no_live_handler_implemented", *hermetic_refused]
         else:
             failure_class = classify_blockers(blockers)
             status = REFUSED
@@ -437,7 +566,13 @@ def run_worker_cycle(
                 "should_retry": retry["should_retry"],
                 "why_not_retried": retry["why_not_retried"],
                 "next_retry_at": retry["next_retry_at"],
+                # A live collector. Still none; a fixture is not one.
                 "collector_invoked": False,
+                "hermetic_execution_refusals": hermetic_refused,
+                "hermetic_execution": execution,
+                "execution_attempt_id": (
+                    execution["execution_attempt_id"] if execution else None
+                ),
                 "loaded_from_store": bool(job.get("loaded_from_store")),
                 "job_row_status": job_row_status,
                 "job_row_blocked_reasons": sorted(set(job_row_blocked)),
@@ -451,7 +586,12 @@ def run_worker_cycle(
             "worker_id": str(worker_id),
             "ran": True,
             "handler": handler,
+            "handlers": list(HANDLERS),
             "handlers_not_implemented": list(HANDLERS_NOT_IMPLEMENTED),
+            "hermetic_transport_injected": callable(transport),
+            "hermetic_executions": hermetic_executions,
+            "hermetic_payloads_persisted": hermetic_payloads,
+            "hermetic_execution_proofs": hermetic_proofs,
             "evaluated_at": str(now),
             "results": results,
             "jobs_offered": len(offered),
@@ -471,12 +611,17 @@ def run_worker_cycle(
             "jobs_failed": sum(1 for r in results if r["status"] == FAILED),
             "blocked_reasons": [],
             "invariant_failures": sorted(set(failures)),
-            # Constants. A cycle decides and records.
+            # Constants. A hermetic execution contacts nothing, so none of
+            # these move: a registered fixture is not a collector, no host was
+            # reached, and no URL was fetched.
             "collectors_invoked": 0,
             "live_source_calls": 0,
             "network_calls": 0,
             "urls_fetched": 0,
-            "raw_payloads_written": 0,
+            # This one is NOT a constant. Gate 160 really did store bytes, and
+            # reporting zero next to a row that exists is how a counter becomes
+            # a claim rather than a count.
+            "raw_payloads_written": hermetic_payloads,
             "threads_started": 0,
             "source_monitoring_live": False,
             "api_key_required": False,
@@ -484,6 +629,11 @@ def run_worker_cycle(
             # plausible thing to mistake for a source having been contacted.
             "claimed_job_means_source_contacted": False,
             "persisted_job_means_collection_occurred": False,
+            "hermetic_execution_means_collection_occurred": False,
+            "why_a_hermetic_execution_completes_nothing": (
+                "the job asked for a source to be collected and a registered "
+                "fixture answered instead. The envelope ran; the work did not."
+            ),
             "store_loaded_jobs_are_never_permitted": (
                 "the job store records why a job was blocked, never that it is "
                 "permitted. An empty blocked_reasons is the absence of a "
@@ -543,19 +693,64 @@ def worker_cycle_invariant_failures(cycle: dict[str, Any]) -> list[str]:
                 f"a_job_completed_but_no_handler_exists:{result.get('job_id')}"
             )
 
-    if cycle.get("handler") not in (None, HANDLER_EVALUATE_ONLY):
+    if cycle.get("handler") not in (None, *HANDLERS):
         fails.append(f"cycle_ran_an_unimplemented_handler:{cycle.get('handler')}")
 
+    # These describe LIVE activity, and a hermetic execution is none of it: a
+    # registered fixture is not a collector, no host was reached, no URL was
+    # fetched, and nothing was spawned. They stay hard zero under every handler.
     for counter in (
         "collectors_invoked",
         "live_source_calls",
         "network_calls",
         "urls_fetched",
-        "raw_payloads_written",
         "threads_started",
     ):
         if cycle.get(counter):
             fails.append(f"cycle_counted:{counter}")
+
+    # `raw_payloads_written` is no longer one of them, because Gate 160 stores
+    # real bytes and forcing the count to zero would make it a claim rather
+    # than a count. What replaces the zero is an AGREEMENT, which is the
+    # property the zero was standing in for:
+    #
+    #   - it must equal what the hermetic path says it persisted;
+    #   - a payload cannot outnumber the executions that produced it;
+    #   - and under any handler but the hermetic one it must still be zero.
+    hermetic_runs = int(cycle.get("hermetic_executions") or 0)
+    hermetic_stored = int(cycle.get("hermetic_payloads_persisted") or 0)
+    written = int(cycle.get("raw_payloads_written") or 0)
+    proofs = int(cycle.get("hermetic_execution_proofs") or 0)
+
+    if written != hermetic_stored:
+        fails.append("raw_payloads_written_disagrees_with_the_hermetic_count")
+    if hermetic_stored > hermetic_runs:
+        fails.append("more_payloads_than_executions")
+    if proofs > hermetic_stored:
+        fails.append("more_execution_proofs_than_persisted_payloads")
+    if hermetic_runs and cycle.get("handler") != HANDLER_HERMETIC_EXECUTION:
+        fails.append(
+            f"a_hermetic_execution_under_handler:{cycle.get('handler')}"
+        )
+    if hermetic_runs and not cycle.get("hermetic_transport_injected"):
+        fails.append("a_hermetic_execution_without_an_injected_transport")
+
+    # A hermetic execution must never be mistaken for a collection, and the
+    # cycle says so in a field rather than leaving it to be inferred.
+    if cycle.get("hermetic_execution_means_collection_occurred"):
+        fails.append("cycle_claimed_a_hermetic_execution_collected_something")
+
+    # Each result's own envelope is re-checked here rather than trusted. A
+    # summary that agrees with itself has only been half-checked.
+    for result in results:
+        envelope = result.get("hermetic_execution")
+        if not isinstance(envelope, dict):
+            continue
+        fails.extend(execution_invariant_failures(envelope))
+        if envelope.get("transport_kind") != HERMETIC_TRANSPORT_KIND:
+            fails.append(
+                f"a_result_carried_a_non_hermetic_envelope:{result.get('job_id')}"
+            )
 
     for flag in ("source_monitoring_live", "api_key_required"):
         if cycle.get(flag):

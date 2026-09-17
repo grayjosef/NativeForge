@@ -95,6 +95,9 @@ from nativeforge.api.source_collection_scheduler_routes import (
 from nativeforge.api.source_collection_worker_routes import (
     router as source_worker_router,
 )
+from nativeforge.api.source_collector_execution_routes import (
+    router as source_collector_execution_router,
+)
 from nativeforge.api.source_ingestion_routes import (
     demo_source_ingestion_router,
     real_source_ingestion_router,
@@ -246,6 +249,12 @@ def create_app() -> FastAPI:
     # fixture inside a SAVEPOINT and rolls it back. No route accepts
     # caller bytes and no route fetches a URL.
     app.include_router(source_raw_payload_router)
+    # Gate 161: the collector execution envelope. Two reads and one smoke
+    # that runs the whole envelope against a REGISTERED FIXTURE inside a
+    # SAVEPOINT and rolls it back. No route takes a URL - not as a
+    # parameter, not as a default, not as an allowlist a caller selects
+    # from - so there is no address a caller could point it at.
+    app.include_router(source_collector_execution_router)
     # Gate 142: digest delivery, rehearsed. Nothing here sends mail and no
     # provider is contacted.
     app.include_router(digest_delivery_router)

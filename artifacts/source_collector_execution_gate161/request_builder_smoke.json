@@ -1,0 +1,87 @@
+{
+  "a_caller_supplied_url": {
+    "blocked_reasons": [
+      "a_caller_supplied_url_is_never_accepted",
+      "the_source_definition_declares_no_endpoint"
+    ],
+    "credentials_accepted": false,
+    "dns_resolved": false,
+    "network_calls": 0,
+    "refused_query_parameters": [],
+    "request": null,
+    "schema_version": "nf_source_collection_request_builder_v1",
+    "scope": "controlled_dev_demo",
+    "source_id": "nf161.fixture.artifact",
+    "source_monitoring_live": false,
+    "usable": false
+  },
+  "allowed_schemes": [
+    "https"
+  ],
+  "an_http_endpoint": {
+    "blocked_reasons": [
+      "endpoint_scheme_is_not_https:http"
+    ],
+    "credentials_accepted": false,
+    "dns_resolved": false,
+    "network_calls": 0,
+    "refused_query_parameters": [],
+    "request": null,
+    "schema_version": "nf_source_collection_request_builder_v1",
+    "scope": "controlled_dev_demo",
+    "source_id": "nf161.fixture.artifact",
+    "source_monitoring_live": false,
+    "usable": false
+  },
+  "caller_supplied_url_exists_only_to_be_refused": "the parameter is present so the refusal is reachable and testable. An unreachable refusal is an unfalsifiable one.",
+  "credential_parameter_names": [
+    "access_token",
+    "api_key",
+    "apikey",
+    "auth",
+    "auth_token",
+    "client_secret",
+    "key",
+    "password",
+    "sas",
+    "secret",
+    "sig",
+    "signature",
+    "token",
+    "x-api-key"
+  ],
+  "from_the_source_definition": {
+    "blocked_reasons": [],
+    "credentials_accepted": false,
+    "dns_resolved": false,
+    "header_names": [],
+    "is_https": true,
+    "method": "GET",
+    "network_calls": 0,
+    "query_parameter_names": [],
+    "refused_query_parameters": [],
+    "request": {
+      "body_size_bytes": 0,
+      "has_body": false,
+      "header_names": [],
+      "method": "GET",
+      "timeout_seconds": 20.0,
+      "url_fingerprint": "0d7efaff3edeb08c9176e70ec59866b98a6604800a90f5d9175d05fd9a84e628"
+    },
+    "schema_version": "nf_source_collection_request_builder_v1",
+    "scheme": "https",
+    "scope": "controlled_dev_demo",
+    "source_id": "nf161.fixture.artifact",
+    "source_monitoring_live": false,
+    "url_came_from": "the_source_definition",
+    "usable": true
+  },
+  "invariant_failures": {
+    "built": [],
+    "caller_url": [],
+    "insecure": []
+  },
+  "schema_version": "nf_source_collector_execution_gate161_artifacts_v1",
+  "source_monitoring_live": false,
+  "the_url_never_appears": "the request description carries a sha256 fingerprint, as Gate 160 settled, because query strings carry api keys"
+}

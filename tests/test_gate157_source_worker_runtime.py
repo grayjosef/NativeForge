@@ -517,7 +517,13 @@ def test_an_unimplemented_handler_refuses_to_run(connection):
 
 
 def test_an_executable_job_still_cannot_complete(connection):
-    """There is no handler. The permitting branch is reachable and refuses."""
+    """The permitting branch is reachable and refuses.
+
+    Gate 161 added a hermetic handler, so the refusal is now named
+    `no_live_handler_implemented` and arrives with the specific hermetic
+    conditions this job failed. The property under test is unchanged: a job
+    the scheduler permitted is claimed, refused, and does not complete.
+    """
     cycle = run_worker_cycle(
         connection=connection,
         organization_id=DEMO,
@@ -534,9 +540,14 @@ def test_an_executable_job_still_cannot_complete(connection):
     )
     assert cycle["jobs_claimed"] == 1
     assert cycle["jobs_completed"] == 0
-    assert cycle["results"][0]["blocked_reasons"] == [
-        "no_handler_implemented_in_gate_157"
-    ]
+    reasons = cycle["results"][0]["blocked_reasons"]
+    assert "no_live_handler_implemented" in reasons
+    # It says WHICH hermetic conditions were not met rather than refusing
+    # without saying why: this job declared no fixture and named a source
+    # the fixture predicate does not recognise.
+    assert "job_is_not_declared_a_hermetic_fixture" in reasons
+    assert "source_id_is_not_a_synthetic_fixture" in reasons
+    assert cycle["hermetic_executions"] == 0
 
 
 def test_a_truncated_batch_says_so(connection):

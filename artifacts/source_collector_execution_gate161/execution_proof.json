@@ -1,0 +1,138 @@
+{
+  "a_complete_proof": {
+    "attempt_id": "nf161-artifact-attempt",
+    "bytes_received": 87,
+    "execution_proof_available": true,
+    "http_status": 200,
+    "job_id": "nf161-artifact-job",
+    "live_source_call": false,
+    "payload_sha256": "ea4b2cb68f6dabcfa12b4164fbf19281b4b97db0cf8ac79d28fdfa2364b05649",
+    "permits_hermetic_job_completion": true,
+    "permits_real_source_job_completion": false,
+    "proof_scope": "hermetic_execution",
+    "proves_a_source_responded": false,
+    "proves_the_envelope_works": true,
+    "requirement_evidence": {
+      "attempt_persisted": "a row in nf_source_collection_execution_attempts, written for every outcome including refusals",
+      "payload_hash_verified": "Gate 160 re-hashed the bytes it read back and they matched. A store that records a hash and never checks it again has recorded an intention.",
+      "policy_permitted_the_transport": "the execution policy allowed the transport kind that actually ran. A proof for a transport nobody permitted would be evidence of a bypass.",
+      "provenance_resolves": "attempt -> job -> source, each resolved by LOOKING rather than by reading a column back to itself",
+      "raw_payload_persisted": "Gate 160 stored the exact bytes and returned a hash",
+      "response_received": "the transport outcome was a response, not a timeout or a connection failure. Bytes may still be malformed - that is a parse problem, not an execution failure.",
+      "transport_invoked": "the transport boundary reported dispatched=true. A refusal before dispatch is not an execution."
+    },
+    "requirements": {
+      "attempt_persisted": true,
+      "payload_hash_verified": true,
+      "policy_permitted_the_transport": true,
+      "provenance_resolves": true,
+      "raw_payload_persisted": true,
+      "response_received": true,
+      "transport_invoked": true
+    },
+    "requirements_expected": [
+      "attempt_persisted",
+      "transport_invoked",
+      "response_received",
+      "raw_payload_persisted",
+      "payload_hash_verified",
+      "provenance_resolves",
+      "policy_permitted_the_transport"
+    ],
+    "requirements_not_met": [],
+    "response_was_usable": true,
+    "schema_version": "nf_source_collection_execution_proof_v1",
+    "scope": "controlled_dev_demo",
+    "source_id": "nf161.fixture.artifact",
+    "source_monitoring_live": false,
+    "transport_kind": "hermetic",
+    "why_not": "the bytes came from a registered fixture. The transport contacted nothing, and a hermetic proof says the path works rather than that anything answered.",
+    "why_real_source_completion_stays_closed": "Gate 158's transition_job still has no execution proof parameter, this gate does not add one, and Gate 162 decides whether any real source may be attempted at all.",
+    "why_usability_is_not_a_requirement": "a 404 is fully evidenced and the record of it is worth keeping. Usability asks a different question - whether the evidenced response is worth acting on - and only completion needs the answer."
+  },
+  "a_proof_missing_its_provenance": {
+    "attempt_id": "nf161-artifact-attempt",
+    "bytes_received": 0,
+    "execution_proof_available": false,
+    "http_status": 200,
+    "job_id": null,
+    "live_source_call": false,
+    "payload_sha256": "ea4b2cb68f6dabcfa12b4164fbf19281b4b97db0cf8ac79d28fdfa2364b05649",
+    "permits_hermetic_job_completion": false,
+    "permits_real_source_job_completion": false,
+    "proof_scope": "hermetic_execution",
+    "proves_a_source_responded": false,
+    "proves_the_envelope_works": false,
+    "requirement_evidence": {
+      "attempt_persisted": "a row in nf_source_collection_execution_attempts, written for every outcome including refusals",
+      "payload_hash_verified": "Gate 160 re-hashed the bytes it read back and they matched. A store that records a hash and never checks it again has recorded an intention.",
+      "policy_permitted_the_transport": "the execution policy allowed the transport kind that actually ran. A proof for a transport nobody permitted would be evidence of a bypass.",
+      "provenance_resolves": "attempt -> job -> source, each resolved by LOOKING rather than by reading a column back to itself",
+      "raw_payload_persisted": "Gate 160 stored the exact bytes and returned a hash",
+      "response_received": "the transport outcome was a response, not a timeout or a connection failure. Bytes may still be malformed - that is a parse problem, not an execution failure.",
+      "transport_invoked": "the transport boundary reported dispatched=true. A refusal before dispatch is not an execution."
+    },
+    "requirements": {
+      "attempt_persisted": true,
+      "payload_hash_verified": false,
+      "policy_permitted_the_transport": true,
+      "provenance_resolves": false,
+      "raw_payload_persisted": true,
+      "response_received": true,
+      "transport_invoked": true
+    },
+    "requirements_expected": [
+      "attempt_persisted",
+      "transport_invoked",
+      "response_received",
+      "raw_payload_persisted",
+      "payload_hash_verified",
+      "provenance_resolves",
+      "policy_permitted_the_transport"
+    ],
+    "requirements_not_met": [
+      "payload_hash_verified",
+      "provenance_resolves"
+    ],
+    "response_was_usable": true,
+    "schema_version": "nf_source_collection_execution_proof_v1",
+    "scope": "controlled_dev_demo",
+    "source_id": null,
+    "source_monitoring_live": false,
+    "transport_kind": "hermetic",
+    "why_not": "the bytes came from a registered fixture. The transport contacted nothing, and a hermetic proof says the path works rather than that anything answered.",
+    "why_real_source_completion_stays_closed": "Gate 158's transition_job still has no execution proof parameter, this gate does not add one, and Gate 162 decides whether any real source may be attempted at all.",
+    "why_usability_is_not_a_requirement": "a 404 is fully evidenced and the record of it is worth keeping. Usability asks a different question - whether the evidenced response is worth acting on - and only completion needs the answer."
+  },
+  "invariant_failures": {
+    "complete": [],
+    "incomplete": []
+  },
+  "permits_hermetic_job_completion": true,
+  "permits_real_source_job_completion": false,
+  "requirement_evidence": {
+    "attempt_persisted": "a row in nf_source_collection_execution_attempts, written for every outcome including refusals",
+    "payload_hash_verified": "Gate 160 re-hashed the bytes it read back and they matched. A store that records a hash and never checks it again has recorded an intention.",
+    "policy_permitted_the_transport": "the execution policy allowed the transport kind that actually ran. A proof for a transport nobody permitted would be evidence of a bypass.",
+    "provenance_resolves": "attempt -> job -> source, each resolved by LOOKING rather than by reading a column back to itself",
+    "raw_payload_persisted": "Gate 160 stored the exact bytes and returned a hash",
+    "response_received": "the transport outcome was a response, not a timeout or a connection failure. Bytes may still be malformed - that is a parse problem, not an execution failure.",
+    "transport_invoked": "the transport boundary reported dispatched=true. A refusal before dispatch is not an execution."
+  },
+  "requirements": [
+    "attempt_persisted",
+    "transport_invoked",
+    "response_received",
+    "raw_payload_persisted",
+    "payload_hash_verified",
+    "provenance_resolves",
+    "policy_permitted_the_transport"
+  ],
+  "schema_version": "nf_source_collector_execution_gate161_artifacts_v1",
+  "source_monitoring_live": false,
+  "the_two_fields_that_must_stay_apart": {
+    "proves_a_source_responded": false,
+    "proves_the_envelope_works": true,
+    "why": "a single boolean meaning both is exactly how the pipeline ran becomes the source answered"
+  }
+}

@@ -30,6 +30,7 @@
       "source_collection_orchestration_routes",
       "source_collection_scheduler_routes",
       "source_collection_worker_routes",
+      "source_collector_execution_routes",
       "source_ingestion_routes",
       "source_monitoring_readiness_routes",
       "source_raw_payload_routes",
@@ -43,12 +44,12 @@
       "trust_routes",
       "verified_binding_readiness_routes"
     ],
-    "converted_modules": 41,
+    "converted_modules": 42,
     "dev_header_modules": 0,
     "dev_header_routes": 0,
     "measured_on_every_call": true,
     "publicly_routed_dev_header_routes": 0,
-    "route_total": 322
+    "route_total": 326
   },
   "before": {
     "converted_modules": 1,
