@@ -3,7 +3,7 @@
   "chokepoint_clean": true,
   "collector_activated": false,
   "distinction_owned_by": "hermetic_network_enforcement_service",
-  "files_scanned": 1199,
+  "files_scanned": 1200,
   "finding_count": 0,
   "invariant_failures": [],
   "monitoring_modules_checked": [

@@ -434,10 +434,44 @@ def _resolve_collector(
             "value": "active" if ready else "not_active",
             "record_exists": True,
             "evidence_ref": (
-                "source_collector_execution_health_service:"
-                "execution_envelope_ready"
+                "source_collector_execution_health_service:execution_envelope_ready"
             ),
         }
+
+    # Gate 163: for a source whose adapter has a collector capability, ask the
+    # service that can measure one. `collectors_active` in phase 1 is a
+    # hardcoded 0 whose own invariant checker FAILS if it is ever nonzero, so
+    # it cannot answer "can a collector run for this source" - it can only
+    # ever say no. Phase 1 is left untouched and still answers for every
+    # source that has no capability descriptor.
+    #
+    # CAPABILITY, not authorization. This says code exists that could collect
+    # this source. Whether anyone permitted it is the terms, review and
+    # activation decisions, which are separate facts and are re-checked by the
+    # warrant at dispatch.
+    try:
+        from nativeforge.services.source_collector_capability_service import (
+            ADAPTER_CAPABILITIES,
+            measure_collector_capability,
+        )
+
+        adapter_key = str(registry_row.get("adapter_key") or "").strip()
+        if adapter_key in ADAPTER_CAPABILITIES:
+            capability = measure_collector_capability(
+                source_id=source_id,
+                registry_row=registry_row,
+                connection=connection,
+                organization_id=organization_id,
+            )
+            return {
+                "value": capability["collector_status"],
+                "record_exists": True,
+                "evidence_ref": capability["evidence_ref"],
+                "capability_unmet": capability["unmet"],
+                "capability_adapter_key": capability["adapter_key"],
+            }
+    except Exception:  # noqa: BLE001 - an unmeasurable capability is not one
+        return {"value": None, "record_exists": False}
 
     try:
         from nativeforge.services.phase1_collector_activation_policy_service import (
@@ -573,9 +607,7 @@ def _resolve_attribution(
             )
 
             contract = build_attribution_contract(
-                trust_manifest={
-                    MANIFEST_BLOCK_KEY: {MANIFEST_NOTICE_KEY: notice}
-                },
+                trust_manifest={MANIFEST_BLOCK_KEY: {MANIFEST_NOTICE_KEY: notice}},
                 # `runtime_payload` is the surface the manifest represents.
                 # `service_constant` is declared too but is NOT customer
                 # visible on its own, which is the bar that matters.
@@ -600,8 +632,7 @@ def _resolve_attribution(
             "recorded_at": terms_fact.get("recorded_at"),
             "recorded_by": terms_fact.get("recorded_by"),
             "evidence_ref": (
-                "grants_gov_attribution_service:verified_verbatim:"
-                "runtime_payload"
+                "grants_gov_attribution_service:verified_verbatim:runtime_payload"
             ),
         }
 
@@ -766,16 +797,12 @@ def resolve_source_authorization_facts(
     missing = sorted(
         name for name, f in facts.items() if f["fact_status"] == FACT_MISSING
     )
-    denied = sorted(
-        name for name, f in facts.items() if f["fact_status"] == "denied"
-    )
+    denied = sorted(name for name, f in facts.items() if f["fact_status"] == "denied")
     stale = sorted(name for name, f in facts.items() if f["fact_status"] == "stale")
     needs_review = sorted(
         name for name, f in facts.items() if f["fact_status"] == "needs_review"
     )
-    unknown = sorted(
-        name for name, f in facts.items() if f["fact_status"] == "unknown"
-    )
+    unknown = sorted(name for name, f in facts.items() if f["fact_status"] == "unknown")
     satisfied = sorted(
         name for name, f in facts.items() if f["fact_status"] == FACT_RECORDED
     )
