@@ -77,15 +77,13 @@ say("AUTHORIZED_SOURCE_IDS", sorted(AUTHORIZED_SOURCE_IDS))
 payloads = session.execute(
     sa.text(
         "SELECT source_id, authorized_source_id, response_status, "
-        "payload_size_bytes, payload_sha256, live_fetch_performed "
+        "payload_size_bytes, payload_sha256, live_fetch_performed, job_id "
         "FROM nf_source_collection_raw_payloads WHERE live_fetch_performed = 1"
     )
 ).all()
 say("rows recording a live fetch", len(payloads))
 for row in payloads:
-    rows.append(
-        f"    source={row[0]} authorized={row[1]} http={row[2]} bytes={row[3]}"
-    )
+    rows.append(f"    source={row[0]} authorized={row[1]} http={row[2]} bytes={row[3]}")
     rows.append(f"    sha256={row[4]}")
 
 say("unauthorized live rows", len([p for p in payloads if not p[1]]))
@@ -109,13 +107,35 @@ hosts = sorted({str(r[0]) for r in robots})
 say("hosts with recorded live contact", hosts)
 say("a second authority was contacted", len(hosts) > 1)
 
-# The one request Gate 163 has not made yet. `search2` would appear as a
-# payload row whose source is the authorized seed and whose path is the API
-# endpoint; a robots row is the /robots.txt preflight, not a collection.
+# Counted by what IS recorded. An earlier version required
+# `response_status == 200`, and the status is NULL by design - never captured,
+# not backfilled - so it read 0 for a collection that demonstrably succeeded,
+# contradicting the evidence printed two lines above it.
+#
+# A collection is a payload row for the COLLECTION JOB that names its
+# authorization and carries bytes with a verified hash. The HTTP status stays
+# out of it: a probe that needs an unknown value is asserting something nobody
+# measured.
+#
+# Discriminated on job_id. A first attempt filtered `"robots" not in source_id`
+# - and the source id is the seed id, which contains no such word, so the
+# robots preflight counted as a collection. Both rows share the same source and
+# the same authorization; the job is what tells a preflight from a collection.
+COLLECTION_JOB = "gate163-first-live-collection"
 collection_rows = [
-    p for p in payloads if str(p[0]) == SOURCE and int(p[2] or 0) == 200
+    p
+    for p in payloads
+    if str(p[6]) == COLLECTION_JOB
+    and str(p[0]) == SOURCE
+    and str(p[1]) == SOURCE
+    and int(p[3] or 0) > 0
+    and str(p[4] or "")
 ]
-say("successful search2 collections", len(collection_rows))
+say("recorded search2 collections", len(collection_rows))
+say(
+    "http status on those rows",
+    sorted({str(p[2]) for p in collection_rows}) or "none",
+)
 
 attempts = session.execute(
     sa.text(

@@ -299,6 +299,60 @@ try:
         )
 
     # ---- collection without the opt-in -------------------------------
+    #
+    # This asserted that evaluating a collection warrant for the authorized
+    # source yields `live_fetch_is_not_opted_in_for_this_source`. True until
+    # Gate 163Y recorded the opt-in; after that the warrant is legitimately
+    # permitted and the proof reported False while the property it protects
+    # was intact.
+    #
+    # The property is "a collection warrant with NO opt-in is refused", so the
+    # subject must be a request without one - not the single source that now
+    # has one. `fact_refusals` is pure and takes `opted_in`, so the refusal
+    # stays reachable without unrecording anything.
+    fully_recorded = {
+        name: {
+            "fact_status": "recorded",
+            "recorded_by": "reviewer:mayhem",
+            "recorded_at": "2026-09-17T00:00:00+00:00",
+        }
+        for name in ("terms_status", "human_review_status", "activation_status")
+    }
+    fully_recorded["attribution_status"] = {"fact_status": "recorded"}
+    fully_recorded["robots_status"] = {"fact_status": "recorded"}
+
+    without_opt_in = fact_refusals(
+        facts=fully_recorded,
+        warrant_kind=WARRANT_SOURCE_COLLECTION,
+        opted_in=False,
+    )
+    out["collection_without_the_opt_in_is_refused"] = bool(
+        "live_fetch_is_not_opted_in_for_this_source" in without_opt_in
+    )
+    # And the same facts WITH the opt-in refuse nothing, so the refusal above
+    # is the opt-in and not one of the other five facts.
+    out["the_same_facts_with_the_opt_in_are_not_refused"] = not fact_refusals(
+        facts=fully_recorded,
+        warrant_kind=WARRANT_SOURCE_COLLECTION,
+        opted_in=True,
+    )
+
+    # A preflight never needs it, which is what makes the two warrant kinds
+    # different rather than one with a flag.
+    out["a_preflight_does_not_require_the_opt_in"] = not [
+        reason
+        for reason in fact_refusals(
+            facts=fully_recorded,
+            warrant_kind=WARRANT_ROBOTS_PREFLIGHT,
+            opted_in=False,
+        )
+        if "opted_in" in reason
+    ]
+
+    # The live request for the authorized source is now PERMITTED, which is
+    # the state Gate 163 was built to reach. Recorded here so this phase says
+    # so rather than leaving it to be inferred from a proof that no longer
+    # fires.
     collection = evaluate_live_request(
         warrant_kind=WARRANT_SOURCE_COLLECTION,
         authorized_source_id=AUTHORIZED,
@@ -308,11 +362,7 @@ try:
         organization_id=DEMO,
     )
     detail.extend(warrant_invariant_failures(collection))
-    out["collection_without_the_opt_in_is_refused"] = bool(
-        not collection["permitted"]
-        and "live_fetch_is_not_opted_in_for_this_source"
-        in collection["refusal_reasons"]
-    )
+    out["the_authorized_collection_is_now_permitted"] = bool(collection["permitted"])
     out["collection_requires_the_opt_in"] = bool(
         collection["live_fetch_opt_in_required"]
     )
@@ -410,6 +460,9 @@ for key in (
     "the_database_refuses_to_unsign_an_approval",
     "the_real_signed_decisions_survived_the_probe",
     "collection_without_the_opt_in_is_refused",
+    "the_same_facts_with_the_opt_in_are_not_refused",
+    "a_preflight_does_not_require_the_opt_in",
+    "the_authorized_collection_is_now_permitted",
     "collection_requires_the_opt_in",
     "legacy_env_flag_is_absent",
     "a_valid_preflight_is_permitted_without_the_env_flag",
