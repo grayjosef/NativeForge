@@ -144,6 +144,78 @@ class LiveRequestRefused(RuntimeError):
         self.warrant = dict(warrant)
 
 
+#: Facts whose permitting value must also carry a signature. A decision is
+#: evidence only if somebody is accountable for it.
+SIGNED_FACTS: frozenset[str] = frozenset(
+    {"terms_status", "human_review_status", "activation_status"}
+)
+
+FACT_REFUSALS = {
+    "terms_status": REFUSE_TERMS,
+    "human_review_status": REFUSE_REVIEW,
+    "activation_status": REFUSE_ACTIVATION,
+    "attribution_status": REFUSE_ATTRIBUTION,
+    "robots_status": REFUSE_ROBOTS,
+}
+
+
+def required_facts_for(warrant_kind: Any) -> tuple[str, ...]:
+    """Which facts this warrant kind needs. One definition, two callers.
+
+    The pure check below and the decision dict both report this. A second
+    literal in either place is a pair of lists that can disagree.
+    """
+    kind = str(warrant_kind or "").strip()
+    return (
+        PREFLIGHT_REQUIRED_FACTS
+        if kind == WARRANT_ROBOTS_PREFLIGHT
+        else COLLECTION_REQUIRED_FACTS
+    )
+
+
+def fact_refusals(
+    *,
+    facts: dict[str, Any] | None = None,
+    warrant_kind: Any = None,
+    opted_in: bool = False,
+) -> list[str]:
+    """Which required facts refuse this warrant kind. Pure.
+
+    Extracted from `evaluate_live_request` so the `:unsigned` branch is
+    reachable without a database. Every route into `facts` is the resolver
+    reading the decision table, and migration 0048 makes an unsigned approved
+    decision unwritable - so this branch guards against something the schema
+    already prevents. Correct defence in depth, and exactly the kind of code
+    that stays unproven: an unreachable refusal is unfalsifiable.
+
+    One copy of the rule. `evaluate_live_request` calls this rather than
+    holding its own version.
+    """
+    resolved = facts or {}
+    kind = str(warrant_kind or "").strip()
+    reasons: list[str] = []
+
+    for name in required_facts_for(kind):
+        refusal = FACT_REFUSALS[name]
+        fact = resolved.get(name) or {}
+        if fact.get("fact_status") != "recorded":
+            reasons.append(f"{refusal}:{fact.get('fact_status') or 'missing'}")
+            continue
+        # A decision fact must also be attributable. An approval nobody signed
+        # is not evidence, which the fact model enforces and this re-checks at
+        # the point of dispatch.
+        if name in SIGNED_FACTS and (
+            not fact.get("recorded_by") or not fact.get("recorded_at")
+        ):
+            reasons.append(f"{refusal}:unsigned")
+
+    # A preflight does NOT need the opt-in. A collection does.
+    if kind == WARRANT_SOURCE_COLLECTION and not opted_in:
+        reasons.append(REFUSE_NO_OPT_IN)
+
+    return reasons
+
+
 def evaluate_live_request(
     *,
     warrant_kind: Any = None,
@@ -206,8 +278,8 @@ def evaluate_live_request(
             reasons.append(f"{REFUSE_PREFLIGHT_PATH}:{path}")
         if str(method).upper() != "GET":
             reasons.append(f"{REFUSE_PREFLIGHT_METHOD}:{method}")
-    elif kind == WARRANT_SOURCE_COLLECTION and registry_path and (
-        path != registry_path
+    elif (
+        kind == WARRANT_SOURCE_COLLECTION and registry_path and (path != registry_path)
     ):
         reasons.append(
             f"collection_path_does_not_match_the_source:{path}!={registry_path}"
@@ -247,36 +319,7 @@ def evaluate_live_request(
         except Exception:  # noqa: BLE001 - absent opt-in is not opted in
             opted_in = False
 
-    def _signed_and_permitting(name: str, refusal: str) -> None:
-        fact = facts.get(name) or {}
-        if fact.get("fact_status") != "recorded":
-            reasons.append(f"{refusal}:{fact.get('fact_status') or 'missing'}")
-            return
-        # A decision fact must also be attributable. An approval nobody signed
-        # is not evidence, which the fact model enforces and this re-checks at
-        # the point of dispatch.
-        if name in {"terms_status", "human_review_status", "activation_status"}:
-            if not fact.get("recorded_by") or not fact.get("recorded_at"):
-                reasons.append(f"{refusal}:unsigned")
-
-    required = (
-        PREFLIGHT_REQUIRED_FACTS
-        if kind == WARRANT_ROBOTS_PREFLIGHT
-        else COLLECTION_REQUIRED_FACTS
-    )
-    mapping = {
-        "terms_status": REFUSE_TERMS,
-        "human_review_status": REFUSE_REVIEW,
-        "activation_status": REFUSE_ACTIVATION,
-        "attribution_status": REFUSE_ATTRIBUTION,
-        "robots_status": REFUSE_ROBOTS,
-    }
-    for name in required:
-        _signed_and_permitting(name, mapping[name])
-
-    # A preflight does NOT need the opt-in. A collection does.
-    if kind == WARRANT_SOURCE_COLLECTION and not opted_in:
-        reasons.append(REFUSE_NO_OPT_IN)
+    reasons.extend(fact_refusals(facts=facts, warrant_kind=kind, opted_in=opted_in))
 
     permitted = not reasons
 
@@ -295,10 +338,10 @@ def evaluate_live_request(
             "host_matches_the_recorded_authority": bool(
                 host and registry_host and host == registry_host
             ),
-            "required_facts": list(required),
+            "required_facts": list(required_facts_for(kind)),
             "fact_statuses": {
                 name: (facts.get(name) or {}).get("fact_status")
-                for name in mapping
+                for name in FACT_REFUSALS
             },
             "live_fetch_opted_in": opted_in,
             "live_fetch_opt_in_required": kind == WARRANT_SOURCE_COLLECTION,

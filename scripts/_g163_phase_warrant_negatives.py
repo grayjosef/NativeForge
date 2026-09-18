@@ -28,6 +28,8 @@ import os
 import sys
 import uuid
 
+import sqlalchemy as sa
+
 sys.path.insert(0, "src")
 sys.path.insert(0, ".")
 
@@ -41,9 +43,12 @@ from nativeforge.services.live_source_transport_service import (  # noqa: E402
     build_live_transport,
 )
 from nativeforge.services.source_live_warrant_service import (  # noqa: E402
+    COLLECTION_REQUIRED_FACTS,
+    FACT_REFUSALS,
     WARRANT_ROBOTS_PREFLIGHT,
     WARRANT_SOURCE_COLLECTION,
     evaluate_live_request,
+    fact_refusals,
     warrant_invariant_failures,
 )
 
@@ -146,6 +151,153 @@ try:
         connection=None,
     )
 
+    # ---- an UNSIGNED decision is refused -----------------------------
+    #
+    # The enumerated case. The guard's `:unsigned` branch had never been
+    # exercised, because every route into the facts mapping is the resolver
+    # reading the decision table and migration 0048 makes an unsigned approved
+    # decision unwritable. Proven here against the pure function, so the
+    # branch is reachable without a database and without disabling anything.
+    def _signed_facts() -> dict[str, dict[str, object]]:
+        return {
+            "terms_status": {
+                "fact_status": "recorded",
+                "recorded_by": "reviewer:mayhem",
+                "recorded_at": "2026-09-17T00:00:00+00:00",
+            },
+            "human_review_status": {
+                "fact_status": "recorded",
+                "recorded_by": "reviewer:mayhem",
+                "recorded_at": "2026-09-17T00:00:00+00:00",
+            },
+            "activation_status": {
+                "fact_status": "recorded",
+                "recorded_by": "operator:mayhem",
+                "recorded_at": "2026-09-17T00:00:00+00:00",
+            },
+            "attribution_status": {"fact_status": "recorded"},
+            "robots_status": {"fact_status": "recorded"},
+        }
+
+    # Every required fact refuses when it is absent, including attribution and
+    # robots - the two enumerated permit conditions that had no measured
+    # refusal of their own. A condition nothing has ever withheld is a
+    # condition nobody has shown is load-bearing.
+    missing_fact_refusals: dict[str, bool] = {}
+    for required_fact in COLLECTION_REQUIRED_FACTS:
+        without = _signed_facts()
+        del without[required_fact]
+        got = fact_refusals(
+            facts=without,
+            warrant_kind=WARRANT_SOURCE_COLLECTION,
+            opted_in=True,
+        )
+        # The refusal must name THIS fact, not merely be non-empty: a refusal
+        # that fires for the wrong fact is not evidence this one is checked.
+        expected = FACT_REFUSALS[required_fact]
+        missing_fact_refusals[required_fact] = any(
+            reason.startswith(expected) for reason in got
+        )
+        if not missing_fact_refusals[required_fact]:
+            detail.append(f"a missing {required_fact} was not refused: {got}")
+
+    out["every_required_fact_refuses_when_absent"] = all(missing_fact_refusals.values())
+    out["required_facts_proven_absent"] = len(missing_fact_refusals)
+    out["a_missing_attribution_is_refused"] = missing_fact_refusals.get(
+        "attribution_status", False
+    )
+    out["a_missing_robots_fact_is_refused"] = missing_fact_refusals.get(
+        "robots_status", False
+    )
+
+    # Falsifiability first: fully signed facts plus the opt-in refuse nothing.
+    # Without this, every assertion below would pass against a function that
+    # refused unconditionally.
+    out["signed_facts_with_the_opt_in_refuse_nothing"] = not fact_refusals(
+        facts=_signed_facts(),
+        warrant_kind=WARRANT_SOURCE_COLLECTION,
+        opted_in=True,
+    )
+
+    unsigned_refusals: dict[str, bool] = {}
+    for fact_name, expected in (
+        ("terms_status", "terms_decision_is_not_signed_and_permitting:unsigned"),
+        (
+            "human_review_status",
+            "human_review_decision_is_not_signed_and_permitting:unsigned",
+        ),
+        (
+            "activation_status",
+            "activation_approval_is_not_signed_and_permitting:unsigned",
+        ),
+    ):
+        for missing in ("recorded_by", "recorded_at"):
+            facts_under_test = _signed_facts()
+            facts_under_test[fact_name][missing] = None
+            got = fact_refusals(
+                facts=facts_under_test,
+                warrant_kind=WARRANT_SOURCE_COLLECTION,
+                opted_in=True,
+            )
+            unsigned_refusals[f"{fact_name}:{missing}"] = expected in got
+            if expected not in got:
+                detail.append(
+                    f"an unsigned {fact_name} (no {missing}) was not refused: {got}"
+                )
+
+    out["an_unsigned_decision_is_refused"] = all(unsigned_refusals.values())
+    out["unsigned_cases_proven"] = len(unsigned_refusals)
+
+    # And the schema half, against the REAL authorized source, because that is
+    # what the enumerated case names. Inside a SAVEPOINT that is rolled back:
+    # `record_decision` upserts, so an attempt that unexpectedly SUCCEEDED
+    # would overwrite MAYHEM's signed decision.
+    signed_before = session.execute(
+        sa.text(
+            "SELECT count(*) FROM nf_source_authorization_decisions "
+            "WHERE source_id = :s AND decision = 'approved' "
+            "AND reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL"
+        ),
+        {"s": AUTHORIZED},
+    ).scalar_one()
+
+    savepoint = session.begin_nested()
+    try:
+        session.execute(
+            sa.text(
+                "UPDATE nf_source_authorization_decisions "
+                "SET reviewed_by = NULL, reviewed_at = NULL "
+                "WHERE source_id = :s AND decision_kind = 'terms'"
+            ),
+            {"s": AUTHORIZED},
+        )
+        session.flush()
+        out["the_database_refuses_to_unsign_an_approval"] = False
+        detail.append("the database ALLOWED an approved decision to be unsigned")
+    except Exception:  # noqa: BLE001 - the refusal is the measurement
+        out["the_database_refuses_to_unsign_an_approval"] = True
+    finally:
+        if savepoint.is_active:
+            savepoint.rollback()
+
+    signed_after = session.execute(
+        sa.text(
+            "SELECT count(*) FROM nf_source_authorization_decisions "
+            "WHERE source_id = :s AND decision = 'approved' "
+            "AND reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL"
+        ),
+        {"s": AUTHORIZED},
+    ).scalar_one()
+    out["the_real_signed_decisions_survived_the_probe"] = bool(
+        signed_before == signed_after and signed_before > 0
+    )
+    out["real_signed_decisions"] = int(signed_after)
+    if signed_before != signed_after:
+        detail.append(
+            f"signed decisions changed across the probe: "
+            f"{signed_before} -> {signed_after}"
+        )
+
     # ---- collection without the opt-in -------------------------------
     collection = evaluate_live_request(
         warrant_kind=WARRANT_SOURCE_COLLECTION,
@@ -198,9 +350,7 @@ try:
     out["build_live_transport_takes_no_prevalidated_authorization"] = bool(
         "authorization" not in params
     )
-    out["build_live_transport_requires_a_warrant_kind"] = bool(
-        "warrant_kind" in params
-    )
+    out["build_live_transport_requires_a_warrant_kind"] = bool("warrant_kind" in params)
     source = inspect.getsource(build_live_transport)
     out["build_live_transport_calls_the_enforcement_path"] = bool(
         "assert_live_request_permitted" in source
@@ -252,6 +402,13 @@ for key in (
     "an_unknown_warrant_kind_is_refused",
     "http_instead_of_https_is_refused",
     "no_connection_means_nothing_is_verifiable_and_it_is_refused",
+    "signed_facts_with_the_opt_in_refuse_nothing",
+    "an_unsigned_decision_is_refused",
+    "every_required_fact_refuses_when_absent",
+    "a_missing_attribution_is_refused",
+    "a_missing_robots_fact_is_refused",
+    "the_database_refuses_to_unsign_an_approval",
+    "the_real_signed_decisions_survived_the_probe",
     "collection_without_the_opt_in_is_refused",
     "collection_requires_the_opt_in",
     "legacy_env_flag_is_absent",
