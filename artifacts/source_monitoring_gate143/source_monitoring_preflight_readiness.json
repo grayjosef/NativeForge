@@ -1,7 +1,7 @@
 {
   "blocked_reasons": [],
   "chokepoint_clean": true,
-  "chokepoint_files_scanned": 1196,
+  "chokepoint_files_scanned": 1199,
   "collector_preflight_state": "configured_dry_run_only",
   "collector_required_for_readiness": false,
   "every_row_classified": true,
@@ -18,7 +18,7 @@
     "terms_review_bypass"
   ],
   "registry_loaded": true,
-  "registry_row_count": 177,
+  "registry_row_count": 178,
   "route_module": {
     "blocked_reasons": [],
     "makes_no_live_call": true,

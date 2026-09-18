@@ -122,7 +122,7 @@ FINDINGS: tuple[str, ...] = (
     "envelope_module_imports_a_legacy_transport",
     "injection_point_missing",
     "injection_point_does_not_take_a_transport",
-    "live_transport_is_dispatchable",
+    "live_dispatches_without_a_permitting_policy",
 )
 
 
@@ -367,8 +367,41 @@ def scan_execution_chokepoint(
         LIVE,
     )
 
+    # Gate 163 made `live` dispatchable for an authorized source, so its
+    # presence in DISPATCHABLE_KINDS is no longer a finding. What IS a finding
+    # is a live dispatch that no policy permits - measured by attempting one
+    # against a refusing policy, with a request that reaches no host even if
+    # the refusal failed.
     if LIVE in DISPATCHABLE_KINDS:
-        findings.append({"kind": "live_transport_is_dispatchable"})
+        from nativeforge.services.source_collection_request_builder_service import (
+            build_source_request,
+        )
+        from nativeforge.services.source_collection_transport_service import (
+            execute_request,
+        )
+
+        probe = build_source_request(
+            source_definition={
+                "source_id": "nf163.probe.chokepoint",
+                "endpoint": "https://fixtures.invalid/nf163/chokepoint",
+                "method": "GET",
+            }
+        )
+        if probe.get("usable"):
+            attempted = execute_request(
+                request=probe["transport_request"],
+                transport_kind=LIVE,
+                policy={
+                    "execution_allowed": False,
+                    "live_transport_allowed": False,
+                    "hermetic_transport_allowed": False,
+                },
+                transport=lambda request: None,
+            )
+            if attempted.get("dispatched"):
+                findings.append(
+                    {"kind": "live_dispatches_without_a_permitting_policy"}
+                )
 
     modules_found = sum(1 for m in modules.values() if m.get("found"))
     reaching = sorted(

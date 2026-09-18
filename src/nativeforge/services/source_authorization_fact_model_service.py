@@ -363,6 +363,11 @@ def build_fact(
     now: Any = None,
     record_exists: bool | None = None,
     decision_verdict: Any = None,
+    join_basis: Any = None,
+    # Accepted and ignored. Resolvers attach context a fact does not model -
+    # the activation's recorded attribution notice, for one - and dropping it
+    # here is deliberate rather than accidental.
+    **_context: Any,
 ) -> dict[str, Any]:
     """One recorded fact, and its status derived from what is actually there.
 
@@ -453,6 +458,10 @@ def build_fact(
             "freshness_required": spec["freshness_required"],
             "evidence_ref": evidence_ref,
             "decision_verdict": verdict,
+            # How the record was found. `source_name_fallback` marks a fact
+            # resolved through a display string rather than a stable key, so a
+            # weaker derivation stays visible.
+            "join_basis": join_basis,
             "vocabulary": list(spec["vocabulary"]),
             "permitting_values": list(spec["permitting"]),
             "why_this_fact_exists": spec["why"],
@@ -530,6 +539,13 @@ def fact_invariant_failures(fact: dict[str, Any]) -> list[str]:
     # Missing means missing. A value alongside it is a contradiction.
     if status == FACT_MISSING and fact.get("value") is not None:
         fails.append(f"a_missing_fact_that_carries_a_value:{name}")
+
+    # A permitting ACTIVATION resolved through a display name is the weakness
+    # Gate 163 was told to remove before the first live source. It is reported
+    # rather than refused, because rows predating migration 0049 are allowed to
+    # exist - but a live activation resting on one is a finding.
+    if permits and fact.get("join_basis") == "source_name_fallback":
+        fails.append(f"a_permitting_fact_joined_on_a_display_name:{name}")
 
     # A permitting fact whose recorded verdict was a refusal would mean the
     # verdict override had been bypassed.

@@ -72,7 +72,11 @@ TRANSPORT_KINDS: tuple[str, ...] = (HERMETIC, LIVE)
 #: The only kind Gate 161 can dispatch. Membership, not a negation of the
 #: refused set - a kind added later is refused by default rather than permitted
 #: by having been forgotten.
-DISPATCHABLE_KINDS: frozenset[str] = frozenset({HERMETIC})
+#: Gate 163 added `live`. The boundary's policy check does the deciding -
+#: `live_transport_allowed` composes Gate 94B's guard, which requires all
+#: ten status requirements AND an explicit `allow_live_fetch`. Keeping
+#: `live` out of this set was a refusal standing in front of a better one.
+DISPATCHABLE_KINDS: frozenset[str] = frozenset({HERMETIC, LIVE})
 
 #: Methods a source request may use. Read-only: a collection that POSTed a
 #: mutation to a source would be doing something nobody authorized, and
@@ -95,7 +99,13 @@ TRANSPORT_OUTCOMES: tuple[str, ...] = (
 
 BLOCK_NO_TRANSPORT = "no_transport_implementation_supplied"
 BLOCK_KIND_NOT_DISPATCHABLE = "transport_kind_is_not_dispatchable"
-BLOCK_LIVE_NOT_IMPLEMENTED = "live_transport_has_no_implementation_in_this_repo"
+#: Gate 163 built the implementation, so a live dispatch must instead name
+#: the source it was authorized for. Migration 0050 enforces the same rule
+#: in the database; this boundary was the one layer that stopped asking.
+#:
+#: `BLOCK_LIVE_NOT_IMPLEMENTED` retired here. It was unreachable once LIVE
+#: became dispatchable, and the sentence it showed an operator was false.
+BLOCK_LIVE_WITHOUT_AUTHORIZATION = "a_live_dispatch_named_no_authorized_source"
 BLOCK_POLICY_REFUSED = "the_execution_policy_refused_this_transport"
 BLOCK_BAD_METHOD = "method_outside_the_allowed_set"
 BLOCK_NO_URL = "no_request_url_supplied"
@@ -108,8 +118,15 @@ BLOCK_UNSAFE_REQUEST_HEADER = "request_header_outside_the_safe_set"
 #: There is no Authorization here, and no mechanism to add one. Credentials are
 #: Gate 162's decision and a later gate's mechanism.
 ALLOWED_REQUEST_HEADERS: frozenset[str] = frozenset(
-    {"user-agent", "accept", "accept-encoding", "accept-language", "if-none-match",
-     "if-modified-since", "content-type"}
+    {
+        "user-agent",
+        "accept",
+        "accept-encoding",
+        "accept-language",
+        "if-none-match",
+        "if-modified-since",
+        "content-type",
+    }
 )
 
 DEFAULT_TIMEOUT_SECONDS = 20.0
@@ -245,10 +262,6 @@ def execute_request(
         blocked.append(f"transport_kind_outside_vocabulary:{kind}")
     elif kind not in DISPATCHABLE_KINDS:
         blocked.append(f"{BLOCK_KIND_NOT_DISPATCHABLE}:{kind}")
-        if kind == LIVE:
-            # Said separately, because "not dispatchable" and "does not exist"
-            # are different facts and an operator should see both.
-            blocked.append(BLOCK_LIVE_NOT_IMPLEMENTED)
 
     # The policy decides whether this transport kind may run at all. It
     # composes Gate 94B's guard; this boundary does not re-decide.
@@ -258,6 +271,18 @@ def execute_request(
             blocked.append(BLOCK_POLICY_REFUSED)
         if kind == HERMETIC and not decision.get("hermetic_transport_allowed"):
             blocked.append(BLOCK_POLICY_REFUSED)
+
+    # A live dispatch must name the source it was authorized for, whatever the
+    # policy's booleans say. Asked HERE and not only in the policy because a
+    # caller supplies the policy dict: without this, a permissive dict is
+    # enough to dispatch live, and "no caller may construct an approval by
+    # supplying booleans" would hold everywhere except the boundary that
+    # actually dispatches.
+    #
+    # The same rule migration 0050 enforces on the attempt row:
+    #   CHECK (transport_kind <> 'live' OR authorized_source_id IS NOT NULL)
+    if kind == LIVE and not str(decision.get("authorized_source_id") or "").strip():
+        blocked.append(BLOCK_LIVE_WITHOUT_AUTHORIZATION)
 
     if request is None:
         blocked.append("no_request_supplied")

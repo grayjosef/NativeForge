@@ -5,7 +5,7 @@
     "activation_approved": 0,
     "api_key_missing": 0,
     "fixture_allowed": 0,
-    "human_review_blocked": 6,
+    "human_review_blocked": 7,
     "registry_known": 0,
     "terms_blocked": 171,
     "unknown_source": 0
@@ -124,13 +124,13 @@
     }
   },
   "dns_resolved": false,
-  "evaluated_count": 177,
+  "evaluated_count": 178,
   "fetch_performed": false,
   "invariant_failures": [],
   "monitorable_count": 0,
   "monitorable_source_ids": [],
   "network_calls": 0,
-  "registry_row_count": 177,
+  "registry_row_count": 178,
   "robots_fetched": false,
   "schema_version": "nf_source_monitoring_gate143_artifact_v1",
   "states": [

@@ -139,9 +139,7 @@ try:
     import hashlib
 
     expected = hashlib.sha256(BODY).hexdigest()
-    out["ok_persisted_before_decoding"] = bool(
-        ok["raw_payload_sha256"] == expected
-    )
+    out["ok_persisted_before_decoding"] = bool(ok["raw_payload_sha256"] == expected)
     if ok["raw_payload_sha256"] != expected:
         detail.append(f"hash {ok['raw_payload_sha256']} != {expected}")
 
@@ -299,18 +297,62 @@ try:
             "method": "GET",
         }
     )
-    dispatched = execute_request(
+    # Gate 163 made live dispatchable FOR AN AUTHORIZED SOURCE, so the
+    # question is no longer "is live refused" but "is UNAUTHORIZED live
+    # refused". Both directions are checked, so the branch is falsifiable
+    # rather than proving a door is locked that had no hinges.
+    refusing = dict(permissive)
+    refusing["live_transport_allowed"] = False
+    refusing["execution_allowed"] = False
+    refused = execute_request(
+        request=built["transport_request"],
+        transport_kind=LIVE,
+        transport=REG.transport,
+        policy=refusing,
+    )
+    out["live_refused_by_the_boundary"] = bool(not refused["dispatched"])
+    if refused["dispatched"]:
+        detail.append("the boundary dispatched an UNAUTHORIZED LIVE request")
+
+    # A policy of booleans alone is not enough either. The boundary requires a
+    # live dispatch to NAME the source it was authorized for - the same rule
+    # migration 0050 puts on the attempt row - so a caller cannot construct a
+    # live dispatch out of a permissive dict.
+    unnamed = execute_request(
         request=built["transport_request"],
         transport_kind=LIVE,
         transport=REG.transport,
         policy=permissive,
     )
-    out["live_refused_by_the_boundary"] = bool(not dispatched["dispatched"])
-    if dispatched["dispatched"]:
-        detail.append("the boundary dispatched a LIVE request")
+    out["live_refused_when_the_policy_names_no_authorization"] = bool(
+        not unnamed["dispatched"]
+        and "a_live_dispatch_named_no_authorized_source"
+        in (unnamed["blocked_reasons"] or [])
+    )
+    if unnamed["dispatched"]:
+        detail.append("the boundary dispatched LIVE with no authorized source")
 
-    out["live_not_dispatchable"] = bool(
-        LIVE not in DISPATCHABLE_KINDS and HERMETIC in DISPATCHABLE_KINDS
+    # And the permitting direction: permitted AND named, the boundary
+    # dispatches. Without this a boundary that refused everything would pass
+    # both checks above and be useless.
+    dispatched = execute_request(
+        request=built["transport_request"],
+        transport_kind=LIVE,
+        transport=REG.transport,
+        policy=dict(permissive, authorized_source_id="nf161.fixture.verify.ok"),
+    )
+    out["live_dispatches_when_the_policy_permits"] = bool(dispatched["dispatched"])
+    if not dispatched["dispatched"]:
+        detail.append(
+            f"a permitted LIVE request was refused: {dispatched['blocked_reasons']}"
+        )
+
+    out["live_requires_a_permitting_policy"] = bool(
+        # Gate 163: both kinds dispatch, and live needs a permitting policy -
+        # which the two checks above measure directly.
+        LIVE in DISPATCHABLE_KINDS
+        and HERMETIC in DISPATCHABLE_KINDS
+        and not refused["dispatched"]
     )
 
     # ---- 18-22: the counters --------------------------------------------
@@ -335,18 +377,31 @@ finally:
 # A key that never appeared is a check that never ran. Default them to False so
 # an exception halfway through fails the verifier rather than skipping checks.
 for key in (
-    "ok_proof_available", "ok_bytes_match_exactly",
-    "ok_hash_verified_on_readback", "ok_persisted_before_decoding",
-    "malformed_persisted", "malformed_is_not_a_failure",
-    "not_found_recorded", "not_found_is_still_evidenced",
+    "ok_proof_available",
+    "ok_bytes_match_exactly",
+    "ok_hash_verified_on_readback",
+    "ok_persisted_before_decoding",
+    "malformed_persisted",
+    "malformed_is_not_a_failure",
+    "not_found_recorded",
+    "not_found_is_still_evidenced",
     "not_found_does_not_permit_completion",
-    "timeout_recorded_no_payload", "rate_limited_body_persisted",
-    "server_error_body_persisted", "unregistered_is_a_connection_failure",
-    "attempt_row_for_every_outcome", "proof_needs_all_seven",
-    "proof_denies_a_source_responded", "real_source_refused_by_policy",
-    "live_refused_by_policy", "live_refused_by_the_boundary",
-    "live_not_dispatchable", "db_refuses_a_live_call_row",
-    "db_refuses_a_live_transport_kind", "counters_all_zero",
+    "timeout_recorded_no_payload",
+    "rate_limited_body_persisted",
+    "server_error_body_persisted",
+    "unregistered_is_a_connection_failure",
+    "attempt_row_for_every_outcome",
+    "proof_needs_all_seven",
+    "proof_denies_a_source_responded",
+    "real_source_refused_by_policy",
+    "live_refused_by_policy",
+    "live_refused_by_the_boundary",
+    "live_refused_when_the_policy_names_no_authorization",
+    "live_dispatches_when_the_policy_permits",
+    "live_requires_a_permitting_policy",
+    "db_refuses_a_live_call_row",
+    "db_refuses_a_live_transport_kind",
+    "counters_all_zero",
 ):
     out.setdefault(key, False)
 

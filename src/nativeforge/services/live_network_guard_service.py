@@ -137,10 +137,25 @@ COLLECTOR_STATUSES = frozenset({"not_active", "activating", "active", "halted"})
 COLLECTOR_SATISFYING = frozenset({"active"})
 
 ROBOTS_STATUSES = frozenset(
-    {"allowed", "disallowed", "absent", "fetch_failed", "unknown"}
+    {
+        "allowed",
+        "disallowed",
+        "absent",
+        # Gate 163: RFC 9309 section 2.3.1.3. A 4xx that is not a 404 - the
+        # file could not be retrieved, and we cannot say whether it exists.
+        # The standard is explicit that crawlers MAY access any resources in
+        # this case, so it permits; it is kept distinct from `absent` because
+        # "there is definitely no file" is different evidence from "we could
+        # not get the file".
+        "unavailable",
+        "fetch_failed",
+        "unknown",
+    }
 )
-# 404 conventionally means no restrictions. A timeout means we do not know.
-ROBOTS_SATISFYING = frozenset({"allowed", "absent"})
+# 404 conventionally means no restrictions, and so does a 4xx the standard
+# calls "unavailable". A timeout or a 5xx means we do not know, and not
+# knowing does not permit.
+ROBOTS_SATISFYING = frozenset({"allowed", "absent", "unavailable"})
 
 CREDENTIAL_STATUSES = frozenset(
     {"present_and_valid", "missing", "expired", "not_required", "unknown"}
@@ -229,6 +244,43 @@ def _host(url: Any) -> str:
 
 def _scheme(url: Any) -> str:
     return (urlsplit(str(url or "")).scheme or "").lower()
+
+
+def _grants_gov_host_is_authorized(host: Any, source_id: Any) -> bool:
+    """Is there a recorded authorization naming THIS source and THIS host?
+
+    Deliberately narrow, and deliberately not a flag. It asks the warrant
+    service - the one enforcement path - whether the source id is one this
+    campaign authorized and whether the host is that source's recorded
+    authority. It does NOT re-check the signed decisions: that is the warrant
+    service's job at dispatch time, and duplicating it here would be a second
+    copy of a rule to drift.
+
+    Imported lazily because the warrant service reads the fact resolver, which
+    reads this module.
+    """
+    try:
+        from nativeforge.services.source_live_warrant_service import (
+            AUTHORIZED_SOURCE_IDS,
+        )
+        from nativeforge.services.source_monitoring_approved_source_service import (
+            load_registry_rows,
+        )
+    except Exception:  # noqa: BLE001 - an unanswerable question authorizes nothing
+        return False
+
+    key = str(source_id or "").strip()
+    if key not in AUTHORIZED_SOURCE_IDS:
+        return False
+
+    try:
+        row = load_registry_rows().get(key) or {}
+        declared = str(row.get("source_url") or "")
+        declared_host = declared.split("//", 1)[-1].split("/", 1)[0].lower()
+    except Exception:  # noqa: BLE001
+        return False
+
+    return bool(declared_host) and str(host or "").lower() == declared_host
 
 
 def build_live_network_decision(
@@ -408,7 +460,19 @@ def build_live_network_decision(
         )
 
     # Gate 77B stays authoritative for Grants.gov.
-    grants_gov_flag_blocked = host in GRANTS_GOV_HOSTS and not live_network_allowed()
+    # Gate 163 made this authorization-aware. Gate 77B put these four hosts
+    # behind an environment flag, which is a legitimate defence and stays
+    # enforced - what changed is that a recorded, signed authorization for
+    # THIS source and THIS host is now also sufficient.
+    #
+    # The flag is never set by this code and is not required for the Gate 163
+    # path. It cannot broaden permission to another source: the authorization
+    # check below is per-source and per-host.
+    grants_gov_flag_blocked = (
+        host in GRANTS_GOV_HOSTS
+        and not live_network_allowed()
+        and not _grants_gov_host_is_authorized(host, source_id)
+    )
     if grants_gov_flag_blocked:
         blocked_reasons.append("gate77b_hermetic_guard_blocks_grants_gov")
 

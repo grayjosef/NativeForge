@@ -121,7 +121,8 @@
       "guard_input": "robots_status",
       "permitting": [
         "absent",
-        "allowed"
+        "allowed",
+        "unavailable"
       ],
       "source_of_truth": "measured at resolve time",
       "vocabulary": [
@@ -129,6 +130,7 @@
         "allowed",
         "disallowed",
         "fetch_failed",
+        "unavailable",
         "unknown"
       ],
       "why": "whether robots.txt permits the path. Requires FETCHING robots.txt, which is itself a live call - so this fact is unresolvable in Gate 162 and refuses as missing. Gate 163 is where that fetch is first permitted, and it is the first live call the campaign makes."

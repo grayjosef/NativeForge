@@ -168,9 +168,11 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
     # nf_source_orchestration_cycles. Gate 160: re-pinned 0045 -> 0046 for
     # nf_source_collection_raw_payloads. Gate 161: re-pinned 0046 -> 0047 for
     # nf_source_collection_execution_attempts. Gate 162: re-pinned 0047 -> 0048
-    # for nf_source_terms_decisions. Gates 158 through 162 each found this line
-    # on the first pass, by running the `grep -rn "(head)"` this comment asks
-    # for. This assertion still protects a real
+    # for nf_source_authorization_decisions. Gate 163: re-pinned 0048 -> 0049
+    # to give activation a stable source key, then 0049 -> 0050 to let an
+    # AUTHORIZED live attempt be recorded at all. Gates 158 through 163 each
+    # found this line on the first pass, by running the `grep -rn "(head)"`
+    # this comment asks for. This assertion still protects a real
     # invariant (single head, no duplicate revision ids); only the expected
     # value moves. Update it deliberately when a migration is approved.
     #
@@ -188,7 +190,7 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
     #     grep -rn "004[0-9]" --include=*.py --include=*.sh src/ scripts/ tests/
     #
     # Unquoted, unanchored, and read every hit rather than filtering.
-    assert result.stdout.strip() == "0048 (head)"
+    assert result.stdout.strip() == "0052 (head)"
 
     sprint_discovery_files = [
         "0010_nf_opportunity_sources_discovery.py",

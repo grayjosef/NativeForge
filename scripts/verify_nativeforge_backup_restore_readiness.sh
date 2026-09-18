@@ -468,7 +468,7 @@ fi
 
 # --------------------------------------------------------- 5. the restore
 if [ "$(get target_is_isolated)" = "True" ] &&
-   [ "$(get target_migration_head)" = "0048" ]; then
+   [ "$(get target_migration_head)" = "0052" ]; then
   pass isolated_target_migrated "head=$(get target_migration_head)"
 else
   fail isolated_target_migrated "head=$(get target_migration_head)"

@@ -46,7 +46,10 @@ HUMAN_REVIEW = "human_review"
 #: Which question a row answers. Required on every call and deliberately NOT
 #: defaulted - a default would let a caller record a terms answer under the
 #: human-review question by forgetting an argument.
-DECISION_KINDS: frozenset[str] = frozenset({TERMS, HUMAN_REVIEW})
+LIVE_FETCH = "live_fetch"
+
+#: Gate 163 added `live_fetch`. Migration 0052 matches this.
+DECISION_KINDS: frozenset[str] = frozenset({TERMS, HUMAN_REVIEW, LIVE_FETCH})
 
 BLOCK_BAD_KIND = "decision_kind_outside_vocabulary"
 

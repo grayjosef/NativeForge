@@ -64,7 +64,7 @@ CONDITIONS: tuple[str, ...] = (
     "safe_headers_survive",
     "oversize_refused",
     "archived_still_readable",
-    "nothing_was_fetched",
+    "no_unauthorized_fetch_occurred",
 )
 
 CONDITION_EVIDENCE: dict[str, str] = {
@@ -113,7 +113,7 @@ CONDITION_EVIDENCE: dict[str, str] = {
         "deletion: nothing here has an approved retention policy, so nothing "
         "deletes."
     ),
-    "nothing_was_fetched": (
+    "no_unauthorized_fetch_occurred": (
         "zero collectors invoked and zero live source calls, and the database "
         "refuses a row claiming either"
     ),
@@ -183,14 +183,16 @@ def build_raw_payload_health(
         for failure in raw_payload_invariant_failures(totals):
             blockers.append(f"counts:{failure}")
 
-    claiming_collector = int(totals.get("rows_claiming_a_collector") or 0)
-    claiming_fetch = int(totals.get("rows_claiming_a_live_fetch") or 0)
     oversize_rows = int(totals.get("rows_over_the_size_limit") or 0)
 
-    if claiming_collector:
-        blockers.append(f"a_row_claims_a_collector:{claiming_collector}")
-    if claiming_fetch:
-        blockers.append(f"a_row_claims_a_live_fetch:{claiming_fetch}")
+    # Gate 163: a warranted live row is the first real collection, not a
+    # blocker. An UNWARRANTED one is still a blocker, and migration 0050 makes
+    # it unwritable - so this asserts none predate that constraint.
+    unauthorized = int(totals.get("unauthorized_live_rows") or 0)
+    if unauthorized > 0:
+        blockers.append(f"a_row_claims_live_activity_with_no_warrant:{unauthorized}")
+    if unauthorized < 0:
+        blockers.append("the_unauthorized_live_row_count_could_not_be_read")
     if oversize_rows:
         blockers.append(f"a_row_exceeds_the_size_limit:{oversize_rows}")
 
@@ -239,9 +241,13 @@ def build_raw_payload_health(
         "archived_still_readable": bool(
             archived and archived.get("archived") and archived.get("replayable")
         ),
-        "nothing_was_fetched": bool(totals)
-        and claiming_collector == 0
-        and claiming_fetch == 0,
+        # Gate 163 replaced "nothing was fetched" with "nothing was fetched
+        # WITHOUT A WARRANT". Migration 0050 requires `authorized_source_id`
+        # on any row claiming a live fetch, so an unwarranted row cannot be
+        # written at all - and this asserts none slipped in before that
+        # constraint existed.
+        "no_unauthorized_fetch_occurred": bool(totals)
+        and int(counts.get("unauthorized_live_rows") or 0) == 0,
     }
 
     missing = sorted(name for name, ok in measured.items() if not ok)
@@ -367,7 +373,7 @@ def raw_payload_health_invariant_failures(health: dict[str, Any]) -> list[str]:
     if health.get("raw_payload_persistence_ready"):
         if not health.get("ready_does_not_mean"):
             fails.append("ready_without_stating_what_ready_does_not_mean")
-        if conditions.get("nothing_was_fetched") is not True:
+        if conditions.get("no_unauthorized_fetch_occurred") is not True:
             fails.append("ready_while_something_was_fetched")
         if conditions.get("safe_headers_survive") is not True:
             fails.append("ready_while_the_filter_kept_nothing")

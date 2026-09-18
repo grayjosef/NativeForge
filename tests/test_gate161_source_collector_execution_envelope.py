@@ -202,8 +202,13 @@ def test_an_attempt_row_is_written_for_every_outcome(connection):
     stamp = uuid.uuid4().hex[:8]
     for key in ("ok", "timeout", "notfound", "missing", "rate", "error"):
         _run(connection, key, tag=stamp)
-    _run(connection, "ok", tag=f"{stamp}x", source_id="grants.gov",
-         is_synthetic_fixture=False)
+    _run(
+        connection,
+        "ok",
+        tag=f"{stamp}x",
+        source_id="grants.gov",
+        is_synthetic_fixture=False,
+    )
     after = count_attempts(connection=connection, organization_id=DEMO)["total"]
     assert after - before == 7
 
@@ -240,8 +245,7 @@ def test_a_duplicate_attempt_is_refused_without_failing_an_invariant(connection)
 
 
 def test_a_real_source_is_refused_by_the_hermetic_policy(connection):
-    report = _run(connection, "ok", source_id="grants.gov",
-                  is_synthetic_fixture=False)
+    report = _run(connection, "ok", source_id="grants.gov", is_synthetic_fixture=False)
     assert report["execution_status"] == "refused_by_policy"
     assert report["refusal_reason"] == "not_a_synthetic_fixture"
     assert report["transport_invoked"] is False
@@ -290,6 +294,13 @@ def test_live_is_refused_four_times_independently(connection):
         live_transport_allowed=True,
         hermetic_transport_allowed=True,
     )
+    # Gate 163 made LIVE dispatchable, so the boundary no longer refuses the
+    # kind outright. What it refuses now is a live dispatch that names no
+    # authorized source - the same rule migration 0050 puts on the attempt
+    # row. Still an INDEPENDENT stop: the policy above permits everything.
+    #
+    # Rewriting this to assert the policy refusal would collapse stop 2 into
+    # stop 1 and make the depth this test exists to measure imaginary.
     dispatched = execute_request(
         request=built["transport_request"],
         transport_kind=LIVE,
@@ -297,9 +308,55 @@ def test_live_is_refused_four_times_independently(connection):
         policy=permissive,
     )
     assert dispatched["dispatched"] is False
+    assert (
+        "a_live_dispatch_named_no_authorized_source" in (dispatched["blocked_reasons"])
+    )
 
-    # 3. and there is nothing to dispatch to
-    assert LIVE not in DISPATCHABLE_KINDS
+    # And the stop is falsifiable: naming an authorization reaches the
+    # injected transport. A refusal no input can turn off is unfalsifiable,
+    # which is the Gate 134F lesson in the permitting direction.
+    authorized = dict(permissive, authorized_source_id="nf161.fixture.test.ok")
+    reached = execute_request(
+        request=built["transport_request"],
+        transport_kind=LIVE,
+        transport=_registry().transport,
+        policy=authorized,
+    )
+    assert reached["dispatched"] is True
+    assert "a_live_dispatch_named_no_authorized_source" not in (
+        reached["blocked_reasons"] or []
+    )
+
+    # 3. and the warrant service refuses it
+    #
+    # Gate 163 put LIVE in DISPATCHABLE_KINDS, so "there is nothing to
+    # dispatch to" stopped being true. The layer that became the third stop is
+    # Gate 77B's canonical enforcement path, and it is independent of the two
+    # above: no policy dict reaches it, and no boolean a caller supplies
+    # changes its answer. It asks whether a recorded, signed authorization
+    # names this source and this host.
+    #
+    # The permitted side needs the real recorded Gate 163 facts, which this
+    # database does not have; `_g163_phase_warrant_negatives.py` asserts it,
+    # which is what keeps this refusal falsifiable rather than unconditional.
+    from nativeforge.services.source_live_warrant_service import (
+        WARRANT_SOURCE_COLLECTION,
+        evaluate_live_request,
+    )
+
+    warrant = evaluate_live_request(
+        warrant_kind=WARRANT_SOURCE_COLLECTION,
+        authorized_source_id="nf161.fixture.test.ok",
+        request_url=URLS["ok"],
+        method="GET",
+        connection=connection,
+        organization_id=DEMO,
+    )
+    assert warrant["permitted"] is False
+    assert warrant["refusal_reasons"], "refused without saying why"
+
+    # Dispatchable is not permitted, and the set says so plainly now.
+    assert LIVE in DISPATCHABLE_KINDS
     assert HERMETIC in DISPATCHABLE_KINDS
 
     # 4. the database will not hold the row
@@ -406,9 +463,7 @@ def test_the_proof_checker_catches_a_proof_that_claims_too_much():
         transport_result={},
     )
     assert "the_proof_claimed_a_source_responded" in (
-        execution_proof_invariant_failures(
-            dict(base, proves_a_source_responded=True)
-        )
+        execution_proof_invariant_failures(dict(base, proves_a_source_responded=True))
     )
     assert "the_proof_permitted_a_real_source_job_to_complete" in (
         execution_proof_invariant_failures(
@@ -421,9 +476,7 @@ def test_the_proof_checker_catches_a_proof_that_claims_too_much():
         )
     )
     assert "proof_available_alongside_unmet_requirements" in (
-        execution_proof_invariant_failures(
-            dict(base, execution_proof_available=True)
-        )
+        execution_proof_invariant_failures(dict(base, execution_proof_available=True))
     )
 
 
@@ -452,9 +505,7 @@ def test_retry_classification_matches_the_outcome():
         ("refused_before_dispatch", None): ("none", False),
     }
     for (outcome, status), (klass, retried) in cases.items():
-        decision = evaluate_execution_retry(
-            outcome=outcome, http_status=status, now=T0
-        )
+        decision = evaluate_execution_retry(outcome=outcome, http_status=status, now=T0)
         assert decision["failure_class"] == klass, (outcome, status)
         assert decision["should_retry"] is retried, (outcome, status)
         assert not execution_retry_invariant_failures(decision)
@@ -572,8 +623,7 @@ def test_each_hermetic_refusal_condition_fires_alone():
         transport=transport,
     )
     seen["source_id_is_not_a_synthetic_fixture"] = hermetic_execution_refusals(
-        job(source_id="grants.gov",
-            source_definition={"source_id": "grants.gov"}),
+        job(source_id="grants.gov", source_definition={"source_id": "grants.gov"}),
         handler=HANDLER_HERMETIC_EXECUTION,
         transport=transport,
     )
@@ -583,9 +633,12 @@ def test_each_hermetic_refusal_condition_fires_alone():
         assert produced == [expected], (expected, produced)
 
     # And all seven satisfied produces none.
-    assert hermetic_execution_refusals(
-        job(), handler=HANDLER_HERMETIC_EXECUTION, transport=transport
-    ) == []
+    assert (
+        hermetic_execution_refusals(
+            job(), handler=HANDLER_HERMETIC_EXECUTION, transport=transport
+        )
+        == []
+    )
 
 
 def test_a_fixture_prefix_alone_is_not_enough():
@@ -810,26 +863,55 @@ def test_the_health_lane_separates_knowing_from_approving(connection):
     assert not execution_health_invariant_failures(health)
 
 
-def test_the_health_lane_refuses_to_claim_a_live_transport(connection):
+def test_the_health_lane_reports_a_live_transport_that_needs_permission(
+    connection,
+):
+    """Available is not enabled, and neither is proven.
+
+    Gate 161 asserted `live_transport_available is False` because no
+    implementation existed. Gate 163 built one, so the lane reports True and
+    what is left to assert is every distinction that survived it.
+    """
     health = build_execution_health(connection=connection, organization_id=DEMO)
-    assert health["live_transport_available"] is False
+
+    # An implementation exists. That is the true state, and refusing it would
+    # only teach the next reader to edit the invariant.
+    assert health["live_transport_available"] is True
+    assert "live" in health["dispatchable_kinds"]
+
+    # None of which is permission, a proof, or a running monitor.
+    assert health["live_transport_enabled"] is False
     assert health["live_execution_proven"] is False
     assert health["source_monitoring_live"] is False
-    assert "live" not in health["dispatchable_kinds"]
+
+    # And it cannot dispatch without an authorization - measured by the lane
+    # attempting one, not declared.
+    assert health["conditions"]["live_transport_requires_an_authorization"] is True
     assert health["not_implied"], "the lane did not say what it does not imply"
 
 
 def test_the_health_checker_catches_a_lane_that_claims_live(connection):
     health = build_execution_health(connection=connection, organization_id=DEMO)
-    assert "health_claimed:live_transport_available" in (
+    # `live_transport_available=True` is no longer a lie to inject - an
+    # implementation exists. The lie is a lane claiming live needs no
+    # authorization, so that is what goes in.
+    assert "live_can_dispatch_without_an_authorization" in (
         execution_health_invariant_failures(
-            dict(health, live_transport_available=True)
+            dict(
+                health,
+                conditions=dict(
+                    health["conditions"],
+                    live_transport_requires_an_authorization=False,
+                ),
+            )
         )
     )
+    # Enabled is still a claim nothing may make.
+    assert "health_claimed:live_transport_enabled" in (
+        execution_health_invariant_failures(dict(health, live_transport_enabled=True))
+    )
     assert "health_counted:approved_source_count=3" in (
-        execution_health_invariant_failures(
-            dict(health, approved_source_count=3)
-        )
+        execution_health_invariant_failures(dict(health, approved_source_count=3))
     )
 
 
@@ -841,8 +923,17 @@ def test_no_route_takes_a_url_parameter():
     client = TestClient(create_app())
     spec = client.get("/openapi.json").json()
     address_words = {
-        "url", "uri", "endpoint", "host", "address", "target", "fetch",
-        "callback", "redirect", "proxy", "location",
+        "url",
+        "uri",
+        "endpoint",
+        "host",
+        "address",
+        "target",
+        "fetch",
+        "callback",
+        "redirect",
+        "proxy",
+        "location",
     }
     paths = {
         path: ops
@@ -853,9 +944,7 @@ def test_no_route_takes_a_url_parameter():
     for path, ops in paths.items():
         for method, operation in ops.items():
             for parameter in operation.get("parameters") or []:
-                words = set(
-                    str(parameter["name"]).replace("-", "_").lower().split("_")
-                )
+                words = set(str(parameter["name"]).replace("-", "_").lower().split("_"))
                 assert not (words & address_words), (method, path, parameter)
 
 

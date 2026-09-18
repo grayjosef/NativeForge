@@ -5,7 +5,7 @@
     "archived_still_readable": "an archived payload replayed. Archive is a lifecycle state, not a deletion: nothing here has an approved retention policy, so nothing deletes.",
     "attempt_conflict_refused": "the same attempt offering different bytes was refused and both hashes named. Overwriting would destroy the evidence that they disagreed.",
     "exact_bytes_round_trip": "the bytes read back are byte-identical to the bytes written, including bodies that are not valid UTF-8",
-    "nothing_was_fetched": "zero collectors invoked and zero live source calls, and the database refuses a row claiming either",
+    "no_unauthorized_fetch_occurred": "zero collectors invoked and zero live source calls, and the database refuses a row claiming either",
     "oversize_refused": "a body over the limit was refused deterministically rather than truncated. Truncating and then hashing produces a digest of bytes that never existed anywhere.",
     "readback_hash_verified": "the store re-hashed the bytes it read back. A store that records a hash and never checks it again has recorded an intention.",
     "safe_headers_survive": "Content-Type, ETag and the rest of the allowlist were KEPT. A filter that refuses everything passes every refusal test and is useless - Gate 160 shipped exactly that for one commit, by calling the secret scanner with the wrong keyword.",
@@ -25,7 +25,7 @@
     "safe_headers_survive",
     "oversize_refused",
     "archived_still_readable",
-    "nothing_was_fetched"
+    "no_unauthorized_fetch_occurred"
   ],
   "lane": "raw_payload_persistence_ready",
   "max_payload_size_bytes": 1048576,

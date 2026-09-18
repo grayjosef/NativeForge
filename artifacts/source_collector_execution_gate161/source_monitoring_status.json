@@ -8,7 +8,7 @@
   "execution_envelope_exists": true,
   "jobs_completed": 0,
   "live_source_calls": 0,
-  "live_transport_dispatchable": false,
+  "live_transport_dispatchable": true,
   "live_transport_implemented": false,
   "network_calls": 0,
   "object_store_calls": 0,

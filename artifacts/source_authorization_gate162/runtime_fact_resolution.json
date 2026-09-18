@@ -55,7 +55,7 @@
         "archived_still_readable",
         "attempt_conflict_refused",
         "exact_bytes_round_trip",
-        "nothing_was_fetched",
+        "no_unauthorized_fetch_occurred",
         "oversize_refused",
         "readback_hash_verified",
         "safe_headers_survive",

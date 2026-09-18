@@ -73,7 +73,7 @@ CONDITIONS: tuple[str, ...] = (
     "attempt_table_exists",
     "transport_boundary_reaches_no_host",
     "hermetic_transport_reaches_no_host",
-    "live_transport_is_not_dispatchable",
+    "live_transport_requires_an_authorization",
     "no_attempt_claims_a_live_call",
     "no_live_attempt_rows_exist",
     "proof_requirements_are_defined",
@@ -147,6 +147,52 @@ def detect_source_counts() -> dict[str, int]:
         }
 
 
+def _live_requires_a_warrant() -> bool:
+    """Does the boundary refuse LIVE when the policy does not permit it?
+
+    Gate 161 asserted `live` was not in DISPATCHABLE_KINDS at all. Gate 163
+    made it dispatchable for an authorized source, so the question became
+    whether an UNAUTHORIZED live dispatch is still refused - which is the
+    property that was actually worth having.
+
+    Measured by attempting one, with a hermetic fixture request that reaches
+    no host even if the refusal failed.
+    """
+    try:
+        from nativeforge.services.source_collection_request_builder_service import (
+            build_source_request,
+        )
+        from nativeforge.services.source_collection_transport_service import (
+            LIVE,
+            execute_request,
+        )
+
+        built = build_source_request(
+            source_definition={
+                "source_id": "nf163.probe.unauthorized",
+                "endpoint": "https://fixtures.invalid/nf163/probe",
+                "method": "GET",
+            }
+        )
+        if not built.get("usable"):
+            return False
+
+        dispatched = execute_request(
+            request=built["transport_request"],
+            transport_kind=LIVE,
+            # A policy that permits NOTHING. The boundary must refuse.
+            policy={
+                "execution_allowed": False,
+                "live_transport_allowed": False,
+                "hermetic_transport_allowed": False,
+            },
+            transport=lambda request: None,
+        )
+        return not dispatched.get("dispatched")
+    except Exception:  # noqa: BLE001 - an unmeasurable refusal is not one
+        return False
+
+
 def build_execution_health(
     *, connection: Any = None, organization_id: Any = None
 ) -> dict[str, Any]:
@@ -176,7 +222,11 @@ def build_execution_health(
         # descriptions were given the same name for the same fact.
         "transport_boundary_reaches_no_host": not boundary["reaches_a_host"],
         "hermetic_transport_reaches_no_host": not hermetic["reaches_a_host"],
-        "live_transport_is_not_dispatchable": not live_available,
+        # Gate 163 replaced "live cannot dispatch" with "live cannot dispatch
+        # without a warrant". MEASURED, not assumed: a LIVE request is put
+        # through the boundary with a policy that does not permit it, and the
+        # condition holds only if the boundary refuses.
+        "live_transport_requires_an_authorization": _live_requires_a_warrant(),
         "no_attempt_claims_a_live_call": int(
             counts.get("rows_claiming_a_live_call") or 0
         )
@@ -266,8 +316,19 @@ def execution_health_invariant_failures(health: dict[str, Any]) -> list[str]:
         if int(health.get(counter) or 0):
             fails.append(f"health_counted:{counter}={health.get(counter)}")
 
+    # `live_transport_available` is deliberately NOT in this list. Gate 161
+    # refused a true value because no implementation existed, so claiming one
+    # was a false claim. Gate 163 built it. Refusing it now would refuse the
+    # true state, and a lane that refuses the truth gets edited until it
+    # stops, which is how an invariant becomes a formality.
+    #
+    # The property that was actually worth having - that an UNAUTHORIZED live
+    # dispatch is still refused - is asserted below as
+    # `live_transport_requires_an_authorization`, measured by attempting one.
+    #
+    # `live_transport_enabled` STAYS. Available is not enabled: an
+    # implementation existing is not a standing permission to use it.
     for flag in (
-        "live_transport_available",
         "live_transport_enabled",
         "live_execution_proven",
         "source_monitoring_live",
@@ -293,8 +354,14 @@ def execution_health_invariant_failures(health: dict[str, Any]) -> list[str]:
 
     # `live` may be NAMED so refusing it is expressible; it may not be
     # dispatchable.
-    if LIVE in set(health.get("dispatchable_kinds") or ()):
-        fails.append("live_is_dispatchable")
+    # `live` being dispatchable is no longer a failure - Gate 163 made it
+    # so deliberately, for one authorized source. What IS a failure is a
+    # live dispatch that no authorization permits, which the condition
+    # above measures directly.
+    if not (health.get("conditions") or {}).get(
+        "live_transport_requires_an_authorization"
+    ):
+        fails.append("live_can_dispatch_without_an_authorization")
 
     if int(health.get("hermetic_attempts") or 0) != int(
         health.get("attempts_recorded") or 0

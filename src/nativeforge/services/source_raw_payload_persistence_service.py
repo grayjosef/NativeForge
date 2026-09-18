@@ -145,6 +145,11 @@ def persist_raw_payload(
     fact_status: str = "synthetic_fixture",
     is_demo: bool = True,
     max_bytes: int = MAX_PAYLOAD_BYTES,
+    # Gate 163: forwarded to the repository, where migration 0050's
+    # CHECK requires a warrant for any row claiming a live fetch.
+    collector_invoked: bool = False,
+    live_fetch_performed: bool = False,
+    authorized_source_id: Any = None,
 ) -> dict[str, Any]:
     """Persist one attempt's bytes through every check, and prove the readback.
 
@@ -213,6 +218,9 @@ def persist_raw_payload(
         safe_response_metadata=metadata["safe_headers"],
         retention_policy=retention_policy,
         fact_status=fact_status,
+        collector_invoked=collector_invoked,
+        live_fetch_performed=live_fetch_performed,
+        authorized_source_id=authorized_source_id,
         is_demo=is_demo,
         max_bytes=max_bytes,
     )

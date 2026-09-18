@@ -120,6 +120,7 @@ ACTIVE_SOURCES = sa.Table(
     sa.MetaData(),
     sa.Column("id", sa.Uuid(as_uuid=True), primary_key=True),
     sa.Column("organization_id", sa.Uuid(as_uuid=True)),
+    sa.Column("source_id", sa.Text()),
     sa.Column("source_name", sa.Text()),
     sa.Column("source_type", sa.Text()),
     sa.Column("source_lane", sa.Text()),
@@ -176,6 +177,10 @@ def _activate(session, source_id, *, signer="operator:nf162-test"):
         sa.insert(ACTIVE_SOURCES).values(
             id=uuid.uuid4(),
             organization_id=DEMO,
+            # Gate 163A added the stable key. Without it the resolver falls
+            # back to the display-name join, which the strict invariant
+            # correctly refuses for a permitting fact.
+            source_id=source_id,
             source_name=row["source_name"],
             source_type="fixture",
             source_lane="fixture",
@@ -226,9 +231,7 @@ def test_every_guard_status_input_is_modelled():
     guard_params = set(inspect.signature(build_live_network_decision).parameters)
     wanted = {p for p in guard_params if p.endswith("_status")}
     model = describe_fact_model()
-    mapped = {
-        spec["guard_input"] for spec in model["facts"] if spec.get("guard_input")
-    }
+    mapped = {spec["guard_input"] for spec in model["facts"] if spec.get("guard_input")}
     assert wanted, "the guard declares no status inputs"
     assert wanted <= mapped, sorted(wanted - mapped)
 
@@ -260,9 +263,7 @@ def test_exactly_one_fact_status_permits():
 
 def test_missing_is_not_the_same_as_denied(connection):
     """Opposite problems, same effect on permission. A boolean cannot tell."""
-    missing = build_fact(
-        fact_name="terms_status", record_exists=False, now=T0
-    )
+    missing = build_fact(fact_name="terms_status", record_exists=False, now=T0)
     assert missing["fact_status"] == FACT_MISSING
     assert missing["value"] is None
     assert "Nobody has decided" in missing["refusal_meaning"]
@@ -342,15 +343,12 @@ def test_the_database_refuses_an_unsigned_approval(connection):
             f"{FIXTURE_PREFIX}unsigned",
             kind,
             decision="approved",
-            guard_status=(
-                "NO_REVIEW_REQUIRED" if kind == TERMS else "NOT_APPLICABLE"
-            ),
+            guard_status=("NO_REVIEW_REQUIRED" if kind == TERMS else "NOT_APPLICABLE"),
             evidence_fingerprint="a" * 64,
         )
         assert result["recorded"] is False, kind
         assert (
-            "an_approval_needs_reviewed_by_and_reviewed_at"
-            in result["blocked_reasons"]
+            "an_approval_needs_reviewed_by_and_reviewed_at" in result["blocked_reasons"]
         )
 
 
@@ -365,9 +363,7 @@ def test_the_database_refuses_an_approval_with_no_evidence(connection):
         reviewed_at=T0,
     )
     assert result["recorded"] is False
-    assert (
-        "an_approval_needs_an_evidence_fingerprint" in result["blocked_reasons"]
-    )
+    assert "an_approval_needs_an_evidence_fingerprint" in result["blocked_reasons"]
 
 
 def test_a_terms_approval_cannot_carry_a_blocking_guard_status(connection):
@@ -472,15 +468,11 @@ def test_get_decision_reports_absence_rather_than_inventing_unknown(connection):
 
 def test_the_resolver_signature_cannot_assert_a_fact():
     """Structural. A parameter that does not exist cannot be misused."""
-    params = sorted(
-        inspect.signature(resolve_source_authorization_facts).parameters
-    )
+    params = sorted(inspect.signature(resolve_source_authorization_facts).parameters)
     assert params == ["connection", "now", "organization_id", "source_id"]
 
     fact_shaped = ("status", "approved", "allow", "permit", "override", "fact")
-    assert not [
-        p for p in params if any(word in p.lower() for word in fact_shaped)
-    ]
+    assert not [p for p in params if any(word in p.lower() for word in fact_shaped)]
 
 
 def test_the_resolver_has_no_kwargs_escape_hatch():
@@ -495,8 +487,13 @@ def test_the_resolver_has_no_kwargs_escape_hatch():
 
 def test_only_a_recorded_decision_can_authorize():
     assert AUTHORIZING_STRENGTHS == frozenset({"recorded_decision"})
-    for name in ("runtime_status", "source_registered", "collector_status",
-                 "rate_limit_status", "user_agent_status"):
+    for name in (
+        "runtime_status",
+        "source_registered",
+        "collector_status",
+        "rate_limit_status",
+        "user_agent_status",
+    ):
         assert STRENGTH_BY_FACT[name] not in AUTHORIZING_STRENGTHS, name
 
 
@@ -507,9 +504,26 @@ def test_a_queued_job_and_an_execution_proof_are_not_authorization_facts():
     assert not [n for n in FACT_NAMES if "adapter" in n]
 
 
+#: The real source these tests use as their "not authorized" subject.
+#:
+#: Seven of them picked it with `sorted(load_registry_rows())[0]`. Gate 163's
+#: seed id sorts before `nf-seed-2026-fed-001`, so all seven silently changed
+#: subject to the source this campaign just authorized - while asserting that
+#: a real source is NOT authorized and that its robots fact is unresolvable.
+#: They still passed, because this database holds no decisions and no robots
+#: evidence, which is what a green check with two possible causes looks like.
+#:
+#: Pinned. Chosen because it is a source this campaign has not authorized and
+#: will not authorize by growing the registry.
+UNAUTHORIZED_REAL_SOURCE = "nf-seed-2026-fed-001"
+
+
 def test_every_real_source_resolves_and_none_is_authorized(connection):
     registry = load_registry_rows()
-    assert len(registry) == 177
+    # 178 since Gate 163 added the Grants.gov Search2 API row. None is
+    # authorized HERE regardless: this database holds no decisions, so the
+    # resolver has nothing to resolve from for any of them.
+    assert len(registry) == 178
 
     authorized = []
     for source_id in sorted(registry):
@@ -524,7 +538,7 @@ def test_every_real_source_resolves_and_none_is_authorized(connection):
 
 def test_a_real_sources_robots_fact_stays_unresolvable(connection):
     """Answering it needs the live fetch we want permission for."""
-    real = sorted(load_registry_rows())[0]
+    real = UNAUTHORIZED_REAL_SOURCE
     resolution = resolve_source_authorization_facts(
         connection=connection, organization_id=DEMO, source_id=real, now=T0
     )
@@ -538,9 +552,7 @@ def test_a_real_sources_robots_fact_stays_unresolvable(connection):
 
 
 def test_runtime_readiness_composes_the_six_gate_lanes(connection):
-    facts = build_runtime_readiness_facts(
-        connection=connection, organization_id=DEMO
-    )
+    facts = build_runtime_readiness_facts(connection=connection, organization_id=DEMO)
     assert len(LANE_NAMES) == 6
     assert set(facts["lanes"]) == set(LANE_NAMES)
     assert facts["lanes_observed"] == 6
@@ -597,9 +609,7 @@ def test_monitoring_requires_strictly_more_than_collection():
 
 
 def test_a_ready_runtime_authorizes_nothing(connection):
-    facts = build_runtime_readiness_facts(
-        connection=connection, organization_id=DEMO
-    )
+    facts = build_runtime_readiness_facts(connection=connection, organization_id=DEMO)
     assert facts["authorizes_nothing"] is True
     assert facts["not_implied"]
     assert any("not an approved source" in item for item in facts["not_implied"])
@@ -640,6 +650,10 @@ def test_an_unsigned_activation_row_reads_as_unknown_not_allowed(connection):
         sa.insert(ACTIVE_SOURCES).values(
             id=uuid.uuid4(),
             organization_id=DEMO,
+            # Gate 163A added the stable key. Without it the resolver falls
+            # back to the display-name join, which the strict invariant
+            # correctly refuses for a permitting fact.
+            source_id=PERMITTABLE_FIXTURE,
             source_name=row["source_name"],
             source_type="fixture",
             source_lane="fixture",
@@ -666,7 +680,7 @@ def test_an_unsigned_activation_row_reads_as_unknown_not_allowed(connection):
 
 
 def test_forged_guard_booleans_cannot_change_an_authorization(connection):
-    real = sorted(load_registry_rows())[0]
+    real = UNAUTHORIZED_REAL_SOURCE
     before = _authorize(connection, real)
 
     forged = build_live_network_decision(
@@ -695,7 +709,7 @@ def test_forged_guard_booleans_cannot_change_an_authorization(connection):
 
 def test_the_authorization_service_withholds_unresolved_guard_inputs(connection):
     """An unresolved fact contributes None, never a permitting default."""
-    real = sorted(load_registry_rows())[0]
+    real = UNAUTHORIZED_REAL_SOURCE
     decision = _authorize(connection, real)
     assert decision["guard_inputs_withheld"]
     assert decision["guard_allowed"] is False
@@ -725,9 +739,7 @@ def test_the_checker_catches_denied_without_a_recorded_denial():
         "resolution": {"resolved_facts": {}, "authorization_ready": False},
         "not_implied": ["x"],
     }
-    assert "denied_without_a_recorded_denial" in authorization_invariant_failures(
-        liar
-    )
+    assert "denied_without_a_recorded_denial" in authorization_invariant_failures(liar)
 
 
 # -------------------------------------- the synthetic permitted branch
@@ -756,10 +768,7 @@ def test_the_synthetic_approved_branch_still_cannot_use_a_live_transport(
 
     assert decision["authorized"] is True
     assert decision["guard_allowed"] is False
-    assert (
-        "live_fetch_not_opted_in"
-        in decision["guard_decision"]["blocked_reasons"]
-    )
+    assert "live_fetch_not_opted_in" in decision["guard_decision"]["blocked_reasons"]
     assert decision["live_transport_permitted"] is False
 
 
@@ -788,7 +797,7 @@ def test_a_terms_denial_on_a_fixture_reports_as_a_decision(connection):
 
 def test_a_technical_shortfall_is_not_reported_as_a_denial(connection):
     """`collector_status=not_active` is nobody's decision."""
-    real = sorted(load_registry_rows())[0]
+    real = UNAUTHORIZED_REAL_SOURCE
     decision = _authorize(connection, real)
     assert decision["authorization_status"] != STATUS_DENIED
     assert decision["denial_is_a_decision"] is False
@@ -840,10 +849,10 @@ def test_no_real_registry_source_uses_the_fixture_prefix():
 
 
 def test_the_allowlist_is_derived_and_stores_no_flag(connection):
-    projection = project_allowlist(
-        connection=connection, organization_id=DEMO, now=T0
-    )
-    assert projection["evaluated"] == 179
+    projection = project_allowlist(connection=connection, organization_id=DEMO, now=T0)
+    # 178 registry rows + 2 synthetic fixtures. Was 179 before Gate 163 added
+    # the Grants.gov API row.
+    assert projection["evaluated"] == 180
     assert projection["real_sources_allowlisted"] == 0
     assert projection["approved_source_count"] == 0
     assert not allowlist_projection_invariant_failures(projection)
@@ -878,9 +887,7 @@ def test_the_allowlist_becomes_reachable_for_a_decided_fixture(connection):
     assert entry["is_synthetic_fixture"] is True
     assert entry["live_transport_permitted"] is False
 
-    projection = project_allowlist(
-        connection=connection, organization_id=DEMO, now=T0
-    )
+    projection = project_allowlist(connection=connection, organization_id=DEMO, now=T0)
     assert projection["synthetic_fixtures_allowlisted"] == 1
     assert projection["real_sources_allowlisted"] == 0
     assert not allowlist_projection_invariant_failures(projection)
@@ -913,7 +920,7 @@ def test_the_projection_checker_catches_an_allowlisted_real_source():
 
 
 def test_the_activation_packet_names_an_owner_for_every_blocker(connection):
-    real = sorted(load_registry_rows())[0]
+    real = UNAUTHORIZED_REAL_SOURCE
     packet = build_activation_packet(
         connection=connection, organization_id=DEMO, source_id=real, now=T0
     )
@@ -927,7 +934,7 @@ def test_the_activation_packet_names_an_owner_for_every_blocker(connection):
 
 
 def test_the_packet_records_the_robots_first_ordering(connection):
-    real = sorted(load_registry_rows())[0]
+    real = UNAUTHORIZED_REAL_SOURCE
     packet = build_activation_packet(
         connection=connection, organization_id=DEMO, source_id=real, now=T0
     )
@@ -991,18 +998,36 @@ def test_no_authorization_route_accepts_a_fact_or_an_address():
         if "source-authorization" in path
     }
     forbidden = {
-        "approved", "approve", "allow", "allowed", "permit", "permitted",
-        "override", "fact", "terms", "activation", "robots", "credential",
-        "attribution", "decision", "authorize", "url", "uri", "endpoint",
-        "host", "address", "target", "callback", "redirect", "proxy",
+        "approved",
+        "approve",
+        "allow",
+        "allowed",
+        "permit",
+        "permitted",
+        "override",
+        "fact",
+        "terms",
+        "activation",
+        "robots",
+        "credential",
+        "attribution",
+        "decision",
+        "authorize",
+        "url",
+        "uri",
+        "endpoint",
+        "host",
+        "address",
+        "target",
+        "callback",
+        "redirect",
+        "proxy",
     }
     for path, ops in paths.items():
         for method, operation in ops.items():
             assert not operation.get("requestBody"), f"{method} {path}"
             for parameter in operation.get("parameters") or []:
-                words = set(
-                    str(parameter["name"]).replace("-", "_").lower().split("_")
-                )
+                words = set(str(parameter["name"]).replace("-", "_").lower().split("_"))
                 assert not (words & forbidden), (method, path, parameter["name"])
 
 
@@ -1038,7 +1063,7 @@ def test_the_real_organization_is_refused_by_the_routes():
 
 def test_a_real_source_reads_as_refused_over_the_route():
     client = _client()
-    real = sorted(load_registry_rows())[0]
+    real = UNAUTHORIZED_REAL_SOURCE
     response = client.get(
         f"/v1/nf/demo/orgs/{DEMO}/source-authorization/sources/{real}",
         headers=soh.session_headers(DEMO),
@@ -1070,11 +1095,23 @@ def test_the_allowlist_route_reports_zero_real_sources():
 
 def test_the_registry_blocked_counts_are_preserved():
     evaluated = evaluate_registry()
-    assert evaluated["registry_row_count"] == 177
+    assert evaluated["registry_row_count"] == 178
     assert evaluated["terms_blocked_count"] == 171
-    assert evaluated["human_review_blocked_count"] == 6
+    # 6 -> 7. The Grants.gov API row is `access_posture_hint: public`, so
+    # registry-level evaluation classes it `human_review_blocked` - a person
+    # must look first. MAYHEM's recorded decisions live in the database, which
+    # `evaluate_registry` does not read, so the row cannot arrive approved.
+    assert evaluated["human_review_blocked_count"] == 7
     assert evaluated["activation_approved_count"] == 0
     assert evaluated["monitorable_count"] == 0
+
+    # The two buckets must account for every row. Two pinned integers I bump
+    # whenever the registry grows are a changelog; this fails if a row leaves
+    # a blocked bucket however the individual numbers move.
+    assert (
+        evaluated["terms_blocked_count"] + evaluated["human_review_blocked_count"]
+        == evaluated["registry_row_count"]
+    )
 
 
 def test_no_real_source_has_a_decision_or_an_approval(connection):
@@ -1086,9 +1123,7 @@ def test_no_real_source_has_a_decision_or_an_approval(connection):
         sa.select(DECISIONS_TABLE.c.source_id, DECISIONS_TABLE.c.decision)
     ).all()
     assert not [r[0] for r in rows if r[0] in real_ids]
-    assert not [
-        r[0] for r in rows if r[0] in real_ids and r[1] == APPROVED
-    ]
+    assert not [r[0] for r in rows if r[0] in real_ids and r[1] == APPROVED]
 
 
 def test_no_execution_attempt_claims_a_live_call(connection):
@@ -1195,7 +1230,19 @@ def test_the_survey_artifact_records_what_was_not_rebuilt():
         "nf_active_opportunity_sources.activation_approved_*"
     )
     assert "id spaces" in survey["why_discovery_review_items_was_not_reused"]
-    assert sorted(survey["decision_kinds"]) == [HUMAN_REVIEW, TERMS]
+    # Gate 163 added `live_fetch` with migration 0052. Compared against
+    # the repository's own constants, so this cannot drift from the
+    # vocabulary it is checking.
+    from nativeforge.repositories.source_authorization_decision_repository import (
+        DECISION_KINDS,
+    )
+
+    assert sorted(survey["decision_kinds"]) == sorted(DECISION_KINDS)
+    assert sorted(survey["decision_kinds"]) == [
+        HUMAN_REVIEW,
+        "live_fetch",
+        TERMS,
+    ]
 
 
 # --------------------------------------------- no duplicate truth source

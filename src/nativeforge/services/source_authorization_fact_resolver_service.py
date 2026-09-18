@@ -223,16 +223,23 @@ def _resolve_activation(
 ) -> dict[str, Any]:
     """Compose `nf_active_opportunity_sources`, which already owns this.
 
-    Joined on `source_name`, because that table has no `source_id` column and
-    the file-backed registry has no UUID. A name join is weaker than an id
-    join and it is reported as such rather than quietly relied on - Gate 163
-    should give these two id spaces a real key before it activates anything.
+    Joined on `source_id` - the registry's stable seed id, added by migration
+    0049. Gate 162 had to join on `source_name`, a DISPLAY STRING, because that
+    column did not exist; a display name can be edited for clarity, translated
+    or corrected for a typo, and any of those would silently detach an
+    activation from the source it authorized.
+
+    The name join survives only for rows written before the column existed, and
+    a fact resolved that way reports `join_basis: source_name_fallback`. A
+    weaker derivation stays visible rather than becoming silently equivalent to
+    a strong one.
     """
     if connection is None or not registry_row:
         return {"value": None, "record_exists": False}
 
+    seed_id = registry_row.get("seed_id")
     name = registry_row.get("source_name")
-    if not name:
+    if not seed_id and not name:
         return {"value": None, "record_exists": False}
 
     try:
@@ -240,16 +247,35 @@ def _resolve_activation(
         table = sa.Table(
             ACTIVATION_SOURCES_TABLE,
             metadata,
+            sa.Column("source_id", sa.Text()),
             sa.Column("source_name", sa.Text()),
             sa.Column("source_status", sa.Text()),
             sa.Column("activation_approved_by", sa.Text()),
             sa.Column("activation_approved_at", sa.DateTime(timezone=True)),
             sa.Column("activation_approval_artifact_id", sa.Text()),
+            sa.Column("activation_notes", sa.Text()),
             sa.Column("disabled_at", sa.DateTime(timezone=True)),
         )
-        row = connection.execute(
-            sa.select(table).where(table.c.source_name == str(name))
-        ).first()
+        row = None
+        join_basis = None
+        if seed_id:
+            row = connection.execute(
+                sa.select(table).where(table.c.source_id == str(seed_id))
+            ).first()
+            if row is not None:
+                join_basis = "source_id"
+        if row is None and name:
+            # Only for rows that predate migration 0049.
+            row = connection.execute(
+                sa.select(table).where(
+                    sa.and_(
+                        table.c.source_name == str(name),
+                        table.c.source_id.is_(None),
+                    )
+                )
+            ).first()
+            if row is not None:
+                join_basis = "source_name_fallback"
     except Exception:  # noqa: BLE001 - an unreadable table records nothing
         return {"value": None, "record_exists": False}
 
@@ -273,11 +299,19 @@ def _resolve_activation(
         "recorded_at": mapping.get("activation_approved_at"),
         "recorded_by": mapping.get("activation_approved_by"),
         "evidence_ref": mapping.get("activation_approval_artifact_id"),
+        "join_basis": join_basis,
+        # Carried for the attribution fact to verify. Stored on the activation
+        # because the operator who activates a source is the one accepting its
+        # attribution obligation.
+        "recorded_attribution_notice": mapping.get("activation_notes"),
     }
 
 
 def _resolve_robots(
-    source_id: str, registry_row: dict[str, Any] | None
+    source_id: str,
+    registry_row: dict[str, Any] | None,
+    *,
+    connection: Any = None,
 ) -> dict[str, Any]:
     """`absent` for a host that cannot exist; unresolvable for a real one.
 
@@ -309,7 +343,60 @@ def _resolve_robots(
         # A fixture pointing somewhere real is not a fixture we can answer for.
         return {"value": None, "record_exists": False}
 
-    return {"value": None, "record_exists": False}
+    # A REAL source. Gate 162 returned `missing` here for every source,
+    # because answering required the live fetch it could not make. Gate 163
+    # made that fetch for one source, so the fact now resolves from recorded
+    # evidence - by HOST, because robots.txt governs an authority rather than
+    # a source, and two sources on one host share one answer.
+    if connection is None:
+        return {"value": None, "record_exists": False}
+
+    url = str(registry_row.get("source_url") or "")
+    parts = url.split("//", 1)[-1]
+    host = parts.split("/", 1)[0].lower()
+    path = "/" + parts.split("/", 1)[1] if "/" in parts else "/"
+    if not host:
+        return {"value": None, "record_exists": False}
+
+    try:
+        metadata = sa.MetaData()
+        table = sa.Table(
+            "nf_source_robots_evidence",
+            metadata,
+            sa.Column("host", sa.Text()),
+            sa.Column("evaluated_path", sa.Text()),
+            sa.Column("decision", sa.Text()),
+            sa.Column("fetched_at", sa.DateTime(timezone=True)),
+            sa.Column("http_status", sa.Integer()),
+            sa.Column("payload_sha256", sa.Text()),
+            sa.Column("evidence_ref", sa.Text()),
+            sa.Column("recheck_due_at", sa.DateTime(timezone=True)),
+        )
+        row = connection.execute(
+            sa.select(table).where(
+                sa.and_(table.c.host == host, table.c.evaluated_path == path)
+            )
+        ).first()
+    except Exception:  # noqa: BLE001 - an unreadable table records nothing
+        return {"value": None, "record_exists": False}
+
+    if row is None:
+        # No fetch for this host and path. One host's evidence never becomes
+        # permission for another.
+        return {"value": None, "record_exists": False}
+
+    mapping = row._mapping
+    return {
+        "value": mapping.get("decision"),
+        "record_exists": True,
+        "recorded_at": mapping.get("fetched_at"),
+        "expires_at": mapping.get("recheck_due_at"),
+        "evidence_ref": (
+            f"{mapping.get('evidence_ref')}"
+            f"#status={mapping.get('http_status')}"
+            f"#sha256={str(mapping.get('payload_sha256'))[:16]}"
+        ),
+    }
 
 
 def _resolve_collector(
@@ -435,7 +522,9 @@ def _resolve_user_agent() -> dict[str, Any]:
     }
 
 
-def _resolve_attribution(terms_fact: dict[str, Any]) -> dict[str, Any]:
+def _resolve_attribution(
+    terms_fact: dict[str, Any], activation_fact: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """Derived from the recorded TERMS decision, and from nothing else.
 
     Whether a source demands attribution is part of what a reviewer decides
@@ -458,13 +547,62 @@ def _resolve_attribution(terms_fact: dict[str, Any]) -> dict[str, Any]:
         return {"value": None, "record_exists": False}
 
     if terms_value == "ATTRIBUTION_REQUIRED":
-        # The terms demand it. Whether a surface actually carries the verbatim
-        # notice is a render-time fact, and nobody has recorded one - so this
-        # refuses, and names attribution as the thing to go and record.
+        # The terms demand it, and it CAN be satisfied - by verifying that the
+        # verbatim notice is recorded on a customer-visible surface. Gate 162
+        # returned `missing` unconditionally here, which made any source whose
+        # terms require attribution permanently unauthorizable: a requirement
+        # with no way to satisfy it is a refusal in disguise.
+        #
+        # The notice is verified character-for-character, never asserted. One
+        # edited character and this returns to `missing`.
+        notice = (activation_fact or {}).get("recorded_attribution_notice")
+        if not notice:
+            return {
+                "value": None,
+                "record_exists": False,
+                "evidence_ref": (
+                    "terms_decision:ATTRIBUTION_REQUIRED:"
+                    "no_notice_recorded_on_the_activation"
+                ),
+            }
+        try:
+            from nativeforge.services.grants_gov_attribution_service import (
+                MANIFEST_BLOCK_KEY,
+                MANIFEST_NOTICE_KEY,
+                build_attribution_contract,
+            )
+
+            contract = build_attribution_contract(
+                trust_manifest={
+                    MANIFEST_BLOCK_KEY: {MANIFEST_NOTICE_KEY: notice}
+                },
+                # `runtime_payload` is the surface the manifest represents.
+                # `service_constant` is declared too but is NOT customer
+                # visible on its own, which is the bar that matters.
+                surfaces_present=["runtime_payload", "service_constant"],
+            )
+        except Exception:  # noqa: BLE001 - an unverifiable notice is not one
+            return {"value": None, "record_exists": False}
+
+        if not contract.get("attribution_is_customer_visible"):
+            return {
+                "value": None,
+                "record_exists": False,
+                "evidence_ref": (
+                    f"attribution_not_customer_visible:"
+                    f"{contract.get('attribution_status')}"
+                ),
+            }
+
         return {
-            "value": None,
-            "record_exists": False,
-            "evidence_ref": "terms_decision:ATTRIBUTION_REQUIRED",
+            "value": contract.get("attribution_status"),
+            "record_exists": True,
+            "recorded_at": terms_fact.get("recorded_at"),
+            "recorded_by": terms_fact.get("recorded_by"),
+            "evidence_ref": (
+                "grants_gov_attribution_service:verified_verbatim:"
+                "runtime_payload"
+            ),
         }
 
     if terms_value == "NO_REVIEW_REQUIRED":
@@ -599,13 +737,17 @@ def resolve_source_authorization_facts(
         connection=connection,
         organization_id=organization_id,
     )
-    resolved["robots_status"] = _resolve_robots(key, registry_row)
+    resolved["robots_status"] = _resolve_robots(
+        key, registry_row, connection=connection
+    )
     resolved["credential_status"] = _resolve_credential(registry_row)
     resolved["rate_limit_status"] = _resolve_rate_limit()
     resolved["user_agent_status"] = _resolve_user_agent()
-    # AFTER terms, because attribution is derived from the terms decision.
+    # AFTER terms AND activation: attribution is derived from the terms
+    # decision, and when terms require it the verbatim notice is read from the
+    # activation record.
     resolved["attribution_status"] = _resolve_attribution(
-        resolved["terms_status"]
+        resolved["terms_status"], resolved["activation_status"]
     )
     runtime_kwargs, runtime_facts = _resolve_runtime(
         connection=connection, organization_id=organization_id, source_id=key

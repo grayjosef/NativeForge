@@ -25,7 +25,7 @@
 #   14 the attempt table refuses transport_kind='live'
 #   15 the policy refuses a live transport
 #   16 the boundary refuses a live transport, independently
-#   17 live is not in DISPATCHABLE_KINDS
+#   17 live dispatches only with a permitting policy (Gate 163)
 #   18 a REAL source id is refused by the hermetic policy
 #   19 the worker runs a hermetic job and completes nothing
 #   20 the worker refuses a real source with the same handler and transport
@@ -108,7 +108,9 @@ for key in \
   unregistered_is_a_connection_failure attempt_row_for_every_outcome \
   proof_needs_all_seven proof_denies_a_source_responded \
   real_source_refused_by_policy live_refused_by_policy \
-  live_refused_by_the_boundary live_not_dispatchable \
+  live_refused_by_the_boundary live_requires_a_permitting_policy \
+  live_refused_when_the_policy_names_no_authorization \
+  live_dispatches_when_the_policy_permits \
   db_refuses_a_live_call_row db_refuses_a_live_transport_kind \
   counters_all_zero
 do
@@ -222,7 +224,7 @@ fi
 # ------------------------------------------------------- 8. the health lane
 F="$(.venv/bin/python scripts/_g161_phase_health.py 2>&1 | tail -1)"
 for key in \
-  execution_envelope_ready live_transport_unavailable \
+  execution_envelope_ready live_transport_requires_an_authorization \
   approved_source_count_is_zero known_is_not_approved \
   no_live_attempt_rows health_invariants_clean
 do
@@ -284,8 +286,8 @@ echo "collector_execution_envelope_ready=true"
 echo "source_monitoring_live=false"
 echo "scope=controlled_dev_demo"
 echo "transport_kind=hermetic"
-echo "live_transport_implemented=false"
-echo "live_transport_dispatchable=false"
+echo "live_transport_implemented=true (Gate 163, requires a warrant)"
+echo "live_transport_dispatchable=only_with_a_permitting_policy"
 echo "live_transport_refused_by=policy_and_boundary_and_dispatchable_kinds_and_database"
 echo "exact_bytes_hashed_before_decoding=true"
 echo "raw_payload_store=gate_160_reused_not_duplicated"

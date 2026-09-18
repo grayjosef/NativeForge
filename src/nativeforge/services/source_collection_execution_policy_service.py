@@ -120,6 +120,10 @@ def build_execution_policy(
     attribution_status: Any = None,
     user_agent_status: Any = None,
     allow_live_fetch: bool = False,
+    # Gate 163: which recorded authorization permits a LIVE transport.
+    # Absent for every hermetic execution, and its absence is exactly what
+    # `a_live_execution_was_permitted_with_no_authorized_source` catches.
+    authorized_source_id: Any = None,
     target_url: Any = None,
     caller: str = "source_collection_execution_envelope",
 ) -> dict[str, Any]:
@@ -192,6 +196,9 @@ def build_execution_policy(
             # The two verdicts, separately, so a caller can see which door is
             # open without inferring it from the other.
             "live_transport_allowed": live_allowed,
+            "authorized_source_id": (
+                str(authorized_source_id) if authorized_source_id else None
+            ),
             "hermetic_transport_allowed": hermetic_allowed,
             "refusal_reasons": sorted(set(blocked)),
             "hermetic_refusal_reasons": sorted(set(hermetic_blocked)),
@@ -220,8 +227,13 @@ def execution_policy_invariant_failures(policy: dict[str, Any]) -> list[str]:
     fails: list[str] = list(policy.get("guard_invariant_failures") or [])
 
     # THE invariant of Gate 161.
-    if policy.get("live_transport_allowed"):
-        fails.append("the_policy_permitted_a_live_transport")
+    # Gate 163 replaced an unconditional refusal with a conditional one. A
+    # permitted live transport is legitimate when a source's recorded,
+    # attributable authorization says so; it is a failure when nothing does.
+    if policy.get("live_transport_allowed") and not str(
+        policy.get("authorized_source_id") or ""
+    ).strip():
+        fails.append("a_live_transport_was_permitted_with_no_authorized_source")
     if policy.get("live_transport_implemented"):
         fails.append("the_policy_claimed_a_live_transport_exists")
     if policy.get("source_monitoring_live"):
@@ -260,9 +272,16 @@ def execution_policy_invariant_failures(policy: dict[str, Any]) -> list[str]:
     if kind is not None and kind not in TRANSPORT_KINDS:
         fails.append(f"transport_kind_outside_vocabulary:{kind}")
 
-    # A live execution may never be allowed while this gate stands.
-    if policy.get("execution_allowed") and kind == LIVE:
-        fails.append("a_live_execution_was_permitted")
+    # Gate 161 refused this unconditionally, which was right while no source
+    # could be authorized. Gate 163 makes it conditional: a live execution is
+    # legitimate when a recorded, attributable authorization named the source,
+    # and is a failure when nothing did.
+    if (
+        policy.get("execution_allowed")
+        and kind == LIVE
+        and not str(policy.get("authorized_source_id") or "").strip()
+    ):
+        fails.append("a_live_execution_was_permitted_with_no_authorized_source")
 
     if not policy.get("not_permission"):
         fails.append("the_policy_did_not_state_what_is_not_permission")

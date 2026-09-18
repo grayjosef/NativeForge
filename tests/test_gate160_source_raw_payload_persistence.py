@@ -492,9 +492,7 @@ def test_the_four_required_headers_are_refused():
 
 def test_a_header_nobody_has_classified_is_refused():
     """The whole argument for an allowlist."""
-    assert (
-        classify_header("X-Acme-Session", "v")["decision"] == REFUSED_UNRECOGNISED
-    )
+    assert classify_header("X-Acme-Session", "v")["decision"] == REFUSED_UNRECOGNISED
 
 
 def test_a_safe_header_SURVIVES():
@@ -676,8 +674,7 @@ def test_a_declared_hash_that_does_not_match_is_refused(connection):
     )
     assert result["stored"] is False
     assert any(
-        "declared_hash_does_not_match" in reason
-        for reason in result["blocked_reasons"]
+        "declared_hash_does_not_match" in reason for reason in result["blocked_reasons"]
     )
 
 
@@ -709,8 +706,7 @@ def test_the_database_refuses_a_row_claiming_a_collector(connection):
         with connection.begin_nested():
             connection.execute(
                 sa.text(
-                    "UPDATE nf_source_collection_raw_payloads "
-                    "SET collector_invoked = 1"
+                    "UPDATE nf_source_collection_raw_payloads SET collector_invoked = 1"
                 )
             )
 
@@ -728,9 +724,7 @@ def test_the_repository_refuses_unsafe_metadata(connection):
         safe_response_metadata={"authorization": "Bearer x"},
     )
     assert result["stored"] is False
-    assert any(
-        "credential_header" in reason for reason in result["blocked_reasons"]
-    )
+    assert any("credential_header" in reason for reason in result["blocked_reasons"])
 
 
 def test_the_real_organization_is_refused_by_name(connection):
@@ -752,9 +746,7 @@ def test_the_url_is_fingerprinted_never_stored(connection):
     secret_url = "https://example.gov/api?api_key=SUPERSECRET123"
     _write(connection, tag, JSON_BODY, source_url=secret_url)
     row = (
-        connection.execute(
-            sa.select(PAYLOADS).where(PAYLOADS.c.job_id == f"{tag}-job")
-        )
+        connection.execute(sa.select(PAYLOADS).where(PAYLOADS.c.job_id == f"{tag}-job"))
         .mappings()
         .first()
     )
@@ -911,11 +903,8 @@ def test_a_tampered_body_fails_replay_and_returns_no_bytes(connection):
 
 
 def test_the_invariant_checker_catches_a_body_returned_unverified():
-    assert (
-        "returned_a_body_without_verifying_the_hash"
-        in replay_invariant_failures(
-            {"body_base64": "abc", "hash_verified": False, "replayable": False}
-        )
+    assert "returned_a_body_without_verifying_the_hash" in replay_invariant_failures(
+        {"body_base64": "abc", "hash_verified": False, "replayable": False}
     )
 
 
@@ -1019,18 +1008,47 @@ def test_a_tamper_that_returned_bytes_does_not_count_as_detected():
     assert health["conditions"]["tamper_detected"] is False
 
 
-def test_a_row_claiming_a_collector_closes_the_lane():
+def test_a_row_claiming_a_collector_with_no_warrant_closes_the_lane():
+    """A collector claim is only a blocker when nothing authorized it.
+
+    `rows_claiming_a_collector: 1` alone now says "a collector ran and it was
+    authorized", which is the first real collection rather than a failure. The
+    counter that carries the property covers collector claims as well as
+    fetches - `count_payloads` counts
+    `live_fetch_performed OR collector_invoked` with `authorized_source_id IS
+    NULL` - so that is the one this sets.
+    """
     health = build_raw_payload_health(
         counts={
             "by_status": {},
             "total": 1,
             "rows_claiming_a_collector": 1,
             "rows_claiming_a_live_fetch": 0,
+            "unauthorized_live_rows": 1,
             "rows_over_the_size_limit": 0,
         }
     )
     assert health["raw_payload_persistence_ready"] is False
-    assert any("claims_a_collector" in b for b in health["blockers"])
+    assert any("with_no_warrant" in b for b in health["blockers"])
+
+
+def test_an_authorized_collector_row_does_not_close_the_lane():
+    """The other half, or the blocker above has one possible cause.
+
+    Same row, one field different. If this also blocked, the check above would
+    be measuring "a collector ran" and not "nothing authorized it."
+    """
+    health = build_raw_payload_health(
+        counts={
+            "by_status": {},
+            "total": 1,
+            "rows_claiming_a_collector": 1,
+            "rows_claiming_a_live_fetch": 0,
+            "unauthorized_live_rows": 0,
+            "rows_over_the_size_limit": 0,
+        }
+    )
+    assert not any("with_no_warrant" in b for b in health["blockers"])
 
 
 def test_ready_alongside_blockers_is_an_invariant_failure():
@@ -1070,9 +1088,9 @@ def test_the_health_service_opens_no_connection():
 def test_the_lane_names_what_ready_does_not_mean():
     health = build_raw_payload_health()
     assert "a source was contacted" in health["ready_does_not_mean"]
-    assert "production raw payload storage is available" in health[
-        "ready_does_not_mean"
-    ]
+    assert (
+        "production raw payload storage is available" in health["ready_does_not_mean"]
+    )
 
 
 # ------------------------------------------------------------ 160L routes
@@ -1089,9 +1107,10 @@ def test_the_read_routes_answer(client, path):
 
 def test_the_routes_need_a_session(client):
     soh.ensure_org(DEMO, "demo")
-    assert client.get(
-        f"/v1/nf/demo/orgs/{DEMO}/raw-payloads/health"
-    ).status_code in (401, 403)
+    assert client.get(f"/v1/nf/demo/orgs/{DEMO}/raw-payloads/health").status_code in (
+        401,
+        403,
+    )
 
 
 def test_another_organization_gets_a_404_not_a_403(client):
@@ -1202,9 +1221,7 @@ def test_the_artifacts_carry_no_secret_shape():
 
 
 def test_the_monitoring_artifact_records_every_forbidden_persistence():
-    status = json.loads(
-        build_raw_payload_artifacts()["source_monitoring_status.json"]
-    )
+    status = json.loads(build_raw_payload_artifacts()["source_monitoring_status.json"])
     for field in (
         "authorization_persisted",
         "cookie_persisted",
@@ -1224,9 +1241,7 @@ def test_the_monitoring_artifact_records_every_forbidden_persistence():
 
 
 def test_the_verifier_exists_and_is_executable():
-    script = (
-        REPO_ROOT / "scripts/verify_nativeforge_source_raw_payload_persistence.sh"
-    )
+    script = REPO_ROOT / "scripts/verify_nativeforge_source_raw_payload_persistence.sh"
     assert script.exists()
     assert script.stat().st_mode & 0o111
 

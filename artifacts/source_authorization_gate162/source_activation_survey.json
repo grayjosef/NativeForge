@@ -2,17 +2,18 @@
   "activation_approved_count": 0,
   "decision_kinds": [
     "human_review",
+    "live_fetch",
     "terms"
   ],
   "gate": "162",
-  "human_review_blocked_count": 6,
+  "human_review_blocked_count": 7,
   "live_source_call": false,
   "migration": "0048",
   "monitorable_count": 0,
-  "registry_row_count": 177,
+  "registry_row_count": 178,
   "schema_version": "nf_source_authorization_gate162_artifacts_v1",
   "second_activation_system_created": false,
-  "shipped_registry_count": 177,
+  "shipped_registry_count": 178,
   "source_monitoring_live": false,
   "terms_blocked_count": 171,
   "what_already_existed": {

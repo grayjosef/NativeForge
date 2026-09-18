@@ -6,7 +6,7 @@
 source_monitoring_preflight_ready   TRUE
 source_monitoring_live              FALSE
 scope                               controlled_dev_demo
-registry rows classified            177
+registry rows classified            178
 sources cleared for collection      0
 ```
 
@@ -30,7 +30,7 @@ passing preflight ever sets it.
 
 ```text
 terms_blocked            171
-human_review_blocked       6
+human_review_blocked       7
 api_key_missing            0
 registry_known             0
 activation_approved        0
@@ -77,7 +77,7 @@ a review that came back
 ```text
 a terms review per source
   terms_review_incomplete x171
-  human_review_only_sources x6
+  human_review_only_sources x7
 
 a scheduler that can run something:
   background_worker
@@ -97,7 +97,7 @@ user agent, and verbatim attribution where the publisher requires it.
 the registry            177 rows load and every one is classified
 the allowlist           six states, each with a different owner and fix
 the collector preflight seven declared policies, each checked
-the choke point         1196 files scanned, 0 unapproved call sites
+the choke point         1199 files scanned, 0 unapproved call sites
 the watchlist           can name a registry source, since Gate 140
 a network library       not needed to prove any of it, and not imported
 ```

@@ -29,7 +29,9 @@
 #   18 an oversize payload is refused
 #   19 the object store is not contacted, and is not configured
 #   20 collectors_invoked = 0
-#   21 live_source_calls = 0
+#   21 unauthorized live source calls = 0 (Gate 163: a WARRANTED live
+#      fetch is the first real collection; an unwarranted one is still a
+#      failure, and migration 0050 makes it unwritable)
 #   22 source_monitoring_live = false
 #   23 cleanup happens after the final persisted write
 #   24 cleanup counts actual rows
@@ -372,11 +374,11 @@ else
   fail collectors_invoked_is_zero
 fi
 
-if [ "$(jget "$A" rows_claiming_a_live_fetch)" = "0" ] &&
-   [ "$(jget "$B" rows_claiming_a_live_fetch)" = "0" ]; then
-  pass live_source_calls_is_zero
+if [ "$(jget "$A" unauthorized_live_rows)" = "0" ] &&
+   [ "$(jget "$B" unauthorized_live_rows)" = "0" ]; then
+  pass unauthorized_live_source_calls_is_zero
 else
-  fail live_source_calls_is_zero
+  fail unauthorized_live_source_calls_is_zero
 fi
 
 if [ "$(jget "$A" rows_over_the_size_limit)" = "0" ]; then
@@ -486,7 +488,7 @@ echo "object_store_configured=false"
 echo "object_store_calls=0"
 echo "production_raw_payload_store_available=false"
 echo "collectors_invoked=0"
-echo "live_source_calls=0"
+echo "unauthorized_live_source_calls=0"
 echo "network_calls=0"
 echo "emails_sent=0"
 echo "approved_source_count=0"

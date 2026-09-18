@@ -41,9 +41,7 @@ JOB_ID = f"{TAG}-job"
 SOURCE_ID = f"{TAG}-src"
 
 BODY = (
-    b'{"opportunities":[{"id":"ABC-123","note":"'
-    b"\xff\xfe binary \x00 tail \x80\x81"
-    b'"}]}'
+    b'{"opportunities":[{"id":"ABC-123","note":"\xff\xfe binary \x00 tail \x80\x81"}]}'
 )
 
 engine = sa.create_engine(get_settings().database_url)
@@ -141,9 +139,7 @@ out["tampered_invariants"] = replay_invariant_failures(tampered)
 
 # ---- listing and counts -------------------------------------------------
 with engine.connect() as connection:
-    by_job = list_payloads(
-        connection=connection, organization_id=ORG, job_id=JOB_ID
-    )
+    by_job = list_payloads(connection=connection, organization_id=ORG, job_id=JOB_ID)
     counts = count_payloads(connection=connection, organization_id=ORG)
 out["payloads_for_this_job"] = by_job["payload_count"]
 out["by_status"] = counts["by_status"]
@@ -152,14 +148,28 @@ out["distinct_hashes"] = counts["distinct_hashes"]
 out["total_bytes"] = counts["total_bytes"]
 out["rows_claiming_a_collector"] = counts["rows_claiming_a_collector"]
 out["rows_claiming_a_live_fetch"] = counts["rows_claiming_a_live_fetch"]
+# The raw count above is legitimately nonzero: the persisted robots.txt
+# evidence claims a live fetch because one happened, under a recorded
+# authorization. The count that must be zero is the narrower one - a row
+# claiming a live fetch with no authorization behind it.
+out["unauthorized_live_rows"] = counts["unauthorized_live_rows"]
 
 # ---- 19: the database refuses a row claiming a collector ----------------
+#
+# Scoped to THIS phase's job. These statements are meant to be refused,
+# and an unscoped UPDATE swept the real Grants.gov robots evidence into
+# the same statement. It was refused and rolled back, so nothing was
+# lost - but a probe that must fail is not a safe place to aim at real
+# evidence, and the refusal is more attributable when the only rows in
+# range are the fixture's own.
 try:
     with engine.begin() as connection:
         connection.execute(
             sa.text(
-                "UPDATE nf_source_collection_raw_payloads SET collector_invoked = 1"
-            )
+                "UPDATE nf_source_collection_raw_payloads "
+                "SET collector_invoked = 1 WHERE job_id = :job"
+            ),
+            {"job": JOB_ID},
         )
     out["database_refused_a_collector_claim"] = False
 except Exception as exc:  # noqa: BLE001 - the refusal is the measurement
@@ -172,8 +182,9 @@ try:
         connection.execute(
             sa.text(
                 "UPDATE nf_source_collection_raw_payloads "
-                "SET live_fetch_performed = 1"
-            )
+                "SET live_fetch_performed = 1 WHERE job_id = :job"
+            ),
+            {"job": JOB_ID},
         )
     out["database_refused_a_live_fetch_claim"] = False
 except Exception:  # noqa: BLE001
@@ -185,8 +196,9 @@ try:
         connection.execute(
             sa.text(
                 "UPDATE nf_source_collection_raw_payloads "
-                "SET payload_size_bytes = 99999999"
-            )
+                "SET payload_size_bytes = 99999999 WHERE job_id = :job"
+            ),
+            {"job": JOB_ID},
         )
     out["database_refused_an_oversize_row"] = False
 except Exception:  # noqa: BLE001

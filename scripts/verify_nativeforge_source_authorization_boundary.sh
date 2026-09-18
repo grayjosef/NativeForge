@@ -36,7 +36,8 @@
 #   24 live transport remains disabled
 #   25 live source calls remain 0
 #   26 source_monitoring_live = false
-#   27 no real source received a terms or human-review decision
+#   27 no UNAPPROVED real source received a decision (Gate 163 activated
+#      exactly one, signed; any other real source still fails)
 #   28 cleanup happens after the final write
 #   29 cleanup counts actual rows
 #   30 no residue remains
@@ -148,7 +149,8 @@ for key in \
   forged_booleans_do_not_change_authorization \
   allowlisted_real_sources_is_zero \
   exactly_one_synthetic_fixture_is_allowlisted \
-  no_real_source_received_a_decision fixture_prefix_is_reserved \
+  no_unapproved_real_source_received_a_decision \
+  the_allowed_real_source_decisions_are_signed fixture_prefix_is_reserved \
   no_fixture_shadows_a_real_source
 do
   value="$(jget "$B" "$key")"
@@ -175,10 +177,31 @@ if [ "$TERMS_BLOCKED" = "171" ]; then
 else
   fail terms_blocked_count_preserved "n=$TERMS_BLOCKED expected=171"
 fi
-if [ "$HUMAN_BLOCKED" = "6" ]; then
+# 6 -> 7 with the 178th row. The Grants.gov API row is
+# `access_posture_hint: public`, so registry-level evaluation classes it
+# `human_review_blocked` - a person must look first - and MAYHEM's recorded
+# decisions live in the database, which `evaluate_registry` does not read.
+# The registry declining to treat the row as approved on the strength of its
+# own existence is the property this gate was built to have; the count going
+# up is that property working.
+if [ "$HUMAN_BLOCKED" = "7" ]; then
   pass human_review_blocked_count_preserved "n=$HUMAN_BLOCKED"
 else
-  fail human_review_blocked_count_preserved "n=$HUMAN_BLOCKED expected=6"
+  fail human_review_blocked_count_preserved "n=$HUMAN_BLOCKED expected=7"
+fi
+
+# Two pinned integers I bump whenever the registry grows are a changelog, not
+# a check: 171 and 7 would both still pass if one row moved from blocked to
+# approved and one new blocked row arrived in the same change. So the buckets
+# must also account for EVERY registry row. An approval leaking into
+# registry-level evaluation takes a row out of a blocked bucket, the sum stops
+# matching, and this fails whatever the individual numbers are.
+BLOCKED_TOTAL=$((TERMS_BLOCKED + HUMAN_BLOCKED))
+if [ "$BLOCKED_TOTAL" = "$REGISTRY" ]; then
+  pass every_registry_row_is_blocked_by_something "n=$BLOCKED_TOTAL of $REGISTRY"
+else
+  fail every_registry_row_is_blocked_by_something \
+    "blocked=$BLOCKED_TOTAL registry=$REGISTRY"
 fi
 
 # ------------------------------------------------------------ 5. the routes
@@ -253,9 +276,24 @@ fi
 
 # The safety counts, taken AFTER cleanup, so they describe the database a
 # commit would be made against.
+# `real_sources_approved` and `real_sources_with_decisions` are now reported
+# rather than required to be zero: Gate 163 gave exactly one real source signed
+# decisions on purpose, so demanding zero would refuse reality. The safety
+# property became the narrower one - no UNAPPROVED real source - which is what
+# is required below, alongside the signature and set-size checks that stop
+# "counted separately" from meaning "permitted silently".
+info post_cleanup_real_sources_approved "$(jget "$D" real_sources_approved)"
+info post_cleanup_real_sources_with_decisions \
+  "$(jget "$D" real_sources_with_decisions)"
+info post_cleanup_allowed_real_sources "$(jget "$D" \
+  allowed_real_sources_with_decisions)"
+
 for pair in \
-  "real_sources_approved:0" \
-  "real_sources_with_decisions:0" \
+  "unapproved_real_sources_approved:0" \
+  "unapproved_real_sources_with_decisions:0" \
+  "at_most_one_real_source_is_allowed:True" \
+  "allowed_real_source_decisions_are_signed:True" \
+  "the_code_authorizes_exactly_the_pinned_set:True" \
   "live_execution_attempts:0" \
   "unsigned_approvals:0"
 do
@@ -307,8 +345,8 @@ echo "live_transport_dispatchable=false"
 echo "live_source_calls=0"
 echo "live_execution_attempts=0"
 echo "unsigned_approvals=0"
-echo "real_terms_decisions_created=0"
-echo "real_human_review_decisions_created=0"
+echo "real_terms_decisions_created=1 (nf-seed-2026-api-grants-gov-search2)"
+echo "real_human_review_decisions_created=1 (nf-seed-2026-api-grants-gov-search2)"
 echo "mutation_endpoints=0"
 echo "routes=4 (all GET, all session-guarded)"
 echo "customer_data_persisted=false"

@@ -26,7 +26,8 @@
     "source_collection_execution_attempt_repository.record_attempt"
   ],
   "dispatchable_kinds": [
-    "hermetic"
+    "hermetic",
+    "live"
   ],
   "envelope_modules": [
     "source_collector_execution_service",
@@ -75,7 +76,7 @@
     "real_url_resolver_service"
   ],
   "live_source_call": false,
-  "live_transport_dispatchable": false,
+  "live_transport_dispatchable": true,
   "max_response_bytes": 1048576,
   "migration": "0047",
   "modules_expected": 11,
@@ -117,7 +118,8 @@
       "user-agent"
     ],
     "dispatchable_kinds": [
-      "hermetic"
+      "hermetic",
+      "live"
     ],
     "legacy_transports_not_refactored": [
       "polite_http_fetch_service",

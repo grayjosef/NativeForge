@@ -54,6 +54,9 @@ from nativeforge.services.source_live_authorization_service import (  # noqa: E4
     authorization_invariant_failures,
     authorize_source_for_live_access,
 )
+from nativeforge.services.source_live_warrant_service import (  # noqa: E402
+    AUTHORIZED_SOURCE_IDS,
+)
 from nativeforge.services.source_monitoring_approved_source_service import (  # noqa: E402,E501
     evaluate_registry,
     load_registry_rows,
@@ -67,6 +70,19 @@ EXPIRED = dt.datetime(2026, 1, 1, tzinfo=dt.UTC)
 #: Every row this phase writes carries it, so cleanup can find them all.
 ARTIFACT_ID = "nf162-verify-activation"
 
+#: The ONLY real sources permitted to carry terms / human-review / activation
+#: decisions. Gate 163 activated exactly one, signed by MAYHEM. Any other real
+#: source carrying any such decision fails this verifier.
+ALLOWED_REAL_DECISION_SOURCES: frozenset[str] = frozenset(
+    {"nf-seed-2026-api-grants-gov-search2"}
+)
+
+#: A LITERAL, deliberately. The authoritative set lives in the code under test
+#: as `source_live_warrant_service.AUTHORIZED_SOURCE_IDS`; deriving this from
+#: it would make the check follow the code, so adding a source there would
+#: silently widen what this verifier permits. Pinned here and cross-checked
+#: against the code, so drift in either direction fails.
+
 out: dict[str, object] = {}
 detail: list[str] = []
 
@@ -75,6 +91,7 @@ ACTIVE_SOURCES = sa.Table(
     sa.MetaData(),
     sa.Column("id", sa.Uuid(as_uuid=True), primary_key=True),
     sa.Column("organization_id", sa.Uuid(as_uuid=True)),
+    sa.Column("source_id", sa.Text()),
     sa.Column("source_name", sa.Text()),
     sa.Column("source_type", sa.Text()),
     sa.Column("source_lane", sa.Text()),
@@ -164,6 +181,145 @@ try:
 
     fingerprint = fixture_evidence_fingerprint(UNDECIDED_FIXTURE) or ("d" * 64)
 
+    # ---- establish "missing", do not inherit it ----------------------
+    #
+    # `missing_terms_blocks` asserts the resolver refuses a MISSING terms
+    # fact. Nothing here made it missing. This phase writes a terms decision
+    # for this same fixture forty lines down, and `record_decision` upserts,
+    # so the fact was missing only when some EARLIER run had deleted it - and
+    # that deletion lives in the cleanup phase, which runs last.
+    #
+    # The check therefore passed after a clean run and failed after a crashed
+    # one. A green check with two possible causes has only been half-tested,
+    # so the precondition is established here and confirmed.
+    #
+    # PINNED to the two named fixture constants. Not the reserved prefix, not
+    # registry ordering, not `sorted(shipped)[0]`, and nothing that
+    # ALLOWED_REAL_DECISION_SOURCES can move: those two ids are what this
+    # phase writes and they are the only ids it may clear.
+    PINNED_FIXTURES = (UNDECIDED_FIXTURE, PERMITTABLE_FIXTURE)
+    out["pinned_fixture_subjects"] = list(PINNED_FIXTURES)
+    out["the_fixture_subjects_are_reserved_ids"] = all(
+        str(fixture).startswith("nf162.fixture.") for fixture in PINNED_FIXTURES
+    )
+
+    def real_decision_count() -> int:
+        return int(
+            session.execute(
+                sa.select(sa.func.count())
+                .select_from(DECISIONS_TABLE)
+                .where(
+                    DECISIONS_TABLE.c.organization_id == DEMO,
+                    DECISIONS_TABLE.c.source_id.in_(
+                        sorted(ALLOWED_REAL_DECISION_SOURCES)
+                    ),
+                )
+            ).scalar_one()
+            or 0
+        )
+
+    # Counted before, counted after. The delete below must be provably
+    # incapable of reaching the one real source that carries decisions.
+    real_decisions_before = real_decision_count()
+
+    def real_activation_count() -> int:
+        return int(
+            session.execute(
+                sa.select(sa.func.count())
+                .select_from(ACTIVE_SOURCES)
+                .where(
+                    ACTIVE_SOURCES.c.organization_id == DEMO,
+                    ACTIVE_SOURCES.c.source_id.in_(
+                        sorted(ALLOWED_REAL_DECISION_SOURCES)
+                    ),
+                )
+            ).scalar_one()
+            or 0
+        )
+
+    real_activations_before = real_activation_count()
+
+    session.execute(
+        sa.delete(DECISIONS_TABLE).where(
+            DECISIONS_TABLE.c.organization_id == DEMO,
+            DECISIONS_TABLE.c.source_id.in_(PINNED_FIXTURES),
+        )
+    )
+
+    # The activation row has the same defect. This phase INSERTs it below and
+    # the unique key is the legacy display-name tuple, so a row surviving any
+    # earlier run collides and kills the phase at
+    # `synthetic_branch_reaches_authorized` - which then reads as "the
+    # permitted branch is unreachable" when the cause is residue.
+    #
+    # Pinned three ways over: a named fixture id, or a row carrying THIS
+    # phase's own artifact tag, and in either case of fixture type. The real
+    # Grants.gov activation row carries a different artifact id, is not a
+    # fixture type and is not a pinned id.
+    session.execute(
+        sa.delete(ACTIVE_SOURCES).where(
+            ACTIVE_SOURCES.c.organization_id == DEMO,
+            ACTIVE_SOURCES.c.source_type == "fixture",
+            sa.or_(
+                ACTIVE_SOURCES.c.source_id.in_(PINNED_FIXTURES),
+                ACTIVE_SOURCES.c.activation_approval_artifact_id == ARTIFACT_ID,
+            ),
+        )
+    )
+    session.commit()
+
+    residue = int(
+        session.execute(
+            sa.select(sa.func.count())
+            .select_from(DECISIONS_TABLE)
+            .where(
+                DECISIONS_TABLE.c.organization_id == DEMO,
+                DECISIONS_TABLE.c.source_id.in_(PINNED_FIXTURES),
+            )
+        ).scalar_one()
+        or 0
+    )
+    out["the_fixtures_start_with_no_decisions"] = bool(residue == 0)
+    if residue:
+        detail.append(f"fixture decision residue survived the reset: {residue}")
+
+    out["clearing_the_fixtures_left_the_real_decisions_alone"] = bool(
+        real_decision_count() == real_decisions_before
+    )
+    out["real_source_decisions_preserved"] = real_decisions_before
+
+    out["the_code_authorizes_exactly_the_pinned_set"] = bool(
+        frozenset(AUTHORIZED_SOURCE_IDS) == ALLOWED_REAL_DECISION_SOURCES
+    )
+    if frozenset(AUTHORIZED_SOURCE_IDS) != ALLOWED_REAL_DECISION_SOURCES:
+        detail.append(
+            "the code's AUTHORIZED_SOURCE_IDS drifted from the pinned set: "
+            f"{sorted(AUTHORIZED_SOURCE_IDS)}"
+        )
+
+    # "The delete was narrow" is a claim. This is the measurement.
+    out["clearing_the_fixtures_left_the_real_activation_alone"] = bool(
+        real_activation_count() == real_activations_before
+    )
+    out["real_source_activations_preserved"] = real_activations_before
+
+    fixture_activations = int(
+        session.execute(
+            sa.select(sa.func.count())
+            .select_from(ACTIVE_SOURCES)
+            .where(
+                ACTIVE_SOURCES.c.organization_id == DEMO,
+                ACTIVE_SOURCES.c.source_id.in_(PINNED_FIXTURES),
+            )
+        ).scalar_one()
+        or 0
+    )
+    out["the_fixtures_start_with_no_activation"] = bool(fixture_activations == 0)
+    if fixture_activations:
+        detail.append(
+            f"fixture activation residue survived the reset: {fixture_activations}"
+        )
+
     out["missing_terms_blocks"] = bool(
         fact_status(UNDECIDED_FIXTURE, "terms_status") == "missing"
     )
@@ -188,8 +344,7 @@ try:
         and not denied["authorized"]
     )
     out["a_denial_is_reported_as_a_decision"] = bool(
-        denied["denial_is_a_decision"]
-        and denied["authorization_status"] == "denied"
+        denied["denial_is_a_decision"] and denied["authorization_status"] == "denied"
     )
 
     decide(
@@ -255,9 +410,7 @@ try:
             reviewed_by="reviewer:nf162-verify",
             reviewed_at=NOW,
             review_authority="nf162_verifier",
-            evidence_fingerprint=fixture_evidence_fingerprint(
-                PERMITTABLE_FIXTURE
-            ),
+            evidence_fingerprint=fixture_evidence_fingerprint(PERMITTABLE_FIXTURE),
             expires_at=LATER,
         )
     row = FIXTURE_ROWS[PERMITTABLE_FIXTURE]
@@ -265,6 +418,10 @@ try:
         sa.insert(ACTIVE_SOURCES).values(
             id=uuid.uuid4(),
             organization_id=DEMO,
+            # Gate 163A: the stable key. Without it the resolver falls through
+            # to the legacy source_name join and trips
+            # `a_permitting_fact_joined_on_a_display_name`, which stays strict.
+            source_id=PERMITTABLE_FIXTURE,
             source_name=row["source_name"],
             source_type="fixture",
             source_lane="fixture",
@@ -282,9 +439,7 @@ try:
 
     permitted = authorize(PERMITTABLE_FIXTURE)
     facts = (permitted.get("resolution") or {}).get("resolved_facts") or {}
-    recorded = [
-        name for name, f in facts.items() if f.get("fact_status") == "recorded"
-    ]
+    recorded = [name for name, f in facts.items() if f.get("fact_status") == "recorded"]
 
     out["synthetic_branch_reaches_authorized"] = bool(permitted["authorized"])
     out["synthetic_branch_status_is_approved"] = bool(
@@ -293,17 +448,14 @@ try:
     out["synthetic_recorded_fact_count"] = len(recorded)
     out["synthetic_all_eleven_facts_recorded"] = bool(len(recorded) == 11)
     if not permitted["authorized"]:
-        detail.append(
-            f"synthetic branch UNREACHABLE: {permitted['refusal_reasons']}"
-        )
+        detail.append(f"synthetic branch UNREACHABLE: {permitted['refusal_reasons']}")
 
     # ---- 22. and it still does not opt into a live fetch ------------
     guard_blockers = (permitted.get("guard_decision") or {}).get(
         "blocked_reasons"
     ) or []
     out["synthetic_authorization_does_not_opt_into_live_fetch"] = bool(
-        not permitted["guard_allowed"]
-        and "live_fetch_not_opted_in" in guard_blockers
+        not permitted["guard_allowed"] and "live_fetch_not_opted_in" in guard_blockers
     )
     out["synthetic_authorization_permits_no_live_transport"] = bool(
         not permitted["live_transport_permitted"]
@@ -333,9 +485,7 @@ try:
     )
 
     # ---- the allowlist projection ----------------------------------
-    projection = project_allowlist(
-        connection=session, organization_id=DEMO, now=NOW
-    )
+    projection = project_allowlist(connection=session, organization_id=DEMO, now=NOW)
     detail.extend(allowlist_projection_invariant_failures(projection))
     out["allowlist_evaluated"] = int(projection["evaluated"])
     out["allowlisted_real_sources_is_zero"] = bool(
@@ -348,16 +498,33 @@ try:
         int(projection["synthetic_fixtures_allowlisted"]) == 1
     )
 
-    # ---- 27. no real source received a decision --------------------
+    # ---- 27. no UNAPPROVED real source received a decision -----------
+    #
+    # Gate 162 proved zero real decisions, which was the right property while
+    # no source could be activated. Gate 163 deliberately gave exactly one
+    # real source signed decisions, so the assertion narrows rather than
+    # disappears: any real source outside the allowed set still fails.
     rows = session.execute(
-        sa.select(DECISIONS_TABLE.c.source_id).where(
-            DECISIONS_TABLE.c.organization_id == DEMO
-        )
-    ).scalars().all()
-    real_decisions = sorted(set(rows) & set(real_ids))
-    out["no_real_source_received_a_decision"] = not real_decisions
-    if real_decisions:
-        detail.append(f"real sources with decisions: {real_decisions}")
+        sa.select(
+            DECISIONS_TABLE.c.source_id,
+            DECISIONS_TABLE.c.reviewed_by,
+            DECISIONS_TABLE.c.reviewed_at,
+        ).where(DECISIONS_TABLE.c.organization_id == DEMO)
+    ).all()
+    real_with_decisions = {r[0] for r in rows} & set(real_ids)
+    unapproved = sorted(real_with_decisions - ALLOWED_REAL_DECISION_SOURCES)
+    out["no_unapproved_real_source_received_a_decision"] = not unapproved
+    if unapproved:
+        detail.append(f"UNAPPROVED real sources with decisions: {unapproved}")
+
+    # And the allowed one's decisions must be signed and attributable, or the
+    # exception is a hole rather than a permission.
+    allowed_rows = [r for r in rows if r[0] in ALLOWED_REAL_DECISION_SOURCES]
+    out["the_allowed_real_source_decisions_are_signed"] = bool(
+        allowed_rows and all(r[1] and r[2] for r in allowed_rows)
+    )
+    if allowed_rows and not all(r[1] and r[2] for r in allowed_rows):
+        detail.append("an allowed real-source decision is unsigned")
 
     # ---- the fixture registry stays reserved -----------------------
     described = describe_fixture_registry(shipped)
@@ -379,6 +546,12 @@ for key in (
     "real_approved_count_is_zero",
     "registry_activation_approved_count_is_zero",
     "registry_monitorable_count_is_zero",
+    "the_fixture_subjects_are_reserved_ids",
+    "the_fixtures_start_with_no_decisions",
+    "the_fixtures_start_with_no_activation",
+    "the_code_authorizes_exactly_the_pinned_set",
+    "clearing_the_fixtures_left_the_real_decisions_alone",
+    "clearing_the_fixtures_left_the_real_activation_alone",
     "missing_terms_blocks",
     "missing_human_review_blocks",
     "missing_activation_blocks",
@@ -397,7 +570,8 @@ for key in (
     "forged_booleans_do_not_change_authorization",
     "allowlisted_real_sources_is_zero",
     "exactly_one_synthetic_fixture_is_allowlisted",
-    "no_real_source_received_a_decision",
+    "no_unapproved_real_source_received_a_decision",
+    "the_allowed_real_source_decisions_are_signed",
     "fixture_prefix_is_reserved",
     "no_fixture_shadows_a_real_source",
 ):

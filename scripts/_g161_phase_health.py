@@ -28,9 +28,12 @@ try:
         detail.append(str(fails))
 
     out["execution_envelope_ready"] = bool(health["execution_envelope_ready"])
-    out["live_transport_unavailable"] = bool(
-        health["live_transport_available"] is False
-        and "live" not in health["dispatchable_kinds"]
+    # Gate 163: a live transport now EXISTS and is dispatchable for an
+    # authorized source. The property that still matters is that it cannot
+    # dispatch without an authorizing policy - measured by the health lane
+    # attempting exactly that and requiring refusal.
+    out["live_transport_requires_an_authorization"] = bool(
+        health["conditions"].get("live_transport_requires_an_authorization")
         and health["live_execution_proven"] is False
     )
     out["approved_source_count_is_zero"] = bool(
@@ -55,7 +58,7 @@ finally:
     session.close()
 
 for key in (
-    "execution_envelope_ready", "live_transport_unavailable",
+    "execution_envelope_ready", "live_transport_requires_an_authorization",
     "approved_source_count_is_zero", "known_is_not_approved",
     "no_live_attempt_rows", "health_invariants_clean",
 ):

@@ -79,6 +79,14 @@ class ApprovedSite:
 # attached; there is no wildcard.
 APPROVED_NETWORK_SITES: tuple[ApprovedSite, ...] = (
     ApprovedSite(
+        "live_source_transport_service",
+        "Gate 163: the live transport for an authorized source. Refuses at "
+        "construction unless the authorization resolved to approved, its "
+        "source matches, and the URL host matches the authorized host",
+        "source_live_authorization_service.authorize_source_for_live_access "
+        "(which composes live_network_guard_service)",
+    ),
+    ApprovedSite(
         "grants_gov_search_api_adapter_service",
         "single choke point for Grants.gov Search2/fetchOpportunity",
         "hermetic_test_guard_service.assert_live_network_allowed (Gate 77B)",

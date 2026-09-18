@@ -262,9 +262,7 @@ def _decision_status(kind: str) -> dict[str, Any]:
         "table": "nf_source_authorization_decisions",
         "decision_vocabulary": sorted(DECISIONS),
         "guard_status_vocabulary": sorted(GUARD_STATUSES),
-        "approval_permitting_guard_statuses": sorted(
-            APPROVAL_PERMITTING_STATUSES
-        ),
+        "approval_permitting_guard_statuses": sorted(APPROVAL_PERMITTING_STATUSES),
         "database_refuses": [
             "an approved decision with no reviewed_by",
             "an approved decision with no reviewed_at",
@@ -316,9 +314,7 @@ def _runtime() -> dict[str, Any]:
         "unmet_for_collection": facts["unmet_for_collection"],
         "invariant_failures": runtime_readiness_invariant_failures(facts),
         "repairs": facts["repairs"],
-        "not_derived_from_module_existence": facts[
-            "not_derived_from_module_existence"
-        ],
+        "not_derived_from_module_existence": facts["not_derived_from_module_existence"],
         "authorizes_nothing": facts["authorizes_nothing"],
         "not_implied": facts["not_implied"],
         "source_monitoring_live": False,
@@ -443,11 +439,7 @@ def _permitted_branch() -> dict[str, Any]:
             record_exists=True,
             decision_verdict="approved" if signed else None,
             recorded_by=(
-                (
-                    FIXTURE_OPERATOR
-                    if name == "activation_status"
-                    else FIXTURE_SIGNER
-                )
+                (FIXTURE_OPERATOR if name == "activation_status" else FIXTURE_SIGNER)
                 if signed
                 else None
             ),
@@ -509,7 +501,14 @@ def _packet_example() -> dict[str, Any]:
     source.
     """
     shipped = load_registry_rows()
-    example_id = sorted(shipped)[0] if shipped else None
+    # Pinned rather than picked by sort order. Gate 163's seed id sorts first,
+    # so the worked example in a "no real source is authorized" artifact would
+    # have become the one source that is.
+    example_id = (
+        "nf-seed-2026-fed-001"
+        if "nf-seed-2026-fed-001" in shipped
+        else (sorted(shipped)[0] if shipped else None)
+    )
 
     resolution = resolve_source_authorization_facts(
         source_id=example_id, now=FIXTURE_INSTANT
@@ -534,9 +533,7 @@ def _packet_example() -> dict[str, Any]:
             "nothing and sets no flag."
         ),
         "resolver_invariant_failures": resolver_invariant_failures(resolution),
-        "authorization_invariant_failures": authorization_invariant_failures(
-            decision
-        ),
+        "authorization_invariant_failures": authorization_invariant_failures(decision),
         "live_transport_permitted": False,
         "source_monitoring_live": False,
     }

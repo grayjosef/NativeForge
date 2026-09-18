@@ -1,6 +1,7 @@
 {
   "a_live_transport": {
     "approved_source_count": 0,
+    "authorized_source_id": null,
     "collectors_invoked": 0,
     "execution_allowed": false,
     "guard_allowed": false,
@@ -43,6 +44,7 @@
   },
   "a_production_scope": {
     "approved_source_count": 0,
+    "authorized_source_id": null,
     "collectors_invoked": 0,
     "execution_allowed": false,
     "guard_allowed": false,
@@ -87,6 +89,7 @@
   },
   "a_real_source": {
     "approved_source_count": 0,
+    "authorized_source_id": null,
     "collectors_invoked": 0,
     "execution_allowed": false,
     "guard_allowed": false,
@@ -131,6 +134,7 @@
   },
   "a_synthetic_fixture_hermetic": {
     "approved_source_count": 0,
+    "authorized_source_id": null,
     "collectors_invoked": 0,
     "execution_allowed": true,
     "guard_allowed": false,
@@ -181,6 +185,7 @@
   "source_monitoring_live": false,
   "the_real_organization": {
     "approved_source_count": 0,
+    "authorized_source_id": null,
     "collectors_invoked": 0,
     "execution_allowed": false,
     "guard_allowed": false,

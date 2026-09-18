@@ -3,7 +3,7 @@
     "activation_approved": 0,
     "api_key_missing": 0,
     "fixture_allowed": 0,
-    "human_review_blocked": 6,
+    "human_review_blocked": 7,
     "registry_known": 0,
     "terms_blocked": 171,
     "unknown_source": 0
@@ -67,7 +67,7 @@
   "real_organization_route_not_built_because": "it would create a route to aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee that nobody has authorized",
   "registry_has_a_terms_column": false,
   "registry_has_no_terms_column_so": "every unreviewed row is UNKNOWN, and live_network_guard_service already classifies UNKNOWN as blocking - deny by default falls out of the data rather than being imposed on it",
-  "registry_row_count": 177,
+  "registry_row_count": 178,
   "sam_gov_rows_in_the_registry": 0,
   "scheduler_components_missing": [
     "background_worker",

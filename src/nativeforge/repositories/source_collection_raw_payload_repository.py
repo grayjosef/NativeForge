@@ -183,6 +183,7 @@ PAYLOADS = sa.Table(
     # Declared so a read can assert them. The database refuses a true value.
     sa.Column("collector_invoked", sa.Boolean(), nullable=False),
     sa.Column("live_fetch_performed", sa.Boolean(), nullable=False),
+    sa.Column("authorized_source_id", sa.Text(), nullable=True),
     sa.Column("fact_status", sa.String(length=32), nullable=False),
     sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
     sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
@@ -219,6 +220,7 @@ def _row_to_payload(row: Any, *, include_body: bool = False) -> dict[str, Any]:
         # Python constant.
         "collector_invoked": bool(payload.get("collector_invoked")),
         "live_fetch_performed": bool(payload.get("live_fetch_performed")),
+        "authorized_source_id": payload.get("authorized_source_id"),
         "fact_status": payload.get("fact_status"),
         "created_at": payload.get("created_at"),
         "updated_at": payload.get("updated_at"),
@@ -336,6 +338,13 @@ def persist_payload(
     fact_status: str = "synthetic_fixture",
     is_demo: bool = True,
     max_bytes: int = MAX_PAYLOAD_BYTES,
+    # Gate 163. These were hardcoded False while nothing could fetch, which
+    # was right then. Migration 0050's CHECK requires `authorized_source_id`
+    # on any row that sets either flag, so a live payload that cannot name its
+    # warrant still cannot be written.
+    collector_invoked: bool = False,
+    live_fetch_performed: bool = False,
+    authorized_source_id: Any = None,
 ) -> dict[str, Any]:
     """Store one attempt's bytes. Verifies the hash before and after."""
     org, blocked = _validate(
@@ -431,8 +440,11 @@ def persist_payload(
                     parser_version=None,
                     blocked_reasons=[],
                     # Never anything else. The database refuses it.
-                    collector_invoked=False,
-                    live_fetch_performed=False,
+                    collector_invoked=bool(collector_invoked),
+                    live_fetch_performed=bool(live_fetch_performed),
+                    authorized_source_id=(
+                        str(authorized_source_id) if authorized_source_id else None
+                    ),
                     fact_status=str(fact_status),
                     created_at=moment,
                     updated_at=moment,
@@ -623,6 +635,7 @@ def count_payloads(
         "distinct_hashes": 0,
         "rows_claiming_a_collector": 0,
         "rows_claiming_a_live_fetch": 0,
+        "unauthorized_live_rows": 0,
         "rows_over_the_size_limit": 0,
     }
     if blocked or org is None:
@@ -679,6 +692,34 @@ def count_payloads(
         or 0
     )
 
+    # Gate 163: rows claiming live activity with NO warrant. Migration 0050
+    # requires `authorized_source_id` on any such row, so these are unwritable
+    # going forward; this proves none predate that constraint.
+    #
+    # The two counters below it are kept. "How much live activity has there
+    # been" is still worth knowing - it just stopped being the thing that
+    # decides readiness, because a warranted live fetch is now legitimate.
+    try:
+        unauthorized_live_rows = int(
+            connection.execute(
+                sa.select(sa.func.count())
+                .select_from(PAYLOADS)
+                .where(
+                    sa.and_(
+                        PAYLOADS.c.organization_id == org,
+                        sa.or_(
+                            PAYLOADS.c.live_fetch_performed.is_(True),
+                            PAYLOADS.c.collector_invoked.is_(True),
+                        ),
+                        PAYLOADS.c.authorized_source_id.is_(None),
+                    )
+                )
+            ).scalar()
+            or 0
+        )
+    except Exception:  # noqa: BLE001 - an unreadable count is not a pass
+        unauthorized_live_rows = -1
+
     return _result(
         **{
             "by_status": by_status,
@@ -689,9 +730,11 @@ def count_payloads(
             # Two attempts may share bytes, so this is deliberately not the
             # same as `total`.
             "distinct_hashes": int(totals[1] or 0),
-            # Summed from the rows. The CHECK keeps them zero; this proves it.
+            # Summed from the rows. A warranted live row is the first real
+            # collection; an unwarranted one is the failure.
             "rows_claiming_a_collector": int(totals[2] or 0),
             "rows_claiming_a_live_fetch": int(totals[3] or 0),
+            "unauthorized_live_rows": unauthorized_live_rows,
             "rows_over_the_size_limit": oversize,
             "max_payload_bytes": MAX_PAYLOAD_BYTES,
         }
@@ -736,10 +779,15 @@ def raw_payload_invariant_failures(result: dict[str, Any]) -> list[str]:
             fails.append(
                 f"row_retention_outside_vocabulary:{payload.get('retention_policy')}"
             )
-        if payload.get("collector_invoked"):
-            fails.append("row_claimed:collector_invoked")
-        if payload.get("live_fetch_performed"):
-            fails.append("row_claimed:live_fetch_performed")
+        # Gate 163 replaced two unconditional refusals with conditional ones.
+        # A live fetch is legitimate when a recorded authorization named the
+        # source; it is a failure when nothing did. Migration 0050 enforces the
+        # same rule in the database, where it cannot be bypassed.
+        warrant = str(payload.get("authorized_source_id") or "").strip()
+        if payload.get("collector_invoked") and not warrant:
+            fails.append("collector_invoked_with_no_authorized_source")
+        if payload.get("live_fetch_performed") and not warrant:
+            fails.append("live_fetch_performed_with_no_authorized_source")
         if status == ARCHIVED and not payload.get("archived_at"):
             fails.append("archived_row_without_a_timestamp")
         if status != ARCHIVED and payload.get("archived_at"):
@@ -758,7 +806,16 @@ def raw_payload_invariant_failures(result: dict[str, Any]) -> list[str]:
             elif normalized not in ALLOWED_RESPONSE_HEADERS:
                 fails.append(f"row_stored_an_unallowlisted_header:{normalized}")
 
-    for name in ("rows_claiming_a_collector", "rows_claiming_a_live_fetch"):
+    # Gate 163: a WARRANTED live row is the first real collection. Only an
+    # unwarranted one is a failure, and migration 0050 makes it unwritable -
+    # so this proves none predate that constraint.
+    unauthorized = int(result.get("unauthorized_live_rows") or 0)
+    if unauthorized > 0:
+        fails.append(f"count_reported:unauthorized_live_rows={unauthorized}")
+    if unauthorized < 0:
+        fails.append("count_could_not_read:unauthorized_live_rows")
+
+    for name in ():
         if int(result.get(name) or 0) != 0:
             fails.append(f"count_reported:{name}={result.get(name)}")
     if int(result.get("rows_over_the_size_limit") or 0) != 0:

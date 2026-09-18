@@ -14,6 +14,7 @@
       "fact_status": "recorded",
       "freshness_required": false,
       "guard_input": "activation_status",
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "activation_allowed"
@@ -41,6 +42,7 @@
       "fact_status": "recorded",
       "freshness_required": false,
       "guard_input": "attribution_status",
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "not_required",
@@ -70,6 +72,7 @@
       "fact_status": "recorded",
       "freshness_required": false,
       "guard_input": "collector_status",
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "active"
@@ -97,6 +100,7 @@
       "fact_status": "recorded",
       "freshness_required": false,
       "guard_input": "credential_status",
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "not_required",
@@ -126,6 +130,7 @@
       "fact_status": "recorded",
       "freshness_required": true,
       "guard_input": null,
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "approved"
@@ -154,6 +159,7 @@
       "fact_status": "recorded",
       "freshness_required": false,
       "guard_input": "rate_limit_status",
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "policy_declared"
@@ -180,10 +186,12 @@
       "fact_status": "recorded",
       "freshness_required": true,
       "guard_input": "robots_status",
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "absent",
-        "allowed"
+        "allowed",
+        "unavailable"
       ],
       "recorded_at": null,
       "recorded_by": null,
@@ -195,6 +203,7 @@
         "allowed",
         "disallowed",
         "fetch_failed",
+        "unavailable",
         "unknown"
       ],
       "why_this_fact_exists": "whether robots.txt permits the path. Requires FETCHING robots.txt, which is itself a live call - so this fact is unresolvable in Gate 162 and refuses as missing. Gate 163 is where that fetch is first permitted, and it is the first live call the campaign makes."
@@ -209,6 +218,7 @@
       "fact_status": "recorded",
       "freshness_required": false,
       "guard_input": null,
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "ready"
@@ -235,6 +245,7 @@
       "fact_status": "recorded",
       "freshness_required": false,
       "guard_input": null,
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "registered"
@@ -260,6 +271,7 @@
       "fact_status": "recorded",
       "freshness_required": true,
       "guard_input": "terms_status",
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "ATTRIBUTION_REQUIRED",
@@ -289,6 +301,7 @@
       "fact_status": "recorded",
       "freshness_required": false,
       "guard_input": "user_agent_status",
+      "join_basis": null,
       "permits": true,
       "permitting_values": [
         "canonical"

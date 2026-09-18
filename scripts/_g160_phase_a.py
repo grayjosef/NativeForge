@@ -220,6 +220,11 @@ with engine.connect() as connection:
 out["payloads_total"] = counts["total"]
 out["rows_claiming_a_collector"] = counts["rows_claiming_a_collector"]
 out["rows_claiming_a_live_fetch"] = counts["rows_claiming_a_live_fetch"]
+# The raw count above is legitimately nonzero: the persisted robots.txt
+# evidence claims a live fetch because one happened, under a recorded
+# authorization. The count that must be zero is the narrower one - a row
+# claiming a live fetch with no authorization behind it.
+out["unauthorized_live_rows"] = counts["unauthorized_live_rows"]
 out["rows_over_the_size_limit"] = counts["rows_over_the_size_limit"]
 out["count_invariants"] = raw_payload_invariant_failures(counts)
 # 2: the exact bytes, in this same process.
