@@ -6,6 +6,9 @@ from nativeforge.services.source_ingestion_seed_loader_service import (
     load_source_seed_rows,
     seed_row_to_discovery_candidate,
 )
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from nativeforge.services.source_ingestion_url_quality_service import (
     verify_seed_candidate_batch,
     verify_source_url_quality,
@@ -32,5 +35,5 @@ def test_public_posture_resolves() -> None:
 def test_batch_quality() -> None:
     cands = [seed_row_to_discovery_candidate(r) for r in load_source_seed_rows()]
     batch = verify_seed_candidate_batch(cands)
-    assert batch["result_count"] == 177
+    assert batch["result_count"] == EXPECTED_ROW_COUNT
     assert batch["blocked_posture_count"] >= 1

@@ -195,6 +195,8 @@ try:
         out["the_code_authorizes_exactly_the_pinned_set"] = False
         detail.append(f"authorized_set:{type(exc).__name__}")
 
+    # Reported, not required to be zero: Gate 163's authorized collection is a
+    # live attempt that legitimately exists.
     try:
         out["live_execution_attempts"] = int(
             session.execute(
@@ -210,6 +212,35 @@ try:
     except Exception as exc:  # noqa: BLE001
         detail.append(f"attempts:{type(exc).__name__}")
         out["live_execution_attempts"] = -1
+
+    # Asserted. Composed from the canonical classifier rather than a second
+    # SQL definition: it resolves eight linkages per row, where a
+    # `WHERE authorized_source_id IS NOT NULL` would check one of them.
+    try:
+        from nativeforge.repositories.source_collection_execution_attempt_repository import (  # noqa: E501
+            count_attempts,
+        )
+
+        attempts = count_attempts(connection=session, organization_id=DEMO)
+        out["unauthorized_live_execution_attempts"] = int(
+            attempts.get("unauthorized_live_attempts") or 0
+        )
+        out["authorized_live_execution_attempts"] = int(
+            attempts.get("authorized_live_attempts") or 0
+        )
+        out["unsigned_live_execution_attempts"] = int(
+            attempts.get("unsigned_live_attempts") or 0
+        )
+        out["live_attempts_outside_the_authorized_set"] = int(
+            attempts.get("live_rows_outside_authorized_set") or 0
+        )
+        if attempts.get("unauthorized_detail"):
+            detail.append(
+                f"unauthorized live attempts: {attempts['unauthorized_detail']}"
+            )
+    except Exception as exc:  # noqa: BLE001 - an unclassifiable row is not authorized
+        detail.append(f"live_attempt_classification:{type(exc).__name__}")
+        out["unauthorized_live_execution_attempts"] = -1
 
     try:
         out["unsigned_approvals"] = int(
@@ -244,6 +275,10 @@ out.setdefault("allowed_real_source_decisions_are_signed", False)
 out.setdefault("the_code_authorizes_exactly_the_pinned_set", False)
 out.setdefault("real_sources_approved", -1)
 out.setdefault("live_execution_attempts", -1)
+out.setdefault("unauthorized_live_execution_attempts", -1)
+out.setdefault("authorized_live_execution_attempts", -1)
+out.setdefault("unsigned_live_execution_attempts", -1)
+out.setdefault("live_attempts_outside_the_authorized_set", -1)
 out.setdefault("unsigned_approvals", -1)
 out["detail"] = "; ".join(sorted(set(detail))) if detail else None
 print(json.dumps(out, sort_keys=True))

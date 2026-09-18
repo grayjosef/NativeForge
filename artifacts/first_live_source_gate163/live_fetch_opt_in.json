@@ -1,0 +1,16 @@
+{
+  "fact": "source-specific live-fetch opt-in",
+  "global_env_flag_used": false,
+  "is_a_global_switch": false,
+  "opted_in_count": 1,
+  "opted_in_sources": [
+    {
+      "reviewed_at": "2026-09-18 15:20:31.553524",
+      "reviewed_by": "operator:MAYHEM",
+      "signed": true,
+      "source_id": "nf-seed-2026-api-grants-gov-search2"
+    }
+  ],
+  "schema_version": "nf_first_live_source_gate163_v1",
+  "stored_in": "nf_source_authorization_decisions[decision_kind=live_fetch]"
+}

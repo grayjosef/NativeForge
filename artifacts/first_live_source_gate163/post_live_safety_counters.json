@@ -1,0 +1,15 @@
+{
+  "attempt_invariant_failures": [],
+  "authorized_live_attempts": 1,
+  "customer_data": "none",
+  "fact": "post-live safety counters",
+  "live_attempts": 1,
+  "live_rows_outside_authorized_set": 0,
+  "real_organization_touched": false,
+  "rows_claiming_a_live_fetch": 2,
+  "schema_version": "nf_first_live_source_gate163_v1",
+  "source_mismatch_live_attempts": 0,
+  "unauthorized_live_attempts": 0,
+  "unauthorized_live_rows": 0,
+  "unsigned_live_attempts": 0
+}

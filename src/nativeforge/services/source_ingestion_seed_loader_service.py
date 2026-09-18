@@ -8,6 +8,7 @@ from typing import Any
 
 from nativeforge.services.source_ingestion_seed_schema_service import (
     EXPECTED_ROW_COUNT,
+    POST_BASELINE_SEED_IDS,
     REQUIRED_COLUMNS,
     SCHEMA_VERSION,
     seed_csv_path,
@@ -102,6 +103,17 @@ def load_source_seed_rows(*, limit: int | None = None) -> list[dict[str, str]]:
     rows = [apply_seed_url_corrections(row) for row in rows]
     if len(rows) != EXPECTED_ROW_COUNT:
         raise ValueError(f"expected {EXPECTED_ROW_COUNT} seed rows, got {len(rows)}")
+    # The count alone would pass if one row were swapped for another, so the
+    # rows added after the baseline are checked BY ID. A corpus that is the
+    # right size and the wrong shape is the failure a bare count cannot see.
+    seed_ids = {str(row.get("seed_id") or "").strip() for row in rows}
+    missing_additions = [
+        seed_id for seed_id in POST_BASELINE_SEED_IDS if seed_id not in seed_ids
+    ]
+    if missing_additions:
+        raise ValueError(
+            f"seed rows added after the baseline are missing: {missing_additions}"
+        )
     assert_real_seed_urls(rows)
     if limit is not None:
         return rows[:limit]

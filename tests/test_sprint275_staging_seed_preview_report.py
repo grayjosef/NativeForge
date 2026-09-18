@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from nativeforge.services.staging_seed_preview_report_service import (
     build_staging_seed_preview_report,
 )
 
 
-def test_seed_preview_report_177_candidates() -> None:
+def test_seed_preview_report_covers_every_candidate() -> None:
     report = build_staging_seed_preview_report()
-    assert report["seed_row_count"] == 177
-    assert report["candidate_count"] == 177
+    assert report["seed_row_count"] == EXPECTED_ROW_COUNT
+    assert report["candidate_count"] == EXPECTED_ROW_COUNT
     assert report["all_candidates_inactive"] is True
     assert report["no_activation_performed"] is True
 

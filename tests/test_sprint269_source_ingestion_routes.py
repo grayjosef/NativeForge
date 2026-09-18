@@ -11,6 +11,9 @@ from nativeforge.db.models import Organization
 from nativeforge.db.session import SessionLocal
 from nativeforge.lib.settings import get_settings
 from nativeforge.main import create_app
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from tests.session_org_helper import session_headers
 
 _DEMO_ORG = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
@@ -53,4 +56,4 @@ def test_seed_preview_with_flag(client_nf: TestClient) -> None:
         headers=_hdr(_DEMO_ORG),
     )
     assert r.status_code == 200
-    assert r.json()["seed_bundle"]["seed_row_count"] == 177
+    assert r.json()["seed_bundle"]["seed_row_count"] == EXPECTED_ROW_COUNT

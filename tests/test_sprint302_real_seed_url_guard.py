@@ -5,6 +5,9 @@ from __future__ import annotations
 from nativeforge.services.source_ingestion_seed_loader_service import (
     load_source_seed_rows,
 )
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from nativeforge.services.source_seed_real_url_guard_service import (
     assert_real_seed_urls,
     build_real_seed_url_guard_report,
@@ -14,7 +17,7 @@ from nativeforge.services.source_seed_real_url_guard_service import (
 
 def test_no_synthetic_placeholder_urls_in_seed() -> None:
     rows = load_source_seed_rows()
-    assert len(rows) == 177
+    assert len(rows) == EXPECTED_ROW_COUNT
     assert_real_seed_urls(rows)
     report = build_real_seed_url_guard_report(rows)
     assert report["synthetic_url_count"] == 0

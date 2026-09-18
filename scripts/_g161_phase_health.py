@@ -37,8 +37,7 @@ try:
         and health["live_execution_proven"] is False
     )
     out["approved_source_count_is_zero"] = bool(
-        health["approved_source_count"] == 0
-        and health["monitorable_source_count"] == 0
+        health["approved_source_count"] == 0 and health["monitorable_source_count"] == 0
     )
     # The registry KNOWS about sources, and the lane says so. A zero that came
     # from an empty registry rather than from nothing being approved would be
@@ -48,9 +47,20 @@ try:
         health["known_source_count"] > 0
         and str(health.get("known_is_not_approved") or "").strip()
     )
-    out["no_live_attempt_rows"] = bool(
-        health["conditions"]["no_live_attempt_rows_exist"]
-        and health["conditions"]["no_attempt_claims_a_live_call"]
+    # Read by name, so a rename raises rather than reporting a quiet False.
+    # Gate 163 renamed both: the property is "no UNAUTHORIZED live attempt
+    # row", and the authorized Gate 163 collection is a row that legitimately
+    # exists.
+    out["no_unauthorized_live_attempt_rows"] = bool(
+        health["conditions"]["no_unauthorized_live_attempt_rows_exist"]
+        and health["conditions"]["no_unauthorized_attempt_claims_a_live_call"]
+    )
+    # Reported beside it, because "how much live activity has there been" is
+    # still worth seeing and is no longer the thing that decides readiness.
+    out["live_attempts"] = int(health.get("live_attempts") or 0)
+    out["authorized_live_attempts"] = int(health.get("authorized_live_attempts") or 0)
+    out["unauthorized_live_attempts"] = int(
+        health.get("unauthorized_live_attempts") or 0
     )
     out["health_invariants_clean"] = not fails
 finally:
@@ -58,9 +68,12 @@ finally:
     session.close()
 
 for key in (
-    "execution_envelope_ready", "live_transport_requires_an_authorization",
-    "approved_source_count_is_zero", "known_is_not_approved",
-    "no_live_attempt_rows", "health_invariants_clean",
+    "execution_envelope_ready",
+    "live_transport_requires_an_authorization",
+    "approved_source_count_is_zero",
+    "known_is_not_approved",
+    "no_unauthorized_live_attempt_rows",
+    "health_invariants_clean",
 ):
     out.setdefault(key, False)
 

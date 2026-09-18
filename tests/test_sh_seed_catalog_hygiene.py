@@ -19,6 +19,9 @@ from nativeforge.services.source_ingestion_seed_loader_service import (
     build_source_seed_candidate_bundle,
     seed_row_to_discovery_candidate,
 )
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from nativeforge.services.tier1_batch_federal_activation_service import (
     activate_tier1_public_batch_human_gate,
 )
@@ -48,14 +51,14 @@ def demo_org() -> Organization:
         return org
 
 
-def test_ac1_reconciliation_accounts_all_177_rows() -> None:
+def test_ac1_reconciliation_accounts_for_every_seed_row() -> None:
     bundle = build_source_seed_candidate_bundle()
     report = build_catalog_reconciliation_report(bundle["candidates"])
-    assert report["catalog_row_count"] == 177
+    assert report["catalog_row_count"] == EXPECTED_ROW_COUNT
     assert report["nothing_silently_dropped"] is True
-    assert sum(report["bucket_counts"].values()) == 177
+    assert sum(report["bucket_counts"].values()) == EXPECTED_ROW_COUNT
     headline = report["headline"]
-    assert headline["catalog_programs"] == 177
+    assert headline["catalog_programs"] == EXPECTED_ROW_COUNT
     assert headline["activatable_now"] >= 100
 
 
@@ -88,11 +91,7 @@ def test_ac2_bia_shared_url_three_distinct_registry_rows(
         rows = os_repo.list_opportunity_sources_for_org(
             session=s, org_id=org.id, org_type=org.org_type
         )
-        active_bia = [
-            r
-            for r in rows
-            if r.is_active and r.seed_id in _BIA_SEEDS
-        ]
+        active_bia = [r for r in rows if r.is_active and r.seed_id in _BIA_SEEDS]
     assert len(active_bia) == 3
     assert len({r.id for r in active_bia}) == 3
 

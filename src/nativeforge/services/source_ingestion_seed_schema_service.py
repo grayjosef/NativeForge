@@ -8,7 +8,29 @@ from typing import Any, Final
 
 SCHEMA_VERSION: Final[str] = "nf_source_seed_2026_csv_v1"
 SEED_FILENAME: Final[str] = "NF_SOURCE_SEED_2026.csv"
-EXPECTED_ROW_COUNT: Final[int] = 177
+
+#: The corpus as Sprint 257 shipped it. Never changes: rows added afterwards
+#: are named below rather than absorbed into this number.
+BASELINE_ROW_COUNT: Final[int] = 177
+
+#: Seed ids added after the baseline, each with the gate that added it and the
+#: reason. A bumped count is a changelog; this says WHICH row and on whose
+#: authority, so a future change to the corpus size has to say the same thing.
+#:
+#: The row-count guard exists to make a corpus change impossible to miss, and
+#: it worked: adding the row below turned 82 tests red in one stroke. Bumping
+#: a bare 177 to 178 would have silenced it without recording anything.
+POST_BASELINE_SEED_IDS: Final[tuple[str, ...]] = (
+    # Gate 163. None of the 177 baseline rows had host api.grants.gov - all
+    # six grants.gov rows were individual opportunity pages, not the API - so
+    # the first authorized live source needed a row of its own. Approved by
+    # MAYHEM with signed terms, human review and activation decisions.
+    "nf-seed-2026-api-grants-gov-search2",
+)
+
+#: Derived, so the count follows the named additions instead of being a magic
+#: number somebody has to remember to keep in step.
+EXPECTED_ROW_COUNT: Final[int] = BASELINE_ROW_COUNT + len(POST_BASELINE_SEED_IDS)
 
 REQUIRED_COLUMNS: Final[tuple[str, ...]] = (
     "seed_id",

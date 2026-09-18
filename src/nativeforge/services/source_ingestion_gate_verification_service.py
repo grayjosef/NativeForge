@@ -46,7 +46,7 @@ def verify_source_ingestion_gates() -> dict[str, Any]:
         ]
     )
     checks = {
-        "seed_row_count_177": len(rows) == EXPECTED_ROW_COUNT,
+        "seed_row_count_matches_the_contract": len(rows) == EXPECTED_ROW_COUNT,
         "all_candidates_inactive": preview["all_candidates_inactive"] is True,
         "human_activation_required": preview["human_activation_required"] is True,
         "no_scrape_without_activation": (

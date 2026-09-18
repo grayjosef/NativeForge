@@ -1,0 +1,53 @@
+{
+  "access_posture_hint": "public",
+  "activation": {
+    "activation_approval_artifact_id": "gate163-grants-gov-search2-activation",
+    "activation_approved_at": "2026-09-17 20:43:27.596162",
+    "activation_approved_by": "MAYHEM",
+    "source_id": "nf-seed-2026-api-grants-gov-search2",
+    "source_name": "Grants.gov Search2 API"
+  },
+  "adapter_key": "grants_gov_search2",
+  "authorized_source_ids": [
+    "nf-seed-2026-api-grants-gov-search2"
+  ],
+  "decisions": [
+    {
+      "decision": "approved",
+      "decision_kind": "human_review",
+      "fact_status": "tenant_supplied",
+      "guard_status": "NOT_APPLICABLE",
+      "review_authority": "operator",
+      "reviewed_at": "2026-09-17 20:43:27.596162",
+      "reviewed_by": "MAYHEM"
+    },
+    {
+      "decision": "approved",
+      "decision_kind": "live_fetch",
+      "fact_status": "tenant_supplied",
+      "guard_status": "NOT_APPLICABLE",
+      "review_authority": "gate163_human_activation",
+      "reviewed_at": "2026-09-18 15:20:31.553524",
+      "reviewed_by": "operator:MAYHEM"
+    },
+    {
+      "decision": "approved",
+      "decision_kind": "terms",
+      "fact_status": "tenant_supplied",
+      "guard_status": "ATTRIBUTION_REQUIRED",
+      "review_authority": "operator",
+      "reviewed_at": "2026-09-17 20:43:27.596162",
+      "reviewed_by": "MAYHEM"
+    }
+  ],
+  "fact": "source authorization",
+  "joined_on": "source_id (migration 0049), never source_name",
+  "not_implied": [
+    "a registry row is not an authorization",
+    "an adapter existing is not an authorization"
+  ],
+  "schema_version": "nf_first_live_source_gate163_v1",
+  "source_id": "nf-seed-2026-api-grants-gov-search2",
+  "source_name": "Grants.gov Search2 API",
+  "source_url": "https://api.grants.gov/v1/api/search2"
+}

@@ -9,8 +9,8 @@
     "transport_boundary_reaches_no_host",
     "hermetic_transport_reaches_no_host",
     "live_transport_requires_an_authorization",
-    "no_attempt_claims_a_live_call",
-    "no_live_attempt_rows_exist",
+    "no_unauthorized_attempt_claims_a_live_call",
+    "no_unauthorized_live_attempt_rows_exist",
     "proof_requirements_are_defined"
   ],
   "hermetic_fixture_prefix": "nf161.fixture.",

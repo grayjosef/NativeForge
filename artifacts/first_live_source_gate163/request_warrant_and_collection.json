@@ -1,0 +1,23 @@
+{
+  "credentials_sent": 0,
+  "endpoint": "https://api.grants.gov/v1/api/search2",
+  "env_allow_live_network_used": false,
+  "fact": "the request warrant, and the actual live collection",
+  "fetch_opportunity_called": false,
+  "job_rows_created": 0,
+  "legacy_env_flag_required": false,
+  "method": "POST",
+  "redirects_followed": 0,
+  "request_body": {
+    "keyword": "tribal",
+    "oppStatuses": "posted|forecasted",
+    "rows": 1
+  },
+  "request_count": 1,
+  "retries": 0,
+  "schema_version": "nf_first_live_source_gate163_v1",
+  "second_request": false,
+  "second_source_contacted": false,
+  "warrant_kind": "source_collection",
+  "why_no_job_row": "a one-shot operator-initiated collection persists an attempt, the bytes and a proof. It does not invent a durable scheduler job to satisfy readiness."
+}

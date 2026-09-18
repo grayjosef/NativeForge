@@ -19,6 +19,9 @@ from nativeforge.services.real_url_resolver_service import (
 from nativeforge.services.seed_source_human_activation_service import (
     NF9_AUTHORIZED_SEED_ID,
 )
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 
 SCHEMA_VERSION = "nf_real_resolver_validation_gate_verification_v1"
 
@@ -61,7 +64,9 @@ def verify_real_resolver_validation_gates(
     activation = result["fed001_activation"]
     tier1 = result["fed001_tier1_live_fetch"]
     checks = {
-        "seed_row_count_177": preview["seed_row_count"] == 177,
+        "seed_row_count_matches_the_contract": (
+            preview["seed_row_count"] == EXPECTED_ROW_COUNT
+        ),
         "baseline_comparison_present": "deltas" in result["baseline_comparison"],
         "fed001_activated": activation["seed_id"] == NF9_AUTHORIZED_SEED_ID,
         "exactly_one_active": activation["exactly_one_active"] is True,

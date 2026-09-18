@@ -287,6 +287,10 @@ info post_cleanup_real_sources_with_decisions \
   "$(jget "$D" real_sources_with_decisions)"
 info post_cleanup_allowed_real_sources "$(jget "$D" \
   allowed_real_sources_with_decisions)"
+info post_cleanup_live_execution_attempts "$(jget "$D" \
+  live_execution_attempts)"
+info post_cleanup_authorized_live_attempts "$(jget "$D" \
+  authorized_live_execution_attempts)"
 
 for pair in \
   "unapproved_real_sources_approved:0" \
@@ -294,7 +298,9 @@ for pair in \
   "at_most_one_real_source_is_allowed:True" \
   "allowed_real_source_decisions_are_signed:True" \
   "the_code_authorizes_exactly_the_pinned_set:True" \
-  "live_execution_attempts:0" \
+  "unauthorized_live_execution_attempts:0" \
+  "unsigned_live_execution_attempts:0" \
+  "live_attempts_outside_the_authorized_set:0" \
   "unsigned_approvals:0"
 do
   key="${pair%%:*}"

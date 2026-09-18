@@ -1,0 +1,42 @@
+{
+  "attempt": {
+    "attempt_id": "c35bbe3c1a84b1f42362ed65c114e44838d14758a274c994fe144732b310c4ec",
+    "authorized_source_id": "nf-seed-2026-api-grants-gov-search2",
+    "bytes_received": 11131,
+    "execution_proof_available": 1,
+    "execution_status": "response_persisted",
+    "fact_status": "tenant_supplied",
+    "http_status": null,
+    "job_id": "gate163-first-live-collection",
+    "live_source_call": 1,
+    "raw_payload_persisted": 1,
+    "raw_payload_sha256": "eb4cc7cb76d278b9f4ab9aad7375ed0481faa6ff5827786452dc74491c0f1712",
+    "request_method": "POST",
+    "request_url_fingerprint": "0f90dbaa7c7587d55e039dc09975b6f439d192fdf28ba1847f8c163168f5782d",
+    "source_id": "nf-seed-2026-api-grants-gov-search2",
+    "transport_kind": "live",
+    "transport_outcome": "response_received"
+  },
+  "fact": "raw evidence, and the execution proof",
+  "hash_verified_on_readback": true,
+  "hash_verified_on_write": true,
+  "payload": {
+    "attempt_id": "c35bbe3c1a84b1f42362ed65c114e44838d14758a274c994fe144732b310c4ec",
+    "authorized_source_id": "nf-seed-2026-api-grants-gov-search2",
+    "body_storage_mode": "controlled_dev_demo_database",
+    "collector_invoked": 1,
+    "job_id": "gate163-first-live-collection",
+    "live_fetch_performed": 1,
+    "media_type": "application/json",
+    "payload_sha256": "eb4cc7cb76d278b9f4ab9aad7375ed0481faa6ff5827786452dc74491c0f1712",
+    "payload_size_bytes": 11131,
+    "payload_status": "active",
+    "received_at": "2026-09-18 15:22:52.359991",
+    "response_header_metadata": "{\"content-length\": \"11131\", \"content-type\": \"application/json\", \"date\": \"Fri, 18 Sep 2026 15:22:52 GMT\"}",
+    "response_status": null,
+    "source_id": "nf-seed-2026-api-grants-gov-search2",
+    "source_url_fingerprint": "0f90dbaa7c7587d55e039dc09975b6f439d192fdf28ba1847f8c163168f5782d"
+  },
+  "schema_version": "nf_first_live_source_gate163_v1",
+  "url_is_fingerprinted_not_stored": true
+}

@@ -5,6 +5,9 @@ from __future__ import annotations
 import pytest
 
 from nativeforge.lib.settings import get_settings
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from nativeforge.services.staging_activation_dry_run_orchestrator_service import (
     run_staging_activation_dry_run,
 )
@@ -25,5 +28,5 @@ def test_full_dry_run(staging_gates: None) -> None:
     result = run_staging_activation_dry_run()
     assert result["stop_before_activation"] is True
     assert result["no_source_activation_performed"] is True
-    assert result["seed_preview_report"]["seed_row_count"] == 177
+    assert result["seed_preview_report"]["seed_row_count"] == EXPECTED_ROW_COUNT
     assert result["tier1_dry_fetch"]["idempotent_path_verified"] is True

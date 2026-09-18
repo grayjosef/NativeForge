@@ -92,7 +92,12 @@ BLOCK_REAL_ORG = "real_organization_refused_by_name"
 BLOCK_NO_ATTEMPT = "no_attempt_id_supplied"
 BLOCK_NOT_FOUND = "no_attempt_row_for_this_attempt_id"
 BLOCK_DUPLICATE = "this_attempt_has_already_been_recorded"
+#: Gate 163 made a live attempt recordable FOR AN AUTHORIZED SOURCE. The
+#: refusal keeps its place in front of migration 0050's CHECK and now asks the
+#: same question it asks, so the two halves of "two refusals for one fact" no
+#: longer disagree.
 BLOCK_LIVE = "a_live_attempt_cannot_be_recorded_in_this_gate"
+BLOCK_LIVE_UNAUTHORIZED = "a_live_attempt_named_no_authorized_source"
 
 
 def _json_safe(value: Any) -> Any:
@@ -153,8 +158,13 @@ ATTEMPTS = sa.Table(
     sa.Column("raw_payload_sha256", sa.String(length=64), nullable=True),
     sa.Column("raw_payload_persisted", sa.Boolean(), nullable=False),
     sa.Column("execution_proof_available", sa.Boolean(), nullable=False),
-    # Declared so a read can assert it. The database refuses a true value.
+    # Declared so a read can assert it. Migration 0050 permits a true value
+    # only on a row that names its authorization.
     sa.Column("live_source_call", sa.Boolean(), nullable=False),
+    # Added by migration 0050. Declared here because this table is declared
+    # rather than reflected, so a column the repository does not name is a
+    # column it cannot write.
+    sa.Column("authorized_source_id", sa.Text(), nullable=True),
     sa.Column("fact_status", sa.String(length=32), nullable=False),
     sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
 )
@@ -184,9 +194,11 @@ def _row_to_attempt(row: Any) -> dict[str, Any]:
             "request_method": attempt.get("request_method"),
             "raw_payload_sha256": attempt.get("raw_payload_sha256"),
             "raw_payload_persisted": bool(attempt.get("raw_payload_persisted")),
-            "execution_proof_available": bool(
-                attempt.get("execution_proof_available")
-            ),
+            "execution_proof_available": bool(attempt.get("execution_proof_available")),
+            # Surfaced on reads, not just written. A live row whose
+            # authorization only exists in the database is a row every health
+            # lane reading through this mapper would count as unauthorized.
+            "authorized_source_id": attempt.get("authorized_source_id"),
             # Read back so a caller can prove it is false.
             "live_source_call": bool(attempt.get("live_source_call")),
             "fact_status": attempt.get("fact_status"),
@@ -273,6 +285,11 @@ def record_attempt(
     execution_proof_available: bool = False,
     fact_status: str = "synthetic_fixture",
     is_demo: bool = True,
+    # Gate 163: the column migration 0050 added, and the thing that makes a
+    # live attempt recordable at all. Without it a live attempt is refused
+    # here and by the CHECK, which is the intended behaviour for every source
+    # this campaign has not authorized.
+    authorized_source_id: Any = None,
 ) -> dict[str, Any]:
     """Record one attempt. Every outcome gets a row, including a refusal."""
     org, blocked = _validate(
@@ -289,10 +306,17 @@ def record_attempt(
         blocked.append(f"execution_status_outside_vocabulary:{execution_status}")
     if transport_kind not in TRANSPORT_KINDS:
         blocked.append(f"transport_kind_outside_vocabulary:{transport_kind}")
-    elif transport_kind == LIVE:
+    elif transport_kind == LIVE and not str(authorized_source_id or "").strip():
         # Refused here as well as by the database. Two refusals for one fact,
         # on purpose: this one names the gate, the constraint names the row.
-        blocked.append(BLOCK_LIVE)
+        #
+        # Gate 163 made the two agree. Migration 0050's CHECK is
+        # `transport_kind <> 'live' OR authorized_source_id IS NOT NULL`, so an
+        # unconditional refusal here meant the layer above rejected rows the
+        # database would have accepted - and a live attempt that really
+        # happened could not be recorded, which is worse than not permitting
+        # one.
+        blocked.append(BLOCK_LIVE_UNAUTHORIZED)
     if refusal_reason not in REFUSAL_REASONS:
         blocked.append(f"refusal_reason_outside_vocabulary:{refusal_reason}")
     if fact_status not in FACT_STATUSES:
@@ -336,9 +360,7 @@ def record_attempt(
                     transport_outcome=(
                         None if transport_outcome is None else str(transport_outcome)
                     ),
-                    http_status=(
-                        int(http_status) if http_status is not None else None
-                    ),
+                    http_status=(int(http_status) if http_status is not None else None),
                     bytes_received=max(0, int(bytes_received or 0)),
                     refusal_reason=str(refusal_reason),
                     blocked_reasons=list(blocked_reasons or []),
@@ -351,14 +373,22 @@ def record_attempt(
                         None if request_method is None else str(request_method)
                     ),
                     raw_payload_sha256=(
-                        None
-                        if raw_payload_sha256 is None
-                        else str(raw_payload_sha256)
+                        None if raw_payload_sha256 is None else str(raw_payload_sha256)
                     ),
                     raw_payload_persisted=bool(raw_payload_persisted),
                     execution_proof_available=bool(execution_proof_available),
-                    # Never anything else. The database refuses it.
-                    live_source_call=False,
+                    # Derived, not hardcoded. Migration 0050's first CHECK is
+                    # `live_source_call = 0 OR transport_kind = 'live'`, so
+                    # this is true exactly when the transport was live. The
+                    # previous `False` carried the comment "Never anything
+                    # else. The database refuses it", which stopped being
+                    # true at 0050.
+                    live_source_call=bool(transport_kind == LIVE),
+                    authorized_source_id=(
+                        None
+                        if not str(authorized_source_id or "").strip()
+                        else str(authorized_source_id).strip()
+                    ),
                     fact_status=str(fact_status),
                     created_at=moment,
                 )
@@ -443,6 +473,12 @@ def count_attempts(
         "total": 0,
         "hermetic_attempts": 0,
         "live_attempts": 0,
+        "authorized_live_attempts": 0,
+        "unauthorized_live_attempts": 0,
+        "unsigned_live_attempts": 0,
+        "source_mismatch_live_attempts": 0,
+        "live_rows_outside_authorized_set": 0,
+        "unauthorized_detail": [],
         "rows_claiming_a_live_call": 0,
         "proofs_available": 0,
         "payloads_linked": 0,
@@ -481,9 +517,7 @@ def count_attempts(
                 sa.func.sum(sa.cast(ATTEMPTS.c.live_source_call, sa.Integer)), 0
             ),
             sa.func.coalesce(
-                sa.func.sum(
-                    sa.cast(ATTEMPTS.c.execution_proof_available, sa.Integer)
-                ),
+                sa.func.sum(sa.cast(ATTEMPTS.c.execution_proof_available, sa.Integer)),
                 0,
             ),
             sa.func.coalesce(
@@ -493,6 +527,12 @@ def count_attempts(
         ).where(ATTEMPTS.c.organization_id == org)
     ).first() or (0, 0, 0, 0)
 
+    # Gate 163: classify every live row rather than counting them. The
+    # question is not "how many live attempts" but "how many the campaign did
+    # not authorize", and `live_attempts - 1` would answer neither: it would
+    # pass for a second live row from any source at any host.
+    live_summary = _classify_live_rows(connection=connection, organization_id=org)
+
     return _result(
         **{
             "by_status": by_status,
@@ -501,7 +541,21 @@ def count_attempts(
             "total": sum(by_status.values()),
             "hermetic_attempts": by_kind[HERMETIC],
             "live_attempts": by_kind[LIVE],
-            # Summed from the rows. The CHECK keeps it zero; this proves it.
+            # Each derived from the linkage that failed, not from a difference
+            # of totals.
+            "authorized_live_attempts": live_summary["authorized_live_attempts"],
+            "unauthorized_live_attempts": live_summary["unauthorized_live_attempts"],
+            "unsigned_live_attempts": live_summary["unsigned_live_attempts"],
+            "source_mismatch_live_attempts": live_summary[
+                "source_mismatch_live_attempts"
+            ],
+            "live_rows_outside_authorized_set": live_summary[
+                "live_rows_outside_authorized_set"
+            ],
+            "unauthorized_detail": live_summary["unauthorized_detail"],
+            # Summed from the rows. Migration 0050 permits a true value only
+            # on a row that names its authorization, so this is reported and
+            # the invariant below asserts the UNAUTHORIZED count instead.
             "rows_claiming_a_live_call": int(totals[0] or 0),
             "proofs_available": int(totals[1] or 0),
             "payloads_linked": int(totals[2] or 0),
@@ -510,11 +564,63 @@ def count_attempts(
     )
 
 
+def _classify_live_rows(*, connection: Any, organization_id: Any) -> dict[str, Any]:
+    """Read the live rows and classify each one.
+
+    Reads only the live rows: the classification is per-row and there are few,
+    while the hermetic rows are not candidates for being unauthorized.
+    """
+    empty = {
+        "authorized_live_attempts": 0,
+        "unauthorized_live_attempts": 0,
+        "unsigned_live_attempts": 0,
+        "source_mismatch_live_attempts": 0,
+        "live_rows_outside_authorized_set": 0,
+        "unauthorized_detail": [],
+    }
+    try:
+        from nativeforge.services.source_live_attempt_authorization_service import (
+            classify_live_attempts,
+        )
+
+        # `.mappings()`, as `_select_one` does: `_row_to_attempt` takes a
+        # mapping, and a bare Row is not one.
+        rows = (
+            connection.execute(
+                sa.select(ATTEMPTS).where(
+                    sa.and_(
+                        ATTEMPTS.c.organization_id == organization_id,
+                        ATTEMPTS.c.transport_kind == LIVE,
+                    )
+                )
+            )
+            .mappings()
+            .all()
+        )
+        summary = classify_live_attempts(
+            [_row_to_attempt(row) for row in rows],
+            connection=connection,
+            organization_id=organization_id,
+        )
+    except Exception:  # noqa: BLE001 - an unclassifiable row is not authorized
+        # -1 rather than 0: a count that could not be taken must not read as
+        # "none found", which is how an unreadable check becomes a pass.
+        return {**empty, "unauthorized_live_attempts": -1}
+
+    return {key: summary.get(key, empty[key]) for key in empty}
+
+
 def attempt_invariant_failures(result: dict[str, Any]) -> list[str]:
     """Refuse a result that claims a live call, or contradicts itself."""
     fails: list[str] = []
 
-    for counter in ("collectors_invoked", "live_source_calls", "live_attempts"):
+    # Gate 163: `live_attempts` is no longer among these. An authorized live
+    # attempt is the first real collection, not a claim to refuse - and the
+    # UNAUTHORIZED counters below carry the property this list was protecting.
+    #
+    # `collectors_invoked` and `live_source_calls` stay: they are envelope
+    # counters that a hermetic store must not report.
+    for counter in ("collectors_invoked", "live_source_calls"):
         if int(result.get(counter) or 0) != 0:
             fails.append(f"attempt_store_claimed:{counter}={result.get(counter)}")
     if result.get("source_monitoring_live"):
@@ -522,8 +628,10 @@ def attempt_invariant_failures(result: dict[str, Any]) -> list[str]:
 
     if result.get("recorded") and result.get("blocked_reasons"):
         fails.append("recorded_alongside_blocked_reasons")
-    if not result.get("recorded") and result.get("attempt") and not result.get(
-        "blocked_reasons"
+    if (
+        not result.get("recorded")
+        and result.get("attempt")
+        and not result.get("blocked_reasons")
     ):
         fails.append("returned_an_attempt_without_recording_or_refusing")
 
@@ -550,10 +658,36 @@ def attempt_invariant_failures(result: dict[str, Any]) -> list[str]:
         ):
             fails.append("a_row_claims_a_persisted_payload_without_a_hash")
 
-    if int(result.get("rows_claiming_a_live_call") or 0) != 0:
-        fails.append("count_reported_a_row_claiming_a_live_call")
-    if int(result.get("live_attempts") or 0) != 0:
-        fails.append("count_reported_a_live_attempt")
+    # Four properties where there was one, and none is satisfied by a nonzero
+    # live count. Each is derived from the linkage that failed.
+    for counter in (
+        "unauthorized_live_attempts",
+        "unsigned_live_attempts",
+        "source_mismatch_live_attempts",
+        "live_rows_outside_authorized_set",
+    ):
+        value = int(result.get(counter) or 0)
+        if value > 0:
+            fails.append(f"count_reported:{counter}={value}")
+        if value < 0:
+            fails.append(f"count_could_not_be_taken:{counter}")
+
+    # authorized + unauthorized must account for every live attempt, or one of
+    # them was computed rather than classified.
+    if "live_attempts" in result and "authorized_live_attempts" in result:
+        live = int(result.get("live_attempts") or 0)
+        authorized = int(result.get("authorized_live_attempts") or 0)
+        unauthorized = int(result.get("unauthorized_live_attempts") or 0)
+        if unauthorized >= 0 and authorized + unauthorized != live:
+            fails.append(
+                f"live_attempts_unaccounted_for:{authorized}+{unauthorized}!={live}"
+            )
+
+    # An unauthorized count with no detail is one nobody can act on.
+    if int(result.get("unauthorized_live_attempts") or 0) > 0 and not result.get(
+        "unauthorized_detail"
+    ):
+        fails.append("unauthorized_live_attempts_without_detail")
 
     by_status = result.get("by_status") or {}
     if by_status and sum(by_status.values()) != int(result.get("total") or 0):

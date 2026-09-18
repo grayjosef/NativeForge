@@ -1,0 +1,20 @@
+{
+  "attribution": {
+    "attribution_status": "present_and_verbatim",
+    "terms_guard_status": "ATTRIBUTION_REQUIRED",
+    "verified_against_the_required_notice": true
+  },
+  "fact": "normalization, and attribution",
+  "further_requests_made_for_the_others": 0,
+  "matched_total_reported_by_the_api": 317,
+  "opportunities_normalized": 1,
+  "opportunity": {
+    "agency_code": "USDOJ-OJP-BJA",
+    "number": "O-BJA-2026-172662",
+    "open_date": "07/24/2026",
+    "title": "U.S. Department of Justice FY26 Coordinated Tribal Assistance Solicitation"
+  },
+  "requested": 1,
+  "returned": 1,
+  "schema_version": "nf_first_live_source_gate163_v1"
+}

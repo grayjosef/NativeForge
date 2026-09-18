@@ -22,6 +22,9 @@ from nativeforge.services.seed_source_human_activation_service import (
 from nativeforge.services.source_ingestion_seed_loader_service import (
     load_source_seed_rows,
 )
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from nativeforge.services.source_seed_real_url_guard_service import (
     build_real_seed_url_guard_report,
 )
@@ -74,7 +77,9 @@ def verify_real_seed_grants_gov_gates(
     tier1 = result["fed001_tier1_live_fetch"]
     checks = {
         "real_seed_guard": seed_guard["real_seed_only"] is True,
-        "seed_row_count_177": preview["seed_row_count"] == 177,
+        "seed_row_count_matches_the_contract": (
+            preview["seed_row_count"] == EXPECTED_ROW_COUNT
+        ),
         "baseline_comparison_present": "deltas" in result["baseline_comparison"],
         "fed001_activated": activation["seed_id"] == NF9_AUTHORIZED_SEED_ID,
         "exactly_one_active": activation["exactly_one_active"] is True,

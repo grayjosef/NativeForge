@@ -1,0 +1,15 @@
+{
+  "application_errorcode": 0,
+  "application_message": "Webservice Succeeds",
+  "backfilled_as_200": false,
+  "cause": "Transport status was not captured by the first-live runner because it read the wrong response field. The boundary returns status_code and bytes_received at the top level; the runner read response_status and body_size_bytes.",
+  "classification": "evidence-quality defect, not grounds for a refetch",
+  "fact": "the HTTP transport-status capture defect",
+  "http_status": null,
+  "http_status_label": "UNKNOWN / not captured",
+  "runner_fixed_for_future_calls": true,
+  "schema_version": "nf_first_live_source_gate163_v1",
+  "second_request_made": false,
+  "these_are_separate_facts": "errorcode 0 is an application fact and an HTTP status is a transport fact. Inferring one from the other is the declared-versus-derived defect this campaign removes.",
+  "which_mistake_each_name_was": "response_status does not exist in the result at all. body_size_bytes DOES exist - nested under `request`, describing the REQUEST body - so reading it at the top level found nothing while looking like a plausible key."
+}

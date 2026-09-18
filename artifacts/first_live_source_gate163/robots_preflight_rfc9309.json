@@ -1,0 +1,28 @@
+{
+  "evidence": [
+    {
+      "decision": "unavailable",
+      "evaluated_path": "/v1/api/search2",
+      "fetched_at": "2026-09-17 21:20:54.214874",
+      "host": "api.grants.gov",
+      "http_status": 403,
+      "payload_sha256": "f249b63cb2fcb66b47e86f906c98f8fd912e82dd035b4e53d7e72fc1960cfd16"
+    }
+  ],
+  "fact": "robots preflight, and the RFC 9309 verdict",
+  "opt_in_required": false,
+  "preserved_exactly": true,
+  "refetched": false,
+  "rfc_9309": {
+    "2xx": "successful - parse the rules",
+    "3xx": "redirect, per policy",
+    "4xx": "UNAVAILABLE - crawlers MAY access",
+    "5xx": "unreachable - assume complete disallow",
+    "observed": 403,
+    "section": "2.3.1",
+    "verdict": "unavailable"
+  },
+  "rules_are_not_authorization": "RFC 9309 section 2: robots.txt rules are not a form of access authorization. The 403 means the robots protocol adds no restriction for this authority. It is not permission to collect.",
+  "schema_version": "nf_first_live_source_gate163_v1",
+  "warrant_kind": "robots_preflight"
+}

@@ -74,8 +74,8 @@ CONDITIONS: tuple[str, ...] = (
     "transport_boundary_reaches_no_host",
     "hermetic_transport_reaches_no_host",
     "live_transport_requires_an_authorization",
-    "no_attempt_claims_a_live_call",
-    "no_live_attempt_rows_exist",
+    "no_unauthorized_attempt_claims_a_live_call",
+    "no_unauthorized_live_attempt_rows_exist",
     "proof_requirements_are_defined",
 )
 
@@ -227,11 +227,22 @@ def build_execution_health(
         # through the boundary with a policy that does not permit it, and the
         # condition holds only if the boundary refuses.
         "live_transport_requires_an_authorization": _live_requires_a_warrant(),
-        "no_attempt_claims_a_live_call": int(
-            counts.get("rows_claiming_a_live_call") or 0
+        # Gate 163: the UNAUTHORIZED counts. Renamed as well as rewired,
+        # because a condition called `no_live_attempt_rows_exist` that holds
+        # while a live attempt row exists is a lie in the vocabulary itself.
+        #
+        # `unauthorized_live_attempts` is -1 when the classification could not
+        # be taken, and -1 == 0 is false - so an unreadable classification
+        # leaves the lane not ready rather than passing it.
+        "no_unauthorized_attempt_claims_a_live_call": int(
+            counts.get("unauthorized_live_attempts") or 0
         )
         == 0,
-        "no_live_attempt_rows_exist": int(counts.get("live_attempts") or 0) == 0,
+        "no_unauthorized_live_attempt_rows_exist": int(
+            counts.get("unauthorized_live_attempts") or 0
+        )
+        == 0
+        and int(counts.get("live_rows_outside_authorized_set") or 0) == 0,
         "proof_requirements_are_defined": len(PROOF_REQUIREMENTS) > 0,
     }
 
@@ -257,6 +268,28 @@ def build_execution_health(
             "attempts_by_status": counts.get("by_status") or {},
             "attempts_by_transport_kind": counts.get("by_transport_kind") or {},
             "hermetic_attempts": int(counts.get("hermetic_attempts") or 0),
+            # Reported so a reader can see WHY the lane is healthy with a live
+            # attempt recorded, rather than having to take it on trust.
+            "live_attempts": int(counts.get("live_attempts") or 0),
+            "authorized_live_attempts": int(
+                counts.get("authorized_live_attempts") or 0
+            ),
+            "unauthorized_live_attempts": int(
+                counts.get("unauthorized_live_attempts") or 0
+            ),
+            "unsigned_live_attempts": int(counts.get("unsigned_live_attempts") or 0),
+            "source_mismatch_live_attempts": int(
+                counts.get("source_mismatch_live_attempts") or 0
+            ),
+            "live_rows_outside_authorized_set": int(
+                counts.get("live_rows_outside_authorized_set") or 0
+            ),
+            "every_attempt_is_hermetic_or_authorized_live": bool(
+                int(counts.get("hermetic_attempts") or 0)
+                + int(counts.get("authorized_live_attempts") or 0)
+                == int(counts.get("total") or 0)
+                and int(counts.get("unauthorized_live_attempts") or 0) == 0
+            ),
             "execution_proofs_available": proofs,
             "payloads_linked": int(counts.get("payloads_linked") or 0),
             "bytes_received_total": int(counts.get("total_bytes_received") or 0),
@@ -347,9 +380,10 @@ def execution_health_invariant_failures(health: dict[str, Any]) -> list[str]:
     # The registry is allowed to KNOW about sources. That is not an approval,
     # so `known_source_count` is deliberately absent from the zero checks -
     # and the lane must say so rather than leave the difference implied.
-    if int(health.get("known_source_count") or 0) and not str(
-        health.get("known_is_not_approved") or ""
-    ).strip():
+    if (
+        int(health.get("known_source_count") or 0)
+        and not str(health.get("known_is_not_approved") or "").strip()
+    ):
         fails.append("known_sources_without_saying_that_knowing_is_not_approving")
 
     # `live` may be NAMED so refusing it is expressible; it may not be
@@ -363,10 +397,36 @@ def execution_health_invariant_failures(health: dict[str, Any]) -> list[str]:
     ):
         fails.append("live_can_dispatch_without_an_authorization")
 
-    if int(health.get("hermetic_attempts") or 0) != int(
-        health.get("attempts_recorded") or 0
+    # Gate 163: every attempt must be hermetic OR a validly authorized live
+    # attempt. `hermetic_attempts == attempts_recorded` was the right property
+    # while no live attempt could exist; it went false the moment one
+    # authorized collection was recorded, and it took three verifiers and a
+    # synthetic fixture's permitted branch down with it.
+    #
+    # The replacement refuses strictly MORE: the old form could only say "a
+    # live row exists", with no way to say "a live row exists that nobody
+    # authorized". `live` alone is never sufficient.
+    hermetic = int(health.get("hermetic_attempts") or 0)
+    recorded = int(health.get("attempts_recorded") or 0)
+    authorized_live = int(health.get("authorized_live_attempts") or 0)
+    unauthorized_live = int(health.get("unauthorized_live_attempts") or 0)
+
+    if unauthorized_live > 0:
+        fails.append(f"an_unauthorized_live_attempt_exists:{unauthorized_live}")
+    if unauthorized_live < 0:
+        fails.append("the_unauthorized_live_attempt_count_could_not_be_read")
+    if hermetic + authorized_live != recorded:
+        fails.append(
+            "some_attempt_is_neither_hermetic_nor_authorized_live:"
+            f"{hermetic}+{authorized_live}!={recorded}"
+        )
+    for counter in (
+        "unsigned_live_attempts",
+        "source_mismatch_live_attempts",
+        "live_rows_outside_authorized_set",
     ):
-        fails.append("some_attempt_was_not_hermetic")
+        if int(health.get(counter) or 0):
+            fails.append(f"health_counted:{counter}={health.get(counter)}")
 
     # ready and not-met must agree, both directions.
     if health.get("execution_envelope_ready") and health.get("conditions_not_met"):

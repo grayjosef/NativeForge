@@ -355,17 +355,52 @@ try:
         and not refused["dispatched"]
     )
 
-    # ---- 18-22: the counters --------------------------------------------
+    # ---- 18-22: the counters, after the first authorized collection -----
+    #
+    # `counters_all_zero` asserted `live_attempts == 0`, which was right while
+    # no live attempt could exist and false once one authorized collection was
+    # recorded. What replaced it permits the authorized row and refuses any
+    # unauthorized one.
+    #
+    # The accepted number is NOT hardcoded. `unauthorized == 0` plus
+    # `hermetic + authorized == total` would pass for a second AUTHORIZED
+    # source and fail for a second unauthorized row of any kind - so the
+    # accepted set comes from the authorization evidence, not from a constant.
     totals = count_attempts(connection=session, organization_id=DEMO)
-    out["counters_all_zero"] = bool(
-        totals["live_attempts"] == 0
-        and totals["rows_claiming_a_live_call"] == 0
-        and ok["collectors_invoked"] == 0
+
+    out["hermetic_attempts"] = int(totals["hermetic_attempts"])
+    out["live_attempts"] = int(totals["live_attempts"])
+    out["authorized_live_attempts"] = int(totals["authorized_live_attempts"])
+    out["unauthorized_live_attempts"] = int(totals["unauthorized_live_attempts"])
+    out["unsigned_live_attempts"] = int(totals["unsigned_live_attempts"])
+    out["source_mismatch_live_attempts"] = int(totals["source_mismatch_live_attempts"])
+    out["live_rows_outside_authorized_set"] = int(
+        totals["live_rows_outside_authorized_set"]
+    )
+
+    out["no_unauthorized_live_attempt_exists"] = bool(
+        int(totals["unauthorized_live_attempts"]) == 0
+        and int(totals["unsigned_live_attempts"]) == 0
+        and int(totals["source_mismatch_live_attempts"]) == 0
+        and int(totals["live_rows_outside_authorized_set"]) == 0
+    )
+    out["every_attempt_is_hermetic_or_authorized_live"] = bool(
+        int(totals["hermetic_attempts"]) + int(totals["authorized_live_attempts"])
+        == int(totals["total"])
+    )
+    # The envelope's own counters stay zero: this lane counts its own activity,
+    # not the source's.
+    out["envelope_counters_all_zero"] = bool(
+        ok["collectors_invoked"] == 0
         and ok["live_source_calls"] == 0
         and ok["network_calls"] == 0
         and ok["approved_source_count"] == 0
         and ok["source_monitoring_live"] is False
     )
+    if int(totals["unauthorized_live_attempts"]):
+        detail.append(
+            f"unauthorized live attempts: {totals.get('unauthorized_detail')}"
+        )
 
     session.commit()
 except Exception as exc:  # noqa: BLE001 - the phase reports rather than raises
@@ -401,7 +436,9 @@ for key in (
     "live_requires_a_permitting_policy",
     "db_refuses_a_live_call_row",
     "db_refuses_a_live_transport_kind",
-    "counters_all_zero",
+    "no_unauthorized_live_attempt_exists",
+    "every_attempt_is_hermetic_or_authorized_live",
+    "envelope_counters_all_zero",
 ):
     out.setdefault(key, False)
 

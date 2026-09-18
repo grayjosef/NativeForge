@@ -5,6 +5,9 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from nativeforge.services.staging_activation_dry_run_orchestrator_service import (
     run_staging_activation_dry_run,
 )
@@ -31,7 +34,9 @@ def verify_staging_activation_dry_run_gates() -> dict[str, Any]:
     activation = dry_run["activation_ready_report"]
     checks = {
         "staging_environment": is_staging_environment(),
-        "seed_row_count_177": preview["seed_row_count"] == 177,
+        "seed_row_count_matches_the_contract": (
+            preview["seed_row_count"] == EXPECTED_ROW_COUNT
+        ),
         "all_candidates_inactive": preview["all_candidates_inactive"] is True,
         "no_activation_performed": preview["no_activation_performed"] is True,
         "tier1_idempotent_second_run_zero_new": tier1["second_run_zero_new"] is True,

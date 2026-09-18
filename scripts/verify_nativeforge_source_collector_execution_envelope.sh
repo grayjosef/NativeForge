@@ -112,7 +112,9 @@ for key in \
   live_refused_when_the_policy_names_no_authorization \
   live_dispatches_when_the_policy_permits \
   db_refuses_a_live_call_row db_refuses_a_live_transport_kind \
-  counters_all_zero
+  no_unauthorized_live_attempt_exists \
+  every_attempt_is_hermetic_or_authorized_live \
+  envelope_counters_all_zero
 do
   value="$(jget "$A" "$key")"
   if [ "$value" = "True" ]; then
@@ -226,7 +228,7 @@ F="$(.venv/bin/python scripts/_g161_phase_health.py 2>&1 | tail -1)"
 for key in \
   execution_envelope_ready live_transport_requires_an_authorization \
   approved_source_count_is_zero known_is_not_approved \
-  no_live_attempt_rows health_invariants_clean
+  no_unauthorized_live_attempt_rows health_invariants_clean
 do
   value="$(jget "$F" "$key")"
   if [ "$value" = "True" ]; then

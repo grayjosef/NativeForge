@@ -367,11 +367,23 @@ else
 fi
 
 # ---- 20 and 21. the standing boundary -----------------------------------
-if [ "$(jget "$A" rows_claiming_a_collector)" = "0" ] &&
-   [ "$(jget "$B" rows_claiming_a_collector)" = "0" ]; then
-  pass collectors_invoked_is_zero
+# `rows_claiming_a_collector` is 1 after the first legitimate collection, so
+# the raw count is reported and the SAFETY property is asserted from
+# `unauthorized_live_rows` - which counts
+# `live_fetch_performed OR collector_invoked` with no `authorized_source_id`.
+#
+# That is the verifier's existing stricter counter, composed rather than
+# duplicated: a second definition of "unauthorized" is a second thing to drift.
+# Two names on one counter because an operator reads two properties from it -
+# a collector invoked with no warrant, and a fetch performed with no warrant.
+info rows_claiming_a_collector "$(jget "$A" rows_claiming_a_collector)"
+info rows_claiming_a_live_fetch "$(jget "$A" rows_claiming_a_live_fetch)"
+
+if [ "$(jget "$A" unauthorized_live_rows)" = "0" ] &&
+   [ "$(jget "$B" unauthorized_live_rows)" = "0" ]; then
+  pass unauthorized_collectors_invoked_is_zero
 else
-  fail collectors_invoked_is_zero
+  fail unauthorized_collectors_invoked_is_zero
 fi
 
 if [ "$(jget "$A" unauthorized_live_rows)" = "0" ] &&

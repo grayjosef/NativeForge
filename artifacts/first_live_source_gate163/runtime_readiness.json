@@ -1,0 +1,17 @@
+{
+  "derivation": "exercised_in_process",
+  "fact": "runtime readiness",
+  "falsifiability": "each required table dropped on a throwaway copy fails exactly its own lane; an untouched copy is still ready",
+  "fixture_residue": 0,
+  "fixture_rows_cleaned": 6,
+  "fixture_rows_created": 6,
+  "is_a_stored_claim": false,
+  "required_lanes": [
+    "collector_execution_envelope_ready",
+    "worker_runtime_ready",
+    "collection_job_store_ready",
+    "raw_payload_persistence_ready"
+  ],
+  "schema_version": "nf_first_live_source_gate163_v1",
+  "why_it_commits": "survives_restart needs a row written by one connection and read by another, which a rolled-back savepoint cannot produce"
+}
