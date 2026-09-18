@@ -660,7 +660,11 @@ def _resolve_attribution(
 
 
 def _resolve_runtime(
-    *, connection: Any, organization_id: Any, source_id: str = ""
+    *,
+    connection: Any,
+    organization_id: Any,
+    source_id: str = "",
+    exercise: bool = False,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Which lanes a collection needs depends on what kind it would be.
 
@@ -675,7 +679,9 @@ def _resolve_runtime(
     of this resolver did.
     """
     facts = build_runtime_readiness_facts(
-        connection=connection, organization_id=organization_id
+        connection=connection,
+        organization_id=organization_id,
+        exercise=exercise,
     )
 
     if is_fixture_source(source_id):
@@ -714,6 +720,7 @@ def resolve_source_authorization_facts(
     organization_id: Any = None,
     source_id: Any = None,
     now: Any = None,
+    exercise_runtime: bool = False,
 ) -> dict[str, Any]:
     """Every guard input for one source, from records.
 
@@ -781,7 +788,10 @@ def resolve_source_authorization_facts(
         resolved["terms_status"], resolved["activation_status"]
     )
     runtime_kwargs, runtime_facts = _resolve_runtime(
-        connection=connection, organization_id=organization_id, source_id=key
+        connection=connection,
+        organization_id=organization_id,
+        source_id=key,
+        exercise=exercise_runtime,
     )
     resolved["runtime_status"] = runtime_kwargs
 

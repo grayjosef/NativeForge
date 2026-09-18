@@ -48,14 +48,8 @@ model = describe_fact_model()
 # ---- 1. the model covers every guard status input ---------------------
 guard_params = set(inspect.signature(build_live_network_decision).parameters)
 guard_status_inputs = {p for p in guard_params if p.endswith("_status")}
-mapped = {
-    spec["guard_input"]
-    for spec in model["facts"]
-    if spec.get("guard_input")
-}
-out["every_guard_status_input_is_modelled"] = bool(
-    guard_status_inputs <= mapped
-)
+mapped = {spec["guard_input"] for spec in model["facts"] if spec.get("guard_input")}
+out["every_guard_status_input_is_modelled"] = bool(guard_status_inputs <= mapped)
 if not guard_status_inputs <= mapped:
     detail.append(f"unmapped guard inputs: {sorted(guard_status_inputs - mapped)}")
 
@@ -94,9 +88,7 @@ def _field_names_read(tree: ast.AST) -> set[str]:
     """String keys this code actually looks up."""
     read: set[str] = set()
     for node in ast.walk(tree):
-        if isinstance(node, ast.Subscript) and isinstance(
-            node.slice, ast.Constant
-        ):
+        if isinstance(node, ast.Subscript) and isinstance(node.slice, ast.Constant):
             if isinstance(node.slice.value, str):
                 read.add(node.slice.value)
         if (
@@ -169,12 +161,23 @@ out["an_execution_proof_is_not_an_authorization_fact"] = bool(
 )
 
 # ---- 19/20. the resolver takes no fact -------------------------------
-resolver_params = list(
-    inspect.signature(resolve_source_authorization_facts).parameters
-)
-out["resolver_parameters_are_exactly_four"] = bool(
+resolver_params = list(inspect.signature(resolve_source_authorization_facts).parameters)
+# Named, not counted: a count passes after a rename. Gate 163 added
+# `exercise_runtime`, which selects HOW `runtime_status` is measured -
+# exercise the lanes, or observe them cold - and cannot change WHAT the
+# measurement returns. That is proven behaviourally in
+# `_g163_phase_runtime_falsifiability.py`: with `exercise_runtime=True` and a
+# required table dropped, runtime_status is still not_ready. Choosing a
+# measurement is not asserting a result.
+out["resolver_parameters_are_the_permitted_set"] = bool(
     sorted(resolver_params)
-    == ["connection", "now", "organization_id", "source_id"]
+    == [
+        "connection",
+        "exercise_runtime",
+        "now",
+        "organization_id",
+        "source_id",
+    ]
 )
 FACT_SHAPED = ("status", "approved", "allow", "permit", "override", "fact")
 suspicious = [
@@ -203,7 +206,7 @@ for key in (
     "the_three_decision_facts_are_the_authorizing_ones",
     "a_queued_job_is_not_an_authorization_fact",
     "an_execution_proof_is_not_an_authorization_fact",
-    "resolver_parameters_are_exactly_four",
+    "resolver_parameters_are_the_permitted_set",
     "no_resolver_parameter_is_fact_shaped",
 ):
     out.setdefault(key, False)

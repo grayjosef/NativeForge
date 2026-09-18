@@ -467,12 +467,33 @@ def test_get_decision_reports_absence_rather_than_inventing_unknown(connection):
 
 
 def test_the_resolver_signature_cannot_assert_a_fact():
-    """Structural. A parameter that does not exist cannot be misused."""
+    """Structural. A parameter that does not exist cannot be misused.
+
+    Gate 163 added `exercise_runtime`, which selects HOW `runtime_status` is
+    measured - exercise the lanes in-process, or observe them cold - and cannot
+    change WHAT the measurement returns. The behavioural proof lives in
+    `scripts/_g163_phase_runtime_falsifiability.py`: with the exercise
+    requested and a required table dropped, runtime_status is still not_ready.
+
+    Choosing a measurement is not asserting a result, and the set is named
+    rather than counted so a rename cannot slip through.
+    """
     params = sorted(inspect.signature(resolve_source_authorization_facts).parameters)
-    assert params == ["connection", "now", "organization_id", "source_id"]
+    assert params == [
+        "connection",
+        "exercise_runtime",
+        "now",
+        "organization_id",
+        "source_id",
+    ]
 
     fact_shaped = ("status", "approved", "allow", "permit", "override", "fact")
     assert not [p for p in params if any(word in p.lower() for word in fact_shaped)]
+
+    # And it is a bool that selects a derivation, not a value to be believed:
+    # nothing a caller passes here is carried into a fact.
+    signature = inspect.signature(resolve_source_authorization_facts)
+    assert signature.parameters["exercise_runtime"].default is False
 
 
 def test_the_resolver_has_no_kwargs_escape_hatch():

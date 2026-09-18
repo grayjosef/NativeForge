@@ -115,7 +115,7 @@ for key in \
   the_three_decision_facts_are_the_authorizing_ones \
   a_queued_job_is_not_an_authorization_fact \
   an_execution_proof_is_not_an_authorization_fact \
-  resolver_parameters_are_exactly_four \
+  resolver_parameters_are_the_permitted_set \
   no_resolver_parameter_is_fact_shaped
 do
   value="$(jget "$A" "$key")"

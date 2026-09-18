@@ -232,11 +232,73 @@ def _observe_lane(
 
 
 def build_runtime_readiness_facts(
-    *, connection: Any = None, organization_id: Any = None
+    *,
+    connection: Any = None,
+    organization_id: Any = None,
+    exercise: bool = False,
 ) -> dict[str, Any]:
-    """Observe all six lanes. Composes health services; infers nothing."""
+    """Observe all six lanes. Composes health services; infers nothing.
+
+    `exercise=True` derives the four lanes a collection requires from
+    `source_runtime_lane_exerciser_service`, which performs the real
+    operations and cleans up after itself, instead of observing them cold.
+
+    Off by default because exercising writes and deletes fixture rows, and a
+    read should not have that side effect. The Gate 163 collection path asks
+    for it explicitly, immediately before authorization - the one place where
+    the answer has to be "can this operate right now" rather than "has
+    anything in this process exercised it".
+
+    Nothing is persisted either way. This is a measurement, not a stored claim.
+    """
+    exercised: dict[str, Any] | None = None
+    if exercise:
+        try:
+            from nativeforge.services.source_runtime_lane_exerciser_service import (
+                exercise_runtime_lanes,
+                exerciser_invariant_failures,
+            )
+
+            exercised = exercise_runtime_lanes(
+                connection=connection, organization_id=organization_id
+            )
+            # An exerciser result that contradicts itself or left residue is
+            # not evidence of readiness.
+            if exerciser_invariant_failures(exercised):
+                exercised = {
+                    **exercised,
+                    "runtime_status": NOT_READY,
+                    "unmet_conditions": sorted(
+                        list(exercised.get("unmet_conditions") or [])
+                        + [
+                            f"exerciser_invariant:{failure}"
+                            for failure in exerciser_invariant_failures(exercised)
+                        ]
+                    ),
+                }
+        except Exception as exc:  # noqa: BLE001 - an unexercisable runtime is not ready
+            exercised = {
+                "runtime_status": NOT_READY,
+                "lanes": {},
+                "unmet_lanes": list(REQUIRED_FOR_COLLECTION),
+                "unmet_conditions": [f"exerciser_raised:{type(exc).__name__}"],
+                "fixture_rows_cleaned": 0,
+                "fixture_residue": -1,
+            }
+
     lanes: dict[str, Any] = {}
     for name, module_name, function_name, ready_field in LANES:
+        if exercised is not None and name in (exercised.get("lanes") or {}):
+            lane = (exercised["lanes"] or {})[name]
+            lanes[name] = {
+                "status": READY if lane.get("ready") else NOT_READY,
+                "observed": bool(lane.get("exercised")),
+                "ready_field": ready_field,
+                "derivation": "exercised_in_process",
+                "unmet_conditions": lane.get("unmet_conditions") or [],
+                "cleanup_count": lane.get("cleanup_count"),
+            }
+            continue
         lanes[name] = _observe_lane(
             module_name,
             function_name,
@@ -244,6 +306,7 @@ def build_runtime_readiness_facts(
             connection=connection,
             organization_id=organization_id,
         )
+        lanes[name]["derivation"] = "observed_cold"
 
     def _ready(names: tuple[str, ...]) -> bool:
         return all(lanes[n]["status"] == READY for n in names)
@@ -252,14 +315,10 @@ def build_runtime_readiness_facts(
     monitoring_ready = _ready(REQUIRED_FOR_MONITORING)
 
     unmet_for_collection = sorted(
-        name
-        for name in REQUIRED_FOR_COLLECTION
-        if lanes[name]["status"] != READY
+        name for name in REQUIRED_FOR_COLLECTION if lanes[name]["status"] != READY
     )
     unmet_for_monitoring = sorted(
-        name
-        for name in REQUIRED_FOR_MONITORING
-        if lanes[name]["status"] != READY
+        name for name in REQUIRED_FOR_MONITORING if lanes[name]["status"] != READY
     )
 
     return _json_safe(
@@ -273,16 +332,35 @@ def build_runtime_readiness_facts(
             # The fact the authorization resolver consumes. Named `runtime_status`
             # to match the fact model's vocabulary exactly.
             "runtime_status": READY if collection_ready else NOT_READY,
+            # Which derivation produced it. A reader can tell a fresh
+            # measurement from a cold observation rather than having to trust
+            # that the call site asked for the right one.
+            "derivation": (
+                "exercised_in_process" if exercised is not None else "observed_cold"
+            ),
+            "was_exercised": exercised is not None,
+            "is_a_stored_claim": False,
+            "exercise_fixture_rows_cleaned": (
+                (exercised or {}).get("fixture_rows_cleaned")
+                if exercised is not None
+                else None
+            ),
+            "exercise_fixture_residue": (
+                (exercised or {}).get("fixture_residue")
+                if exercised is not None
+                else None
+            ),
+            "exercise_unmet_conditions": (
+                (exercised or {}).get("unmet_conditions")
+                if exercised is not None
+                else None
+            ),
             "collection_runtime_ready": collection_ready,
             "monitoring_runtime_ready": monitoring_ready,
             "unmet_for_collection": unmet_for_collection,
             "unmet_for_monitoring": unmet_for_monitoring,
-            "lanes_observed": sum(
-                1 for lane in lanes.values() if lane["observed"]
-            ),
-            "lanes_ready": sum(
-                1 for lane in lanes.values() if lane["status"] == READY
-            ),
+            "lanes_observed": sum(1 for lane in lanes.values() if lane["observed"]),
+            "lanes_ready": sum(1 for lane in lanes.values() if lane["status"] == READY),
             # ---- what this repairs, and what it does not ------------------
             "repairs": (
                 "phase1_collector_activation_policy_service read Gate 98E's "

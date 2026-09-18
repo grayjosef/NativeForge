@@ -26,6 +26,41 @@ FetchMode = Literal["live", "fixture"]
 
 HttpPostJson = Callable[[str, dict[str, Any]], dict[str, Any]]
 
+#: How a search ended. A FIELD, not something inferred from which keys happen
+#: to be populated - inferring it is how "the guard refused" and "there were no
+#: results" came to look identical.
+OUTCOME_HITS = "hits"
+OUTCOME_EMPTY = "empty"
+OUTCOME_FETCH_ERROR = "fetch_error"
+
+
+#: Authorization refusals are re-raised rather than returned. Resolved lazily
+#: because the warrant and transport services read the registry, which reads
+#: this module.
+def _authorization_refusals() -> tuple[type[BaseException], ...]:
+    """The exception types that mean "not permitted", never "no results"."""
+    found: list[type[BaseException]] = []
+    for module_name, attribute in (
+        ("nativeforge.services.live_source_transport_service", "LiveTransportRefused"),
+        ("nativeforge.services.source_live_warrant_service", "LiveRequestRefused"),
+        ("nativeforge.services.hermetic_test_guard_service", "LiveNetworkRefused"),
+    ):
+        try:
+            module = __import__(module_name, fromlist=[attribute])
+            candidate = getattr(module, attribute, None)
+            if isinstance(candidate, type) and issubclass(candidate, BaseException):
+                found.append(candidate)
+        except Exception:  # noqa: BLE001 - an absent type cannot be raised
+            continue
+    # Never empty: an empty tuple in `except` catches nothing, which would
+    # silently restore the behaviour this removes.
+    return tuple(found) or (_NeverRaised,)
+
+
+class _NeverRaised(BaseException):
+    """Placeholder so the except clause is never an empty tuple."""
+
+
 _ALN_RE = re.compile(r"(\d{2}\.\d{3})")
 _FIXTURES_DIR = Path(__file__).resolve().parents[3] / "fixtures" / "source_ingestion"
 
@@ -163,7 +198,14 @@ def search_grants_gov_opportunities(
     try:
         raw = do_post(SEARCH2_URL, body)
         search_live = raw.get("errorcode") == 0
-    except Exception as exc:
+    except _authorization_refusals() as refusal:
+        # An authorization refusal is NOT a search result. Re-raised unchanged
+        # so the guard's own reasons reach the caller: the old bare
+        # `except Exception` turned "the guard refused to let us ask" into
+        # `hit_count: 0`, which is indistinguishable from "Grants.gov has no
+        # tribal grants".
+        raise refusal
+    except Exception as exc:  # noqa: BLE001 - a transport failure is not a refusal
         return _json_safe(
             {
                 "schema_version": SCHEMA_VERSION,
@@ -172,6 +214,7 @@ def search_grants_gov_opportunities(
                 "opp_hits": [],
                 "search_live": False,
                 "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FETCH_ERROR,
                 "api_error": str(exc),
             }
         )
@@ -184,6 +227,7 @@ def search_grants_gov_opportunities(
                 "opp_hits": [],
                 "search_live": False,
                 "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FETCH_ERROR,
                 "api_error": raw.get("msg"),
             }
         )
@@ -207,6 +251,10 @@ def search_grants_gov_opportunities(
             "opp_hits": hits,
             "search_live": search_live,
             "fetch_mode": fetch_mode,
+            # A real answer. Zero hits here means Grants.gov returned zero,
+            # which is a different fact from "we could not ask".
+            "outcome": OUTCOME_HITS if hits else OUTCOME_EMPTY,
+            "api_error": None,
             "never_synthesized": True,
         }
     )

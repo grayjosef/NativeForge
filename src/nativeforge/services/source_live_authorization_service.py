@@ -161,6 +161,7 @@ def authorize_source_for_live_access(
     purpose: str = "source_collection",
     method: str = "GET",
     now: Any = None,
+    exercise_runtime: bool = False,
 ) -> dict[str, Any]:
     """Resolve the facts, then ask the guard. The only runtime path.
 
@@ -174,6 +175,7 @@ def authorize_source_for_live_access(
         organization_id=organization_id,
         source_id=source_id,
         now=now,
+        exercise_runtime=exercise_runtime,
     )
     failures = list(resolver_invariant_failures(resolution))
 
@@ -207,9 +209,7 @@ def authorize_source_for_live_access(
         # this source, the platform is not ready to collect from it.
         for fact_status, mapped in STATUS_PRECEDENCE:
             if fact_status in other_statuses.values():
-                status = (
-                    STATUS_MISSING_FACT if mapped == STATUS_DENIED else mapped
-                )
+                status = STATUS_MISSING_FACT if mapped == STATUS_DENIED else mapped
                 break
 
     blocking_decisions = sorted(
@@ -359,9 +359,7 @@ def authorization_invariant_failures(decision: dict[str, Any]) -> list[str]:
     # input was withheld.
     withheld = decision.get("guard_inputs_withheld") or []
     if withheld and decision.get("guard_allowed"):
-        fails.append(
-            f"the_guard_allowed_with_{len(withheld)}_inputs_withheld"
-        )
+        fails.append(f"the_guard_allowed_with_{len(withheld)}_inputs_withheld")
 
     # The implication runs ONE WAY.
     #
