@@ -86,6 +86,30 @@ network_total = sum(
     json.dumps(
         {
             "schema_version": "nf_gate164_phase_evidence_v1",
+            # ENVIRONMENT-SCOPED, and it says so rather than sitting beside
+            # the canonical files pretending to be one of them.
+            #
+            # Proven by the gate's own invariance check: regenerating with the
+            # real `.env` changes nothing, but exporting provider credentials
+            # moves `settings_secret_values_checked` and
+            # `environment_secret_values_checked`. Those are COUNTS, never
+            # values - nothing leaked - but a count of what exists on this
+            # machine is a fact about the machine.
+            #
+            # The canonical set is build_context.json, audit_chain.json and
+            # known_evidence_gaps.json. Those are unchanged by either.
+            "scope": "environment_scoped",
+            "why_environment_scoped": (
+                "records what each phase OBSERVED on the machine that ran it, "
+                "including how many configured secret values were available "
+                "for the scan to look at. Counts only, never values. Not "
+                "repository evidence, and not to be read as canonical."
+            ),
+            "canonical_files_in_this_directory": [
+                "audit_chain.json",
+                "build_context.json",
+                "known_evidence_gaps.json",
+            ],
             "phases": results,
             "network_requests_during_gate164": network_total,
             "how_no_network_was_proven": (

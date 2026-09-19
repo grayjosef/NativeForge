@@ -1,4 +1,9 @@
 {
+  "canonical_files_in_this_directory": [
+    "audit_chain.json",
+    "build_context.json",
+    "known_evidence_gaps.json"
+  ],
   "how_no_network_was_proven": "each phase replaces socket.socket with one that raises and counts attempts. Not inferred from reading the code.",
   "network_requests_during_gate164": 0,
   "phases": {
@@ -107,13 +112,13 @@
       "changed_raw_bytes_are_refused": true,
       "detail": null,
       "environment_scoped_permits_what_it_exists_to_read": true,
-      "environment_secret_values_checked": 0,
+      "environment_secret_values_checked": 2,
       "network_attempts_during_this_phase": 0,
       "no_environment_secret_value_appears_in_the_audit": true,
       "no_network_during_tamper_and_guard": true,
       "no_settings_secret_value_appears_in_the_audit": true,
       "refused_reader": "settings.auth_environment_overlay",
-      "settings_secret_values_checked": 5,
+      "settings_secret_values_checked": 2,
       "stripping_the_authorization_is_refused_by_the_schema": true,
       "the_audit_carries_no_credential_fields": true,
       "the_flag_is_restored_after_a_refusal": true,
@@ -121,5 +126,7 @@
     }
   },
   "schema_version": "nf_gate164_phase_evidence_v1",
-  "the_database_is_an_explicit_input": "canonical generation is passed a connection. It is an input, not ambient state, and 164F holds it constant across every variant so 'the database moved' is never the variable."
+  "scope": "environment_scoped",
+  "the_database_is_an_explicit_input": "canonical generation is passed a connection. It is an input, not ambient state, and 164F holds it constant across every variant so 'the database moved' is never the variable.",
+  "why_environment_scoped": "records what each phase OBSERVED on the machine that ran it, including how many configured secret values were available for the scan to look at. Counts only, never values. Not repository evidence, and not to be read as canonical."
 }
