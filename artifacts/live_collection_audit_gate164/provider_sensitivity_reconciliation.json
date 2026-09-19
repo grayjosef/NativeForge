@@ -1,0 +1,19 @@
+{
+  "all_are_environment_scoped": [
+    "environment_scoped",
+    "environment_scoped"
+  ],
+  "both_numbers_are_correct": "21 = provider-sensitive among writers that ran in BOTH the A and D runs. 19 = provider-sensitive among writers that ran in ALL SIX variants. Same property, different populations.",
+  "dedicated_a_vs_d_run": 21,
+  "difference": [
+    "customer_auth_activation_preflight_artifact_service:write_preflight_artifacts",
+    "customer_auth_live_redirect_artifact_service:write_live_redirect_artifacts"
+  ],
+  "errored_in_some_variant": [
+    "customer_auth_activation_preflight_artifact_service:write_preflight_artifacts",
+    "customer_auth_live_redirect_artifact_service:write_live_redirect_artifacts"
+  ],
+  "explanation": "the writers in `difference` errored in at least one variant of the six-way matrix - variant B has no .env, and these auth builders raise without provider configuration. The classifier buckets an errored writer before it reaches the D comparison, so they are counted as environment_scoped by a different route rather than dropped.",
+  "schema_version": "nf_gate164_provider_reconciliation_v1",
+  "six_way_matrix_d_sensitive": 19
+}

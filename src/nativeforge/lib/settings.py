@@ -158,8 +158,29 @@ def auth_environment_overlay(
     Returns a plain dict. Secret values are in it, exactly as they are in
     `os.environ`; nothing here emits them and every auth service redacts on the
     way out.
+
+    Gate 164: refused during canonical artifact generation. This is the
+    function that turns "the developer has credentials" into a fact, and
+    Gate 163 nearly committed one laptop's Auth0 configuration as repository
+    evidence through it. The check lives HERE rather than at the twenty-one
+    call sites that were found to be sensitive, because a check a caller has
+    to remember is one that will eventually be forgotten - which is precisely
+    what happened.
+
+    An EXPLICIT `environ` is still honoured: passing a mapping in is supplying
+    an input, not reading the machine.
     """
     import os as _os
+
+    if environ is None:
+        from nativeforge.services.canonical_artifact_build_context_service import (
+            refuse_ambient,
+        )
+
+        refuse_ambient(
+            "settings.auth_environment_overlay",
+            detail="reads os.environ and .env-backed Settings",
+        )
 
     env = dict(_os.environ if environ is None else environ)
     st = settings or get_settings()

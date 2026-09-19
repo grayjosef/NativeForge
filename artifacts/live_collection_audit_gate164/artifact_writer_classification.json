@@ -1,0 +1,317 @@
+{
+  "classification": {
+    "audit_replay_artifact_gate152_service:write_audit_replay_artifacts": "ambient_independent",
+    "award_document_store_persistence_artifact_service:write_persistence_artifacts": "environment_scoped",
+    "award_requirement_proof_audit_persistence_artifact_service:write_persistence_artifacts": "environment_scoped",
+    "award_requirements_persistence_artifact_service:write_persistence_artifacts": "environment_scoped",
+    "awarded_grants_persistence_artifact_service:write_persistence_artifacts": "environment_scoped",
+    "awarded_grants_requirements_artifact_service:write_awarded_requirements_artifacts": "ambient_independent",
+    "awarded_operational_artifact_gate139_service:write_awarded_artifacts": "environment_scoped",
+    "backend_process_proof_artifact_service:write_process_proof_artifacts": "ambient_independent",
+    "backend_runtime_readiness_artifact_service:write_backend_runtime_artifacts": "ambient_independent",
+    "backup_restore_artifact_gate153_service:write_backup_restore_artifacts": "ambient_independent",
+    "beta_onboarding_cockpit_artifact_gate144_service:write_cockpit_artifacts": "environment_scoped",
+    "controlled_beta_artifact_gate145_service:write_controlled_beta_artifacts": "ambient_independent",
+    "controlled_customer_pilot_artifact_gate149_service:write_pilot_activation_artifacts": "ambient_independent",
+    "customer_auth_activation_artifact_gate135_service:write_activation_artifacts": "environment_scoped",
+    "customer_auth_activation_artifact_service:write_activation_artifacts": "environment_scoped",
+    "customer_auth_activation_preflight_artifact_service:write_preflight_artifacts": "environment_scoped",
+    "customer_auth_boundary_artifact_service:write_auth_boundary_artifacts": "environment_scoped",
+    "customer_auth_enforcement_artifact_service:write_enforcement_artifacts": "environment_scoped",
+    "customer_auth_live_redirect_artifact_service:write_live_redirect_artifacts": "environment_scoped",
+    "customer_auth_route_artifact_service:write_route_artifacts": "environment_scoped",
+    "customer_auth_second_person_artifact_gate146_service:write_second_person_artifacts": "ambient_independent",
+    "customer_beta_reassessment_artifact_gate150_service:write_reassessment_artifacts": "ambient_independent",
+    "customer_data_boundary_artifact_gate148_service:write_customer_data_boundary_artifacts": "ambient_independent",
+    "customer_persistence_artifact_gate138_service:write_persistence_artifacts": "ambient_independent",
+    "customer_session_state_artifact_service:write_session_state_artifacts": "environment_scoped",
+    "demo_live_operating_shell_artifact_service:write_demo_live_artifacts": "environment_scoped",
+    "demo_reliability_oauth_artifact_service:write_demo_reliability_artifacts": "environment_scoped",
+    "dev_header_kill_artifact_service:write_dev_header_kill_artifacts": "environment_scoped",
+    "dev_header_replacement_artifact_service:write_replacement_artifacts": "environment_scoped",
+    "discovery_baseline_x_artifact_service:write_discovery_baseline_x_artifacts": "requires_explicit_input",
+    "document_storage_artifact_gate141_service:write_document_storage_artifacts": "environment_scoped",
+    "email_delivery_artifact_gate142_service:write_email_delivery_artifacts": "environment_scoped",
+    "external_source_registry_artifact_service:write_external_source_registry_artifacts": "requires_explicit_input",
+    "first_dev_org_binding_artifact_service:write_first_dev_org_binding_artifacts": "environment_scoped",
+    "honest_mixed_corpus_derivation_service:write_honest_derivation_artifacts": "ambient_independent",
+    "invite_activation_artifact_gate136_service:write_activation_artifacts": "ambient_independent",
+    "live_collection_audit_artifact_gate164_service:write_audit_artifacts": "ambient_independent",
+    "login_live_dev_header_kill_artifact_service:write_login_live_artifacts": "environment_scoped",
+    "mixed_corpus_regeneration_attestation_service:write_attestation_artifacts": "ambient_independent",
+    "oauth_state_session_artifact_service:write_state_session_artifacts": "environment_scoped",
+    "oidc_organization_resolution_artifact_service:write_resolution_artifacts": "environment_scoped",
+    "operational_durability_artifact_gate155_service:write_durability_artifacts": "ambient_independent",
+    "operational_health_artifact_gate154_service:write_operational_health_artifacts": "ambient_independent",
+    "org_identity_canonicalization_artifact_service:write_canonicalization_artifacts": "ambient_independent",
+    "org_scoped_customer_persistence_artifact_service:write_persistence_artifacts": "environment_scoped",
+    "phase1_readiness_artifact_service:write_phase1_readiness_artifacts": "ambient_independent",
+    "raw_payload_body_store_readiness_artifact_service:write_readiness_artifacts": "ambient_independent",
+    "raw_payload_production_readiness_artifact_service:write_readiness_artifacts": "ambient_independent",
+    "raw_payload_store_readiness_artifact_service:write_readiness_artifacts": "ambient_independent",
+    "source_authorization_artifact_gate162_service:write_authorization_artifacts": "ambient_independent",
+    "source_collector_execution_artifact_gate161_service:write_execution_artifacts": "ambient_independent",
+    "source_job_store_artifact_gate158_service:write_job_store_artifacts": "ambient_independent",
+    "source_monitoring_artifact_gate143_service:write_source_monitoring_artifacts": "ambient_independent",
+    "source_orchestration_artifact_gate159_service:write_orchestration_artifacts": "ambient_independent",
+    "source_raw_payload_artifact_gate160_service:write_raw_payload_artifacts": "ambient_independent",
+    "source_scheduler_artifact_gate156_service:write_scheduler_artifacts": "ambient_independent",
+    "source_scheduler_dry_run_artifact_service:write_dry_run_artifacts": "ambient_independent",
+    "source_scheduler_dry_run_worker_artifact_service:write_worker_artifacts": "ambient_independent",
+    "source_scheduler_readiness_artifact_service:write_scheduler_readiness_artifacts": "ambient_independent",
+    "source_worker_artifact_gate157_service:write_worker_artifacts": "ambient_independent",
+    "tenant_beta_contract_artifact_service:write_tenant_beta_artifacts": "ambient_independent",
+    "tenant_customer_org_binding_store_artifact_service:write_store_artifacts": "ambient_independent",
+    "tenant_customer_org_identity_artifact_service:write_identity_artifacts": "ambient_independent",
+    "tenant_digest_artifact_gate140_service:write_tenant_digest_artifacts": "environment_scoped",
+    "tenant_digest_persistence_artifact_gate151_service:write_digest_persistence_artifacts": "ambient_independent",
+    "tenant_nofo_digest_artifact_service:write_digest_artifacts": "ambient_independent",
+    "tenant_profile_persistence_artifact_service:write_persistence_artifacts": "environment_scoped",
+    "tribal_eligibility_classification_bridge_guard_service:write_bridge_artifacts": "ambient_independent",
+    "verified_binding_artifact_gate147_service:write_verified_binding_artifacts": "ambient_independent",
+    "verified_binding_workflow_artifact_service:write_workflow_artifacts": "environment_scoped",
+    "verified_operational_binding_artifact_gate137_service:write_binding_artifacts": "ambient_independent"
+  },
+  "counts": {
+    "ambient_independent_writers": 41,
+    "environment_scoped_writers": 28,
+    "non_deterministic_writers": 0,
+    "not_measured_writers": 0,
+    "requires_explicit_input_writers": 2,
+    "total_writers": 71,
+    "unclassified_writers": 0
+  },
+  "database_held_constant": true,
+  "database_note": "DATABASE_URL pinned to the same absolute file in every variant, so 'the database moved' is never the variable",
+  "differing_files_by_variant": {
+    "award_document_store_persistence_artifact_service:write_persistence_artifacts": {
+      "B": [
+        "award_document_store_persistence_demo_fixtures.json"
+      ],
+      "D": [
+        "award_document_store_persistence_demo_fixtures.json"
+      ]
+    },
+    "award_requirement_proof_audit_persistence_artifact_service:write_persistence_artifacts": {
+      "B": [
+        "award_requirement_proof_audit_persistence_demo_fixtures.json"
+      ],
+      "D": [
+        "award_requirement_proof_audit_persistence_demo_fixtures.json"
+      ]
+    },
+    "award_requirements_persistence_artifact_service:write_persistence_artifacts": {
+      "B": [
+        "award_requirements_persistence_demo_fixtures.json"
+      ],
+      "D": [
+        "award_requirements_persistence_demo_fixtures.json"
+      ]
+    },
+    "awarded_grants_persistence_artifact_service:write_persistence_artifacts": {
+      "B": [
+        "awarded_grants_persistence_demo_fixtures.json"
+      ],
+      "D": [
+        "awarded_grants_persistence_demo_fixtures.json"
+      ]
+    },
+    "awarded_operational_artifact_gate139_service:write_awarded_artifacts": {
+      "errored_in": [
+        "B"
+      ]
+    },
+    "beta_onboarding_cockpit_artifact_gate144_service:write_cockpit_artifacts": {
+      "errored_in": [
+        "B"
+      ]
+    },
+    "customer_auth_activation_artifact_gate135_service:write_activation_artifacts": {
+      "B": [
+        "customer_auth_readiness_after_gate135.json"
+      ],
+      "D": [
+        "customer_auth_readiness_after_gate135.json"
+      ]
+    },
+    "customer_auth_activation_artifact_service:write_activation_artifacts": {
+      "B": [
+        "customer_auth_activation_demo_fixtures.json",
+        "customer_auth_activation_gate.json",
+        "customer_auth_activation_readiness_summary.md",
+        "customer_auth_route_readiness_matrix.csv",
+        "dev_org_header_shutdown_readiness.json"
+      ],
+      "D": [
+        "customer_auth_activation_demo_fixtures.json",
+        "customer_auth_activation_gate.json",
+        "customer_auth_activation_readiness_summary.md",
+        "customer_auth_route_readiness_matrix.csv"
+      ]
+    },
+    "customer_auth_activation_preflight_artifact_service:write_preflight_artifacts": {
+      "errored_in": [
+        "D"
+      ]
+    },
+    "customer_auth_boundary_artifact_service:write_auth_boundary_artifacts": {
+      "D": [
+        "customer_auth_principal_contract.json",
+        "customer_auth_readiness_summary.md"
+      ]
+    },
+    "customer_auth_enforcement_artifact_service:write_enforcement_artifacts": {
+      "B": [
+        "customer_auth_enforcement_demo_fixtures.json",
+        "customer_auth_redirect_flow_contract.json",
+        "customer_auth_route_enforcement_readiness_summary.md"
+      ],
+      "D": [
+        "customer_auth_enforcement_demo_fixtures.json",
+        "customer_auth_redirect_flow_contract.json",
+        "customer_auth_route_enforcement_readiness_summary.md",
+        "customer_auth_token_exchange_boundary.json"
+      ]
+    },
+    "customer_auth_live_redirect_artifact_service:write_live_redirect_artifacts": {
+      "errored_in": [
+        "D"
+      ]
+    },
+    "customer_auth_route_artifact_service:write_route_artifacts": {
+      "B": [
+        "customer_auth_route_demo_fixtures.json",
+        "customer_auth_route_readiness_summary.md"
+      ],
+      "D": [
+        "customer_auth_route_demo_fixtures.json",
+        "customer_auth_route_readiness_summary.md"
+      ]
+    },
+    "customer_session_state_artifact_service:write_session_state_artifacts": {
+      "B": [
+        "customer_session_format_contract.json",
+        "customer_session_state_demo_fixtures.json",
+        "customer_session_state_readiness_summary.md"
+      ],
+      "D": [
+        "customer_session_state_readiness_summary.md"
+      ]
+    },
+    "demo_live_operating_shell_artifact_service:write_demo_live_artifacts": {
+      "B": [
+        "demo_readiness_blockers.json",
+        "gate129_demo_live_summary.md"
+      ]
+    },
+    "demo_reliability_oauth_artifact_service:write_demo_reliability_artifacts": {
+      "B": [
+        "next_blockers.md",
+        "oauth_env_status.json",
+        "oauth_login_smoke_result.json"
+      ],
+      "D": [
+        "oauth_env_status.json"
+      ]
+    },
+    "dev_header_kill_artifact_service:write_dev_header_kill_artifacts": {
+      "B": [
+        "converted_routes_matrix.csv",
+        "customer_auth_readiness_after_dev_header_conversion.json"
+      ],
+      "D": [
+        "customer_auth_readiness_after_dev_header_conversion.json"
+      ]
+    },
+    "dev_header_replacement_artifact_service:write_replacement_artifacts": {
+      "B": [
+        "dev_header_replacement_demo_fixtures.json"
+      ],
+      "D": [
+        "dev_header_replacement_demo_fixtures.json"
+      ]
+    },
+    "document_storage_artifact_gate141_service:write_document_storage_artifacts": {
+      "errored_in": [
+        "B"
+      ]
+    },
+    "email_delivery_artifact_gate142_service:write_email_delivery_artifacts": {
+      "errored_in": [
+        "B"
+      ]
+    },
+    "first_dev_org_binding_artifact_service:write_first_dev_org_binding_artifacts": {
+      "B": [
+        "auth_readiness_after_binding.json"
+      ],
+      "D": [
+        "auth_readiness_after_binding.json"
+      ]
+    },
+    "login_live_dev_header_kill_artifact_service:write_login_live_artifacts": {
+      "B": [
+        "dev_header_exposure_matrix.csv",
+        "dev_header_kill_plan.md",
+        "login_live_readiness_after_gate133.json"
+      ],
+      "D": [
+        "login_live_readiness_after_gate133.json"
+      ]
+    },
+    "oauth_state_session_artifact_service:write_state_session_artifacts": {
+      "B": [
+        "oauth_state_session_redaction_scan.json",
+        "oauth_state_store_status.json"
+      ]
+    },
+    "oidc_organization_resolution_artifact_service:write_resolution_artifacts": {
+      "D": [
+        "oidc_organization_id_resolution_contract.json",
+        "oidc_organization_id_resolution_readiness_summary.md"
+      ]
+    },
+    "org_scoped_customer_persistence_artifact_service:write_persistence_artifacts": {
+      "B": [
+        "customer_persistence_spine_decision.json"
+      ],
+      "D": [
+        "customer_persistence_readiness_summary.md",
+        "customer_persistence_spine_decision.json"
+      ]
+    },
+    "tenant_digest_artifact_gate140_service:write_tenant_digest_artifacts": {
+      "errored_in": [
+        "B"
+      ]
+    },
+    "tenant_profile_persistence_artifact_service:write_persistence_artifacts": {
+      "B": [
+        "tenant_profile_persistence_demo_fixtures.json"
+      ],
+      "D": [
+        "tenant_profile_persistence_demo_fixtures.json"
+      ]
+    },
+    "verified_binding_workflow_artifact_service:write_workflow_artifacts": {
+      "B": [
+        "verified_binding_readiness_summary.md",
+        "verified_binding_workflow_demo_fixtures.json"
+      ],
+      "D": [
+        "verified_binding_readiness_summary.md",
+        "verified_binding_workflow_demo_fixtures.json"
+      ]
+    }
+  },
+  "requires_explicit_input_note": "these writers raise without caller-supplied data. Reported separately rather than counted as stable: failing identically in six environments is not a proof of hermeticity.",
+  "schema_version": "nf_gate164_writer_classification_v1",
+  "variants": {
+    "A": "repo cwd, real local .env",
+    "B": "temp cwd, no .env",
+    "C": "unrelated environment variables present",
+    "D": "fake provider credentials present (values fake; presence varied)",
+    "E": "relative repo_root",
+    "F": "absolute repo_root"
+  }
+}

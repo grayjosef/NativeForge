@@ -1,0 +1,118 @@
+{
+  "audit": {
+    "audit_chain_complete": true,
+    "audit_sections": [
+      "source",
+      "authorization",
+      "request",
+      "response",
+      "execution",
+      "normalization"
+    ],
+    "composed_from": "the registry row, the decision records, the activation row, the raw payload, the execution attempt, and the stored bytes",
+    "is_a_second_ledger": false,
+    "missing_sections": [],
+    "not_implied": [
+      "an audit view is not an authorization",
+      "a complete chain is not a claim the response was correct",
+      "an absent HTTP status is a gap in evidence, not a failed request",
+      "this composes recorded rows; it is not a second ledger"
+    ],
+    "schema_version": "nf_live_collection_audit_v1",
+    "sections": {
+      "authorization": {
+        "activation": {
+          "activation_approval_artifact_id": "gate163-grants-gov-search2-activation",
+          "activation_approved_at": "2026-09-17 20:43:27.596162",
+          "activation_approved_by": "MAYHEM"
+        },
+        "human_review": {
+          "decision": "approved",
+          "decision_kind": "human_review",
+          "evidence_ref": "controlled NativeForge grant discovery via documented public API",
+          "guard_status": "NOT_APPLICABLE",
+          "review_authority": "operator",
+          "reviewed_at": "2026-09-17 20:43:27.596162",
+          "reviewed_by": "MAYHEM"
+        },
+        "live_fetch_opt_in": {
+          "decision": "approved",
+          "decision_kind": "live_fetch",
+          "evidence_ref": "gate163:operator_live_fetch_opt_in",
+          "guard_status": "NOT_APPLICABLE",
+          "review_authority": "gate163_human_activation",
+          "reviewed_at": "2026-09-18 15:20:31.553524",
+          "reviewed_by": "operator:MAYHEM"
+        },
+        "reviewers": [
+          "MAYHEM",
+          "operator:MAYHEM"
+        ],
+        "terms": {
+          "decision": "approved",
+          "decision_kind": "terms",
+          "evidence_ref": "https://www.grants.gov/api/terms-conditions",
+          "guard_status": "ATTRIBUTION_REQUIRED",
+          "review_authority": "operator",
+          "reviewed_at": "2026-09-17 20:43:27.596162",
+          "reviewed_by": "MAYHEM"
+        }
+      },
+      "execution": {
+        "attempt_id": "c35bbe3c1a84b1f42362ed65c114e44838d14758a274c994fe144732b310c4ec",
+        "authorized_source_id": "nf-seed-2026-api-grants-gov-search2",
+        "execution_proof_available": true,
+        "live_source_call": true,
+        "proof_hash_matches_payload": true,
+        "transport_kind": "live"
+      },
+      "normalization": {
+        "agency_code": "USDOJ-OJP-BJA",
+        "application_errorcode": 0,
+        "application_message": "Webservice Succeeds",
+        "close_date": "10/15/2026",
+        "derived_from": "the stored bytes, re-verified by hash at read time",
+        "open_date": "07/24/2026",
+        "opportunity_number": "O-BJA-2026-172662",
+        "raw_payload_reference": "eb4cc7cb76d278b9f4ab9aad7375ed0481faa6ff5827786452dc74491c0f1712",
+        "source_opportunity_id": "363308",
+        "title": "U.S. Department of Justice FY26 Coordinated Tribal Assistance Solicitation Notice of Funding Opportunity"
+      },
+      "request": {
+        "authority": "api.grants.gov",
+        "bounded": true,
+        "fingerprint_matches_declared_endpoint": true,
+        "method": "POST",
+        "path": "/v1/api/search2",
+        "request_fingerprint": "0f90dbaa7c7587d55e039dc09975b6f439d192fdf28ba1847f8c163168f5782d",
+        "warrant_kind": "source_collection"
+      },
+      "response": {
+        "byte_count": 11131,
+        "http_status": null,
+        "http_status_known": false,
+        "http_status_note": "UNKNOWN / not captured - see doc 849 section 12. Not inferred.",
+        "media_type": "application/json",
+        "payload_id": "c35bbe3c1a84b1f42362ed65c114e44838d14758a274c994fe144732b310c4ec",
+        "payload_status": "active",
+        "safe_response_metadata": {
+          "content-length": "11131",
+          "content-type": "application/json",
+          "date": "Fri, 18 Sep 2026 15:22:52 GMT"
+        },
+        "sha256": "eb4cc7cb76d278b9f4ab9aad7375ed0481faa6ff5827786452dc74491c0f1712",
+        "storage_mode": "controlled_dev_demo_database"
+      },
+      "source": {
+        "adapter_key": "grants_gov_search2",
+        "declared_endpoint": "https://api.grants.gov/v1/api/search2",
+        "host": "api.grants.gov",
+        "source_id": "nf-seed-2026-api-grants-gov-search2",
+        "source_name": "Grants.gov Search2 API"
+      }
+    }
+  },
+  "audit_chain_complete": true,
+  "invariant_failures": [],
+  "schema_version": "nf_live_collection_audit_artifact_gate164_v1"
+}

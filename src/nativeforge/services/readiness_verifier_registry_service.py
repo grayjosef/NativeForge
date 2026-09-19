@@ -413,6 +413,48 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "live_collection_audit_replay",
+        lane="live_collection_audit_ready",
+        kind=KIND_READINESS,
+        gate="164",
+        blocking=True,
+        depends_on=(
+            "source_authorization_boundary",
+            "source_raw_payload_persistence",
+            "source_collector_execution_envelope",
+        ),
+        note=(
+            "the first real live collection, replayed from persisted evidence "
+            "alone. A FRESH connection with the pool disposed - a pooled "
+            "connection outlives close(), and reusing one would be the "
+            "process-memory shortcut a restart proof exists to exclude - "
+            "recovers 11131 exact bytes, recomputes the hash, and re-derives "
+            "the normalized opportunity from those bytes. No network: every "
+            "phase replaces socket.socket with one that raises and counts "
+            "attempts, so zero is measured rather than read off the code. "
+            "The audit COMPOSES six sections from rows that already exist "
+            "rather than writing a second ledger, because two accounts of one "
+            "event can disagree and the one that disagreed would not announce "
+            "itself. Tampering runs against COPIES of the database file; "
+            "migration 0050 means a stripped authorized_source_id has no "
+            "representation at rest, which is stronger than detecting it. "
+            "health_status is healthy_with_known_evidence_gap: the HTTP "
+            "transport status was never captured because the Gate 163 runner "
+            "read the wrong result field, and it is NOT backfilled from the "
+            "application errorcode - a gap must be named or `known gap` "
+            "becomes a way to pass while hiding anything. Canonical artifact "
+            "generation refuses ambient credential-backed reads at "
+            "auth_environment_overlay, the function that turns credential "
+            "presence into a fact, so a developer .env cannot change a byte "
+            "of committed evidence; the context is a ContextVar rather than "
+            "thread-local because all 57 route modules are sync and run in a "
+            "REUSED anyio worker threadpool. 71 artifact writers classified, "
+            "0 unclassified, 0 unmeasured. The authorized collection count is "
+            "REPORTED, never required to be 1: a second authorized source "
+            "must raise it without failing this gate."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,

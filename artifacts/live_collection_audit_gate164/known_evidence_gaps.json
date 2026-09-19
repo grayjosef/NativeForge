@@ -1,0 +1,13 @@
+{
+  "a_gap_is_not_corruption": "the bytes verify, the linkage holds and the collection replays. What is missing is one field nobody captured.",
+  "application_errorcode": 0,
+  "application_message": "Webservice Succeeds",
+  "http_status": null,
+  "http_status_known": false,
+  "http_status_note": "UNKNOWN / not captured - see doc 849 section 12. Not inferred.",
+  "known_evidence_gaps": [
+    "http_status_not_captured"
+  ],
+  "schema_version": "nf_live_collection_audit_artifact_gate164_v1",
+  "these_are_separate_facts": "an application errorcode is not an HTTP status. Neither is inferred from the other, and the absent one is not filled in."
+}

@@ -1,0 +1,34 @@
+{
+  "build_context": {
+    "ambient_secret_state": "refused",
+    "reason": "gate164 live collection audit evidence",
+    "schema_version": "nf_canonical_artifact_build_context_v1",
+    "scope": "canonical"
+  },
+  "inputs": [
+    "the repository",
+    "an explicit database connection"
+  ],
+  "no_generation_timestamp": "nothing here records when it was generated. A generation time would make the artifact differ on every run for a reason that says nothing about the evidence.",
+  "not_inputs": [
+    "os.environ",
+    ".env",
+    "the working directory",
+    "provider configuration",
+    "the wall clock"
+  ],
+  "schema_version": "nf_live_collection_audit_artifact_gate164_v1",
+  "scope_meaning": {
+    "identical_on_every_machine": true,
+    "is_canonical": true,
+    "meaning": "derived from the repository and its recorded evidence; byte-identical on every machine",
+    "not_implied": [
+      "a canonical artifact is not a statement about any deployment",
+      "an environment-scoped artifact is not repository evidence",
+      "no secret VALUE appears in either kind"
+    ],
+    "reads_ambient_secret_state": false,
+    "schema_version": "nf_canonical_artifact_build_context_v1",
+    "scope": "canonical"
+  }
+}
