@@ -501,6 +501,52 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "canonical_opportunity_store",
+        lane="canonical_graph_ready",
+        kind=KIND_READINESS,
+        gate="167",
+        blocking=True,
+        depends_on=(
+            "source_authority",
+            "live_collection_audit_replay",
+            "source_raw_payload_persistence",
+        ),
+        note=(
+            "the substrate stopped merely proving where a byte came from. The "
+            "Gate 163 payload is replayed from the store, parsed by the "
+            "adapter's declared parser and persisted as a canonical "
+            "opportunity - L1:OBJA2026172662|synopsis, ten provenance rows, "
+            "every one naming the payload sha256. Four tables, because "
+            "CanonicalOpportunity, SourceObservation, OpportunityVersion and "
+            "FieldProvenance are four different things; nf_grant_sparks is "
+            "what collapsing them looks like, 50 columns per organization. "
+            "NONE of the four carries organization_id, which the verifier "
+            "reads from the live schema rather than trusting a comment: the "
+            "other fifteen opportunity-shaped tables are tenant-scoped, and a "
+            "shared federal opportunity stored per tenant multiplies the "
+            "world by the customer count. Evidence is required at write time "
+            "rather than audited after - CHECK(length(raw_payload_sha256) = "
+            "64) means a field value tracing to nothing has no representation "
+            "at rest - and CHECK(identity_layer <> 'L4' OR is_provisional = "
+            "1) makes fuzzy identity unable to present itself as settled. "
+            "Every identifier is DERIVED from evidence, so replaying the same "
+            "payload writes nothing and a full rebuild inside a copied "
+            "database reproduces the identical canonical, version, "
+            "observation and all ten provenance ids. Two sources disagreeing "
+            "about a deadline produces two provenance rows sharing a conflict "
+            "group and no winner; the disputed value does not become "
+            "canonical by arriving second. Forecast and synopsis stay "
+            "distinct canonical rows - merging them would destroy the "
+            "forecasted-to-posted transition - joined by "
+            "opportunity_number_group. 5,000 opportunities and 7,508 "
+            "observations in a throwaway copy: every probed lookup uses an "
+            "index at 0.06-0.17ms, and writes are 14.7/second at 49 SQL "
+            "statements per observation, which is REPORTED as the gate's main "
+            "limitation rather than dressed up. The canonical opportunity "
+            "count is reported, never asserted."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,
