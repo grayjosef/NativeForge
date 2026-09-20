@@ -108,16 +108,23 @@ def classify_live_attempt(
         source_id and authorized_id and source_id == authorized_id
     )
 
+    # Gate 166B: derived from the signed rows, not from a constant. Without a
+    # connection nothing can be derived and nothing is authorized - which is
+    # the same answer the constant gave for an unknown id, reached honestly.
     try:
-        from nativeforge.services.source_live_warrant_service import (
-            AUTHORIZED_SOURCE_IDS,
+        from nativeforge.services.source_authority_service import (
+            derive_authorized_source_ids,
         )
 
-        measured["source_is_in_the_authorized_set"] = authorized_id in (
-            AUTHORIZED_SOURCE_IDS
+        derived = derive_authorized_source_ids(
+            connection=connection, organization_id=organization_id
         )
-        notes["authorized_set"] = sorted(AUTHORIZED_SOURCE_IDS)
-    except Exception as exc:  # noqa: BLE001 - an unreadable set authorizes nothing
+        measured["source_is_in_the_authorized_set"] = authorized_id in derived
+        notes["authorized_set"] = sorted(derived)
+        notes["authorized_set_derived_from"] = (
+            "nf_source_authorization_decisions + nf_active_opportunity_sources"
+        )
+    except Exception as exc:  # noqa: BLE001 - an underivable set authorizes nothing
         notes["authorized_set_error"] = type(exc).__name__
 
     # A claimed proof needs a persisted payload and a hash. Checked from the

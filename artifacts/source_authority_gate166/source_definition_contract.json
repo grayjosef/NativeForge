@@ -1,0 +1,197 @@
+{
+  "by_classification": {
+    "AUTHORITATIVE": [
+      "access_posture_hint",
+      "activation_approval_artifact_id",
+      "activation_approved_at",
+      "activation_approved_by",
+      "adapter_key",
+      "canonical_source_id",
+      "check_interval_days",
+      "check_method",
+      "consecutive_failure_count",
+      "covered_states_json",
+      "covered_tribal_groups_json",
+      "disabled_at",
+      "disabled_reason",
+      "endpoint",
+      "freshness_interval_days",
+      "last_check_status",
+      "last_checked_at",
+      "legal_tos_review_required",
+      "native_relevance_basis",
+      "native_relevance_notes",
+      "next_check_due_at",
+      "priority_level",
+      "program_family",
+      "publisher_name",
+      "source_health_status",
+      "source_id",
+      "source_name",
+      "source_type",
+      "state_code",
+      "tier",
+      "verification_status"
+    ],
+    "DERIVED": [
+      "activation_state",
+      "authority_host"
+    ],
+    "DUPLICATED": [
+      "source_status"
+    ],
+    "LEGACY": [
+      "is_active"
+    ]
+  },
+  "consolidation_performed": false,
+  "fields": {
+    "access_posture_hint": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "activation_approval_artifact_id": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_active_opportunity_sources"
+    },
+    "activation_approved_at": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_active_opportunity_sources"
+    },
+    "activation_approved_by": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_active_opportunity_sources"
+    },
+    "activation_state": {
+      "classification": "DERIVED",
+      "store": "activation signature columns"
+    },
+    "adapter_key": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "authority_host": {
+      "classification": "DERIVED",
+      "store": "seed_csv.source_url"
+    },
+    "canonical_source_id": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "check_interval_days": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "check_method": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "consecutive_failure_count": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "covered_states_json": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "covered_tribal_groups_json": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "disabled_at": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_active_opportunity_sources"
+    },
+    "disabled_reason": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_active_opportunity_sources"
+    },
+    "endpoint": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv.source_url"
+    },
+    "freshness_interval_days": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "is_active": {
+      "classification": "LEGACY",
+      "store": "nf_opportunity_sources"
+    },
+    "last_check_status": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "last_checked_at": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "legal_tos_review_required": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_active_opportunity_sources"
+    },
+    "native_relevance_basis": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_active_opportunity_sources"
+    },
+    "native_relevance_notes": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "next_check_due_at": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "priority_level": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "program_family": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "publisher_name": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "source_health_status": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    },
+    "source_id": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "source_name": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "source_status": {
+      "classification": "DUPLICATED",
+      "store": "nf_active_opportunity_sources"
+    },
+    "source_type": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "state_code": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "tier": {
+      "classification": "AUTHORITATIVE",
+      "store": "seed_csv"
+    },
+    "verification_status": {
+      "classification": "AUTHORITATIVE",
+      "store": "nf_opportunity_sources"
+    }
+  },
+  "schema_version": "nf_source_definition_v1",
+  "stores": [
+    "seed_csv",
+    "nf_opportunity_sources",
+    "nf_active_opportunity_sources"
+  ],
+  "why_no_consolidation": "Gate 166 defines the runtime contract, not the physical schema. Rows are neither migrated nor deleted: this projection is the specification a later consolidation has to satisfy, and its callers do not change when it happens."
+}

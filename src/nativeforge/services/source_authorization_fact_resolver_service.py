@@ -81,9 +81,6 @@ from nativeforge.services.source_authorization_fixture_registry_service import (
     is_fixture_source,
     merge_fixture_rows,
 )
-from nativeforge.services.source_runtime_readiness_fact_service import (
-    build_runtime_readiness_facts,
-)
 
 SCHEMA_VERSION = "nf_source_authorization_fact_resolver_v1"
 
@@ -416,15 +413,19 @@ def _resolve_collector(
         # and persists the bytes. So the question is whether that envelope is
         # ready, which its own health lane MEASURES.
         try:
-            from nativeforge.services.source_collector_execution_health_service import (  # noqa: E501
-                build_execution_health,
+            from nativeforge.services.source_fleet_fact_scope_service import (
+                scoped_execution_health,
             )
 
             # WITH the connection. The lane checks `attempt_table_exists`
             # by reading the table, so without one it reports not-ready and
             # the collector fact refused for a reason unrelated to collectors.
+            #
+            # Scoped (Gate 166E): the lane takes no `source_id`, so its answer
+            # is the same for every source in one sweep. Outside a scope this
+            # is exactly `build_execution_health`.
             ready = bool(
-                build_execution_health(
+                scoped_execution_health(
                     connection=connection, organization_id=organization_id
                 ).get("execution_envelope_ready")
             )
@@ -557,9 +558,16 @@ def _resolve_user_agent() -> dict[str, Any]:
 
 
 def _resolve_attribution(
-    terms_fact: dict[str, Any], activation_fact: dict[str, Any] | None = None
+    terms_fact: dict[str, Any],
+    activation_fact: dict[str, Any] | None = None,
+    registry_row: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Derived from the recorded TERMS decision, and from nothing else.
+    """Whether attribution is required comes from the recorded TERMS decision.
+
+    WHAT text satisfies it comes from the source's own `adapter_key` (Gate
+    166I). Those are different questions and were conflated: this function used
+    to import the Grants.gov module directly, so every source's notice was
+    compared against Grants.gov's verbatim string.
 
     Whether a source demands attribution is part of what a reviewer decides
     when they read its terms - `ATTRIBUTION_REQUIRED` is a member of the
@@ -599,22 +607,21 @@ def _resolve_attribution(
                     "no_notice_recorded_on_the_activation"
                 ),
             }
-        try:
-            from nativeforge.services.grants_gov_attribution_service import (
-                MANIFEST_BLOCK_KEY,
-                MANIFEST_NOTICE_KEY,
-                build_attribution_contract,
-            )
+        # Gate 166I: the required text is resolved by the source's OWN
+        # `adapter_key`, not imported from one publisher's module. Before
+        # this, the generic resolver compared every source's notice against
+        # the verbatim Grants.gov string - so source #2's correct notice
+        # would have been rejected for not being Grants.gov's, and no
+        # signed decision could have fixed it.
+        #
+        # Grants.gov's behaviour is unchanged: same module, same constant,
+        # same character-for-character comparison.
+        from nativeforge.services.source_attribution_contract_service import (
+            verify_recorded_notice,
+        )
 
-            contract = build_attribution_contract(
-                trust_manifest={MANIFEST_BLOCK_KEY: {MANIFEST_NOTICE_KEY: notice}},
-                # `runtime_payload` is the surface the manifest represents.
-                # `service_constant` is declared too but is NOT customer
-                # visible on its own, which is the bar that matters.
-                surfaces_present=["runtime_payload", "service_constant"],
-            )
-        except Exception:  # noqa: BLE001 - an unverifiable notice is not one
-            return {"value": None, "record_exists": False}
+        adapter_key = (registry_row or {}).get("adapter_key")
+        contract = verify_recorded_notice(adapter_key=adapter_key, notice=notice)
 
         if not contract.get("attribution_is_customer_visible"):
             return {
@@ -622,7 +629,7 @@ def _resolve_attribution(
                 "record_exists": False,
                 "evidence_ref": (
                     f"attribution_not_customer_visible:"
-                    f"{contract.get('attribution_status')}"
+                    f"{contract.get('attribution_status') or contract.get('result')}"
                 ),
             }
 
@@ -631,9 +638,7 @@ def _resolve_attribution(
             "record_exists": True,
             "recorded_at": terms_fact.get("recorded_at"),
             "recorded_by": terms_fact.get("recorded_by"),
-            "evidence_ref": (
-                "grants_gov_attribution_service:verified_verbatim:runtime_payload"
-            ),
+            "evidence_ref": contract.get("evidence_ref"),
         }
 
     if terms_value == "NO_REVIEW_REQUIRED":
@@ -678,7 +683,16 @@ def _resolve_runtime(
     it - and would leave `approved` unreachable, which is what the first draft
     of this resolver did.
     """
-    facts = build_runtime_readiness_facts(
+    # Scoped (Gate 166E). `build_runtime_readiness_facts` takes no `source_id`
+    # and was ~102 ms of the ~332 ms Gate 165 measured per source. Inside a
+    # sweep it is computed once; outside one this is exactly the same call.
+    # `exercise=True` is never scoped - it writes and deletes fixture rows, and
+    # reusing one exercise's result would report lanes exercised that were not.
+    from nativeforge.services.source_fleet_fact_scope_service import (
+        scoped_runtime_readiness_facts,
+    )
+
+    facts = scoped_runtime_readiness_facts(
         connection=connection,
         organization_id=organization_id,
         exercise=exercise,
@@ -785,7 +799,9 @@ def resolve_source_authorization_facts(
     # decision, and when terms require it the verbatim notice is read from the
     # activation record.
     resolved["attribution_status"] = _resolve_attribution(
-        resolved["terms_status"], resolved["activation_status"]
+        resolved["terms_status"],
+        resolved["activation_status"],
+        registry_row=registry_row,
     )
     runtime_kwargs, runtime_facts = _resolve_runtime(
         connection=connection,

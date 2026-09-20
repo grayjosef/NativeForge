@@ -33,6 +33,9 @@ sys.path.insert(0, "src")
 sys.path.insert(0, ".")
 
 from nativeforge.db.session import SessionLocal  # noqa: E402
+from nativeforge.services.source_authority_service import (  # noqa: E402
+    derive_authorized_source_ids,
+)
 from nativeforge.services.source_authorization_fact_resolver_service import (  # noqa: E402
     resolve_source_authorization_facts,
 )
@@ -42,9 +45,6 @@ from nativeforge.services.source_live_authorization_service import (  # noqa: E4
 )
 from nativeforge.services.source_live_fetch_opt_in_service import (  # noqa: E402
     describe_opt_in_state,
-)
-from nativeforge.services.source_live_warrant_service import (  # noqa: E402
-    AUTHORIZED_SOURCE_IDS,
 )
 from nativeforge.services.source_monitoring_approved_source_service import (  # noqa: E402
     load_registry_rows,
@@ -152,8 +152,11 @@ try:
     out["real_allowlisted_count"] = len(unblocked)
     out["exactly_one_real_source_is_allowlisted"] = len(unblocked) == 1
     out["the_allowlisted_source_is_the_authorized_one"] = sorted(unblocked) == [SOURCE]
+    # Gate 166B: the authorized set is derived from the signed rows, not read
+    # from a constant. The comparison is unchanged - what it compares against
+    # is now the thing that actually authorizes a request.
     out["the_allowlist_matches_the_authorized_set"] = set(unblocked) == set(
-        AUTHORIZED_SOURCE_IDS
+        derive_authorized_source_ids(connection=session, organization_id=DEMO)
     )
     out["other_real_sources_still_blocked"] = len(blocked_by_more)
     out["every_other_real_source_remains_denied"] = len(blocked_by_more) == (

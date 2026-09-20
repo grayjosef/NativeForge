@@ -1,0 +1,35 @@
+{
+  "derived_from": [
+    "nf_source_authorization_decisions",
+    "nf_active_opportunity_sources",
+    "the seed catalog"
+  ],
+  "derived_from_source_code_constant": false,
+  "fact": "what sources exist, and which of them may execute",
+  "not_implied": [
+    "a catalog row is not an authorization",
+    "an adapter existing is not an authorization",
+    "governance complete is not a permitted request: robots, attribution, collector capability and runtime readiness are conditions of the moment and are checked per request",
+    "retired wins outright; it is evaluated before the ladder"
+  ],
+  "removed_in_this_gate": "source_live_warrant_service.AUTHORIZED_SOURCE_IDS",
+  "required_decision_kinds": [
+    "terms",
+    "human_review",
+    "live_fetch"
+  ],
+  "schema_version": "nf_source_authority_gate166_v1",
+  "states": [
+    "unregistered",
+    "registered",
+    "reviewed",
+    "activated",
+    "live_opted_in",
+    "authorized_for_live",
+    "retired",
+    "blocked",
+    "review_required",
+    "unknown"
+  ],
+  "why_removed": "it restated a guarantee the database already enforces - migration 0048 makes an unsigned approved decision unwritable - in a place nobody could audit, and at 1,000 sources it would have made every activation a deploy"
+}

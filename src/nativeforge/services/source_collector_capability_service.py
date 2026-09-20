@@ -116,12 +116,15 @@ def _envelope_ready(*, connection: Any, organization_id: Any) -> bool:
     collectors.
     """
     try:
-        from nativeforge.services.source_collector_execution_health_service import (
-            build_execution_health,
+        # Routed through the Gate 166E scope. This lane takes no `source_id`,
+        # so a fleet sweep asked it once per source and got one answer every
+        # time. With no scope open this is exactly `build_execution_health`.
+        from nativeforge.services.source_fleet_fact_scope_service import (
+            scoped_execution_health,
         )
 
         return bool(
-            build_execution_health(
+            scoped_execution_health(
                 connection=connection, organization_id=organization_id
             ).get("execution_envelope_ready")
         )

@@ -1,0 +1,9 @@
+{
+  "adapters_with_contracts": [
+    "grants_gov_search2"
+  ],
+  "contract_count": 1,
+  "declaring_is_not_satisfying": "a descriptor names where the required text lives; the notice recorded on the activation is still verified verbatim",
+  "keyed_by": "adapter_key from the source catalog row",
+  "schema_version": "nf_source_attribution_contract_v1"
+}

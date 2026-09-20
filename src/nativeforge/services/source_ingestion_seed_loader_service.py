@@ -101,8 +101,24 @@ def load_source_seed_rows(*, limit: int | None = None) -> list[dict[str, str]]:
     for row in rows:
         _validate_row(row)
     rows = [apply_seed_url_corrections(row) for row in rows]
-    if len(rows) != EXPECTED_ROW_COUNT:
-        raise ValueError(f"expected {EXPECTED_ROW_COUNT} seed rows, got {len(rows)}")
+    # Gate 166D: the corpus may GROW without a code edit, and may not SHRINK.
+    #
+    # An equality check made "what sources exist" a source-code constant:
+    # adding source #500 meant editing a historical row count and regenerating
+    # every artifact that quoted it. That was the right transition guard for a
+    # 177-row fixture and the wrong permanent mechanism for a fleet.
+    #
+    # What it was really protecting - that Sprint 257's corpus cannot silently
+    # be lost or swapped out - is preserved below as a FLOOR plus a by-id
+    # check. Growth is allowed because a new row is not an authorization: it
+    # makes a source `registered`, and nothing more. Accountability moved to
+    # `source_authority_service`, where it takes four signed decisions, which
+    # is a stronger forcing function than a number somebody had to remember.
+    if len(rows) < EXPECTED_ROW_COUNT:
+        raise ValueError(
+            f"the seed corpus shrank: expected at least {EXPECTED_ROW_COUNT} "
+            f"rows, got {len(rows)}"
+        )
     # The count alone would pass if one row were swapped for another, so the
     # rows added after the baseline are checked BY ID. A corpus that is the
     # right size and the wrong shape is the failure a bare count cannot see.

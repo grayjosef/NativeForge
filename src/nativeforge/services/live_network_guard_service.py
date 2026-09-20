@@ -246,23 +246,30 @@ def _scheme(url: Any) -> str:
     return (urlsplit(str(url or "")).scheme or "").lower()
 
 
-def _grants_gov_host_is_authorized(host: Any, source_id: Any) -> bool:
-    """Is there a recorded authorization naming THIS source and THIS host?
+def _host_is_the_recorded_authority(
+    host: Any, source_id: Any, *, activation: Any = None, terms: Any = None
+) -> bool:
+    """Is THIS host the recorded authority of a source THIS request activated?
 
-    Deliberately narrow, and deliberately not a flag. It asks the warrant
-    service - the one enforcement path - whether the source id is one this
-    campaign authorized and whether the host is that source's recorded
-    authority. It does NOT re-check the signed decisions: that is the warrant
-    service's job at dispatch time, and duplicating it here would be a second
-    copy of a rule to drift.
+    Gate 163 answered the first half by asking whether the source id appeared
+    in `AUTHORIZED_SOURCE_IDS`. Gate 166B removed that constant, and this
+    function must stay PURE: `build_live_network_decision` is a pure decision
+    function over its arguments, which Gate 162 asserts and
+    `_g162_phase_resolution.py` re-checks. Giving it a database connection
+    would break a property that is itself proven.
 
-    Imported lazily because the warrant service reads the fact resolver, which
-    reads this module.
+    So the two halves are answered from what is already here:
+
+      * the host binding, from the catalog row - a file read, no connection;
+      * the authorization, from the `activation_status` and `terms_status`
+        THIS caller resolved from the decision tables for THIS request.
+
+    That is strictly stronger than the constant it replaces. Set membership
+    was static and said nothing about the moment; a resolved
+    `activation_allowed` is a fact about this request, and a source whose
+    activation was revoked stops passing here without any code changing.
     """
     try:
-        from nativeforge.services.source_live_warrant_service import (
-            AUTHORIZED_SOURCE_IDS,
-        )
         from nativeforge.services.source_monitoring_approved_source_service import (
             load_registry_rows,
         )
@@ -270,7 +277,16 @@ def _grants_gov_host_is_authorized(host: Any, source_id: Any) -> bool:
         return False
 
     key = str(source_id or "").strip()
-    if key not in AUTHORIZED_SOURCE_IDS:
+    if not key:
+        return False
+
+    # The caller's own resolved authorization for this request. Anything other
+    # than a permitting activation, or terms that still need a human, is not
+    # authority - including the `activation_unknown` fallback that a revoked
+    # activation normalizes to.
+    if str(activation or "") != "activation_allowed":
+        return False
+    if str(terms or "") not in TERMS_NON_BLOCKING:
         return False
 
     try:
@@ -471,7 +487,9 @@ def build_live_network_decision(
     grants_gov_flag_blocked = (
         host in GRANTS_GOV_HOSTS
         and not live_network_allowed()
-        and not _grants_gov_host_is_authorized(host, source_id)
+        and not _host_is_the_recorded_authority(
+            host, source_id, activation=activation, terms=terms
+        )
     )
     if grants_gov_flag_blocked:
         blocked_reasons.append("gate77b_hermetic_guard_blocks_grants_gov")

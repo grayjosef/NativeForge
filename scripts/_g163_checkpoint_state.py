@@ -26,12 +26,12 @@ from nativeforge.services.hermetic_test_guard_service import (  # noqa: E402
 from nativeforge.services.source_allowlist_projection_service import (  # noqa: E402
     project_allowlist,
 )
+from nativeforge.services.source_authority_service import (  # noqa: E402
+    derive_authorized_source_ids,
+)
 from nativeforge.services.source_live_fetch_opt_in_service import (  # noqa: E402
     describe_opt_in_state,
     opt_in_invariant_failures,
-)
-from nativeforge.services.source_live_warrant_service import (  # noqa: E402
-    AUTHORIZED_SOURCE_IDS,
 )
 from nativeforge.services.source_monitoring_approved_source_service import (  # noqa: E402
     load_registry_rows,
@@ -72,7 +72,9 @@ decided = (
     .all()
 )
 say("real sources with decisions", sorted(set(decided) & real_ids))
-say("AUTHORIZED_SOURCE_IDS", sorted(AUTHORIZED_SOURCE_IDS))
+# Gate 166B: derived from the signed rows, not read from a constant.
+AUTHORIZED = derive_authorized_source_ids(connection=session, organization_id=DEMO)
+say("derived authorized source ids", sorted(AUTHORIZED))
 
 payloads = session.execute(
     sa.text(
@@ -89,7 +91,7 @@ for row in payloads:
 say("unauthorized live rows", len([p for p in payloads if not p[1]]))
 say(
     "live rows outside the authorized set",
-    len([p for p in payloads if str(p[1]) not in AUTHORIZED_SOURCE_IDS]),
+    len([p for p in payloads if str(p[1]) not in AUTHORIZED]),
 )
 
 robots = session.execute(

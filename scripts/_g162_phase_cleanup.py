@@ -38,11 +38,12 @@ FIXTURE_LIKE = "nf162.fixture.%"
 #: The ONLY real sources permitted to carry terms / human-review / activation
 #: decisions. Gate 163 activated exactly one, signed by MAYHEM.
 #:
-#: A LITERAL, deliberately. The authoritative set lives in the code under test
-#: as `source_live_warrant_service.AUTHORIZED_SOURCE_IDS`; deriving this from
-#: it would make the check follow the code, so adding a source there would
-#: silently widen what this permits. Pinned here and cross-checked against the
-#: code below, so drift in either direction fails.
+#: A LITERAL, deliberately. Gate 166B removed the code's constant, so the
+#: authoritative set is now DERIVED from the signed decision and activation
+#: rows. Deriving this pin the same way would make the check follow the data,
+#: so signing a fourth decision would silently widen what this permits. Pinned
+#: here and cross-checked against the derived set below, so drift in either
+#: direction fails.
 ALLOWED_REAL_DECISION_SOURCES: frozenset[str] = frozenset(
     {"nf-seed-2026-api-grants-gov-search2"}
 )
@@ -177,22 +178,31 @@ try:
             f"an allowed real source has an unsigned decision: {unsigned_allowed}"
         )
 
-    # The literal pin above and the code under test must agree.
+    # The literal pin above and the authority under test must agree.
+    #
+    # Gate 166B removed `AUTHORIZED_SOURCE_IDS`: no constant authorizes a
+    # source any more, the signed rows do. The key is RENAMED rather than
+    # reused, because what it measures changed - a check still called
+    # `the_code_authorizes...` while reading the database would be the
+    # substring-vs-meaning defect this campaign keeps finding.
     try:
-        from nativeforge.services.source_live_warrant_service import (
-            AUTHORIZED_SOURCE_IDS,
+        from nativeforge.services.source_authority_service import (
+            derive_authorized_source_ids,
         )
 
-        out["the_code_authorizes_exactly_the_pinned_set"] = bool(
-            frozenset(AUTHORIZED_SOURCE_IDS) == ALLOWED_REAL_DECISION_SOURCES
+        derived = derive_authorized_source_ids(
+            connection=session, organization_id=DEMO
         )
-        if frozenset(AUTHORIZED_SOURCE_IDS) != ALLOWED_REAL_DECISION_SOURCES:
+        out["the_data_authorizes_exactly_the_pinned_set"] = bool(
+            derived == ALLOWED_REAL_DECISION_SOURCES
+        )
+        if derived != ALLOWED_REAL_DECISION_SOURCES:
             detail.append(
-                "the code's AUTHORIZED_SOURCE_IDS drifted from the pinned set: "
-                f"{sorted(AUTHORIZED_SOURCE_IDS)}"
+                "the DERIVED authorized set drifted from the pinned set: "
+                f"{sorted(derived)}"
             )
-    except Exception as exc:  # noqa: BLE001 - an unreadable set authorizes nothing
-        out["the_code_authorizes_exactly_the_pinned_set"] = False
+    except Exception as exc:  # noqa: BLE001 - an underivable set authorizes nothing
+        out["the_data_authorizes_exactly_the_pinned_set"] = False
         detail.append(f"authorized_set:{type(exc).__name__}")
 
     # Reported, not required to be zero: Gate 163's authorized collection is a
@@ -272,7 +282,7 @@ out.setdefault("unapproved_real_sources_approved", -1)
 out.setdefault("allowed_real_sources_with_decisions", -1)
 out.setdefault("at_most_one_real_source_is_allowed", False)
 out.setdefault("allowed_real_source_decisions_are_signed", False)
-out.setdefault("the_code_authorizes_exactly_the_pinned_set", False)
+out.setdefault("the_data_authorizes_exactly_the_pinned_set", False)
 out.setdefault("real_sources_approved", -1)
 out.setdefault("live_execution_attempts", -1)
 out.setdefault("unauthorized_live_execution_attempts", -1)

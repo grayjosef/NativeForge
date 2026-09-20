@@ -297,7 +297,7 @@ for pair in \
   "unapproved_real_sources_with_decisions:0" \
   "at_most_one_real_source_is_allowed:True" \
   "allowed_real_source_decisions_are_signed:True" \
-  "the_code_authorizes_exactly_the_pinned_set:True" \
+  "the_data_authorizes_exactly_the_pinned_set:True" \
   "unauthorized_live_execution_attempts:0" \
   "unsigned_live_execution_attempts:0" \
   "live_attempts_outside_the_authorized_set:0" \

@@ -45,6 +45,9 @@ from nativeforge.repositories.source_authorization_decision_repository import ( 
     LIVE_FETCH,
     record_decision,
 )
+from nativeforge.services.source_authority_service import (  # noqa: E402
+    resolve_source_authority,
+)
 from nativeforge.services.source_authorization_fact_resolver_service import (  # noqa: E402
     resolve_source_authorization_facts,
 )
@@ -57,7 +60,6 @@ from nativeforge.services.source_live_fetch_opt_in_service import (  # noqa: E40
     opt_in_invariant_failures,
 )
 from nativeforge.services.source_live_warrant_service import (  # noqa: E402
-    AUTHORIZED_SOURCE_IDS,
     WARRANT_SOURCE_COLLECTION,
     evaluate_live_request,
 )
@@ -95,8 +97,6 @@ def main() -> int:
         refusals.append(
             f"source_id is not the authorized source: {source_id!r} != {AUTHORIZED!r}"
         )
-    if source_id not in AUTHORIZED_SOURCE_IDS:
-        refusals.append("source_id is not in AUTHORIZED_SOURCE_IDS")
     if not handle:
         refusals.append("no operator handle")
     if not args.single_source_acknowledged:
@@ -104,6 +104,24 @@ def main() -> int:
 
     session = SessionLocal()
     try:
+        # Gate 166B: the source must already be ACTIVATED before it may be
+        # opted in. This replaces a membership test against the constant
+        # `AUTHORIZED_SOURCE_IDS`, and it cannot be the derived authorized set
+        # - that set requires the live_fetch decision, which is the very row
+        # this script is about to write. Asking for it here would make the
+        # script refuse to do its own job.
+        authority = resolve_source_authority(
+            connection=session,
+            organization_id=DEMO,
+            source_id=source_id,
+            registered=source_id in load_registry_rows(),
+        )
+        if authority.get("state") not in ("activated", "live_opted_in"):
+            refusals.append(
+                "source is not activated, so it may not be opted in: "
+                f"state={authority.get('state')} reasons={authority.get('reasons')}"
+            )
+
         # The exact-one-source assertion, re-made here. The phase that proved
         # it ran in a different process, and an opt-in that trusts a previous
         # process is an opt-in nobody checked.

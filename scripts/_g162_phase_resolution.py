@@ -42,6 +42,9 @@ from nativeforge.services.source_allowlist_projection_service import (  # noqa: 
     allowlist_projection_invariant_failures,
     project_allowlist,
 )
+from nativeforge.services.source_authority_service import (  # noqa: E402
+    derive_authorized_source_ids,
+)
 from nativeforge.services.source_authorization_fixture_registry_service import (  # noqa: E402,E501
     FIXTURE_ROWS,
     PERMITTABLE_FIXTURE,
@@ -53,9 +56,6 @@ from nativeforge.services.source_authorization_fixture_registry_service import (
 from nativeforge.services.source_live_authorization_service import (  # noqa: E402
     authorization_invariant_failures,
     authorize_source_for_live_access,
-)
-from nativeforge.services.source_live_warrant_service import (  # noqa: E402
-    AUTHORIZED_SOURCE_IDS,
 )
 from nativeforge.services.source_monitoring_approved_source_service import (  # noqa: E402,E501
     evaluate_registry,
@@ -77,11 +77,13 @@ ALLOWED_REAL_DECISION_SOURCES: frozenset[str] = frozenset(
     {"nf-seed-2026-api-grants-gov-search2"}
 )
 
-#: A LITERAL, deliberately. The authoritative set lives in the code under test
-#: as `source_live_warrant_service.AUTHORIZED_SOURCE_IDS`; deriving this from
-#: it would make the check follow the code, so adding a source there would
-#: silently widen what this verifier permits. Pinned here and cross-checked
-#: against the code, so drift in either direction fails.
+#: A LITERAL, deliberately. Gate 166B removed the code's constant, so the
+#: authoritative set is now DERIVED from the signed decision and activation
+#: rows. Deriving this pin the same way would make the check follow the data,
+#: and signing a fourth decision would silently widen what this verifier
+#: permits. Pinned here and cross-checked against the derived set, so drift in
+#: either direction fails - which is the same property the pin had when the
+#: thing it guarded was a frozenset.
 
 out: dict[str, object] = {}
 detail: list[str] = []
@@ -288,13 +290,20 @@ try:
     )
     out["real_source_decisions_preserved"] = real_decisions_before
 
-    out["the_code_authorizes_exactly_the_pinned_set"] = bool(
-        frozenset(AUTHORIZED_SOURCE_IDS) == ALLOWED_REAL_DECISION_SOURCES
+    # Gate 166B removed the code's set; authority now derives from the signed
+    # rows. The pin above is unchanged and still a LITERAL, so the check keeps
+    # its original force - drift in either direction fails - while measuring
+    # the thing that actually authorizes a request now.
+    derived_authorized = derive_authorized_source_ids(
+        connection=session, organization_id=DEMO
     )
-    if frozenset(AUTHORIZED_SOURCE_IDS) != ALLOWED_REAL_DECISION_SOURCES:
+    out["the_data_authorizes_exactly_the_pinned_set"] = bool(
+        derived_authorized == ALLOWED_REAL_DECISION_SOURCES
+    )
+    if derived_authorized != ALLOWED_REAL_DECISION_SOURCES:
         detail.append(
-            "the code's AUTHORIZED_SOURCE_IDS drifted from the pinned set: "
-            f"{sorted(AUTHORIZED_SOURCE_IDS)}"
+            "the DERIVED authorized set drifted from the pinned set: "
+            f"{sorted(derived_authorized)}"
         )
 
     # "The delete was narrow" is a claim. This is the measurement.
@@ -549,7 +558,7 @@ for key in (
     "the_fixture_subjects_are_reserved_ids",
     "the_fixtures_start_with_no_decisions",
     "the_fixtures_start_with_no_activation",
-    "the_code_authorizes_exactly_the_pinned_set",
+    "the_data_authorizes_exactly_the_pinned_set",
     "clearing_the_fixtures_left_the_real_decisions_alone",
     "clearing_the_fixtures_left_the_real_activation_alone",
     "missing_terms_blocks",

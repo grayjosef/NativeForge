@@ -455,6 +455,52 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "source_authority",
+        lane="source_authority_data_derived",
+        kind=KIND_READINESS,
+        gate="166",
+        blocking=True,
+        depends_on=(
+            "source_authorization_boundary",
+            "live_collection_audit_replay",
+        ),
+        note=(
+            "source authorization stopped being a source-code allowlist. "
+            "AUTHORIZED_SOURCE_IDS - one frozenset naming Grants.gov - is "
+            "gone, and authority derives from the signed rows in "
+            "nf_source_authorization_decisions and "
+            "nf_active_opportunity_sources that already existed; migration "
+            "0048 makes an unsigned approved decision unwritable, so the "
+            "constant was restating a database guarantee where nobody could "
+            "audit it. Proven by negative control, because one positive case "
+            "cannot tell enforcement from deletion: the SAME source id with "
+            "its opt-in withdrawn is refused, and a DIFFERENT id that appears "
+            "nowhere in the codebase reaches live_opted_in on its records "
+            "alone - which is the factory unlock. A real catalog row "
+            "(nf-seed-2026-fed-001) refuses at state 'registered', so "
+            "presence in the CSV is not authorization. retired is evaluated "
+            "before the ladder and wins outright, because a disabled source "
+            "with four signed decisions is disabled. Fleet facts are hoisted "
+            "into an explicitly-scoped ContextVar: Gate 165 measured ~70% of "
+            "a 332ms authorization as fleet-wide work with no source_id, "
+            "recomputed per source, and a sweep now computes each fleet fact "
+            "exactly ONCE - 2 computations at 10, 100, 1,000 and 5,000 "
+            "sources, 5,000 evaluated in 175ms, 9,998 computations avoided. "
+            "It is not a cache: with no scope open every call computes, and a "
+            "scope opened for another organization is bypassed rather than "
+            "answered from. The genericity scan classifies by AST node - a "
+            "publisher named inside an adapter-keyed descriptor is the "
+            "architecture working, an import or a branch is a leak - and "
+            "found a real one: the generic resolver verified every source's "
+            "attribution against the verbatim Grants.gov notice, so source "
+            "#2's correct notice would have been rejected and no signed "
+            "decision could have fixed it. generic_layer_leaks=0. The "
+            "authorized source count is REPORTED, never asserted: a verifier "
+            "requiring 1 would have to be edited to permit what this gate "
+            "was built to allow."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,

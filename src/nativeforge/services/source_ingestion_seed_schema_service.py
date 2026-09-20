@@ -30,7 +30,24 @@ POST_BASELINE_SEED_IDS: Final[tuple[str, ...]] = (
 
 #: Derived, so the count follows the named additions instead of being a magic
 #: number somebody has to remember to keep in step.
+#:
+#: Gate 166D: this is HISTORICAL FIXTURE INTEGRITY, not runtime source
+#: authority. It records what the shipped corpus contained and is enforced as
+#: a FLOOR - the corpus may not shrink below it, and each named post-baseline
+#: addition must still be present by id. It is no longer an equality check,
+#: because "what sources exist" must not be a constant in this file: at 1,000
+#: sources that made every addition a code change and a deploy.
+#:
+#: What sources exist at runtime is answered by the catalog; which of them may
+#: EXECUTE is answered by `source_authority_service` from signed rows. A seed
+#: row grants nothing - it makes a source `registered`, which is the floor of
+#: the authority ladder and never the answer.
 EXPECTED_ROW_COUNT: Final[int] = BASELINE_ROW_COUNT + len(POST_BASELINE_SEED_IDS)
+
+#: The same number, named for what Gate 166D actually enforces. Callers that
+#: mean "the corpus must not have shrunk" should say so rather than reaching
+#: for a constant whose name implies an equality that no longer holds.
+MINIMUM_ROW_COUNT: Final[int] = EXPECTED_ROW_COUNT
 
 REQUIRED_COLUMNS: Final[tuple[str, ...]] = (
     "seed_id",

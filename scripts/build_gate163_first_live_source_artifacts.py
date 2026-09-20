@@ -27,11 +27,11 @@ from nativeforge.repositories.source_collection_execution_attempt_repository imp
 from nativeforge.repositories.source_collection_raw_payload_repository import (  # noqa: E402
     count_payloads,
 )
+from nativeforge.services.source_authority_service import (  # noqa: E402
+    derive_authorized_source_ids,
+)
 from nativeforge.services.source_live_fetch_opt_in_service import (  # noqa: E402
     describe_opt_in_state,
-)
-from nativeforge.services.source_live_warrant_service import (  # noqa: E402
-    AUTHORIZED_SOURCE_IDS,
 )
 from nativeforge.services.source_monitoring_approved_source_service import (  # noqa: E402
     load_registry_rows,
@@ -142,7 +142,15 @@ def main() -> int:
                 "decisions": [dict(row) for row in decisions],
                 "activation": dict(activation) if activation else None,
                 "joined_on": "source_id (migration 0049), never source_name",
-                "authorized_source_ids": sorted(AUTHORIZED_SOURCE_IDS),
+                "authorized_source_ids": sorted(
+                    derive_authorized_source_ids(
+                        connection=session, organization_id=DEMO
+                    )
+                ),
+                "authorized_source_ids_derived_from": (
+                    "nf_source_authorization_decisions + "
+                    "nf_active_opportunity_sources, not a source-code constant"
+                ),
                 "not_implied": [
                     "a registry row is not an authorization",
                     "an adapter existing is not an authorization",

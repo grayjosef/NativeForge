@@ -67,10 +67,25 @@ WARRANT_KINDS: tuple[str, ...] = (
     WARRANT_SOURCE_COLLECTION,
 )
 
-#: The ONE source this gate authorized. A constant, not an argument: widening
-#: it is an edit somebody reviews.
-AUTHORIZED_SOURCE_IDS: frozenset[str] = frozenset(
-    {"nf-seed-2026-api-grants-gov-search2"}
+#: Gate 166 removed `AUTHORIZED_SOURCE_IDS` from this module.
+#:
+#: It named one source and was the right mechanism for a first live call:
+#: widening it was an edit somebody reviewed. It was also REDUNDANT - the
+#: authorization it encoded already existed as signed rows in
+#: `nf_source_authorization_decisions` and `nf_active_opportunity_sources`,
+#: and migration 0048 makes an unsigned `approved` decision unwritable. The
+#: constant restated a database guarantee in a place nobody could audit, and
+#: at 1,000 sources it would have made every activation a deploy.
+#:
+#: Authority now derives from those rows via `source_authority_service`. The
+#: Grants.gov source remains authorized because its DATA says so.
+#:
+#: The states in which governance permits a live call. Operational facts -
+#: robots, attribution, collector, runtime - are separate and are checked
+#: below on every request; reaching one of these states is necessary, never
+#: sufficient.
+GOVERNANCE_PERMITTING_STATES: frozenset[str] = frozenset(
+    {"live_opted_in", "authorized_for_live"}
 )
 
 #: The only path a robots preflight may request.
@@ -241,8 +256,6 @@ def evaluate_live_request(
     source_id = str(authorized_source_id or "").strip()
     if not source_id:
         reasons.append(REFUSE_NO_SOURCE_ID)
-    elif source_id not in AUTHORIZED_SOURCE_IDS:
-        reasons.append(f"{REFUSE_SOURCE_NOT_AUTHORIZED}:{source_id}")
 
     url = str(request_url or "")
     host = _host_of(url)
@@ -284,6 +297,36 @@ def evaluate_live_request(
         reasons.append(
             f"collection_path_does_not_match_the_source:{path}!={registry_path}"
         )
+
+    # ---- the recorded authority (Gate 166B) --------------------------
+    # Derived from the signed rows, not from a list in this file. A source
+    # whose decisions are complete is authorized whether or not any module
+    # names it; a source whose decisions are withdrawn is refused even
+    # though its identifier has not changed.
+    authority_state = None
+    authority_reasons: list[str] = []
+    if connection is not None and source_id:
+        try:
+            from nativeforge.services.source_authority_service import (
+                resolve_source_authority,
+            )
+
+            authority = resolve_source_authority(
+                connection=connection,
+                organization_id=organization_id,
+                source_id=source_id,
+                registered=bool(row),
+                now=now,
+            )
+            authority_state = authority.get("state")
+            authority_reasons = list(authority.get("reasons") or [])
+            if not authority.get("governance_complete"):
+                reasons.append(f"{REFUSE_SOURCE_NOT_AUTHORIZED}:{authority_state}")
+        except Exception:  # noqa: BLE001 - an underivable authority is none
+            reasons.append(f"{REFUSE_SOURCE_NOT_AUTHORIZED}:authority_underivable")
+    elif source_id:
+        # No connection: nothing could be derived, so nothing is authorized.
+        reasons.append(f"{REFUSE_SOURCE_NOT_AUTHORIZED}:no_connection")
 
     # ---- the recorded facts ------------------------------------------
     facts: dict[str, Any] = {}
@@ -350,7 +393,12 @@ def evaluate_live_request(
             # permitted this - and never silently set by this code.
             "legacy_env_flag_consulted": False,
             "legacy_env_flag_required": False,
-            "authorized_source_ids": sorted(AUTHORIZED_SOURCE_IDS),
+            # Gate 166B: the authority, and where it came from. No list of
+            # source ids appears here because no list decides this any more.
+            "source_authority_state": authority_state,
+            "source_authority_reasons": sorted(set(authority_reasons)),
+            "authorization_derived_from_persisted_decisions": True,
+            "authorization_derived_from_source_code_constant": False,
         }
     )
 
@@ -399,8 +447,15 @@ def warrant_invariant_failures(decision: dict[str, Any]) -> list[str]:
 
     if decision.get("permitted"):
         source_id = decision.get("authorized_source_id")
-        if source_id not in AUTHORIZED_SOURCE_IDS:
-            fails.append(f"permitted_an_unauthorized_source:{source_id}")
+        if not source_id:
+            fails.append("permitted_without_naming_a_source")
+        # Gate 166B: the check is on the DERIVED authority the decision
+        # carries, not on membership of a list this module holds.
+        state = decision.get("source_authority_state")
+        if state not in GOVERNANCE_PERMITTING_STATES:
+            fails.append(f"permitted_without_a_permitting_authority_state:{state}")
+        if decision.get("authorization_derived_from_source_code_constant"):
+            fails.append("authorization_came_from_a_source_code_constant")
         if not decision.get("host_matches_the_recorded_authority"):
             fails.append("permitted_a_host_that_is_not_the_recorded_authority")
         statuses = decision.get("fact_statuses") or {}

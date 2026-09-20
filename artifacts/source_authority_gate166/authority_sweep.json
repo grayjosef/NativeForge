@@ -1,0 +1,23 @@
+{
+  "authorized_count_is_reported_not_asserted": "Gate 163's world had one authorized source. Gate 166 exists so the next one is a data change, and a verifier asserting 1 would have to be edited to permit what this gate enables.",
+  "authorized_source_ids": [
+    "nf-seed-2026-api-grants-gov-search2"
+  ],
+  "counts_by_state": {
+    "activated": 0,
+    "authorized_for_live": 0,
+    "blocked": 0,
+    "live_opted_in": 1,
+    "registered": 179,
+    "retired": 0,
+    "review_required": 0,
+    "reviewed": 0,
+    "unknown": 0,
+    "unregistered": 0
+  },
+  "evaluated_sources": 180,
+  "fact": "every registered source, evaluated in one fleet-fact scope",
+  "invariant_failures": [],
+  "registered_sources": 180,
+  "schema_version": "nf_source_authority_gate166_v1"
+}

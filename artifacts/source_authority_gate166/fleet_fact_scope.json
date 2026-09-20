@@ -1,0 +1,20 @@
+{
+  "computations_during_this_sweep": {
+    "execution_health": 1,
+    "runtime_readiness_facts": 1,
+    "scheduler_readiness": 0
+  },
+  "covered_transitively": {
+    "scheduler_readiness": "runtime_readiness_facts"
+  },
+  "fact": "fleet-wide facts are computed once per sweep",
+  "fleet_facts": [
+    "runtime_readiness_facts",
+    "execution_health",
+    "scheduler_readiness"
+  ],
+  "primitive": "contextvars.ContextVar",
+  "schema_version": "nf_source_authority_gate166_v1",
+  "why_not_a_cache": "explicit lifetime, immutable for one sweep, discarded on exit. With no scope open every call computes, which is byte-for-byte the pre-Gate-166 behaviour. A scope opened for another organization is BYPASSED rather than answered from - a mismatch costs time, never correctness.",
+  "why_not_thread_local": "all 57 API route modules are sync, so Starlette runs them in anyio's worker threadpool with REUSED workers; thread-local state would leak one request's scope into the next request that landed on the same worker"
+}
