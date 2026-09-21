@@ -76,6 +76,16 @@ BLOCKING_KEY_INSERT = "BLOCKING_KEY_INSERT"
 #: primary-key collision. One set query per batch, and only when there is
 #: something to insert.
 BLOCKING_KEY_LOOKUP = "BLOCKING_KEY_LOOKUP"
+#: Gate 170 types each field move into a durable change event. Three
+#: statements per BATCH: one semantic-index read, one bulk insert, and one
+#: update per corroborating source. Named individually because this profile's
+#: whole purpose is that no statement in the write path is unattributed - and
+#: it has now caught three separate additions that forgot to declare
+#: themselves, which is the check working rather than being pedantic.
+CHANGE_EVENT_LOOKUP = "CHANGE_EVENT_LOOKUP"
+CHANGE_EVENT_INSERT = "CHANGE_EVENT_INSERT"
+CHANGE_EVENT_CORROBORATION = "CHANGE_EVENT_CORROBORATION"
+CONFLICT_STATE_WRITE = "CONFLICT_STATE_WRITE"
 REDUNDANT = "REDUNDANT"
 UNKNOWN = "UNKNOWN"
 
@@ -104,6 +114,10 @@ def classify(statement: str) -> str:
         return table in text
 
     if upper.startswith("INSERT"):
+        if touches("nf_opportunity_change_events"):
+            return CHANGE_EVENT_INSERT
+        if touches("nf_opportunity_field_conflicts"):
+            return CONFLICT_STATE_WRITE
         if touches("nf_opportunity_blocking_keys"):
             return BLOCKING_KEY_INSERT
         if touches(CANONICAL):
@@ -117,6 +131,10 @@ def classify(statement: str) -> str:
         return UNKNOWN
 
     if upper.startswith("UPDATE"):
+        if touches("nf_opportunity_change_events"):
+            return CHANGE_EVENT_CORROBORATION
+        if touches("nf_opportunity_field_conflicts"):
+            return CONFLICT_STATE_WRITE
         if touches(CANONICAL):
             return CURRENT_VERSION_UPDATE
         if touches(VERSIONS):
@@ -126,6 +144,10 @@ def classify(statement: str) -> str:
         return UNKNOWN
 
     if upper.startswith("SELECT"):
+        if touches("nf_opportunity_change_events"):
+            return CHANGE_EVENT_LOOKUP
+        if touches("nf_opportunity_field_conflicts"):
+            return CONFLICT_STATE_WRITE
         if touches("nf_opportunity_blocking_keys"):
             return BLOCKING_KEY_LOOKUP
         if touches(PROVENANCE):

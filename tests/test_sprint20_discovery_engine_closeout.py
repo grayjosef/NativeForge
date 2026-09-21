@@ -190,7 +190,7 @@ def test_alembic_migrations_unique_revisions_and_expected_head() -> None:
     #     grep -rn "004[0-9]" --include=*.py --include=*.sh src/ scripts/ tests/
     #
     # Unquoted, unanchored, and read every hit rather than filtering.
-    assert result.stdout.strip() == "0054 (head)"
+    assert result.stdout.strip() == "0055 (head)"
 
     sprint_discovery_files = [
         "0010_nf_opportunity_sources_discovery.py",

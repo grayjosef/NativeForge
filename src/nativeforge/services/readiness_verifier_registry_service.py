@@ -625,6 +625,49 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "change_intelligence",
+        lane="change_intelligence_ready",
+        kind=KIND_READINESS,
+        gate="170",
+        blocking=True,
+        depends_on=("canonical_opportunity_store", "cross_source_identity"),
+        note=(
+            "the graph can now say what changed, how much it matters and which "
+            "source proves it. No second diff: Gate 168's comparison stays the "
+            "only comparison, and this types what it found. Direction is the "
+            "point - DEADLINE_SHORTENED is CRITICAL and DEADLINE_EXTENDED is "
+            "MATERIAL, because a Tribe that planned around the old date needs "
+            "the first immediately and the second can wait for a digest; one "
+            "DEADLINE_CHANGED type would force both into the same alert and "
+            "guarantee one is wrong. Every classification carries the named "
+            "rule that produced it, and migration 0055 refuses to store a "
+            "non-UNKNOWN materiality without one: CRITICAL is not reviewable, "
+            "CRITICAL because deadline_shortened is. The asymmetries are "
+            "deliberate - losing eligibility outranks gaining it, losing a "
+            "document outranks adding one. A first sighting is NON_MATERIAL, "
+            "because firing an amendment alert on discovery is the wrong "
+            "signal to the wrong audience. Corroboration is AGREEMENT, not a "
+            "repeated transition: two sources never share a version pair "
+            "(their record ids differ) and with a shared version chain the "
+            "second source to see a change produces no diff at all, so a "
+            "source carrying the new value confirms the change - one event "
+            "with a count of two rather than one alert per source. Conflicts "
+            "are a row with a duration: first_detected_at is never rewritten, "
+            "so 'these sources have disagreed for eleven days' is answerable, "
+            "and resolving one field leaves another contested. The unchanged "
+            "case is the one that matters at fleet scale: 0.016 statements per "
+            "observation and 1740/sec against 2.02 and 294/sec for changed. "
+            "50,001 observations, 111,010 events, every lookup index-backed "
+            "under 0.2ms. Rebuild from evidence reproduces identical event "
+            "ids, types, materiality and shapes; Gate 169's human identity "
+            "decisions replay from storage rather than being recomputed. The "
+            "customer read model is an allowlist - a denylist is a list of "
+            "things somebody remembered - and withholds the rule NAME while "
+            "showing the explanation. Nothing is delivered: notifications_sent "
+            "is 0 and delivery is not built in this gate."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,

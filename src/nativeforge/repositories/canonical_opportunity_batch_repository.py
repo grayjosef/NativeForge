@@ -240,6 +240,18 @@ def _provenance_table() -> sa.Table:
 # --------------------------------------------------------------- helpers
 
 
+def deadline_shape_for(fields: dict[str, Any]) -> str:
+    """Which deadline shape this record's fields represent.
+
+    The canonical vocabulary carries one `close_date`, so a record from the
+    current adapter is `single`. A future source publishing regional or staged
+    deadlines will carry more, and the shape must travel with the change event
+    so a regional move is never reported as a national one - which is why this
+    is a function rather than a hardcoded literal.
+    """
+    return "single" if fields.get("close_date") else "unknown"
+
+
 def _field_text(value: Any) -> str:
     return json.dumps(value) if isinstance(value, list) else str(value)
 
@@ -335,6 +347,11 @@ def persist_observations(
         "blocking_keys_inserted": 0,
         "blocking_key_failures": 0,
         "blocking_keys_already_present": 0,
+        "change_events_inserted": 0,
+        "change_events_corroborated": 0,
+        "change_events_already_present": 0,
+        "change_events_refused": 0,
+        "change_classification_failures": 0,
         "batches": 0,
         "batch_failures": 0,
     }
@@ -510,6 +527,12 @@ def _persist_chunk(
     # identity did not add a statement per observation.
     new_blocking: list[dict[str, Any]] = []
     seen_blocking: set[tuple[str, str, str]] = set()
+    # Gate 170: classified change events, accumulated in memory and written in
+    # bulk with everything else.
+    pending_changes: list[dict[str, Any]] = []
+    #: (source_id, {field: value, "_canonical_ids": {...}}) for every record in
+    #: this chunk, so corroboration-by-agreement needs no extra query.
+    agreement_candidates: list[tuple[str, dict[str, Any]]] = []
     new_observations: list[dict[str, Any]] = []
     new_versions: list[dict[str, Any]] = []
     new_provenance: list[dict[str, Any]] = []
@@ -540,6 +563,14 @@ def _persist_chunk(
             canonical_id=canonical_id,
             observation_id=observation_id,
             version_id=version_id,
+        )
+
+        # What this record asserts, for corroboration-by-agreement later.
+        agreement_candidates.append(
+            (
+                str(record.source_id),
+                {**fields, "_canonical_ids": {canonical_id}},
+            )
         )
 
         # -- canonical row
@@ -679,6 +710,56 @@ def _persist_chunk(
             plan.changed_fields = sorted(changed)
             plan.is_material = bool(materiality["is_material"])
             metrics["versions_inserted"] += 1
+
+            # Gate 170C: type each field move while the prior and new values
+            # are already in hand. Classifying here rather than re-reading the
+            # version row keeps change intelligence at statements per BATCH
+            # rather than per changed observation - and it reuses Gate 168's
+            # diff instead of computing a second one.
+            try:
+                from nativeforge.services.opportunity_change_taxonomy_service import (
+                    classify_change,
+                )
+
+                prior_fields: dict[str, Any] = {}
+                if previous is not None:
+                    try:
+                        prior_fields = json.loads(
+                            previous["normalized_fields_json"] or "{}"
+                        )
+                    except Exception:  # noqa: BLE001
+                        prior_fields = {}
+
+                for field_name in sorted(changed):
+                    # A source's own record key changing is a fact about the
+                    # source, not about the opportunity. Gate 167 already
+                    # classifies these as SOURCE_SCOPED and keeps them out of
+                    # conflict detection; emitting a change event for one
+                    # would put "something changed that we cannot describe"
+                    # in front of a customer for a reason that is not about
+                    # their opportunity at all.
+                    if field_name in SOURCE_SCOPED_FIELDS:
+                        continue
+                    classified = classify_change(
+                        field_name=field_name,
+                        prior_value=prior_fields.get(field_name),
+                        new_value=fields.get(field_name),
+                        is_first_observation=previous is None,
+                        deadline_shape=deadline_shape_for(fields),
+                    )
+                    classified["canonical_id"] = canonical_id
+                    classified["prior_version_id"] = (
+                        str(previous["version_id"]) if previous is not None else None
+                    )
+                    classified["new_version_id"] = version_id
+                    classified["observation_id"] = observation_id
+                    classified["source_id"] = str(record.source_id)
+                    classified["raw_payload_sha256"] = sha
+                    pending_changes.append(classified)
+            except Exception:  # noqa: BLE001 - change typing is derived, not evidence
+                metrics["change_classification_failures"] = (
+                    metrics.get("change_classification_failures", 0) + 1
+                )
 
         # -- provenance, decided against the prefetched map
         conflicts: list[str] = []
@@ -873,6 +954,224 @@ def _persist_chunk(
             .where(provenance_t.c.provenance_id.in_(sorted(set(ids))))
             .values(conflict_group=group)
         )
+
+    # ---- Gate 170: change events, in bulk ----------------------------
+    #
+    # Three statements for the whole chunk: one existence read, one insert,
+    # and one corroboration update per source that agreed. Not per change.
+    if pending_changes:
+        from nativeforge.repositories.opportunity_change_repository import (
+            _events_table,
+            build_change_event_id,
+        )
+        from nativeforge.services.opportunity_change_taxonomy_service import (
+            change_invariant_failures,
+        )
+
+        events = _events_table()
+        by_id: dict[str, dict[str, Any]] = {}
+        for change in pending_changes:
+            if change_invariant_failures(change):
+                # A classification that cannot be argued with is not written.
+                metrics["change_events_refused"] = (
+                    metrics.get("change_events_refused", 0) + 1
+                )
+                continue
+            event_id = build_change_event_id(
+                canonical_id=change["canonical_id"],
+                prior_version_id=change.get("prior_version_id"),
+                new_version_id=change["new_version_id"],
+                field_name=change["field_name"],
+            )
+            # Within one chunk the same semantic change from a second source
+            # is corroboration, not a duplicate row.
+            if event_id in by_id:
+                sources = set(by_id[event_id].setdefault("_sources", set()))
+                sources.add(change["source_id"])
+                by_id[event_id]["_sources"] = sources
+                continue
+            change["_event_id"] = event_id
+            change["_sources"] = {change["source_id"]}
+            by_id[event_id] = change
+
+        # A change has TWO identities, and conflating them was wrong.
+        #
+        #   row identity      (canonical, prior_version, new_version, field)
+        #   semantic identity (canonical, field, prior_value, new_value)
+        #
+        # The first stops a replay writing a second row. The second is what
+        # CORROBORATION means: two sources reporting "the deadline moved from
+        # X to Y" are describing one event, even though their version rows
+        # differ because their own record ids differ. Keyed on the version
+        # pair, a second source produced a second event - which is the alert
+        # spam this gate exists to prevent.
+        touched_canonical = sorted({c["canonical_id"] for c in by_id.values()})
+        semantic_index: dict[tuple[str, str, str, str], dict[str, Any]] = {}
+        existing_events: dict[str, dict[str, Any]] = {}
+        for group in _chunks(touched_canonical, 400):
+            for row in connection.execute(
+                sa.select(
+                    events.c.change_event_id,
+                    events.c.canonical_id,
+                    events.c.field_name,
+                    events.c.prior_value,
+                    events.c.new_value,
+                    events.c.source_id,
+                    events.c.corroborated_by_json,
+                    events.c.corroborating_source_count,
+                ).where(events.c.canonical_id.in_(group))
+            ).mappings():
+                record_row = dict(row)
+                existing_events[str(row["change_event_id"])] = record_row
+                semantic_index[
+                    (
+                        str(row["canonical_id"]),
+                        str(row["field_name"]),
+                        str(row["prior_value"]),
+                        str(row["new_value"]),
+                    )
+                ] = record_row
+
+        rows_to_insert: list[dict[str, Any]] = []
+        for event_id, change in sorted(by_id.items()):
+            sources = sorted(change.pop("_sources", set()))
+            change.pop("_event_id", None)
+            # Either this exact row exists (a replay) or the same semantic
+            # change is already on file from another source (corroboration).
+            semantic_key = (
+                str(change["canonical_id"]),
+                str(change["field_name"]),
+                str(change.get("prior_value")),
+                str(change.get("new_value")),
+            )
+            prior_row = existing_events.get(event_id) or semantic_index.get(
+                semantic_key
+            )
+            if prior_row is not None:
+                prior = prior_row
+                event_id = str(prior["change_event_id"])
+                try:
+                    known = set(json.loads(prior["corroborated_by_json"] or "[]"))
+                except Exception:  # noqa: BLE001
+                    known = set()
+                fresh = {s for s in sources if s != str(prior["source_id"])} - known
+                if not fresh:
+                    metrics["change_events_already_present"] = (
+                        metrics.get("change_events_already_present", 0) + 1
+                    )
+                    continue
+                known |= fresh
+                connection.execute(
+                    sa.update(events)
+                    .where(events.c.change_event_id == event_id)
+                    .values(
+                        corroborating_source_count=len(known) + 1,
+                        corroborated_by_json=json.dumps(sorted(known)),
+                        last_reported_at=stamp,
+                    )
+                )
+                metrics["change_events_corroborated"] = (
+                    metrics.get("change_events_corroborated", 0) + 1
+                )
+                continue
+
+            primary = sources[0]
+            others = sorted(set(sources[1:]))
+            rows_to_insert.append(
+                {
+                    "change_event_id": event_id,
+                    "canonical_id": change["canonical_id"],
+                    "prior_version_id": change.get("prior_version_id"),
+                    "new_version_id": change["new_version_id"],
+                    "observation_id": change["observation_id"],
+                    "field_name": change["field_name"],
+                    "change_type": change["change_type"],
+                    "materiality": change["materiality"],
+                    "materiality_rule": change.get("materiality_rule"),
+                    "prior_value": (
+                        None
+                        if change.get("prior_value") is None
+                        else str(change["prior_value"])
+                    ),
+                    "new_value": (
+                        None
+                        if change.get("new_value") is None
+                        else str(change["new_value"])
+                    ),
+                    "source_id": primary,
+                    "raw_payload_sha256": change["raw_payload_sha256"],
+                    "deadline_shape": change.get("deadline_shape"),
+                    "detected_at": stamp,
+                    "effective_date": change.get("effective_date"),
+                    "corroborating_source_count": 1 + len(others),
+                    "corroborated_by_json": json.dumps(others),
+                    "first_reported_at": stamp,
+                    "last_reported_at": stamp,
+                    "created_at": stamp,
+                }
+            )
+
+        if rows_to_insert:
+            connection.execute(sa.insert(events), rows_to_insert)
+            metrics["change_events_inserted"] = (
+                metrics.get("change_events_inserted", 0) + len(rows_to_insert)
+            )
+
+        # ---- corroboration by AGREEMENT ------------------------------
+        #
+        # Two sources never share a version pair - their own record ids differ,
+        # so their content fingerprints differ - which means version-keyed
+        # corroboration can never fire between them. And with a single shared
+        # version chain the second source to see a transition produces no diff
+        # at all, because the chain already moved.
+        #
+        # So corroboration is agreement, not a repeated transition: a source
+        # whose observation carries the NEW value of a recorded change is
+        # confirming that change, whether or not it ever reported the old one.
+        # That is the property a downstream alert needs - "two sources say the
+        # deadline is now March" - and it is what keeps one deadline move from
+        # becoming one alert per source.
+        #
+        # Computed from the events already in hand plus this chunk's own
+        # observations. No extra query.
+        agreements: dict[str, set[str]] = {}
+        for observation_source, observation_fields in agreement_candidates:
+            for row in rows_to_insert:
+                if str(row["source_id"]) == observation_source:
+                    continue
+                if str(row["canonical_id"]) not in observation_fields.get(
+                    "_canonical_ids", set()
+                ):
+                    continue
+                field = str(row["field_name"])
+                if field not in observation_fields:
+                    continue
+                if str(observation_fields[field]) != str(row["new_value"]):
+                    continue
+                agreements.setdefault(str(row["change_event_id"]), set()).add(
+                    observation_source
+                )
+
+        for event_id, sources in sorted(agreements.items()):
+            row = next(
+                (r for r in rows_to_insert if r["change_event_id"] == event_id),
+                None,
+            )
+            if row is None:
+                continue
+            known = set(json.loads(row["corroborated_by_json"] or "[]")) | sources
+            connection.execute(
+                sa.update(events)
+                .where(events.c.change_event_id == event_id)
+                .values(
+                    corroborating_source_count=len(known) + 1,
+                    corroborated_by_json=json.dumps(sorted(known)),
+                    last_reported_at=stamp,
+                )
+            )
+            metrics["change_events_corroborated"] = (
+                metrics.get("change_events_corroborated", 0) + 1
+            )
 
     # Counts, recomputed once per touched opportunity rather than per record.
     if canonical_updates:

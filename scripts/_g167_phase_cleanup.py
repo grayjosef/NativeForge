@@ -41,7 +41,15 @@ import sqlalchemy as sa  # noqa: E402
 
 from nativeforge.db.session import SessionLocal  # noqa: E402
 
-FIXTURE_LIKE = "nf167.%"
+#: Every gate's fixture source ids start with `nf1` followed by the gate
+#: number - nf162, nf163, nf167, nf169, nf170. The real source id is
+#: `nf-seed-2026-...`, which starts `nf-` and therefore cannot match.
+#:
+#: Widened from `nf167.%` because later gates introduced their own prefixes
+#: and a cleanup that only knows about one gate's fixtures leaves the others
+#: behind - which Gate 169 proved shows up as "versioning stopped working"
+#: several phases later rather than as leftover rows.
+FIXTURE_LIKE = "nf1%"
 REAL_CANONICAL = "L1:OBJA2026172662|synopsis"
 REAL_SOURCE = "nf-seed-2026-api-grants-gov-search2"
 
@@ -74,7 +82,20 @@ try:
     # version. Children first, and versions selected BY the fixture
     # observations rather than by orphan-hood, because nothing is orphaned
     # until after the observations are gone.
+    fixture_observations = (
+        "SELECT observation_id FROM nf_opportunity_source_observations "
+        "WHERE source_id LIKE :p"
+    )
     statements = (
+        # Gate 170 change events reference canonical, versions AND
+        # observations, so they are the deepest child and go first. Deleting
+        # a version out from under an event raises IntegrityError, which is
+        # the schema correctly refusing to orphan a claim.
+        (
+            "nf_opportunity_change_events",
+            "DELETE FROM nf_opportunity_change_events WHERE "
+            f"observation_id IN ({fixture_observations})",
+        ),
         (
             "nf_opportunity_field_provenance",
             "DELETE FROM nf_opportunity_field_provenance WHERE "
@@ -83,8 +104,7 @@ try:
         (
             "nf_opportunity_versions",
             "DELETE FROM nf_opportunity_versions WHERE observation_id IN "
-            "(SELECT observation_id FROM nf_opportunity_source_observations "
-            "WHERE source_id LIKE :p)",
+            f"({fixture_observations})",
         ),
         (
             "nf_opportunity_source_observations",
@@ -115,6 +135,9 @@ try:
         "NOT IN (SELECT canonical_id FROM nf_opportunity_source_observations)"
     )
     for table, column in (
+        # Conflict rows and blocking keys both hang off a canonical id, so
+        # both precede the canonical delete.
+        ("nf_opportunity_field_conflicts", "canonical_id"),
         ("nf_opportunity_blocking_keys", "canonical_id"),
         ("nf_canonical_opportunities", "canonical_id"),
     ):
