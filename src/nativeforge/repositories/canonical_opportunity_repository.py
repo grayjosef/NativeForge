@@ -32,7 +32,6 @@ evidence ledger; this graph references it and adds nothing to it.
 
 from __future__ import annotations
 
-import datetime as dt
 import hashlib
 import json
 from typing import Any
@@ -216,333 +215,121 @@ def record_observation(
 ) -> dict[str, Any]:
     """Absorb one source record. Idempotent for identical evidence.
 
+    Delegates to `persist_observations` with a batch of one (Gate 168C). The
+    rules that decide identity, lineage, conflict and currency live in exactly
+    one place; keeping a second copy here for the single-record case would be
+    two encodings of the same semantics, and the one that drifted would not
+    announce itself.
+
+    Gate 167 measured this path at 49 SQL statements. The batch writer folds
+    the per-field provenance loop into set operations, so the same single
+    record now costs a fixed handful - without changing what gets written.
+
     `identity` comes from `opportunity_identity_versioning_service`; it is not
     recomputed here so that the one identity model stays the one identity
-    model. Passing an identity does not assert anything - every branch below
-    reads the database to decide what actually happens.
+    model. Passing an identity does not assert anything: every branch reads
+    the database to decide what actually happens.
     """
-    stamp = now or dt.datetime.now(dt.UTC)
-    fields = dict(normalized.get("fields") or {})
-    fingerprint = str(normalized.get("content_fingerprint") or "")
-    sha = str(raw_payload_sha256 or "")
-
-    identity = identity or {}
-    layer = str(identity.get("identity_layer") or "L1")
-    canonical_id = build_canonical_id(
-        identity_layer=layer,
-        composite_key=identity.get("composite_key"),
-        fuzzy_key=identity.get("fuzzy_key"),
+    from nativeforge.repositories.canonical_opportunity_batch_repository import (
+        INSERTED,
+        NormalizedSourceObservation,
+        persist_observations,
     )
-    number = str(identity.get("normalized_opportunity_number") or "")
-    doc_type = str(identity.get("doc_type") or fields.get("doc_type") or "unknown")
 
-    canonical = _canonical_table()
-    observations = _observations_table()
-    versions = _versions_table()
-    provenance = _provenance_table()
+    outcome = persist_observations(
+        connection=connection,
+        observations=[
+            NormalizedSourceObservation(
+                source_id=str(source_id or ""),
+                normalized=dict(normalized or {}),
+                raw_payload_sha256=str(raw_payload_sha256 or ""),
+                identity=dict(identity or {}),
+                raw_payload_attempt_id=raw_payload_attempt_id,
+                source_authority_host=source_authority_host,
+                observed_at=observed_at,
+                http_status=http_status,
+            )
+        ],
+        now=now,
+    )
 
+    record = (outcome.get("results") or [{}])[0]
+    metrics = outcome.get("metrics") or {}
+    result_outcome = str(record.get("outcome") or "")
+
+    # The Gate 167 result shape, preserved. Callers read these keys.
     result: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
-        "canonical_id": canonical_id,
+        "canonical_id": record.get("canonical_id"),
         "source_id": str(source_id or ""),
-        "raw_payload_sha256": sha,
-        "wrote_canonical": False,
-        "wrote_observation": False,
-        "wrote_version": False,
-        "provenance_rows_written": 0,
-        "conflicts_detected": [],
+        "raw_payload_sha256": str(raw_payload_sha256 or ""),
+        "observation_id": record.get("observation_id"),
+        "version_id": record.get("version_id"),
+        "wrote_canonical": bool(metrics.get("canonical_created")),
+        "wrote_observation": result_outcome == INSERTED,
+        "wrote_version": bool(metrics.get("versions_inserted")),
+        "provenance_rows_written": int(
+            metrics.get("provenance_rows_inserted") or 0
+        ),
+        "conflicts_detected": list(record.get("conflicts") or []),
+        "rejected_reasons": list(record.get("reasons") or []),
     }
+    if result["wrote_version"]:
+        result["changed_fields"] = list(record.get("changed_fields") or [])
+        result["is_material"] = bool(record.get("is_material"))
 
-    existing = connection.execute(
-        sa.select(canonical).where(canonical.c.canonical_id == canonical_id)
-    ).mappings().first()
+    result["identity_outcome"] = _identity_outcome(
+        connection=connection,
+        canonical_id=record.get("canonical_id"),
+        source_id=source_id,
+        identity=identity or {},
+        outcome=result_outcome,
+        created_canonical=result["wrote_canonical"],
+    )
+    return _json_safe(result)
 
-    # ---- 1. the canonical row ---------------------------------------
-    if existing is None:
-        connection.execute(
-            sa.insert(canonical).values(
-                canonical_id=canonical_id,
-                normalized_opportunity_number=number,
-                doc_type=doc_type,
-                identity_layer=layer,
-                is_provisional=bool(identity.get("is_provisional")),
-                opportunity_number_group=number,
-                surrogate_opportunity_id=identity.get("opportunity_id"),
-                lifecycle_state=str(
-                    normalized.get("lifecycle_state") or "unknown"
-                ),
-                first_seen_at=stamp,
-                last_seen_at=stamp,
-                observation_count=0,
-                version_count=0,
-                has_field_conflicts=False,
-                created_at=stamp,
-                updated_at=stamp,
-            )
-        )
-        result["wrote_canonical"] = True
-        result["identity_outcome"] = NEW_OPPORTUNITY
-    else:
-        result["identity_outcome"] = None  # decided below
 
-    # ---- 2. the observation ------------------------------------------
-    record_id = str(fields.get("source_record_id") or "")
-    observation_id = _digest(source_id, record_id, sha)
-    seen = connection.execute(
-        sa.select(observations).where(
-            observations.c.observation_id == observation_id
-        )
-    ).mappings().first()
+def _identity_outcome(
+    *,
+    connection: Any,
+    canonical_id: Any,
+    source_id: Any,
+    identity: dict[str, Any],
+    outcome: str,
+    created_canonical: bool,
+) -> str:
+    """What this observation turned out to be, relative to what was known.
 
-    if seen is None:
-        connection.execute(
-            sa.insert(observations).values(
-                observation_id=observation_id,
-                canonical_id=canonical_id,
-                source_id=str(source_id or ""),
-                source_record_id=record_id or None,
-                source_opportunity_number=fields.get("opportunity_number"),
-                source_authority_host=source_authority_host,
-                raw_payload_sha256=sha,
-                raw_payload_attempt_id=raw_payload_attempt_id,
-                parser_name=str(normalized.get("parser_name") or "unknown"),
-                parser_version=str(normalized.get("parser_version") or "0"),
-                observed_at=observed_at or stamp,
-                source_record_fingerprint=fingerprint,
-                observation_state="recorded",
-                # NULL stays NULL. Gate 163 never captured it.
-                http_status=http_status,
-                created_at=stamp,
-            )
-        )
-        result["wrote_observation"] = True
-    result["observation_id"] = observation_id
-
-    # ---- 3. the version ----------------------------------------------
-    version_id = _digest(canonical_id, fingerprint)
-    prior = connection.execute(
-        sa.select(versions)
-        .where(versions.c.canonical_id == canonical_id)
-        .order_by(versions.c.created_at)
-    ).mappings().all()
-    already = next(
-        (row for row in prior if row["version_id"] == version_id), None
+    Read after the write, because "is this the same opportunity another source
+    already described" is a question about the graph, not about the record.
+    """
+    from nativeforge.repositories.canonical_opportunity_batch_repository import (
+        IDEMPOTENT,
+        REJECTED,
     )
 
-    if already is None:
-        previous = prior[-1] if prior else None
-        changed = _changed_fields(previous, fields)
-        # Materiality describes a CHANGE against a prior version. A first
-        # sighting has no prior version, so every field reads as "changed" and
-        # the deadline category would mark it material - which would fire an
-        # "the deadline moved" signal at a Tribe on the day we first saw the
-        # opportunity. First discovery is a different event with a different
-        # audience, so it is recorded as not-material and says why.
-        materiality = (
-            _materiality(changed)
-            if previous is not None
-            else {"is_material": False, "material_categories": []}
-        )
-        connection.execute(
-            sa.insert(versions).values(
-                version_id=version_id,
-                canonical_id=canonical_id,
-                observation_id=observation_id,
-                version_key=identity.get("version_key"),
-                revision=identity.get("revision"),
-                doc_type=doc_type,
-                normalized_fields_json=json.dumps(fields, sort_keys=True),
-                content_fingerprint=fingerprint,
-                supersedes_version_id=(
-                    previous["version_id"] if previous is not None else None
-                ),
-                superseded_by_version_id=None,
-                is_material=materiality["is_material"],
-                material_categories_json=json.dumps(
-                    materiality["material_categories"], sort_keys=True
-                ),
-                # What this version established (first) or altered (later).
-                changed_fields_json=json.dumps(sorted(changed), sort_keys=True),
-                parser_version=str(normalized.get("parser_version") or "0"),
-                created_at=stamp,
-            )
-        )
-        if previous is not None:
-            connection.execute(
-                sa.update(versions)
-                .where(versions.c.version_id == previous["version_id"])
-                .values(superseded_by_version_id=version_id)
-            )
-        result["wrote_version"] = True
-        result["changed_fields"] = sorted(changed)
-        result["is_material"] = materiality["is_material"]
-    result["version_id"] = version_id
+    if outcome == REJECTED:
+        return UNCERTAIN_IDENTITY
+    if bool(identity.get("is_provisional")):
+        return UNCERTAIN_IDENTITY
+    if created_canonical:
+        return NEW_OPPORTUNITY
+    if outcome == IDEMPOTENT:
+        return SAME_SOURCE_SAME_RECORD
 
-    # ---- 4. field provenance ------------------------------------------
-    written = 0
-    conflicts: list[str] = []
-    for name, value in sorted(fields.items()):
-        text = json.dumps(value) if isinstance(value, list) else str(value)
-        provenance_id = _digest(version_id, name)
-        exists = connection.execute(
-            sa.select(provenance.c.provenance_id).where(
-                provenance.c.provenance_id == provenance_id
-            )
-        ).first()
-        if exists is not None:
-            continue
-
-        # This source has made a new claim about this field, so its OWN
-        # previous claim stops being current. Without this demotion a source
-        # that moved a deadline leaves both dates marked current, and "the
-        # current close date" has two answers from one source - which is not a
-        # conflict, just a stale row pretending to be a fact.
-        connection.execute(
-            sa.update(provenance)
-            .where(
-                sa.and_(
-                    provenance.c.canonical_id == canonical_id,
-                    provenance.c.field_name == name,
-                    provenance.c.source_id == str(source_id or ""),
-                    provenance.c.is_current_canonical.is_(True),
-                )
-            )
-            .values(is_current_canonical=False)
-        )
-
-        # Does another SOURCE still assert a different value for this field?
-        # Read AFTER the demotion, so this source's own superseded rows can
-        # never be mistaken for somebody disagreeing.
-        others = connection.execute(
-            sa.select(provenance).where(
-                sa.and_(
-                    provenance.c.canonical_id == canonical_id,
-                    provenance.c.field_name == name,
-                    provenance.c.is_current_canonical.is_(True),
-                )
-            )
-        ).mappings().all()
-        disagreeing = (
-            []
-            if name in SOURCE_SCOPED_FIELDS
-            else [
-                row
-                for row in others
-                if row["field_value"] != text
-                and str(row["source_id"]) != str(source_id or "")
-            ]
-        )
-        conflict_group = _digest(canonical_id, name) if disagreeing else None
-        if disagreeing:
-            conflicts.append(name)
-            # The incumbent keeps its group label so both sides of the
-            # disagreement are findable by one indexed lookup.
-            for row in disagreeing:
-                connection.execute(
-                    sa.update(provenance)
-                    .where(provenance.c.provenance_id == row["provenance_id"])
-                    .values(conflict_group=conflict_group)
-                )
-
-        connection.execute(
-            sa.insert(provenance).values(
-                provenance_id=provenance_id,
-                canonical_id=canonical_id,
-                version_id=version_id,
-                observation_id=observation_id,
-                field_name=name,
-                field_value=text,
-                source_id=str(source_id or ""),
-                raw_payload_sha256=sha,
-                selection_rule=(
-                    "conflicting_sources_retained_no_automatic_winner"
-                    if disagreeing
-                    else "single_source_latest_observation"
-                ),
-                # A value that disagrees with an existing current value does
-                # NOT become current by arriving second. Nothing is overwritten
-                # and no winner is picked here; Gate 167I requires the
-                # disagreement to survive, not to be resolved.
-                is_current_canonical=not disagreeing,
-                conflict_group=conflict_group,
-                created_at=stamp,
-            )
-        )
-        written += 1
-
-    result["provenance_rows_written"] = written
-    result["conflicts_detected"] = sorted(set(conflicts))
-
-    # ---- 5. advance the canonical row --------------------------------
-    counts = connection.execute(
-        sa.select(
-            sa.func.count(sa.distinct(observations.c.observation_id))
-        ).where(observations.c.canonical_id == canonical_id)
-    ).scalar()
-    version_total = connection.execute(
-        sa.select(sa.func.count(sa.distinct(versions.c.version_id))).where(
-            versions.c.canonical_id == canonical_id
-        )
-    ).scalar()
-
-    updates: dict[str, Any] = {
-        "current_version_id": version_id,
-        "last_seen_at": stamp,
-        "observation_count": int(counts or 0),
-        "version_count": int(version_total or 0),
-        "updated_at": stamp,
-    }
-    if conflicts:
-        updates["has_field_conflicts"] = True
-    # Lifecycle is derived from `status`, so it inherits that field's
-    # contested-ness. Advancing it while two sources disagree about the status
-    # would resolve the disagreement by arrival order in the one column a
-    # reader is most likely to trust.
-    if (
-        normalized.get("lifecycle_state") not in (None, "unknown")
-        and "status" not in conflicts
-    ):
-        updates["lifecycle_state"] = normalized["lifecycle_state"]
-    # The surrogate is set once, by the first source to supply one, and is
-    # never rewritten by a later source's own record key - those are different
-    # namespaces and the second would silently replace the first.
-    if fields.get("source_record_id") and not (
-        existing and existing.get("surrogate_opportunity_id")
-    ):
-        updates["surrogate_opportunity_id"] = fields["source_record_id"]
-
-    # Only fields whose provenance row is current may reach the canonical row.
-    for name, column in CANONICAL_COLUMN_FOR_FIELD.items():
-        if name not in fields or name in conflicts:
-            continue
-        updates[column] = fields[name]
-
-    connection.execute(
-        sa.update(canonical)
-        .where(canonical.c.canonical_id == canonical_id)
-        .values(**updates)
-    )
-
-    # ---- 6. what this observation turned out to be -------------------
-    if result["identity_outcome"] is None:
-        prior_sources = connection.execute(
+    try:
+        observations = _observations_table()
+        sources = connection.execute(
             sa.select(sa.distinct(observations.c.source_id)).where(
-                observations.c.canonical_id == canonical_id
+                observations.c.canonical_id == str(canonical_id)
             )
         ).scalars().all()
-        if bool(identity.get("is_provisional")):
-            result["identity_outcome"] = UNCERTAIN_IDENTITY
-        elif not result["wrote_version"] and not result["wrote_observation"]:
-            result["identity_outcome"] = SAME_SOURCE_SAME_RECORD
-        elif len({str(s) for s in prior_sources}) > 1:
-            result["identity_outcome"] = SAME_OPPORTUNITY_DIFFERENT_SOURCE
-        elif result["wrote_version"]:
-            result["identity_outcome"] = AMENDMENT_OR_VERSION
-        else:
-            result["identity_outcome"] = SAME_SOURCE_SAME_RECORD
+    except Exception:  # noqa: BLE001 - an unreadable graph classifies nothing
+        return UNCERTAIN_IDENTITY
 
-    connection.commit()
-    return _json_safe(result)
+    if len({str(s) for s in sources}) > 1:
+        return SAME_OPPORTUNITY_DIFFERENT_SOURCE
+    return AMENDMENT_OR_VERSION
 
 
 def _changed_fields(previous: Any, fields: dict[str, Any]) -> list[str]:

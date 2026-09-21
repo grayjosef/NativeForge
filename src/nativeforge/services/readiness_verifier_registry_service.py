@@ -547,6 +547,46 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "canonical_write_scale",
+        lane="canonical_write_path_ready",
+        kind=KIND_READINESS,
+        gate="168",
+        blocking=True,
+        depends_on=("canonical_opportunity_store",),
+        note=(
+            "Gate 167's writer was correct at 49 SQL statements per "
+            "observation. Profiling attributed 41 of them to provenance: a "
+            "probe, a demote, a conflict read and an insert, once per field, "
+            "per observation - 4.1 statements per field. The batch writer "
+            "folds that into RESOLVE / DECIDE / APPLY: set queries for "
+            "everything the chunk could collide with, the decisions made in "
+            "memory in deterministic order because version lineage is a "
+            "chain a set operation cannot order, then bulk inserts. A first "
+            "observation is now 11 statements, an idempotent replay 4, and "
+            "statements per field fell to 0.3. At 50,000 observations the "
+            "path issues 1.16 statements each - essentially constant, which "
+            "is the O(observations) target measured rather than asserted. "
+            "Nothing in the evidence model changed: same provenance row per "
+            "field, same payload hash, same conflict metadata, and the Gate "
+            "167 verifier's semantics are re-proven after the rewrite. "
+            "record_observation now delegates to the batch path with a batch "
+            "of one, so there is one write path rather than two that drift. "
+            "Atomicity is proven across six failure shapes including a real "
+            "mid-chunk interruption - the first version of that test patched "
+            "a function the fixture never called and reported a clean "
+            "rollback of nothing. Memory is bounded by the batch, not the "
+            "input: the API consumes an iterable and per-record reporting is "
+            "opt-out, which took peak memory at 50,000 from 713MB to 103MB. "
+            "Every technique is DATABASE_AGNOSTIC - no PRAGMA, no ON "
+            "CONFLICT, no RETURNING - because derived primary keys mean no "
+            "round trip is needed to learn a key. SQLite serializes writers, "
+            "so concurrency is proven under interleaving and NOT under real "
+            "row-level contention, which is reported UNKNOWN. Throughput "
+            "numbers are INFO: pinning one would make a slower machine a "
+            "test failure."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,

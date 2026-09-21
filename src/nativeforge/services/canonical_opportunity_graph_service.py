@@ -193,12 +193,24 @@ def compose_opportunity(
                 {str(r["field_name"]) for r in current}
             ),
             "fields_in_conflict": conflicts,
-            # A field may have at most one current value. Two would mean the
+            # A field may have at most one current VALUE. Two would mean the
             # graph has two answers and no way to choose.
+            #
+            # Counting current ROWS would be wrong: two sources asserting the
+            # same value is corroboration, and the more sources that agree the
+            # more confident the answer - flagging that as a defect would
+            # punish the graph for working.
             "fields_with_multiple_current_values": sorted(
                 name
                 for name in {str(r["field_name"]) for r in current}
-                if len([r for r in current if r["field_name"] == name]) > 1
+                if len(
+                    {
+                        str(r["field_value"])
+                        for r in current
+                        if r["field_name"] == name
+                    }
+                )
+                > 1
             ),
         }
     )
