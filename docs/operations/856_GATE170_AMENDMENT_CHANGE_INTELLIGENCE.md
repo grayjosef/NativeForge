@@ -202,21 +202,76 @@ classification. It is per-source bookkeeping; left in, it generated
 |---|---|
 | opportunities | 10,001 |
 | observations | 50,001 |
-| change events | 111,010 |
+| change events | 111,009 |
 | versions | 31,001 |
 | conflicts | 40 |
-| DB growth | 459.79 MB |
+| DB growth | 459.62 MB |
 
 **The unchanged case is the one that matters at fleet scale** — most polls
 change nothing:
 
 | case | statements / observation | rate |
 |---|---|---|
-| unchanged | **0.016** | **1,740/sec** |
-| changed | 2.024 | 294/sec |
+| unchanged | **0.016** | **1,830/sec** |
+| changed | 1.526 | 443/sec |
 
-a **3.7× separation**, and the unchanged path is effectively free. Every
-change-event and conflict lookup is index-backed at **under 0.2 ms**.
+a **95× separation in statements** and 4.1× in throughput; the unchanged path
+is effectively free. Change-event and conflict lookups are index-backed at
+**0.11–0.23 ms** (`open_conflicts` 0.11, `critical_changes` 0.14,
+`conflict_for_one_field` 0.19, `history_for_one_opportunity` 0.23).
+
+### The N+1 this gate put back, and Gate 168 caught
+
+The first cut of corroboration issued **one UPDATE per event**. In a
+1,500-observation chunk that was **4,291 statements**, 71% of the chunk, and it
+drove statements per observation from the 1.16 Gate 168 shipped to **4.03** —
+the per-field N+1 that Gate 168 exists to have removed, reintroduced by the
+gate that came after it.
+
+Nothing in this gate's own validation found it. The Gate 170 verifier was
+green, the Gate 170 scale phase reported a number that looked reasonable, and
+the full suite was green. **Gate 168's `no_per_field_select` check found it in
+the back-to-back battery, after the commit.** The comment above the block
+claimed "one corroboration update per source that agreed. Not per change" —
+intent, not behaviour.
+
+Per-event values cannot share an `IN` clause, but they can share one
+statement:
+
+| | before | after |
+|---|---|---|
+| corroboration statements per chunk | 4,291 | **3** |
+| rows updated | 4,291 | 4,291 |
+| statements per observation | 4.025 | **1.166** |
+
+`record_change_events` — the backfill and rebuild writer — had the same shape:
+a per-change existence SELECT and a per-change INSERT, on the path that runs
+over every version in the graph. Also three statements now, and it raises
+**before** issuing any statement rather than partway through. Its docstring
+said "this is the path callers use"; it isn't, and it now names itself as the
+backfill writer and states the two-writers drift risk.
+
+### Gate 168's numbers, restored and re-measured
+
+| | Gate 168 shipped | now |
+|---|---|---|
+| stmt/obs at 1k · 10k · 50k | 1.56 · 1.20 · 1.16 | **1.57 · 1.21 · 1.17** |
+| obs/sec at 1k · 10k · 50k | 1,267 · 817 · 559 | 454 · 320 · **256** |
+
+Statement counts are restored — change intelligence now costs about **0.01
+statements per observation**. **Throughput is not**, and that is worth stating
+plainly rather than leaving in a table: 559 → 256 observations/second at 50k,
+and the speedup over the Gate 167 baseline reads **30.9× where Gate 168
+reported ~86×**.
+
+The cost is rows, not statements. Every observation now also writes roughly
+six change-event rows and two blocking-key rows, all indexed, and index
+maintenance is what the Gate 168 report already named as the reason throughput
+degrades with table size. **What is NOT measured is how much of the 559 → 256
+move is those rows and how much is machine variance between two runs on
+different days** — separating them would mean re-running the pre-Gate-169
+write path, which this gate did not do. Reported as an UNKNOWN split rather
+than attributed to the convenient cause.
 
 Gate 168's profiler is authoritative on the write path and it **failed this
 gate three times** for unattributed statements (blocking-key insert, blocking-key
@@ -260,6 +315,7 @@ condition that was never measured is **named rather than assumed true**.
 | `scripts/verify_nativeforge_change_intelligence.sh` | `RESULT=PASS`, 90 checks, `gate170_ready=true` |
 | `tests/test_gate170_change_intelligence.py` | 61 passed |
 | head-pin battery (63, 119, 120, sprint20, 153) | 244 passed |
+| 167 · 168 · 169 · 170 verifiers, **back to back, same DB state** | all `RESULT=PASS` |
 | full suite | green (see gate report) |
 | ruff · `bash -n` · `git diff --check` | clean |
 | funding-source network requests | **0** |

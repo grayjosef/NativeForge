@@ -957,8 +957,11 @@ def _persist_chunk(
 
     # ---- Gate 170: change events, in bulk ----------------------------
     #
-    # Three statements for the whole chunk: one existence read, one insert,
-    # and one corroboration update per source that agreed. Not per change.
+    # Per chunk: one insert, one corroboration update, and one existence read
+    # per 400 touched opportunities. Not one of anything per change - the
+    # first cut issued the corroboration update per event and Gate 168's
+    # no_per_field_select check caught it at 4.03 statements per observation
+    # against the 1.16 that gate shipped.
     if pending_changes:
         from nativeforge.repositories.opportunity_change_repository import (
             _events_table,
@@ -1033,6 +1036,13 @@ def _persist_chunk(
                 ] = record_row
 
         rows_to_insert: list[dict[str, Any]] = []
+        #: Corroboration is a per-EVENT value - each row gets its own count
+        #: and source list - so it cannot collapse into one UPDATE with an
+        #: IN clause. It collapses into one executemany instead: parameter
+        #: sets, one statement. Issued per event, this was 4,291 statements
+        #: in a 1,500-observation chunk and put the per-field N+1 that Gate
+        #: 168 removed straight back into the write path.
+        corroboration_updates: list[dict[str, Any]] = []
         for event_id, change in sorted(by_id.items()):
             sources = sorted(change.pop("_sources", set()))
             change.pop("_event_id", None)
@@ -1061,14 +1071,13 @@ def _persist_chunk(
                     )
                     continue
                 known |= fresh
-                connection.execute(
-                    sa.update(events)
-                    .where(events.c.change_event_id == event_id)
-                    .values(
-                        corroborating_source_count=len(known) + 1,
-                        corroborated_by_json=json.dumps(sorted(known)),
-                        last_reported_at=stamp,
-                    )
+                corroboration_updates.append(
+                    {
+                        "target_event_id": event_id,
+                        "new_count": len(known) + 1,
+                        "new_sources_json": json.dumps(sorted(known)),
+                        "new_last_reported_at": stamp,
+                    }
                 )
                 metrics["change_events_corroborated"] = (
                     metrics.get("change_events_corroborated", 0) + 1
@@ -1160,17 +1169,33 @@ def _persist_chunk(
             if row is None:
                 continue
             known = set(json.loads(row["corroborated_by_json"] or "[]")) | sources
-            connection.execute(
-                sa.update(events)
-                .where(events.c.change_event_id == event_id)
-                .values(
-                    corroborating_source_count=len(known) + 1,
-                    corroborated_by_json=json.dumps(sorted(known)),
-                    last_reported_at=stamp,
-                )
+            corroboration_updates.append(
+                {
+                    "target_event_id": event_id,
+                    "new_count": len(known) + 1,
+                    "new_sources_json": json.dumps(sorted(known)),
+                    "new_last_reported_at": stamp,
+                }
             )
             metrics["change_events_corroborated"] = (
                 metrics.get("change_events_corroborated", 0) + 1
+            )
+
+        # One statement for every corroboration in the chunk, whether it
+        # confirmed an event already on file or one inserted a moment ago.
+        # The two loops above cannot overlap - the first only touches events
+        # that already existed, the second only rows_to_insert - so a single
+        # executemany is safe as well as cheap.
+        if corroboration_updates:
+            connection.execute(
+                sa.update(events)
+                .where(events.c.change_event_id == sa.bindparam("target_event_id"))
+                .values(
+                    corroborating_source_count=sa.bindparam("new_count"),
+                    corroborated_by_json=sa.bindparam("new_sources_json"),
+                    last_reported_at=sa.bindparam("new_last_reported_at"),
+                ),
+                corroboration_updates,
             )
 
     # Counts, recomputed once per touched opportunity rather than per record.

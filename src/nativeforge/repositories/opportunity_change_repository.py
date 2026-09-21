@@ -324,9 +324,16 @@ def record_change_events(
 ) -> dict[str, Any]:
     """Persist classified changes. Idempotent; corroboration is an update.
 
-    Raises rather than writing a classification that cannot be argued with -
-    migration 0055's CHECK refuses the same thing at rest, and this is the
-    path callers use.
+    This is the BACKFILL and rebuild writer. The fleet write path types and
+    writes its own events inline inside one batch, because a batch already
+    holds every version it created and a shared helper would have to re-read
+    them. Two writers of one table is a drift risk, so they are held to the
+    same event identity, the same invariant refusal and the same statement
+    discipline - three statements for the call, not three per change.
+
+    Raises rather than writing a classification that cannot be argued with,
+    and raises BEFORE issuing any statement; migration 0055's CHECK refuses
+    the same thing at rest.
     """
     from nativeforge.services.opportunity_change_taxonomy_service import (
         change_invariant_failures,
@@ -347,6 +354,10 @@ def record_change_events(
     written_ids: list[str] = []
     refusals: list[str] = []
 
+    # Identity first, for every change, so the existence probe is one query
+    # instead of one per change. Issued per change this was three statements
+    # each, and the backfill runs over every version in the graph.
+    candidates: dict[str, dict[str, Any]] = {}
     for change in changes or []:
         failures = change_invariant_failures(change)
         if failures:
@@ -360,10 +371,27 @@ def record_change_events(
             field_name=change["field_name"],
         )
         written_ids.append(event_id)
+        candidates.setdefault(event_id, change)
 
-        existing = connection.execute(
-            sa.select(table).where(table.c.change_event_id == event_id)
-        ).mappings().first()
+    on_file: dict[str, dict[str, Any]] = {}
+    ids = sorted(candidates)
+    for start in range(0, len(ids), 400):
+        for row in (
+            connection.execute(
+                sa.select(table).where(
+                    table.c.change_event_id.in_(ids[start : start + 400])
+                )
+            )
+            .mappings()
+            .all()
+        ):
+            on_file[str(row["change_event_id"])] = dict(row)
+
+    rows_to_insert: list[dict[str, Any]] = []
+    corroboration_updates: list[dict[str, Any]] = []
+
+    for event_id, change in sorted(candidates.items()):
+        existing = on_file.get(event_id)
 
         if existing is not None:
             # Same event. Either the same source replaying - which changes
@@ -381,55 +409,68 @@ def record_change_events(
                 already += 1
                 continue
             sources.add(str(source_id))
-            connection.execute(
-                sa.update(table)
-                .where(table.c.change_event_id == event_id)
-                .values(
-                    corroborating_source_count=len(sources) + 1,
-                    corroborated_by_json=json.dumps(sorted(sources)),
-                    last_reported_at=stamp,
-                )
+            corroboration_updates.append(
+                {
+                    "target_event_id": event_id,
+                    "new_count": len(sources) + 1,
+                    "new_sources_json": json.dumps(sorted(sources)),
+                    "new_last_reported_at": stamp,
+                }
             )
             corroborated += 1
             continue
 
-        connection.execute(
-            sa.insert(table).values(
-                change_event_id=event_id,
-                canonical_id=change["canonical_id"],
-                prior_version_id=change.get("prior_version_id"),
-                new_version_id=change["new_version_id"],
-                observation_id=change["observation_id"],
-                field_name=change["field_name"],
-                change_type=change["change_type"],
-                materiality=change["materiality"],
-                materiality_rule=change.get("materiality_rule"),
-                prior_value=(
+        rows_to_insert.append(
+            {
+                "change_event_id": event_id,
+                "canonical_id": change["canonical_id"],
+                "prior_version_id": change.get("prior_version_id"),
+                "new_version_id": change["new_version_id"],
+                "observation_id": change["observation_id"],
+                "field_name": change["field_name"],
+                "change_type": change["change_type"],
+                "materiality": change["materiality"],
+                "materiality_rule": change.get("materiality_rule"),
+                "prior_value": (
                     None
                     if change.get("prior_value") is None
                     else str(change["prior_value"])
                 ),
-                new_value=(
+                "new_value": (
                     None
                     if change.get("new_value") is None
                     else str(change["new_value"])
                 ),
-                source_id=str(source_id),
-                raw_payload_sha256=sha,
-                deadline_shape=change.get("deadline_shape"),
-                detected_at=stamp,
-                effective_date=change.get("effective_date"),
-                corroborating_source_count=1,
-                corroborated_by_json=json.dumps([]),
-                first_reported_at=stamp,
-                last_reported_at=stamp,
-                created_at=stamp,
-            )
+                "source_id": str(source_id),
+                "raw_payload_sha256": sha,
+                "deadline_shape": change.get("deadline_shape"),
+                "detected_at": stamp,
+                "effective_date": change.get("effective_date"),
+                "corroborating_source_count": 1,
+                "corroborated_by_json": json.dumps([]),
+                "first_reported_at": stamp,
+                "last_reported_at": stamp,
+                "created_at": stamp,
+            }
         )
         inserted += 1
 
     if refusals:
         raise ChangeWriteRefused(sorted(set(refusals)))
+
+    if rows_to_insert:
+        connection.execute(sa.insert(table), rows_to_insert)
+    if corroboration_updates:
+        connection.execute(
+            sa.update(table)
+            .where(table.c.change_event_id == sa.bindparam("target_event_id"))
+            .values(
+                corroborating_source_count=sa.bindparam("new_count"),
+                corroborated_by_json=sa.bindparam("new_sources_json"),
+                last_reported_at=sa.bindparam("new_last_reported_at"),
+            ),
+            corroboration_updates,
+        )
 
     return _json_safe(
         {
