@@ -332,6 +332,9 @@ def persist_observations(
         "canonical_created": 0,
         "canonical_matched": 0,
         "conflicts_recorded": 0,
+        "blocking_keys_inserted": 0,
+        "blocking_key_failures": 0,
+        "blocking_keys_already_present": 0,
         "batches": 0,
         "batch_failures": 0,
     }
@@ -501,6 +504,12 @@ def _persist_chunk(
 
     # ---- 2. DECIDE: pure, sequential, in memory --------------------------
     new_canonical: list[dict[str, Any]] = []
+    # Gate 169P: the buckets a new opportunity belongs in, so cross-source
+    # candidate generation is an indexed key lookup rather than a scan.
+    # Accumulated and inserted in bulk with everything else, so adding
+    # identity did not add a statement per observation.
+    new_blocking: list[dict[str, Any]] = []
+    seen_blocking: set[tuple[str, str, str]] = set()
     new_observations: list[dict[str, Any]] = []
     new_versions: list[dict[str, Any]] = []
     new_provenance: list[dict[str, Any]] = []
@@ -563,6 +572,46 @@ def _persist_chunk(
             new_canonical.append(row)
             existing_canonical[canonical_id] = dict(row)
             metrics["canonical_created"] += 1
+
+            # Blocking keys, built from the same normalized record. Only for
+            # NEW opportunities: the keys derive from identity fields, which
+            # do not change for an existing canonical row.
+            try:
+                from nativeforge.services.cross_source_identity_service import (
+                    build_blocking_keys,
+                    describe_identity,
+                )
+
+                described = describe_identity(
+                    opportunity_number=fields.get("opportunity_number"),
+                    doc_type=doc_type,
+                    agency_code=fields.get("funder_agency_code"),
+                    agency_name=fields.get("funder_agency_name"),
+                    title=fields.get("title"),
+                    source_record_id=fields.get("source_record_id"),
+                    source_id=record.source_id,
+                )
+                for entry in build_blocking_keys(described):
+                    triple = (
+                        canonical_id,
+                        entry["key_kind"],
+                        entry["key_value"],
+                    )
+                    if triple in seen_blocking:
+                        continue
+                    seen_blocking.add(triple)
+                    new_blocking.append(
+                        {
+                            "canonical_id": canonical_id,
+                            "key_kind": entry["key_kind"],
+                            "key_value": entry["key_value"],
+                            "created_at": stamp,
+                        }
+                    )
+            except Exception:  # noqa: BLE001 - identity keys are an index, not evidence
+                metrics["blocking_key_failures"] = (
+                    metrics.get("blocking_key_failures", 0) + 1
+                )
         else:
             metrics["canonical_matched"] += 1
 
@@ -741,6 +790,46 @@ def _persist_chunk(
     # ---- 3. APPLY: bulk, bounded, in a fixed number of statements --------
     if new_canonical:
         connection.execute(sa.insert(canonical), new_canonical)
+    if new_blocking:
+        blocking = _table(
+            "nf_opportunity_blocking_keys",
+            sa.Column("canonical_id", sa.Text()),
+            sa.Column("key_kind", sa.Text()),
+            sa.Column("key_value", sa.Text()),
+            sa.Column("created_at", sa.DateTime(timezone=True)),
+        )
+        # A key may already exist even though the canonical row is new: an
+        # earlier fixture run can leave orphaned keys behind, and a collision
+        # on the primary key would fail the whole batch - surfacing three
+        # phases later as "versioning stopped working" rather than as a
+        # duplicate key. One set query, and only when there is something to
+        # insert, so the hot path is unchanged for a batch of fresh records.
+        touched = sorted({row["canonical_id"] for row in new_blocking})
+        already: set[tuple[str, str, str]] = set()
+        for group in _chunks(touched, 400):
+            for row in connection.execute(
+                sa.select(
+                    blocking.c.canonical_id,
+                    blocking.c.key_kind,
+                    blocking.c.key_value,
+                ).where(blocking.c.canonical_id.in_(group))
+            ):
+                already.add((str(row[0]), str(row[1]), str(row[2])))
+        insertable = [
+            row
+            for row in new_blocking
+            if (row["canonical_id"], row["key_kind"], row["key_value"])
+            not in already
+        ]
+        if insertable:
+            connection.execute(sa.insert(blocking), insertable)
+        metrics["blocking_keys_inserted"] = (
+            metrics.get("blocking_keys_inserted", 0) + len(insertable)
+        )
+        metrics["blocking_keys_already_present"] = (
+            metrics.get("blocking_keys_already_present", 0)
+            + (len(new_blocking) - len(insertable))
+        )
     if new_observations:
         connection.execute(sa.insert(observations_t), new_observations)
     if new_versions:

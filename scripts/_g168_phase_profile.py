@@ -67,6 +67,15 @@ CURRENT_VERSION_UPDATE = "CURRENT_VERSION_UPDATE"
 CONFLICT_LOOKUP = "CONFLICT_LOOKUP"
 LINEAGE_LOOKUP = "LINEAGE_LOOKUP"
 IDEMPOTENCY_CHECK = "IDEMPOTENCY_CHECK"
+#: Gate 169P added one bulk insert of blocking keys per NEW opportunity, so
+#: cross-source candidate generation is an indexed lookup. It is named rather
+#: than folded into an existing class: the point of this profile is that no
+#: statement is unattributed, and a new statement must announce itself.
+BLOCKING_KEY_INSERT = "BLOCKING_KEY_INSERT"
+#: The existence check that stops an orphaned key from failing the batch on a
+#: primary-key collision. One set query per batch, and only when there is
+#: something to insert.
+BLOCKING_KEY_LOOKUP = "BLOCKING_KEY_LOOKUP"
 REDUNDANT = "REDUNDANT"
 UNKNOWN = "UNKNOWN"
 
@@ -95,6 +104,8 @@ def classify(statement: str) -> str:
         return table in text
 
     if upper.startswith("INSERT"):
+        if touches("nf_opportunity_blocking_keys"):
+            return BLOCKING_KEY_INSERT
         if touches(CANONICAL):
             return CANONICAL_INSERT_OR_UPDATE
         if touches(OBSERVATIONS):
@@ -115,6 +126,8 @@ def classify(statement: str) -> str:
         return UNKNOWN
 
     if upper.startswith("SELECT"):
+        if touches("nf_opportunity_blocking_keys"):
+            return BLOCKING_KEY_LOOKUP
         if touches(PROVENANCE):
             # A single-row probe on the primary key is an idempotency check;
             # a filtered read of current values is conflict detection.

@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 36,
+  "blocking_count": 37,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -25,6 +25,7 @@
       "collection_job_store",
       "controlled_beta_readiness",
       "controlled_customer_pilot_activation_package",
+      "cross_source_identity",
       "customer_auth_live",
       "customer_auth_second_person_event",
       "customer_beta_reassessment",
@@ -74,7 +75,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 40,
+  "verifier_count": 41,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -86,6 +87,7 @@
     "collection_job_store",
     "controlled_beta_readiness",
     "controlled_customer_pilot_activation_package",
+    "cross_source_identity",
     "customer_auth_live",
     "customer_auth_second_person_event",
     "customer_beta_reassessment",
@@ -575,6 +577,22 @@
       "production": false,
       "script": "scripts/verify_nativeforge_canonical_write_scale.sh",
       "verifier": "canonical_write_scale"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "canonical_opportunity_store",
+        "canonical_write_scale"
+      ],
+      "expected_result": "PASS",
+      "gate": "169",
+      "kind": "readiness_lane",
+      "lane": "identity_resolution_ready",
+      "note": "the graph can now tell when many sources describe one opportunity, and refuse when they merely look alike. Twelve decision cases, each asserted individually because a summary boolean would let one regression hide behind eleven passes. The strongest guard is the simplest: two different published opportunity numbers mean two different solicitations, which refuses same-agency, same-program and same-deadline lookalikes before any title comparison runs. Annual recurrences are the trap - FY26 and FY27 share their title almost word for word - so the fiscal year is extracted BEFORE comparison and a year difference converts any same-title finding into RECURRENCE_OF, a real relationship and explicitly not a merge. A merge is a SAME_AS ROW, never a rewrite: both opportunities keep every observation, version and provenance row, so reversing an incorrect merge is deleting a row and the counts are identical before, during and after - reversibility is structural rather than a feature. Migration 0054 makes a fuzzy SAME_AS nobody reviewed unrepresentable at rest, and the attempt is proven refused. Candidate generation is an indexed key lookup, and the keys that generate candidates are restricted to the selective ones: funder_and_period measured 25/125/201 candidates at 1k/5k/10k and title_band 4/20/40, so both are written for reporting but never walked per observation. That costs recall on the weakest L4 shape and the trade is named rather than hidden. Mean candidates then stay flat at 1.1/1.1/1.6 across a 10x graph at 2 SQL statements per lookup. Cross-source identity costs exactly one statement per NEW opportunity - 11 to 12 - not one per field or per observation.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_cross_source_identity.sh",
+      "verifier": "cross_source_identity"
     },
     {
       "blocking": true,

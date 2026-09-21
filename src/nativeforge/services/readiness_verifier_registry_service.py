@@ -587,6 +587,44 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "cross_source_identity",
+        lane="identity_resolution_ready",
+        kind=KIND_READINESS,
+        gate="169",
+        blocking=True,
+        depends_on=("canonical_opportunity_store", "canonical_write_scale"),
+        note=(
+            "the graph can now tell when many sources describe one "
+            "opportunity, and refuse when they merely look alike. Twelve "
+            "decision cases, each asserted individually because a summary "
+            "boolean would let one regression hide behind eleven passes. The "
+            "strongest guard is the simplest: two different published "
+            "opportunity numbers mean two different solicitations, which "
+            "refuses same-agency, same-program and same-deadline lookalikes "
+            "before any title comparison runs. Annual recurrences are the "
+            "trap - FY26 and FY27 share their title almost word for word - so "
+            "the fiscal year is extracted BEFORE comparison and a year "
+            "difference converts any same-title finding into RECURRENCE_OF, a "
+            "real relationship and explicitly not a merge. A merge is a "
+            "SAME_AS ROW, never a rewrite: both opportunities keep every "
+            "observation, version and provenance row, so reversing an "
+            "incorrect merge is deleting a row and the counts are identical "
+            "before, during and after - reversibility is structural rather "
+            "than a feature. Migration 0054 makes a fuzzy SAME_AS nobody "
+            "reviewed unrepresentable at rest, and the attempt is proven "
+            "refused. Candidate generation is an indexed key lookup, and the "
+            "keys that generate candidates are restricted to the selective "
+            "ones: funder_and_period measured 25/125/201 candidates at "
+            "1k/5k/10k and title_band 4/20/40, so both are written for "
+            "reporting but never walked per observation. That costs recall on "
+            "the weakest L4 shape and the trade is named rather than hidden. "
+            "Mean candidates then stay flat at 1.1/1.1/1.6 across a 10x "
+            "graph at 2 SQL statements per lookup. Cross-source identity "
+            "costs exactly one statement per NEW opportunity - 11 to 12 - not "
+            "one per field or per observation."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,

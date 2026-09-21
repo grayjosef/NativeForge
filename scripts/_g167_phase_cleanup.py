@@ -100,19 +100,32 @@ try:
             detail.append(f"{table}:{type(exc).__name__}")
             session.rollback()
 
-    # Canonical rows with no observations left are fixture leftovers.
-    try:
-        result = session.execute(
-            sa.text(
-                "DELETE FROM nf_canonical_opportunities WHERE canonical_id "
-                "NOT IN (SELECT canonical_id FROM "
-                "nf_opportunity_source_observations)"
+    # Gate 169 added blocking keys, which carry a foreign key to the canonical
+    # row - so they go FIRST, selected by the same orphan predicate the
+    # canonical delete uses, evaluated while the observations are already gone
+    # but the canonical rows are not. Deleting canonical first raises
+    # IntegrityError, which is the schema correctly refusing to orphan a key.
+    #
+    # Leaving them behind is not merely untidy: the next run re-creates the
+    # same canonical id, the write path inserts its keys again, and the batch
+    # dies on a primary-key collision - surfacing three phases later as
+    # "versioning stopped working". Found by the post-commit battery, which is
+    # the only place two runs happen back to back.
+    orphaned = (
+        "NOT IN (SELECT canonical_id FROM nf_opportunity_source_observations)"
+    )
+    for table, column in (
+        ("nf_opportunity_blocking_keys", "canonical_id"),
+        ("nf_canonical_opportunities", "canonical_id"),
+    ):
+        try:
+            result = session.execute(
+                sa.text(f"DELETE FROM {table} WHERE {column} {orphaned}")
             )
-        )
-        removed += int(result.rowcount or 0)
-    except Exception as exc:  # noqa: BLE001
-        detail.append(f"canonical:{type(exc).__name__}")
-        session.rollback()
+            removed += int(result.rowcount or 0)
+        except Exception as exc:  # noqa: BLE001
+            detail.append(f"{table}:{type(exc).__name__}")
+            session.rollback()
 
     session.commit()
     out["rows_removed"] = removed
