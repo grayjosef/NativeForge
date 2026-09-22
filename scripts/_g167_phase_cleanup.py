@@ -53,6 +53,26 @@ FIXTURE_LIKE = "nf1%"
 REAL_CANONICAL = "L1:OBJA2026172662|synopsis"
 REAL_SOURCE = "nf-seed-2026-api-grants-gov-search2"
 
+#: Gate 163's two real payloads, by content hash and exact byte count: the
+#: robots.txt response and the one Search2 POST. Matched by HASH rather than
+#: by size, so "unchanged" means the bytes are the same bytes.
+GATE163_EVIDENCE: dict[str, int] = {
+    "f249b63cb2fcb66b47e86f906c98f8fd912e82dd035b4e53d7e72fc1960cfd16": 42,
+    "eb4cc7cb76d278b9f4ab9aad7375ed0481faa6ff5827786452dc74491c0f1712": 11131,
+}
+
+#: Sources whose payloads may legitimately be in this ledger. Gate 171 added
+#: two under explicit operator approval; anything else appearing here is a
+#: collection nobody authorized, which is exactly what this check exists to
+#: notice.
+AUTHORIZED_LIVE_SOURCES: frozenset[str] = frozenset(
+    {
+        REAL_SOURCE,
+        "nf-seed-2026-fed-007",
+        "nf-seed-2026-api-federal-register-documents",
+    }
+)
+
 out: dict[str, object] = {}
 detail: list[str] = []
 removed = 0
@@ -224,7 +244,7 @@ try:
     payloads = (
         session.execute(
             sa.text(
-                "SELECT payload_sha256, payload_size_bytes FROM "
+                "SELECT payload_sha256, payload_size_bytes, source_id FROM "
                 "nf_source_collection_raw_payloads ORDER BY payload_sha256"
             )
         )
@@ -235,9 +255,45 @@ try:
     out["raw_payload_bytes"] = sorted(
         int(r["payload_size_bytes"] or 0) for r in payloads
     )
-    out["live_evidence_unchanged"] = sorted(
-        int(r["payload_size_bytes"] or 0) for r in payloads
-    ) == [42, 11131]
+
+    # ---- Gate 163's two payloads, checked BY HASH ---------------------
+    #
+    # This asserted `sizes == [42, 11131]` - correct while Grants.gov was the
+    # only live source, and false the moment Gate 171 collected two more. The
+    # rule the campaign settled is that when reality legitimately changes, the
+    # check moves from "this never happens" to "this happens only under the
+    # authorized condition"; widening the list to four sizes would have done
+    # neither, because a size is not an identity.
+    #
+    # So the two original payloads are matched by CONTENT HASH, which is
+    # strictly stronger than the size comparison it replaces, and every
+    # additional payload must belong to a source the operator approved.
+    by_hash = {
+        str(r["payload_sha256"]): int(r["payload_size_bytes"] or 0)
+        for r in payloads
+    }
+    gate163_present = all(
+        by_hash.get(digest) == size
+        for digest, size in GATE163_EVIDENCE.items()
+    )
+    out["gate163_evidence"] = {
+        digest: {"expected_bytes": size, "found_bytes": by_hash.get(digest)}
+        for digest, size in GATE163_EVIDENCE.items()
+    }
+    out["gate163_evidence_present_and_byte_identical"] = gate163_present
+
+    extra = [
+        str(r["source_id"])
+        for r in payloads
+        if str(r["payload_sha256"]) not in GATE163_EVIDENCE
+    ]
+    out["additional_payload_sources"] = sorted(set(extra))
+    out["additional_payloads_are_authorized"] = all(
+        source in AUTHORIZED_LIVE_SOURCES for source in extra
+    )
+    out["live_evidence_unchanged"] = bool(
+        gate163_present and out["additional_payloads_are_authorized"]
+    )
 finally:
     session.close()
 

@@ -541,11 +541,18 @@ def test_a_missing_notice_does_not_pass():
 
 
 def test_an_edited_notice_does_not_pass():
-    """Verbatim means verbatim. One character and it returns to missing."""
+    """Verbatim means verbatim. One character and it returns to missing.
+
+    The required text is resolved through the contract's own
+    `text_constant`, not through a constant this test guesses the name of.
+    Guessing `ATTRIBUTION_TEXT` worked while one adapter existed; Gate 171
+    added two whose module serves both and therefore cannot use that name
+    for either.
+    """
     key = sorted(ATTRIBUTION_CONTRACTS)[0]
     contract = contract_for_adapter(key)
-    module = __import__(contract["module"], fromlist=["ATTRIBUTION_TEXT"])
-    good = module.ATTRIBUTION_TEXT
+    module = __import__(contract["module"], fromlist=[contract["text_constant"]])
+    good = getattr(module, contract["text_constant"])
 
     passing = verify_recorded_notice(adapter_key=key, notice=good)
     assert passing["attribution_is_customer_visible"] is True

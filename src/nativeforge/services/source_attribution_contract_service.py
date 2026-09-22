@@ -55,8 +55,40 @@ ATTRIBUTION_CONTRACTS: dict[str, dict[str, str]] = {
         "builder": "build_attribution_contract",
         "manifest_block_constant": "MANIFEST_BLOCK_KEY",
         "manifest_notice_constant": "MANIFEST_NOTICE_KEY",
+        # Where the required TEXT lives. Declared rather than assumed: callers
+        # previously reached for a constant literally named ATTRIBUTION_TEXT,
+        # which worked only while one adapter existed and its module happened
+        # to use that name. A module serving two adapters cannot.
+        "text_constant": "ATTRIBUTION_TEXT",
         "publisher": "Grants.gov",
         "why": "the Grants.gov API Terms & Conditions require a verbatim notice",
+    },
+    # Gate 171. The first two rows added by a gate other than the one that
+    # built this table, which is the test it was written for: a source
+    # declaring its own required text, with no edit to the generic resolver.
+    "bia_program_page_html": {
+        "module": "nativeforge.services.source_adapters.gate171_attribution",
+        "builder": "build_bia_attribution_contract",
+        "manifest_block_constant": "BIA_MANIFEST_BLOCK_KEY",
+        "manifest_notice_constant": "BIA_MANIFEST_NOTICE_KEY",
+        "text_constant": "BIA_ATTRIBUTION_TEXT",
+        "publisher": "Bureau of Indian Affairs",
+        "why": (
+            "the operator's activation recorded attribution as required for "
+            "this source, so the notice is owed and must be verbatim"
+        ),
+    },
+    "federal_register_documents_json": {
+        "module": "nativeforge.services.source_adapters.gate171_attribution",
+        "builder": "build_federal_register_attribution_contract",
+        "manifest_block_constant": "FEDERAL_REGISTER_MANIFEST_BLOCK_KEY",
+        "manifest_notice_constant": "FEDERAL_REGISTER_MANIFEST_NOTICE_KEY",
+        "text_constant": "FEDERAL_REGISTER_ATTRIBUTION_TEXT",
+        "publisher": "Office of the Federal Register",
+        "why": (
+            "the operator's activation recorded attribution as required for "
+            "this source, so the notice is owed and must be verbatim"
+        ),
     },
 }
 

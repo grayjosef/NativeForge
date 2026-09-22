@@ -26,6 +26,16 @@ POST_BASELINE_SEED_IDS: Final[tuple[str, ...]] = (
     # the first authorized live source needed a row of its own. Approved by
     # MAYHEM with signed terms, human review and activation decisions.
     "nf-seed-2026-api-grants-gov-search2",
+    # Gate 171. The API-shaped half of the first heterogeneous pair. No
+    # baseline row had this host, and none was API-shaped at all - every one
+    # of the 40 database registry rows is `check_method='web_page'` - so the
+    # second adapter family needed a row of its own. Approved by MAYHEM for
+    # exactly one robots preflight and one bounded collection.
+    #
+    # The HTML half needed no row: the approved BIA program page was already
+    # in the corpus as nf-seed-2026-fed-007, and minting a parallel id for a
+    # source already registered is how a second registry starts.
+    "nf-seed-2026-api-federal-register-documents",
 )
 
 #: Derived, so the count follows the named additions instead of being a magic

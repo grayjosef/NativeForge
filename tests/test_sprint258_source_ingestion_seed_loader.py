@@ -19,6 +19,7 @@ def test_load_every_seed_row() -> None:
 def test_all_candidates_inactive() -> None:
     bundle = build_source_seed_candidate_bundle()
     assert bundle["all_candidates_inactive"] is True
-    # 61 -> 62: the Gate 163 Grants.gov API row is tier 1. The corpus gained a
-    # tier-1 source, which is a real property of the corpus and not a drift.
-    assert bundle["tier_counts"][1] == 62
+    # 61 -> 62 -> 63: Gate 163's Grants.gov API row and Gate 171's Federal
+    # Register row are both tier 1. The corpus gained tier-1 sources, which is
+    # a real property of the corpus and not a drift.
+    assert bundle["tier_counts"][1] == 63

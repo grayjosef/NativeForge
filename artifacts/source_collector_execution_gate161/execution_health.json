@@ -26,7 +26,7 @@
   "human_review_blocked_source_count": 7,
   "jobs_completed": 0,
   "knowing_is_not_approving": "the registry holds many sources and has approved none. Counting its rows reported every one of them as approved until the lane's own invariant refused it.",
-  "known_source_count": 178,
+  "known_source_count": 179,
   "live_source_calls": 0,
   "live_transport_available": true,
   "max_retry_after_seconds": 3600,
@@ -53,7 +53,7 @@
   },
   "schema_version": "nf_source_collector_execution_gate161_artifacts_v1",
   "source_monitoring_live": false,
-  "terms_blocked_source_count": 171,
+  "terms_blocked_source_count": 172,
   "worker_default_handler": "evaluate_only",
   "worker_handler": "hermetic_execution"
 }

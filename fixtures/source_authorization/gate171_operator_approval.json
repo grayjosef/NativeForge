@@ -1,0 +1,66 @@
+{
+  "schema_version": "nf_gate171_operator_approval_v1",
+  "gate": "171",
+  "approved_operator": "MAYHEM",
+  "approval_channel": "operator_message_in_gate171_session",
+  "what_this_file_is": "The operator's explicit approval, recorded as DATA so that activating a source is a decision on file rather than a constant in a script. Gate 163 held its one authorized seed as a module constant and said so; at three sources that stops scaling, and Gate 171F asks for the opposite proof. The safety property is unchanged: a source id that does not appear here is refused, and appearing here is a reviewable change to a tracked file.",
+  "what_this_file_is_not": "Legal authorization, a terms review, or a robots verdict. It is the operator saying which exact identities may be contacted, and nothing more.",
+  "maximum_total_requests": 5,
+  "amendments": [
+    {
+      "amendment": 1,
+      "approved_operator": "MAYHEM",
+      "what": "One replacement robots GET for nf-seed-2026-fed-007, raising the gate total from 4 to 5.",
+      "why": "The first BIA robots request was dispatched and its response discarded by a defect in run_gate171_robots_preflight.py: the script read result['response'], a key execute_request does not return, so it reported 'no request was made' about a request that had already gone out. A prior run of the same script was BLOCKED before dispatch for a missing policy and derived status=None into an 'unreachable' verdict - a caller refusal about to be recorded as a publisher restriction, stopped only by the fact_status CHECK constraint. Both defects are fixed: the script reads `dispatched` directly, and a blocked dispatch can no longer be derived into a verdict.",
+      "spent_without_evidence": 1,
+      "replacement_requests_authorized": 1
+    }
+  ],
+  "approved_sources": [
+    {
+      "source_id": "nf-seed-2026-fed-007",
+      "operator_label": "BIA TTGP program page",
+      "shape": "HTML",
+      "adapter_key": "bia_program_page_html",
+      "source_url": "https://www.bia.gov/service/grants/ttgp/apply-ttgp-grant",
+      "live_fetch_approved": true,
+      "max_requests": 2,
+      "request_budget": {
+        "robots_preflight": 1,
+        "bounded_collection": 1
+      },
+      "attribution_notice": "Source: Bureau of Indian Affairs, U.S. Department of the Interior",
+      "operator_naming_note": "The operator's approval line read 'BIA Tribal Transportation Program / TTGP program page'. TTGP in the Gate 171E packet is the Tribal Tourism Grant Program, which is how registry row nf-seed-2026-fed-007 names it, and the URL approved is that row's URL. The discrepancy is recorded rather than silently resolved, and the URL is the identity that was approved.",
+      "registry_row_preexisting": true
+    },
+    {
+      "source_id": "nf-seed-2026-api-federal-register-documents",
+      "operator_label": "Federal Register documents",
+      "shape": "JSON API",
+      "adapter_key": "federal_register_documents_json",
+      "source_url": "https://www.federalregister.gov/api/v1/documents.json",
+      "live_fetch_approved": true,
+      "max_requests": 2,
+      "request_budget": {
+        "robots_preflight": 1,
+        "bounded_collection": 1
+      },
+      "attribution_notice": "Source: Office of the Federal Register, National Archives and Records Administration",
+      "endpoint_status": "PROPOSED_NOT_ESTABLISHED",
+      "endpoint_note": "The operator authorized testing the proposed path, parameters and envelope EXACTLY ONCE. If the path or schema is wrong, the result is recorded and this source stops for a corrected authorization. No second request may be spent guessing another endpoint.",
+      "registry_row_preexisting": false
+    }
+  ],
+  "standing_constraints": [
+    "no_source_substitutions",
+    "no_alternate_sources",
+    "no_additional_availability_or_head_or_test_probes",
+    "no_retries_merely_to_improve_evidence",
+    "do_not_hunt_for_an_overlapping_opportunity",
+    "preserve_exact_status_bytes_hashes_timestamps_and_unknowns",
+    "robots_evidence_is_not_legal_authorization",
+    "stop_a_source_rather_than_work_around_its_restrictions",
+    "do_not_expand_crawl_depth_on_an_unexpected_document_structure",
+    "persist_raw_evidence_before_normalization"
+  ]
+}

@@ -7,7 +7,7 @@
     "fixture_allowed": 0,
     "human_review_blocked": 7,
     "registry_known": 0,
-    "terms_blocked": 171,
+    "terms_blocked": 172,
     "unknown_source": 0
   },
   "cases": {
@@ -124,13 +124,13 @@
     }
   },
   "dns_resolved": false,
-  "evaluated_count": 178,
+  "evaluated_count": 179,
   "fetch_performed": false,
   "invariant_failures": [],
   "monitorable_count": 0,
   "monitorable_source_ids": [],
   "network_calls": 0,
-  "registry_row_count": 178,
+  "registry_row_count": 179,
   "robots_fetched": false,
   "schema_version": "nf_source_monitoring_gate143_artifact_v1",
   "states": [

@@ -85,6 +85,9 @@ from nativeforge.services.source_authorization_fixture_registry_service import (
     fixture_registry_invariant_failures,
     is_fixture_source,
 )
+from nativeforge.services.source_ingestion_seed_schema_service import (
+    EXPECTED_ROW_COUNT,
+)
 from nativeforge.services.source_live_authorization_service import (
     STATUS_APPROVED,
     STATUS_DENIED,
@@ -541,10 +544,14 @@ UNAUTHORIZED_REAL_SOURCE = "nf-seed-2026-fed-001"
 
 def test_every_real_source_resolves_and_none_is_authorized(connection):
     registry = load_registry_rows()
-    # 178 since Gate 163 added the Grants.gov Search2 API row. None is
-    # authorized HERE regardless: this database holds no decisions, so the
-    # resolver has nothing to resolve from for any of them.
-    assert len(registry) == 178
+    # The corpus size is DERIVED from the named post-baseline additions rather
+    # than pinned to a literal here - 177 at baseline, +1 for Gate 163's
+    # Grants.gov API row, +1 for Gate 171's Federal Register row. A literal
+    # made every authorized source a test edit in three separate files.
+    #
+    # None is authorized HERE regardless: this database holds no decisions, so
+    # the resolver has nothing to resolve from for any of them.
+    assert len(registry) == EXPECTED_ROW_COUNT
 
     authorized = []
     for source_id in sorted(registry):
@@ -871,9 +878,8 @@ def test_no_real_registry_source_uses_the_fixture_prefix():
 
 def test_the_allowlist_is_derived_and_stores_no_flag(connection):
     projection = project_allowlist(connection=connection, organization_id=DEMO, now=T0)
-    # 178 registry rows + 2 synthetic fixtures. Was 179 before Gate 163 added
-    # the Grants.gov API row.
-    assert projection["evaluated"] == 180
+    # Every registry row plus 2 synthetic fixtures.
+    assert projection["evaluated"] == EXPECTED_ROW_COUNT + 2
     assert projection["real_sources_allowlisted"] == 0
     assert projection["approved_source_count"] == 0
     assert not allowlist_projection_invariant_failures(projection)
@@ -1116,8 +1122,12 @@ def test_the_allowlist_route_reports_zero_real_sources():
 
 def test_the_registry_blocked_counts_are_preserved():
     evaluated = evaluate_registry()
-    assert evaluated["registry_row_count"] == 178
-    assert evaluated["terms_blocked_count"] == 171
+    assert evaluated["registry_row_count"] == EXPECTED_ROW_COUNT
+    # 171 -> 172. Gate 171's Federal Register row has no terms decision in the
+    # REGISTRY's own view - `evaluate_registry` does not read the decision
+    # table, so an operator-approved source still counts as terms-blocked
+    # here. That is the boundary working, not a regression.
+    assert evaluated["terms_blocked_count"] == 172
     # 6 -> 7. The Grants.gov API row is `access_posture_hint: public`, so
     # registry-level evaluation classes it `human_review_blocked` - a person
     # must look first. MAYHEM's recorded decisions live in the database, which

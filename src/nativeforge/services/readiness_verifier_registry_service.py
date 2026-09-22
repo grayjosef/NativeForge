@@ -681,6 +681,56 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        # The script path is DERIVED from this name, and Gate 171 names the
+        # file, so the entry matches the file rather than the file being
+        # renamed to suit a registry convention.
+        "real_multisource_gate171",
+        lane="real_multisource_ready",
+        kind=KIND_READINESS,
+        gate="171",
+        blocking=True,
+        depends_on=(
+            "canonical_opportunity_store",
+            "cross_source_identity",
+            "change_intelligence",
+        ),
+        note=(
+            "three heterogeneous REAL source families now flow through one "
+            "fabric: Grants.gov's structured API, a BIA HTML program page and "
+            "the Federal Register JSON API. Five live requests total, all "
+            "operator-approved, and none after the live phase. 21 real "
+            "observations - 1 document, 20 API - all NEW_CANONICAL, with "
+            "independent field provenance per source (10 / 4 / 8 fields) and "
+            "135 FIRST_OBSERVED change events, because a first sighting is "
+            "not an amendment. REAL_OVERLAP_OBSERVED is FALSE and was not "
+            "hunted: convergence, conflicts and corroboration stay "
+            "structurally proven on source-shaped fixtures, and will be "
+            "observed naturally as the fleet grows. The identity LAYER is "
+            "chosen from what a source publishes - the API source is L1, the "
+            "program page is L4 provisional - which is how this gate found "
+            "the defect that matters. Gate 167's unique index on "
+            "(normalized_opportunity_number, doc_type) permitted exactly ONE "
+            "provisional opportunity in the entire graph, because every L4 "
+            "row stores an empty number and doc_type 'unknown'. The real BIA "
+            "page took the slot and the next document-shaped record was an "
+            "IntegrityError that rolled back its whole batch. Migration 0056 "
+            "makes the index partial so uniqueness applies to a PUBLISHED "
+            "identity; L1's guarantee is unchanged and provisional records "
+            "still cannot machine-settle. Replay from persisted bytes "
+            "reproduces identical hashes, identities and provenance with the "
+            "graph unchanged and zero network. BIA's robots response BODY was "
+            "not retained - status, byte count, sha256 and verdict are on "
+            "file - so its health is degraded with the gap NAMED rather than "
+            "hidden behind an authorized boolean. Generic layers stay "
+            "source-blind: 0 leaks, 0 identity branches, scanner proven "
+            "falsifiable. Mixed-fleet scale, all three shapes interleaved: "
+            "6,000 attempted, 6,000 LANDED, 0 rolled back, 1.04 statements "
+            "per landed observation at 443/sec - landed counts are asserted "
+            "because this gate reported 3,490/sec for a run where every batch "
+            "rolled back and nothing was written."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,

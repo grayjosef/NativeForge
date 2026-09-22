@@ -18,8 +18,8 @@
   "prefix_is_reserved": true,
   "real_sources_allowlisted": 0,
   "schema_version": "nf_source_authorization_gate162_artifacts_v1",
-  "shipped_registry_count": 178,
+  "shipped_registry_count": 179,
   "source_monitoring_live": false,
-  "sources_evaluated": 180,
+  "sources_evaluated": 181,
   "why_a_fixture_exists": "an unreachable permitted branch makes a refusal unfalsifiable. Something must be able to reach approved, and it must not be one of the 177 real sources."
 }

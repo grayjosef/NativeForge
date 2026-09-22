@@ -103,6 +103,33 @@ try:
         or 0
     )
 
+    # ---- the precondition this phase depends on, MEASURED --------------
+    #
+    # Every assertion below describes "what this run wrote". That is only true
+    # if this run actually wrote: against leftover fixture rows the writes are
+    # idempotent replays, and the assertions silently describe stale data
+    # instead. Gate 171's battery produced exactly that ambiguity - a lineage
+    # failure that passed standalone and could not be reproduced afterwards,
+    # because nothing recorded what state the phase started from.
+    #
+    # It is reported rather than enforced: this phase does not own cleanup,
+    # and a phase that silently deleted rows to suit itself would be worse
+    # than one that starts dirty. What it owes is to SAY so.
+    started_versions = int(
+        session.execute(
+            sa.text(
+                "SELECT count(*) FROM nf_opportunity_versions v "
+                "JOIN nf_canonical_opportunities k "
+                "ON k.canonical_id = v.canonical_id "
+                "WHERE k.normalized_opportunity_number = :n"
+            ),
+            {"n": NUMBER.replace("-", "")},
+        ).scalar()
+        or 0
+    )
+    out["g_versions_present_before_this_run"] = started_versions
+    out["g_started_from_a_clean_fixture"] = started_versions == 0
+
     # ---- 167G: one field at a time ------------------------------------
     first = write(session, record=dict(BASE), source_id=SOURCE_A)
     canonical_id = first["canonical_id"]
@@ -134,7 +161,12 @@ try:
                 "SELECT version_id, supersedes_version_id, "
                 "superseded_by_version_id, is_material, changed_fields_json "
                 "FROM nf_opportunity_versions WHERE canonical_id = :c "
-                "ORDER BY created_at"
+                # version_id breaks a created_at tie. Without it the sort is
+                # ambiguous for versions written in the same instant, and an
+                # ambiguous sort makes `versions[-1]` mean whatever the query
+                # plan happened to return - which is not a property of the
+                # lineage at all.
+                "ORDER BY created_at, version_id"
             ),
             {"c": canonical_id},
         )
@@ -147,6 +179,30 @@ try:
     out["g_lineage_is_a_chain"] = all(
         row["superseded_by_version_id"] for row in versions[:-1]
     ) and not versions[-1]["superseded_by_version_id"]
+
+    # The supersession links are the AUTHORITATIVE order; created_at is a
+    # proxy for it. If the two ever disagree, say which - a bare
+    # `g_lineage_is_a_chain=False` sent Gate 171 looking for a cleanup bug
+    # when the question was which version the phase thought was newest.
+    by_id = {str(row["version_id"]): row for row in versions}
+    head = [
+        str(row["version_id"])
+        for row in versions
+        if not row["supersedes_version_id"]
+    ]
+    walked: list[str] = []
+    cursor = head[0] if len(head) == 1 else None
+    seen: set[str] = set()
+    while cursor and cursor in by_id and cursor not in seen:
+        seen.add(cursor)
+        walked.append(cursor)
+        cursor = by_id[cursor]["superseded_by_version_id"]
+        cursor = str(cursor) if cursor else None
+    out["g_chain_walk_length"] = len(walked)
+    out["g_exactly_one_chain_root"] = len(head) == 1
+    out["g_timestamp_order_matches_supersession_order"] = walked == [
+        str(row["version_id"]) for row in versions
+    ]
 
     canonical_row = (
         session.execute(
