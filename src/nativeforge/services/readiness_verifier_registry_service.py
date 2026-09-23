@@ -731,6 +731,71 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        # The script path is DERIVED from this name, and Gate 172 names the
+        # file, so the entry matches the file rather than the file being
+        # renamed to suit a registry convention.
+        "source_fleet_health_gate172",
+        lane="source_fleet_operations_ready",
+        kind=KIND_READINESS,
+        gate="172",
+        blocking=True,
+        depends_on=(
+            "real_multisource_gate171",
+            "source_scheduler_runtime",
+            "source_worker_runtime",
+            "collection_job_store",
+        ),
+        note=(
+            "the operating system for the source fleet. Three sources can be "
+            "watched by a person; five thousand cannot, and a fleet that size "
+            "does not fail loudly - it fails in one dimension, on one source, "
+            "while the dashboard stays green. A source's state is DERIVED "
+            "from eleven independent dimensions, each owned by exactly one "
+            "layer, and degrading any one leaves the other ten untouched, "
+            "because which part is broken is the only thing an operator "
+            "needs. Unmeasured defaults to UNKNOWN rather than healthy, and "
+            "operator intent outranks measurement: a disabled source with "
+            "eleven failed dimensions is DISABLED, and a source that asked us "
+            "to slow down is RATE_LIMITED, not FAILING. The defect this gate "
+            "existed to find: the read model could not tell an authorization "
+            "REFUSED from an authorization not yet measured, so a revoked "
+            "source classified as FAILING with transport still permitted - a "
+            "source we had been told to stop collecting from, still allowed "
+            "to collect. Three answers, not two. Five success levels, because "
+            "a 200 is not intelligence and collapsing them is how a source "
+            "that has silently returned nothing for six weeks keeps reporting "
+            "itself healthy; freshness comes from five distinct timestamps "
+            "against this source's own cadence, where never-collected is not "
+            "stale, an unscheduled cadence carries no SLA, and a punctual "
+            "source can still be stale. Breaking schema drift asks for a "
+            "human - an adapter is never rewritten automatically, because a "
+            "parser that silently adapts to an unreviewed change writes "
+            "plausible wrong records into the canonical store, which is worse "
+            "than a stopped source because it is trusted. Migration 0058 adds "
+            "durable operations events and operator alerts with a CHECK that "
+            "makes an event which is not a transition unrepresentable: three "
+            "identical sweeps write ONE event and advance a counter, and "
+            "DEGRADED, UNKNOWN and RETIRED never page anyone. Proven at 5,000 "
+            "sources - population 50x, sweep time 33x, statements per source "
+            "FALLING with scale because fleet globals are hoisted once per "
+            "sweep. The access-path rule is selectivity-aware on purpose: "
+            "sources_due returns the whole population so a scan is correct "
+            "there, named as an exemption rather than quietly dropped, and "
+            "every selective query is index-backed at 100, 1,000 and 5,000. "
+            "Zero network requests, asserted by counting refused sockets; no "
+            "sources added, no activations, nothing delivered. Gate 171's "
+            "root cause remains UNKNOWN - this gate re-measures the "
+            "regression and does not claim the cause was found. Four of its "
+            "permanent regressions test the INSTRUMENTS, because four "
+            "measurements here were wrong while the system was right: the "
+            "failure matrix went green without exercising a branch, the "
+            "fairness simulation could not show starvation, and the index "
+            "audit omitted organization_id and compared str(UUID) against a "
+            "column stored as 32 hex characters, returning zero rows while "
+            "printing query plans."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,
