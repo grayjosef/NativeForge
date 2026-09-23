@@ -61,6 +61,15 @@ GENERIC_FILES = (
     "services/source_authority_service.py",
     "services/source_authorization_fact_resolver_service.py",
     "services/source_fleet_fact_scope_service.py",
+    # Gate 173. The relevance engine is where a source-specific branch would
+    # do the most damage - "trust the codes if it came from Grants.gov" works
+    # until somebody adds a source that codes differently.
+    "services/native_relevance_ontology_service.py",
+    "services/native_relevance_evidence_service.py",
+    "services/native_relevance_candidate_service.py",
+    "services/native_relevance_classifier_service.py",
+    "services/native_relevance_repository_service.py",
+    "services/source_coverage_universe_service.py",
     "repositories/canonical_opportunity_repository.py",
     "repositories/canonical_opportunity_batch_repository.py",
     "repositories/opportunity_change_repository.py",

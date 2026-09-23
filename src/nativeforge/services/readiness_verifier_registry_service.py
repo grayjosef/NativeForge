@@ -796,6 +796,83 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        # The script path is DERIVED from this name, and Gate 173 names the
+        # file, so the entry matches the file rather than the file being
+        # renamed to suit a registry convention.
+        "native_relevance_gate173",
+        lane="native_relevance_ready",
+        kind=KIND_READINESS,
+        gate="173",
+        blocking=True,
+        depends_on=(
+            "source_fleet_health_gate172",
+            "real_multisource_gate171",
+            "canonical_opportunity_store",
+            "cross_source_identity",
+        ),
+        note=(
+            "Native relevance stops being a keyword search. The product "
+            "principle this gate enforces is that a highly Native-relevant "
+            "opportunity frequently uses no Native language at all: a "
+            "Grants.gov record coded 99 UNRESTRICTED says nothing and is open "
+            "to every Tribe in the country, and a broadband program open to "
+            "'units of general local government and Indian tribes' says the "
+            "word once, in a list, on page 14 of an attachment. Twelve of the "
+            "thirteen candidate signals never look at a word - applicant "
+            "codes, general-government eligibility, geography, beneficiaries, "
+            "statutory authority, prior awards, program history, sector, "
+            "source context and document evidence. The survey found the fact "
+            "that decided the gate's shape: a real Stage 6 relevance stack "
+            "already existed - eight labels, a deterministic evaluator, "
+            "confidence bands, review triggers, two guards - and NOT ONE of "
+            "its ten modules could reach a canonical opportunity. All of it "
+            "sees fixture dictionaries. So this gate binds relevance to the "
+            "Gate 167 graph rather than building a second engine, reusing the "
+            "applicant-code classifier that already knew an absent code is "
+            "not a negative finding. Eight relevance classes, never collapsed "
+            "into one score, because a score cannot be reviewed: durable "
+            "truth is classification plus evidence plus reason plus "
+            "uncertainty. Twelve evidence types, each bound to the payload "
+            "sha256 it was read from - a human assertion may have no payload "
+            "because a person is the origin, and nothing else may. UNCERTAIN "
+            "is a real answer that routes to a person, not a soft "
+            "NOT_RELEVANT, and NOT_CANDIDATE is a FINDING that has to be "
+            "earned: with no signal and no stated eligibility the answer is "
+            "UNKNOWN, because 'we have not looked' and 'we looked and it is "
+            "not relevant' are different facts. An inference cannot drop an "
+            "opportunity at the high-recall stage, where a false negative is "
+            "unrecoverable. The 27-row adversarial corpus - 9 hard negatives "
+            "including Indian River County, native prairie species, and a "
+            "Tribal grantee named only in a background paragraph - feeds RAW "
+            "INPUTS into the real classifier and states no answers; it caught "
+            "three defects on its first run, including a "
+            "BROADLY_ELIGIBLE_NATIVE_RELEVANT class that was unreachable from "
+            "the entity-class ambiguity that defines it. Candidate recall is "
+            "1.0 with zero false negatives at the irreversible stage, and "
+            "because a corpus written beside its model proves only internal "
+            "consistency, what is ASSERTED is falsifiability: a keyword-only "
+            "baseline scores 0.52 on the same rows against the real model's "
+            "1.0. Projecting the 22 real canonical opportunities through the "
+            "layer puts ZERO of them in the applicant band, because the real "
+            "graph carries no eligibility field at all - that is reported as "
+            "the finding it is, and it is what Gates 174 and 175 exist to "
+            "change. Coverage models publishers by family and state and "
+            "REFUSES to claim completeness because the denominator is "
+            "unknown; a discovered publisher stops at "
+            "DISCOVERED_PENDING_REVIEW and migration 0059 makes it "
+            "structurally impossible for one to already have a source "
+            "attached, keeping the Gate 162-171 authorization boundary "
+            "intact. Relevance is GLOBAL: classifier calls are identical at 1 "
+            "tenant and at 50, measured, so there is no opportunity-by-tenant "
+            "sweep. 100,000 opportunities classify in 7.1s with per-"
+            "opportunity cost flat, 50,000 rows write in 6 statements, and "
+            "every selective query is index-backed. The genericity scan was "
+            "extended from 16 files to 22 so that generic_layer_source_leaks "
+            "= 0 actually covers the relevance engine, which is where a "
+            "source-specific branch would do the most damage."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,
