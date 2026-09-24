@@ -51,7 +51,7 @@ SCHEMA_VERSION = "nf_operational_backup_manifest_v1"
 CONTROLLED_SCOPE = "controlled_dev_demo"
 
 #: The migration head this manifest was written against. A restore compares.
-MANIFEST_MIGRATION_HEAD = "0062"
+MANIFEST_MIGRATION_HEAD = "0063"
 
 #: Columns worth a second look on any table. A REVIEW HINT, never a gate:
 #: `state` matches both an OAuth state and a row lifecycle state, and only a

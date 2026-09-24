@@ -5,7 +5,7 @@
     "what_it_looked_like": "missing_record for a digest sitting in the table - a lookup key mistake wearing the costume of a data integrity failure"
   },
   "gate": "153",
-  "migration_head": "0062",
+  "migration_head": "0063",
   "production_backup_ready": false,
   "schema_version": "nf_backup_restore_gate153_artifacts_v1",
   "scope": "controlled_dev_demo",

@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 44,
+  "blocking_count": 45,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -53,6 +53,7 @@
       "source_worker_runtime",
       "tenant_digest_operational",
       "tenant_digest_persistence",
+      "tribal_onboarding_gate177",
       "verified_binding_approval_boundary"
     ],
     "repository_hygiene": [
@@ -82,7 +83,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 48,
+  "verifier_count": 49,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -131,6 +132,7 @@
     "tenant_digest_operational",
     "tenant_digest_persistence",
     "test_selection_coverage",
+    "tribal_onboarding_gate177",
     "verified_binding_approval_boundary"
   ],
   "verifiers": [
@@ -728,6 +730,23 @@
       "production": false,
       "script": "scripts/verify_nativeforge_early_signal_gate176.sh",
       "verifier": "early_signal_gate176"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "early_signal_gate176",
+        "document_intelligence_gate175",
+        "eligibility_gate174"
+      ],
+      "expected_result": "PASS",
+      "gate": "177",
+      "kind": "readiness_lane",
+      "lane": "tribal_onboarding_ready",
+      "note": "identity verified is not affiliation verified is not authority verified, and the survey found them collapsed: nf_authority_proof_records governed authority through a single `state` column naming two of the three dimensions, so verified could not say verified AS WHAT. That is not a modelling preference. A person with a working @tribe.gov mailbox has proven control of a mailbox; it says nothing about whether the Council has authorised them to establish a tenant, invite staff and represent a sovereign government to funders, and a system with one boolean will let an intern speak for a nation while looking, from the inside, exactly like success. So three states live in three columns, graded by three functions, and may_administer_tenant requires all three independently - with 0063 making authority over SELF_ASSERTED affiliation unrepresentable rather than merely discouraged. Evidence is typed and plural because 574 federally recognised Tribes do not share one governance structure: demanding a council resolution would exclude organisations that never issue one, and accepting a matching email domain would accept anyone who can register a lookalike. ORGANIZATION_EMAIL_DOMAIN and OFFICIAL_TRIBAL_WEBSITE are therefore absent from ESTABLISHES_AUTHORITY in the model and refused by CHECK in the schema. Authority that nobody signed for cannot be stored. Evidence records a REFERENCE, never bytes and never a credential, and a field that looks like a secret is refused. The first four customers are onboarded by named controlling-company staff with a stated reason and an audit event, and no customer identity is hardcoded anywhere. CONTROLLING_COMPANY_ADMIN is not the top of the customer ladder, it is a different ladder: ASSIGNABLE_BY never lists a customer role as able to confer it, so there is no sequence of legitimate actions that reaches it, proven through three separate routes - the action, an invitation, and the function itself. Tenancy is checked BEFORE privilege, so a genuine administrator of one Tribe is refused at another before their role is even consulted. An unauthorised invitation is refused at ISSUE rather than filtered at acceptance, so it never exists to sit in somebody's inbox. Revocation removes authority and nothing else: not the organisation, not the historical work, not the audit trail, and not ordinary membership unless that is asked for separately. Organisations describe themselves in their own words, so phrase resolution keeps RECOGNIZED, AMBIGUOUS, LOOKUP_MISS and EXPLICITLY_EMPTY distinct - a Tribe writing 'language revitalization' must never be treated as though they left the field blank, and an ambiguous phrase keeps its candidates rather than discarding what we knew. A personal dashboard override deep-copies before merging and returns proof the organisation default is byte-identical afterwards, because 'we do not mutate' is exactly the kind of claim that quietly stops being true; the override table has no branding columns at all, so one person's taste has nowhere to become the Tribe's identity. Nine self-health detectors each fire on their OWN breakage and fire ALONE - the revoked-authority detector had to be rewritten because it asked may_administer_tenant and then re-read the fields that function already applies, so it could only ever agree with what it was checking; it now compares the revocation log against the grant row and catches the partial write. The measurement this gate turns on is FALSE and must stay false: real_organization_has_an_authorized_admin. The real organisation has zero active members and zero authority grants, so 'organisation has no authorised administrator' is adversarial case 11 AND the live state of the real tenant.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_tribal_onboarding_gate177.sh",
+      "verifier": "tribal_onboarding_gate177"
     },
     {
       "blocking": true,
