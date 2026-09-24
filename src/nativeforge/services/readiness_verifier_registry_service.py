@@ -1001,6 +1001,77 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "early_signal_gate176",
+        lane="early_signal_intelligence_ready",
+        kind=KIND_READINESS,
+        gate="176",
+        blocking=True,
+        depends_on=(
+            "document_intelligence_gate175",
+            "eligibility_gate174",
+            "native_relevance_gate173",
+            "source_fleet_health_gate172",
+        ),
+        note=(
+            "by the time a NOFO is published, a Tribe with one grant writer "
+            "has already lost weeks it did not have. This gate builds the two "
+            "halves of seeing sooner: forward signals, which notice funding "
+            "before the solicitation, and backward error detection, which "
+            "notices what we missed after the award. The forward half is "
+            "thirteen typed signal types across an eight-state lifecycle, and "
+            "the load-bearing property is that a signal is EVIDENCE and never "
+            "an opportunity: creates_opportunity and "
+            "auto_onboarding_permitted are false on every row, in the Python "
+            "and again as CHECK constraints in 0062, because a budget line "
+            "that quietly became a funding opportunity would be a fabrication "
+            "presented to a government. Linking requires an opportunity that "
+            "ALREADY EXISTS; a link to an absent one is refused rather than "
+            "created. Correlation PROPOSES - corroborates, likely precursor, "
+            "possible same programme - and merges nothing; two traces that "
+            "share only a funder reach UNRESOLVED rather than a convenient "
+            "answer. The backward half starts from a measurement that is "
+            "asserted FALSE and must stay false: "
+            "real_award_evidence_available_for_miss_detection. All 2,757 "
+            "award rows are Gate 138 demo fixtures on the protected demo "
+            "organisation, none carries a source_opportunity_id, and the "
+            "detector therefore has nothing real to detect against. Counting "
+            "them would have reported 2,757 coverage failures made entirely "
+            "of test data, so a miss carries the provenance of its award and "
+            "the scorecard counts REAL and DEMO separately - enforced in the "
+            "schema, where award_is_demo_fixture and "
+            "counts_toward_real_metrics cannot both be true. The scorecard "
+            "refuses to report a coverage PERCENTAGE at all: the denominator "
+            "- how much Native-relevant funding exists - is unknown and this "
+            "system has no way to learn it, so a percentage would be a number "
+            "we made up and it would be believed. Recurrence rests on a "
+            "decisive identity basis - assistance listing, programme number, "
+            "stable path, authority - and never on title similarity, because "
+            "a cadence derived from a name collision is worse than no "
+            "cadence; a renamed programme keeps its history, a lookalike gets "
+            "UNKNOWN and a review flag. Below three observed cycles nothing "
+            "is forecast, in the model and again as a CHECK, because one "
+            "observation plus an assumption looks exactly like intelligence "
+            "until the year it is wrong. An absence signal cites the "
+            "recurrence history that justifies it - absence has no payload "
+            "bytes, and without that reference the gate's own evidence "
+            "invariant refused it, which is how the defect was found. "
+            "Twenty-one adversarial cases run against the real services, each "
+            "pinning its own clock so the corpus cannot rot the way Gate "
+            "172's verifier did; its recall and precision stay INFO, because "
+            "they measure the cases we thought of and not the world. Ten "
+            "self-health detectors each fire on a fixture broken in their OWN "
+            "way and fire ALONE - the zero-history fixture had to be "
+            "narrowed, because breaking two things at once proves neither. "
+            "Eight access paths are index-backed at 120,000 historical "
+            "instances, and the open-queue path exposed a real defect: an "
+            "unordered LIMIT made a table scan genuinely optimal, so the "
+            "QUERY was wrong, not the plan - a triage queue nobody can order "
+            "is not a queue. The scan detector itself was wrong too, reading "
+            "an ordered index walk as a full scan, and now proves it can "
+            "still fire against a control query nothing can serve."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,
