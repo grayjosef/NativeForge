@@ -1147,6 +1147,79 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "commercial_entitlements_gate178",
+        lane="commercial_entitlements_ready",
+        kind=KIND_READINESS,
+        gate="178",
+        blocking=True,
+        depends_on=(
+            "tribal_onboarding_gate177",
+            "early_signal_gate176",
+        ),
+        note=(
+            "this gate encodes an approved commercial model and designs "
+            "nothing: a persistent organisational licence at $32,999 with the "
+            "first twelve months of maintenance included, $4,999 a year "
+            "after, benefits frozen when maintenance goes delinquent, the "
+            "licence lost after three CONTINUOUS years, and relicensing at "
+            "the current price with historical unpaid maintenance forgiven. "
+            "docs/operations/570 carries different figures and says of itself "
+            "that they are the operator's drafts recorded verbatim as drafts; "
+            "the survey asserts none of them reached the code. The load-"
+            "bearing separation is three states that most of the time agree "
+            "and come apart exactly when it matters: LICENCE state, "
+            "MAINTENANCE state and BENEFIT ACCESS. A delinquent organisation "
+            "with a live 14-day extension has a held licence, a lapsed term "
+            "and full benefits simultaneously, and a single is_active flag "
+            "cannot say that - so a system with one will either deny a "
+            "customer the extension somebody granted them or quietly forget "
+            "they owe money. An extension therefore changes BENEFIT ACCESS "
+            "and nothing else: it does not move the paid-through date, reduce "
+            "the delinquency count, or pause the three-year clock, and the "
+            "extension row RECORDS the delinquency it did not cure, enforced "
+            "by a CHECK that refuses an extension claiming the customer was "
+            "current. Getting that wrong generously is worse than getting it "
+            "wrong harshly, because it is invisible until somebody reconciles "
+            "and sends a Tribe a bill nobody told them was accruing. Expiry "
+            "is strictly greater than 1095 days, so the boundary day itself "
+            "still holds the licence, and the schema refuses an expired row "
+            "at or below it - taking a licence away early is the most "
+            "expensive arithmetic error this system can make. Frozen is not "
+            "deleted and expired is not deleted: authentication, identity, "
+            "account and licence status, history, the renewal path and "
+            "EXPORT_OWN_DATA remain available in every state including years "
+            "after expiry, because the difference between 'your workflows are "
+            "paused' and 'we have your data' is the difference between a "
+            "vendor and a hostage-taker. The ledger is append-only and "
+            "relicensing appends a forgiveness event naming the amount - "
+            "forgiven with no figure is not a record, it is a shrug - while "
+            "every delinquency event stays exactly where it is, because "
+            "forgiving a debt is a decision about what is owed and not a "
+            "claim that it never existed. Corrections are events, never "
+            "edits. No customer role, including ORG_SUPER_ADMIN, may forgive "
+            "debt, move a paid-through date, grant an extension, correct the "
+            "ledger or relicense itself, though every role may always SEE its "
+            "own standing. Money is integer cents throughout and time is "
+            "always supplied, never read from a clock, because 178E names "
+            "clock fixture ambiguity as a reason a licence must not expire. "
+            "Twenty adversarial cases run against the real services, each "
+            "pinning its own clock, including the same instant written three "
+            "ways. Nine self-health detectors each fire on their OWN breakage "
+            "and fire ALONE, and the ledger-disagreement detector compares "
+            "two INDEPENDENT sources - the served entitlement against a fresh "
+            "derivation - rather than asking the same function twice, which "
+            "is the mistake Gate 177 had to repair. Eight read paths are "
+            "index-backed across 5,000 organisations, 30,000 ledger events "
+            "and 8,000 extensions, with fleet questions answered from the "
+            "materialised summary rather than by replaying thousands of "
+            "histories; the zero-row rule caught a scale fixture whose "
+            "maintenance terms all ended after the cutoff, making the "
+            "expiring-maintenance queue return nothing and look beautifully "
+            "indexed. No money moved, no invoice was raised, and the exact "
+            "legal wording remains with counsel."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,
