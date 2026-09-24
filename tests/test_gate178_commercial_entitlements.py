@@ -17,6 +17,22 @@ import pytest
 import sqlalchemy as sa
 from sqlalchemy import text
 
+from nativeforge.services.commercial_consortium_service import (
+    COMPLEXITY_BESPOKE,
+    COMPLEXITY_ELEVATED,
+    COMPLEXITY_STANDARD,
+    COMPLEXITY_UNKNOWN,
+    ISOLATION_HYBRID,
+    ISOLATION_ISOLATED_PER_MEMBER,
+    ISOLATION_SHARED_WORKSPACE,
+    ISOLATION_UNKNOWN,
+    OFFERING_INTERTRIBAL_CONSORTIUM,
+    OFFERING_SINGLE_ORGANIZATION,
+    build_consortium_quote_request,
+    describe_offering_model,
+    describe_quote_dimensions,
+    quote_invariant_failures,
+)
 from nativeforge.services.commercial_entitlement_service import (
     ACTION_CORRECT_LEDGER,
     ACTION_FORGIVE_DEBT,
@@ -102,15 +118,15 @@ def _grant(days: int, as_of: str = "2027-06-01", role: str = CC):
 # ==================== 178A: the approved numbers ======================
 
 
-def test_the_persistent_license_is_32999():
+def test_the_persistent_license_is_34999():
     """Checked against the decision, not against the constant."""
-    assert PERSISTENT_LICENSE_PRICE_CENTS == 3_299_900
-    assert dollars(PERSISTENT_LICENSE_PRICE_CENTS) == "$32,999.00"
+    assert PERSISTENT_LICENSE_PRICE_CENTS == 3_499_900
+    assert dollars(PERSISTENT_LICENSE_PRICE_CENTS) == "$34,999.00"
 
 
-def test_annual_maintenance_is_4999():
-    assert ANNUAL_MAINTENANCE_PRICE_CENTS == 499_900
-    assert dollars(ANNUAL_MAINTENANCE_PRICE_CENTS) == "$4,999.00"
+def test_annual_maintenance_is_6999():
+    assert ANNUAL_MAINTENANCE_PRICE_CENTS == 699_900
+    assert dollars(ANNUAL_MAINTENANCE_PRICE_CENTS) == "$6,999.00"
 
 
 def test_money_never_becomes_a_float():
@@ -119,7 +135,7 @@ def test_money_never_becomes_a_float():
         assert isinstance(cents, int)
     assert describe_commercial_model()["money_is_integer_cents"] is True
     assert dollars(1) == "$0.01"
-    assert dollars(-499_900) == "-$4,999.00"
+    assert dollars(-123_456) == "-$1,234.56"
 
 
 def test_the_first_twelve_months_are_included_and_free():
@@ -157,7 +173,7 @@ def test_no_draft_pricing_is_encoded():
     """doc 570's figures are drafts and must not appear as canonical."""
     model = describe_commercial_model()
     assert model["no_draft_pricing_encoded"] is True
-    for draft in (3_499_900, 2_499_900, 1_499_500, 4_999_900):
+    for draft in (2_499_900, 1_499_500, 4_999_900, 899_900):
         assert PERSISTENT_LICENSE_PRICE_CENTS != draft
 
 
@@ -823,3 +839,140 @@ def test_the_survey_found_no_draft_pricing_in_the_code():
     assert report["nothing_can_delete_a_delinquent_organization"] is True
     assert report["feature_and_commercial_entitlement_are_distinct"] is True
     assert report["network_requests"] == 0
+
+
+# ==================== 178A2: the consortium suite =====================
+
+
+def _quote(**over):
+    base = dict(
+        consortium_name="Four Rivers Intertribal Consortium",
+        member_organization_ids=["org:a", "org:b", "org:c", "org:d"],
+        isolation_model=ISOLATION_HYBRID,
+        complexity_level=COMPLEXITY_ELEVATED,
+        complexity_factors=["CONSORTIUM_LEVEL_REPORTING"],
+        seats_requested=28,
+        requested_by="cc:sales-1",
+        requested_at="2026-09-24",
+    )
+    base.update(over)
+    return build_consortium_quote_request(**base)
+
+
+def test_there_are_two_offerings_and_only_one_has_a_published_price():
+    model = describe_offering_model()
+    assert set(model["offerings"]) == {
+        OFFERING_SINGLE_ORGANIZATION,
+        OFFERING_INTERTRIBAL_CONSORTIUM,
+    }
+    assert model["offerings_with_a_published_price"] == [OFFERING_SINGLE_ORGANIZATION]
+    assert model["consortium_has_no_published_price"] is True
+    assert model["single_organization_price"] == "$34,999.00"
+
+
+def test_the_consortium_is_priced_on_three_named_dimensions():
+    """Isolation need, complexity, seats — the operator's three."""
+    assert describe_quote_dimensions()["dimensions"] == [
+        "ISOLATION_NEED",
+        "COMPLEXITY",
+        "SEATS",
+    ]
+
+
+def test_a_consortium_quote_never_carries_a_price():
+    """A computed suite price would be a wrong number, confidently.
+
+    Three factors multiplied together look like arithmetic rather than like
+    a guess, which is what makes the wrongness invisible.
+    """
+    quote = _quote()
+    assert quote["price_cents"] is None
+    assert quote["requires_human_quote"] is True
+    assert quote_invariant_failures(quote) == []
+
+
+def test_a_quote_that_priced_itself_is_refused():
+    priced = {**_quote(), "price_cents": 9_999_900}
+    assert any("computed_price" in f for f in quote_invariant_failures(priced))
+
+
+def test_the_reference_price_is_not_a_formula():
+    """Context for the person quoting, not a multiplier."""
+    quote = _quote()
+    assert quote["reference_single_license_price"] == "$34,999.00"
+    assert quote["reference_is_not_a_formula"] is True
+
+
+@pytest.mark.parametrize(
+    "isolation",
+    [ISOLATION_SHARED_WORKSPACE, ISOLATION_ISOLATED_PER_MEMBER, ISOLATION_HYBRID],
+)
+def test_every_stated_isolation_model_is_quotable(isolation):
+    quote = _quote(isolation_model=isolation)
+    assert quote["quotable"] is True
+    assert quote_invariant_failures(quote) == []
+
+
+def test_unstated_isolation_is_an_outcome_not_a_default():
+    """A consortium that has not decided this is not quotable."""
+    quote = _quote(isolation_model=ISOLATION_UNKNOWN)
+    assert quote["quotable"] is False
+    assert "isolation_model_not_stated" in quote["blocking_unknowns"]
+    assert (
+        describe_offering_model()["isolation_unknown_is_an_outcome_not_a_default"]
+        is True
+    )
+
+
+@pytest.mark.parametrize(
+    "level", [COMPLEXITY_STANDARD, COMPLEXITY_ELEVATED, COMPLEXITY_BESPOKE]
+)
+def test_every_assessed_complexity_is_quotable(level):
+    assert _quote(complexity_level=level)["quotable"] is True
+
+
+def test_an_incomplete_request_names_what_is_missing_individually():
+    """ "Incomplete" tells nobody what to chase."""
+    quote = build_consortium_quote_request(
+        consortium_name="Unnamed",
+        member_organization_ids=["org:a"],
+        complexity_level=COMPLEXITY_UNKNOWN,
+        requested_at="2026-09-24",
+    )
+    assert quote["quotable"] is False
+    assert set(quote["blocking_unknowns"]) == {
+        "isolation_model_not_stated",
+        "complexity_not_assessed",
+        "seats_not_stated",
+        "fewer_than_two_member_organizations",
+    }
+    assert quote_invariant_failures(quote) == []
+
+
+def test_a_consortium_needs_at_least_two_members():
+    assert (
+        "fewer_than_two_member_organizations"
+        in _quote(member_organization_ids=["org:a"])["blocking_unknowns"]
+    )
+
+
+def test_seats_per_member_cannot_exceed_seats_requested():
+    over = _quote(seats_requested=10, seats_per_member={"org:a": 40})
+    assert any("exceeds" in f for f in quote_invariant_failures(over))
+
+
+def test_isolated_per_member_is_the_isolation_gate_179_proves():
+    """The commercial dimension and the architectural one are the same thing."""
+    model = describe_offering_model()
+    assert model["isolated_per_member_is_the_tenant_isolation_gate_179_proved"] is True
+    dimensions = describe_quote_dimensions()
+    assert (
+        "invisible to the others"
+        in dimensions["isolation_meanings"][ISOLATION_ISOLATED_PER_MEMBER]
+    )
+
+
+def test_an_unrecognised_complexity_factor_is_reported_not_dropped():
+    quote = _quote(complexity_factors=["CONSORTIUM_LEVEL_REPORTING", "VIBES"])
+    assert quote["complexity_factors"] == ["CONSORTIUM_LEVEL_REPORTING"]
+    assert quote["unrecognised_complexity_factors"] == ["VIBES"]

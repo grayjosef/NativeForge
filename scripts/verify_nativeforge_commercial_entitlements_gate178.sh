@@ -2,7 +2,8 @@
 # Gate 178 — is the approved commercial model encoded exactly, and does a
 # delinquent customer keep everything they are entitled to keep?
 #
-# RESULT=PASS only when the price is $32,999 and the maintenance $4,999;
+# RESULT=PASS only when the licence price is $34,999 and the maintenance
+# $6,999; when a consortium of Tribes is QUOTED rather than computed;
 # when the first twelve months are included and free rather than discounted;
 # when a licence expires after three CONTINUOUS years and not a day sooner;
 # when a frozen or expired account can still authenticate, read its history
@@ -35,10 +36,11 @@
 #              specificity, 177 semantics, zero network
 #   INFO       corpus counts, query milliseconds, memory, forgiven amounts
 #
-# docs/operations/570 contains DIFFERENT figures — $34,999, $24,999 and
+# docs/operations/570 contains OTHER figures — $24,999, $14,995, $49,999 and
 # others. That document says of itself that they are "the operator's drafts,
-# recorded verbatim as drafts". They are not canonical, and the survey asserts
-# none of them appears in the code.
+# recorded verbatim as drafts". Those remain drafts, and the survey asserts
+# none of THEM appears in the code. $34,999 is no longer among them: it is the
+# approved licence price.
 #
 # Exact legal wording remains subject to counsel. This verifies product
 # semantics, not an agreement.
@@ -98,10 +100,21 @@ SCALE="$(run_phase scripts/_g178_phase_scale.py)" || {
 
 # ---------------- 178A: the approved numbers, exactly --------------------
 require_true "$PROOF" persistent_license_model_ready
-require_value "$PROOF" persistent_license_price_cents 3299900 license_price_is_32999
-require_value "$PROOF" annual_maintenance_price_cents 499900 maintenance_price_is_4999
+require_value "$PROOF" persistent_license_price_cents 3499900 license_price_is_34999
+require_value "$PROOF" annual_maintenance_price_cents 699900 maintenance_price_is_6999
 require_true "$PROOF" first_year_maintenance_included
 require_true "$PROOF" annual_maintenance_model_ready
+
+# ---------------- 178A2: the intertribal consortium suite ----------------
+# Tribes joining together are priced as a SUITE on isolation need,
+# complexity and seats. That is a commercial judgement, so this module
+# captures the dimensions and refuses to produce a figure: a function that
+# multiplied three factors would return a WRONG number, confidently, to a
+# group of sovereign governments negotiating together.
+require_true "$PROOF" consortium_offering_ready
+require_true "$PROOF" consortium_price_is_never_computed
+require_true "$PROOF" consortium_isolation_is_not_a_default
+info consortium_quote_dimensions "value=$(jget "$PROOF" consortium_quote_dimensions)"
 
 # ---------------- 178D: frozen is not deleted ----------------------------
 require_true "$PROOF" frozen_not_deleted
@@ -177,6 +190,8 @@ echo "RESULT=PASS"
 echo "persistent_license_model_ready=true"
 echo "first_year_maintenance_included=true"
 echo "annual_maintenance_model_ready=true"
+echo "consortium_offering_ready=true"
+echo "consortium_price_is_never_computed=true"
 echo "frozen_not_deleted=true"
 echo "three_year_license_expiration_ready=true"
 echo "relicense_ready=true"

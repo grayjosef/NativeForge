@@ -4,9 +4,9 @@ This module does not design a commercial model. It encodes one that was
 approved, and its job is to be boring and exact.
 
 ```text
-Persistent organisational licence   $32,999
+Persistent organisational licence   $34,999
     includes the first 12 months of maintenance
-Annual maintenance thereafter       $4,999 / year
+Annual maintenance thereafter       $6,999 / year
 Delinquent                          benefits freeze; NOTHING is deleted
 3 continuous years delinquent       the persistent licence expires
 Relicensing                         current full price; historical unpaid
@@ -14,10 +14,14 @@ Relicensing                         current full price; historical unpaid
 Temporary benefit extensions        7 / 14 / 30 days, controlling company only
 ```
 
-`docs/operations/570_...` contains different figures - $34,999, $24,999 and
-others - and says of itself that they are "the operator's drafts, recorded
-verbatim as drafts". They are not canonical and are deliberately absent from
-this module.
+`docs/operations/570_...` records a set of figures and says of itself that
+they are "the operator's drafts, recorded verbatim as drafts". The licence
+price here matches 570's Professional 5 draft, and that is a decision the
+operator made rather than a coincidence the code may rely on: 570's OTHER
+figures - $24,999, $14,995, $49,999 and the other maintenance
+variants - remain
+drafts, are not canonical, and are deliberately absent from this module. The
+survey asserts none of THEM is encoded as a price.
 
 ## Three states, never one
 
@@ -37,7 +41,7 @@ money.
 
 ## Money is integer cents
 
-No float ever touches a price. `$32,999` is `3_299_900` cents. A rounding
+No float ever touches a price. `$34,999` is `3_499_900` cents. A rounding
 error in a licence fee is not a rounding error to the Tribe paying it.
 
 ## Time is supplied, never taken
@@ -63,11 +67,11 @@ POLICY_VERSION = "2026.09-approved-v1"
 # 178A: the approved numbers. Integer cents, no floats, no drafts.
 # ---------------------------------------------------------------------------
 
-PERSISTENT_LICENSE_PRICE_CENTS = 3_299_900
-"""$32,999 - the persistent organisational licence."""
+PERSISTENT_LICENSE_PRICE_CENTS = 3_499_900
+"""$34,999 - the persistent organisational licence."""
 
-ANNUAL_MAINTENANCE_PRICE_CENTS = 499_900
-"""$4,999 - annual maintenance after the included first year."""
+ANNUAL_MAINTENANCE_PRICE_CENTS = 699_900
+"""$6,999 - annual maintenance after the included first year."""
 
 INCLUDED_MAINTENANCE_MONTHS = 12
 """The first twelve months of maintenance are included in the licence."""
@@ -271,7 +275,7 @@ def add_months(start: Any, months: int) -> dt.date:
 
 
 def included_maintenance_through(license_purchased_at: Any) -> dt.date:
-    """The first twelve months are included in the $32,999."""
+    """The first twelve months are included in the licence price."""
     return add_months(license_purchased_at, INCLUDED_MAINTENANCE_MONTHS)
 
 

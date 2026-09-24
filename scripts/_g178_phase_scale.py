@@ -158,7 +158,7 @@ def main() -> int:
                         + dt.timedelta(days=k * 180),
                         "recorded_at": NOW,
                         "recorded_by": "cc:staff-1",
-                        "amount_cents": 3299900 if k == 0 else 499900,
+                        "amount_cents": 3499900 if k == 0 else 699900,
                         "paid_through": dt.date(2027, 3, 15)
                         + dt.timedelta(days=k * 365),
                         "detail": None,

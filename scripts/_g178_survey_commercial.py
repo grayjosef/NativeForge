@@ -11,8 +11,8 @@ docs/operations/570_...PRICING_REQUIREMENT.md
     Starter $14,995 / Professional 5 $34,999 / Founding Tribe Beta $24,999 ...
 
 Gate 178 prompt (approved, canonical)
-    persistent licence $32,999, first 12 months maintenance included,
-    $4,999/year thereafter, 3 continuous years delinquent = expiry
+    persistent licence $34,999, first 12 months maintenance included,
+    $6,999/year thereafter, 3 continuous years delinquent = expiry
 ```
 
 Doc 570 says of itself that it holds drafts. The gate prompt is the approved
@@ -66,9 +66,9 @@ DB = REPO / "nativeforge.local.db"
 #: The APPROVED model. Encoded here so the survey can assert the repository
 #: contains no contradicting canonical claim.
 CANONICAL = {
-    "persistent_license_price_usd": 32999,
+    "persistent_license_price_usd": 34999,
     "included_maintenance_months": 12,
-    "annual_maintenance_price_usd": 4999,
+    "annual_maintenance_price_usd": 6999,
     "delinquency_years_before_expiration": 3,
     "extension_days": (7, 14, 30),
 }
@@ -77,11 +77,11 @@ CANONICAL = {
 #: the survey can prove none is used as a PRICE.
 #:
 #: Checked as numeric LITERALS rather than as text. Searching the source for
-#: "2,999" matched inside "$32,999" - the canonical price setting off a
+#: "2,999" matched inside "$34,999" - the canonical price setting off a
 #: draft-price alarm - and "34,999" matched the docstring that exists to say
 #: that figure is a draft we do not use. A figure named in prose as a thing we
 #: are not doing is the opposite of a figure encoded as a price.
-DRAFT_DOLLARS = (14995, 34999, 49999, 24999, 8999, 6999, 2999)
+DRAFT_DOLLARS = (14995, 49999, 24999, 8999, 2999)
 
 #: The same figures in integer cents, which is how a price would be stored.
 DRAFT_CENTS = tuple(d * 100 for d in DRAFT_DOLLARS)
@@ -216,7 +216,7 @@ def main() -> int:
     out["doc570_labels_its_figures_as_drafts"] = bool(
         re.search(r"recorded verbatim as drafts|drafted by the operator", doc_text)
     )
-    out["doc570_contains_canonical_price"] = "32,999" in doc_text or "32999" in doc_text
+    out["doc570_contains_canonical_price"] = "34,999" in doc_text or "34999" in doc_text
     out["canonical_price_already_encoded_anywhere"] = bool(re.search(r"32,?999", WHOLE))
 
     # ---- what 178 must build ----------------------------------------

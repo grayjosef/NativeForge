@@ -5,27 +5,81 @@
 This gate encodes a decision. It does not make one.
 
 ```text
-Persistent organisational licence   $32,999
+Persistent organisational licence   $34,999
     includes the first 12 months of maintenance
-Annual maintenance thereafter       $4,999 / year
+Annual maintenance thereafter       $6,999 / year
 Delinquent                          benefits freeze; NOTHING is deleted
 3 continuous years delinquent       the persistent licence expires
 Relicensing                         current full price; historical unpaid
                                     maintenance forgiven; history retained
 Temporary benefit extensions        7 / 14 / 30 days, controlling company only
+
+Intertribal consortium suite        QUOTED — isolation need, complexity, seats
 ```
+
+## The consortium suite
+
+When Tribes join together the thing being sold stops being one licence for
+one organisation. The suite is priced on three named dimensions:
+
+| Dimension | Values |
+| --- | --- |
+| **Isolation need** | `SHARED_WORKSPACE` · `ISOLATED_PER_MEMBER` · `HYBRID` |
+| **Complexity** | `STANDARD` · `ELEVATED` · `BESPOKE`, with seven named factors |
+| **Seats** | a count, optionally broken down per member |
+
+### There is no price in that module
+
+A suite price depending on isolation, complexity and seats is a commercial
+judgement. A function that multiplied three factors would return a **wrong
+number, confidently**, to a group of sovereign governments negotiating
+together — and the wrongness would be invisible, because it would look like
+arithmetic rather than like a guess.
+
+So `build_consortium_quote_request` produces a quote *request*:
+`price_cents` is `None`, `requires_human_quote` is true, and
+`quote_invariant_failures` refuses a request that arrived carrying a price.
+The single-organisation price is included as **reference, explicitly not a
+formula**.
+
+This is the same discipline as the coverage scorecard refusing a percentage
+against an unknown denominator. The system is allowed to say *a person
+decides this*, and saying so is more useful than a number nobody should
+trust.
+
+### Isolation is an architecture, not a preference
+
+`ISOLATED_PER_MEMBER` means each member Tribe is its own tenant — one Tribe's
+pursuits, documents and decisions invisible to the others. That is exactly
+the isolation Gate 179 proved, which is why that proof matters commercially.
+
+`ISOLATION_UNKNOWN` is an **outcome, not a default**: a consortium that has
+not decided this is not quotable, and an incomplete request names each
+missing dimension individually, because "incomplete" tells nobody what to
+chase.
 
 ### On doc 570
 
-`docs/operations/570_...PRICING_REQUIREMENT.md` contains different figures —
-$34,999, $24,999, $14,995 and others. That document says of itself:
+`docs/operations/570_...PRICING_REQUIREMENT.md` records a set of figures and
+says of itself:
 
 > "These figures are the operator's drafts, recorded verbatim as drafts"
 
-They are not canonical. The survey asserts none of them is encoded as a
-price, and the verifier checks the code against the **approved decision**
-rather than against its own constants — a gate asserting "the price is
-whatever we wrote" would pass with the wrong price in it.
+Both approved figures match 570's Professional 5 draft — $34,999 and
+~$6,999/yr — and that is a decision the operator made rather than a
+coincidence the code may rely on. 570's **other** figures — $24,999,
+$14,995, $49,999 and the other maintenance variants — remain drafts, and
+the survey asserts none of *those* is encoded as a price.
+
+$34,999 and $6,999 both came **off** the survey's draft list when they
+became the approved figures. Leaving either there would have made the
+survey flag a canonical price as a draft — the same failure the
+literal-parsing fix was written to prevent, arriving from the other
+direction.
+
+The verifier checks the code against the **approved decision** rather than
+against its own constants: a gate asserting "the price is whatever we wrote"
+would pass with the wrong price in it.
 
 ## Three states, never one
 
@@ -116,19 +170,27 @@ customer cannot even read would be its own failure.
 
 ## What the instruments found
 
-**My draft-pricing detector was wrong in two ways at once.** It searched the
-source text for `"2,999"`, `"24,999"` and `"34,999"`:
+**My draft-pricing detector was wrong in two ways at once.** *(Found while
+the licence price was still $32,999, before the operator moved it to
+$34,999 — the figures below are as they were then.)* It searched the source
+text for `"2,999"`, `"24,999"` and `"34,999"`:
 
 - `"2,999"` is a **substring of `"$32,999"`** — the canonical price set off a
   draft-price alarm.
-- `"34,999"` genuinely appears, in the docstring that exists to say that
-  figure is a draft we do not use.
+- `"34,999"` genuinely appears, in the docstring that at the time existed to
+  say that figure was a draft we did not use.
 
 A figure named in prose as a thing we are *not* doing is the opposite of a
 figure encoded as a price. The detector now parses each module and collects
 numeric **literals**: prose cannot produce one, and a literal cannot hide
 inside a longer one. Proven falsifiable by planting `3499900` and watching it
 fire, then removing it and watching it go silent.
+
+**The price move had a consequence the detector caught.** When $34,999
+became the approved licence price it had to come **off** the draft list.
+Leaving it there would have made the survey flag the canonical figure as a
+draft — precisely the failure the literal-parsing fix was written to prevent,
+arriving from the other direction.
 
 **The zero-row rule caught a scale fixture.** Every "current" organisation in
 the synthetic fleet had a maintenance term ending *after* the query cutoff, so

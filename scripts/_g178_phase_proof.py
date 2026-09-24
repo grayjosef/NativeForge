@@ -29,6 +29,17 @@ class _RefusedSocket:
 
 socket.socket = _RefusedSocket  # type: ignore[misc,assignment]
 
+from nativeforge.services.commercial_consortium_service import (  # noqa: E402
+    COMPLEXITY_ELEVATED,
+    COMPLEXITY_UNKNOWN,
+    ISOLATION_HYBRID,
+    ISOLATION_ISOLATED_PER_MEMBER,
+    OFFERING_INTERTRIBAL_CONSORTIUM,
+    build_consortium_quote_request,
+    describe_offering_model,
+    describe_quote_dimensions,
+    quote_invariant_failures,
+)
 from nativeforge.services.commercial_entitlement_service import (  # noqa: E402
     ACTION_CORRECT_LEDGER,
     ACTION_FORGIVE_DEBT,
@@ -80,8 +91,8 @@ from nativeforge.services.commercial_self_health_service import (  # noqa: E402
 
 #: The APPROVED model, restated here so the verifier checks the code against
 #: the decision rather than against itself.
-APPROVED_LICENSE_CENTS = 3_299_900
-APPROVED_MAINTENANCE_CENTS = 499_900
+APPROVED_LICENSE_CENTS = 3_499_900
+APPROVED_MAINTENANCE_CENTS = 699_900
 APPROVED_INCLUDED_MONTHS = 12
 APPROVED_EXPIRY_YEARS = 3
 APPROVED_EXTENSION_DAYS = (7, 14, 30)
@@ -99,7 +110,7 @@ def main() -> int:
     # ---- 178A: the approved numbers, exactly ------------------------
     out["persistent_license_model_ready"] = bool(
         PERSISTENT_LICENSE_PRICE_CENTS == APPROVED_LICENSE_CENTS
-        and model["persistent_license_price"] == "$32,999.00"
+        and model["persistent_license_price"] == "$34,999.00"
         and model["money_is_integer_cents"]
         and model["no_draft_pricing_encoded"]
     )
@@ -136,6 +147,66 @@ def main() -> int:
         and renewal["paid_through"] == "2028-03-15"
         and describe_ledger_model()["renewal_extends_from_the_paid_through_date"]
     )
+
+    # ---- 178A2: the intertribal consortium suite --------------------
+    offering = describe_offering_model()
+    dimensions = describe_quote_dimensions()
+
+    complete = build_consortium_quote_request(
+        consortium_name="Four Rivers Intertribal Consortium",
+        member_organization_ids=["org:a", "org:b", "org:c", "org:d"],
+        isolation_model=ISOLATION_HYBRID,
+        complexity_level=COMPLEXITY_ELEVATED,
+        complexity_factors=["CONSORTIUM_LEVEL_REPORTING"],
+        seats_requested=28,
+        requested_by="cc:sales-1",
+        requested_at="2026-09-24",
+    )
+    isolated = build_consortium_quote_request(
+        consortium_name="Two Rivers",
+        member_organization_ids=["org:a", "org:b"],
+        isolation_model=ISOLATION_ISOLATED_PER_MEMBER,
+        complexity_level=COMPLEXITY_ELEVATED,
+        seats_requested=10,
+        requested_at="2026-09-24",
+    )
+    incomplete = build_consortium_quote_request(
+        consortium_name="Unnamed",
+        member_organization_ids=["org:a"],
+        complexity_level=COMPLEXITY_UNKNOWN,
+        requested_at="2026-09-24",
+    )
+    priced = dict(complete)
+    priced["price_cents"] = 9_999_900
+
+    out["consortium_offering_ready"] = bool(
+        OFFERING_INTERTRIBAL_CONSORTIUM in offering["offerings"]
+        and offering["every_offering_has_a_meaning"]
+        and dimensions["dimensions"] == ["ISOLATION_NEED", "COMPLEXITY", "SEATS"]
+        and complete["quotable"]
+        and isolated["quotable"]
+        and not quote_invariant_failures(complete)
+        and not quote_invariant_failures(isolated)
+        # An incomplete request says WHAT is missing, individually.
+        and not incomplete["quotable"]
+        and len(incomplete["blocking_unknowns"]) >= 3
+        and not quote_invariant_failures(incomplete)
+    )
+    out["consortium_price_is_never_computed"] = bool(
+        complete["price_cents"] is None
+        and complete["requires_human_quote"]
+        and offering["consortium_has_no_published_price"]
+        and offering["consortium_price_is_never_computed"]
+        and complete["reference_is_not_a_formula"]
+        # And the refusal must be able to fire.
+        and any("computed_price" in f for f in quote_invariant_failures(priced))
+    )
+    out["consortium_isolation_is_not_a_default"] = bool(
+        offering["isolation_unknown_is_an_outcome_not_a_default"]
+        and "isolation_model_not_stated" in incomplete["blocking_unknowns"]
+    )
+    out["consortium_quote_dimensions"] = dimensions["dimensions"]
+    out["consortium_blocking_unknowns_example"] = incomplete["blocking_unknowns"]
 
     # ---- 178D: frozen is not deleted --------------------------------
     frozen = derive_entitlement(
@@ -418,6 +489,9 @@ def main() -> int:
     out["fixture_residue"] = 0
     out["gate178_ready"] = bool(
         out["persistent_license_model_ready"]
+        and out["consortium_offering_ready"]
+        and out["consortium_price_is_never_computed"]
+        and out["consortium_isolation_is_not_a_default"]
         and out["first_year_maintenance_included"]
         and out["annual_maintenance_model_ready"]
         and out["frozen_not_deleted"]
