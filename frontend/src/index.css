@@ -1,47 +1,57 @@
-/* NativeForge — executive institutional surface (UX redesign, doc 346).
-   Light-first: ivory field, deep navy ink, restrained copper accent.
-   No external font/CDN requests — the demo must stay self-contained. */
+/* NativeForge — executive institutional surface.
+   Light-first: warm paper field, forge-green ink, ember-gold accent.
+
+   Palette sampled from the brand artwork, not chosen: forge green #023620
+   (basket weave and the "Forge" wordmark), ember gold #C7781A (anvil rim and
+   spark), steel #817F7D (anvil body and the "Native" wordmark). A brand that
+   is nearly the right green looks like a counterfeit of itself.
+
+   Kept from the doc-346 system: the warm field rather than clinical white,
+   and the rule that HELD is ember and never red or green — a held gate is a
+   deliberate decision at the same visual weight as a passing one.
+
+   No external font/CDN requests — the app must stay self-contained. */
 
 :root {
   color-scheme: light;
 
   /* — surfaces — */
-  --nf-page: #faf7f0;
-  --nf-page-accent: #f3efe4;
+  --nf-page: #f8f7f3;
+  --nf-page-accent: #f0efe8;
   --nf-card: #ffffff;
-  --nf-card-muted: #f6f2e8;
-  --nf-border: #e4ddd0;
-  --nf-border-strong: #d3c9b6;
+  --nf-card-muted: #f5f4ee;
+  --nf-border: #e3e1d7;
+  --nf-border-strong: #cfcdbf;
   /* editorial hairlines */
-  --nf-rule: #e4ddd0;
-  --nf-rule-fine: #ede7d9;
+  --nf-rule: #e3e1d7;
+  --nf-rule-fine: #eceae2;
 
   /* — ink — */
-  --nf-text: #1c1a15;
-  --nf-muted: #4a4538;
-  --nf-muted2: #6b6558;
-  --nf-faint: #8a8477;
+  --nf-text: #14201a;
+  --nf-muted: #3d4a43;
+  --nf-muted2: #5d6a62;
+  --nf-faint: #7e8a82;
 
   /* — retained for non-demo surfaces — */
-  --nf-navy: #2f2a20;
-  --nf-navy-deep: #221e16;
-  --nf-navy-fg: #faf7f0;
+  --nf-navy: #1b2b22;
+  --nf-navy-deep: #0f1c15;
+  --nf-navy-fg: #f8f7f3;
 
   /* — actions — */
-  --nf-primary: #4c7a63;
-  --nf-primary-hover: #3d6350;
-  --nf-primary-fg: #faf7f0;
+  --nf-primary: #0a4227;
+  --nf-primary-hover: #023620;
+  --nf-primary-fg: #f8f7f3;
 
   /* — ochre accent — */
-  --nf-accent: #8a6a3c;
-  --nf-accent-hover: #6b5230;
-  --nf-accent-deep: #6b5230;
-  --nf-accent-soft: rgba(138, 106, 60, 0.09);
-  --nf-accent-line: rgba(138, 106, 60, 0.34);
+  --nf-accent: #a6650f;
+  --nf-accent-hover: #85510c;
+  --nf-accent-deep: #85510c;
+  --nf-accent-soft: rgba(199, 120, 26, 0.10);
+  --nf-accent-line: rgba(199, 120, 26, 0.34);
 
   /* — status dots — */
-  --nf-sage: #4c7a63;
-  --nf-dot-neutral: #c9bfa8;
+  --nf-sage: #1f6b45;
+  --nf-dot-neutral: #c2c0b2;
   /* legacy aliases — existing selectors depend on these */
   --nf-trust: var(--nf-accent);
   --nf-trust-bg: var(--nf-accent-soft);
@@ -50,14 +60,14 @@
   /* — semantic status —
      "Held" is ochre, never red and never green: a held gate is a deliberate
      decision at the same visual weight as a passing one, not a failure. */
-  --nf-verified: #4c7a63;
-  --nf-verified-bg: rgba(76, 122, 99, 0.10);
-  --nf-held: #8a6a3c;
-  --nf-warn: #8a6a3c;
-  --nf-warn-bg: rgba(138, 106, 60, 0.10);
-  --nf-blocked: #8a6a3c;
-  --nf-blocked-bg: rgba(138, 106, 60, 0.07);
-  --nf-blocked-line: rgba(138, 106, 60, 0.34);
+  --nf-verified: #1f6b45;
+  --nf-verified-bg: rgba(31, 107, 69, 0.10);
+  --nf-held: #a6650f;
+  --nf-warn: #a6650f;
+  --nf-warn-bg: rgba(199, 120, 26, 0.10);
+  --nf-blocked: #a6650f;
+  --nf-blocked-bg: rgba(199, 120, 26, 0.07);
+  --nf-blocked-line: rgba(199, 120, 26, 0.34);
   --nf-success: var(--nf-verified);
   /* genuine failures elsewhere in the app still read red */
   --nf-error: #a32530;
@@ -100,6 +110,14 @@
   --nf-radius-lg: 14px;
   --nf-radius-pill: 999px;
 
+  /* — brand, straight from the artwork — */
+  --nf-forge: #023620;
+  --nf-forge-lift: #1f6b45;
+  --nf-ember: #c7781a;
+  --nf-ember-lift: #f6b24a;
+  --nf-steel: #817f7d;
+  --nf-steel-light: #edebe8;
+
   --nf-max: 1240px;
   --nf-touch: 44px;
 }
@@ -107,40 +125,40 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --nf-page: #16150f;
-    --nf-page-accent: #1c1a13;
-    --nf-card: #1d1b14;
-    --nf-card-muted: #1c1a13;
-    --nf-border: #33301f;
-    --nf-border-strong: #4a4530;
-    --nf-rule: #33301f;
-    --nf-rule-fine: #292718;
-    --nf-text: #f2eee2;
-    --nf-muted: #cdc6b3;
-    --nf-muted2: #a49c88;
-    --nf-faint: #8a8477;
-    --nf-navy: #f2eee2;
-    --nf-navy-deep: #cdc6b3;
-    --nf-navy-fg: #16150f;
-    --nf-primary: #6ea88b;
-    --nf-primary-hover: #85bda1;
-    --nf-primary-fg: #0d1310;
-    --nf-accent: #c49a5f;
-    --nf-accent-hover: #d8b078;
-    --nf-accent-deep: #a8834f;
-    --nf-accent-soft: rgba(196, 154, 95, 0.13);
-    --nf-accent-line: rgba(196, 154, 95, 0.38);
-    --nf-sage: #6ea88b;
-    --nf-dot-neutral: #5c5744;
-    --nf-verified: #6ea88b;
-    --nf-verified-bg: rgba(110, 168, 139, 0.13);
-    --nf-held: #c49a5f;
-    --nf-warn: #c49a5f;
-    --nf-warn-bg: rgba(196, 154, 95, 0.13);
-    --nf-blocked: #c49a5f;
-    --nf-blocked-bg: rgba(196, 154, 95, 0.10);
-    --nf-blocked-line: rgba(196, 154, 95, 0.38);
-    --nf-error: #e07b83;
+    --nf-page: #0d1310;
+    --nf-page-accent: #111a15;
+    --nf-card: #141d18;
+    --nf-card-muted: #111a15;
+    --nf-border: #22302a;
+    --nf-border-strong: #31443b;
+    --nf-rule: #22302a;
+    --nf-rule-fine: #1b2721;
+    --nf-text: #eef2ef;
+    --nf-muted: #c3d0c8;
+    --nf-muted2: #93a49a;
+    --nf-faint: #7d8d84;
+    --nf-navy: #eef2ef;
+    --nf-navy-deep: #c3d0c8;
+    --nf-navy-fg: #0d1310;
+    --nf-primary: #3e9c68;
+    --nf-primary-hover: #54b67f;
+    --nf-primary-fg: #04160d;
+    --nf-accent: #e0a24e;
+    --nf-accent-hover: #eeb668;
+    --nf-accent-deep: #c7781a;
+    --nf-accent-soft: rgba(224, 162, 78, 0.14);
+    --nf-accent-line: rgba(224, 162, 78, 0.38);
+    --nf-sage: #5fb287;
+    --nf-dot-neutral: #455349;
+    --nf-verified: #5fb287;
+    --nf-verified-bg: rgba(95, 178, 135, 0.14);
+    --nf-held: #e0a24e;
+    --nf-warn: #e0a24e;
+    --nf-warn-bg: rgba(224, 162, 78, 0.14);
+    --nf-blocked: #e0a24e;
+    --nf-blocked-bg: rgba(224, 162, 78, 0.10);
+    --nf-blocked-line: rgba(224, 162, 78, 0.38);
+    --nf-error: #e88a91;
     --nf-e1: 0 1px 2px rgba(0, 0, 0, 0.4);
     --nf-e2: 0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 30px -16px rgba(0, 0, 0, 0.7);
     --nf-e3: 0 18px 48px -20px rgba(0, 0, 0, 0.8);
@@ -151,6 +169,21 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/* Present to assistive technology, absent from the screen. Not
+   `display: none` — that would remove it from the accessibility tree too,
+   which is the opposite of what it is for. */
+.nf-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 html {
@@ -267,12 +300,68 @@ code,
 
 .nf-wordmark {
   margin: 0;
-  font-family: var(--nf-font-display);
-  font-size: clamp(1.6rem, 4vw, 2.15rem);
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.1;
-  color: var(--nf-text);
+  line-height: 1;
+  /* The lockup carries its own type. The heading is here for the document
+     outline and for anything that reads structure rather than pixels. */
+  font-size: 0;
+}
+
+/* — the lockup ——————————————————————————————————————————————————
+   Mark plus live text. The wordmark is not an image: it stays crisp at any
+   zoom, re-keys itself in dark mode, and a screen reader announces a product
+   name rather than alt text. */
+.nf-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  line-height: 1;
+}
+
+.nf-lockup-mark {
+  display: block;
+  flex: none;
+  /* The mark is drawn on its own baseline; this settles it against the
+     cap height of the wordmark rather than its descenders. */
+  margin-block-start: -0.04em;
+  user-select: none;
+}
+
+.nf-lockup-word {
+  font-family: var(--nf-font);
+  font-weight: 800;
+  letter-spacing: -0.021em;
+  white-space: nowrap;
+}
+
+.nf-lockup-native {
+  color: var(--nf-steel);
+}
+
+.nf-lockup-forge {
+  color: var(--nf-forge);
+}
+
+/* Steel goes muddy on a dark field and the deep forge green disappears into
+   it, so both lift. Same relationship, different ground. */
+@media (prefers-color-scheme: dark) {
+  .nf-lockup-native {
+    color: var(--nf-steel-light);
+  }
+
+  .nf-lockup-forge {
+    color: var(--nf-forge-lift);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nf-lockup-mark {
+    transition: transform 160ms ease;
+  }
+
+  a:hover > .nf-lockup .nf-lockup-mark,
+  button:hover > .nf-lockup .nf-lockup-mark {
+    transform: translateY(-1px);
+  }
 }
 
 .nf-header-promise {

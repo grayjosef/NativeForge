@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="NativeForge">
+  <title>NativeForge</title>
+  <!-- Single-colour mark. Inherits `currentColor`, so it takes the colour of
+       whatever it sits in - a button, a disabled state, a print stylesheet -
+       without a second file per context. -->
+  <g fill="currentColor">
+    <path d="M32 3.5 54.5 23.5l-6.6 5.9L32 15.4 16.1 29.4 9.5 23.5z"/>
+    <path d="M32 19 46 31.5h-8.4L32 26.6l-5.6 4.9H18z"/>
+    <path d="M8.5 33h47l-4.4 7.6H12.9z"/>
+    <path d="M24.8 40.6h14.4v3.1c0 3.9 1.6 5.6 4.3 7.3H20.5c2.7-1.7 4.3-3.4 4.3-7.3z"/>
+    <path d="M17 51h30l3.2 8H13.8z"/>
+    <path d="M57 22.5c.6 3.3 1.2 3.9 4.5 4.5-3.3.6-3.9 1.2-4.5 4.5-.6-3.3-1.2-3.9-4.5-4.5 3.3-.6 3.9-1.2 4.5-4.5z"/>
+  </g>
+</svg>

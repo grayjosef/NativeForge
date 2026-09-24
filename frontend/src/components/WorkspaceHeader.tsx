@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Plane } from "../m0Flow";
 import type { AppSurface } from "../viewSurface";
+import { BrandLockup } from "./BrandLockup";
 
 export interface WorkspaceHeaderProps {
   plane: Plane;
@@ -50,7 +51,9 @@ export function WorkspaceHeader({
       <div className="nf-header-bar">
         <div className="nf-header-brand-block">
           <p className="nf-header-product">Grant pursuit workspace</p>
-          <h1 className="nf-wordmark">NativeForge</h1>
+          <h1 className="nf-wordmark">
+            <BrandLockup size={38} />
+          </h1>
           <p className="nf-header-promise">
             Review-ready pursuits — without auto-submitting applications.
           </p>

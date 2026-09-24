@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="NativeForge">
+  <title>NativeForge</title>
+  <defs>
+    <linearGradient id="nfWeave" x1=".2" y1="0" x2=".8" y2="1">
+      <stop offset="0" stop-color="#2F8F5C"/>
+      <stop offset="1" stop-color="#023620"/>
+    </linearGradient>
+    <linearGradient id="nfSteel" x1=".12" y1="0" x2=".88" y2="1">
+      <stop offset="0" stop-color="#EDEBE8"/>
+      <stop offset="0.34" stop-color="#A8A5A1"/>
+      <stop offset="0.66" stop-color="#5B5854"/>
+      <stop offset="1" stop-color="#33312E"/>
+    </linearGradient>
+    <linearGradient id="nfEmber" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F6B24A"/>
+      <stop offset="1" stop-color="#C7781A"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Weave: two nested chevrons, thick enough to hold at 16px, with a
+       clear gap between them so it reads as woven rather than solid. -->
+  <g fill="url(#nfWeave)">
+    <path d="M32 3.5 54.5 23.5l-6.6 5.9L32 15.4 16.1 29.4 9.5 23.5z"/>
+    <path d="M32 19 46 31.5h-8.4L32 26.6l-5.6 4.9H18z"/>
+  </g>
+
+  <!-- Anvil: wide face, concave waist, flared foot. One silhouette, so it
+       stays legible when it is sixteen pixels tall. -->
+  <path fill="url(#nfSteel)"
+        d="M8.5 33h47l-4.4 7.6H12.9z"/>
+  <path fill="url(#nfSteel)"
+        d="M24.8 40.6h14.4v3.1c0 3.9 1.6 5.6 4.3 7.3H20.5c2.7-1.7 4.3-3.4 4.3-7.3z"/>
+  <path fill="url(#nfSteel)" d="M17 51h30l3.2 8H13.8z"/>
+
+  <!-- Forge light: a warm edge under the face, not a painted stripe. -->
+  <path fill="url(#nfEmber)" d="M12.9 40.6h38.2l-.9 1.5H13.8z" opacity=".9"/>
+  <path fill="url(#nfEmber)" d="M13.8 59h36.4l-.5-1.3H14.3z" opacity=".55"/>
+
+  <!-- Spark -->
+  <path fill="url(#nfEmber)"
+        d="M57 22.5c.6 3.3 1.2 3.9 4.5 4.5-3.3.6-3.9 1.2-4.5 4.5-.6-3.3-1.2-3.9-4.5-4.5 3.3-.6 3.9-1.2 4.5-4.5z"/>
+</svg>
