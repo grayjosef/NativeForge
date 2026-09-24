@@ -3,7 +3,7 @@
     "tenant_supplied",
     "verified"
   ],
-  "alembic_head": "0064",
+  "alembic_head": "0065",
   "applicant_classes": [
     "federally_recognized_tribe",
     "native_business",

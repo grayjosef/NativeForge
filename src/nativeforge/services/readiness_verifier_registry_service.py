@@ -1220,6 +1220,75 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
         ),
     ),
     _verifier(
+        "customer_scale_gate179",
+        lane="customer_experience_ready",
+        kind=KIND_READINESS,
+        gate="179",
+        blocking=True,
+        depends_on=(
+            "commercial_entitlements_gate178",
+            "tribal_onboarding_gate177",
+            "early_signal_gate176",
+        ),
+        note=(
+            "the survey found the thing this gate exists to fix: "
+            "buyer_feed_depends_on_hand_made_sparks was TRUE, "
+            "api_imports_canonical_intelligence was FALSE, and "
+            "canonical_opportunity_store_service - the spine of gates 167 "
+            "through 175 - had no importer at all. Nine gates of proven "
+            "intelligence and not one of them reached a buyer; seven "
+            "customer-facing route modules referenced demo fixtures instead. "
+            "A workspace built on hand-made sparks demonstrates beautifully "
+            "and tells you nothing about whether the intelligence works. So "
+            "recommendations are now assembled from the canonical record and "
+            "a recommendation with no canonical_id is refused by two "
+            "independent invariants. Every recommendation must answer four "
+            "questions - why Native-relevant, why eligible or uncertain, what "
+            "evidence, what remains unknown - and a decisive relevance claim "
+            "citing no evidence is refused, as is a CONDITIONAL eligibility "
+            "that does not NAME its condition and an APPEARS_INELIGIBLE that "
+            "does not name its blocker. UNKNOWN survives to the surface: "
+            "ELIGIBILITY_UNCERTAIN and NOT_ASSESSED are distinct, and "
+            "uncertainty that failed to reach known_unknowns is a failure, "
+            "because a system that hides its uncertainty is not more useful, "
+            "it is more confident about the wrong things. Ordering is a named "
+            "criterion the customer can change, never an opaque score. "
+            "Watch, dismiss and pursue are durable decisions naming an actor "
+            "and a time - the survey found 457 watchlist rows and 124 "
+            "suppressions recording neither - with history appended rather "
+            "than overwritten, every state reversible, and dismissal scoped "
+            "to ONE tenant: a dismissal that deleted intelligence would let "
+            "one person's tidy-up remove a funding opportunity from every "
+            "Tribe in the product. Customer and operator capabilities are "
+            "disjoint SETS rather than a UI convention, and the refusal walks "
+            "the whole payload, so an internal field cannot reach a customer "
+            "by being nested inside a serialiser somebody forgot to filter. "
+            "The 1,000-source rehearsal runs 1,200 synthetic sources across "
+            "twelve publisher kinds and nine health states, refuses to "
+            "collect from 666 of them on state, and distributes leases fairly "
+            "across 24 workers. The catastrophe 179J names is measured rather "
+            "than assumed absent: opportunity x tenant x document would be "
+            "30,000,000 units, the actual work is 180,000, and global "
+            "intelligence is computed once per opportunity rather than once "
+            "per tenant - a 166x difference that looks fine in development "
+            "with four tenants. Five customer read paths are index-backed "
+            "across 10,000 decisions, and the zero-row rule caught a fixture "
+            "that never produced the org+opportunity pair the read-path "
+            "contract names. Two things this gate reports rather than claims: "
+            "claims_real_thousand_source_coverage is FALSE - NativeForge "
+            "monitors 40 real sources and 3 active ones, and this is "
+            "architecture rehearsal - and postgres_concurrency_status is "
+            "UNKNOWN_NOT_MEASURED, because SQLite proves single-writer "
+            "serialisation and index selection and proves nothing about "
+            "Postgres row-level locking. The demo story runs only on the "
+            "protected demo organisation, refuses the real one in every "
+            "spelling, and is byte-deterministic. The UX smoke checklist for "
+            "Claude Design arrives with every result NOT_YET_WALKED, because "
+            "Claude Code has not navigated a UI and a checklist pre-marked "
+            "PASS would answer the question it exists to ask."
+        ),
+    ),
+    _verifier(
         "source_collector_execution_envelope",
         lane="collector_execution_envelope_ready",
         kind=KIND_READINESS,

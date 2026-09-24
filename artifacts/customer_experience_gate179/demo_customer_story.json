@@ -1,0 +1,731 @@
+{
+  "as_of": "2026-09-24",
+  "authorized_admin": {
+    "affiliation_status": "VERIFIED",
+    "authority_status": "MANUALLY_VERIFIED",
+    "identity_id": "demo:person:grants-lead",
+    "identity_status": "VERIFIED",
+    "role": "ORG_SUPER_ADMIN"
+  },
+  "content_digest": "2489d2444e4bca7c4620a79affa779c530139406d6099997a06f4cc4de769fc0",
+  "dashboard": {
+    "as_of": "2026-09-24",
+    "deadlines": [
+      {
+        "canonical_id": "demo:canon:broadband-002",
+        "days_remaining": 36,
+        "deadline": "2026-10-30",
+        "decision_state": "NEW",
+        "title": "Rural Broadband Deployment"
+      },
+      {
+        "canonical_id": "demo:canon:workforce-005",
+        "days_remaining": 38,
+        "deadline": "2026-11-01",
+        "decision_state": "NEW",
+        "title": "Regional Workforce Development"
+      },
+      {
+        "canonical_id": "demo:canon:water-001",
+        "days_remaining": 52,
+        "deadline": "2026-11-15",
+        "decision_state": "PURSUING",
+        "title": "Tribal Water Infrastructure Assistance"
+      }
+    ],
+    "dismissed_count": 0,
+    "model_version": "2026.09.1",
+    "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+    "rows_considered": 5,
+    "rows_from_other_tenants_excluded": 0,
+    "schema_version": "nf_customer_surface_v1",
+    "tenant_scoped": true,
+    "tiles": {
+      "ACTIVE_PURSUITS": 1,
+      "COVERAGE_NOTES": 1,
+      "DEADLINES": 3,
+      "ELIGIBILITY_REVIEW": 1,
+      "NEEDS_REVIEW": 0,
+      "NEW_OPPORTUNITIES": 3,
+      "RECENT_CHANGES": 1,
+      "WATCH_LIST": 1
+    }
+  },
+  "decisions": [
+    {
+      "actor_id": "demo:person:grants-lead",
+      "canonical_id": "demo:canon:language-004",
+      "decided_at": "2026-09-21",
+      "decision_id": "6a69cc9ef6ab89a7605170fb6f8b4058aea2a6fe49bee1e76aeb7bb1ccb80e9c",
+      "decision_state": "WATCHED",
+      "model_version": "2026.09.1",
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "previous_state": null,
+      "reason": "council asked us to keep an eye on this",
+      "schema_version": "nf_customer_decision_v1"
+    },
+    {
+      "actor_id": "demo:person:grants-lead",
+      "canonical_id": "demo:canon:water-001",
+      "decided_at": "2026-09-22",
+      "decision_id": "35c17b2ba39efd654bf5e4ea0fec664c84c308dffecb0ee68ca76cd21ef93d03",
+      "decision_state": "PURSUING",
+      "model_version": "2026.09.1",
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "previous_state": null,
+      "reason": "strongest fit this cycle",
+      "schema_version": "nf_customer_decision_v1"
+    }
+  ],
+  "feed": {
+    "as_of": "2026-09-24",
+    "available": 4,
+    "dismissal_is_tenant_scoped": true,
+    "dismissed_hidden": 0,
+    "global_intelligence_unchanged": true,
+    "model_version": "2026.09.1",
+    "ordering": "DEADLINE_SOONEST",
+    "ordering_is_explicit": true,
+    "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+    "recommendations": [
+      {
+        "canonical_id": "demo:canon:broadband-002",
+        "deadline": "2026-10-30",
+        "decision_state": null,
+        "document_citations": [
+          {
+            "document_id": "demo:doc:nofo-002",
+            "document_type": "NOFO",
+            "page": 22,
+            "quote": "Applicants must provide a non-federal match of at least 25 percent of total project cost."
+          }
+        ],
+        "eligibility_blockers": [],
+        "eligibility_conditions": [
+          "25% non-federal match required at application"
+        ],
+        "eligibility_evidence_ids": [
+          "demo:el:match-002"
+        ],
+        "eligibility_view": "CONDITIONAL",
+        "funder_name": "Department of Commerce",
+        "known_unknowns": [],
+        "model_version": "2026.09.1",
+        "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "recommendation_id": "924b66845711eb2998db124285af84b41e8fb6b1f2b776d8f2a17c0801afa75f",
+        "relevance_class": "NATIVE_SPECIFIC",
+        "relevance_evidence_ids": [
+          "demo:ev:priority-002"
+        ],
+        "schema_version": "nf_customer_opportunity_feed_v1",
+        "sourced_from_canonical_graph": true,
+        "title": "Rural Broadband Deployment",
+        "what_changed": [],
+        "why_eligibility": "eligible if a non-federal match can be committed",
+        "why_relevant": "Tribal lands are named as a priority deployment area"
+      },
+      {
+        "canonical_id": "demo:canon:workforce-005",
+        "deadline": "2026-11-01",
+        "decision_state": null,
+        "document_citations": [],
+        "eligibility_blockers": [],
+        "eligibility_conditions": [],
+        "eligibility_evidence_ids": [
+          "demo:el:broad-005"
+        ],
+        "eligibility_view": "APPEARS_ELIGIBLE",
+        "funder_name": "Department of Labor",
+        "known_unknowns": [
+          "no_document_evidence_read_yet"
+        ],
+        "model_version": "2026.09.1",
+        "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "recommendation_id": "13130acca259649f906d6a732423eaeea82aec07381fe0198837796398a8a23d",
+        "relevance_class": "BROADLY_ELIGIBLE",
+        "relevance_evidence_ids": [
+          "demo:ev:broad-005"
+        ],
+        "schema_version": "nf_customer_opportunity_feed_v1",
+        "sourced_from_canonical_graph": true,
+        "title": "Regional Workforce Development",
+        "what_changed": [],
+        "why_eligibility": "entity type is within the eligible applicant list",
+        "why_relevant": "open to units of local and Tribal government"
+      },
+      {
+        "canonical_id": "demo:canon:water-001",
+        "deadline": "2026-11-15",
+        "decision_state": "PURSUING",
+        "document_citations": [
+          {
+            "document_id": "demo:doc:nofo-001",
+            "document_type": "NOFO",
+            "page": 14,
+            "quote": "Eligible applicants are federally recognized Indian Tribes and Tribal consortia."
+          }
+        ],
+        "eligibility_blockers": [],
+        "eligibility_conditions": [],
+        "eligibility_evidence_ids": [
+          "demo:el:entity-001"
+        ],
+        "eligibility_view": "APPEARS_ELIGIBLE",
+        "funder_name": "Environmental Protection Agency",
+        "known_unknowns": [],
+        "model_version": "2026.09.1",
+        "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "recommendation_id": "35c17b2ba39efd654bf5e4ea0fec664c84c308dffecb0ee68ca76cd21ef93d03",
+        "relevance_class": "NATIVE_SPECIFIC",
+        "relevance_evidence_ids": [
+          "demo:ev:set-aside-001"
+        ],
+        "schema_version": "nf_customer_opportunity_feed_v1",
+        "sourced_from_canonical_graph": true,
+        "title": "Tribal Water Infrastructure Assistance",
+        "what_changed": [
+          {
+            "change_type": "DEADLINE_MOVED",
+            "observed_at": "2026-09-20",
+            "summary": "Amendment 2 moved the closing date to 15 November 2026."
+          }
+        ],
+        "why_eligibility": "entity type on file is a federally recognised Tribe",
+        "why_relevant": "the notice sets this programme aside for federally recognised Tribes"
+      },
+      {
+        "canonical_id": "demo:canon:language-004",
+        "deadline": "2027-02-01",
+        "decision_state": "WATCHED",
+        "document_citations": [
+          {
+            "document_id": "demo:doc:nofo-004",
+            "document_type": "NOFO",
+            "page": 3,
+            "quote": "Awards support Native American language assessment, planning, and implementation."
+          }
+        ],
+        "eligibility_blockers": [],
+        "eligibility_conditions": [],
+        "eligibility_evidence_ids": [
+          "demo:el:language-004"
+        ],
+        "eligibility_view": "APPEARS_ELIGIBLE",
+        "funder_name": "Administration for Native Americans",
+        "known_unknowns": [],
+        "model_version": "2026.09.1",
+        "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+        "recommendation_id": "6a69cc9ef6ab89a7605170fb6f8b4058aea2a6fe49bee1e76aeb7bb1ccb80e9c",
+        "relevance_class": "NATIVE_SPECIFIC",
+        "relevance_evidence_ids": [
+          "demo:ev:language-004"
+        ],
+        "schema_version": "nf_customer_opportunity_feed_v1",
+        "sourced_from_canonical_graph": true,
+        "title": "Native Language Preservation",
+        "what_changed": [],
+        "why_eligibility": "entity type and programme area both match",
+        "why_relevant": "the programme exists for Native language communities"
+      }
+    ],
+    "returned": 4,
+    "schema_version": "nf_customer_opportunity_feed_v1",
+    "sourced_from_canonical_graph": true
+  },
+  "license": {
+    "benefit_access": "BENEFIT_FULL",
+    "license_state": "LICENSED_ACTIVE",
+    "maintenance_state": "MAINTENANCE_CURRENT"
+  },
+  "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+  "organization_is_the_protected_demo": true,
+  "preferences": {
+    "org_default_tile_order": [
+      "DEADLINES",
+      "ACTIVE_PURSUITS",
+      "NEW_OPPORTUNITIES"
+    ],
+    "personal_tile_order": [
+      "NEW_OPPORTUNITIES",
+      "DEADLINES"
+    ]
+  },
+  "profile": {
+    "entity_type": "FEDERALLY_RECOGNIZED_TRIBE",
+    "funding_sectors": [
+      "water",
+      "broadband",
+      "language"
+    ],
+    "legal_name": "Demo Tribal Government",
+    "strategic_priorities": [
+      "language revitalization"
+    ]
+  },
+  "pursuit": {
+    "canonical_id": "demo:canon:water-001",
+    "deadline": "2026-11-15",
+    "opened_at": "2026-09-22",
+    "opened_by": "demo:person:grants-lead",
+    "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+    "pursuit_id": "demo:pursuit:water-001",
+    "requirements": [
+      {
+        "label": "SF-424 application for federal assistance",
+        "requirement_id": "demo:req:sf424",
+        "status": "NOT_STARTED"
+      },
+      {
+        "label": "Project narrative, 15 pages maximum",
+        "requirement_id": "demo:req:narrative",
+        "status": "NOT_STARTED"
+      }
+    ],
+    "tasks": [
+      {
+        "assigned_to": "demo:person:grants-lead",
+        "due": "2026-10-10",
+        "label": "Confirm no match is required for this programme",
+        "status": "OPEN",
+        "task_id": "demo:task:confirm-match"
+      }
+    ]
+  },
+  "real_organization_untouched": true,
+  "recommendations": [
+    {
+      "canonical_id": "demo:canon:water-001",
+      "deadline": "2026-11-15",
+      "decision_state": "PURSUING",
+      "document_citations": [
+        {
+          "document_id": "demo:doc:nofo-001",
+          "document_type": "NOFO",
+          "page": 14,
+          "quote": "Eligible applicants are federally recognized Indian Tribes and Tribal consortia."
+        }
+      ],
+      "eligibility_blockers": [],
+      "eligibility_conditions": [],
+      "eligibility_evidence_ids": [
+        "demo:el:entity-001"
+      ],
+      "eligibility_view": "APPEARS_ELIGIBLE",
+      "funder_name": "Environmental Protection Agency",
+      "known_unknowns": [],
+      "model_version": "2026.09.1",
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "recommendation_id": "35c17b2ba39efd654bf5e4ea0fec664c84c308dffecb0ee68ca76cd21ef93d03",
+      "relevance_class": "NATIVE_SPECIFIC",
+      "relevance_evidence_ids": [
+        "demo:ev:set-aside-001"
+      ],
+      "schema_version": "nf_customer_opportunity_feed_v1",
+      "sourced_from_canonical_graph": true,
+      "title": "Tribal Water Infrastructure Assistance",
+      "what_changed": [
+        {
+          "change_type": "DEADLINE_MOVED",
+          "observed_at": "2026-09-20",
+          "summary": "Amendment 2 moved the closing date to 15 November 2026."
+        }
+      ],
+      "why_eligibility": "entity type on file is a federally recognised Tribe",
+      "why_relevant": "the notice sets this programme aside for federally recognised Tribes"
+    },
+    {
+      "canonical_id": "demo:canon:broadband-002",
+      "deadline": "2026-10-30",
+      "decision_state": null,
+      "document_citations": [
+        {
+          "document_id": "demo:doc:nofo-002",
+          "document_type": "NOFO",
+          "page": 22,
+          "quote": "Applicants must provide a non-federal match of at least 25 percent of total project cost."
+        }
+      ],
+      "eligibility_blockers": [],
+      "eligibility_conditions": [
+        "25% non-federal match required at application"
+      ],
+      "eligibility_evidence_ids": [
+        "demo:el:match-002"
+      ],
+      "eligibility_view": "CONDITIONAL",
+      "funder_name": "Department of Commerce",
+      "known_unknowns": [],
+      "model_version": "2026.09.1",
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "recommendation_id": "924b66845711eb2998db124285af84b41e8fb6b1f2b776d8f2a17c0801afa75f",
+      "relevance_class": "NATIVE_SPECIFIC",
+      "relevance_evidence_ids": [
+        "demo:ev:priority-002"
+      ],
+      "schema_version": "nf_customer_opportunity_feed_v1",
+      "sourced_from_canonical_graph": true,
+      "title": "Rural Broadband Deployment",
+      "what_changed": [],
+      "why_eligibility": "eligible if a non-federal match can be committed",
+      "why_relevant": "Tribal lands are named as a priority deployment area"
+    },
+    {
+      "canonical_id": "demo:canon:maritime-003",
+      "deadline": "2026-12-01",
+      "decision_state": null,
+      "document_citations": [],
+      "eligibility_blockers": [
+        "applicant must be a designated public port authority"
+      ],
+      "eligibility_conditions": [],
+      "eligibility_evidence_ids": [
+        "demo:el:port-003"
+      ],
+      "eligibility_view": "APPEARS_INELIGIBLE",
+      "funder_name": "Department of Transportation",
+      "known_unknowns": [
+        "no_document_evidence_read_yet"
+      ],
+      "model_version": "2026.09.1",
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "recommendation_id": "25492e22eee6531e54ce244e9a73edc56603ccaf01f74997a5c5c23946c3a998",
+      "relevance_class": "NOT_RELEVANT",
+      "relevance_evidence_ids": [
+        "demo:ev:port-only-003"
+      ],
+      "schema_version": "nf_customer_opportunity_feed_v1",
+      "sourced_from_canonical_graph": true,
+      "title": "Commercial Maritime Port Modernisation",
+      "what_changed": [],
+      "why_eligibility": "the applicant class excludes Tribal governments",
+      "why_relevant": "eligibility is limited to public port authorities"
+    },
+    {
+      "canonical_id": "demo:canon:language-004",
+      "deadline": "2027-02-01",
+      "decision_state": "WATCHED",
+      "document_citations": [
+        {
+          "document_id": "demo:doc:nofo-004",
+          "document_type": "NOFO",
+          "page": 3,
+          "quote": "Awards support Native American language assessment, planning, and implementation."
+        }
+      ],
+      "eligibility_blockers": [],
+      "eligibility_conditions": [],
+      "eligibility_evidence_ids": [
+        "demo:el:language-004"
+      ],
+      "eligibility_view": "APPEARS_ELIGIBLE",
+      "funder_name": "Administration for Native Americans",
+      "known_unknowns": [],
+      "model_version": "2026.09.1",
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "recommendation_id": "6a69cc9ef6ab89a7605170fb6f8b4058aea2a6fe49bee1e76aeb7bb1ccb80e9c",
+      "relevance_class": "NATIVE_SPECIFIC",
+      "relevance_evidence_ids": [
+        "demo:ev:language-004"
+      ],
+      "schema_version": "nf_customer_opportunity_feed_v1",
+      "sourced_from_canonical_graph": true,
+      "title": "Native Language Preservation",
+      "what_changed": [],
+      "why_eligibility": "entity type and programme area both match",
+      "why_relevant": "the programme exists for Native language communities"
+    },
+    {
+      "canonical_id": "demo:canon:workforce-005",
+      "deadline": "2026-11-01",
+      "decision_state": null,
+      "document_citations": [],
+      "eligibility_blockers": [],
+      "eligibility_conditions": [],
+      "eligibility_evidence_ids": [
+        "demo:el:broad-005"
+      ],
+      "eligibility_view": "APPEARS_ELIGIBLE",
+      "funder_name": "Department of Labor",
+      "known_unknowns": [
+        "no_document_evidence_read_yet"
+      ],
+      "model_version": "2026.09.1",
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "recommendation_id": "13130acca259649f906d6a732423eaeea82aec07381fe0198837796398a8a23d",
+      "relevance_class": "BROADLY_ELIGIBLE",
+      "relevance_evidence_ids": [
+        "demo:ev:broad-005"
+      ],
+      "schema_version": "nf_customer_opportunity_feed_v1",
+      "sourced_from_canonical_graph": true,
+      "title": "Regional Workforce Development",
+      "what_changed": [],
+      "why_eligibility": "entity type is within the eligible applicant list",
+      "why_relevant": "open to units of local and Tribal government"
+    }
+  ],
+  "schema_version": "nf_customer_demo_story_v1",
+  "story_version": "2026.09.1",
+  "surface": {
+    "capabilities": [
+      "DISMISS_OPPORTUNITY",
+      "EDIT_ORGANIZATION_PROFILE",
+      "EXPORT_OWN_DATA",
+      "PREPARE_APPLICATION",
+      "PURSUE_OPPORTUNITY",
+      "SET_PERSONAL_PREFERENCES",
+      "VIEW_ACCOUNT_STATUS",
+      "VIEW_CHANGES",
+      "VIEW_DEADLINES",
+      "VIEW_DOCUMENT_EVIDENCE",
+      "VIEW_ELIGIBILITY",
+      "VIEW_ORGANIZATION_PROFILE",
+      "VIEW_PURSUITS",
+      "VIEW_RECOMMENDATIONS",
+      "VIEW_REQUIREMENTS",
+      "VIEW_TASKS",
+      "VIEW_TRUST_EVIDENCE",
+      "VIEW_WHY_RELEVANT",
+      "WATCH_OPPORTUNITY"
+    ],
+    "dashboard": {
+      "as_of": "2026-09-24",
+      "deadlines": [
+        {
+          "canonical_id": "demo:canon:broadband-002",
+          "days_remaining": 36,
+          "deadline": "2026-10-30",
+          "decision_state": "NEW",
+          "title": "Rural Broadband Deployment"
+        },
+        {
+          "canonical_id": "demo:canon:workforce-005",
+          "days_remaining": 38,
+          "deadline": "2026-11-01",
+          "decision_state": "NEW",
+          "title": "Regional Workforce Development"
+        },
+        {
+          "canonical_id": "demo:canon:water-001",
+          "days_remaining": 52,
+          "deadline": "2026-11-15",
+          "decision_state": "PURSUING",
+          "title": "Tribal Water Infrastructure Assistance"
+        }
+      ],
+      "dismissed_count": 0,
+      "model_version": "2026.09.1",
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "rows_considered": 5,
+      "rows_from_other_tenants_excluded": 0,
+      "schema_version": "nf_customer_surface_v1",
+      "tenant_scoped": true,
+      "tiles": {
+        "ACTIVE_PURSUITS": 1,
+        "COVERAGE_NOTES": 1,
+        "DEADLINES": 3,
+        "ELIGIBILITY_REVIEW": 1,
+        "NEEDS_REVIEW": 0,
+        "NEW_OPPORTUNITIES": 3,
+        "RECENT_CHANGES": 1,
+        "WATCH_LIST": 1
+      }
+    },
+    "feed": {
+      "as_of": "2026-09-24",
+      "available": 4,
+      "dismissal_is_tenant_scoped": true,
+      "dismissed_hidden": 0,
+      "global_intelligence_unchanged": true,
+      "model_version": "2026.09.1",
+      "ordering": "DEADLINE_SOONEST",
+      "ordering_is_explicit": true,
+      "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+      "recommendations": [
+        {
+          "canonical_id": "demo:canon:broadband-002",
+          "deadline": "2026-10-30",
+          "decision_state": null,
+          "document_citations": [
+            {
+              "document_id": "demo:doc:nofo-002",
+              "document_type": "NOFO",
+              "page": 22,
+              "quote": "Applicants must provide a non-federal match of at least 25 percent of total project cost."
+            }
+          ],
+          "eligibility_blockers": [],
+          "eligibility_conditions": [
+            "25% non-federal match required at application"
+          ],
+          "eligibility_evidence_ids": [
+            "demo:el:match-002"
+          ],
+          "eligibility_view": "CONDITIONAL",
+          "funder_name": "Department of Commerce",
+          "known_unknowns": [],
+          "model_version": "2026.09.1",
+          "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+          "recommendation_id": "924b66845711eb2998db124285af84b41e8fb6b1f2b776d8f2a17c0801afa75f",
+          "relevance_class": "NATIVE_SPECIFIC",
+          "relevance_evidence_ids": [
+            "demo:ev:priority-002"
+          ],
+          "schema_version": "nf_customer_opportunity_feed_v1",
+          "sourced_from_canonical_graph": true,
+          "title": "Rural Broadband Deployment",
+          "what_changed": [],
+          "why_eligibility": "eligible if a non-federal match can be committed",
+          "why_relevant": "Tribal lands are named as a priority deployment area"
+        },
+        {
+          "canonical_id": "demo:canon:workforce-005",
+          "deadline": "2026-11-01",
+          "decision_state": null,
+          "document_citations": [],
+          "eligibility_blockers": [],
+          "eligibility_conditions": [],
+          "eligibility_evidence_ids": [
+            "demo:el:broad-005"
+          ],
+          "eligibility_view": "APPEARS_ELIGIBLE",
+          "funder_name": "Department of Labor",
+          "known_unknowns": [
+            "no_document_evidence_read_yet"
+          ],
+          "model_version": "2026.09.1",
+          "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+          "recommendation_id": "13130acca259649f906d6a732423eaeea82aec07381fe0198837796398a8a23d",
+          "relevance_class": "BROADLY_ELIGIBLE",
+          "relevance_evidence_ids": [
+            "demo:ev:broad-005"
+          ],
+          "schema_version": "nf_customer_opportunity_feed_v1",
+          "sourced_from_canonical_graph": true,
+          "title": "Regional Workforce Development",
+          "what_changed": [],
+          "why_eligibility": "entity type is within the eligible applicant list",
+          "why_relevant": "open to units of local and Tribal government"
+        },
+        {
+          "canonical_id": "demo:canon:water-001",
+          "deadline": "2026-11-15",
+          "decision_state": "PURSUING",
+          "document_citations": [
+            {
+              "document_id": "demo:doc:nofo-001",
+              "document_type": "NOFO",
+              "page": 14,
+              "quote": "Eligible applicants are federally recognized Indian Tribes and Tribal consortia."
+            }
+          ],
+          "eligibility_blockers": [],
+          "eligibility_conditions": [],
+          "eligibility_evidence_ids": [
+            "demo:el:entity-001"
+          ],
+          "eligibility_view": "APPEARS_ELIGIBLE",
+          "funder_name": "Environmental Protection Agency",
+          "known_unknowns": [],
+          "model_version": "2026.09.1",
+          "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+          "recommendation_id": "35c17b2ba39efd654bf5e4ea0fec664c84c308dffecb0ee68ca76cd21ef93d03",
+          "relevance_class": "NATIVE_SPECIFIC",
+          "relevance_evidence_ids": [
+            "demo:ev:set-aside-001"
+          ],
+          "schema_version": "nf_customer_opportunity_feed_v1",
+          "sourced_from_canonical_graph": true,
+          "title": "Tribal Water Infrastructure Assistance",
+          "what_changed": [
+            {
+              "change_type": "DEADLINE_MOVED",
+              "observed_at": "2026-09-20",
+              "summary": "Amendment 2 moved the closing date to 15 November 2026."
+            }
+          ],
+          "why_eligibility": "entity type on file is a federally recognised Tribe",
+          "why_relevant": "the notice sets this programme aside for federally recognised Tribes"
+        },
+        {
+          "canonical_id": "demo:canon:language-004",
+          "deadline": "2027-02-01",
+          "decision_state": "WATCHED",
+          "document_citations": [
+            {
+              "document_id": "demo:doc:nofo-004",
+              "document_type": "NOFO",
+              "page": 3,
+              "quote": "Awards support Native American language assessment, planning, and implementation."
+            }
+          ],
+          "eligibility_blockers": [],
+          "eligibility_conditions": [],
+          "eligibility_evidence_ids": [
+            "demo:el:language-004"
+          ],
+          "eligibility_view": "APPEARS_ELIGIBLE",
+          "funder_name": "Administration for Native Americans",
+          "known_unknowns": [],
+          "model_version": "2026.09.1",
+          "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+          "recommendation_id": "6a69cc9ef6ab89a7605170fb6f8b4058aea2a6fe49bee1e76aeb7bb1ccb80e9c",
+          "relevance_class": "NATIVE_SPECIFIC",
+          "relevance_evidence_ids": [
+            "demo:ev:language-004"
+          ],
+          "schema_version": "nf_customer_opportunity_feed_v1",
+          "sourced_from_canonical_graph": true,
+          "title": "Native Language Preservation",
+          "what_changed": [],
+          "why_eligibility": "entity type and programme area both match",
+          "why_relevant": "the programme exists for Native language communities"
+        }
+      ],
+      "returned": 4,
+      "schema_version": "nf_customer_opportunity_feed_v1",
+      "sourced_from_canonical_graph": true
+    },
+    "model_version": "2026.09.1",
+    "operator_capabilities": [],
+    "organization_id": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+    "role": "ORG_ADMIN",
+    "schema_version": "nf_customer_surface_v1"
+  },
+  "trust_panel": {
+    "canonical_id": "demo:canon:water-001",
+    "document_citations": [
+      {
+        "document_id": "demo:doc:nofo-001",
+        "document_type": "NOFO",
+        "page": 14,
+        "quote": "Eligible applicants are federally recognized Indian Tribes and Tribal consortia."
+      }
+    ],
+    "eligibility_evidence_ids": [
+      "demo:el:entity-001"
+    ],
+    "internal_fields_excluded": true,
+    "known_unknowns": [],
+    "model_version": "2026.09.1",
+    "relevance_evidence_ids": [
+      "demo:ev:set-aside-001"
+    ],
+    "schema_version": "nf_customer_surface_v1",
+    "sources": [
+      {
+        "authorization_status": "AUTHORIZED",
+        "last_observed_at": "2026-09-23",
+        "publisher": "Environmental Protection Agency",
+        "source_name": "EPA Grants Announcements"
+      }
+    ],
+    "what_changed": [
+      {
+        "change_type": "DEADLINE_MOVED",
+        "observed_at": "2026-09-20",
+        "summary": "Amendment 2 moved the closing date to 15 November 2026."
+      }
+    ]
+  }
+}

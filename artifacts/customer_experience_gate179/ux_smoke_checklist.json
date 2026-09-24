@@ -1,0 +1,196 @@
+{
+  "any_customer_ready_prefilled": false,
+  "any_result_prefilled": false,
+  "generated_by": "claude_code",
+  "items": [
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "one sign-in, landing in their organisation with its name visible",
+      "intended_goal": "the person gets into their own organisation, and only theirs",
+      "notes": null,
+      "required_backend_state": "verified identity with an affiliation to this org",
+      "route": "/sign-in",
+      "step": "SIGN_IN"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "the Tribe's own name and mark, not an internal identifier",
+      "intended_goal": "they can see which organisation they are acting for",
+      "notes": null,
+      "required_backend_state": "org profile with legal name and entity type",
+      "route": "/organization",
+      "step": "ORGANIZATION"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "a short sequence that says why each answer is needed",
+      "intended_goal": "a new organisation can reach a useful state unaided",
+      "notes": null,
+      "required_backend_state": "authority grant, empty profile",
+      "route": "/onboarding",
+      "step": "ONBOARDING"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "free text accepted; an unrecognised phrase is flagged for review rather than silently dropped",
+      "intended_goal": "the organisation describes itself in its own words",
+      "notes": null,
+      "required_backend_state": "profile versions, phrase resolution",
+      "route": "/organization/profile",
+      "step": "PROFILE_PRIORITIES"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "eight tiles, counts that match the lists",
+      "intended_goal": "they can see what needs attention today",
+      "notes": null,
+      "required_backend_state": "tenant-scoped dashboard read model",
+      "route": "/dashboard",
+      "step": "DASHBOARD"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "a list with a named ordering they can change",
+      "intended_goal": "they see funding they could actually pursue",
+      "notes": null,
+      "required_backend_state": "recommendations sourced from the canonical graph",
+      "route": "/opportunities",
+      "step": "RECOMMENDED_OPPORTUNITIES"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "a sentence and a citation, not a percentage",
+      "intended_goal": "they can tell why an item is in front of them",
+      "notes": null,
+      "required_backend_state": "relevance class with evidence ids",
+      "route": "/opportunities/{id}",
+      "step": "WHY_RELEVANT"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "conditional says WHAT the condition is; uncertain says so plainly",
+      "intended_goal": "they know whether they can apply, or what is unclear",
+      "notes": null,
+      "required_backend_state": "eligibility view, conditions, blockers",
+      "route": "/opportunities/{id}#eligibility",
+      "step": "ELIGIBILITY"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "the quote, the page, the document",
+      "intended_goal": "they can check the claim against the funder's words",
+      "notes": null,
+      "required_backend_state": "document citations with page and quote",
+      "route": "/opportunities/{id}#evidence",
+      "step": "DOCUMENT_EVIDENCE"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "the decision survives a reload; dismissing is reversible",
+      "intended_goal": "their decision sticks and can be undone",
+      "notes": null,
+      "required_backend_state": "durable decision with actor and time",
+      "route": "/opportunities/{id}",
+      "step": "WATCH_DISMISS_PURSUE"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "requirements, tasks, one deadline",
+      "intended_goal": "an application has somewhere to live",
+      "notes": null,
+      "required_backend_state": "pursuit with requirements and tasks",
+      "route": "/pursuits/{id}",
+      "step": "PURSUIT"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "each requirement cites where it came from",
+      "intended_goal": "they know what the funder asks for",
+      "notes": null,
+      "required_backend_state": "requirement list from document extraction",
+      "route": "/pursuits/{id}#requirements",
+      "step": "REQUIREMENTS"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "assignable, with dates that match deadlines",
+      "intended_goal": "work can be assigned and tracked",
+      "notes": null,
+      "required_backend_state": "tasks with assignee and due date",
+      "route": "/pursuits/{id}#tasks",
+      "step": "TASKS"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "days remaining, and an amended date shown as amended",
+      "intended_goal": "nothing closes without warning",
+      "notes": null,
+      "required_backend_state": "deadline read model within a window",
+      "route": "/deadlines",
+      "step": "DEADLINES"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "review-ready output, and no button that submits on their behalf",
+      "intended_goal": "they can assemble a submission",
+      "notes": null,
+      "required_backend_state": "form package, no auto-submission",
+      "route": "/pursuits/{id}/prepare",
+      "step": "APPLICATION_PREPARATION"
+    },
+    {
+      "actual_result": "NOT_YET_WALKED",
+      "customer_ready": null,
+      "evidence_screenshot_needed": true,
+      "expected_customer_experience": "provenance and known gaps, with no internal identifiers",
+      "intended_goal": "they can see where all of it came from",
+      "notes": null,
+      "required_backend_state": "trust panel: sources, citations, changes, unknowns",
+      "route": "/opportunities/{id}#trust",
+      "step": "TRUST_SOURCE_EVIDENCE"
+    }
+  ],
+  "results_vocabulary": [
+    "PASS",
+    "FRICTION",
+    "DEFECT",
+    "BLOCKED",
+    "NOT_YET_WALKED"
+  ],
+  "schema_version": "nf_customer_demo_story_v1",
+  "step_count": 16,
+  "story_version": "2026.09.1",
+  "to_be_walked_by": "claude_design",
+  "unwalked_count": 16,
+  "why_unfilled": "Claude Code has not navigated a UI. A checklist that arrived pre-marked PASS would answer the question it exists to ask"
+}
