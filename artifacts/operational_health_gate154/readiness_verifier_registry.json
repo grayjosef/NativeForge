@@ -9,7 +9,7 @@
     "production_lane": "production_backup_ready",
     "why_they_are_different": "one asks whether a provider can dump and restore a database and cannot run without a managed instance; the other asks whether this system can export its own controlled dev/demo state, reload it elsewhere and still pass the Gate 152 replay, and runs today"
   },
-  "blocking_count": 41,
+  "blocking_count": 43,
   "by_kind": {
     "production_infrastructure": [
       "backup_restore",
@@ -32,7 +32,9 @@
       "customer_beta_reassessment",
       "customer_data_boundary",
       "customer_persistence_live",
+      "document_intelligence_gate175",
       "document_storage_readiness",
+      "eligibility_gate174",
       "email_delivery_readiness",
       "live_collection_audit_replay",
       "native_relevance_gate173",
@@ -79,7 +81,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 45,
+  "verifier_count": 47,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -101,7 +103,9 @@
     "demo_deployment",
     "demo_live_stack",
     "demo_payload_determinism",
+    "document_intelligence_gate175",
     "document_storage_readiness",
+    "eligibility_gate174",
     "email_delivery_readiness",
     "fixture_cleanliness",
     "live_collection_audit_replay",
@@ -670,6 +674,40 @@
       "production": false,
       "script": "scripts/verify_nativeforge_native_relevance_gate173.sh",
       "verifier": "native_relevance_gate173"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "native_relevance_gate173",
+        "source_fleet_health_gate172",
+        "canonical_opportunity_store"
+      ],
+      "expected_result": "PASS",
+      "gate": "174",
+      "kind": "readiness_lane",
+      "lane": "eligibility_intelligence_ready",
+      "note": "eligibility stops being a boolean. The question an operator actually has is who can apply, under what conditions, what disqualifies them and what is unknown, and True/False carries none of it: True hides a matching-funds condition nobody can meet, False hides that the only blocker is a UEI that takes a week. So eligibility is a set of typed requirements - fifteen kinds - and a six-valued result. The survey found the same shape Gate 173 did, one layer deeper: a real Stage 7 stack exists, and not one module can reach a canonical opportunity. Worse, it consumes the STAGE 6 relevance preview, which Gate 173 established is itself unwired, so the whole eligibility-to-relevance chain floats free of the graph. The survey's own first run hid that: a `native_relevance_` prefix marker matched four Stage 7 modules importing the OLD unwired stack and reported them as spine-wired, because a naming convention is not a capability. Negative requirements are first class - a model storing only who MAY apply represents 'tribal governments are not eligible' as the ABSENCE of a tribal class from a list, byte-identical to 'nobody wrote the list down', and migration 0060 gives a disqualifier its own polarity column so those are different rows. An exclusion ENDS the question rather than being outvoted: five satisfied requirements do not beat one disqualifier, and the CHECK makes an ELIGIBLE row with an applied exclusion unrepresentable. A failed STRUCTURAL requirement is INELIGIBLE and a failed ADDRESSABLE one is CONDITIONAL, because not being a Tribe cannot be fixed before the deadline and a missing registration can - collapsing them throws away the only actionable half of the answer. Entity classes are deny-by-default: naming 'Indian tribes' names a tribal government and NOT a tribal college, an enterprise or a Native nonprofit, because telling a Tribe otherwise costs them a cycle and their standing with the funder; only the source's own grouping language expands, and the lookup tolerates the spacing a source actually writes, which it did not at first. The organisation profile is three-valued and versioned from its content - UNANSWERED is never a no, and a match names the profile version it used, so yesterday's CONDITIONALLY_ELIGIBLE becomes an answer about a superseded profile rather than a wrong one. Gate 174 cannot verify authority: VERIFIED_BY_AUTHORITY is reserved for Gate 177 and the invariant refuses a profile that produces it here. The sixteen-row corpus feeds raw requirements and raw profiles into the real engine with zero false positives and zero false negatives, and because a corpus written beside its engine proves only internal consistency, what is ASSERTED is falsifiability: five planted breakages are each caught and a naive entity-class-blind engine scores 0.31 against the real engine's 1.0. 174K is measured, not claimed - the same opportunity normalizes ONCE at one tenant and at fifty while matches scale 1 to 50, and 2,000 normalizations serve 40,000 matches across 20 tenants, a 20x saving. Two tenants get DIFFERENT answers on the same opportunity, which is the point of separating global parsing from the per-tenant match. 50,000 opportunities evaluate with per-opportunity cost flat, 40,000 rows write in 2 statements, and every selective query is index-backed. The 0060 CHECK caught this gate's own scale fixture, which claimed CONDITIONALLY_ELIGIBLE on 20,000 rows while naming no condition.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_eligibility_gate174.sh",
+      "verifier": "eligibility_gate174"
+    },
+    {
+      "blocking": true,
+      "controlled_dev_demo_only": true,
+      "depends_on": [
+        "eligibility_gate174",
+        "native_relevance_gate173",
+        "source_fleet_health_gate172"
+      ],
+      "expected_result": "PASS",
+      "gate": "175",
+      "kind": "readiness_lane",
+      "lane": "document_intelligence_ready",
+      "note": "the landing page is not the authoritative answer, and this gate stops NativeForge assuming it is. Eligibility lives on page 14 of an attachment, the match requirement lives in Appendix C, and the FAQ published a month later is what the programme officer will cite. The survey established the gap in one measurement: no_table_binds_a_document_to_a_canonical_opportunity. nf_award_documents exists and holds 876 ARCHIVED rows of financial_report and award_letter hanging off awarded_grant_id - post-award compliance artifacts, a different lifecycle stage, and filing a funder's eligibility language against a grant nobody has won would conflate the two permanently. So migration 0061 adds documents, facts and conflicts bound to the canonical opportunity. The rule the gate exists for is that a document we could not READ must never read as a document with nothing in it: UNSUPPORTED and PARTIAL can never carry absence_is_meaningful, because a scanned PDF reporting 'no requirements found' is byte-identical to a NOFO that genuinely imposes none. Identity is the CONTENT hash, so the same URL serving changed bytes is a new version and the same bytes at a second URL is the same document - an agency's mirror is not an amendment. Conflicts are REPRESENTED, never silently resolved: an amendment supersedes and the predecessor is retained, a notice outranks a landing-page summary, an FAQ CLARIFIES without erasing - both values survive and the pair goes to review - and anything else is UNRESOLVED and asks for a human. The CHECK makes a winner under a non-selecting rule unrepresentable. Every fact carries the document, the page and the funder's own quoted words, so a citation can be shown to anybody who disputes it; a citation past the document's last page is refused. Eight planted breakages are each caught by their SPECIFIC detector rather than by any failure at all - the cycle fixture uses equal ordinals so the ordinal rule cannot explain the result on its own. 10,000 opportunities carrying 60,000 documents and 120,000 facts process with per-opportunity cost flat, 65,000 rows write in 3 statements, and every selective query is index-backed. No document is downloaded: every byte is a synthetic fixture and the socket count is zero. The integrated 173-175 proof closes the chain on four cases, including the one the whole block exists for - a title with no Native word whose eligibility is on page 14, whose match requirement is in an appendix, and whose deadline moved by amendment - which a keyword filter never sees, a landing-page pipeline cannot answer, and a boolean eligibility model cannot express.",
+      "production": false,
+      "script": "scripts/verify_nativeforge_document_intelligence_gate175.sh",
+      "verifier": "document_intelligence_gate175"
     },
     {
       "blocking": true,

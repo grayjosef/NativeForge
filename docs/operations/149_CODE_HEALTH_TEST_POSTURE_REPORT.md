@@ -4,23 +4,23 @@ Schema: `nf_code_health_inventory_v1`
 
 ## Totals
 
-- Source files: **654**
-- Test files: **597**
-- Source LOC (approx): **154612**
-- Test LOC (approx): **86073**
-- Approximate test-to-code ratio: **0.5567**
+- Source files: **1337**
+- Test files: **787**
+- Source LOC (approx): **385484**
+- Test LOC (approx): **177965**
+- Approximate test-to-code ratio: **0.4617**
 
 ## Breakdown
 
-- Python source: {'file_count': 572, 'line_count': 141231}
-- Python tests: {'file_count': 581, 'line_count': 84461}
-- Frontend source: {'file_count': 82, 'line_count': 13381}
-- Frontend tests: {'file_count': 16, 'line_count': 1612}
-- Service modules: {'file_count': 518, 'line_count': 129495}
-- Frontend pages: {'file_count': 8, 'line_count': 2936}
-- Smoke scripts: {'file_count': 27, 'line_count': 600}
-- Campaign block smokes: {'file_count': 18, 'line_count': 258}
-- Playwright specs: {'file_count': 2, 'line_count': 413}
+- Python source: {'file_count': 1250, 'line_count': 365828}
+- Python tests: {'file_count': 768, 'line_count': 175030}
+- Frontend source: {'file_count': 87, 'line_count': 19656}
+- Frontend tests: {'file_count': 19, 'line_count': 2935}
+- Service modules: {'file_count': 1152, 'line_count': 336330}
+- Frontend pages: {'file_count': 10, 'line_count': 6201}
+- Smoke scripts: {'file_count': 95, 'line_count': 1552}
+- Campaign block smokes: {'file_count': 86, 'line_count': 1210}
+- Playwright specs: {'file_count': 2, 'line_count': 933}
 
 ## Honesty flags
 
@@ -42,28 +42,28 @@ Schema: `nf_code_health_inventory_v1`
 {
   "campaign_block": 17,
   "campaign_block_smoke_scripts": {
-    "file_count": 18,
-    "line_count": 258
+    "file_count": 86,
+    "line_count": 1210
   },
   "frontend_e2e_specs": {
     "file_count": 2,
-    "line_count": 413
+    "line_count": 933
   },
   "frontend_pages": {
-    "file_count": 8,
-    "line_count": 2936
+    "file_count": 10,
+    "line_count": 6201
   },
   "frontend_source": {
-    "file_count": 82,
-    "line_count": 13381
+    "file_count": 87,
+    "line_count": 19656
   },
   "frontend_tests": {
-    "file_count": 16,
-    "line_count": 1612
+    "file_count": 19,
+    "line_count": 2935
   },
   "frontend_unit_tests": {
-    "file_count": 14,
-    "line_count": 1199
+    "file_count": 17,
+    "line_count": 2002
   },
   "full_suite_passed": false,
   "full_suite_run": false,
@@ -75,38 +75,38 @@ Schema: `nf_code_health_inventory_v1`
     "Pen-test pass is NOT claimed by this inventory."
   ],
   "operations_docs": {
-    "file_count": 1035,
-    "line_count": 5600
+    "file_count": 2022,
+    "line_count": 81514
   },
   "pen_test_passed_claimed": false,
   "playwright_specs": {
     "file_count": 2,
-    "line_count": 413
+    "line_count": 933
   },
   "python_source": {
-    "file_count": 572,
-    "line_count": 141231
+    "file_count": 1250,
+    "line_count": 365828
   },
   "python_tests": {
-    "file_count": 581,
-    "line_count": 84461
+    "file_count": 768,
+    "line_count": 175030
   },
   "repo_root": "/home/josefgray/projects/nativeforge",
   "schema_version": "nf_code_health_inventory_v1",
   "service_modules": {
-    "file_count": 518,
-    "line_count": 129495
+    "file_count": 1152,
+    "line_count": 336330
   },
   "smoke_scripts": {
-    "file_count": 27,
-    "line_count": 600
+    "file_count": 95,
+    "line_count": 1552
   },
   "totals": {
-    "approximate_test_to_code_ratio": 0.5567,
-    "source_files": 654,
-    "source_loc": 154612,
-    "test_files": 597,
-    "test_loc": 86073
+    "approximate_test_to_code_ratio": 0.4617,
+    "source_files": 1337,
+    "source_loc": 385484,
+    "test_files": 787,
+    "test_loc": 177965
   }
 }
 ```

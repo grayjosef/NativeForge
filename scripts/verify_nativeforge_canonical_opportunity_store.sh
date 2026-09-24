@@ -84,6 +84,18 @@ if [ ! -x .venv/bin/python ]; then
 fi
 
 # ------------------------------------------- 1. the first real write
+# PRECLEAN. The graph semantics phase replays its writes against leftover
+# fixture rows, and its assertions then describe stale data instead of what
+# this run wrote - proven this session by leaving residue, watching 167 fail
+# with exactly that signature, clearing it, and watching the same phase report
+# a clean start. Cleanup runs LAST in this verifier, which protects whatever
+# comes after but left this verifier's own phases exposed to whatever came
+# before. Gate 168's verifier has opened with a preclean all along.
+PRECLEAN="$(run_phase scripts/_g167_phase_cleanup.py preclean)" || {
+  echo "RESULT=BLOCKED"; echo "blocker=preclean_did_not_report"; exit 0; }
+require_zero "$PRECLEAN" fixture_residue preclean_left_no_residue
+require_true "$PRECLEAN" live_evidence_unchanged preclean_kept_live_evidence
+
 WRITE="$(run_phase scripts/_g167_phase_first_write.py first_write)" || {
   echo "RESULT=BLOCKED"; echo "blocker=first_write_phase_did_not_report"; exit 0; }
 
@@ -113,6 +125,11 @@ SEM="$(run_phase scripts/_g167_phase_graph_semantics.py semantics)" || {
   echo "RESULT=BLOCKED"; echo "blocker=semantics_phase_did_not_report"; exit 0; }
 
 # 167G
+# The phase reports what it started from; this is where that is ACTED on.
+# A dirty start makes every assertion below describe stale rows.
+require_true "$SEM" g_started_from_a_clean_fixture \
+  semantics_started_from_a_clean_fixture
+info g_versions_present_before_this_run "$(jget "$SEM" g_versions_present_before_this_run)"
 require_true "$SEM" g_title_change_new_version version_lineage_supported
 require_true "$SEM" g_title_change_same_canonical
 require_true "$SEM" g_previous_versions_retained

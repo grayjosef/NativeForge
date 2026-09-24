@@ -14,11 +14,11 @@ Schema: `nf_pen_test_readiness_report_v1`
 {
   "adversarial_suite_status": "PASS",
   "code_health_totals": {
-    "approximate_test_to_code_ratio": 0.5567,
-    "source_files": 654,
-    "source_loc": 154612,
-    "test_files": 597,
-    "test_loc": 86073
+    "approximate_test_to_code_ratio": 0.4617,
+    "source_files": 1337,
+    "source_loc": 385484,
+    "test_files": 787,
+    "test_loc": 177965
   },
   "critical_path_weakest": [
     "evidence_binder"

@@ -70,6 +70,14 @@ GENERIC_FILES = (
     "services/native_relevance_classifier_service.py",
     "services/native_relevance_repository_service.py",
     "services/source_coverage_universe_service.py",
+    # Gates 174 and 175. A source-specific branch here - "trust the codes if
+    # it came from Grants.gov", "skip the appendix for a BIA PDF" - works
+    # until somebody adds the source that behaves differently.
+    "services/eligibility_requirement_model_service.py",
+    "services/eligibility_match_engine_service.py",
+    "services/organization_capability_profile_service.py",
+    "services/opportunity_document_service.py",
+    "services/document_fact_extraction_service.py",
     "repositories/canonical_opportunity_repository.py",
     "repositories/canonical_opportunity_batch_repository.py",
     "repositories/opportunity_change_repository.py",

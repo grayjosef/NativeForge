@@ -208,17 +208,33 @@ else
   fail bia_gap_degrades_only_the_evidence_dimension "value=$BIA_OK"
 fi
 
-# Federal Register's unmeasured dimensions must stay UNKNOWN. A fleet layer
+# Federal Register's unmeasured DIMENSIONS must stay `unknown`. A fleet layer
 # that defaults the unmeasured to healthy is the failure this campaign keeps
 # finding, so it is asserted rather than hoped for.
+#
+# This asserts the dimension, NOT the overall state. The state is computed
+# against the real clock, so a real observation ages: Federal Register has a
+# daily cadence, and once its payload is more than a day old the source is
+# genuinely STALE, which correctly outranks UNKNOWN. An earlier version of
+# this check required state = UNKNOWN and was a time bomb - it held only while
+# the data stayed fresh and fired when the date rolled over.
+#
+# What matters, and what holds however much time passes: an unmeasured
+# dimension reads `unknown`, and an unmeasured source is never HEALTHY.
 FR_STATE="$(jfind "$OPS" real_three_sources source_id "$FR" operational_state)"
 FR_SCHED="$(jfind "$OPS" real_three_sources source_id "$FR" scheduler_health)"
-if [ "$FR_STATE" = "UNKNOWN" ] && [ "$FR_SCHED" = "unknown" ]; then
-  pass federal_register_unmeasured_dimensions_remain_unknown
+FR_WORKER="$(jfind "$OPS" real_three_sources source_id "$FR" worker_health)"
+if [ "$FR_SCHED" = "unknown" ] && [ "$FR_WORKER" = "unknown" ] \
+   && [ "$FR_STATE" != "HEALTHY" ]; then
+  pass federal_register_unmeasured_dimensions_remain_unknown \
+    "scheduler=$FR_SCHED worker=$FR_WORKER state=$FR_STATE"
 else
   fail federal_register_unmeasured_dimensions_remain_unknown \
-    "state=$FR_STATE scheduler=$FR_SCHED"
+    "state=$FR_STATE scheduler=$FR_SCHED worker=$FR_WORKER"
 fi
+# The state itself is reported, because it legitimately changes with the age
+# of the real evidence and is a fact rather than a pass condition.
+info federal_register_operational_state "$FR_STATE"
 info grants_gov_state "$(jfind "$OPS" real_three_sources source_id "$GG" operational_state)"
 info bia_known_gaps "$(jget "$OPS" bia_known_gaps)"
 

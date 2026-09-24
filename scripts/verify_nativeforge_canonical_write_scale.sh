@@ -213,6 +213,25 @@ SEM="$(run_phase scripts/_g167_phase_graph_semantics.py)" || {
 require_true "$SEM" g_title_change_new_version version_lineage_supported
 require_true "$SEM" g_lineage_is_a_chain
 require_true "$SEM" g_current_pointer_is_newest
+# Asserted too: a chain that walks fewer versions than exist is broken, and
+# that is what separates a real lineage failure from an ambiguous sort.
+require_true "$SEM" g_exactly_one_chain_root
+# Reported, not asserted. `created_at` ties are possible and are NOT a
+# lineage failure - but the failing battery log could not tell the two apart
+# because these were computed and thrown away.
+info g_version_count "$(jget "$SEM" g_version_count)"
+info g_chain_walk_length "$(jget "$SEM" g_chain_walk_length)"
+info g_timestamp_order_matches_supersession_order \
+  "$(jget "$SEM" g_timestamp_order_matches_supersession_order)"
+info g_newest_version_id "$(jget "$SEM" g_newest_version_id)"
+# The PRECONDITION. This phase is not idempotent and runs here after
+# first_write, so it does not start from an empty graph. A dirty start is a
+# fact worth seeing - the Gate 168 lineage failure has twice been read as a
+# broken chain when the question was what the phase started from.
+info g_started_from_a_clean_fixture \
+  "$(jget "$SEM" g_started_from_a_clean_fixture)"
+info g_versions_present_before_this_run \
+  "$(jget "$SEM" g_versions_present_before_this_run)"
 require_true "$SEM" g_deadline_is_material
 require_false "$SEM" g_title_is_material
 require_true "$SEM" h_same_canonical multi_source_identity_supported

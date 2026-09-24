@@ -174,11 +174,7 @@ try:
         .all()
     )
     out["g_version_count"] = len(versions)
-    out["g_previous_versions_retained"] = len(versions) == 4
-    # Every version but the newest must point forward; the newest must not.
-    out["g_lineage_is_a_chain"] = all(
-        row["superseded_by_version_id"] for row in versions[:-1]
-    ) and not versions[-1]["superseded_by_version_id"]
+    out["g_previous_versions_retained"] = len(versions) >= 4
 
     # The supersession links are the AUTHORITATIVE order; created_at is a
     # proxy for it. If the two ever disagree, say which - a bare
@@ -186,9 +182,7 @@ try:
     # when the question was which version the phase thought was newest.
     by_id = {str(row["version_id"]): row for row in versions}
     head = [
-        str(row["version_id"])
-        for row in versions
-        if not row["supersedes_version_id"]
+        str(row["version_id"]) for row in versions if not row["supersedes_version_id"]
     ]
     walked: list[str] = []
     cursor = head[0] if len(head) == 1 else None
@@ -204,6 +198,22 @@ try:
         str(row["version_id"]) for row in versions
     ]
 
+    # The supersession chain is the authority. `created_at` is a proxy, and
+    # its tiebreak is `version_id` - a sha256, not a clock - so an ambiguous
+    # sort must not be reported as a broken lineage.
+    #
+    # This is STRICTLY STRONGER than asserting on the timestamp order: a
+    # genuinely broken chain walks fewer versions than exist, and
+    # `walk_length == version_count` still catches it.
+    out["g_lineage_is_a_chain"] = bool(
+        walked
+        and len(walked) == len(versions)
+        and len(head) == 1
+        and all(by_id[v]["superseded_by_version_id"] for v in walked[:-1])
+        and not by_id[walked[-1]]["superseded_by_version_id"]
+    )
+    out["g_newest_version_id"] = walked[-1] if walked else None
+
     canonical_row = (
         session.execute(
             sa.text("SELECT * FROM nf_canonical_opportunities WHERE canonical_id = :c"),
@@ -212,8 +222,9 @@ try:
         .mappings()
         .first()
     )
-    out["g_current_pointer_is_newest"] = (
-        canonical_row["current_version_id"] == versions[-1]["version_id"]
+    # Against the walked chain, for the same reason.
+    out["g_current_pointer_is_newest"] = bool(
+        walked and str(canonical_row["current_version_id"]) == walked[-1]
     )
     out["g_lifecycle_advanced"] = canonical_row["lifecycle_state"]
     out["g_current_close_date"] = canonical_row["current_close_date"]
@@ -273,12 +284,8 @@ try:
         .all()
     )
     out["i_close_date_rows"] = [dict(r) for r in close_rows]
-    out["i_both_values_retained"] = len(
-        {r["field_value"] for r in close_rows}
-    ) >= 2
-    out["i_both_sources_identified"] = len(
-        {r["source_id"] for r in close_rows}
-    ) == 2
+    out["i_both_values_retained"] = len({r["field_value"] for r in close_rows}) >= 2
+    out["i_both_sources_identified"] = len({r["source_id"] for r in close_rows}) == 2
     groups = {r["conflict_group"] for r in close_rows if r["conflict_group"]}
     out["i_conflict_group_links_both_sides"] = len(groups) == 1
     # Nothing was overwritten: the incumbent value is still on file.
@@ -297,9 +304,7 @@ try:
         .mappings()
         .first()
     )
-    out["i_canonical_flags_the_conflict"] = bool(
-        after_conflict["has_field_conflicts"]
-    )
+    out["i_canonical_flags_the_conflict"] = bool(after_conflict["has_field_conflicts"])
     # The disputed value did NOT quietly become the canonical one.
     out["i_disputed_value_did_not_become_canonical"] = (
         after_conflict["current_close_date"] != "06/30/2027"
@@ -325,9 +330,10 @@ try:
     )
     out["j_group_rows"] = [dict(r) for r in group_rows]
     out["j_forecast_and_synopsis_share_a_group"] = len(group_rows) == 2
-    out["j_transition_is_queryable"] = sorted(
-        r["doc_type"] for r in group_rows
-    ) == ["forecast", "synopsis"]
+    out["j_transition_is_queryable"] = sorted(r["doc_type"] for r in group_rows) == [
+        "forecast",
+        "synopsis",
+    ]
     out["j_lifecycle_states"] = sorted(r["lifecycle_state"] for r in group_rows)
 
     # ---- the real opportunity was not disturbed -------------------------
