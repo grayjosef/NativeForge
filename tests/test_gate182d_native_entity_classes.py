@@ -23,6 +23,7 @@ import pytest
 
 from nativeforge.services.native_entity_class_service import (
     AIAN_NATIONAL_ORGANIZATION,
+    INTERTRIBAL_CONSORTIUM,
     NAMED_NO,
     NAMED_UNKNOWN,
     NAMED_YES,
@@ -221,6 +222,102 @@ def test_distinct_classes_are_all_reported_not_merged():
 def test_evidence_is_reported_so_a_reviewer_can_check_the_reading():
     result = assess("Urban Indian Organizations")
     assert result["class_evidence"][URBAN_INDIAN_ORGANIZATION]
+
+
+# ---- eligibility that POINTS instead of stating -----------------------
+
+
+@pytest.mark.parametrize(
+    "prose",
+    [
+        "See Section 2 of Notice of Funding Opportunity",
+        "See Section 2 of the full announcement for eligibility information.",
+        "See Section II of the Assistance Agreement Program Guidance for "
+        "eligibility information.",
+        "See Section 2 for eligibility requirements.",
+        "Refer to Section III of the solicitation.",
+    ],
+)
+def test_a_publisher_may_defer_eligibility_to_a_document(prose):
+    """One measured publisher does this on 100% of its current opportunities
+    while two others never do. For it, the attached notice is not enrichment -
+    it is the only place eligibility exists."""
+    result = assess(prose)
+    assert result["eligibility_deferred_to_document"] is True
+    assert result["document_retrieval_required"] is True
+    assert result["tribe_named_as_eligible_class"] == NAMED_UNKNOWN
+
+
+def test_deferral_is_a_different_state_from_absent_prose():
+    """Both are UNKNOWN and only one of them tells you where to look."""
+    deferred = assess("See Section 2 of the full announcement.")
+    absent = assess(None)
+    assert deferred["eligibility_deferred_to_document"] is True
+    assert absent["eligibility_deferred_to_document"] is False
+    assert "publisher_defers_eligibility_to_a_named_document" in deferred["reasons"]
+
+
+def test_deferral_never_claims_a_tribe_is_eligible():
+    result = assess("See Section 2 of the Notice of Funding Opportunity")
+    assert result["tribe_named_as_eligible_class"] != NAMED_YES
+    assert result["entity_classes"] == []
+
+
+def test_prose_that_states_classes_is_not_treated_as_deferral():
+    result = assess("Tribes, Tribal Organizations, Urban Organizations")
+    assert result["eligibility_deferred_to_document"] is False
+    assert result["tribe_named_as_eligible_class"] == NAMED_YES
+
+
+def test_prose_naming_classes_and_a_section_still_reads_the_classes():
+    """A statement that also cites its authority is still a statement."""
+    result = assess(
+        "Federally recognized Indian Tribes, as described in Section 4, are eligible."
+    )
+    assert result["eligibility_deferred_to_document"] is False
+    assert TRIBE_FEDERALLY_RECOGNIZED in result["entity_classes"]
+
+
+# ---- consortia are their own applicant --------------------------------
+
+
+def test_an_intertribal_consortium_is_its_own_class():
+    """A real competition is open to "Indian Tribes and Intertribal
+    Consortia" - two classes, and reducing it to one loses whichever the
+    reader is."""
+    result = assess("Indian Tribes and Intertribal Consortia may apply.")
+    assert INTERTRIBAL_CONSORTIUM in result["entity_classes"]
+    assert TRIBE_FEDERALLY_RECOGNIZED in result["entity_classes"]
+
+
+def test_a_consortium_alone_does_not_make_a_tribe_eligible():
+    result = assess("Eligible applicants are intertribal consortia.")
+    assert INTERTRIBAL_CONSORTIUM in result["entity_classes"]
+    assert result["tribal_government_classes_named"] == []
+    assert result["no_tribal_class_named"] is True
+
+
+@pytest.mark.parametrize(
+    "phrase",
+    [
+        "intertribal consortium",
+        "intertribal consortia",
+        "inter-tribal consortium",
+        "tribal consortium",
+        "tribal consortia",
+        "consortia of Indian Tribes",
+    ],
+)
+def test_consortium_matches_singular_and_plural(phrase):
+    """ "consortia" shares no stem ending with "consortium", so both are
+    spelled out rather than trusted to a boundary."""
+    assert INTERTRIBAL_CONSORTIUM in extract_entity_classes(phrase)["entity_classes"]
+
+
+def test_a_consortium_is_not_merged_into_tribal_organization():
+    result = extract_entity_classes("Intertribal Consortia")
+    assert INTERTRIBAL_CONSORTIUM in result["entity_classes"]
+    assert TRIBAL_ORGANIZATION not in result["entity_classes"]
 
 
 # ---- the plural / stem regression class -------------------------------

@@ -59,6 +59,12 @@ TRIBE_STATE_RECOGNIZED = "TRIBE_STATE_RECOGNIZED"
 #: is the recognition requirement, and those are two different questions.
 TRIBE_RECOGNITION_UNSPECIFIED = "TRIBE_RECOGNITION_UNSPECIFIED"
 TRIBAL_ORGANIZATION = "TRIBAL_ORGANIZATION"
+#: A consortium is its own applicant with its own conditions - member Tribes'
+#: recognition, the consortium's own legal status, authorising resolutions.
+#: One measured competition is open to "Indian Tribes and Intertribal
+#: Consortia", which is two classes, and reducing it to one loses whichever
+#: the reader is.
+INTERTRIBAL_CONSORTIUM = "INTERTRIBAL_CONSORTIUM"
 URBAN_INDIAN_ORGANIZATION = "URBAN_INDIAN_ORGANIZATION"
 AIAN_NATIONAL_ORGANIZATION = "AIAN_NATIONAL_ORGANIZATION"
 TRIBAL_EPIDEMIOLOGY_CENTER = "TRIBAL_EPIDEMIOLOGY_CENTER"
@@ -71,6 +77,7 @@ ENTITY_CLASSES: tuple[str, ...] = (
     TRIBE_STATE_RECOGNIZED,
     TRIBE_RECOGNITION_UNSPECIFIED,
     TRIBAL_ORGANIZATION,
+    INTERTRIBAL_CONSORTIUM,
     URBAN_INDIAN_ORGANIZATION,
     AIAN_NATIONAL_ORGANIZATION,
     TRIBAL_EPIDEMIOLOGY_CENTER,
@@ -97,6 +104,7 @@ TRIBAL_GOVERNMENT_CLASSES: frozenset[str] = frozenset(
 NATIVE_SERVING_NON_TRIBAL_CLASSES: frozenset[str] = frozenset(
     {
         TRIBAL_ORGANIZATION,
+        INTERTRIBAL_CONSORTIUM,
         URBAN_INDIAN_ORGANIZATION,
         AIAN_NATIONAL_ORGANIZATION,
         TRIBAL_EPIDEMIOLOGY_CENTER,
@@ -151,6 +159,13 @@ _PATTERNS: tuple[tuple[str, str], ...] = (
         r"\balaska\s+native\s+village\w*",
     ),
     (
+        INTERTRIBAL_CONSORTIUM,
+        # "consortia" is the plural of "consortium" and shares no stem ending,
+        # so both are spelled out rather than trusted to a boundary.
+        r"\binter-?tribal\s+consorti(?:um|a)|\btribal\s+consorti(?:um|a)|"
+        r"\bconsorti(?:um|a)\s+of\s+(?:indian\s+)?tribes",
+    ),
+    (
         TRIBAL_ORGANIZATION,
         r"\btribal\s+organi\w*|\bindian\s+organi\w*|"
         r"\btribally\s+designated\s+\w+\s+entit\w*",
@@ -176,6 +191,21 @@ _COMPILED: tuple[tuple[str, re.Pattern[str]], ...] = tuple(
 #: "must be", "limited to", "only" - language that makes a list exhaustive.
 #: Without it a list may be illustrative, and an absent Tribe means UNKNOWN
 #: rather than NO.
+#: Prose that POINTS AT eligibility instead of stating it. Measured: one
+#: federal publisher does this on 100% of its current opportunities - "See
+#: Section 2 of the full announcement for eligibility information" - while two
+#: others never do. For that publisher the attached notice is not enrichment,
+#: it is the only place eligibility exists, and a reader of structured fields
+#: alone knows nothing. This is a DIFFERENT state from "prose absent" and from
+#: "prose unreadable": it is actionable, because it names where to look.
+_DEFERRED_RE = re.compile(
+    r"\b(see\s+section|see\s+part\b|see\s+the\s+(?:full\s+)?"
+    r"(?:announcement|notice|solicitation)|refer\s+to\s+section|"
+    r"as\s+(?:described|set\s+forth)\s+in\s+section|"
+    r"see\s+.{0,40}?\bfor\s+eligibilit)",
+    re.I,
+)
+
 _EXCLUSIVE_RE = re.compile(
     r"\b(must\s+be|limited\s+to|restricted\s+to|only\s+\w+\s+(?:may|are)|"
     r"eligible\s+applicants?\s+(?:are|is)|to\s+be\s+eligible)",
@@ -213,12 +243,15 @@ def extract_entity_classes(
             found.append(name)
             evidence[name] = sorted({m.lower() for m in matches})
 
+    deferred = bool(_DEFERRED_RE.search(text)) and not found
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
             "entity_classes": sorted(found),
             "class_evidence": {k: evidence[k] for k in sorted(evidence)},
             "prose_present": bool(text),
+            # Present, readable, and deliberately not an answer.
+            "eligibility_deferred_to_document": deferred,
             "exclusive_language": bool(_EXCLUSIVE_RE.search(text)),
             "classes_are_legal_classes_not_synonyms": True,
         }
@@ -261,6 +294,9 @@ def assess_tribal_applicant_class(
     elif not extracted["prose_present"]:
         named = NAMED_UNKNOWN
         reasons.append("no_eligibility_prose_to_read")
+    elif extracted["eligibility_deferred_to_document"]:
+        named = NAMED_UNKNOWN
+        reasons.append("publisher_defers_eligibility_to_a_named_document")
     elif not classes:
         named = NAMED_UNKNOWN
         reasons.append("prose_names_no_recognisable_entity_class")
@@ -291,6 +327,13 @@ def assess_tribal_applicant_class(
             # The signal that separates "restricted to another class" from
             # "prose could not be read at all".
             "no_tribal_class_named": bool(classes and not tribal_gov),
+            # Actionable: the answer exists, in the document the prose names.
+            "eligibility_deferred_to_document": extracted[
+                "eligibility_deferred_to_document"
+            ],
+            "document_retrieval_required": extracted[
+                "eligibility_deferred_to_document"
+            ],
             "native_serving_non_tribal_classes_named": sorted(native_other),
             "native_relevant_evidence_present": bool(tribal_gov or native_other),
             "exclusive_language": extracted["exclusive_language"],
