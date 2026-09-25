@@ -234,15 +234,19 @@ def backfill_blocking_keys(
         sa.Column("surrogate_opportunity_id", sa.Text()),
     )
 
-    missing = connection.execute(
-        sa.select(canonical)
-        .where(
-            ~canonical.c.canonical_id.in_(
-                sa.select(blocking.c.canonical_id).distinct()
+    missing = (
+        connection.execute(
+            sa.select(canonical)
+            .where(
+                ~canonical.c.canonical_id.in_(
+                    sa.select(blocking.c.canonical_id).distinct()
+                )
             )
+            .limit(limit)
         )
-        .limit(limit)
-    ).mappings().all()
+        .mappings()
+        .all()
+    )
 
     rows: list[dict[str, Any]] = []
     seen: set[tuple[str, str, str]] = set()
@@ -324,15 +328,17 @@ def generate_candidates(
         if kind not in GENERATIVE_KEY_KINDS:
             skipped.append(kind)
             continue
-        rows = connection.execute(
-            sa.select(table.c.canonical_id)
-            .where(
-                sa.and_(table.c.key_kind == kind, table.c.key_value == value)
+        rows = (
+            connection.execute(
+                sa.select(table.c.canonical_id)
+                .where(sa.and_(table.c.key_kind == kind, table.c.key_value == value))
+                # One more than the cap, so truncation is detected rather than
+                # inferred from a suspiciously round number.
+                .limit(cap + 1)
             )
-            # One more than the cap, so truncation is detected rather than
-            # inferred from a suspiciously round number.
-            .limit(cap + 1)
-        ).scalars().all()
+            .scalars()
+            .all()
+        )
         found = [str(r) for r in rows if str(r) != exclude]
         per_key[f"{kind}:{value[:24]}"] = len(found)
         if len(found) > cap:
@@ -408,9 +414,7 @@ def record_relationship(
         refusals.append("an_opportunity_is_not_related_to_itself")
     if kind == "SAME_AS" and layer not in SETTLED_LAYERS:
         if decided_by != DECIDED_HUMAN:
-            refusals.append(
-                f"a_same_as_at_{layer}_requires_a_human_decision"
-            )
+            refusals.append(f"a_same_as_at_{layer}_requires_a_human_decision")
     if decided_by == DECIDED_HUMAN and not str(reviewer or "").strip():
         refusals.append("a_human_decision_must_name_the_human")
     if refusals:
@@ -419,9 +423,13 @@ def record_relationship(
     table = _relationships_table()
     relationship_id = _digest(left, right, kind)
 
-    existing = connection.execute(
-        sa.select(table).where(table.c.relationship_id == relationship_id)
-    ).mappings().first()
+    existing = (
+        connection.execute(
+            sa.select(table).where(table.c.relationship_id == relationship_id)
+        )
+        .mappings()
+        .first()
+    )
     if existing is not None:
         return _json_safe(
             {
@@ -485,9 +493,7 @@ def revoke_relationship(
     """
     stamp = now or dt.datetime.now(dt.UTC)
     if not str(revoked_by or "").strip() or not str(reason or "").strip():
-        raise IdentityWriteRefused(
-            ["a_revocation_must_name_who_and_why"]
-        )
+        raise IdentityWriteRefused(["a_revocation_must_name_who_and_why"])
 
     table = _relationships_table()
     result = connection.execute(
@@ -548,9 +554,11 @@ def record_candidate(
     kind = str(proposed_relationship or "")
     candidate_id = _digest(left, right, kind)
 
-    existing = connection.execute(
-        sa.select(table).where(table.c.candidate_id == candidate_id)
-    ).mappings().first()
+    existing = (
+        connection.execute(sa.select(table).where(table.c.candidate_id == candidate_id))
+        .mappings()
+        .first()
+    )
     if existing is not None:
         return _json_safe(
             {
@@ -614,9 +622,13 @@ def resolve_candidate(
         raise IdentityWriteRefused(["a_review_decision_must_name_the_reviewer"])
 
     table = _candidates_table()
-    candidate = connection.execute(
-        sa.select(table).where(table.c.candidate_id == str(candidate_id))
-    ).mappings().first()
+    candidate = (
+        connection.execute(
+            sa.select(table).where(table.c.candidate_id == str(candidate_id))
+        )
+        .mappings()
+        .first()
+    )
     if candidate is None:
         raise IdentityWriteRefused([f"no_such_candidate:{candidate_id}"])
 
@@ -660,8 +672,7 @@ def resolve_candidate(
             decided_by=DECIDED_HUMAN,
             reviewer=str(reviewer),
             candidate_id=str(candidate_id),
-            primary_canonical_id=primary_canonical_id
-            or candidate["canonical_a"],
+            primary_canonical_id=primary_canonical_id or candidate["canonical_a"],
             now=stamp,
         )
 
@@ -686,9 +697,7 @@ def describe_identity_graph(
     """Every relationship touching one opportunity, in both directions."""
     table = _relationships_table()
     key = str(canonical_id or "")
-    where = sa.or_(
-        table.c.from_canonical_id == key, table.c.to_canonical_id == key
-    )
+    where = sa.or_(table.c.from_canonical_id == key, table.c.to_canonical_id == key)
     if not include_revoked:
         where = sa.and_(where, table.c.revoked_at.is_(None))
 
@@ -728,6 +737,190 @@ def describe_identity_graph(
             "includes_revoked": include_revoked,
         }
     )
+
+
+# --------------------------------------------------------------------
+# Logical identity resolution
+#
+# L1 preserves source truth: a forecast and the posting it became are two
+# rows, because overwriting one with the other would destroy the transition.
+# The PRODUCT must still understand that they are one real opportunity.
+#
+# This is the single place that turns an L1 canonical_id into the logical
+# opportunity a customer acts on. Thirty services reference canonical_id; none
+# of them should learn to interpret a relationship graph, because thirty
+# interpretations is thirty chances to disagree.
+# --------------------------------------------------------------------
+
+#: Relationships that mean "these are one opportunity, act on the primary".
+#: RELATED_TO, RECURRENCE_OF and REPUBLISHED_FROM deliberately do NOT collapse:
+#: last year's programme cycle is a different grant with a different deadline.
+RESOLVING_RELATIONSHIPS: frozenset[str] = frozenset({"SAME_AS", "FORECAST_OF"})
+
+#: Resolution outcomes.
+RESOLVED_SELF = "SELF"
+RESOLVED_TO_PRIMARY = "RESOLVED_TO_PRIMARY"
+RESOLVED_UNRESOLVED = "UNRESOLVED"
+RESOLVED_CONFLICT = "CONFLICT"
+
+#: A chain longer than this is a graph problem, not a deep lineage.
+_MAX_RESOLUTION_DEPTH = 8
+
+
+def resolve_logical_canonical_ids(
+    *, connection: Any, canonical_ids: Any
+) -> dict[str, Any]:
+    """Map each L1 canonical_id onto the logical opportunity it belongs to.
+
+    Batched on purpose. A customer feed holding N opportunities must not issue
+    N relationship queries, so this walks the graph in rounds - one query per
+    round, and depth is 1 for every pair this system currently produces.
+
+    Never guesses. A relationship that does not name its primary, a node with
+    two different primaries, or a cycle all resolve to the node itself and are
+    reported as failures rather than settled quietly.
+    """
+    table = _relationships_table()
+    wanted = [str(c) for c in (canonical_ids or []) if str(c or "")]
+    resolutions: dict[str, dict[str, Any]] = {
+        key: {
+            "canonical_id": key,
+            "logical_canonical_id": key,
+            "primary_canonical_id": None,
+            "status": RESOLVED_SELF,
+            "relationship": None,
+            "reason": "no_relationship",
+        }
+        for key in wanted
+    }
+    failures: list[str] = []
+    query_count = 0
+    edges: dict[str, dict[str, Any]] = {}
+
+    frontier = set(wanted)
+    seen: set[str] = set()
+    depth = 0
+    while frontier and depth < _MAX_RESOLUTION_DEPTH:
+        depth += 1
+        seen |= frontier
+        where = sa.and_(
+            sa.or_(
+                table.c.from_canonical_id.in_(sorted(frontier)),
+                table.c.to_canonical_id.in_(sorted(frontier)),
+            ),
+            table.c.revoked_at.is_(None),
+            table.c.relationship.in_(sorted(RESOLVING_RELATIONSHIPS)),
+        )
+        rows = connection.execute(sa.select(table).where(where)).mappings().all()
+        query_count += 1
+
+        next_frontier: set[str] = set()
+        for row in rows:
+            a = str(row["from_canonical_id"] or "")
+            b = str(row["to_canonical_id"] or "")
+            primary = str(row["primary_canonical_id"] or "")
+            kind = str(row["relationship"] or "")
+            if not primary:
+                # A collapsing relationship that does not say which side is
+                # current cannot be applied. Applying it would be a guess
+                # about which record the customer should act on.
+                failures.append(f"{kind.lower()}_without_primary:{a}|{b}")
+                continue
+            if primary not in (a, b):
+                failures.append(f"primary_is_not_an_endpoint:{primary}")
+                continue
+            other = b if primary == a else a
+            existing = edges.get(other)
+            if existing and existing["primary"] != primary:
+                # Two relationships disagree about where this record belongs.
+                failures.append(
+                    f"conflicting_primaries_for:{other}|{existing['primary']}|{primary}"
+                )
+                edges[other] = {"primary": other, "kind": kind, "conflict": True}
+                continue
+            edges[other] = {"primary": primary, "kind": kind, "conflict": False}
+            if primary not in seen:
+                next_frontier.add(primary)
+        frontier = next_frontier
+
+    if frontier:
+        failures.append(f"resolution_depth_exceeded:{sorted(frontier)}")
+
+    for key in wanted:
+        hops = 0
+        current = key
+        chain: list[str] = [current]
+        kind_used: str | None = None
+        conflicted = False
+        while current in edges and hops < _MAX_RESOLUTION_DEPTH:
+            edge = edges[current]
+            if edge.get("conflict"):
+                conflicted = True
+                break
+            nxt = str(edge["primary"])
+            kind_used = str(edge["kind"])
+            if nxt == current:
+                break
+            if nxt in chain:
+                failures.append(f"relationship_cycle:{'>'.join([*chain, nxt])}")
+                conflicted = True
+                break
+            chain.append(nxt)
+            current = nxt
+            hops += 1
+
+        if conflicted:
+            resolutions[key].update(
+                {
+                    "status": RESOLVED_CONFLICT,
+                    "logical_canonical_id": key,
+                    "reason": "conflicting_or_cyclic_relationships",
+                }
+            )
+        elif hops >= _MAX_RESOLUTION_DEPTH:
+            failures.append(f"resolution_depth_exceeded:{key}")
+            resolutions[key].update(
+                {"status": RESOLVED_CONFLICT, "reason": "resolution_depth_exceeded"}
+            )
+        elif current != key:
+            resolutions[key].update(
+                {
+                    "logical_canonical_id": current,
+                    "primary_canonical_id": current,
+                    "status": RESOLVED_TO_PRIMARY,
+                    "relationship": kind_used,
+                    "reason": f"resolved_via_{(kind_used or '').lower()}",
+                }
+            )
+
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "resolutions": resolutions,
+            "requested_count": len(wanted),
+            "logical_count": len(
+                {r["logical_canonical_id"] for r in resolutions.values()}
+            ),
+            "collapsed_count": sum(
+                1 for r in resolutions.values() if r["status"] == RESOLVED_TO_PRIMARY
+            ),
+            # Reported so a caller can prove it is not doing N+1.
+            "query_count": query_count,
+            "invariant_failures": sorted(set(failures)),
+        }
+    )
+
+
+def resolve_logical_canonical_id(
+    *, connection: Any, canonical_id: Any
+) -> dict[str, Any]:
+    """Single-id convenience. Prefer the batch form inside a list read."""
+    key = str(canonical_id or "")
+    batch = resolve_logical_canonical_ids(connection=connection, canonical_ids=[key])
+    resolution = dict(batch["resolutions"].get(key) or {})
+    resolution["invariant_failures"] = batch["invariant_failures"]
+    resolution["query_count"] = batch["query_count"]
+    return _json_safe(resolution)
 
 
 def list_pending_candidates(
