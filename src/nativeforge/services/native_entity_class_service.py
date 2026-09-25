@@ -112,6 +112,55 @@ NATIVE_SERVING_NON_TRIBAL_CLASSES: frozenset[str] = frozenset(
     }
 )
 
+# ---- certification, a SEPARATE axis from entity class ----------------
+#: Some funders gate on what an applicant IS (a Tribe, a Tribal organization).
+#: Others gate on what an applicant HAS BEEN CERTIFIED AS. Measured on one
+#: Native-designated fund, the eligible parties are "Certified CDFIs, Emerging
+#: CDFIs, and Sponsoring Entities" - three certification states and not one
+#: statutory entity class among them.
+#:
+#: Collapsing certification into Native identity would tell a Tribe it
+#: qualifies for Native-designated capital because it is a Tribe, when the
+#: actual gate is a certification it may not hold. The entity reader returns
+#: no classes for that prose, which is correct and incomplete; this axis is
+#: the missing half.
+CERTIFICATION_HELD = "CERTIFICATION_HELD_REQUIRED"
+CERTIFICATION_EMERGING = "EMERGING_CERTIFICATION_PATH"
+CERTIFICATION_SPONSOR = "SPONSORING_ENTITY"
+CERTIFICATION_NOT_MENTIONED = "NOT_MENTIONED"
+
+CERTIFICATION_STATES: tuple[str, ...] = (
+    CERTIFICATION_HELD,
+    CERTIFICATION_EMERGING,
+    CERTIFICATION_SPONSOR,
+    CERTIFICATION_NOT_MENTIONED,
+)
+
+#: Deliberately generic. Certification, accreditation, licensure and formal
+#: designation are the same gate wearing different words, and a different
+#: publisher's "accredited institution" reuses this unchanged.
+_CERT_HELD_RE = re.compile(
+    r"\b(certified\s+\w+|must\s+be\s+certified|"
+    r"hold\s+(?:a\s+)?(?:current\s+)?certification|"
+    r"accredited\s+\w+|licensed\s+\w+|"
+    r"formally\s+designated)",
+    re.I,
+)
+#: "Emerging" and "within N years" are the same idea: not certified yet, on a
+#: path to it. Both numbers of "year"/"years" are covered.
+_CERT_EMERGING_RE = re.compile(
+    r"\b(emerging\s+\w+|certif\w*\s+within\s+\w+\s+years?|"
+    r"propose\s+to\s+(?:become|create)\s+\w*\s*certified|"
+    r"not\s+yet\s+certified)",
+    re.I,
+)
+_CERT_SPONSOR_RE = re.compile(
+    r"\b(sponsoring\s+entit(?:y|ies)|sponsor\s+organi\w*|"
+    r"propose\s+to\s+create\s+a\s+separate)",
+    re.I,
+)
+
+
 # ---- three-valued answer ---------------------------------------------
 NAMED_YES = "YES"
 NAMED_NO = "NO"
@@ -344,6 +393,50 @@ def assess_tribal_applicant_class(
             "state_recognition_never_inferred": TRIBE_STATE_RECOGNIZED not in classes,
             # Gates 173 and 174 still own the verdicts.
             "native_relevance_decided": False,
+            "tenant_eligibility_decided": False,
+        }
+    )
+
+
+def assess_certification_requirement(
+    eligibility_prose: str | None,
+) -> dict[str, Any]:
+    """Does this programme gate on a CERTIFICATION rather than on what you are?
+
+    Reported separately from entity class, and never merged into it. A
+    Native-designated fund whose applicants must be Certified institutions is
+    Native-relevant AND closed to a Tribe that holds no such certification,
+    and those two facts have to survive independently.
+    """
+    text = _normalise(eligibility_prose or "")
+    states: list[str] = []
+    evidence: dict[str, list[str]] = {}
+    for pattern, state in (
+        (_CERT_HELD_RE, CERTIFICATION_HELD),
+        (_CERT_EMERGING_RE, CERTIFICATION_EMERGING),
+        (_CERT_SPONSOR_RE, CERTIFICATION_SPONSOR),
+    ):
+        found = [m.group(0).strip() for m in pattern.finditer(text)]
+        if found:
+            states.append(state)
+            evidence[state] = sorted({f.lower() for f in found})
+
+    required = bool(states)
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "certification_states": sorted(states),
+            "certification_evidence": {k: evidence[k] for k in sorted(evidence)},
+            "certification_gate_present": required,
+            "certification_state": (
+                sorted(states)[0] if states else CERTIFICATION_NOT_MENTIONED
+            ),
+            # The two refusals this axis exists for.
+            "certification_is_not_an_entity_class": True,
+            "certification_is_not_native_identity": True,
+            # Holding or lacking a certification is a tenant fact, and Gate 174
+            # owns it. This module reports only what the publisher demanded.
+            "tenant_certification_verified": False,
             "tenant_eligibility_decided": False,
         }
     )
