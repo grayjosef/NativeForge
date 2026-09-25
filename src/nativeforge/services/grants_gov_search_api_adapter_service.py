@@ -70,6 +70,13 @@ EXPECTED_ELIGIBILITY_FACET_LABELS: dict[str, str] = {
 #: a housing authority rather than a government at all. This module records
 #: which class the publisher named; Gate 174 decides whether a given tenant is
 #: eligible, and nothing here may pre-empt it.
+#:
+#: NECESSARY BUT NOT SUFFICIENT. Code 25 "Others" does not only return
+#: irrelevant rows, as the 24/25 mistake above showed - it also HIDES relevant
+#: ones. A posted opportunity restricted by regulation to Tribes and Tribal
+#: organizations was found declaring 25 and nothing else, so all three codes
+#: below return it zero times. Searching only these codes is a blind spot with
+#: money in it; see `search_grants_gov_by_assistance_listing`.
 TRIBAL_ELIGIBILITY_CODES: tuple[str, ...] = (
     ELIGIBILITY_TRIBAL_GOVERNMENT,
     ELIGIBILITY_INDIAN_HOUSING_AUTHORITY,
@@ -554,6 +561,192 @@ def search_grants_gov_by_eligibility(
             "api_error": None,
             "facet_contract": contract,
             "never_synthesized": True,
+        }
+    )
+
+
+#: Discovery by PROGRAMME, for the money the applicant-type facet cannot see.
+#:
+#: Measured on 2026-09-25: a posted opportunity whose eligibility text reads
+#: "Eligible applicants are Tribes and Tribal organizations as described in
+#: the ICDBG regulations at 24 CFR 1003.5" declares applicant type 25,
+#: "Others" - and nothing else. It carries $5,000,000 in estimated funding and
+#: a $1,500,000 ceiling, and searching codes 07, 08 and 11 returns it zero
+#: times out of three.
+#:
+#: So the eligibility facet is necessary and is NOT sufficient. A programme's
+#: assistance listing finds what the applicant-type codes drop, which is why
+#: both discovery paths exist and why the coverage gap between them is
+#: measured rather than assumed.
+ASSISTANCE_LISTING_DISCOVERY_ROWS = 100
+
+#: A listing number is nn.nnn. The filter silently returns zero for anything
+#: it does not recognise - "99.999" and "NONSENSE" both return 0, exactly as a
+#: genuinely empty programme would - so a malformed listing is refused here
+#: rather than being allowed to look like a finding about the programme.
+_ASSISTANCE_LISTING_RE = re.compile(r"^\d{2}\.\d{3}$")
+
+
+def build_grants_gov_assistance_listing_search_body(
+    *,
+    assistance_listing: str,
+    opp_statuses: str = "posted",
+    rows: int = ASSISTANCE_LISTING_DISCOVERY_ROWS,
+    start_record_num: int = 0,
+) -> dict[str, Any]:
+    """Discovery by WHICH PROGRAMME, carrying no keyword and no eligibility.
+
+    No keyword, for the same reason the eligibility body carries none: the
+    opportunities this is built to find are the ones whose titles do not say
+    what they are. No eligibility filter either - adding one would reinstate
+    the precise blind spot this path exists to cover.
+    """
+    listing = str(assistance_listing).strip()
+    if not _ASSISTANCE_LISTING_RE.match(listing):
+        raise ValueError(f"malformed assistance listing number: {assistance_listing!r}")
+    return {
+        "rows": int(rows),
+        "startRecordNum": int(start_record_num),
+        "oppStatuses": str(opp_statuses),
+        "cfda": listing,
+    }
+
+
+def search_grants_gov_by_assistance_listing(
+    *,
+    assistance_listing: str,
+    opp_statuses: str = "posted",
+    rows: int = ASSISTANCE_LISTING_DISCOVERY_ROWS,
+    start_record_num: int = 0,
+    http_post: HttpPostJson | None = None,
+    fetch_mode: FetchMode = FETCH_MODE_LIVE,
+) -> dict[str, Any]:
+    """Find a programme's opportunities whatever applicant type it declares.
+
+    Returns CANDIDATES carrying the publisher's programme evidence. The basis
+    here is PROGRAM, not eligibility: arriving by assistance listing says the
+    publisher filed this opportunity under a programme, and says nothing about
+    who may apply. Gate 173 owns relevance and Gate 174 owns tenant
+    eligibility, and nothing here may pre-empt either.
+    """
+    do_post = http_post or default_grants_gov_http_post
+    body = build_grants_gov_assistance_listing_search_body(
+        assistance_listing=assistance_listing,
+        opp_statuses=opp_statuses,
+        rows=rows,
+        start_record_num=start_record_num,
+    )
+    try:
+        raw = do_post(SEARCH2_URL, body)
+    except _authorization_refusals() as refusal:
+        # "Not permitted to ask" is never "this programme has no funding".
+        raise refusal
+    except Exception as exc:  # noqa: BLE001 - transport failure is not refusal
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "search_body": body,
+                "assistance_listing": assistance_listing,
+                "hit_count": 0,
+                "opp_hits": [],
+                "search_live": False,
+                "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FETCH_ERROR,
+                "api_error": str(exc),
+            }
+        )
+    search_live = raw.get("errorcode") == 0
+    if not search_live:
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "search_body": body,
+                "assistance_listing": assistance_listing,
+                "hit_count": 0,
+                "opp_hits": [],
+                "search_live": False,
+                "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FETCH_ERROR,
+                "api_error": raw.get("msg"),
+            }
+        )
+
+    data = raw.get("data") or {}
+    hits = [h for h in (data.get("oppHits") or []) if isinstance(h, dict)]
+    evidenced = [
+        dict(
+            hit,
+            nf_program_evidence={
+                "assistance_listing": assistance_listing,
+                "discovered_by": "assistance_listing",
+                "search_body": body,
+                # PROGRAM, not ELIGIBILITY. The whole point of this path is
+                # that it finds opportunities the eligibility facet misses,
+                # so it must never claim eligibility evidence it does not have.
+                "native_relevance_basis": "PROGRAM",
+                "native_relevance_decided": False,
+                "tenant_eligibility_decided": False,
+                # ABSENT is not EMPTY. The search response does not carry
+                # applicant types at all, and returning [] for that reads as
+                # "this opportunity declares no applicant types" - which is
+                # the same shape as the real answer for the record this path
+                # exists to find, and would hide it a second time.
+                "declared_applicant_types": (
+                    [str(t) for t in hit["eligibilities"]]
+                    if isinstance(hit.get("eligibilities"), list)
+                    else None
+                ),
+                "applicant_types_present_in_response": isinstance(
+                    hit.get("eligibilities"), list
+                ),
+            },
+        )
+        for hit in hits
+    ]
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "search_body": body,
+            "assistance_listing": assistance_listing,
+            "hit_count": len(evidenced),
+            "total_hit_count": data.get("hitCount"),
+            "opp_hits": evidenced,
+            "search_live": True,
+            "fetch_mode": fetch_mode,
+            "outcome": OUTCOME_HITS if evidenced else OUTCOME_EMPTY,
+            "api_error": None,
+            "never_synthesized": True,
+        }
+    )
+
+
+def eligibility_facet_coverage_gap(
+    *,
+    eligibility_opportunity_numbers: list[str],
+    assistance_listing_opportunity_numbers: list[str],
+) -> dict[str, Any]:
+    """What does applicant-type discovery miss that programme discovery finds?
+
+    Kept as a measurement rather than a belief. If a future facet change makes
+    the gap vanish, this reports zero and the extra discovery path costs a
+    little; if the gap grows, it is visible instead of silent. The failure this
+    guards is one-directional and expensive: money a Tribe may apply for that
+    NativeForge never showed it.
+    """
+    by_eligibility = {str(n) for n in eligibility_opportunity_numbers if n}
+    by_program = {str(n) for n in assistance_listing_opportunity_numbers if n}
+    missed = sorted(by_program - by_eligibility)
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "found_by_eligibility": len(by_eligibility),
+            "found_by_assistance_listing": len(by_program),
+            "found_by_both": len(by_eligibility & by_program),
+            "missed_by_eligibility_facet": missed,
+            "missed_count": len(missed),
+            "eligibility_facet_is_sufficient": not missed,
+            # The direction that matters: a miss here is unshown money.
+            "a_missed_opportunity_is_invisible_to_the_customer": True,
         }
     )
 
