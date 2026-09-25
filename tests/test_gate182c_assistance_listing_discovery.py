@@ -104,7 +104,35 @@ def test_paging_is_explicit():
 
 
 @pytest.mark.parametrize(
-    "bad", ["", "14.86", "1.867", "14.8672", "NONSENSE", "14-862", "cfda", "  "]
+    "good", ["14.862", "14.867", "93.933", "93.00K", "93.00E", "93.00L", "93.00p"]
+)
+def test_a_listing_whose_last_character_is_a_letter_is_accepted(good):
+    """^\\d{2}\\.\\d{3}$ was written against one agency and refused a second.
+
+    93.00K, 93.00E, 93.00F, 93.00G, 93.00L and 93.00P are live listings the
+    publisher's own filter accepts and that carry current opportunities. The
+    stricter pattern raised ValueError on every one, so those programmes could
+    not even be asked about - a refusal that looks like an empty programme.
+    """
+    body = gg.build_grants_gov_assistance_listing_search_body(assistance_listing=good)
+    assert body["cfda"] == good
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        "",
+        "14.86",
+        "1.867",
+        "14.8672",
+        "NONSENSE",
+        "14-862",
+        "cfda",
+        "  ",
+        "93.0K",
+        "93.00KK",
+        "9.300K",
+    ],
 )
 def test_a_malformed_listing_is_refused_rather_than_asked(bad):
     """The filter returns 0 for anything it does not recognise.

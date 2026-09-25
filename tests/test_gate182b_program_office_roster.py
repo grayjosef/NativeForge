@@ -22,6 +22,7 @@ import pytest
 
 from nativeforge.services.program_office_roster_service import (
     COMPETITIVE_GRANT,
+    COOPERATIVE_AGREEMENT,
     FORMULA_ALLOCATION,
     LOAN_GUARANTEE,
     POLICY_GUIDANCE,
@@ -35,7 +36,9 @@ from nativeforge.services.program_office_roster_service import (
     ROUTE_CANONICAL_REFERRAL,
     ROUTE_FINANCIAL_ASSISTANCE,
     ROUTE_FORMULA_INTELLIGENCE,
+    ROUTE_INDIVIDUAL_ASSISTANCE,
     ROUTE_INTELLIGENCE,
+    SCHOLARSHIP_OR_LOAN_REPAYMENT,
     TECHNICAL_ASSISTANCE,
     TRAINING_EVENT,
     VEHICLE_UNKNOWN,
@@ -148,6 +151,68 @@ def test_loan_programmes_never_enter_the_opportunity_graph():
     grant source, because they are not grants."""
     result = prog("Loan Guarantee Program", "lender and borrower requirements")
     assert result["route"] != ROUTE_CANONICAL_REFERRAL
+
+
+# ---- cooperative agreements and individual-directed money -------------
+
+
+def test_a_cooperative_agreement_bears_an_opportunity():
+    """It is applied for and won like a grant. Excluding it on a technicality
+    would drop a whole health agency's portfolio."""
+    result = prog(
+        "Tribal Self-Governance Planning",
+        "This cooperative agreement supports Tribes preparing to enter "
+        "self-governance.",
+    )
+    assert result["funding_vehicle"] == COOPERATIVE_AGREEMENT
+    assert result["route"] == ROUTE_CANONICAL_REFERRAL
+    assert result["may_bear_opportunity"] is True
+
+
+@pytest.mark.parametrize("word", ["cooperative agreement", "cooperative agreements"])
+def test_cooperative_agreement_matches_both_numbers(word):
+    assert COOPERATIVE_AGREEMENT in detect_vehicle_signals(
+        {"title": "Programme", "description": f"funded through {word}"}
+    )
+
+
+def test_a_cooperative_agreement_is_still_not_an_opportunity():
+    result = prog("Negotiation Cooperative Agreement", "cooperative agreement")
+    assert result["is_an_opportunity"] is False
+
+
+@pytest.mark.parametrize(
+    "title,desc",
+    [
+        ("Scholarship Program", "scholarships for health professions students"),
+        ("Loan Repayment Program", "loan repayment in exchange for service"),
+    ],
+)
+def test_individual_directed_money_is_not_an_organisational_opportunity(title, desc):
+    """A clinician applies, not a Tribe. Measured: both such programmes carry
+    zero records on the canonical grant source."""
+    result = prog(title, desc)
+    assert result["funding_vehicle"] == SCHOLARSHIP_OR_LOAN_REPAYMENT
+    assert result["route"] == ROUTE_INDIVIDUAL_ASSISTANCE
+    assert result["may_bear_opportunity"] is False
+    assert result["individual_directed"] is True
+    assert result["has_no_organisational_applicant"] is True
+
+
+def test_loan_repayment_is_not_a_loan_guarantee():
+    """Different products, different applicants. The guarantee pattern does
+    not match repayment, and conflating them puts a clinician's benefit in a
+    Tribe's financing lane."""
+    repayment = prog("Loan Repayment Program", "loan repayment for clinicians")
+    guarantee = prog("Loan Guarantee Program", "guaranteed loan for tribal housing")
+    assert repayment["funding_vehicle"] == SCHOLARSHIP_OR_LOAN_REPAYMENT
+    assert guarantee["funding_vehicle"] == LOAN_GUARANTEE
+    assert guarantee["individual_directed"] is False
+
+
+def test_an_organisational_grant_is_not_individual_directed():
+    result = prog("Competitive Grant", "competitive grant")
+    assert result["individual_directed"] is False
 
 
 # ---- services are not money -------------------------------------------

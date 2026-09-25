@@ -60,8 +60,19 @@ SCHEMA_VERSION = "nf_program_office_roster_v1"
 
 # ---- funding vehicles -------------------------------------------------
 COMPETITIVE_GRANT = "COMPETITIVE_GRANT"
+#: A cooperative agreement is applied for and won like a grant and differs in
+#: how the agency participates afterwards. It bears opportunities; calling it
+#: a grant loses a real distinction, and calling it "not a grant" would drop a
+#: whole health agency's portfolio on a technicality.
+COOPERATIVE_AGREEMENT = "COOPERATIVE_AGREEMENT"
 FORMULA_ALLOCATION = "FORMULA_ALLOCATION"
 LOAN_GUARANTEE = "LOAN_GUARANTEE"
+#: Money a PERSON applies for - a clinician's scholarship, a loan repaid in
+#: exchange for service. A Tribe cannot pursue it and it has no organisational
+#: applicant, so it never belongs in an organisation's opportunity feed.
+#: Measured: both such programmes at one agency carry zero records on the
+#: canonical grant source, exactly as its loan guarantees did.
+SCHOLARSHIP_OR_LOAN_REPAYMENT = "SCHOLARSHIP_OR_LOAN_REPAYMENT"
 TECHNICAL_ASSISTANCE = "TECHNICAL_ASSISTANCE"
 TRAINING_EVENT = "TRAINING_EVENT"
 POLICY_GUIDANCE = "POLICY_GUIDANCE"
@@ -70,8 +81,10 @@ VEHICLE_UNKNOWN = "UNKNOWN"
 
 FUNDING_VEHICLES: tuple[str, ...] = (
     COMPETITIVE_GRANT,
+    COOPERATIVE_AGREEMENT,
     FORMULA_ALLOCATION,
     LOAN_GUARANTEE,
+    SCHOLARSHIP_OR_LOAN_REPAYMENT,
     TECHNICAL_ASSISTANCE,
     TRAINING_EVENT,
     POLICY_GUIDANCE,
@@ -83,7 +96,17 @@ FUNDING_VEHICLES: tuple[str, ...] = (
 #: Formula money is real and is not pursuable; a loan guarantee is not a grant;
 #: technical assistance is a service. None of them belongs in the opportunity
 #: graph, and widening this set is how a roster turns into fake inventory.
-OPPORTUNITY_BEARING_VEHICLES: frozenset[str] = frozenset({COMPETITIVE_GRANT})
+OPPORTUNITY_BEARING_VEHICLES: frozenset[str] = frozenset(
+    {COMPETITIVE_GRANT, COOPERATIVE_AGREEMENT}
+)
+
+#: Vehicles whose applicant is a PERSON rather than an organisation. Kept
+#: separate from "not opportunity-bearing" because the reason differs: formula
+#: money has an organisational recipient and no competition, while a
+#: scholarship has a competition and no organisational applicant.
+INDIVIDUAL_DIRECTED_VEHICLES: frozenset[str] = frozenset(
+    {SCHOLARSHIP_OR_LOAN_REPAYMENT}
+)
 
 # ---- routes -----------------------------------------------------------
 #: A competitive programme does not become an opportunity HERE. It becomes a
@@ -93,10 +116,13 @@ ROUTE_FORMULA_INTELLIGENCE = "FORMULA_INTELLIGENCE"
 ROUTE_FINANCIAL_ASSISTANCE = "FINANCIAL_ASSISTANCE_LANE"
 ROUTE_RESOURCE = "RESOURCE"
 ROUTE_INTELLIGENCE = "INTELLIGENCE_ONLY"
+ROUTE_INDIVIDUAL_ASSISTANCE = "INDIVIDUAL_ASSISTANCE_LANE"
 ROUTE_DISCARD = "NOT_ROUTED"
 
 ROUTE_FOR_VEHICLE: dict[str, str] = {
     COMPETITIVE_GRANT: ROUTE_CANONICAL_REFERRAL,
+    COOPERATIVE_AGREEMENT: ROUTE_CANONICAL_REFERRAL,
+    SCHOLARSHIP_OR_LOAN_REPAYMENT: ROUTE_INDIVIDUAL_ASSISTANCE,
     FORMULA_ALLOCATION: ROUTE_FORMULA_INTELLIGENCE,
     LOAN_GUARANTEE: ROUTE_FINANCIAL_ASSISTANCE,
     TECHNICAL_ASSISTANCE: ROUTE_RESOURCE,
@@ -174,6 +200,20 @@ _FORMULA_RE = re.compile(
 #: it listed among the programmes it affects - and a policy notice was filed
 #: in the financial-assistance lane on the strength of a programme it merely
 #: mentions.
+#: Both alternatives are prefixes. "cooperative agreement" and "cooperative
+#: agreements" both appear in real programme prose.
+_COOPERATIVE_RE = re.compile(
+    r"\b(cooperative\s+agreement|co-?operative\s+agreement)", re.I
+)
+#: "Loan repayment" is NOT a loan guarantee, and the guarantee pattern does not
+#: match it. A clinician repaying a loan in exchange for service and a Tribe
+#: guaranteeing a housing loan are different products with different applicants.
+_INDIVIDUAL_RE = re.compile(
+    r"\b(scholarship|loan\s+repayment|repayment\s+program|"
+    r"tuition|stipend|fellowship|traineeship|"
+    r"health\s+professions?\s+(?:student|recruit))",
+    re.I,
+)
 _POLICY_RE = re.compile(
     r"\b(notice\s+(?:pih|cpd)|program\s+guidance|dear\s+tribal\s+leader|"
     r"dear\s+lender|income\s+limits|waiver|guidance\s+for|"
@@ -187,6 +227,8 @@ _REASON_FOR_VEHICLE: dict[str, str] = {
     TRAINING_EVENT: "training_or_event_language",
     TECHNICAL_ASSISTANCE: "technical_assistance_language",
     COMPETITIVE_GRANT: "competitive_funding_language",
+    COOPERATIVE_AGREEMENT: "cooperative_agreement_language",
+    SCHOLARSHIP_OR_LOAN_REPAYMENT: "individual_directed_assistance_language",
     LOAN_GUARANTEE: "loan_or_guarantee_language",
     FORMULA_ALLOCATION: "formula_allocation_language",
     POLICY_GUIDANCE: "policy_or_guidance_language",
@@ -221,7 +263,9 @@ RECORD_KIND_ANNOUNCEMENT = "announcement"
 #: announcement.
 _PRECEDENCE: dict[str, tuple[str, ...]] = {
     RECORD_KIND_PROGRAM: (
+        COOPERATIVE_AGREEMENT,
         COMPETITIVE_GRANT,
+        SCHOLARSHIP_OR_LOAN_REPAYMENT,
         LOAN_GUARANTEE,
         FORMULA_ALLOCATION,
         TECHNICAL_ASSISTANCE,
@@ -238,7 +282,9 @@ _PRECEDENCE: dict[str, tuple[str, ...]] = {
     RECORD_KIND_ANNOUNCEMENT: (
         TRAINING_EVENT,
         TECHNICAL_ASSISTANCE,
+        COOPERATIVE_AGREEMENT,
         COMPETITIVE_GRANT,
+        SCHOLARSHIP_OR_LOAN_REPAYMENT,
         FORMULA_ALLOCATION,
         POLICY_GUIDANCE,
         LOAN_GUARANTEE,
@@ -264,6 +310,8 @@ def detect_vehicle_signals(
         (_TRAINING_RE, TRAINING_EVENT),
         (_TA_RE, TECHNICAL_ASSISTANCE),
         (_COMPETITIVE_RE, COMPETITIVE_GRANT),
+        (_COOPERATIVE_RE, COOPERATIVE_AGREEMENT),
+        (_INDIVIDUAL_RE, SCHOLARSHIP_OR_LOAN_REPAYMENT),
         (_LOAN_RE, LOAN_GUARANTEE),
         (_FORMULA_RE, FORMULA_ALLOCATION),
         (_POLICY_RE, POLICY_GUIDANCE),
@@ -341,6 +389,12 @@ def classify_funding_vehicle(
             "a_program_is_not_an_opportunity": True,
             "a_program_page_is_not_a_program": True,
             "formula_money_is_not_pursuable": vehicle == FORMULA_ALLOCATION,
+            # A person applies, not an organisation. Kept distinct from
+            # "not bearing" because the reason is different.
+            "individual_directed": vehicle in INDIVIDUAL_DIRECTED_VEHICLES,
+            "has_no_organisational_applicant": (
+                vehicle in INDIVIDUAL_DIRECTED_VEHICLES
+            ),
             "reasons": sorted(set(reasons)),
             # Gate 173 and Gate 174 still own these, as everywhere else.
             "native_relevance_decided": False,

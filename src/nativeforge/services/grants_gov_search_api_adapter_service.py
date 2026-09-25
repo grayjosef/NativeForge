@@ -580,11 +580,20 @@ def search_grants_gov_by_eligibility(
 #: measured rather than assumed.
 ASSISTANCE_LISTING_DISCOVERY_ROWS = 100
 
-#: A listing number is nn.nnn. The filter silently returns zero for anything
-#: it does not recognise - "99.999" and "NONSENSE" both return 0, exactly as a
-#: genuinely empty programme would - so a malformed listing is refused here
-#: rather than being allowed to look like a finding about the programme.
-_ASSISTANCE_LISTING_RE = re.compile(r"^\d{2}\.\d{3}$")
+#: A listing number is nn.nnn OR nn.nnX - the last character may be a LETTER.
+#:
+#: ^\d{2}\.\d{3}$ was written against one agency's listings and refused a real
+#: one the moment a second agency was measured: 93.00K, 93.00E, 93.00F,
+#: 93.00G, 93.00L and 93.00P are live listings that the publisher's own cfda
+#: filter accepts and that carry current opportunities. The stricter pattern
+#: raised ValueError on all of them, so the programmes were not merely missed,
+#: they could not be asked about.
+#:
+#: The filter silently returns zero for anything it does not recognise -
+#: "99.999" and "NONSENSE" both return 0, exactly as a genuinely empty
+#: programme would - so a malformed listing is still refused here rather than
+#: being allowed to look like a finding about the programme.
+_ASSISTANCE_LISTING_RE = re.compile(r"^\d{2}\.\d{2}[0-9A-Za-z]$")
 
 
 def build_grants_gov_assistance_listing_search_body(
