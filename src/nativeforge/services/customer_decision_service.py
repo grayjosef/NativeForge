@@ -106,14 +106,29 @@ def build_decision(
     actor_id: Any = None,
     decided_at: Any = None,
     reason: Any = None,
+    logical_canonical_id: Any = None,
 ) -> dict[str, Any]:
+    """One current decision per organisation per LOGICAL opportunity.
+
+    `logical_canonical_id` is what the customer is actually deciding about.
+    Without it, watching a forecast and then pursuing the posting it became
+    produces two decision ids for one grant - the customer would watch one
+    record and pursue another, and neither view would know about the other.
+
+    The canonical_id stays on the row: it records which representation the
+    person was looking at when they decided, which is evidence and is not
+    rewritten when the posting arrives.
+    """
+    target = logical_canonical_id or canonical_id
     return {
         "schema_version": SCHEMA_VERSION,
         "decision_id": build_decision_id(
-            organization_id=organization_id, canonical_id=canonical_id
+            organization_id=organization_id, canonical_id=target
         ),
         "organization_id": str(organization_id) if organization_id else None,
         "canonical_id": str(canonical_id) if canonical_id else None,
+        "logical_canonical_id": str(target) if target else None,
+        "decision_binds_to_logical_opportunity": logical_canonical_id is not None,
         "decision_state": str(decision_state),
         "previous_state": str(previous_state) if previous_state else None,
         "actor_id": str(actor_id) if actor_id else None,

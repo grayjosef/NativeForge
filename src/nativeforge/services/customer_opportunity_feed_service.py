@@ -296,12 +296,19 @@ def build_feed(
     include_dismissed: bool = False,
     as_of: Any = None,
     limit: int = 50,
+    logical_resolutions: Any = None,
 ) -> dict[str, Any]:
     """Order and page the recommendations, and say how they were ordered.
 
     A feed whose order is a secret number cannot be argued with. The ordering
     is named, the criteria are reported, and a customer who disagrees can
     pick a different one.
+
+    `logical_resolutions` is a batch from
+    `resolve_logical_canonical_ids`. When supplied, representations of one
+    real opportunity - a forecast and the posting it became - collapse to a
+    single card carrying the forecast as history. Passed in rather than looked
+    up so that a feed of N opportunities costs one relationship query, not N.
     """
     today = _as_date(as_of) or dt.datetime.now(dt.UTC).date()
     if str(ordering) not in ORDERINGS:
@@ -313,6 +320,16 @@ def build_feed(
         if str(r.get("relevance_class")) in RECOMMENDED_RELEVANCE
         or str(r.get("relevance_class")) == RELEVANCE_UNCERTAIN
     ]
+    representation_count = len(visible)
+    collapsed_count = 0
+    if logical_resolutions is not None:
+        from nativeforge.services.logical_opportunity_read_service import (
+            collapse_rows,
+        )
+
+        collapsed = collapse_rows(visible, resolutions=logical_resolutions)
+        visible = list(collapsed["rows"])
+        collapsed_count = int(collapsed["collapsed_count"])
     dismissed = [r for r in visible if str(r.get("decision_state")) == "DISMISSED"]
     if not include_dismissed:
         visible = [r for r in visible if str(r.get("decision_state")) != "DISMISSED"]
@@ -349,6 +366,13 @@ def build_feed(
         "recommendations": ordered,
         "returned": len(ordered),
         "available": len(visible),
+        # Two numbers with two meanings, named so neither is mistaken for the
+        # other: how many real opportunities, and how many source rows they
+        # came from.
+        "logical_opportunity_count": len(visible),
+        "representation_count": representation_count,
+        "collapsed_representations": collapsed_count,
+        "identity_collapse_applied": logical_resolutions is not None,
         "dismissed_hidden": 0 if include_dismissed else len(dismissed),
         # Dismissing hides a row from ONE organisation's feed. It does not
         # delete the opportunity, and it does not touch what the graph knows.
