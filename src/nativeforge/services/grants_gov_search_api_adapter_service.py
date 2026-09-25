@@ -32,19 +32,94 @@ HttpPostJson = Callable[[str, dict[str, Any]], dict[str, Any]]
 OUTCOME_HITS = "hits"
 OUTCOME_EMPTY = "empty"
 OUTCOME_FETCH_ERROR = "fetch_error"
+#: The publisher renumbered its facets, so every eligibility query below is
+#: asking a question we no longer understand. NOT an empty result.
+OUTCOME_FACET_CONTRACT_CHANGED = "facet_contract_changed"
+
+#: Grants.gov's OWN eligibility facet codes, read from a live search2 response
+#: on 2026-09-24. These are the publisher's structured assertion about who may
+#: apply, which is a better thing to trust than whether a title happens to say
+#: "Tribal" - but it is the publisher's assertion, not ours, so the labels are
+#: checked before the codes are used.
+#:
+#: An earlier research pass assumed 24/25. Code 25 returned a plausible 693
+#: hits and they were NIH clinical-trial notices: 25 is "Others". The number
+#: looked entirely reasonable and was entirely wrong, and only reading the rows
+#: exposed it. That is why `verify_eligibility_facet_contract` exists and why
+#: these codes are never queried without it.
+ELIGIBILITY_TRIBAL_GOVERNMENT = "07"
+ELIGIBILITY_INDIAN_HOUSING_AUTHORITY = "08"
+ELIGIBILITY_TRIBAL_ORGANIZATION = "11"
+
+#: code -> the publisher's exact label, as the facet itself reports it.
+EXPECTED_ELIGIBILITY_FACET_LABELS: dict[str, str] = {
+    ELIGIBILITY_TRIBAL_GOVERNMENT: (
+        "Native American tribal governments (Federally recognized)"
+    ),
+    ELIGIBILITY_INDIAN_HOUSING_AUTHORITY: (
+        "Public housing authorities/Indian housing authorities"
+    ),
+    ELIGIBILITY_TRIBAL_ORGANIZATION: (
+        "Native American tribal organizations (other than Federally recognized "
+        "tribal governments)"
+    ),
+}
+
+#: THREE DISTINCT LEGAL CLASSES, never one "Native" bucket. A programme open to
+#: 11 says nothing about a federally recognized government under 07, and 08 is
+#: a housing authority rather than a government at all. This module records
+#: which class the publisher named; Gate 174 decides whether a given tenant is
+#: eligible, and nothing here may pre-empt it.
+TRIBAL_ELIGIBILITY_CODES: tuple[str, ...] = (
+    ELIGIBILITY_TRIBAL_GOVERNMENT,
+    ELIGIBILITY_INDIAN_HOUSING_AUTHORITY,
+    ELIGIBILITY_TRIBAL_ORGANIZATION,
+)
+
+#: Keyword discovery takes DEFAULT_ROWS=5 because it hunts one named programme.
+#: Eligibility discovery is asking what a Tribe may apply for at all, where 5
+#: would be absurd.
+ELIGIBILITY_DISCOVERY_ROWS = 100
 
 
 #: Authorization refusals are re-raised rather than returned. Resolved lazily
 #: because the warrant and transport services read the registry, which reads
 #: this module.
+#:
+#: Each entry is (module, attribute). Resolution is by NAME, which is why
+#: `unresolved_authorization_refusals` exists: the third entry here read
+#: "LiveNetworkRefused" for a class actually called LiveNetworkBlockedError,
+#: so it silently resolved to nothing and the hermetic guard's refusal fell
+#: through to the generic handler as `outcome=fetch_error, hit_count=0` -
+#: precisely the "we could not ask" / "there are none" collapse the comment
+#: in `search_grants_gov_opportunities` says must never happen. A name lookup
+#: that skips quietly is a detector that cannot fail, so misses are recorded
+#: and asserted empty rather than shrugged off.
+_REFUSAL_TYPE_NAMES: tuple[tuple[str, str], ...] = (
+    ("nativeforge.services.live_source_transport_service", "LiveTransportRefused"),
+    ("nativeforge.services.source_live_warrant_service", "LiveRequestRefused"),
+    ("nativeforge.services.hermetic_test_guard_service", "LiveNetworkBlockedError"),
+)
+
+
+def unresolved_authorization_refusals() -> list[str]:
+    """Which named refusal types did NOT resolve, so a rename is visible."""
+    missing: list[str] = []
+    for module_name, attribute in _REFUSAL_TYPE_NAMES:
+        try:
+            module = __import__(module_name, fromlist=[attribute])
+            candidate = getattr(module, attribute, None)
+        except Exception:  # noqa: BLE001 - an unimportable module is a miss
+            candidate = None
+        if not (isinstance(candidate, type) and issubclass(candidate, BaseException)):
+            missing.append(f"{module_name}.{attribute}")
+    return missing
+
+
 def _authorization_refusals() -> tuple[type[BaseException], ...]:
     """The exception types that mean "not permitted", never "no results"."""
     found: list[type[BaseException]] = []
-    for module_name, attribute in (
-        ("nativeforge.services.live_source_transport_service", "LiveTransportRefused"),
-        ("nativeforge.services.source_live_warrant_service", "LiveRequestRefused"),
-        ("nativeforge.services.hermetic_test_guard_service", "LiveNetworkRefused"),
-    ):
+    for module_name, attribute in _REFUSAL_TYPE_NAMES:
         try:
             module = __import__(module_name, fromlist=[attribute])
             candidate = getattr(module, attribute, None)
@@ -279,6 +354,206 @@ def probe_grants_gov_live_hits(
                 str(source.get("source_name") or "")
             ),
             "seed_id": source.get("seed_id"),
+        }
+    )
+
+
+def verify_eligibility_facet_contract(raw: dict[str, Any]) -> dict[str, Any]:
+    """Do the publisher's facet labels still mean what this module thinks?
+
+    Reads the eligibilities facet out of a search2 response and compares every
+    code relied on against the label the publisher itself returned. This is
+    precisely the check that would have caught assuming codes 24/25: code 25
+    exists, answers happily with hundreds of hits, and means "Others".
+
+    A changed label is not a smaller result set. It is a different question.
+    """
+    data = raw.get("data") if isinstance(raw, dict) else None
+    facets = list(data.get("eligibilities") or []) if isinstance(data, dict) else []
+    observed = {
+        str(f.get("value") or ""): str(f.get("label") or "")
+        for f in facets
+        if isinstance(f, dict)
+    }
+    mismatches: list[dict[str, Any]] = []
+    for code, expected in EXPECTED_ELIGIBILITY_FACET_LABELS.items():
+        actual = observed.get(code)
+        if actual is None:
+            mismatches.append(
+                {
+                    "code": code,
+                    "expected_label": expected,
+                    "observed_label": None,
+                    "reason": "code_absent_from_facet",
+                }
+            )
+        elif actual.strip() != expected:
+            mismatches.append(
+                {
+                    "code": code,
+                    "expected_label": expected,
+                    "observed_label": actual,
+                    "reason": "label_changed",
+                }
+            )
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "facet_present": bool(observed),
+            "codes_checked": list(EXPECTED_ELIGIBILITY_FACET_LABELS),
+            "observed_labels": {
+                code: observed.get(code) for code in EXPECTED_ELIGIBILITY_FACET_LABELS
+            },
+            "mismatches": mismatches,
+            # Absent facet is not a passing contract: it means the check could
+            # not run, and a check that cannot run must not report success.
+            "contract_holds": bool(observed) and not mismatches,
+        }
+    )
+
+
+def build_grants_gov_eligibility_search_body(
+    *,
+    eligibility_code: str,
+    opp_statuses: str = "posted",
+    rows: int = ELIGIBILITY_DISCOVERY_ROWS,
+    start_record_num: int = 0,
+) -> dict[str, Any]:
+    """Discovery by WHO MAY APPLY, rather than by what the title says.
+
+    This body deliberately carries no keyword. The entire reason it exists is
+    the Tribal-eligible opportunities whose titles never say "Tribal", so
+    adding a keyword would quietly reinstate the blind spot it removes.
+    """
+    if eligibility_code not in EXPECTED_ELIGIBILITY_FACET_LABELS:
+        raise ValueError(f"unknown eligibility code: {eligibility_code!r}")
+    return {
+        "rows": int(rows),
+        "startRecordNum": int(start_record_num),
+        "oppStatuses": str(opp_statuses),
+        "eligibilities": str(eligibility_code),
+    }
+
+
+def search_grants_gov_by_eligibility(
+    *,
+    eligibility_code: str,
+    opp_statuses: str = "posted",
+    rows: int = ELIGIBILITY_DISCOVERY_ROWS,
+    start_record_num: int = 0,
+    http_post: HttpPostJson | None = None,
+    fetch_mode: FetchMode = FETCH_MODE_LIVE,
+) -> dict[str, Any]:
+    """Find what a Tribal entity may apply for, whatever the title calls it.
+
+    Returns CANDIDATES carrying the publisher's eligibility evidence. It does
+    not decide Native relevance and does not decide tenant eligibility: Gate
+    173 and Gate 174 own those, and an opportunity arriving here has only been
+    shown to name this applicant class. `native_relevance_decided` is False on
+    every hit so that no downstream reader can mistake arrival for a verdict.
+    """
+    do_post = http_post or default_grants_gov_http_post
+    body = build_grants_gov_eligibility_search_body(
+        eligibility_code=eligibility_code,
+        opp_statuses=opp_statuses,
+        rows=rows,
+        start_record_num=start_record_num,
+    )
+    try:
+        raw = do_post(SEARCH2_URL, body)
+    except _authorization_refusals() as refusal:
+        # Same rule as keyword search: "not permitted to ask" is never
+        # "there are no Tribal-eligible opportunities".
+        raise refusal
+    except Exception as exc:  # noqa: BLE001 - transport failure is not refusal
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "search_body": body,
+                "eligibility_code": eligibility_code,
+                "hit_count": 0,
+                "opp_hits": [],
+                "search_live": False,
+                "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FETCH_ERROR,
+                "api_error": str(exc),
+                "facet_contract": None,
+            }
+        )
+    search_live = raw.get("errorcode") == 0
+    if not search_live:
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "search_body": body,
+                "eligibility_code": eligibility_code,
+                "hit_count": 0,
+                "opp_hits": [],
+                "search_live": False,
+                "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FETCH_ERROR,
+                "api_error": raw.get("msg"),
+                "facet_contract": None,
+            }
+        )
+
+    contract = verify_eligibility_facet_contract(raw)
+    if not contract["contract_holds"]:
+        # Refuse the rows rather than import them under a code whose meaning
+        # is no longer established. Returning them would be the 24/25 mistake
+        # committed deliberately.
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "search_body": body,
+                "eligibility_code": eligibility_code,
+                "hit_count": 0,
+                "opp_hits": [],
+                "search_live": True,
+                "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FACET_CONTRACT_CHANGED,
+                "api_error": None,
+                "facet_contract": contract,
+            }
+        )
+
+    data = raw.get("data") or {}
+    hits = list(data.get("oppHits") or [])
+    label = EXPECTED_ELIGIBILITY_FACET_LABELS[eligibility_code]
+    evidenced = [
+        dict(
+            hit,
+            nf_eligibility_evidence={
+                "eligibility_code": eligibility_code,
+                "publisher_label": label,
+                "discovered_by": "eligibility_facet",
+                "search_body": body,
+                # The basis is the publisher's declaration of applicant class.
+                # It is NOT a relevance finding and NOT a tenant-eligibility
+                # finding; absence of Native wording is not evidence either way.
+                "native_relevance_basis": "ELIGIBILITY",
+                "native_relevance_decided": False,
+                "tenant_eligibility_decided": False,
+            },
+        )
+        for hit in hits
+        if isinstance(hit, dict)
+    ]
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "search_body": body,
+            "eligibility_code": eligibility_code,
+            "publisher_label": label,
+            "hit_count": len(evidenced),
+            "total_hit_count": data.get("hitCount"),
+            "opp_hits": evidenced,
+            "search_live": True,
+            "fetch_mode": fetch_mode,
+            "outcome": OUTCOME_HITS if evidenced else OUTCOME_EMPTY,
+            "api_error": None,
+            "facet_contract": contract,
+            "never_synthesized": True,
         }
     )
 
