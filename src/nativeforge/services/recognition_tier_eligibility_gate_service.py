@@ -98,12 +98,10 @@ def apply_recognition_tier_eligibility_gate(
     blocker_codes: list[str] = []
     recognition_tier_mismatch = False
     condition_mismatch = False
-    member_level_only = False
     member_level_note: str | None = None
 
     # individual_only — not org-level (AC-4b); applies to all tribes including federal.
     if opportunity.get("individual_only"):
-        member_level_only = True
         member_level_note = (
             "Grant is individual-only (e.g. scholarship); surface as member-level note, "
             "not org-eligible match."

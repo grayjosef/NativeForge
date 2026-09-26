@@ -827,11 +827,6 @@ def _resolve_review_context(
                 activation_readiness_gate_artifact is not None
                 and isinstance(activation_readiness_gate_artifact, dict),
             )
-        wrong_type = (
-            isinstance(post_runtime_verification_artifact, dict)
-            and post_runtime_verification_artifact.get("artifact_type")
-            != POST_RUNTIME_VERIFICATION_ARTIFACT_TYPE
-        )
         rd = READINESS_BLOCKED_POST_RUNTIME_INVALID
         gate_supplied = isinstance(activation_readiness_gate_artifact, dict)
         return False, rd, pr_reasons, [], cid, snap, True, gate_supplied

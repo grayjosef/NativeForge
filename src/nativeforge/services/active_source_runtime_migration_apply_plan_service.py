@@ -342,7 +342,7 @@ def build_active_source_runtime_migration_apply_plan(
             "connection. Future apply must name environment and identifier explicitly."
         ),
         "migration_file_path_probe_only": (
-            str((root / TARGET_MIGRATION_FILE_PATH))
+            str(root / TARGET_MIGRATION_FILE_PATH)
             if root is not None
             else None
         ),

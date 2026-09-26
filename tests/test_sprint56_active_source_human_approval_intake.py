@@ -148,7 +148,6 @@ def test_wrong_request_artifact_type_not_ready() -> None:
 
 
 def test_request_artifact_not_ready_blocks_intake() -> None:
-    oid = uuid.uuid4()
     req = build_active_source_creation_request({})
     assert req["readiness_decision"] == READINESS_NOT_READY
     art = build_active_source_human_approval_intake(req, _complete_approval_payload())
