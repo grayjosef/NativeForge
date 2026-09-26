@@ -251,15 +251,42 @@ def extraction_invariant_failures(result: dict[str, Any]) -> list[str]:
     if result.get("fabricated") is not False:
         fails.append("fabricated_must_be_false")
 
-    # The four constants that make this an honest deterministic parser.
+    # The constants that make this an honest deterministic parser.
     if result.get("ai_used") is not False:
         fails.append("ai_used_for_extraction")
-    if result.get("ocr_used") is not False:
-        fails.append("ocr_used_without_approval")
     if result.get("network_access_performed") is not False:
         fails.append("extraction_performed_network_access")
     if result.get("deterministic") is not True:
         fails.append("extraction_not_marked_deterministic")
+
+    # OCR: a bounded permission, not a prohibition.
+    #
+    # This used to be a fourth constant - `ocr_used` had to be False or the
+    # result was rejected as `ocr_used_without_approval`. That was the correct
+    # guard while NativeForge had no approved OCR: an unbounded OCR call is a
+    # queue-exhaustion surface, and an OCR result nobody bounded is a document
+    # that can silently come back empty.
+    #
+    # OCR is now approved, bounded and local. The prohibition is replaced by
+    # the evidence that makes it safe rather than deleted: a result claiming
+    # OCR must say how it read the document and under what bound. A claim with
+    # no method and no page count is indistinguishable from a fabrication,
+    # which is exactly what the original constant was protecting against.
+    if result.get("ocr_used") not in (True, False):
+        fails.append("ocr_used_must_be_stated")
+    if result.get("ocr_used") is True:
+        if not result.get("extraction_method"):
+            fails.append("ocr_used_without_recorded_method")
+        if not result.get("extractor_version"):
+            fails.append("ocr_used_without_extractor_version")
+        pages = result.get("pages_ocr")
+        if not isinstance(pages, int) or pages < 1:
+            fails.append("ocr_used_without_page_count")
+        timeout = result.get("ocr_timeout_seconds")
+        if not isinstance(timeout, int | float) or timeout <= 0:
+            # pytesseract treats a zero timeout as NO timeout, so a
+            # non-positive value removes the bound instead of tightening it.
+            fails.append("ocr_used_without_a_positive_timeout")
 
     status = result.get("extraction_status")
     if status not in EXTRACTION_STATUSES:

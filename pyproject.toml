@@ -16,6 +16,24 @@ dependencies = [
     "psycopg[binary]>=3.2",
     "pydantic-settings>=2.14.2",
     "pyjwt[crypto]>=2.10",
+    # ── document extraction ────────────────────────────────────────────────
+    # Native PDF text. Tried first and, for most federal notices, the only
+    # pass needed: a born-digital NOFO already carries a text layer and
+    # rendering it to raster for OCR would be slower and less accurate.
+    "pypdf>=6.0,<7.0",
+    # Page rasterisation for the OCR fallback. Chromium's PDF engine, which
+    # copes with the malformed PDFs government portals emit, and it bundles
+    # its own binary rather than needing a system library.
+    "pypdfium2>=4.30.0",
+    # Tesseract binding. The engine itself is a SYSTEM package installed in
+    # the image (tesseract-ocr plus tesseract-ocr-eng); this only drives it.
+    "pytesseract>=0.3.13",
+    # Image decode and the pre-decode bounds guard. Declared explicitly
+    # because the extraction path imports it directly - it was previously
+    # present in the developer virtualenv by accident, in neither the project
+    # metadata nor the lockfile, so an image built from the lock would not
+    # have had it.
+    "Pillow>=11.0",
 ]
 
 [project.optional-dependencies]

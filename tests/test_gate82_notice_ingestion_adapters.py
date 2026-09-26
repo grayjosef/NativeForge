@@ -821,8 +821,46 @@ def test_hermetic_and_corpus_guards_untouched() -> None:
     assert "ENV_ALLOW_SOURCE_FIXTURE_OVERWRITE" in guard
 
 
-def test_no_pdf_or_html_dependency_was_added() -> None:
-    """This gate must not have quietly grown a dependency."""
+def test_the_document_dependencies_are_exactly_the_approved_set() -> None:
+    """This gate must not quietly grow a dependency.
+
+    It previously asserted that *no* PDF dependency existed, which was the
+    right guard while NativeForge had no approved document extraction: a
+    silent dependency would have meant a silent parser, and a silent parser
+    reads a scanned solicitation as an empty one.
+
+    Document extraction is now approved and bounded, so the guard is inverted
+    rather than removed. Growth is still refused - the named alternatives stay
+    out, and the approved set is enumerated here so adding a fifth library is
+    a deliberate edit to this list rather than an unnoticed line in a lockfile.
+    """
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8").lower()
-    for pkg in ("pypdf", "pdfminer", "pdfplumber", "pymupdf", "beautifulsoup", "lxml"):
-        assert pkg not in pyproject, f"{pkg} appeared in pyproject.toml"
+
+    # Approved: native text, page rasterisation, the Tesseract binding, and
+    # the image decoder its pre-decode bounds guard needs.
+    for approved in ("pypdf", "pypdfium2", "pytesseract", "pillow"):
+        assert approved in pyproject, f"{approved} is required but absent"
+
+    # Still refused. Each would be a second thing that could disagree with the
+    # first about the same file, which is how a quote stops matching its source.
+    for refused in ("pdfminer", "pdfplumber", "pymupdf", "beautifulsoup", "lxml"):
+        assert refused not in pyproject, f"{refused} appeared in pyproject.toml"
+
+
+def test_document_extraction_needs_no_network() -> None:
+    """OCR is local. Nothing in the extraction path may fetch.
+
+    Tesseract runs as a subprocess on this host and pypdfium2 bundles its own
+    binary, so extraction stays deterministic and offline - the property that
+    let this gate call itself a deterministic parser in the first place.
+    """
+    for module in (
+        "document_extraction_service",
+        "document_ocr_engine_service",
+        "document_image_bounds_service",
+    ):
+        source = (ROOT / "src" / "nativeforge" / "services" / f"{module}.py").read_text(
+            encoding="utf-8"
+        )
+        for forbidden in ("httpx", "requests", "urllib.request", "socket."):
+            assert forbidden not in source, f"{module} reaches the network via {forbidden}"

@@ -682,14 +682,39 @@ def test_html_extraction_reuses_the_gate82_adapter() -> None:
     assert text_extraction_failures(result) == []
 
 
-def test_unsupported_pdf_returns_parser_unavailable_not_empty_text() -> None:
-    """A silent fallback would read a document with obligations as one with none."""
-    result = extract_grant_document_text(
-        document_id="doc-pdf", local_path=str(PDF_FIXTURE)
-    )
+def test_a_pdf_with_a_text_layer_is_now_extracted() -> None:
+    """This asserted `parser_unavailable`, because no PDF backend was installed.
+
+    `available_pdf_backends()` returned `[]`, so every PDF - including
+    born-digital ones carrying a perfectly good text layer - went to manual
+    review. That was honest about its own blindness, which is why it was
+    written that way, but it meant NativeForge could not read the documents
+    its decisions depend on.
+
+    A native backend is now an approved dependency, so a text-layer PDF
+    extracts. The rule this test defends has not changed; it has moved to the
+    document that genuinely cannot be read, below.
+    """
+    result = extract_grant_document_text(document_id="doc-pdf", local_path=str(PDF_FIXTURE))
+    assert result["extraction_status"] == "extracted"
+    assert result["text"]
+    assert text_extraction_failures(result) == []
+
+
+def test_an_unreadable_pdf_still_refuses_to_look_empty() -> None:
+    """A silent fallback would read a document with obligations as one with none.
+
+    The failure has to survive as a failure. `parser_unavailable` with no text
+    and an explicit manual-review reason is distinguishable downstream from a
+    document that was read and found to contain nothing; empty text would not
+    be, and absence of evidence would quietly become evidence of absence.
+    """
+    corrupt = REPO_ROOT / "tests/fixtures/document_ocr/corrupt.pdf"
+    result = extract_grant_document_text(document_id="doc-bad", local_path=str(corrupt))
     assert result["extraction_status"] == "parser_unavailable"
     assert result["text"] is None
     assert any("manual_review" in r for r in result["blocked_reasons"])
+    assert any("pdf_parse_failed" in r for r in result["blocked_reasons"])
     assert text_extraction_failures(result) == []
 
 
