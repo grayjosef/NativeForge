@@ -161,6 +161,15 @@ def _in_list(column: str, values: tuple[str, ...]) -> str:
 
 
 def upgrade() -> None:
+    # `~` is a regex match in PostgreSQL and a bitwise NOT in SQLite; GLOB is
+    # SQLite-only. Same semantics, two spellings: '#', one hex character, then
+    # anything. Length is constrained separately by the surrounding AND.
+    _hex_prefix = (
+        "primary_color GLOB '#[0-9a-fA-F]*'"
+        if op.get_bind().dialect.name == "sqlite"
+        else "primary_color ~ '^#[0-9a-fA-F]'"
+    )
+
     # ---------------- authority grants -------------------------------
     op.create_table(
         GRANTS,
@@ -201,18 +210,18 @@ def upgrade() -> None:
         sa.CheckConstraint(_in_list("scope", SCOPES), name=f"ck_{GRANTS}_scope"),
         # The collapse, made unrepresentable.
         sa.CheckConstraint(
-            f"{_in_list('authority_status', AUTHORITY_SUFFICIENT)} = 0 "
+            f"{_in_list('authority_status', AUTHORITY_SUFFICIENT)} = false "
             "OR affiliation_status = 'VERIFIED'",
-            name=f"ck_{GRANTS}_authority_may_not_outrank_affiliation",
+            name=f"ck_{GRANTS}_auth_may_not_outrank_affil",
         ),
         sa.CheckConstraint(
-            f"{_in_list('authority_status', AUTHORITY_SUFFICIENT)} = 0 "
+            f"{_in_list('authority_status', AUTHORITY_SUFFICIENT)} = false "
             "OR identity_status = 'VERIFIED'",
-            name=f"ck_{GRANTS}_authority_may_not_outrank_identity",
+            name=f"ck_{GRANTS}_auth_may_not_outrank_identity",
         ),
         # An authority nobody signed for cannot be stored.
         sa.CheckConstraint(
-            f"{_in_list('authority_status', AUTHORITY_SUFFICIENT)} = 0 "
+            f"{_in_list('authority_status', AUTHORITY_SUFFICIENT)} = false "
             "OR (verified_by IS NOT NULL AND verified_at IS NOT NULL "
             "AND reason IS NOT NULL)",
             name=f"ck_{GRANTS}_verified_authority_is_signed",
@@ -262,7 +271,7 @@ def upgrade() -> None:
         ),
         # A judged decision names a judge, a reason and a date.
         sa.CheckConstraint(
-            f"{_in_list('decision', JUDGED_DECISIONS)} = 0 "
+            f"{_in_list('decision', JUDGED_DECISIONS)} = false "
             "OR (reviewer IS NOT NULL AND reason IS NOT NULL "
             "AND decided_at IS NOT NULL)",
             name=f"ck_{EVIDENCE}_judgement_is_attributed",
@@ -271,13 +280,13 @@ def upgrade() -> None:
         # domain, so this type can never carry the authority flag.
         sa.CheckConstraint(
             "evidence_type <> 'ORGANIZATION_EMAIL_DOMAIN' "
-            "OR establishes_authority = 0",
+            "OR establishes_authority = false",
             name=f"ck_{EVIDENCE}_email_domain_is_not_authority",
         ),
         sa.CheckConstraint(
             "evidence_type <> 'OFFICIAL_TRIBAL_WEBSITE' "
-            "OR establishes_authority = 0",
-            name=f"ck_{EVIDENCE}_a_website_listing_is_not_authority",
+            "OR establishes_authority = false",
+            name=f"ck_{EVIDENCE}_a_website_listing_is_not_auth",
         ),
     )
     op.create_index(
@@ -312,7 +321,7 @@ def upgrade() -> None:
         ),
         sa.CheckConstraint(
             "version_ordinal = 1 OR supersedes_version_id IS NOT NULL",
-            name=f"ck_{PROFILES}_later_version_names_its_predecessor",
+            name=f"ck_{PROFILES}_later_ver_names_its_pred",
         ),
         sa.CheckConstraint(
             "supersedes_version_id IS NULL "
@@ -322,8 +331,8 @@ def upgrade() -> None:
         # The phrase rule, kept honest in the store: an unresolved phrase
         # must send somebody to look, never resolve quietly to nothing.
         sa.CheckConstraint(
-            "unresolved_phrase_count = 0 OR review_required = 1",
-            name=f"ck_{PROFILES}_unresolved_phrases_ask_for_review",
+            "unresolved_phrase_count = 0 OR review_required = true",
+            name=f"ck_{PROFILES}_unres_phrases_ask_review",
         ),
         sa.CheckConstraint(
             "unresolved_phrase_count >= 0",
@@ -371,7 +380,7 @@ def upgrade() -> None:
         # and there must not become one.
         sa.CheckConstraint(
             "primary_color IS NULL OR "
-            "(primary_color GLOB '#[0-9a-fA-F]*' AND "
+            f"({_hex_prefix} AND "
             "(length(primary_color) = 4 OR length(primary_color) = 7))",
             name=f"ck_{DEFAULTS}_primary_color_is_hex",
         ),
@@ -433,8 +442,8 @@ def upgrade() -> None:
         # The privilege boundary, surviving a writer that skips the service.
         sa.CheckConstraint(
             "offered_role <> 'CONTROLLING_COMPANY_ADMIN' "
-            f"OR {_in_list('invited_by_role', CUSTOMER_ROLES)} = 0",
-            name=f"ck_{INVITATIONS}_no_customer_role_confers_controlling_company",
+            f"OR {_in_list('invited_by_role', CUSTOMER_ROLES)} = false",
+            name=f"ck_{INVITATIONS}_no_cust_role_confers_ctrl_co",
         ),
         # An ordinary member may not invite anybody at all.
         sa.CheckConstraint(

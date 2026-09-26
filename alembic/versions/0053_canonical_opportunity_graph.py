@@ -162,7 +162,7 @@ def upgrade() -> None:
         ),
         # Fuzzy identity may never present itself as settled.
         sa.CheckConstraint(
-            "identity_layer <> 'L4' OR is_provisional = 1",
+            "identity_layer <> 'L4' OR is_provisional = true",
             name=f"ck_{CANONICAL}_l4_is_provisional",
         ),
         # An L1 row without a number is not an L1 row.

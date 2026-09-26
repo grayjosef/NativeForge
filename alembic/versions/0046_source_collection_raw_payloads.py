@@ -228,11 +228,11 @@ def upgrade() -> None:
         ),
         # THE constraints that keep this a spine rather than a claim.
         sa.CheckConstraint(
-            "collector_invoked = 0",
+            "collector_invoked = false",
             name="ck_nf_source_collection_raw_payloads_no_collector",
         ),
         sa.CheckConstraint(
-            "live_fetch_performed = 0",
+            "live_fetch_performed = false",
             name="ck_nf_source_collection_raw_payloads_no_live_fetch",
         ),
         # A body stored in the database has bytes; one stored elsewhere does

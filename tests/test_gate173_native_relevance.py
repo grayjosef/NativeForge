@@ -546,6 +546,6 @@ def test_migration_0059_refuses_an_unevidenced_decisive_claim():
         REPO / "alembic" / "versions" / "0059_native_relevance_and_coverage.py"
     ).read_text(encoding="utf-8")
     assert "decisive_needs_evidence" in text
-    assert "uncertain_asks_for_review" in text
+    assert "uncertain_asks_review" in text
     assert "pending_review_has_no_source" in text
     assert "is_traceable_to_a_payload" in text

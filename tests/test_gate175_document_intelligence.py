@@ -456,11 +456,11 @@ def test_migration_0061_puts_the_document_rules_in_the_schema():
     text = (REPO / "alembic" / "versions" / "0061_document_intelligence.py").read_text(
         encoding="utf-8"
     )
-    assert "absence_is_meaningful_only_when_parsed" in text
+    assert "absence_meaningful_only_when_parsed" in text
     assert "fact_needs_a_document" in text
     assert "fact_quotes_its_source" in text
-    assert "winner_needs_a_selecting_rule" in text
-    assert "clarification_does_not_overwrite" in text
+    assert "winner_needs_a_sel_rule" in text
+    assert "clarif_does_not_overwrite" in text
     assert "no_self_supersession" in text
 
 

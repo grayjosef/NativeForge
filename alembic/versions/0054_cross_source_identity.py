@@ -164,7 +164,7 @@ def upgrade() -> None:
         batch.create_check_constraint(
             f"ck_{CANONICAL}_probabilistic_is_provisional",
             f"{_not_in_list('identity_layer', PROVISIONAL_LAYERS)}"
-            " OR is_provisional = 1",
+            " OR is_provisional = true",
         )
 
     # ---- blocking keys ----------------------------------------------
@@ -250,7 +250,7 @@ def upgrade() -> None:
         sa.CheckConstraint(
             "revoked_at IS NULL OR (revoked_by IS NOT NULL"
             " AND revoked_reason IS NOT NULL)",
-            name=f"ck_{RELATIONSHIPS}_revocation_is_attributed",
+            name=f"ck_{RELATIONSHIPS}_revocation_is_attrib",
         ),
         sa.ForeignKeyConstraint(
             ["from_canonical_id"],
@@ -327,7 +327,7 @@ def upgrade() -> None:
         sa.CheckConstraint(
             "review_state NOT IN ('approved_merge', 'rejected_merge')"
             " OR (reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL)",
-            name=f"ck_{CANDIDATES}_resolution_needs_signature",
+            name=f"ck_{CANDIDATES}_resolution_needs_sig",
         ),
         sa.ForeignKeyConstraint(
             ["canonical_a"],
@@ -361,7 +361,7 @@ def downgrade() -> None:
         )
         batch.create_check_constraint(
             f"ck_{CANONICAL}_l4_is_provisional",
-            "identity_layer <> 'L4' OR is_provisional = 1",
+            "identity_layer <> 'L4' OR is_provisional = true",
         )
         batch.drop_constraint(f"ck_{CANONICAL}_layer", type_="check")
         batch.create_check_constraint(

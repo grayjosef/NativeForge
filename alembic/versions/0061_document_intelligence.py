@@ -171,9 +171,9 @@ def upgrade() -> None:
         # The load-bearing one. "We could not read this" must never decay
         # into "there is nothing to read".
         sa.CheckConstraint(
-            "absence_is_meaningful = 0 OR "
+            "absence_is_meaningful = false OR "
             + _in_list("document_state", ABSENCE_IS_MEANINGFUL),
-            name=f"ck_{DOCUMENTS}_absence_is_meaningful_only_when_parsed",
+            name=f"ck_{DOCUMENTS}_absence_meaningful_only_when_parsed",
         ),
         # A fetched document has bytes.
         sa.CheckConstraint(
@@ -280,20 +280,20 @@ def upgrade() -> None:
         sa.CheckConstraint(
             "winning_fact_id IS NULL OR "
             + _in_list("resolution_rule", SELECTS_A_WINNER),
-            name=f"ck_{CONFLICTS}_winner_needs_a_selecting_rule",
+            name=f"ck_{CONFLICTS}_winner_needs_a_sel_rule",
         ),
         sa.CheckConstraint(
             _not_in_list("resolution_rule", SELECTS_A_WINNER)
             + " OR winning_fact_id IS NOT NULL",
-            name=f"ck_{CONFLICTS}_selecting_rule_names_a_winner",
+            name=f"ck_{CONFLICTS}_sel_rule_names_a_winner",
         ),
         # A clarification never overwrites.
         sa.CheckConstraint(
             "resolution_rule <> 'FAQ_CLARIFIES' OR winning_fact_id IS NULL",
-            name=f"ck_{CONFLICTS}_clarification_does_not_overwrite",
+            name=f"ck_{CONFLICTS}_clarif_does_not_overwrite",
         ),
         sa.CheckConstraint(
-            "resolution_rule <> 'UNRESOLVED' OR review_required = 1",
+            "resolution_rule <> 'UNRESOLVED' OR review_required = true",
             name=f"ck_{CONFLICTS}_unresolved_asks_for_review",
         ),
         sa.CheckConstraint("length(why) > 0", name=f"ck_{CONFLICTS}_says_why"),

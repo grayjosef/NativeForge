@@ -154,9 +154,15 @@ def test_the_migration_requires_evidence_on_observations_and_provenance():
 
 
 def test_fuzzy_identity_cannot_present_itself_as_settled():
+    # `is_provisional = true`, not `= 1`. The column is declared Boolean, and
+    # SQLite accepted the integer comparison because it has no boolean type -
+    # PostgreSQL refuses it outright with `operator does not exist: boolean =
+    # integer`, so every such comparison was repaired for portability. The rule
+    # the constraint enforces is unchanged: an L4 identity may not claim to be
+    # settled.
     expressions = _check_constraint_expressions(MIGRATION)
     assert any(
-        "identity_layer <> 'L4' OR is_provisional = 1" in e for e in expressions
+        "identity_layer <> 'L4' OR is_provisional = true" in e for e in expressions
     ), expressions
 
 

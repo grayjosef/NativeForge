@@ -219,14 +219,14 @@ def upgrade() -> None:
         # UNCERTAIN is a request for a human. One that asks for nobody is a
         # contradiction.
         sa.CheckConstraint(
-            "relevance_class <> 'UNCERTAIN' OR review_required = 1",
-            name=f"ck_{ASSESSMENTS}_uncertain_asks_for_review",
+            "relevance_class <> 'UNCERTAIN' OR review_required = true",
+            name=f"ck_{ASSESSMENTS}_uncertain_asks_review",
         ),
         # 173H: global relevance never carries a tenant.
         sa.CheckConstraint("scope = 'GLOBAL'", name=f"ck_{ASSESSMENTS}_is_global"),
         sa.CheckConstraint(
-            "is_current = 0 OR superseded_at IS NULL",
-            name=f"ck_{ASSESSMENTS}_current_is_not_superseded",
+            "is_current = false OR superseded_at IS NULL",
+            name=f"ck_{ASSESSMENTS}_current_not_superseded",
         ),
     )
     # 173P: by class, by review, by unknown, and latest-per-opportunity.

@@ -153,15 +153,15 @@ def upgrade() -> None:
         # The 174G column. A disqualifier is a row, not an absence.
         sa.CheckConstraint(
             _in_list("polarity", POLARITIES),
-            name=f"ck_{REQUIREMENTS}_exclusion_is_representable",
+            name=f"ck_{REQUIREMENTS}_excl_is_repr",
         ),
         sa.CheckConstraint(
             "length(original_text) > 0",
-            name=f"ck_{REQUIREMENTS}_keeps_the_original_text",
+            name=f"ck_{REQUIREMENTS}_keeps_the_orig_text",
         ),
         sa.CheckConstraint(
             "length(normalized_value_json) > 0",
-            name=f"ck_{REQUIREMENTS}_has_a_normalized_value",
+            name=f"ck_{REQUIREMENTS}_has_a_norm_value",
         ),
         # A requirement is a claim about a source and must point at one.
         sa.CheckConstraint(
@@ -173,8 +173,8 @@ def upgrade() -> None:
             name=f"ck_{REQUIREMENTS}_page_is_a_page",
         ),
         sa.CheckConstraint(
-            "is_current = 0 OR superseded_at IS NULL",
-            name=f"ck_{REQUIREMENTS}_current_is_not_superseded",
+            "is_current = false OR superseded_at IS NULL",
+            name=f"ck_{REQUIREMENTS}_current_superseded",
         ),
     )
     # 174L: requirements by opportunity, disqualifiers by opportunity.
@@ -213,8 +213,8 @@ def upgrade() -> None:
             "length(content_digest) = 64", name=f"ck_{PROFILES}_digest_length"
         ),
         sa.CheckConstraint(
-            "is_current = 0 OR superseded_at IS NULL",
-            name=f"ck_{PROFILES}_current_is_not_superseded",
+            "is_current = false OR superseded_at IS NULL",
+            name=f"ck_{PROFILES}_current_not_superseded",
         ),
     )
     op.create_index(
@@ -257,7 +257,7 @@ def upgrade() -> None:
         sa.CheckConstraint(
             "applied_exclusion_count = 0 OR "
             + _not_in_list("eligibility_result", PURSUABLE),
-            name=f"ck_{MATCHES}_exclusion_blocks_a_pursuable_result",
+            name=f"ck_{MATCHES}_excl_blocks_a_pursuable_result",
         ),
         sa.CheckConstraint(
             "eligibility_result <> 'UNKNOWN' OR "
@@ -269,7 +269,7 @@ def upgrade() -> None:
         sa.CheckConstraint(
             "satisfied_count + unsatisfied_count + unknown_count + review_count "
             "= requirement_count",
-            name=f"ck_{MATCHES}_every_requirement_is_accounted_for",
+            name=f"ck_{MATCHES}_every_req_is_acct_for",
         ),
         sa.CheckConstraint(
             "length(profile_version) > 0",
@@ -278,15 +278,15 @@ def upgrade() -> None:
         sa.CheckConstraint(
             "eligibility_result <> 'CONDITIONALLY_ELIGIBLE' "
             "OR conditions_to_obtain_json IS NOT NULL",
-            name=f"ck_{MATCHES}_conditional_names_its_condition",
+            name=f"ck_{MATCHES}_conditional_names_condition",
         ),
         # 174K, structurally.
         sa.CheckConstraint(
-            "consumed_global_normalization = 1",
+            "consumed_global_normalization = true",
             name=f"ck_{MATCHES}_match_consumed_global",
         ),
         sa.CheckConstraint(
-            "is_current = 0 OR superseded_at IS NULL",
+            "is_current = false OR superseded_at IS NULL",
             name=f"ck_{MATCHES}_current_is_not_superseded",
         ),
     )

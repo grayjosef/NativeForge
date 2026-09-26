@@ -191,7 +191,7 @@ def upgrade() -> None:
         # THE two constraints of this migration. A live attempt is not a thing
         # this database can hold while Gate 161 stands.
         sa.CheckConstraint(
-            "live_source_call = 0",
+            "live_source_call = false",
             name="ck_nf_source_collection_execution_attempts_no_live_call",
         ),
         sa.CheckConstraint(
@@ -201,13 +201,13 @@ def upgrade() -> None:
         # A proof requires bytes that were actually persisted. Gate 160 owns
         # the hash; an attempt claiming a proof without one is refused.
         sa.CheckConstraint(
-            "execution_proof_available = 0 "
-            "OR (raw_payload_persisted = 1 AND raw_payload_sha256 IS NOT NULL)",
+            "execution_proof_available = false "
+            "OR (raw_payload_persisted = true AND raw_payload_sha256 IS NOT NULL)",
             name="ck_nf_source_collection_execution_attempts_proof_needs_payload",
         ),
         # Bytes and a persisted payload go together.
         sa.CheckConstraint(
-            "raw_payload_persisted = 0 OR raw_payload_sha256 IS NOT NULL",
+            "raw_payload_persisted = false OR raw_payload_sha256 IS NOT NULL",
             name="ck_nf_source_collection_execution_attempts_persisted_has_a_hash",
         ),
         sa.CheckConstraint(

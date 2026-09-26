@@ -594,11 +594,11 @@ def test_migration_0060_puts_the_two_rules_in_the_schema():
     text = (
         REPO / "alembic" / "versions" / "0060_eligibility_intelligence.py"
     ).read_text(encoding="utf-8")
-    assert "exclusion_blocks_a_pursuable_result" in text
-    assert "keeps_the_original_text" in text
-    assert "every_requirement_is_accounted_for" in text
+    assert "excl_blocks_a_pursuable_result" in text
+    assert "keeps_the_orig_text" in text
+    assert "every_req_is_acct_for" in text
     assert "names_its_profile_version" in text
-    assert "conditional_names_its_condition" in text
+    assert "conditional_names_condition" in text
     assert "match_consumed_global" in text
 
 

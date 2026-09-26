@@ -91,13 +91,13 @@ def upgrade() -> None:
         ),
         # The survey's finding, made unrepresentable.
         sa.CheckConstraint(
-            f"{_in_list('decision_state', HUMAN_DECIDED)} = 0 "
+            f"{_in_list('decision_state', HUMAN_DECIDED)} = false "
             "OR (actor_id IS NOT NULL AND decided_at IS NOT NULL)",
             name=f"ck_{DECISIONS}_decision_names_its_actor",
         ),
         sa.CheckConstraint(
             "length(trim(canonical_id)) > 0",
-            name=f"ck_{DECISIONS}_decision_names_its_opportunity",
+            name=f"ck_{DECISIONS}_dec_names_its_opp",
         ),
     )
     # 179E/179J: the three questions a dashboard asks on every page load.

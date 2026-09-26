@@ -156,7 +156,7 @@ def upgrade() -> None:
             name=f"ck_{EVENTS}_amounts_are_not_negative",
         ),
         sa.CheckConstraint(
-            f"{_in_list('event_type', MONETARY_EVENTS)} = 0 "
+            f"{_in_list('event_type', MONETARY_EVENTS)} = false "
             "OR amount_cents IS NOT NULL",
             name=f"ck_{EVENTS}_monetary_event_records_an_amount",
         ),
@@ -225,16 +225,16 @@ def upgrade() -> None:
         # extension. "Active for no reason" is the product given away by
         # nobody's decision.
         sa.CheckConstraint(
-            f"{_in_list('benefit_access', BENEFIT_WORKING)} = 0 "
+            f"{_in_list('benefit_access', BENEFIT_WORKING)} = false "
             f"OR {_in_list('license_state', LICENSE_SELF_SUPPORTING)} "
             "OR active_extension_id IS NOT NULL",
-            name=f"ck_{STATE}_working_benefits_need_a_reason",
+            name=f"ck_{STATE}_working_benefits_need_reason",
         ),
         # An extended benefit must name the extension that justifies it.
         sa.CheckConstraint(
             "benefit_access <> 'BENEFIT_EXTENDED' "
             "OR active_extension_id IS NOT NULL",
-            name=f"ck_{STATE}_extended_benefits_name_their_extension",
+            name=f"ck_{STATE}_ext_benefits_name_their_ext",
         ),
     )
     # 178K: the frozen queue, the expiring queue, the expired queue.
@@ -272,12 +272,12 @@ def upgrade() -> None:
         sa.Column("is_demo", sa.Boolean(), nullable=False),
         sa.CheckConstraint(
             "duration_days IN (7, 14, 30)",
-            name=f"ck_{EXTENSIONS}_extension_duration_is_allowed",
+            name=f"ck_{EXTENSIONS}_ext_duration_is_allowed",
         ),
         # A customer administrator cannot extend their own benefits.
         sa.CheckConstraint(
             f"granted_by_role = '{CONTROLLING_COMPANY_ADMIN}'",
-            name=f"ck_{EXTENSIONS}_extension_is_controlling_company",
+            name=f"ck_{EXTENSIONS}_ext_is_ctrl_co",
         ),
         sa.CheckConstraint(
             "expires_at > granted_at",
@@ -295,7 +295,7 @@ def upgrade() -> None:
                 "underlying_maintenance_state",
                 ("MAINTENANCE_LAPSED", "MAINTENANCE_DELINQUENT", "MAINTENANCE_NONE"),
             ),
-            name=f"ck_{EXTENSIONS}_extension_records_its_delinquency",
+            name=f"ck_{EXTENSIONS}_ext_records_its_delinq",
         ),
         sa.CheckConstraint(
             "revoked_at IS NULL OR revoked_by IS NOT NULL",

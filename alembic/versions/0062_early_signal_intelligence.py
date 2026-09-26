@@ -210,11 +210,11 @@ def upgrade() -> None:
         ),
         # The two refusals, pinned.
         sa.CheckConstraint(
-            "creates_opportunity = 0",
+            "creates_opportunity = false",
             name=f"ck_{SIGNALS}_signal_never_creates_an_opportunity",
         ),
         sa.CheckConstraint(
-            "auto_onboarding_permitted = 0",
+            "auto_onboarding_permitted = false",
             name=f"ck_{SIGNALS}_signal_never_auto_onboards",
         ),
         # A link must point at an opportunity, and only where it belongs.
@@ -367,12 +367,12 @@ def upgrade() -> None:
         # A miss exists only when nothing was observed.
         sa.CheckConstraint(
             "observed_solicitation_count = 0",
-            name=f"ck_{MISSES}_miss_needs_zero_observed_solicitations",
+            name=f"ck_{MISSES}_miss_needs_zero_observed_solics",
         ),
         # The Gate 176 guard, made structural.
         sa.CheckConstraint(
-            "award_is_demo_fixture = 0 OR counts_toward_real_metrics = 0",
-            name=f"ck_{MISSES}_demo_award_never_counts_toward_real_metrics",
+            "award_is_demo_fixture = false OR counts_toward_real_metrics = false",
+            name=f"ck_{MISSES}_demo_never_counts_real_metrics",
         ),
         sa.CheckConstraint(
             "length(trim(searched_source_ids_json)) > 0",

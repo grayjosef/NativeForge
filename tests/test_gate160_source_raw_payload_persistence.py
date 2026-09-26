@@ -266,8 +266,8 @@ def test_the_migration_caps_the_payload_size():
 
 def test_the_migration_refuses_a_row_claiming_a_fetch():
     body = MIGRATION.read_text()
-    assert "collector_invoked = 0" in body
-    assert "live_fetch_performed = 0" in body
+    assert "collector_invoked = false" in body
+    assert "live_fetch_performed = false" in body
 
 
 def test_the_migration_stores_no_credential_and_no_url():

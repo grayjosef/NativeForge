@@ -482,7 +482,7 @@ def test_probabilistic_layers_must_be_provisional():
     """The layer list is interpolated, so the assertion checks the shape."""
     expressions = _check_expressions()
     assert any(
-        "is_provisional = 1" in e and "identity_layer" in e for e in expressions
+        "is_provisional = true" in e and "identity_layer" in e for e in expressions
     ), expressions
     # And the layers themselves come from the migration's own constant.
     source = MIGRATION.read_text(encoding="utf-8")

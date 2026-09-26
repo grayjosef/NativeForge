@@ -88,7 +88,7 @@ def upgrade() -> None:
         # They may not disagree.
         batch.create_check_constraint(
             "ck_nf_source_collection_execution_attempts_live_needs_live_kind",
-            "live_source_call = 0 OR transport_kind = 'live'",
+            "live_source_call = false OR transport_kind = 'live'",
         )
         # THE replacement. A live attempt must name the source whose recorded
         # authorization permitted it.
@@ -114,11 +114,11 @@ def upgrade() -> None:
         )
         batch.create_check_constraint(
             "ck_nf_source_collection_raw_payloads_live_needs_a_warrant",
-            "live_fetch_performed = 0 OR authorized_source_id IS NOT NULL",
+            "live_fetch_performed = false OR authorized_source_id IS NOT NULL",
         )
         batch.create_check_constraint(
             "ck_nf_source_collection_raw_payloads_collector_needs_a_warrant",
-            "collector_invoked = 0 OR authorized_source_id IS NOT NULL",
+            "collector_invoked = false OR authorized_source_id IS NOT NULL",
         )
 
     op.create_index(
@@ -147,11 +147,11 @@ def downgrade() -> None:
         )
         batch.create_check_constraint(
             "ck_nf_source_collection_raw_payloads_no_live_fetch",
-            "live_fetch_performed = 0",
+            "live_fetch_performed = false",
         )
         batch.create_check_constraint(
             "ck_nf_source_collection_raw_payloads_no_collector",
-            "collector_invoked = 0",
+            "collector_invoked = false",
         )
         batch.drop_column("authorized_source_id")
 
@@ -170,7 +170,7 @@ def downgrade() -> None:
         )
         batch.create_check_constraint(
             "ck_nf_source_collection_execution_attempts_no_live_call",
-            "live_source_call = 0",
+            "live_source_call = false",
         )
         batch.create_check_constraint(
             "ck_nf_source_collection_execution_attempts_hermetic_only",
