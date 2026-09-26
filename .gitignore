@@ -38,3 +38,9 @@ frontend/test-results/
 # new directory name. The readiness artifacts live in a separate, committed
 # directory: artifacts/raw_payload_store_readiness/.
 artifacts/raw_payload_store/
+
+# Generated smoke and evidence runs: timestamped output from demo/browser
+# harnesses, not source. ~2,000 of these accumulated untracked, one
+# `git add -A` away from being committed. Files already tracked are
+# unaffected - historical evidence is kept, new litter is not collected.
+artifacts/*_smoke/

@@ -13,7 +13,9 @@ import pathlib
 
 import cairosvg
 
-BRAND = pathlib.Path("/home/josefgray/projects/nativeforge/frontend/public/brand")
+# Derived from this file's own location so the build works in any checkout,
+# not only the one it was written on.
+BRAND = pathlib.Path(__file__).resolve().parents[1] / "frontend/public/brand"
 
 #: (source, output, size) - each one has a named consumer.
 TARGETS = [

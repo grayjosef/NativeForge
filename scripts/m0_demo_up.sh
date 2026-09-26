@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -u
 
-ROOT="/home/josefgray/projects/nativeforge"
+# Derived from this script’s own location so the demo lane works in any
+# checkout, not only the one it was written on.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export ROOT
 RUN_DIR="$ROOT/.run"
 LOG_DIR="$ROOT/logs"
 BACKEND_LOG="$LOG_DIR/m0_backend.log"
@@ -40,7 +43,7 @@ rm -f "$BACKEND_PID" "$FRONTEND_PID"
 
 echo "--- start backend :8000 ---"
 nohup bash -lc '
-  cd /home/josefgray/projects/nativeforge
+  cd "$ROOT"
   export DATABASE_URL=sqlite+pysqlite:///./nativeforge.local.db
   export NF_DEV_ORG_HEADERS=true
   uv run uvicorn nativeforge.main:app --reload --host 127.0.0.1 --port 8000
@@ -49,7 +52,7 @@ echo $! > "$BACKEND_PID"
 
 echo "--- start frontend :5173 ---"
 nohup bash -lc '
-  cd /home/josefgray/projects/nativeforge/frontend
+  cd "$ROOT/frontend"
   if [ ! -d node_modules ]; then npm ci; fi
   npm run dev -- --host 127.0.0.1 --port 5173
 ' > "$FRONTEND_LOG" 2>&1 &

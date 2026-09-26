@@ -1,0 +1,52 @@
+# The build context is sent to the daemon before anything is built, so this
+# file is the difference between a few megabytes and a few gigabytes. The
+# repository carries a 382k-line source tree, a virtualenv, node_modules, and
+# ~2,000 timestamped smoke artifacts, none of which belong in an image.
+
+# Version control
+.git
+.gitignore
+
+# Python environments and caches
+.venv
+venv
+__pycache__
+*.py[cod]
+*.egg-info
+.pytest_cache
+.ruff_cache
+.mypy_cache
+
+# Node
+frontend/node_modules
+frontend/dist
+
+# Local databases - a container must never inherit a developer's SQLite file
+*.db
+*.sqlite3
+nativeforge.local.db
+nativeforge.sh_hygiene.db
+
+# Secrets. Belt and braces: the image takes configuration from the
+# environment, and a stray .env must never be baked into a layer.
+.env
+.env.*
+!.env.example
+
+# Evidence, logs and run state - historical records, not runtime inputs
+artifacts
+logs
+.run
+docs
+
+# Tests and dev-only tooling are not part of the runtime image
+tests
+scripts
+ops
+.github
+.claude
+
+# Editor noise
+.vscode
+.idea
+*.swp

@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -u
 
-ROOT="/home/josefgray/projects/nativeforge"
+# Derived from this script’s own location so the demo lane works in any
+# checkout, not only the one it was written on.
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export ROOT
 RUN_UP=false
 
 for arg in "$@"; do
