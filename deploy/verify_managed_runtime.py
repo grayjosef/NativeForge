@@ -126,9 +126,20 @@ def verify_database() -> None:
     if not gate.is_file():
         record("isolation gate present in image", False)
         return
+    # The gate runs with the MIGRATION credential, and tests as a restricted
+    # role it creates itself.
+    #
+    # It has to: seeding two tenants' rows and creating the NOSUPERUSER role
+    # under test both need owner rights. Handing it the runtime credential
+    # made it fail for the right reason in the wrong place - `nf_app` is
+    # subject to the very policies being tested, so its seed INSERTs were
+    # refused for want of a tenant context. That is the boundary working, not
+    # the gate failing, but it is not what this check is asking.
+    owner = os.environ.get("NF_MIGRATION_DATABASE_URL") or libpq
+    owner_libpq = owner.replace("postgresql+psycopg://", "postgresql://")
     proc = subprocess.run(
         [sys.executable, str(gate)],
-        env={**os.environ, "DATABASE_URL": libpq},
+        env={**os.environ, "DATABASE_URL": owner_libpq},
         capture_output=True,
         text=True,
     )

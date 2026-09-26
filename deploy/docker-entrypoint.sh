@@ -94,11 +94,49 @@ case "${1:-serve}" in
       log "WARNING: serving without a deployment identity (NF_APP_ENV=${NF_APP_ENV:-local})"
     fi
 
+    # Migration authority and runtime authority are different things.
+    #
+    # Alembic must own the schema; the application must not. A managed
+    # provider issues one superuser credential, and a superuser bypasses
+    # row-level security unconditionally - so an application connecting with
+    # it is exempt from every policy protecting tenants.
+    #
+    # When NF_MIGRATION_DATABASE_URL is set, migrations use it and the server
+    # runs as whatever DATABASE_URL names, which should be the restricted
+    # role. When it is not set, both are the same credential and that is the
+    # single-credential development case.
+    if [ -n "${NF_MIGRATION_DATABASE_URL:-}" ]; then
+      log "bootstrapping the restricted runtime role"
+      DATABASE_URL="${NF_MIGRATION_DATABASE_URL}" \
+        python /app/deploy/bootstrap_runtime_role.py || \
+        log "WARNING: runtime role bootstrap reported a problem (see above)"
+    fi
+
     if [ "${NF_RUN_MIGRATIONS}" = "true" ]; then
       log "alembic upgrade head"
-      alembic upgrade head
+      DATABASE_URL="${NF_MIGRATION_DATABASE_URL:-${DATABASE_URL}}" alembic upgrade head
     else
       log "NF_RUN_MIGRATIONS=false - skipping migrations"
+    fi
+
+    # Opt-in, bounded self-verification at boot.
+    #
+    # Two facts can only be measured from inside the deployed artifact on the
+    # provider's own network: that the MANAGED database refuses the wrong
+    # tenant, and that OCR executes here rather than merely having been
+    # installed. Providers vary in whether they expose a one-shot command, and
+    # the alternatives are worse - an account-wide SSH key, or a debug route
+    # that outlives the question it answered.
+    #
+    # So it runs at boot, only when explicitly asked, writes its receipt to
+    # the deployment log, and does not gate serving: a verification failure
+    # must be visible without taking the service down, because an unavailable
+    # service is not safer than one with a reported flaw.
+    if [ "${NF_VERIFY_ON_BOOT:-false}" = "true" ]; then
+      log "NF_VERIFY_ON_BOOT=true - running managed runtime verification"
+      python /app/deploy/verify_managed_runtime.py || \
+        log "WARNING: managed runtime verification reported failures (see above)"
+      log "verification complete; continuing to serve"
     fi
 
     log "serving on 0.0.0.0:${PORT} (sha=${NF_GIT_SHA:-unknown})"

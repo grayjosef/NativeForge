@@ -83,6 +83,7 @@ RUN chmod +x /usr/local/bin/nativeforge-entrypoint
 # This is a one-shot command, never a route. Nothing here is reachable from
 # the internet.
 COPY deploy/verify_managed_runtime.py ./deploy/verify_managed_runtime.py
+COPY deploy/bootstrap_runtime_role.py ./deploy/bootstrap_runtime_role.py
 COPY scripts/check_postgres_tenant_isolation.py ./scripts/check_postgres_tenant_isolation.py
 COPY tests/fixtures/document_ocr/ ./fixtures/document_ocr/
 
