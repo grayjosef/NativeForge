@@ -408,10 +408,26 @@ def test_the_backend_health_path_is_not_the_static_stamp_path() -> None:
     assert HEALTHCHECK_PATH != "/health"
 
 
-def test_the_original_health_endpoint_is_untouched(client: TestClient) -> None:
+def test_the_original_health_endpoint_still_answers_ok(client: TestClient) -> None:
+    """The liveness contract is unchanged; the deployment identity is added.
+
+    This asserted exact equality against `{status, service}`. It now carries
+    `git_sha` and `source_dirty` as well, because a health endpoint that
+    cannot say which commit it is running proves only that something is
+    answering - which is not enough to verify a deployment.
+
+    Unstamped, as here, both read as "not stated" rather than as a value:
+    `source_dirty` is None, not False. "Nobody told us" and "the tree was
+    clean" are different claims.
+    """
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "ok", "service": "nativeforge"}
+    body = response.json()
+    assert body["status"] == "ok"
+    assert body["service"] == "nativeforge"
+    assert set(body) == {"status", "service", "git_sha", "source_dirty"}
+    assert body["git_sha"] == "unknown"
+    assert body["source_dirty"] is None
 
 
 def test_no_endpoint_body_contains_a_secret(client: TestClient) -> None:

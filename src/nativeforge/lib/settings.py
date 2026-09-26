@@ -24,10 +24,36 @@ class Settings(BaseSettings):
     #: Comma-separated UUIDs for demo orgs (must match future `org_type=demo`).
     nf_demo_org_ids: str = Field(default="", validation_alias="NF_DEMO_ORG_IDS")
     #: When True, accept `X-NF-Org-Id` for dev isolation smoke tests (not prod).
+    #:
+    #: Defaults to False so that an unconfigured deployment fails closed. This
+    #: header names the tenant every row-level security policy reads, with no
+    #: authentication behind it, so a True default meant any deployment that
+    #: forgot to set it would accept an attacker-chosen tenant. Dev and demo
+    #: lanes set `NF_DEV_ORG_HEADERS=true` explicitly; production never does.
     nf_dev_org_headers: bool = Field(
-        default=True,
+        default=False,
         validation_alias="NF_DEV_ORG_HEADERS",
     )
+
+    # ── Deployment identity ────────────────────────────────────────────────
+    #
+    # Stamped at build time. The workstation services derive these by running
+    # `git rev-parse HEAD` and `git status --porcelain`, which works in a
+    # checkout and fails in a container: the image has no `.git` directory and
+    # no git binary. A health endpoint that cannot say which commit it is
+    # running proves only that *something* is answering, so this is told to
+    # the image once, by whatever built it.
+    #
+    # `unknown` is the honest default. It is deliberately not `false` for
+    # `nf_source_dirty`: "nobody told us" and "the tree was clean" are
+    # different claims, and only one of them is evidence.
+    nf_git_sha: str = Field(default="unknown", validation_alias="NF_GIT_SHA")
+    nf_source_dirty: str = Field(default="unknown", validation_alias="NF_SOURCE_DIRTY")
+
+    #: Directory of the built frontend, served by the API from the same origin.
+    #: Empty means no frontend is bundled, which is how the test suite and the
+    #: SQLite development lane run.
+    nf_frontend_dist: str = Field(default="", validation_alias="NF_FRONTEND_DIST")
 
     # ── Gate 97: S3-compatible raw payload body store ──────────────────────
     #

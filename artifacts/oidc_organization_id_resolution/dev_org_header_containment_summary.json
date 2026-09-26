@@ -4,14 +4,13 @@
   "backend_unit": "nativeforge-backend.service",
   "backend_unit_active": true,
   "blocked_reasons": [
-    "NF_DEV_ORG_HEADERS_defaults_true",
     "backend_reachable_from_outside_loopback",
     "unauthenticated_header_can_set_app_current_org_id"
   ],
   "contained_by_deployment_posture": false,
   "current_org_id_set": false,
   "customer_auth_live": false,
-  "dev_header_enabled_default": true,
+  "dev_header_enabled_default": false,
   "dev_header_is_customer_auth": false,
   "dev_header_name": "X-NF-Org-Id",
   "dev_header_setting": "NF_DEV_ORG_HEADERS",

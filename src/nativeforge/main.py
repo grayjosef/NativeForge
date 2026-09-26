@@ -2,8 +2,10 @@
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from nativeforge.api.activation_routes import (
     demo_activation_router,
@@ -297,7 +299,35 @@ def create_app() -> FastAPI:
     app.include_router(customer_beta_reassessment_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
+    _mount_frontend(app)
     return app
+
+
+def _mount_frontend(app: FastAPI) -> None:
+    """Serve the built frontend from the same origin, if one is bundled.
+
+    Mounted last, and only last. A mount at `/` is a catch-all: registered
+    before the routers it would shadow every API path in the application.
+
+    Same-origin is a deliberate portability choice rather than a convenience.
+    Split across two services the frontend needs to be told the API's address,
+    and `apiFetchBase()` falls back to `http://127.0.0.1:8000` when nothing
+    tells it - so a deployed page probes the *viewer's* own machine, which
+    cannot succeed and is mixed content on an HTTPS page. Served from one
+    origin the requests are relative, there is no CORS, no second hostname,
+    and the image is not bound to the domain it happens to be running under.
+
+    Absent directory means no frontend bundled, which is how the test suite
+    and the SQLite development lane run; `html=True` serves index.html so
+    client-side routes survive a refresh.
+    """
+    configured = get_settings().nf_frontend_dist
+    if not configured:
+        return
+    dist = Path(configured)
+    if not dist.is_dir():
+        return
+    app.mount("/", StaticFiles(directory=dist, html=True), name="frontend")
 
 
 app = create_app()

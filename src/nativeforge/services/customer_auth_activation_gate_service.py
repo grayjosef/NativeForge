@@ -277,13 +277,18 @@ def build_customer_auth_activation_gate(
         # the RLS context - and a header no route reads cannot set anything,
         # whatever the setting says. So a *measured* zero satisfies it too.
         #
-        # Measured, never assumed: without exposure evidence only the setting
-        # decides, which keeps this deterministic for the artifacts it feeds.
+        # Measured, never assumed. The setting used to be able to clear this on
+        # its own, which was conservative only while it defaulted to True: an
+        # unconfigured process looked "enabled" and held the blocker shut. The
+        # default is now False, so that same branch would clear the blocker for
+        # any process that simply never set the variable - a developer laptop
+        # would assert a fact about production. Absence of configuration is not
+        # evidence, so only a measured zero clears it now.
         exposure = dev_header_exposure or {}
         measured_zero = bool(
             exposure.get("dev_header_route_count") == 0 and exposure.get("route_total")
         )
-        dev_header_disabled_for_production = not _dev_header_enabled() or measured_zero
+        dev_header_disabled_for_production = measured_zero
 
     if owner_approval is None:
         # Gate 135D. Two ways to authorize, and the env var is still one of
@@ -705,17 +710,6 @@ def build_customer_auth_activation_gate(
             break
 
     return result
-
-
-def _dev_header_enabled() -> bool:
-    """Is the unauthenticated org header still the way an org is chosen?"""
-    try:
-        from nativeforge.lib.settings import get_settings
-
-        return bool(get_settings().nf_dev_org_headers)
-    except Exception:  # pragma: no cover - settings always load in this repo
-        # Unknown means enabled. An unreadable setting is not permission.
-        return True
 
 
 def activation_gate_invariant_failures(gate: dict[str, Any]) -> list[str]:
