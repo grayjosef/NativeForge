@@ -34,6 +34,22 @@ FROM python:3.12-slim AS runtime
 # resolve the identical dependency set.
 COPY --from=ghcr.io/astral-sh/uv:0.11.7 /uv /usr/local/bin/uv
 
+# OCR system dependencies, installed at BUILD time. A runtime apt-get would
+# make the image non-deterministic and would fail in any environment without
+# outbound package access.
+#
+# `tesseract-ocr-eng` is the language data and is not optional: without it
+# tesseract installs, runs, and recognises nothing - which arrives downstream
+# as a blank page rather than as an error, and a blank page that was never
+# really read is exactly what must never reach a conclusion. `poppler-utils`
+# backs the PDF tooling.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        tesseract-ocr \
+        tesseract-ocr-eng \
+        poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     UV_COMPILE_BYTECODE=1 \
