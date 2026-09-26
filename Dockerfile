@@ -72,6 +72,20 @@ COPY --from=frontend /app/frontend/dist ./frontend/dist
 COPY deploy/docker-entrypoint.sh /usr/local/bin/nativeforge-entrypoint
 RUN chmod +x /usr/local/bin/nativeforge-entrypoint
 
+# Self-verification, carried in the image on purpose.
+#
+# Two facts can only be established from inside the deployed artifact on the
+# provider's own network: that the MANAGED database refuses the wrong tenant,
+# and that OCR actually executes here. A verifier that lives on a developer
+# machine proves neither. About 800 KB of fixtures is a small price for being
+# able to ask the running deployment rather than infer from a build log.
+#
+# This is a one-shot command, never a route. Nothing here is reachable from
+# the internet.
+COPY deploy/verify_managed_runtime.py ./deploy/verify_managed_runtime.py
+COPY scripts/check_postgres_tenant_isolation.py ./scripts/check_postgres_tenant_isolation.py
+COPY tests/fixtures/document_ocr/ ./fixtures/document_ocr/
+
 # Stamped at build time. A container has no `.git` and no git binary, so the
 # health endpoint cannot shell out for this the way the workstation services
 # do - it has to be told, once, by whatever built the image.

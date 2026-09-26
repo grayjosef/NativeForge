@@ -34,7 +34,45 @@ def client() -> TestClient:
 
 def test_health_carries_the_deployment_identity(client: TestClient) -> None:
     body = client.get("/health").json()
-    assert set(body) == {"status", "service", "git_sha", "source_dirty"}
+    assert set(body) == {
+        "status",
+        "service",
+        "git_sha",
+        "source_dirty",
+        "deployment_identity_known",
+    }
+
+
+def test_an_empty_sha_is_reported_as_unknown_not_as_blank(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A blank field reads as one the endpoint forgot to fill.
+
+    Not hypothetical: a Railway variable reference that did not resolve put
+    `"git_sha": ""` into a live controlled-live deployment, and it looked like
+    a perfectly healthy service. `unknown` says plainly that nobody told this
+    image what it is.
+    """
+    monkeypatch.setenv("NF_GIT_SHA", "")
+    get_settings.cache_clear()
+    try:
+        body = TestClient(app).get("/health").json()
+        assert body["git_sha"] == "unknown"
+        assert body["deployment_identity_known"] is False
+    finally:
+        get_settings.cache_clear()
+
+
+def test_a_stamped_build_reports_identity_known(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("NF_GIT_SHA", "0123456789abcdef0123456789abcdef01234567")
+    get_settings.cache_clear()
+    try:
+        body = TestClient(app).get("/health").json()
+        assert body["deployment_identity_known"] is True
+    finally:
+        get_settings.cache_clear()
 
 
 def test_unstamped_is_unknown_not_a_fabricated_sha() -> None:

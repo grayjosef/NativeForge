@@ -425,9 +425,18 @@ def test_the_original_health_endpoint_still_answers_ok(client: TestClient) -> No
     body = response.json()
     assert body["status"] == "ok"
     assert body["service"] == "nativeforge"
-    assert set(body) == {"status", "service", "git_sha", "source_dirty"}
+    assert set(body) == {
+        "status",
+        "service",
+        "git_sha",
+        "source_dirty",
+        "deployment_identity_known",
+    }
     assert body["git_sha"] == "unknown"
     assert body["source_dirty"] is None
+    # Liveness and identity are separate claims: the process is serving, and
+    # it is saying it cannot name what it is running.
+    assert body["deployment_identity_known"] is False
 
 
 def test_no_endpoint_body_contains_a_secret(client: TestClient) -> None:
@@ -711,9 +720,7 @@ def test_policy_invariants_reject_scheduling_without_a_backend() -> None:
     matrix = pol.build_phase1_activation_matrix(
         preflight_by_source=pol.default_phase1_preflights()
     )
-    fails = pol.policy_invariant_failures(
-        dict(matrix, sources_may_schedule_monitor=3)
-    )
+    fails = pol.policy_invariant_failures(dict(matrix, sources_may_schedule_monitor=3))
     assert "scheduling_without_a_persistent_backend" in fails
 
 

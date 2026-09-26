@@ -41,12 +41,29 @@ def _source_dirty(raw: str) -> bool | None:
     return None
 
 
+#: What an unstamped build reports. Never an empty string: a blank `git_sha`
+#: reads as a field the endpoint forgot to fill, while `unknown` says plainly
+#: that nobody told this image what it is. That distinction is not academic -
+#: a deployment configured with an unresolved variable reference reported
+#: `""` in production, and it took a character-level look to notice.
+UNKNOWN_SHA = "unknown"
+
+
+def _git_sha(raw: str) -> str:
+    return (raw or "").strip() or UNKNOWN_SHA
+
+
 @router.get("/health")
 def health() -> dict[str, Any]:
     settings = get_settings()
+    sha = _git_sha(settings.nf_git_sha)
     return {
         "status": "ok",
         "service": "nativeforge",
-        "git_sha": settings.nf_git_sha,
+        "git_sha": sha,
         "source_dirty": _source_dirty(settings.nf_source_dirty),
+        # Liveness is not identity. The process is serving either way, so
+        # `status` stays ok; this says whether the answer can be trusted to
+        # name what is running.
+        "deployment_identity_known": sha != UNKNOWN_SHA,
     }
