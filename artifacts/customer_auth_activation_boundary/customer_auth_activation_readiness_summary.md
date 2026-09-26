@@ -60,7 +60,7 @@ X-NF-Org-Id          UUID-validated and existence-checked, and it establishes no
 ## The dev header
 
 ```text
-enabled by default                    true
+enabled by default                    false
 route modules depending on it         0
 safe to disable now                   false
 must disable before production auth   true

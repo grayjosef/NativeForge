@@ -4,13 +4,12 @@
   "auth_routes_enforce_authentication": true,
   "blocked_reasons": [
     "auth_routes_refuse_unauthenticated_callers_but_cannot_admit_anybody",
-    "dev_header_is_enabled_by_default_in_settings",
     "no_authenticated_route_can_supply_an_organization_id_yet"
   ],
   "central_replacement_available": true,
   "cloudflare_access_is_customer_auth": false,
   "current_org_id_set": false,
-  "dev_header_enabled_default": true,
+  "dev_header_enabled_default": false,
   "dev_header_is_customer_auth": false,
   "dev_header_is_production_safe": false,
   "dev_header_mention_only_modules": [
