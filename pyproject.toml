@@ -34,13 +34,22 @@ dependencies = [
     # metadata nor the lockfile, so an image built from the lock would not
     # have had it.
     "Pillow>=11.0",
+    # ── outbound HTTP ──────────────────────────────────────────────────────
+    # A runtime dependency since the customer-supplied URL path shipped. It
+    # was dev-only while the only egress module was inert; the moment
+    # `main.py` imported the route that calls it, the production image - built
+    # `uv sync --no-dev` - failed to import and the service would not boot.
+    #
+    # The single module allowed to use it is the one named in
+    # `hermetic_network_enforcement_service.APPROVED_NETWORK_SITES`. Having the
+    # library installed is not permission to call it.
+    "httpx>=0.27",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3",
     "pytest-cov>=6.0",
-    "httpx>=0.27",
     "ruff>=0.8",
 ]
 
