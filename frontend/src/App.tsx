@@ -26,7 +26,8 @@ import {
   postNofoExtractStub,
   postScoreSpark,
 } from "./m0ApiClient";
-import { friendlyError } from "./friendlyError";
+import { friendlyError, interpretError } from "./friendlyError";
+import type { CustomerState } from "./customerState";
 import {
   runM0LiveDemoSequence,
   type RunnerLogStep,
@@ -89,7 +90,7 @@ export default function App() {
     unknown
   > | null>(null);
   const [orgBusy, setOrgBusy] = useState(false);
-  const [orgErr, setOrgErr] = useState<string | null>(null);
+  const [orgErr, setOrgErr] = useState<CustomerState | null>(null);
 
   const [sparks, setSparks] = useState<Record<string, unknown>[]>([]);
   const [sparkDetail, setSparkDetail] = useState<Record<string, unknown> | null>(
@@ -269,7 +270,7 @@ export default function App() {
       }
     } catch (e) {
       setProfileRecord(null);
-      setOrgErr(friendlyError(e));
+      setOrgErr(interpretError(e));
     }
   }, [base, orgOk, plane, o]);
 
@@ -314,7 +315,7 @@ export default function App() {
       );
       setProfileRecord(profile);
     } catch (e) {
-      setOrgErr(friendlyError(e));
+      setOrgErr(interpretError(e));
     } finally {
       setOrgBusy(false);
     }

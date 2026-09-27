@@ -3302,3 +3302,140 @@ code,
   font-size: 0.78rem;
   opacity: 0.8;
 }
+
+/* ── customer state surfaces ───────────────────────────────────────────
+   One component renders every loading, empty, blocked, partial, error and
+   success state, so internal vocabulary has one place to escape from rather
+   than fifteen. Tone carries a label as well as a hue: status must survive
+   greyscale and colour blindness.
+
+   Blocked is deliberately not styled as an error. A tenant boundary refusing
+   an unverified organization is the product working, and painting that red
+   teaches customers that NativeForge breaks whenever it is careful. */
+.nf-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s2);
+  padding: var(--nf-s5);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius-lg);
+  background: var(--nf-card);
+}
+
+.nf-state.is-inline {
+  padding: var(--nf-s4);
+  gap: var(--nf-s1);
+}
+
+.nf-state-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s2);
+  margin: 0;
+  font-size: var(--nf-t-micro);
+  font-weight: 700;
+  letter-spacing: var(--nf-track-eyebrow);
+  text-transform: uppercase;
+  color: var(--nf-muted2);
+}
+
+.nf-state-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--nf-radius-pill);
+  background: var(--nf-dot-neutral);
+  flex: none;
+}
+
+.nf-state-title {
+  margin: 0;
+  font-size: var(--nf-t-h2);
+  font-weight: 650;
+  line-height: 1.3;
+  color: var(--nf-text);
+}
+
+.nf-state-body {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--nf-t-body);
+  line-height: 1.55;
+  color: var(--nf-muted);
+}
+
+.nf-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--nf-s3);
+  margin-block-start: var(--nf-s2);
+}
+
+.nf-state-blocked {
+  border-color: var(--nf-forge-line);
+  background: linear-gradient(0deg, var(--nf-forge-glow), var(--nf-forge-glow)), var(--nf-card);
+}
+
+.nf-state-blocked .nf-state-dot {
+  background: var(--nf-ember);
+}
+
+.nf-state-error {
+  border-color: rgba(163, 37, 48, 0.32);
+}
+
+.nf-state-error .nf-state-dot {
+  background: var(--nf-error);
+}
+
+.nf-state-partial .nf-state-dot {
+  background: var(--nf-ember);
+}
+
+.nf-state-success .nf-state-dot {
+  background: var(--nf-verified);
+}
+
+.nf-state-loading {
+  flex-direction: row;
+  align-items: center;
+  border-style: dashed;
+}
+
+.nf-state-technical {
+  margin-block-start: var(--nf-s3);
+  font-size: var(--nf-t-xs);
+  color: var(--nf-faint);
+}
+
+.nf-state-technical code {
+  display: block;
+  margin-block-start: var(--nf-s2);
+  padding: var(--nf-s2);
+  border-radius: var(--nf-radius-sm);
+  background: var(--nf-card-muted);
+  font-family: var(--nf-font-mono);
+  font-size: var(--nf-t-micro);
+  overflow-wrap: anywhere;
+}
+
+.nf-spinner {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border: 2px solid var(--nf-border-strong);
+  border-block-start-color: var(--nf-primary);
+  border-radius: var(--nf-radius-pill);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nf-spinner {
+    animation: nf-spin 720ms linear infinite;
+  }
+}
+
+@keyframes nf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
