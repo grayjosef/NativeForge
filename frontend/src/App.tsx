@@ -14,6 +14,8 @@ import {
   getHealth,
   extractApplyPath,
   getApplyPath,
+  readOpportunityDocument,
+  readOpportunityUrl,
   getNofoLatest,
   getNofoRequirements,
   getOrgDataSnapshot,
@@ -39,7 +41,14 @@ import {
 import { WorkspacePage } from "./pages/WorkspacePage";
 import { OpportunitiesPage } from "./pages/OpportunitiesPage";
 import { AddOpportunityPage } from "./pages/AddOpportunityPage";
-import { draftToCreateBody, type IntakeDraft } from "./lib/opportunityIntake";
+import {
+  draftToCreateBody,
+  fileToDocumentBody,
+  parseDocumentRead,
+  parseUrlRead,
+  type IntakeDraft,
+  type UrlReadResult,
+} from "./lib/opportunityIntake";
 import { DiscoverPage } from "./pages/DiscoverPage";
 import { DocumentsPage } from "./pages/DocumentsPage";
 import { PursuitsPage } from "./pages/PursuitsPage";
@@ -1094,6 +1103,43 @@ export default function App() {
     [base, loadSparksAndDetail, orgOk, o, plane],
   );
 
+  /**
+   * Read a public page the customer named.
+   *
+   * A declined address is not an error here. The server answers `200` with a
+   * reason, and the wizard renders that reason next to the field the customer
+   * can act on; routing it through the page-level error surface would replace
+   * "that is not a public web page" with "something went wrong".
+   */
+  const onReadOpportunityUrl = useCallback(
+    async (url: string): Promise<UrlReadResult | null> => {
+      if (!orgOk) return null;
+      try {
+        return parseUrlRead(await readOpportunityUrl(base, plane, o, url));
+      } catch {
+        // The request itself failed. There is nothing to say about the
+        // address, so the wizard says nothing about it and the customer can
+        // still paste the notice.
+        return null;
+      }
+    },
+    [base, orgOk, o, plane],
+  );
+
+  /** The same contract as the link, for a notice the customer has as a file. */
+  const onReadOpportunityDocument = useCallback(
+    async (file: File): Promise<UrlReadResult | null> => {
+      if (!orgOk) return null;
+      try {
+        const body = await fileToDocumentBody(file);
+        return parseDocumentRead(await readOpportunityDocument(base, plane, o, body));
+      } catch {
+        return null;
+      }
+    },
+    [base, orgOk, o, plane],
+  );
+
   const onSignOut = useCallback(async () => {
     await signOut(base);
     setSession({ authenticated: false, organizationId: null });
@@ -1324,6 +1370,8 @@ export default function App() {
           busy={sparkBusy}
           error={sparkErr}
           onCreate={onCreateIntake}
+          onReadUrl={onReadOpportunityUrl}
+          onReadDocument={onReadOpportunityDocument}
           onOpenExisting={(id) => {
             setSparkId(id);
             setSurface("documents");

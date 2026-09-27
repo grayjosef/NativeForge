@@ -50,6 +50,14 @@ from nativeforge.api.customer_beta_reassessment_routes import (
 from nativeforge.api.customer_data_boundary_routes import (
     router as customer_data_boundary_router,
 )
+from nativeforge.api.customer_document_intake_routes import (
+    demo_document_intake_router,
+    real_document_intake_router,
+)
+from nativeforge.api.customer_url_intake_routes import (
+    demo_url_intake_router,
+    real_url_intake_router,
+)
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
 )
@@ -321,6 +329,16 @@ def create_app() -> FastAPI:
     # opportunity and fetches nothing.
     app.include_router(demo_apply_router)
     app.include_router(real_apply_router)
+    # Read one public page a signed-in customer named. The only route on the
+    # customer_supplied_url purpose, and it stores nothing: what it finds goes
+    # back for review and through the ordinary create path.
+    app.include_router(demo_url_intake_router)
+    app.include_router(real_url_intake_router)
+    # And the same thing for a notice the customer has as a file. Also stores
+    # nothing: it reads, returns the text, and leaves the record to the
+    # ordinary create path.
+    app.include_router(demo_document_intake_router)
+    app.include_router(real_document_intake_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     _mount_frontend(app)

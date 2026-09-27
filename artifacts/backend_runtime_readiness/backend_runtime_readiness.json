@@ -55,7 +55,8 @@
         "scripts/la_scale_federal_staging_verify.sh",
         "scripts/m0_demo_up.sh",
         "scripts/m8_close_gate_staging_smoke.sh",
-        "scripts/seed_hygiene_staging_verify.sh"
+        "scripts/seed_hygiene_staging_verify.sh",
+        "scripts/try_login_local.sh"
       ]
     },
     "source_monitoring_live": false,

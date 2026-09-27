@@ -29,6 +29,17 @@ connecting to the validated address itself would fix that. That needs a
 custom transport, is noted rather than pretended, and the exposure is one
 request to one address with no credentials attached.
 
+## Politeness is asked for, not assumed
+
+`robots.txt` is fetched and parsed for each host before its page is, through
+the same verdict module the collectors use. A customer naming a URL does not
+make NativeForge welcome on somebody else's host, and a parameter defaulting
+to "allowed" would have made the guard's `robots_permits` requirement a thing
+this module asserted about itself.
+
+RFC 9309 is explicit that a permitting verdict is not authorization. It
+removes one objection; the other requirements still have to be met.
+
 ## Nothing of NativeForge goes out with it
 
 No session cookie, no `Authorization`, no tenant identifier, no internal
@@ -42,6 +53,7 @@ from __future__ import annotations
 import socket
 from dataclasses import dataclass, field
 from typing import Any
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -59,9 +71,17 @@ from nativeforge.services.live_network_guard_service import (
 from nativeforge.services.nativeforge_user_agent_service import (
     NATIVEFORGE_USER_AGENT,
 )
+from nativeforge.services.robots_verdict_service import (
+    ROBOTS_VERDICT_PERMITS,
+    derive_robots_verdict,
+)
 
 PURPOSE = "customer_supplied_url"
 CALLER = "customer_supplied_url_fetch_service"
+
+#: RFC 9309 section 2.5 asks crawlers to parse at least 500 KiB of a
+#: robots.txt. Reading more than that is reading somebody's mistake.
+MAX_ROBOTS_BYTES = 512 * 1024
 
 
 @dataclass(frozen=True)
@@ -73,14 +93,20 @@ class FetchResult:
     final_url: str = ""
     status_code: int | None = None
     content_type: str = ""
+    #: The document decoded as text. Correct for HTML and plain text, and a
+    #: guess for anything binary - `content_bytes` is the truth.
     body: str = ""
+    #: Exactly what arrived. A PDF is not text, and a caller that decodes one
+    #: gets a plausible, wrong document rather than an error, so the bytes are
+    #: kept for the reader that knows what to do with them.
+    content_bytes: bytes = b""
     bytes_read: int = 0
     #: Every URL in the chain, each one separately validated.
     hops: tuple[str, ...] = ()
     blocked_reasons: tuple[str, ...] = field(default_factory=tuple)
 
     def as_dict(self) -> dict[str, Any]:
-        # The body is deliberately absent: this is what gets logged and
+        # Neither the body nor the bytes: this is what gets logged and
         # returned to an API caller, and a fetched document does not belong
         # in an audit line.
         return {
@@ -134,22 +160,83 @@ def _permitted(
 
 
 def _host_of(url: str) -> str:
-    from urllib.parse import urlsplit
-
     try:
         return (urlsplit(url).hostname or "").lower()
     except ValueError:
         return ""
 
 
+def _robots_verdict_for(url: str, *, client, resolver, cache: dict[str, str]) -> str:
+    """Ask the host, before asking it for the page.
+
+    One lookup per host, kept for the length of one call: a redirect chain
+    that stays on a host must not re-ask it, and a chain that leaves one must.
+    """
+    host = _host_of(url)
+    if host in cache:
+        return cache[host]
+
+    path = urlsplit(url).path or "/"
+    # Always port 443: the safety module allows no other, so a robots.txt
+    # anywhere else could not govern a page this module is able to fetch.
+    current = f"https://{host}/robots.txt"
+    status: int | None = None
+    body = b""
+
+    for _ in range(MAX_REDIRECTS + 1):
+        # robots.txt sits on the same host as the page and gets the same
+        # destination check. RFC 9309 does not make it exempt from SSRF.
+        permitted, _reasons, _ = _permitted(
+            current, robots_status="allowed", resolver=resolver
+        )
+        if not permitted:
+            cache[host] = "disallowed"
+            return "disallowed"
+
+        try:
+            with client.stream("GET", current) as response:
+                if response.is_redirect:
+                    location = response.headers.get("location", "")
+                    nxt = str(httpx.URL(current).join(location)) if location else ""
+                    if not nxt:
+                        break
+                    current = nxt
+                    continue
+                status = response.status_code
+                chunks: list[bytes] = []
+                read = 0
+                for chunk in response.iter_bytes():
+                    read += len(chunk)
+                    if read > MAX_ROBOTS_BYTES:
+                        break
+                    chunks.append(chunk)
+                body = b"".join(chunks)
+                break
+        except httpx.HTTPError:
+            # Section 2.3.1.4: unreachable is a complete disallow, and
+            # `derive_robots_verdict` says exactly that for `status=None`.
+            status = None
+            body = b""
+            break
+
+    decision = derive_robots_verdict(status=status, body=body, path=path)["decision"]
+    verdict = "allowed" if decision in ROBOTS_VERDICT_PERMITS else "disallowed"
+    cache[host] = verdict
+    return verdict
+
+
 def fetch_customer_url(
     url: str,
     *,
-    robots_status: str = "allowed",
+    robots_status: str | None = None,
     resolver=resolve_addresses,
     client_factory=None,
 ) -> FetchResult:
     """Read one public document at a URL a signed-in customer supplied.
+
+    `robots_status` defaults to None, which means *go and find out*. Passing a
+    value overrides the lookup, and exists for tests that need a host to have
+    answered a particular way; nothing in the application passes one.
 
     `resolver` and `client_factory` are injectable so the whole path can be
     exercised without a network — which is the only way the redirect rules get
@@ -158,20 +245,41 @@ def fetch_customer_url(
     hops: list[str] = []
     current = (url or "").strip()
 
-    allowed, reasons, _ = _permitted(
-        current, robots_status=robots_status, resolver=resolver
-    )
-    if not allowed:
+    # The address check first, and on its own. Asking a host for its
+    # robots.txt is already a request, so nothing may be sent anywhere before
+    # the destination has been shown to be public.
+    safety = evaluate_url(current, resolved_addresses=resolver(_host_of(current)))
+    if not safety.allowed:
         return FetchResult(
             fetched=False,
             url=url,
             hops=(),
-            blocked_reasons=tuple(dict.fromkeys(reasons)),
+            blocked_reasons=tuple(dict.fromkeys(safety.blocked_reasons)),
         )
 
     make_client = client_factory or _default_client
+    robots_cache: dict[str, str] = {}
 
     with make_client() as client:
+
+        def robots_for(target: str) -> str:
+            if robots_status is not None:
+                return robots_status
+            return _robots_verdict_for(
+                target, client=client, resolver=resolver, cache=robots_cache
+            )
+
+        allowed, reasons, _ = _permitted(
+            current, robots_status=robots_for(current), resolver=resolver
+        )
+        if not allowed:
+            return FetchResult(
+                fetched=False,
+                url=url,
+                hops=(),
+                blocked_reasons=tuple(dict.fromkeys(reasons)),
+            )
+
         for _ in range(MAX_REDIRECTS + 1):
             hops.append(current)
             try:
@@ -189,7 +297,7 @@ def fetch_customer_url(
                         # A new destination is a new decision. The host that
                         # was public a moment ago does not vouch for this one.
                         ok, why, _ = _permitted(
-                            nxt, robots_status=robots_status, resolver=resolver
+                            nxt, robots_status=robots_for(nxt), resolver=resolver
                         )
                         if not ok:
                             return FetchResult(
@@ -269,6 +377,7 @@ def fetch_customer_url(
                         status_code=response.status_code,
                         content_type=type_label,
                         body=raw.decode("utf-8", errors="replace"),
+                        content_bytes=raw,
                         bytes_read=len(raw),
                         hops=tuple(hops),
                     )

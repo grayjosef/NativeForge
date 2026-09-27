@@ -241,3 +241,115 @@ export function draftToCreateBody(draft: IntakeDraft): Record<string, unknown> {
     eligibility_tags: notes ? [notes] : null,
   };
 }
+
+/**
+ * What came back from asking NativeForge to read a link.
+ *
+ * Three endings, not two. `fetched` says whether the page was opened at all;
+ * `readable` says whether there was anything in it to read. Collapsing them
+ * would show a scanned PDF as an opportunity with no contacts, which is a
+ * different and much worse statement than "nobody could read this".
+ */
+export interface UrlReadResult {
+  fetched: boolean;
+  readable: boolean;
+  /** A sentence for the customer. Empty when there is nothing to caveat. */
+  message: string;
+  finalUrl: string;
+  noticeText: string;
+  /** The parsed deadline, when the notice gave a date. `YYYY-MM-DD`. */
+  deadline: string;
+}
+
+function s(value: unknown): string {
+  return typeof value === "string" ? value : value != null ? String(value) : "";
+}
+
+/** The API's shape, narrowed to what the wizard uses. */
+export function parseUrlRead(payload: Record<string, unknown>): UrlReadResult {
+  const extracted = (payload.extracted ?? {}) as Record<string, unknown>;
+  const submission = (extracted.submission ?? null) as Record<string, unknown> | null;
+  const deadlineAt = submission ? s(submission.deadline_at) : "";
+
+  return {
+    fetched: payload.fetched === true,
+    readable: payload.readable === true,
+    message: s(payload.message),
+    finalUrl: s(payload.final_url),
+    noticeText: s(payload.notice_text),
+    // Date only. The wizard's deadline field is a date, and the time of day
+    // stays in the notice text where the wording that produced it is.
+    deadline: deadlineAt ? deadlineAt.slice(0, 10) : "",
+  };
+}
+
+/**
+ * Fold a reading into the draft, without overwriting the customer.
+ *
+ * Only blank fields are filled. Someone who typed a deadline from the funder's
+ * email has better information than a date parsed out of a web page, and
+ * silently replacing it would be the kind of help nobody asked for - the sort
+ * that is discovered after the deadline passes.
+ *
+ * The link itself is updated to the final URL, because following redirects to
+ * the page that was actually read is the address worth keeping.
+ */
+export function applyUrlRead(draft: IntakeDraft, read: UrlReadResult): IntakeDraft {
+  if (!read.readable) return draft;
+  return {
+    ...draft,
+    url: read.finalUrl || draft.url,
+    noticeText: draft.noticeText.trim() ? draft.noticeText : read.noticeText,
+    deadline: draft.deadline || read.deadline,
+  };
+}
+
+/**
+ * The document route's shape, narrowed to the same result the link produces.
+ *
+ * `read` is false for two different endings - a file nothing here can read,
+ * and a file that was read and had nothing in it - so the presence of the
+ * `reading` block is what separates them. Without that the wizard would tell
+ * somebody who uploaded a scanned PDF that NativeForge would not accept their
+ * file, which is not what happened.
+ */
+export function parseDocumentRead(payload: Record<string, unknown>): UrlReadResult {
+  const extracted = (payload.extracted ?? {}) as Record<string, unknown>;
+  const submission = (extracted.submission ?? null) as Record<string, unknown> | null;
+  const deadlineAt = submission ? s(submission.deadline_at) : "";
+
+  return {
+    fetched: payload.reading !== undefined,
+    readable: payload.read === true,
+    message: s(payload.message),
+    finalUrl: "",
+    noticeText: s(payload.notice_text),
+    deadline: deadlineAt ? deadlineAt.slice(0, 10) : "",
+  };
+}
+
+/** A browser `File`, as the API wants it. Never touches the network. */
+export async function fileToDocumentBody(
+  file: File,
+  read: (f: File) => Promise<string> = readAsDataUrl,
+): Promise<{ filename: string; contentType: string; contentBase64: string }> {
+  const dataUrl = await read(file);
+  const comma = dataUrl.indexOf(",");
+  return {
+    filename: file.name,
+    // A browser leaves the type blank for formats it does not recognise. The
+    // server decides what it can read; guessing from the extension here would
+    // be a second opinion nobody asked for.
+    contentType: file.type || "application/octet-stream",
+    contentBase64: comma >= 0 ? dataUrl.slice(comma + 1) : "",
+  };
+}
+
+function readAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error ?? new Error("could not read the file"));
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.readAsDataURL(file);
+  });
+}

@@ -700,6 +700,21 @@ code,
   background: var(--nf-primary-hover);
 }
 
+/* A field with one action attached to it. The action wraps under the input
+   rather than squeezing it, because a two-character-wide URL field is worse
+   than a button on its own line. */
+.nf-input-with-action {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.nf-input-with-action > .nf-input {
+  flex: 1 1 18rem;
+  min-width: 0;
+}
+
 .nf-btn-secondary {
   background: var(--nf-card);
   color: var(--nf-text);

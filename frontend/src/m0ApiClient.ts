@@ -515,6 +515,65 @@ export async function getApplyPath(
   return parseJson(r);
 }
 
+/**
+ * Read a public opportunity page the customer named.
+ *
+ * Creates nothing. What comes back is for the customer to look at and accept,
+ * which is why a page that turns out to be the wrong one costs a glance
+ * rather than a record.
+ *
+ * Refusals arrive as `200` with `fetched: false` and a sentence, not as an
+ * HTTP error: "that address is not a public web page" is an answer to the
+ * request, and rendering it through the generic error surface would lose the
+ * one thing the customer needs, which is what to do instead.
+ */
+export async function readOpportunityUrl(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  url: string,
+): Promise<Record<string, unknown>> {
+  const path = buildM0Path(plane, orgId, "/opportunity-intake/read-url");
+  const r = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    headers: jsonHeaders(orgId),
+    body: JSON.stringify({ url }),
+  });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
+/**
+ * Read a notice the customer has as a file.
+ *
+ * Base64 in JSON rather than a multipart upload: the API does not carry the
+ * multipart dependency, and the shape of the answer is the same either way.
+ * Stores nothing, exactly like the link route.
+ */
+export async function readOpportunityDocument(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  document: { filename: string; contentType: string; contentBase64: string },
+): Promise<Record<string, unknown>> {
+  const path = buildM0Path(plane, orgId, "/opportunity-intake/read-document");
+  const r = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    headers: jsonHeaders(orgId),
+    body: JSON.stringify({
+      filename: document.filename,
+      content_type: document.contentType,
+      content_base64: document.contentBase64,
+    }),
+  });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
 /** Re-read the stored notice for contacts and a submission route. */
 export async function extractApplyPath(
   baseUrl: string,
