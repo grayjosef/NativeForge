@@ -13,6 +13,7 @@
     "central_replacement_module_available": true,
     "converted_dev_header_module_names": [
       "activation_routes.py",
+      "apply_path_routes.py",
       "audit_replay_routes.py",
       "auth.py",
       "award_document_routes.py",
@@ -25,6 +26,8 @@
       "customer_auth_readiness_routes.py",
       "customer_beta_reassessment_routes.py",
       "customer_data_boundary_routes.py",
+      "customer_document_intake_routes.py",
+      "customer_url_intake_routes.py",
       "digest_delivery_routes.py",
       "form_package_routes.py",
       "grant_spark_routes.py",
@@ -88,6 +91,7 @@
     "actual_central_replacement_available": true,
     "actual_converted_route_modules": [
       "activation_routes.py",
+      "apply_path_routes.py",
       "audit_replay_routes.py",
       "auth.py",
       "award_document_routes.py",
@@ -100,6 +104,8 @@
       "customer_auth_readiness_routes.py",
       "customer_beta_reassessment_routes.py",
       "customer_data_boundary_routes.py",
+      "customer_document_intake_routes.py",
+      "customer_url_intake_routes.py",
       "digest_delivery_routes.py",
       "form_package_routes.py",
       "grant_spark_routes.py",

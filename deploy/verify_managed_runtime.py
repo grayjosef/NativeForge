@@ -31,6 +31,26 @@ from pathlib import Path
 sys.path.insert(0, "/app/src")
 
 FIXTURES = Path("/app/fixtures/document_ocr")
+
+
+def _expected_head() -> str:
+    """The newest revision in the image, read off disk.
+
+    A hand-maintained constant here is a second source of truth for something
+    the migration directory already states, and it drifts silently: the two
+    disagreed for exactly one release.
+    """
+    versions = Path("/app/alembic/versions")
+    if not versions.is_dir():
+        versions = Path(__file__).resolve().parents[1] / "alembic" / "versions"
+    revisions = sorted(
+        f.name.split("_", 1)[0]
+        for f in versions.glob("[0-9]*.py")
+    )
+    return revisions[-1] if revisions else ""
+
+
+EXPECTED_HEAD = _expected_head()
 DECISIVE = "eligible applicants"
 
 results: list[tuple[str, bool, str]] = []
@@ -102,7 +122,15 @@ def verify_database() -> None:
     print(f"  tenant tables owned {owned}")
     print()
 
-    record("migration head is 0067", str(head) == "0067", f"head={head}")
+    # Read from the migration directory rather than typed in here. The pin
+    # said 0067 while the repository head was 0068, so the verifier would have
+    # failed a correct deployment - and a verifier that cries wolf on a good
+    # deploy is one nobody reads on a bad one.
+    record(
+        f"migration head is {EXPECTED_HEAD}",
+        str(head) == EXPECTED_HEAD,
+        f"head={head}",
+    )
     record("every tenant table has RLS", rls == tenant_tables, f"{rls}/{tenant_tables}")
     record(
         "every tenant table FORCEs RLS",
