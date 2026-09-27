@@ -34,6 +34,18 @@ import type { CustomerState } from "../customerState";
  * would produce confident eligibility answers that are wrong. All ten are
  * offered, each with a sentence saying who it is for.
  *
+ * ## The step's question is the page heading
+ *
+ * Every step used an h2 and the page had no h1 at all, so a screen reader
+ * landing here found no top-level heading to orient on — on the one screen in
+ * the product that is nothing but a form. The shell's brand is not available
+ * to borrow, because onboarding renders outside the shell.
+ *
+ * The question is the right thing to promote rather than the product name: it
+ * is what the page is about at that moment, it changes as the customer moves
+ * through, and "What is your organization called?" is a better answer to
+ * "where am I" than "NativeForge" would be.
+ *
  * ## Progress survives a reload
  *
  * Kept in `localStorage` under one key, written on every change. A six-step
@@ -286,7 +298,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
       <div className="nf-onboard">
         <div className="nf-onboard-card nf-onboard-card--done">
           <BrandLockup size={44} />
-          <h2 className="nf-onboard-title">Your organization is set up</h2>
+          <h1 className="nf-onboard-title">Your organization is set up</h1>
           <p className="nf-onboard-lead">
             NativeForge can now evaluate opportunities against {draft.legal_name.trim()} and prepare
             application packages for your review.
@@ -334,7 +346,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
 
         {step === 0 ? (
           <section className="nf-onboard-body">
-            <h2 className="nf-onboard-title">What is your organization called?</h2>
+            <h1 className="nf-onboard-title">What is your organization called?</h1>
             <p className="nf-onboard-lead">
               Use the legal name exactly as it appears on federal registrations. It goes onto every
               application package NativeForge prepares.
@@ -377,7 +389,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
 
         {step === 1 ? (
           <section className="nf-onboard-body">
-            <h2 className="nf-onboard-title">How is your organization recognized?</h2>
+            <h1 className="nf-onboard-title">How is your organization recognized?</h1>
             <p className="nf-onboard-lead">
               Eligibility differs between these, so NativeForge keeps them distinct rather than
               treating every Native-serving organization the same way.
@@ -422,7 +434,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
 
         {step === 2 ? (
           <section className="nf-onboard-body">
-            <h2 className="nf-onboard-title">Who do you serve, and from where?</h2>
+            <h1 className="nf-onboard-title">Who do you serve, and from where?</h1>
             <p className="nf-onboard-lead">
               Many federal programs are scoped geographically. This is what NativeForge will quote
               back to you when it explains a geographic eligibility rule.
@@ -463,7 +475,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
 
         {step === 3 ? (
           <section className="nf-onboard-body">
-            <h2 className="nf-onboard-title">What do you pursue funding for?</h2>
+            <h1 className="nf-onboard-title">What do you pursue funding for?</h1>
             <p className="nf-onboard-lead">
               Stored with your profile as notes for your team. NativeForge does not yet use these to
               filter opportunities, and will say so rather than implying otherwise.
@@ -495,7 +507,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
 
         {step === 4 ? (
           <section className="nf-onboard-body">
-            <h2 className="nf-onboard-title">Who signs, and who manages the work?</h2>
+            <h1 className="nf-onboard-title">Who signs, and who manages the work?</h1>
             <p className="nf-onboard-lead">
               The authorized representative is the person who may commit your organization. Naming
               them here records a claim; NativeForge does not treat it as verified authority.
@@ -556,7 +568,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
 
         {step === 5 ? (
           <section className="nf-onboard-body">
-            <h2 className="nf-onboard-title">Check this over</h2>
+            <h1 className="nf-onboard-title">Check this over</h1>
             <p className="nf-onboard-lead">
               Anything left blank stays blank. NativeForge will report it as unknown rather than
               guessing.
