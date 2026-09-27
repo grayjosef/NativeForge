@@ -54,8 +54,16 @@ ENV_PREFIX = "NF_OIDC_"
 #: absent: the public origin is a property of the deployment, not of an
 #: identity provider, and letting a provider override it would let a
 #: misconfigured provider entry redirect a customer to another host.
+#:
+#: `NF_SESSION_SIGNING_KEY` is excluded for a stronger reason than tidiness.
+#: It signs NativeForge's own session cookie, which has nothing to do with
+#: which provider proved the identity. A per-provider signing key would mean
+#: sessions minted through Google could not be verified against sessions
+#: minted through Microsoft, so a customer would be signed out by choosing a
+#: different button - and rotating one provider's key would silently
+#: invalidate only half the sessions.
 PROVIDER_KEYS: tuple[str, ...] = tuple(
-    k for k in AUTH_ENV_KEYS if k != "NF_PUBLIC_ORIGIN"
+    k for k in AUTH_ENV_KEYS if k.startswith("OIDC_")
 )
 
 

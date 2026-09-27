@@ -28,21 +28,46 @@ log() { printf '[entrypoint] %s\n' "$*"; }
 # and NOT in application code - the moment `settings.py` reads
 # RAILWAY_GIT_COMMIT_SHA the image stops being provider-neutral.
 #
-# Checked in order; the first non-empty wins. NF_GIT_SHA set explicitly by a
-# deploy wrapper always takes precedence.
+# Checked in order; the first non-empty wins.
+#
+# The provider's own commit variable comes FIRST, and an explicit NF_GIT_SHA
+# is the fallback. That is the opposite of how this started, and the reversal
+# is the point.
+#
+# NF_GIT_SHA used to win, on the reasoning that a deploy wrapper knows best.
+# It does - once. `scripts/deploy_railway.sh` sets it as a *service* variable,
+# which persists, so every later deployment inherited a stamp from whenever
+# the wrapper last ran. Railway also auto-deploys on push to main, bypassing
+# the wrapper entirely, and those deployments reported the old commit while
+# serving the new code: /health said 98814839 while endpoints that commit had
+# never contained were answering. The one field whose entire job is to make
+# "is the new version live?" answerable was answering it wrongly, and it was
+# only noticed because a bundle hash changed.
+#
+# A provider commit variable is set per deployment and therefore cannot go
+# stale. An explicit one can, so it goes second and is reported when the two
+# disagree rather than silently overriding.
+_NF_EXPLICIT_SHA="${NF_GIT_SHA:-}"
+NF_GIT_SHA=""
 for _candidate in \
-    "${NF_GIT_SHA:-}" \
     "${RAILWAY_GIT_COMMIT_SHA:-}" \
     "${SOURCE_VERSION:-}" \
     "${VERCEL_GIT_COMMIT_SHA:-}" \
     "${GITHUB_SHA:-}" \
-    "${CI_COMMIT_SHA:-}"; do
+    "${CI_COMMIT_SHA:-}" \
+    "${_NF_EXPLICIT_SHA}"; do
     if [ -n "${_candidate}" ]; then
         NF_GIT_SHA="${_candidate}"
         break
     fi
 done
 export NF_GIT_SHA="${NF_GIT_SHA:-}"
+
+if [ -n "${_NF_EXPLICIT_SHA}" ] && [ "${_NF_EXPLICIT_SHA}" != "${NF_GIT_SHA}" ]; then
+    log "NF_GIT_SHA (${_NF_EXPLICIT_SHA}) disagrees with the provider's commit"
+    log "  (${NF_GIT_SHA}). Serving the provider's, which is set per deployment."
+    log "  A stale NF_GIT_SHA service variable is the usual cause; clear it."
+fi
 
 identity_known() {
     case "${NF_GIT_SHA}" in
