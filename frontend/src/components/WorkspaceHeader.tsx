@@ -51,8 +51,11 @@ export function WorkspaceHeader({
       <div className="nf-header-bar">
         <div className="nf-header-brand-block">
           <p className="nf-header-product">Grant pursuit workspace</p>
+          {/* 52px, not the 38 the flat mark used to sit at. The kit's
+              wordmark is bevelled and outlined, and below about 48px those
+              details collapse into mush rather than reading as the logo. */}
           <h1 className="nf-wordmark">
-            <BrandLockup size={38} />
+            <BrandLockup size={52} />
           </h1>
           <p className="nf-header-promise">
             Review-ready pursuits — without auto-submitting applications.

@@ -4,8 +4,8 @@
   "description": "Grant intelligence, pursuit, and award compliance for Tribal governments.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8f7f3",
-  "theme_color": "#023620",
+  "background_color": "#f5f2ea",
+  "theme_color": "#004031",
   "icons": [
     {
       "src": "/brand/icon-192.png",
@@ -20,9 +20,10 @@
       "purpose": "any"
     },
     {
-      "src": "/brand/nf-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "/brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

@@ -16,7 +16,7 @@
   color-scheme: light;
 
   /* — surfaces — */
-  --nf-page: #f8f7f3;
+  --nf-page: #f5f2ea;
   --nf-page-accent: #f0efe8;
   --nf-card: #ffffff;
   --nf-card-muted: #f5f4ee;
@@ -37,10 +37,13 @@
   --nf-navy-deep: #0f1c15;
   --nf-navy-fg: #f8f7f3;
 
-  /* — actions — */
-  --nf-primary: #0a4227;
-  --nf-primary-hover: #023620;
-  --nf-primary-fg: #f8f7f3;
+  /* — actions —
+     Primary is the emblem's own green. Hover lifts rather than darkens: the
+     previous hover was darker than the resting state, which reads as a press
+     rather than a hover and left the two nearly indistinguishable at depth. */
+  --nf-primary: var(--nf-forge);
+  --nf-primary-hover: #0a5a45;
+  --nf-primary-fg: var(--nf-brand-ivory);
 
   /* — ochre accent — */
   --nf-accent: #a6650f;
@@ -110,13 +113,36 @@
   --nf-radius-lg: 14px;
   --nf-radius-pill: 999px;
 
-  /* — brand, straight from the artwork — */
-  --nf-forge: #023620;
-  --nf-forge-lift: #1f6b45;
-  --nf-ember: #c7781a;
+  /* — brand, straight from the artwork —
+     Sampled pixel by pixel from the canonical brand kit rather than copied
+     from its printed swatch labels, because the two disagree: the swatch
+     captioned "TEAL #5BA740" measures #3F9C8F, and #5BA740 is a yellow-green
+     that matches neither the swatch nor the emblem. Where a label and the
+     artwork conflict, the artwork wins.
+
+     --nf-forge is the chevron green read out of the emblem itself. */
+  --nf-forge: #004031;
+  --nf-forge-lift: #3f9c8f;
+  --nf-ember: #cf9055;
   --nf-ember-lift: #f6b24a;
   --nf-steel: #817f7d;
   --nf-steel-light: #edebe8;
+
+  /* Kit palette, for chrome and premium surfaces. Named for the kit so a
+     designer reading the board can find them, and kept separate from the
+     semantic tokens above so a brand tweak cannot silently restyle a status. */
+  --nf-brand-navy: #001731;
+  --nf-brand-graphite: #2c373e;
+  --nf-brand-steel: #455362;
+  --nf-brand-ivory: #f5f2ea;
+  --nf-brand-teal: #3f9c8f;
+  --nf-brand-copper: #cf9055;
+
+  /* The forge-light accent. Gold is an accent, never body text: #cf9055 on
+     ivory is about 2.3:1, so it carries lines, rules and edges, and the
+     darker ochre below carries anything that has to be read. */
+  --nf-forge-line: rgba(207, 144, 85, 0.38);
+  --nf-forge-glow: rgba(246, 178, 74, 0.16);
 
   --nf-max: 1240px;
   --nf-touch: 44px;
@@ -317,49 +343,22 @@ code,
   line-height: 1;
 }
 
-.nf-lockup-mark {
+/* The artwork carries its own aspect ratio; only the height is set, so the
+   lockup and the emblem-only mark can share one rule. */
+.nf-lockup-art {
   display: block;
   flex: none;
-  /* The mark is drawn on its own baseline; this settles it against the
-     cap height of the wordmark rather than its descenders. */
-  margin-block-start: -0.04em;
+  width: auto;
   user-select: none;
 }
 
-.nf-lockup-word {
-  font-family: var(--nf-font);
-  font-weight: 800;
-  letter-spacing: -0.021em;
-  white-space: nowrap;
-}
-
-.nf-lockup-native {
-  color: var(--nf-steel);
-}
-
-.nf-lockup-forge {
-  color: var(--nf-forge);
-}
-
-/* Steel goes muddy on a dark field and the deep forge green disappears into
-   it, so both lift. Same relationship, different ground. */
-@media (prefers-color-scheme: dark) {
-  .nf-lockup-native {
-    color: var(--nf-steel-light);
-  }
-
-  .nf-lockup-forge {
-    color: var(--nf-forge-lift);
-  }
-}
-
 @media (prefers-reduced-motion: no-preference) {
-  .nf-lockup-mark {
+  .nf-lockup-art {
     transition: transform 160ms ease;
   }
 
-  a:hover > .nf-lockup .nf-lockup-mark,
-  button:hover > .nf-lockup .nf-lockup-mark {
+  a:hover > .nf-lockup .nf-lockup-art,
+  button:hover > .nf-lockup .nf-lockup-art {
     transform: translateY(-1px);
   }
 }

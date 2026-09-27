@@ -1,70 +1,160 @@
-"""Render the raster brand assets from the SVG sources.
+"""Cut the brand assets out of the canonical brand kit.
 
-Rasters are DERIVED, never hand-edited: the SVG is the source of truth, so a
-change to the mark cannot leave a stale favicon behind claiming to be the
-brand. Re-run this after touching nf-icon.svg or nf-mark.svg.
+Assets are DERIVED, never hand-edited. The kit board at
+``brand/nativeforge-brand-kit.webp`` is the source of truth, so a change to
+the identity cannot leave a stale favicon behind claiming to be the brand.
+Re-run this after replacing the board.
 
-Only the sizes that actually have a consumer are produced. A folder of
-seventeen icon sizes nobody references is not thoroughness, it is clutter
-that will drift.
+The previous version rendered these from ``nf-icon.svg`` with cairosvg. That
+mark is superseded, and the SVGs are gone: the kit arrived as a single raster
+board carrying every lockup, so each asset is a crop of the artwork rather
+than a redraw of it. Nothing here alters the identity.
+
+## Why the background is flood filled rather than keyed
+
+The wordmark's "Native" is silver through white and the anvil carries bright
+specular highlights. Keying every white pixel punches holes straight through
+both. Every element on the board is closed by a dark outline, so a flood fill
+inwards from the four corners removes the page and stops at those outlines,
+leaving interior whites intact.
+
+## Why the icons come from the large emblem
+
+The board has its own icon row, about 110px tall. Upscaling that to a 512px
+app icon gives a soft, artefacted mark. The emblem inside the primary lockup
+is roughly 440x375, so every icon size is a downscale instead: sharper at
+every size, and the same artwork.
+
+## Why there is no SVG favicon
+
+There was one, and it outranked every PNG beside it. Browsers prefer an SVG
+icon, so the tab kept showing the superseded mark however many PNG sizes were
+regenerated. A stale vector that outranks every correct raster is worse than
+no vector at all.
 """
 
 import pathlib
 
-import cairosvg
+from PIL import Image, ImageDraw, ImageFilter
 
-# Derived from this file's own location so the build works in any checkout,
-# not only the one it was written on.
-BRAND = pathlib.Path(__file__).resolve().parents[1] / "frontend/public/brand"
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+BOARD = ROOT / "brand/nativeforge-brand-kit.webp"
+OUT = ROOT / "frontend/public/brand"
 
-#: (source, output, size) - each one has a named consumer.
-TARGETS = [
-    # Browser tab, for the browsers that still want PNG.
-    ("nf-icon.svg", "favicon-32.png", 32),
-    ("nf-icon.svg", "favicon-16.png", 16),
-    # iOS home screen. 180 is the size Apple actually asks for.
-    ("nf-icon.svg", "apple-touch-icon.png", 180),
-    # Android / PWA manifest.
-    ("nf-icon.svg", "icon-192.png", 192),
-    ("nf-icon.svg", "icon-512.png", 512),
-]
+#: The dark forge ground the board uses behind its app icon.
+TILE = (10, 32, 24)
 
-for source, out, size in TARGETS:
-    cairosvg.svg2png(
-        url=str(BRAND / source),
-        write_to=str(BRAND / out),
-        output_width=size,
-        output_height=size,
+#: Crops measured from the board. Keyed by output name so a mis-measured
+#: region shows up as one wrong asset rather than a silent shift in all of
+#: them.
+REGIONS = {
+    "lockup": (150, 20, 1570, 420),
+    "emblem": (150, 20, 610, 400),
+    "stacked": (755, 440, 1100, 680),
+    "mono-dark": (1245, 838, 1400, 935),
+    "mono-light": (1420, 838, 1570, 935),
+}
+
+#: Display widths at 2x device pixel ratio. The full-resolution crops are far
+#: larger than anything renders, and the header lockup loads on every page.
+WIDTHS = {
+    "nf-lockup-notag.png": 720,
+    "nf-lockup.png": 960,
+    "nf-lockup-stacked.png": 480,
+    "nf-emblem.png": 256,
+}
+
+
+def cut_background(img: Image.Image, tolerance: int = 26) -> Image.Image:
+    img = img.convert("RGBA")
+    flat = img.convert("RGB")
+    w, h = img.size
+    for seed in ((0, 0), (w - 1, 0), (0, h - 1), (w - 1, h - 1)):
+        ImageDraw.floodfill(flat, seed, (255, 0, 255), thresh=tolerance)
+    src, out = flat.load(), img.copy()
+    dst = out.load()
+    for y in range(h):
+        for x in range(w):
+            if src[x, y] == (255, 0, 255):
+                dst[x, y] = (0, 0, 0, 0)
+    return out
+
+
+def trim(img: Image.Image, pad: int = 6) -> Image.Image:
+    box = img.getbbox()
+    if box:
+        img = img.crop(box)
+    out = Image.new("RGBA", (img.width + pad * 2, img.height + pad * 2), (0, 0, 0, 0))
+    out.paste(img, (pad, pad))
+    return out
+
+
+def contain(img: Image.Image, box: int, inset: float) -> Image.Image:
+    target = box * inset
+    scale = min(target / img.width, target / img.height)
+    return img.resize(
+        (max(1, round(img.width * scale)), max(1, round(img.height * scale))),
+        Image.LANCZOS,
     )
-    print(f"  {out:<26} {size}x{size}")
 
-# Social card. Built from the full mark on a forge-green field, because the
-# flat app icon looks like a placeholder at 1200x630.
-OG = """<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#04301D"/>
-      <stop offset="1" stop-color="#011A10"/>
-    </linearGradient>
-  </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <g transform="translate(110 176) scale(4.35)">
-    __MARK__
-  </g>
-  <text x="432" y="300" fill="#EDEBE8" font-family="Segoe UI, Helvetica, Arial, sans-serif"
-        font-size="76" font-weight="700" letter-spacing="-2">NativeForge</text>
-  <text x="436" y="350" fill="#7FB89A" font-family="Segoe UI, Helvetica, Arial, sans-serif"
-        font-size="27" letter-spacing="0.4">Grant intelligence for Tribal governments</text>
-  <rect x="436" y="378" width="78" height="4" rx="2" fill="#C7781A"/>
-</svg>"""
 
-mark = (BRAND / "nf-mark.svg").read_text(encoding="utf-8")
-inner = mark.split(">", 1)[1].rsplit("</svg>", 1)[0]
-cairosvg.svg2png(
-    bytestring=OG.replace("__MARK__", inner).encode("utf-8"),
-    write_to=str(BRAND / "og-card.png"),
-    output_width=1200,
-    output_height=630,
-)
-print(f"  {'og-card.png':<26} 1200x630")
-print("rasters rebuilt from SVG source")
+def save(img: Image.Image, name: str) -> None:
+    width = WIDTHS.get(name)
+    if width and img.width > width:
+        img = img.resize((width, round(img.height * width / img.width)), Image.LANCZOS)
+    path = OUT / name
+    img.save(path, optimize=True)
+    print(f"  {name:<26} {img.width:>4}x{img.height:<4} {path.stat().st_size:>7,} bytes")
+
+
+def main() -> None:
+    if not BOARD.is_file():
+        raise SystemExit(f"brand board not found: {BOARD}")
+    OUT.mkdir(parents=True, exist_ok=True)
+    board = Image.open(BOARD).convert("RGBA")
+    print(f"board {BOARD.name} {board.size}")
+
+    emblem = trim(cut_background(board.crop(REGIONS["emblem"])))
+    lockup = trim(cut_background(board.crop(REGIONS["lockup"])))
+
+    save(emblem.copy(), "nf-emblem.png")
+    save(lockup.copy(), "nf-lockup.png")
+    save(trim(cut_background(board.crop(REGIONS["stacked"]))), "nf-lockup-stacked.png")
+    for key in ("mono-dark", "mono-light"):
+        save(trim(cut_background(board.crop(REGIONS[key]))), f"nf-emblem-{key}.png")
+
+    # The tagline is set in the kit's navy and goes muddy on a dark field, so
+    # application chrome uses a lockup without it.
+    notag = lockup.crop((0, 0, lockup.width, round(lockup.height * 0.80)))
+    save(trim(notag), "nf-lockup-notag.png")
+
+    # Tiled icons. The emblem is inset rather than bled to the edges so the
+    # maskable variant survives a circular crop.
+    for size, name in ((512, "icon-512.png"), (192, "icon-192.png"), (180, "apple-touch-icon.png")):
+        tile = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        ImageDraw.Draw(tile).rounded_rectangle(
+            (0, 0, size - 1, size - 1), radius=round(size * 0.22), fill=(*TILE, 255)
+        )
+        mark = contain(emblem, size, 0.74)
+        tile.alpha_composite(mark, ((size - mark.width) // 2, (size - mark.height) // 2))
+        save(tile, name)
+
+    # Small favicons carry no tile. Sharpened because the anvil's inner
+    # detail mushes below 32px otherwise.
+    for size in (32, 16):
+        mark = contain(emblem, size, 1.0)
+        canvas = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+        canvas.alpha_composite(mark, ((size - mark.width) // 2, (size - mark.height) // 2))
+        save(canvas.filter(ImageFilter.UnsharpMask(radius=0.6, percent=110)), f"favicon-{size}.png")
+
+    og = Image.new("RGBA", (1200, 630), (*TILE, 255))
+    art = contain(lockup, 900, 1.0)
+    if art.height > 300:
+        art = contain(lockup, 300, 1.0)
+    og.alpha_composite(art, ((1200 - art.width) // 2, (630 - art.height) // 2 - 10))
+    og.convert("RGB").save(OUT / "og-card.png", quality=92, optimize=True)
+    print(f"  {'og-card.png':<26} 1200x630  {(OUT / 'og-card.png').stat().st_size:>7,} bytes")
+
+
+if __name__ == "__main__":
+    main()
