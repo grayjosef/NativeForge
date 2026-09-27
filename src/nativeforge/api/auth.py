@@ -73,12 +73,26 @@ import time
 import uuid
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
+from fastapi import (
+    APIRouter,
+    Cookie,
+    Depends,
+    Header,
+    HTTPException,
+    Response,
+    status,
+)
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from nativeforge.api.deps import get_db
 from nativeforge.lib.settings import auth_environment_overlay
+from nativeforge.services.auth_provider_registry_service import (
+    PROVIDER_KEYS_KNOWN,
+    available_providers,
+    callback_path,
+    provider_env,
+)
 from nativeforge.services.customer_auth_activation_gate_service import (
     build_customer_auth_activation_gate,
 )
@@ -141,6 +155,7 @@ from nativeforge.services.customer_session_verifier_service import (
     verify_session_cookie,
 )
 from nativeforge.services.dev_org_membership_bootstrap_service import (
+    insert_membership,
     upsert_identity,
 )
 from nativeforge.services.identity_org_session_resolution_service import (
@@ -421,7 +436,7 @@ DURABLE_STATE_SCOPE = "database"
 
 
 @router.get("/login")
-def login(db: DbSession) -> Any:
+def login(db: DbSession, provider: str | None = None) -> Any:
     """Start a login. Issues state and PKCE; refuses to redirect.
 
     Returns a structured refusal rather than a redirect: redirecting to an
@@ -463,11 +478,19 @@ def login(db: DbSession) -> Any:
         storage_scope=STATE_STORE_SCOPE,
     )
 
-    _auth_env = auth_environment_overlay()
+    _auth_env = provider_env(provider)
     _configured_callback = (_auth_env.get("OIDC_CALLBACK_URL") or "").strip()
     if not _configured_callback:
         _origin = (_auth_env.get("NF_PUBLIC_ORIGIN") or "").strip().rstrip("/")
-        _configured_callback = f"{_origin}{CALLBACK_ROUTE_PATH}" if _origin else ""
+        # A named provider returns to its own path, because the path is how
+        # the callback knows whose client secret to present at the token
+        # endpoint - see auth_provider_registry_service.
+        _path = (
+            callback_path(provider)
+            if provider in PROVIDER_KEYS_KNOWN
+            else CALLBACK_ROUTE_PATH
+        )
+        _configured_callback = f"{_origin}{_path}" if _origin else ""
 
     persisted = {"row_written": False, "blocked_reasons": ["state_not_attempted"]}
     if configured and _configured_callback:
@@ -586,6 +609,7 @@ def callback(
     code: str | None = None,
     state: str | None = None,
     error: str | None = None,
+    provider: str | None = None,
 ) -> dict[str, Any]:
     """Receive a provider redirect. Validate, exchange, verify - then stop.
 
@@ -605,7 +629,7 @@ def callback(
     returned_state = str(state or "").strip()
     returned_code = str(code or "").strip()
 
-    _auth_env = auth_environment_overlay()
+    _auth_env = provider_env(provider)
 
     # -- 1. the state, consumed exactly once ------------------------------
     consumed: dict[str, Any] = {
@@ -773,6 +797,63 @@ def callback(
 
     organization_id_resolved = bool(resolution.get("organization_id_resolved"))
     membership_verified = bool(resolution.get("membership_verified"))
+
+    # -- 4b. the first membership in a demo organization --------------------
+    #
+    # Without this, a verified identity with no membership is a dead end. The
+    # callback says `identity_verified_without_an_organization_binding`,
+    # nothing in the product creates a membership, and so the first person
+    # ever to sign in can never get in.
+    #
+    # Every rule that makes self-approval safe lives in
+    # `dev_org_membership_bootstrap_service` and is enforced there rather than
+    # here: the organization must be classified `demo` by its own row, it must
+    # have no memberships at all, and `is_demo` is derived rather than passed.
+    # This block supplies an organization id and nothing else.
+    #
+    # It does nothing unless a deployment names the organization, because a
+    # bootstrap that runs by default is an open door with a lock on it.
+    bootstrap_result: dict[str, Any] = {"rows_written": 0, "attempted": False}
+    if identity_validated and identity_id and not organization_id_resolved:
+        target = str((_auth_env.get(BOOTSTRAP_ORG_ENV) or "").strip())
+        if target:
+            try:
+                written = insert_membership(
+                    connection=db.connection(),
+                    organization_id=target,
+                    identity_id=identity_id,
+                    state="active",
+                    role="owner",
+                    membership_source="org_owner_approved",
+                    # Self-approval. Permitted by the service only when the
+                    # organization has no memberships at all, and refused on
+                    # every attempt after the first.
+                    approved_by=identity_id,
+                )
+                bootstrap_result = {
+                    "attempted": True,
+                    "rows_written": int(written.get("rows_written") or 0),
+                    "blocked_reasons": sorted(written.get("blocked_reasons") or []),
+                    "bootstrap_membership": bool(written.get("bootstrap_membership")),
+                }
+                if written.get("rows_written"):
+                    db.commit()
+                    resolution = resolve_session_organization(
+                        connection=db.connection(), identity_id=identity_id
+                    )
+                else:
+                    db.rollback()
+            except Exception:
+                db.rollback()
+                bootstrap_result = {
+                    "attempted": True,
+                    "rows_written": 0,
+                    "blocked_reasons": ["membership_bootstrap_store_unavailable"],
+                }
+
+        organization_id_resolved = bool(resolution.get("organization_id_resolved"))
+        membership_verified = bool(resolution.get("membership_verified"))
+
     org_binding_missing = bool(identity_validated and not organization_id_resolved)
 
     # -- 5. the session, only once all of that holds ------------------------
@@ -850,7 +931,11 @@ def callback(
             # The cookie carries the internal identity id. The provider subject
             # stays in the database.
             "session_carries_provider_subject": False,
-            "membership_rows_written": 0,
+            "membership_rows_written": int(bootstrap_result.get("rows_written") or 0),
+            "membership_bootstrap_attempted": bool(bootstrap_result.get("attempted")),
+            "membership_bootstrap_blocked_reasons": sorted(
+                bootstrap_result.get("blocked_reasons") or []
+            ),
             "state_validated": state_validated,
             "pkce_verified": pkce_validated,
             # Gate 131: the real flow's outcome, in booleans.
@@ -956,8 +1041,20 @@ def session(
     should be told no, not refused for not having one.
     """
     gate = _gate(db)
-    body = _envelope("session", "unauthenticated", gate)
     verification = decision["session_verification"]
+    # Derived, not constant.
+    #
+    # This said "unauthenticated" unconditionally, which was true for sixteen
+    # gates because nobody could authenticate. Since Gate 132 somebody can, and
+    # the route went on telling them otherwise while the `authenticated` field
+    # two lines down said the opposite - one response disagreeing with itself,
+    # and a client that trusted the more obvious of the two fields got the
+    # wrong answer.
+    body = _envelope(
+        "session",
+        "authenticated" if decision["authenticated"] else "unauthenticated",
+        gate,
+    )
     body.update(
         {
             "authenticated": bool(decision["authenticated"]),
@@ -971,9 +1068,15 @@ def session(
             "signature_valid": verification["signature_valid"],
             "session_expired": verification["session_expired"],
             "session_blocked_reasons": verification["blocked_reasons"],
-            # Still None: an organization comes from a verified membership,
-            # and this route asks nobody for one.
-            "organization_id": None,
+            # The organization comes from the **membership row** the
+            # dependency resolved, never from the cookie that claims one. It
+            # was hardcoded None on the grounds that "this route asks nobody
+            # for one" - true when it was written, and false since
+            # `_session_decision` started performing the membership lookup. A
+            # caller that has a session needs to know which organization it is
+            # for, and the alternative was every client keeping its own copy.
+            "organization_id": verification["organization_id"],
+            "roles": list(verification["roles"]),
             "expires_at": None,
         }
     )
@@ -1023,6 +1126,110 @@ def current_user(
         }
     )
     return body
+
+
+#: The one organization a first sign-in may bootstrap a membership into. Named
+#: by the deployment, never defaulted: a bootstrap that runs without being
+#: asked is an open door. The service refuses any organization whose own row
+#: does not classify it `demo`, so naming a real one here still does nothing.
+BOOTSTRAP_ORG_ENV = "NF_BOOTSTRAP_DEMO_ORG_ID"
+
+#: Where a browser lands after the callback. Paths relative to the
+#: deployment's own origin, so a misconfigured value cannot send a customer to
+#: another host.
+APP_AFTER_SIGN_IN = "/?view=workspace"
+APP_NEEDS_ORG = "/?view=onboarding"
+APP_SIGN_IN = "/?view=sign_in"
+
+
+@router.get("/providers")
+def providers(db: DbSession) -> dict[str, Any]:
+    """Which identity providers this deployment can sign a customer in with.
+
+    Booleans and labels. No client id, no issuer, no secret: the sign-in page
+    draws buttons, and a page that knows the configuration leaks it to
+    everyone who opens the network tab.
+    """
+    env = auth_environment_overlay()
+    gate = _gate(db)
+    return {
+        **available_providers(
+            env, public_origin=str(env.get("NF_PUBLIC_ORIGIN") or "").strip()
+        ),
+        "login_live": bool(gate["login_live"]),
+        "customer_auth_live": bool(gate["customer_auth_live"]),
+    }
+
+
+def _wants_html(accept: str | None) -> bool:
+    """Whether the caller is a browser following a redirect.
+
+    Content negotiation rather than an environment flag, for two reasons. A
+    provider redirect genuinely is a browser navigation and genuinely does
+    send `text/html`, so this is the signal itself rather than a proxy for it.
+    And a flag defaulting off would mean the tested path and the production
+    path are different paths.
+    """
+    return "text/html" in (accept or "").lower()
+
+
+@router.get("/callback/{provider_key}")
+def provider_callback(
+    provider_key: str,
+    db: DbSession,
+    response: Response,
+    code: str | None = None,
+    state: str | None = None,
+    error: str | None = None,
+    accept: Annotated[str | None, Header()] = None,
+) -> Any:
+    """A provider's redirect target, one path per provider.
+
+    Runs the identical flow as `/callback` - the same state consumption, the
+    same exchange, the same verification, the same session minting - and then
+    answers in the form the caller can use.
+
+    ## Why a browser gets a redirect and a test gets JSON
+
+    `/callback` returns a body describing everything that happened, which is
+    exactly right for a gate and exactly wrong for a customer: a person who
+    has just signed in would be looking at a page of JSON. The outcome is the
+    same either way; only the representation differs.
+
+    The session cookie is copied onto the redirect, because it was set on the
+    response the flow wrote to. A redirect built without it would land the
+    customer, signed out, on a page that requires a session.
+    """
+    if provider_key not in PROVIDER_KEYS_KNOWN:
+        raise HTTPException(status_code=404, detail="unknown provider")
+
+    body = callback(
+        db=db,
+        response=response,
+        code=code,
+        state=state,
+        error=error,
+        provider=provider_key,
+    )
+
+    if not _wants_html(accept):
+        return body
+
+    if body.get("session_created"):
+        destination = APP_AFTER_SIGN_IN
+    elif body.get("org_binding_missing"):
+        destination = APP_NEEDS_ORG
+    else:
+        # A stable, non-identifying code. The customer-state layer turns it
+        # into designed copy; the reasons themselves stay in the body and in
+        # the logs, because a query string is somewhere other people can read.
+        destination = f"{APP_SIGN_IN}&auth=sign_in_incomplete"
+
+    redirect = RedirectResponse(url=destination, status_code=status.HTTP_303_SEE_OTHER)
+    for header_name, header_value in response.raw_headers:
+        if header_name.lower() == b"set-cookie":
+            redirect.raw_headers.append((header_name, header_value))
+    return redirect
 
 
 def install_auth_security_scheme(app: Any) -> None:

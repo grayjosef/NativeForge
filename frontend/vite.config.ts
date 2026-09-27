@@ -5,6 +5,10 @@ const api = "http://127.0.0.1:8000";
 
 const apiProxy = {
   "/v1": api,
+  // Sign-in, the session and provider discovery. Without this the dev server
+  // answers /api/auth/* with index.html, and the sign-in page reads a page of
+  // HTML as its provider list.
+  "/api": api,
   "/docs": api,
   "/openapi.json": api,
   "/redoc": api,

@@ -11,20 +11,28 @@ import type { AppSurface } from "../../viewSurface";
  *
  * So destinations live here, the environment lives in the top bar, and
  * status is reported where the thing it describes is shown.
+ *
+ * ## Grouped, because nine flat items is a list rather than a structure
+ *
+ * Finding money, pursuing it, and governing the organization that does both
+ * are three different jobs, often done by three different people. The groups
+ * are named after the jobs rather than after the data: a grants manager looks
+ * for "Pursue", not for "Entities".
  */
 
 export interface NavItem {
   id: string;
   label: string;
-  /** Surface this routes to, when one exists today. */
-  surface?: AppSurface;
+  /** Surface this routes to. Every item has one; none are decorative. */
+  surface: AppSurface;
   /** Short description, used as the tooltip when the rail is collapsed. */
   hint: string;
+  /** Section heading this item sits under when the rail is expanded. */
+  group: string;
   /**
-   * Destinations the product promises but has not built yet. They render
-   * disabled and say so, rather than being hidden: a navigation that
-   * silently omits half the product is harder to trust than one that admits
-   * what is coming.
+   * Retained for destinations that are still being built. Nothing sets it
+   * false today; it stays because hiding an unbuilt page is worse than
+   * labelling one, and the labelling has to be possible.
    */
   ready: boolean;
 }
@@ -35,64 +43,96 @@ export const NAV_ITEMS: NavItem[] = [
     label: "Workspace",
     surface: "workspace",
     hint: "What needs your attention today",
+    group: "Overview",
     ready: true,
   },
   {
     id: "discover",
     label: "Discover",
-    hint: "Funding opportunities matched to your organization",
-    ready: false,
+    surface: "discover",
+    hint: "Funding matched to your organization",
+    group: "Find funding",
+    ready: true,
   },
   {
     id: "opportunities",
     label: "Opportunities",
+    surface: "opportunities",
     hint: "Opportunities you are tracking",
-    ready: false,
+    group: "Find funding",
+    ready: true,
   },
   {
     id: "pursuits",
     label: "Pursuits",
+    surface: "pursuits",
     hint: "Applications in progress",
-    ready: false,
+    group: "Pursue",
+    ready: true,
   },
   {
     id: "documents",
     label: "Documents",
-    hint: "Notices, appendices and amendments NativeForge has read",
-    ready: false,
+    surface: "documents",
+    hint: "Notices and amendments NativeForge has read",
+    group: "Pursue",
+    ready: true,
   },
   {
     id: "organization",
     label: "Organization",
+    surface: "organization",
     hint: "Your profile, recognition and authority",
-    ready: false,
+    group: "Govern",
+    ready: true,
   },
   {
     id: "trust",
     label: "Trust",
+    surface: "trust",
     hint: "Data ownership, review and provenance",
-    ready: false,
-  },
-  {
-    id: "workbench",
-    label: "Workbench",
-    surface: "workbench",
-    hint: "Operator tools",
+    group: "Govern",
     ready: true,
   },
   {
     id: "settings",
     label: "Settings",
-    hint: "Workspace preferences",
-    ready: false,
+    surface: "settings",
+    hint: "Workspace preferences and operator tools",
+    group: "Govern",
+    ready: true,
   },
 ];
 
-/** Which nav item a surface belongs under. */
+/** Navigation in the order it is drawn, with group headings resolved once. */
+export function navGroups(): Array<{ group: string; items: NavItem[] }> {
+  const out: Array<{ group: string; items: NavItem[] }> = [];
+  for (const item of NAV_ITEMS) {
+    const last = out[out.length - 1];
+    if (last && last.group === item.group) {
+      last.items.push(item);
+    } else {
+      out.push({ group: item.group, items: [item] });
+    }
+  }
+  return out;
+}
+
+/**
+ * Which nav item a surface belongs under.
+ *
+ * Operator and demo surfaces have no item of their own - they are reached
+ * from Settings and from links - so they light Settings rather than leaving
+ * the rail with nothing active, which reads as "you are nowhere".
+ */
 export function activeNavId(surface: AppSurface): string {
   const match = NAV_ITEMS.find((item) => item.surface === surface);
   if (match) return match.id;
-  // Demo surfaces are shown from the workspace, so the rail keeps workspace lit
-  // rather than losing its active state entirely.
-  return "workspace";
+  if (surface === "sign_in" || surface === "onboarding") return "";
+  return "settings";
+}
+
+/** The surface a nav id routes to, for callers that only know the id. */
+export function surfaceForNav(navId: string): AppSurface | null {
+  return NAV_ITEMS.find((item) => item.id === navId)?.surface ?? null;
 }

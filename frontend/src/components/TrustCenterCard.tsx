@@ -1,10 +1,13 @@
+import type { CustomerState } from "../customerState";
+import { StateView } from "./StateView";
+
 export interface TrustCenterCardProps {
   manifest: Record<string, unknown> | null;
   auditCount: number | null;
   reviewSummary: Record<string, unknown> | null;
   exportHint: string | null;
   busy: boolean;
-  error: string | null;
+  error: CustomerState | null;
   statusChip: string;
   onRefresh: () => void;
   onExportDownload: () => void;
@@ -138,9 +141,7 @@ export function TrustCenterCard({
       ) : null}
 
       {error ? (
-        <div className="nf-alert nf-alert--error" role="alert">
-          {error}
-        </div>
+        <StateView state={error} inline />
       ) : null}
     </section>
   );

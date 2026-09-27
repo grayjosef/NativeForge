@@ -1,8 +1,12 @@
+import type { CustomerState } from "../customerState";
+import { humanDisqualification } from "../lib/entityTypes";
+import { StateView } from "./StateView";
+
 export interface ScoreCardProps {
   sparkSelected: boolean;
   score: Record<string, unknown> | null;
   busy: boolean;
-  error: string | null;
+  error: CustomerState | null;
   statusChip: string;
   locked: boolean;
   onScore: () => void;
@@ -30,11 +34,11 @@ export function ScoreCard({
   onScore,
   onRefreshLatest,
 }: ScoreCardProps) {
-  const gentleNotice =
-    error &&
-    /no readiness score|no score|not loaded yet/i.test(error)
-      ? error
-      : null;
+  // "No score yet" is an absence, not a fault, and it was being separated
+  // from real failures by running a regex over the message text. The tone now
+  // carries that distinction from the point the error was interpreted, so
+  // presentation reads it rather than re-deriving it from prose.
+  const gentleNotice = error && (error.tone === "empty" || error.tone === "partial") ? error : null;
   const hardError = error && !gentleNotice ? error : null;
 
   return (
@@ -84,11 +88,11 @@ export function ScoreCard({
           {score.disqualified ? (
             <div className="nf-alert nf-alert--warn" role="status">
               Flagged for staff review:{" "}
-              {str(score.disqualification_reason) || "See explanation."}
+              {humanDisqualification(str(score.disqualification_reason)) || "See explanation."}
             </div>
           ) : null}
           {score.explanation_text ? (
-            <p className="nf-muted">{str(score.explanation_text)}</p>
+            <p className="nf-muted">{humanDisqualification(str(score.explanation_text))}</p>
           ) : null}
         </div>
       ) : (
@@ -98,14 +102,8 @@ export function ScoreCard({
           </div>
         )
       )}
-      {gentleNotice ? (
-        <p className="nf-callout nf-callout--muted">{gentleNotice}</p>
-      ) : null}
-      {hardError ? (
-        <div className="nf-alert nf-alert--error" role="alert">
-          {hardError}
-        </div>
-      ) : null}
+      {gentleNotice ? <StateView state={gentleNotice} inline /> : null}
+      {hardError ? <StateView state={hardError} inline /> : null}
     </section>
   );
 }

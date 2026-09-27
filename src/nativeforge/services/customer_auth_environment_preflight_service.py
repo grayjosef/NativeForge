@@ -210,22 +210,63 @@ def _read_runtime_database_revision() -> str:
     return str(row[0] or "").strip().split()[0] if str(row[0] or "").strip() else ""
 
 
+#: How long a detected revision is reused before it is measured again.
+#:
+#: `build_binding_store_decision` reaches, through the tenant readiness tree,
+#: into the source-collection preflights - and those `ast.parse` 556 files.
+#: Measured at ~3 seconds per call, paid by every `/api/auth/session` and
+#: `/api/auth/providers` request, which is the first thing the application
+#: asks for on load. The sign-in page sat on "Checking available sign-in
+#: methods" for eight seconds because of it.
+#:
+#: A TTL rather than a permanent cache, deliberately. Almost everything the
+#: decision reads - the source tree, the alembic history - cannot change
+#: inside a running process, but the *database* can: a deployment that
+#: migrates while the server is up would otherwise report `not applied`
+#: forever, and an activation gate stuck on a stale negative is exactly the
+#: kind of wrong this codebase spends its effort avoiding. Thirty seconds is
+#: short enough that a migration is reflected almost immediately and long
+#: enough that a browser's opening burst of requests pays for one scan.
+_REVISION_TTL_SECONDS = 30.0
+
+#: (measured_at, revision). Module-level rather than lru_cache because it has
+#: to expire, and because `reset_revision_cache` has to be able to clear it.
+_REVISION_CACHE: tuple[float, str] | None = None
+
+
+def reset_revision_cache() -> None:
+    """Forget the cached revision. For tests that change the database."""
+    global _REVISION_CACHE
+    _REVISION_CACHE = None
+
+
 def _detect_database_revision() -> str:
     """Which revision a runtime database has applied, or an empty string.
 
     The rule for what counts as applied stays in Gate 113's decision service --
     duplicating the rule here is how the two would come to disagree. What this
     supplies is the fact that service was missing.
+
+    The answer is cached for `_REVISION_TTL_SECONDS`; see the note there for
+    why the expensive part is expensive and why the cache expires.
     """
+    import time as _time
+
+    global _REVISION_CACHE
+
+    now = _time.monotonic()
+    if _REVISION_CACHE is not None and now - _REVISION_CACHE[0] < _REVISION_TTL_SECONDS:
+        return _REVISION_CACHE[1]
+
     from nativeforge.services.tenant_customer_org_binding_store_decision_service import (  # noqa: E501
         build_binding_store_decision,
     )
 
     live = _read_runtime_database_revision()
     decision = build_binding_store_decision(database_revision=live or None)
-    if not decision.get("migration_applied"):
-        return ""
-    return live
+    resolved = live if decision.get("migration_applied") else ""
+    _REVISION_CACHE = (now, resolved)
+    return resolved
 
 
 def build_environment_preflight(

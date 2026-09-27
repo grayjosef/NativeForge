@@ -12,9 +12,11 @@ import {
   getFormPackage,
   getGrantSpark,
   getHealth,
+  getNofoLatest,
   getNofoRequirements,
   getOrgDataSnapshot,
   getPursuitDetail,
+  listPursuits,
   getReviewSummary,
   getScoreLatest,
   getTribalProfile,
@@ -26,13 +28,22 @@ import {
   postNofoExtractStub,
   postScoreSpark,
 } from "./m0ApiClient";
-import { friendlyError, interpretError } from "./friendlyError";
+import { interpretError } from "./friendlyError";
 import type { CustomerState } from "./customerState";
 import {
   runM0LiveDemoSequence,
   type RunnerLogStep,
 } from "./m0LiveDemoRunner";
-import { ProgressStrip } from "./components/ProgressStrip";
+import { WorkspacePage } from "./pages/WorkspacePage";
+import { OpportunitiesPage } from "./pages/OpportunitiesPage";
+import { DiscoverPage } from "./pages/DiscoverPage";
+import { DocumentsPage } from "./pages/DocumentsPage";
+import { PursuitsPage } from "./pages/PursuitsPage";
+import { TrustPage } from "./pages/TrustPage";
+import { OrganizationPage } from "./pages/OrganizationPage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { SignInPage } from "./pages/SignInPage";
+import { OnboardingPage } from "./pages/OnboardingPage";
 import { WhatsNextCard } from "./components/WhatsNextCard";
 import { AppShell } from "./components/shell/AppShell";
 import { OrgReadinessCard } from "./components/OrgReadinessCard";
@@ -48,7 +59,10 @@ import {
   buildWhatsNext,
   type NextActionId,
 } from "./workspaceProgress";
-import { readSurface, type AppSurface } from "./viewSurface";
+import { readSurface, writeSurface, type AppSurface } from "./viewSurface";
+import { daysUntil } from "./lib/dates";
+import { surfaceForNav } from "./components/shell/navigation";
+import { getAuthSession, signOut } from "./authApiClient";
 import { NmWaOperatorDemoPage } from "./pages/NmWaOperatorDemoPage";
 import { ScCustomerDemoPage } from "./pages/ScCustomerDemoPage";
 import { BetaOnboardingCockpitPage } from "./pages/BetaOnboardingCockpitPage";
@@ -97,25 +111,25 @@ export default function App() {
     null,
   );
   const [sparkBusy, setSparkBusy] = useState(false);
-  const [sparkErr, setSparkErr] = useState<string | null>(null);
+  const [sparkErr, setSparkErr] = useState<CustomerState | null>(null);
 
   const [requirements, setRequirements] = useState<Record<string, unknown>[]>(
     [],
   );
   const [nofoBusy, setNofoBusy] = useState(false);
-  const [nofoErr, setNofoErr] = useState<string | null>(null);
+  const [nofoErr, setNofoErr] = useState<CustomerState | null>(null);
 
   const [score, setScore] = useState<Record<string, unknown> | null>(null);
   const [scoreBusy, setScoreBusy] = useState(false);
-  const [scoreErr, setScoreErr] = useState<string | null>(null);
+  const [scoreErr, setScoreErr] = useState<CustomerState | null>(null);
 
   const [pursuit, setPursuit] = useState<Record<string, unknown> | null>(null);
   const [pursuitBusy, setPursuitBusy] = useState(false);
-  const [pursuitErr, setPursuitErr] = useState<string | null>(null);
+  const [pursuitErr, setPursuitErr] = useState<CustomerState | null>(null);
 
   const [formPkg, setFormPkg] = useState<Record<string, unknown> | null>(null);
   const [formBusy, setFormBusy] = useState(false);
-  const [formErr, setFormErr] = useState<string | null>(null);
+  const [formErr, setFormErr] = useState<CustomerState | null>(null);
 
   const [trustManifest, setTrustManifest] = useState<Record<
     string,
@@ -128,13 +142,27 @@ export default function App() {
   > | null>(null);
   const [exportHint, setExportHint] = useState<string | null>(null);
   const [trustBusy, setTrustBusy] = useState(false);
-  const [trustCardErr, setTrustCardErr] = useState<string | null>(null);
+  const [trustCardErr, setTrustCardErr] = useState<CustomerState | null>(null);
 
   const [runnerSteps, setRunnerSteps] = useState<RunnerLogStep[]>([]);
   const [runnerBusy, setRunnerBusy] = useState(false);
   const [operatorOpen, setOperatorOpen] = useState(false);
 
   const [surface, setSurfaceState] = useState<AppSurface>(() => readSurface());
+  const [nofoLatest, setNofoLatest] = useState<Record<string, unknown> | null>(null);
+  const [session, setSession] = useState<{
+    authenticated: boolean;
+    organizationId: string | null;
+  } | null>(null);
+
+  /** The `?auth=` code the callback leaves behind when it returns a browser. */
+  const authNotice = useMemo(() => {
+    try {
+      return new URLSearchParams(window.location.search).get("auth");
+    } catch {
+      return null;
+    }
+  }, []);
 
   /* SC and NM/WA are offline static demo bridges: they render entirely from
      bundled JSON and never need the workspace API. Firing these requests from
@@ -144,30 +172,32 @@ export default function App() {
   const offlineDemoSurface =
     surface === "sc_customer_demo" ||
     surface === "nm_wa_operator_demo" ||
-    surface === "beta_onboarding_cockpit";
+    surface === "beta_onboarding_cockpit" ||
+    // Sign-in has no organization yet, so every org-scoped request it fired
+    // would be refused - eight red entries in the network tab of the first
+    // page a buyer ever opens.
+    surface === "sign_in";
 
   const setSurface = useCallback((s: AppSurface) => {
     setSurfaceState(s);
+    writeSurface(s);
+    // A destination change that leaves the page scrolled halfway down the
+    // previous one reads as the navigation not having worked.
     try {
-      const u = new URL(window.location.href);
-      if (s === "workbench") {
-        u.searchParams.set("view", "workbench");
-      } else if (s === "activation") {
-        u.searchParams.set("view", "activation");
-      } else if (s === "nm_wa_operator_demo") {
-        u.searchParams.set("view", "nm_wa_operator_demo");
-      } else if (s === "sc_customer_demo") {
-        u.searchParams.set("view", "sc_customer_demo");
-      } else if (s === "beta_onboarding_cockpit") {
-        u.searchParams.set("view", "beta_onboarding_cockpit");
-      } else {
-        u.searchParams.delete("view");
-      }
-      window.history.replaceState({}, "", u.toString());
+      window.scrollTo({ top: 0 });
     } catch {
       /* ignore */
     }
   }, []);
+
+  /** Navigate by nav id, for callers that only know where they want to go. */
+  const setSurfaceByNav = useCallback(
+    (navId: string) => {
+      const target = surfaceForNav(navId);
+      if (target) setSurface(target);
+    },
+    [setSurface],
+  );
 
   useEffect(() => {
     const onPop = () => setSurfaceState(readSurface());
@@ -256,6 +286,29 @@ export default function App() {
     void refreshConnectivity();
   }, [refreshConnectivity, offlineDemoSurface]);
 
+  // Asked once, on load. A session that cannot be read is reported as no
+  // session rather than as an error: not being signed in is the ordinary
+  // state of this application today, not a fault.
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await getAuthSession(base);
+        if (!cancelled) {
+          setSession({
+            authenticated: res.authenticated,
+            organizationId: res.organization_id,
+          });
+        }
+      } catch {
+        if (!cancelled) setSession({ authenticated: false, organizationId: null });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [base]);
+
   const loadProfile = useCallback(async () => {
     if (!orgOk) {
       return;
@@ -338,7 +391,7 @@ export default function App() {
           const d = await getGrantSpark(base, plane, o, sid);
           setSparkDetail(d);
         } catch (e) {
-          setSparkErr(friendlyError(e));
+          setSparkErr(interpretError(e));
           setSparkDetail(null);
         }
       } else {
@@ -347,7 +400,7 @@ export default function App() {
         setSparkDetail(null);
       }
     } catch (e) {
-      setSparkErr(friendlyError(e));
+      setSparkErr(interpretError(e));
     } finally {
       setSparkBusy(false);
     }
@@ -362,7 +415,54 @@ export default function App() {
     setRequirements([]);
     setScore(null);
     setScoreErr(null);
+    setNofoLatest(null);
   }, [sparkId]);
+
+  // Everything already known about the selected opportunity, on arrival.
+  //
+  // The extraction run and the requirements it produced are one fact shown two
+  // ways, so they are fetched together: loading only the requirements leaves
+  // "read but produced nothing" indistinguishable from "never read".
+  //
+  // The score is here for a blunter reason. It used to be set only by pressing
+  // the button, so a customer who scored an opportunity, navigated, and came
+  // back was told to score it again - and the Pursuits page, which unlocks on
+  // a score, refused to open a pursuit against an opportunity that had already
+  // been evaluated. Work the product had done and stored was invisible the
+  // moment anybody changed page.
+  useEffect(() => {
+    if (offlineDemoSurface || !sparkSelected) return;
+    let cancelled = false;
+    void (async () => {
+      const [reqs, latest, latestScore, openPursuits] = await Promise.all([
+        getNofoRequirements(base, plane, o, sparkId.trim()).catch(() => null),
+        getNofoLatest(base, plane, o, sparkId.trim()).catch(() => null),
+        // A 404 here is "not scored yet", which is the ordinary state of a new
+        // opportunity rather than a failure worth reporting on arrival.
+        getScoreLatest(base, plane, o, sparkId.trim()).catch(() => null),
+        listPursuits(base, plane, o).catch(() => null),
+      ]);
+      if (cancelled) return;
+      if (reqs) setRequirements(reqs.requirements ?? []);
+      setNofoLatest(latest);
+      if (latestScore) setScore(latestScore);
+
+      // Recover the pursuit that already exists for this opportunity.
+      //
+      // Without this the workspace only knew about a pursuit it had opened on
+      // this page. After a reload it offered "Open a pursuit", the API
+      // correctly refused with 409 because one was already open, and the
+      // customer was shown a generic failure over work the product had
+      // already done. The id is on the server; it was simply never asked for.
+      if (openPursuits && !pursuitId.trim()) {
+        const mine = openPursuits.find((p) => str(p.grant_spark_id) === sparkId.trim());
+        if (mine) setPursuitId(str(mine.id));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [base, o, plane, sparkId, sparkSelected, offlineDemoSurface]);
 
   const onCreateDemoSpark = useCallback(async () => {
     if (!orgOk) {
@@ -382,7 +482,7 @@ export default function App() {
       setSparkDetail(row);
       await loadSparksAndDetail();
     } catch (e) {
-      setSparkErr(friendlyError(e));
+      setSparkErr(interpretError(e));
     } finally {
       setSparkBusy(false);
     }
@@ -397,7 +497,7 @@ export default function App() {
     try {
       await postNofoExtractStub(base, plane, o, sparkId.trim());
     } catch (e) {
-      setNofoErr(friendlyError(e));
+      setNofoErr(interpretError(e));
     } finally {
       setNofoBusy(false);
     }
@@ -413,7 +513,7 @@ export default function App() {
       const r = await getNofoRequirements(base, plane, o, sparkId.trim());
       setRequirements(r.requirements ?? []);
     } catch (e) {
-      setNofoErr(friendlyError(e));
+      setNofoErr(interpretError(e));
     } finally {
       setNofoBusy(false);
     }
@@ -435,7 +535,7 @@ export default function App() {
       );
       setScore(s);
     } catch (e) {
-      setScoreErr(friendlyError(e));
+      setScoreErr(interpretError(e));
     } finally {
       setScoreBusy(false);
     }
@@ -451,7 +551,7 @@ export default function App() {
       const s = await getScoreLatest(base, plane, o, sparkId.trim());
       setScore(s);
     } catch (e) {
-      setScoreErr(friendlyError(e));
+      setScoreErr(interpretError(e));
       setScore(null);
     } finally {
       setScoreBusy(false);
@@ -477,7 +577,7 @@ export default function App() {
       setPursuitId(id);
       setPursuit(p);
     } catch (e) {
-      setPursuitErr(friendlyError(e));
+      setPursuitErr(interpretError(e));
     } finally {
       setPursuitBusy(false);
     }
@@ -493,7 +593,7 @@ export default function App() {
       const p = await getPursuitDetail(base, plane, o, pursuitId.trim());
       setPursuit(p);
     } catch (e) {
-      setPursuitErr(friendlyError(e));
+      setPursuitErr(interpretError(e));
     } finally {
       setPursuitBusy(false);
     }
@@ -561,7 +661,7 @@ export default function App() {
         });
         await onRefreshPursuit();
       } catch (e) {
-        setPursuitErr(friendlyError(e));
+        setPursuitErr(interpretError(e));
       } finally {
         setPursuitBusy(false);
       }
@@ -585,7 +685,7 @@ export default function App() {
       );
       setFormPkg(pkg);
     } catch (e) {
-      setFormErr(friendlyError(e));
+      setFormErr(interpretError(e));
     } finally {
       setFormBusy(false);
     }
@@ -601,7 +701,7 @@ export default function App() {
       const pkg = await getFormPackage(base, plane, o, pursuitId.trim());
       setFormPkg(pkg);
     } catch (e) {
-      setFormErr(friendlyError(e));
+      setFormErr(interpretError(e));
       setFormPkg(null);
     } finally {
       setFormBusy(false);
@@ -626,7 +726,7 @@ export default function App() {
       setReviewSummary(r);
       setExportHint(null);
     } catch (e) {
-      setTrustCardErr(friendlyError(e));
+      setTrustCardErr(interpretError(e));
     } finally {
       setTrustBusy(false);
     }
@@ -662,7 +762,7 @@ export default function App() {
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
-      setTrustCardErr(friendlyError(e));
+      setTrustCardErr(interpretError(e));
     } finally {
       setTrustBusy(false);
     }
@@ -756,6 +856,23 @@ export default function App() {
     !!pursuitId.trim() && pursuit !== null;
   const hasForm = formPkg !== null;
 
+  /**
+   * Any in-flight request, as one value.
+   *
+   * The same eight-way disjunction was written out at three call sites and
+   * had already drifted at one of them, so a card could offer an action while
+   * another request was still running against the same organization.
+   */
+  const anyBusy =
+    orgBusy ||
+    sparkBusy ||
+    nofoBusy ||
+    scoreBusy ||
+    pursuitBusy ||
+    formBusy ||
+    trustBusy ||
+    runnerBusy;
+
   const whatsNext = useMemo(
     () =>
       buildWhatsNext({
@@ -795,6 +912,66 @@ export default function App() {
     ],
   );
 
+  /**
+   * Save the organization profile from the onboarding wizard.
+   *
+   * Returns whether it was written, so the wizard can show its success step
+   * only when there is something to succeed about. A wizard that advances on
+   * a failed save is a wizard that tells the customer their organization is
+   * set up when it is not.
+   */
+  const onSaveProfile = useCallback(
+    async (body: Record<string, unknown>): Promise<boolean> => {
+      if (!orgOk) return false;
+      setOrgBusy(true);
+      setOrgErr(null);
+      try {
+        const { profile } = await createOrUpdateTribalProfile(base, plane, o, body);
+        setProfileRecord(profile);
+        return true;
+      } catch (e) {
+        setOrgErr(interpretError(e));
+        return false;
+      } finally {
+        setOrgBusy(false);
+      }
+    },
+    [base, orgOk, plane, o],
+  );
+
+  /**
+   * Read a notice and load what came out of it, as one action.
+   *
+   * Extraction and requirement loading were two separate buttons, and a
+   * customer who pressed only the first saw an empty checklist and concluded
+   * the notice had no requirements - the exact inference the evidence rules
+   * exist to prevent.
+   */
+  const onExtractAndLoad = useCallback(async () => {
+    if (!sparkSelected) return;
+    setNofoBusy(true);
+    setNofoErr(null);
+    try {
+      await postNofoExtractStub(base, plane, o, sparkId.trim());
+      const [reqs, latest] = await Promise.all([
+        getNofoRequirements(base, plane, o, sparkId.trim()),
+        getNofoLatest(base, plane, o, sparkId.trim()),
+      ]);
+      setRequirements(reqs.requirements ?? []);
+      setNofoLatest(latest);
+    } catch (e) {
+      setNofoErr(interpretError(e));
+    } finally {
+      setNofoBusy(false);
+    }
+  }, [base, o, plane, sparkId, sparkSelected]);
+
+  const onSignOut = useCallback(async () => {
+    await signOut(base);
+    setSession({ authenticated: false, organizationId: null });
+    setSurface("sign_in");
+  }, [base, setSurface]);
+
   const runPrimaryNext = useCallback(() => {
     const id: NextActionId = whatsNext.actionId;
     if (id === "profile") {
@@ -826,6 +1003,36 @@ export default function App() {
     refreshTrustCenter,
   ]);
 
+  if (surface === "sign_in") {
+    return (
+      <SignInPage
+        notice={authNotice}
+        onContinueToDemo={() => setSurface("workspace")}
+      />
+    );
+  }
+
+  if (surface === "onboarding") {
+    return (
+      <OnboardingPage
+        busy={orgBusy}
+        error={orgErr}
+        onSubmit={onSaveProfile}
+        onEnterWorkspace={() => setSurface("workspace")}
+        initial={
+          profileFields
+            ? {
+                legal_name: profileFields.legalName,
+                entity_type: profileFields.entityType,
+                city: profileFields.city,
+                state: profileFields.state,
+              }
+            : undefined
+        }
+      />
+    );
+  }
+
   return (
     <AppShell
       surface={surface}
@@ -840,11 +1047,20 @@ export default function App() {
       online={backendOk !== false}
       offlineHint={backendHint}
       attention={{ trust: trustErr, organization: Boolean(orgErr) }}
+      // The account menu is about a person, and the organization's name was
+      // standing in for one - so a signed-in user saw their Tribe's name in
+      // an avatar circle, which reads as being logged in as the organization.
+      // `/api/auth/session` reports no display name or email today, so the
+      // menu says "Account" rather than naming the wrong thing.
+      account={session?.authenticated ? { name: "Account" } : null}
+      onSignIn={() => setSurface("sign_in")}
+      onSignOut={onSignOut}
       topBarExtra={
         <>
-          {trustVersion ? (
-            <span className="nf-topbar-meta">Trust {trustVersion}</span>
-          ) : null}
+          {/* The Trust manifest's schema version used to be printed here as
+              "Trust ml2_trust_v1". It is an internal identifier, it told a
+              customer nothing, and it sat in the most prominent chrome in the
+              product. The Trust page reports the manifest in its own terms. */}
           <button
             type="button"
             className="nf-btn nf-btn-ghost"
@@ -857,12 +1073,52 @@ export default function App() {
     >
 
       {surface === "workspace" ? (
-        <ProgressStrip steps={progressSteps} />
-      ) : null}
-
-      {surface === "workspace" ? (
-      <div className="nf-layout">
-        <main className="nf-workflow">
+      <WorkspacePage
+        organizationName={profileFields?.legalName ?? null}
+        entityType={profileFields?.entityType ?? null}
+        identityVerified={false}
+        hasProfile={hasProfile}
+        steps={progressSteps}
+        sparks={sparks}
+        selectedSparkId={sparkId}
+        onSelectSpark={setSparkId}
+        requirementsCount={requirements.length}
+        reviewSummary={reviewSummary}
+        score={score}
+        pursuit={pursuit}
+        formPackage={formPkg}
+        trustVersion={trustVersion}
+        auditCount={auditCount}
+        nextHeadline={whatsNext.headline}
+        nextDetail={whatsNext.detail}
+        nextActionLabel={whatsNext.primaryLabel}
+        onNextAction={runPrimaryNext}
+        busy={anyBusy}
+        onGoTo={setSurfaceByNav}
+        aside={
+          <>
+            <WhatsNextCard
+              headline={whatsNext.headline}
+              detail={whatsNext.detail}
+              primaryLabel={whatsNext.primaryLabel}
+              onPrimary={runPrimaryNext}
+              busy={anyBusy}
+            />
+            <TrustCenterCard
+              manifest={trustManifest}
+              auditCount={auditCount}
+              reviewSummary={reviewSummary}
+              exportHint={exportHint}
+              busy={trustBusy}
+              error={trustCardErr}
+              statusChip={stepChip("trust")}
+              onRefresh={refreshTrustCenter}
+              onExportDownload={onExportDownload}
+            />
+          </>
+        }
+        workflow={
+          <>
           <OrgReadinessCard
             busy={orgBusy}
             profileFields={profileFields}
@@ -924,38 +1180,94 @@ export default function App() {
             onCreatePreview={onCreateFormPackage}
             onRefresh={onRefreshFormPackage}
           />
-        </main>
-
-        <aside className="nf-rail" aria-label="Guidance and trust">
-          <WhatsNextCard
-            headline={whatsNext.headline}
-            detail={whatsNext.detail}
-            primaryLabel={whatsNext.primaryLabel}
-            onPrimary={runPrimaryNext}
-            busy={
-              orgBusy ||
-              sparkBusy ||
-              nofoBusy ||
-              scoreBusy ||
-              pursuitBusy ||
-              formBusy ||
-              trustBusy ||
-              runnerBusy
-            }
-          />
-          <TrustCenterCard
-            manifest={trustManifest}
-            auditCount={auditCount}
-            reviewSummary={reviewSummary}
-            exportHint={exportHint}
-            busy={trustBusy}
-            error={trustCardErr}
-            statusChip={stepChip("trust")}
-            onRefresh={refreshTrustCenter}
-            onExportDownload={onExportDownload}
-          />
-        </aside>
-      </div>
+          </>
+        }
+      />
+      ) : surface === "discover" ? (
+        <DiscoverPage
+          trackedCount={sparks.length}
+          onGoToOpportunities={() => setSurface("opportunities")}
+          onAddDemo={() => void onCreateDemoSpark()}
+          canAdd={hasProfile && !anyBusy}
+        />
+      ) : surface === "opportunities" ? (
+        <OpportunitiesPage
+          sparks={sparks}
+          selectedSparkId={sparkId}
+          onSelectSpark={setSparkId}
+          onOpenSpark={(id) => {
+            setSparkId(id);
+            setSurface("documents");
+          }}
+          busy={sparkBusy}
+          error={sparkErr}
+          onRefresh={() => void loadSparksAndDetail()}
+          onAddDemo={() => void onCreateDemoSpark()}
+          canAdd={hasProfile}
+          addBlockedReason="Complete your organization profile first."
+        />
+      ) : surface === "documents" ? (
+        <DocumentsPage
+          opportunityTitle={
+            sparkDetail ? str(sparkDetail.opportunity_title) || null : null
+          }
+          sparkSelected={sparkSelected}
+          requirements={requirements}
+          extraction={nofoLatest}
+          busy={nofoBusy}
+          error={nofoErr}
+          onExtract={() => void onExtractAndLoad()}
+          onReload={() => void onLoadRequirements()}
+          onGoToOpportunities={() => setSurface("opportunities")}
+        />
+      ) : surface === "pursuits" ? (
+        <PursuitsPage
+          pursuit={pursuit}
+          opportunityTitle={
+            sparkDetail ? str(sparkDetail.opportunity_title) || null : null
+          }
+          score={score}
+          formPackage={formPkg}
+          busy={pursuitBusy || formBusy}
+          error={pursuitErr ?? formErr}
+          canOpen={hasScore}
+          deadlineDays={daysUntil(str(sparkDetail?.application_deadline))}
+          onOpenPursuit={() => void onOpenPursuit()}
+          onToggleTask={(id, status) => void onToggleTask(id, status)}
+          onRefresh={() => void onRefreshPursuit()}
+          onCreateFormPackage={() => void onCreateFormPackage()}
+          onGoToOpportunities={() => setSurface("opportunities")}
+        />
+      ) : surface === "trust" ? (
+        <TrustPage
+          manifest={trustManifest}
+          auditCount={auditCount}
+          reviewSummary={reviewSummary}
+          exportHint={exportHint}
+          busy={trustBusy}
+          error={trustCardErr}
+          onRefresh={() => void refreshTrustCenter()}
+          onExport={() => void onExportDownload()}
+        />
+      ) : surface === "organization" ? (
+        <OrganizationPage
+          profile={profileRecord}
+          identityVerified={Boolean(session?.authenticated)}
+          busy={orgBusy}
+          error={orgErr}
+          onEditProfile={() => setSurface("onboarding")}
+          onRefresh={() => void loadProfile()}
+        />
+      ) : surface === "settings" ? (
+        <SettingsPage
+          environment={plane === "demo" ? "demo" : "live"}
+          onEnvironmentChange={(next) => setPlane(next === "demo" ? "demo" : "real")}
+          organizationId={orgId}
+          onOrganizationIdChange={setOrgId}
+          organizationIdValid={orgOk}
+          onOpen={(view) => setSurface(view as AppSurface)}
+          onSignOut={session?.authenticated ? onSignOut : undefined}
+        />
       ) : surface === "workbench" ? (
         <WorkbenchPage plane={plane} orgId={orgId.trim()} orgOk={orgOk} />
       ) : surface === "nm_wa_operator_demo" ? (

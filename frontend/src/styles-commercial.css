@@ -1,0 +1,1477 @@
+/* ══════════════════════════════════════════════════════════════════════
+   The commercial surface.
+
+   Everything below dresses the pages built for the customer product: the
+   shared layout primitives, the destinations, sign-in and onboarding. It is
+   a separate file from index.css because index.css had grown to 3,795 lines
+   covering the operator workbench, the demo bridges and the guided workflow
+   cards, and adding a fourth concern to it would have made the one file
+   nobody can navigate into the one file nobody can change.
+
+   It defines no new colour values. Every rule here resolves to a token
+   already declared on :root, so a brand change stays a one-file change.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ── page scaffold ──────────────────────────────────────────────────── */
+
+.nf-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s6);
+  padding-bottom: var(--nf-s7);
+}
+
+.nf-pagehead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--nf-s5);
+  flex-wrap: wrap;
+  padding-bottom: var(--nf-s4);
+  border-bottom: 1px solid var(--nf-rule);
+}
+
+.nf-pagehead-eyebrow {
+  margin: 0 0 var(--nf-s2);
+  font-size: var(--nf-t-micro);
+  font-weight: 700;
+  letter-spacing: var(--nf-track-eyebrow);
+  text-transform: uppercase;
+  color: var(--nf-faint);
+}
+
+.nf-pagehead-title {
+  margin: 0;
+  font-family: var(--nf-font-display);
+  font-size: var(--nf-t-h1);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--nf-text);
+}
+
+.nf-pagehead-lead {
+  margin: var(--nf-s2) 0 0;
+  max-width: 62ch;
+  font-size: var(--nf-t-body);
+  color: var(--nf-muted);
+}
+
+.nf-pagehead-actions {
+  display: flex;
+  gap: var(--nf-s2);
+  flex-wrap: wrap;
+}
+
+/* ── section ────────────────────────────────────────────────────────── */
+
+.nf-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s4);
+}
+
+.nf-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--nf-s4);
+  flex-wrap: wrap;
+}
+
+.nf-section-title {
+  margin: 0;
+  font-size: var(--nf-t-h2);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--nf-text);
+}
+
+.nf-section-lead {
+  margin: var(--nf-s1) 0 0;
+  max-width: 68ch;
+  font-size: var(--nf-t-sm);
+  color: var(--nf-muted2);
+}
+
+.nf-section-aside {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s2);
+}
+
+.nf-count {
+  font-size: var(--nf-t-sm);
+  color: var(--nf-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.nf-note {
+  margin: 0;
+  max-width: 76ch;
+  font-size: var(--nf-t-sm);
+  line-height: 1.55;
+  color: var(--nf-muted2);
+}
+
+.nf-note--quiet {
+  font-size: var(--nf-t-xs);
+  color: var(--nf-faint);
+}
+
+/* ── badge ──────────────────────────────────────────────────────────── */
+
+.nf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: var(--nf-radius-pill);
+  border: 1px solid var(--nf-border);
+  background: var(--nf-card-muted);
+  font-size: var(--nf-t-xs);
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--nf-muted);
+}
+
+.nf-badge[data-tone="positive"] {
+  color: var(--nf-verified);
+  background: var(--nf-verified-bg);
+  border-color: rgba(31, 107, 69, 0.28);
+}
+
+.nf-badge[data-tone="warn"] {
+  color: var(--nf-warn);
+  background: var(--nf-warn-bg);
+  border-color: var(--nf-accent-line);
+}
+
+.nf-badge[data-tone="bad"] {
+  color: var(--nf-error);
+  background: rgba(163, 37, 48, 0.08);
+  border-color: rgba(163, 37, 48, 0.26);
+}
+
+.nf-badge[data-tone="info"] {
+  color: var(--nf-forge);
+  background: rgba(0, 64, 49, 0.07);
+  border-color: rgba(0, 64, 49, 0.22);
+}
+
+.nf-badge[data-tone="muted"] {
+  color: var(--nf-faint);
+}
+
+/* ── metrics ────────────────────────────────────────────────────────── */
+
+.nf-metric-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--nf-s3);
+}
+
+.nf-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+  text-align: start;
+  font: inherit;
+}
+
+.nf-metric.is-clickable {
+  cursor: pointer;
+}
+
+.nf-metric.is-clickable:hover {
+  border-color: var(--nf-border-strong);
+  box-shadow: var(--nf-e2);
+}
+
+.nf-metric.is-clickable:focus-visible {
+  outline: 2px solid var(--nf-forge);
+  outline-offset: 2px;
+}
+
+.nf-metric-label {
+  font-size: var(--nf-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--nf-muted2);
+}
+
+.nf-metric-value {
+  font-family: var(--nf-font-display);
+  font-size: 1.85rem;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  color: var(--nf-text);
+}
+
+.nf-metric-value[data-tone="positive"] {
+  color: var(--nf-verified);
+}
+.nf-metric-value[data-tone="warn"] {
+  color: var(--nf-warn);
+}
+.nf-metric-value[data-tone="bad"] {
+  color: var(--nf-error);
+}
+.nf-metric-value[data-tone="muted"] {
+  color: var(--nf-faint);
+}
+
+.nf-metric-note {
+  font-size: var(--nf-t-xs);
+  color: var(--nf-faint);
+  line-height: 1.4;
+}
+
+/* ── cards ──────────────────────────────────────────────────────────── */
+
+.nf-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--nf-grid-min, 260px), 1fr));
+  gap: var(--nf-s3);
+}
+
+.nf-panel {
+  padding: var(--nf-s5);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius-lg);
+  background: var(--nf-card);
+}
+
+.nf-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--nf-s2);
+  padding: var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-inline-start: 3px solid var(--nf-border-strong);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+}
+
+.nf-action-card[data-tone="warn"] {
+  border-inline-start-color: var(--nf-warn);
+}
+.nf-action-card[data-tone="bad"] {
+  border-inline-start-color: var(--nf-error);
+}
+.nf-action-card[data-tone="neutral"] {
+  border-inline-start-color: var(--nf-forge);
+}
+
+.nf-action-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s3);
+  width: 100%;
+}
+
+.nf-action-card-title {
+  margin: 0;
+  font-size: var(--nf-t-h3);
+  font-weight: 650;
+  color: var(--nf-text);
+}
+
+.nf-action-card-body {
+  margin: 0;
+  font-size: var(--nf-t-sm);
+  line-height: 1.5;
+  color: var(--nf-muted);
+}
+
+/* ── workflow progress ──────────────────────────────────────────────── */
+
+.nf-flow {
+  padding: var(--nf-s4) var(--nf-s5);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius-lg);
+  background: var(--nf-card);
+}
+
+.nf-flow-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--nf-s4);
+  margin-bottom: var(--nf-s4);
+}
+
+.nf-flow-title {
+  margin: 0;
+  font-size: var(--nf-t-xs);
+  font-weight: 700;
+  letter-spacing: var(--nf-track-eyebrow);
+  text-transform: uppercase;
+  color: var(--nf-faint);
+}
+
+.nf-flow-count {
+  margin: 0;
+  font-size: var(--nf-t-sm);
+  color: var(--nf-muted2);
+  font-variant-numeric: tabular-nums;
+}
+
+.nf-flow-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nf-flow-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nf-s2);
+  padding: 0 var(--nf-s2);
+  text-align: center;
+}
+
+/* The connector belongs to the step that follows it, which is why it is drawn
+   from the left edge to this step's marker and the first step has none. */
+.nf-flow-link {
+  position: absolute;
+  top: 13px;
+  inset-inline-start: -50%;
+  width: 100%;
+  height: 2px;
+  background: var(--nf-rule);
+}
+
+.nf-flow-step[data-tone="done"] .nf-flow-link {
+  background: var(--nf-forge);
+}
+
+.nf-flow-marker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--nf-border-strong);
+  background: var(--nf-card);
+  font-size: var(--nf-t-xs);
+  font-weight: 700;
+  color: var(--nf-faint);
+}
+
+.nf-flow-step[data-tone="done"] .nf-flow-marker {
+  border-color: var(--nf-forge);
+  background: var(--nf-forge);
+  color: #ffffff;
+}
+
+.nf-flow-step[data-current="true"] .nf-flow-marker {
+  border-color: var(--nf-forge);
+  color: var(--nf-forge);
+  box-shadow: 0 0 0 4px rgba(0, 64, 49, 0.12);
+}
+
+.nf-flow-step[data-tone="warn"] .nf-flow-marker {
+  border-color: var(--nf-warn);
+  color: var(--nf-warn);
+}
+
+.nf-flow-step[data-tone="bad"] .nf-flow-marker {
+  border-color: var(--nf-error);
+  background: var(--nf-error);
+  color: #ffffff;
+}
+
+.nf-flow-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.nf-flow-label {
+  font-size: var(--nf-t-xs);
+  font-weight: 650;
+  color: var(--nf-muted);
+}
+
+.nf-flow-step[data-current="true"] .nf-flow-label {
+  color: var(--nf-text);
+}
+
+.nf-flow-summary {
+  font-size: var(--nf-t-micro);
+  line-height: 1.35;
+  color: var(--nf-faint);
+}
+
+/* Below this the seven columns are 90px wide and the labels wrap to four
+   lines each. A vertical track keeps every step legible instead. */
+@media (max-width: 860px) {
+  .nf-flow-track {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    gap: var(--nf-s3);
+  }
+
+  .nf-flow-step {
+    flex-direction: row;
+    align-items: flex-start;
+    text-align: start;
+    padding: 0;
+  }
+
+  .nf-flow-link {
+    display: none;
+  }
+
+  .nf-flow-text {
+    align-items: flex-start;
+  }
+}
+
+/* ── verification tiers ─────────────────────────────────────────────── */
+
+.nf-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--nf-s3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nf-tier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s2);
+  padding: var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+}
+
+.nf-tier[data-state="verified"] {
+  border-color: rgba(31, 107, 69, 0.3);
+}
+
+.nf-tier-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s3);
+}
+
+.nf-tier-name {
+  font-size: var(--nf-t-h3);
+  font-weight: 650;
+  color: var(--nf-text);
+}
+
+.nf-tier-detail {
+  margin: 0;
+  font-size: var(--nf-t-sm);
+  line-height: 1.5;
+  color: var(--nf-muted2);
+}
+
+/* ── deadlines ──────────────────────────────────────────────────────── */
+
+.nf-deadline-list,
+.nf-opp-list,
+.nf-req-list,
+.nf-task-list,
+.nf-fact-list,
+.nf-source-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s2);
+}
+
+.nf-deadline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s4);
+  padding: var(--nf-s3) var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-inline-start: 3px solid var(--nf-border-strong);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+}
+
+.nf-deadline[data-tone="bad"] {
+  border-inline-start-color: var(--nf-error);
+}
+.nf-deadline[data-tone="warn"] {
+  border-inline-start-color: var(--nf-warn);
+}
+.nf-deadline[data-tone="neutral"] {
+  border-inline-start-color: var(--nf-forge);
+}
+
+.nf-deadline-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  padding: 0;
+}
+
+.nf-deadline-main:focus-visible {
+  outline: 2px solid var(--nf-forge);
+  outline-offset: 3px;
+}
+
+.nf-deadline-title {
+  font-size: var(--nf-t-body);
+  font-weight: 600;
+  color: var(--nf-text);
+}
+
+.nf-deadline-meta {
+  font-size: var(--nf-t-xs);
+  color: var(--nf-faint);
+}
+
+.nf-deadline-when {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  flex: none;
+}
+
+.nf-deadline-days {
+  font-size: var(--nf-t-sm);
+  font-weight: 650;
+  color: var(--nf-text);
+}
+
+.nf-deadline-date {
+  font-size: var(--nf-t-micro);
+  color: var(--nf-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── opportunities ──────────────────────────────────────────────────── */
+
+.nf-filterbar {
+  display: flex;
+  gap: var(--nf-s3);
+  flex-wrap: wrap;
+  align-items: flex-end;
+  padding: var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card-muted);
+}
+
+.nf-field--grow {
+  flex: 1 1 260px;
+}
+
+.nf-opp {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s4);
+  padding: var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+}
+
+.nf-opp[data-selected="true"] {
+  border-color: var(--nf-forge);
+  box-shadow: inset 3px 0 0 var(--nf-forge);
+}
+
+.nf-opp-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.nf-opp-title {
+  margin: 0;
+  font-size: var(--nf-t-h3);
+  font-weight: 650;
+  color: var(--nf-text);
+}
+
+.nf-opp-meta {
+  margin: 2px 0 var(--nf-s2);
+  font-size: var(--nf-t-sm);
+  color: var(--nf-muted2);
+}
+
+.nf-opp-tags {
+  display: flex;
+  gap: var(--nf-s2);
+  flex-wrap: wrap;
+}
+
+.nf-opp-actions {
+  display: flex;
+  gap: var(--nf-s2);
+  flex: none;
+}
+
+@media (max-width: 720px) {
+  .nf-opp,
+  .nf-deadline,
+  .nf-source {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nf-deadline-when {
+    align-items: flex-start;
+  }
+}
+
+/* ── requirements, tasks, facts, sources ────────────────────────────── */
+
+.nf-req,
+.nf-task,
+.nf-fact,
+.nf-source {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s4);
+  padding: var(--nf-s3) var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+}
+
+.nf-fact {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--nf-s2);
+}
+
+.nf-fact-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s3);
+}
+
+.nf-fact-title {
+  margin: 0;
+  font-size: var(--nf-t-h3);
+  font-weight: 650;
+  color: var(--nf-text);
+}
+
+.nf-fact-body {
+  margin: 0;
+  font-size: var(--nf-t-sm);
+  line-height: 1.55;
+  color: var(--nf-muted);
+  max-width: 82ch;
+}
+
+.nf-req-text {
+  margin: 0;
+  font-size: var(--nf-t-sm);
+  line-height: 1.5;
+  color: var(--nf-text);
+}
+
+.nf-req-meta {
+  margin: var(--nf-s2) 0 0;
+}
+
+.nf-source-name {
+  margin: 0;
+  font-size: var(--nf-t-body);
+  font-weight: 600;
+  color: var(--nf-text);
+}
+
+.nf-source-detail {
+  margin: 2px 0 0;
+  font-size: var(--nf-t-xs);
+  color: var(--nf-faint);
+}
+
+.nf-task-check {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+.nf-task-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--nf-forge);
+  flex: none;
+}
+
+.nf-task-title {
+  font-size: var(--nf-t-sm);
+  color: var(--nf-text);
+}
+
+.nf-task[data-done="true"] .nf-task-title {
+  color: var(--nf-faint);
+  text-decoration: line-through;
+}
+
+.nf-task-due {
+  font-size: var(--nf-t-micro);
+  color: var(--nf-faint);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+/* ── next action ────────────────────────────────────────────────────── */
+
+.nf-next-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--nf-s2);
+  padding: var(--nf-s5);
+  border: 1px solid var(--nf-forge);
+  border-radius: var(--nf-radius-lg);
+  background: rgba(0, 64, 49, 0.045);
+}
+
+.nf-next-action[data-tone="done"] {
+  border-color: var(--nf-border);
+  background: var(--nf-card-muted);
+}
+
+.nf-next-action-label {
+  margin: 0;
+  font-size: var(--nf-t-micro);
+  font-weight: 700;
+  letter-spacing: var(--nf-track-eyebrow);
+  text-transform: uppercase;
+  color: var(--nf-forge);
+}
+
+.nf-next-action-title {
+  margin: 0;
+  font-family: var(--nf-font-display);
+  font-size: var(--nf-t-h2);
+  line-height: 1.25;
+  color: var(--nf-text);
+}
+
+.nf-next-action-body {
+  margin: 0;
+  max-width: 70ch;
+  font-size: var(--nf-t-sm);
+  color: var(--nf-muted);
+}
+
+/* ── review list ────────────────────────────────────────────────────── */
+
+.nf-review {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+  overflow: hidden;
+}
+
+.nf-review-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 1fr);
+  gap: var(--nf-s4);
+  padding: var(--nf-s3) var(--nf-s4);
+  border-bottom: 1px solid var(--nf-rule-fine);
+}
+
+.nf-review-row:last-child {
+  border-bottom: 0;
+}
+
+.nf-review-row dt {
+  font-size: var(--nf-t-sm);
+  font-weight: 600;
+  color: var(--nf-muted2);
+}
+
+.nf-review-row dd {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--nf-s3);
+  margin: 0;
+  font-size: var(--nf-t-sm);
+  color: var(--nf-text);
+}
+
+/* Blank is reported, not left as an empty cell: a customer reading a profile
+   needs to see which half NativeForge will have to call unknown. */
+.nf-review-row dd [data-empty="true"] {
+  color: var(--nf-faint);
+  font-style: italic;
+}
+
+.nf-link-btn {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: var(--nf-t-xs);
+  color: var(--nf-forge);
+  text-decoration: underline;
+  cursor: pointer;
+  flex: none;
+}
+
+@media (max-width: 640px) {
+  .nf-review-row {
+    grid-template-columns: 1fr;
+    gap: var(--nf-s1);
+  }
+}
+
+/* ── sign-in ────────────────────────────────────────────────────────── */
+
+.nf-signin {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--nf-page);
+}
+
+.nf-signin-brand {
+  display: grid;
+  place-items: center;
+  padding: var(--nf-s7);
+  /* Graphite, not the forge green this panel started as.
+     The canonical wordmark is silver "Native" plus green "Forge". That reads
+     on ivory and on a dark neutral; on the forge green itself the second half
+     of the product's own name dropped to roughly 1.2:1 and effectively
+     vanished - the logo camouflaged by the brand colour. Caught by looking at
+     it, not by reading the tokens: both are "dark green" in the palette and
+     the collision is invisible in the names. */
+  background: var(--nf-brand-graphite);
+  color: var(--nf-brand-ivory);
+  /* One restrained lift toward the top, not a gradient across the panel. The
+     lockup is the expressive element; the ground behind it is not. */
+  background-image: radial-gradient(
+    120% 80% at 50% 0%,
+    rgba(246, 178, 74, 0.14),
+    transparent 62%
+  );
+}
+
+.nf-signin-brand-inner {
+  max-width: 34rem;
+  text-align: center;
+}
+
+.nf-signin-tagline {
+  margin: var(--nf-s5) 0 0;
+  font-family: var(--nf-font-display);
+  font-size: var(--nf-t-h2);
+  letter-spacing: 0.04em;
+  color: var(--nf-ember-lift);
+}
+
+.nf-signin-claim {
+  margin: var(--nf-s4) 0 0;
+  font-size: var(--nf-t-body);
+  line-height: 1.6;
+  color: rgba(245, 242, 234, 0.82);
+}
+
+.nf-signin-panel {
+  display: grid;
+  place-items: center;
+  padding: var(--nf-s6) var(--nf-s5);
+}
+
+.nf-signin-card {
+  width: 100%;
+  max-width: 26rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s4);
+}
+
+.nf-signin-mobile-brand {
+  display: none;
+}
+
+.nf-signin-title {
+  margin: 0;
+  font-family: var(--nf-font-display);
+  font-size: var(--nf-t-h1);
+  line-height: 1.2;
+  color: var(--nf-text);
+}
+
+.nf-signin-lead {
+  margin: 0;
+  font-size: var(--nf-t-body);
+  line-height: 1.55;
+  color: var(--nf-muted);
+}
+
+.nf-signin-loading {
+  margin: 0;
+  font-size: var(--nf-t-sm);
+  color: var(--nf-faint);
+}
+
+.nf-signin-providers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s3);
+}
+
+.nf-provider-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+  min-height: 52px;
+  padding: 0 var(--nf-s4);
+  border: 1px solid var(--nf-border-strong);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+  font: inherit;
+  font-size: var(--nf-t-body);
+  font-weight: 600;
+  color: var(--nf-text);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nf-provider-btn:hover:not(:disabled) {
+  border-color: var(--nf-forge);
+  box-shadow: var(--nf-e2);
+}
+
+.nf-provider-btn:focus-visible {
+  outline: 2px solid var(--nf-forge);
+  outline-offset: 2px;
+}
+
+.nf-provider-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.nf-provider-mark {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.nf-provider-note {
+  margin-inline-start: auto;
+  font-size: var(--nf-t-xs);
+  font-weight: 500;
+  color: var(--nf-faint);
+}
+
+.nf-signin-alt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--nf-s1);
+  margin: 0;
+  padding-top: var(--nf-s4);
+  border-top: 1px solid var(--nf-rule);
+}
+
+.nf-signin-alt-note,
+.nf-signin-legal {
+  margin: 0;
+  font-size: var(--nf-t-xs);
+  line-height: 1.5;
+  color: var(--nf-faint);
+}
+
+@media (max-width: 900px) {
+  .nf-signin {
+    grid-template-columns: 1fr;
+  }
+
+  /* The brand panel is decorative, and at phone width it would push the
+     thing the page is for below the fold. */
+  .nf-signin-brand {
+    display: none;
+  }
+
+  .nf-signin-mobile-brand {
+    display: block;
+    margin-bottom: var(--nf-s2);
+  }
+}
+
+/* ── onboarding ─────────────────────────────────────────────────────── */
+
+.nf-onboard {
+  display: grid;
+  place-items: start center;
+  min-height: 100vh;
+  padding: var(--nf-s6) var(--nf-s4) var(--nf-s7);
+  background: var(--nf-page);
+}
+
+.nf-onboard-card {
+  width: 100%;
+  max-width: 42rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s4);
+  padding: var(--nf-s6);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius-lg);
+  background: var(--nf-card);
+  box-shadow: var(--nf-e3);
+}
+
+.nf-onboard-card--done {
+  align-items: flex-start;
+  text-align: start;
+}
+
+.nf-onboard-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s4);
+}
+
+.nf-onboard-step {
+  margin: 0;
+  font-size: var(--nf-t-xs);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--nf-faint);
+}
+
+.nf-onboard-track {
+  display: flex;
+  gap: 6px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nf-onboard-tick {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--nf-radius-pill);
+  background: var(--nf-rule);
+}
+
+.nf-onboard-tick[data-state="done"] {
+  background: var(--nf-forge);
+}
+
+.nf-onboard-tick[data-state="current"] {
+  background: var(--nf-ember);
+}
+
+.nf-onboard-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s4);
+}
+
+.nf-onboard-title {
+  margin: 0;
+  font-family: var(--nf-font-display);
+  font-size: var(--nf-t-h1);
+  line-height: 1.2;
+  color: var(--nf-text);
+}
+
+.nf-onboard-lead {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--nf-t-body);
+  line-height: 1.55;
+  color: var(--nf-muted);
+}
+
+.nf-onboard-note {
+  display: flex;
+  align-items: baseline;
+  gap: var(--nf-s2);
+  flex-wrap: wrap;
+  margin: 0;
+  font-size: var(--nf-t-xs);
+  line-height: 1.5;
+  color: var(--nf-muted2);
+}
+
+.nf-onboard-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--nf-s3);
+  padding-top: var(--nf-s4);
+  border-top: 1px solid var(--nf-rule);
+}
+
+.nf-field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--nf-s3);
+}
+
+.nf-field-help {
+  margin: var(--nf-s1) 0 0;
+  font-size: var(--nf-t-xs);
+  color: var(--nf-faint);
+}
+
+.nf-field-help--warn {
+  color: var(--nf-warn);
+}
+
+.nf-textarea {
+  width: 100%;
+  padding: var(--nf-s3);
+  border: 1px solid var(--nf-border-strong);
+  border-radius: var(--nf-radius-sm);
+  background: var(--nf-card);
+  font: inherit;
+  font-size: var(--nf-t-body);
+  color: var(--nf-text);
+  resize: vertical;
+}
+
+.nf-textarea:focus-visible,
+.nf-input:focus-visible {
+  outline: 2px solid var(--nf-forge);
+  outline-offset: 1px;
+}
+
+/* ── radio and check lists ──────────────────────────────────────────── */
+
+.nf-radio-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s2);
+}
+
+.nf-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nf-s3);
+  padding: var(--nf-s3) var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+  cursor: pointer;
+}
+
+.nf-radio[data-checked="true"] {
+  border-color: var(--nf-forge);
+  background: rgba(0, 64, 49, 0.04);
+}
+
+.nf-radio input,
+.nf-check input {
+  margin-top: 3px;
+  width: 17px;
+  height: 17px;
+  accent-color: var(--nf-forge);
+  flex: none;
+}
+
+.nf-radio:focus-within,
+.nf-check:focus-within {
+  outline: 2px solid var(--nf-forge);
+  outline-offset: 2px;
+}
+
+.nf-radio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nf-radio-label {
+  font-size: var(--nf-t-body);
+  font-weight: 600;
+  color: var(--nf-text);
+}
+
+.nf-radio-help {
+  font-size: var(--nf-t-xs);
+  line-height: 1.45;
+  color: var(--nf-muted2);
+}
+
+.nf-check-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--nf-s2);
+}
+
+.nf-check {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+  padding: var(--nf-s3);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+  font-size: var(--nf-t-sm);
+  cursor: pointer;
+}
+
+.nf-check[data-checked="true"] {
+  border-color: var(--nf-forge);
+  background: rgba(0, 64, 49, 0.04);
+}
+
+/* ── shell additions: groups, drawer, account menu ──────────────────── */
+
+.nf-rail-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s4);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.nf-rail-group-label {
+  margin: 0 0 var(--nf-s1);
+  padding-inline-start: var(--nf-s2);
+  font-size: var(--nf-t-micro);
+  font-weight: 700;
+  letter-spacing: var(--nf-track-eyebrow);
+  text-transform: uppercase;
+  color: rgba(232, 239, 234, 0.45);
+}
+
+.nf-rail-glyph {
+  position: relative;
+}
+
+.nf-nav-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.nf-rail-attention {
+  position: absolute;
+  top: -2px;
+  inset-inline-end: -2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--nf-ember-lift);
+}
+
+.nf-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(15, 28, 21, 0.5);
+}
+
+.nf-rail--drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 41;
+  width: min(288px, 84vw);
+  box-shadow: var(--nf-e3);
+}
+
+.nf-drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s3);
+  padding: var(--nf-s2) var(--nf-s2) var(--nf-s4);
+}
+
+.nf-shell[data-drawer="true"] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.nf-menu-btn {
+  display: grid;
+  place-items: center;
+  width: var(--nf-touch);
+  height: var(--nf-touch);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius-sm);
+  background: var(--nf-card);
+  font-size: 1.1rem;
+  color: var(--nf-text);
+  cursor: pointer;
+  flex: none;
+}
+
+.nf-topbar-brand {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-size: 0;
+}
+
+.nf-account {
+  position: relative;
+}
+
+.nf-account-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s2);
+  min-height: 36px;
+  padding: 0 var(--nf-s2);
+  border: 1px solid transparent;
+  border-radius: var(--nf-radius-pill);
+  background: transparent;
+  font: inherit;
+  font-size: var(--nf-t-sm);
+  color: var(--nf-muted);
+  cursor: pointer;
+}
+
+.nf-account-btn:hover {
+  border-color: var(--nf-border);
+  background: var(--nf-card);
+}
+
+.nf-avatar {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--nf-forge);
+  color: #ffffff;
+  font-size: var(--nf-t-xs);
+  font-weight: 700;
+  flex: none;
+}
+
+.nf-account-name {
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nf-menu {
+  position: absolute;
+  inset-inline-end: 0;
+  top: calc(100% + 6px);
+  z-index: 30;
+  min-width: 15rem;
+  padding: var(--nf-s2);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+  box-shadow: var(--nf-e3);
+}
+
+.nf-menu-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: var(--nf-s2) var(--nf-s3) var(--nf-s3);
+  border-bottom: 1px solid var(--nf-rule-fine);
+}
+
+.nf-menu-name {
+  font-size: var(--nf-t-sm);
+  font-weight: 650;
+  color: var(--nf-text);
+}
+
+.nf-menu-email {
+  font-size: var(--nf-t-xs);
+  color: var(--nf-faint);
+}
+
+.nf-menu-item {
+  display: block;
+  width: 100%;
+  padding: var(--nf-s2) var(--nf-s3);
+  border: 0;
+  border-radius: var(--nf-radius-sm);
+  background: none;
+  font: inherit;
+  font-size: var(--nf-t-sm);
+  text-align: start;
+  color: var(--nf-text);
+  cursor: pointer;
+}
+
+.nf-menu-item:hover {
+  background: var(--nf-card-muted);
+}
+
+/* ── workspace two-column ───────────────────────────────────────────── */
+
+.nf-sidecol {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s4);
+  min-width: 0;
+}
+
+@media (max-width: 1080px) {
+  .nf-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── requirement rows ───────────────────────────────────────────────── */
+
+.nf-req-detail {
+  margin: 2px 0 0;
+  max-width: 78ch;
+  font-size: var(--nf-t-xs);
+  line-height: 1.5;
+  color: var(--nf-muted2);
+}
+
+.nf-req-meta {
+  display: flex;
+  gap: var(--nf-s2);
+  flex-wrap: wrap;
+  margin: var(--nf-s2) 0 0;
+}

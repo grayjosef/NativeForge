@@ -1,8 +1,11 @@
+import type { CustomerState } from "../customerState";
+import { StateView } from "./StateView";
+
 export interface FormPreviewCardProps {
   pursuitId: string;
   pkg: Record<string, unknown> | null;
   busy: boolean;
-  error: string | null;
+  error: CustomerState | null;
   statusChip: string;
   locked: boolean;
   onCreatePreview: () => void;
@@ -109,9 +112,7 @@ export function FormPreviewCard({
         </div>
       ) : null}
       {error ? (
-        <div className="nf-alert nf-alert--error" role="alert">
-          {error}
-        </div>
+        <StateView state={error} inline />
       ) : null}
     </section>
   );

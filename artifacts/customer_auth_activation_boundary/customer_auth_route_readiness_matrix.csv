@@ -1,7 +1,7 @@
 requirement,kind,satisfied,detail
 login_route_available,route,true,/api/auth/login
 logout_route_available,route,true,/api/auth/logout
-callback_route_available,route,true,/api/auth/callback
+callback_route_available,route,true,/api/auth/callback; /api/auth/callback/{provider_key}
 session_route_available,route,true,/api/auth/session
 current_user_route_available,route,true,/api/auth/current-user
 route_auth_enforced,enforcement,true,

@@ -165,6 +165,24 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     production payload store. None is satisfied today.
     """
     record_startup()
+    # Build the OpenAPI document once, here, rather than leaving it to
+    # whichever request happens to arrive first.
+    #
+    # `customer_auth_route_readiness_service` reads the application's own route
+    # table to decide which auth routes exist, and FastAPI builds that document
+    # lazily across ~180 operations - close to four seconds. Paid on the first
+    # request, that is four seconds added to the first page the first customer
+    # of the day loads, and it looks exactly like the product hanging.
+    #
+    # This starts nothing and fetches nothing. It reads the routes registered
+    # above and caches the result FastAPI would have cached anyway.
+    try:
+        app.openapi()
+    except Exception:  # pragma: no cover
+        # A schema that cannot be built is not a reason to refuse to serve.
+        # The route readiness detector already treats an unreadable route
+        # table as evidence of no routes, which is the conservative answer.
+        pass
     try:
         yield
     finally:

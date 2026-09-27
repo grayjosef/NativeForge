@@ -44,3 +44,9 @@ artifacts/raw_payload_store/
 # `git add -A` away from being committed. Files already tracked are
 # unaffected - historical evidence is kept, new litter is not collected.
 artifacts/*_smoke/
+
+# Local run state: pid files and the development session cookie that
+# scripts/dev_demo_session.py writes so browser QA can reach the product
+# without an OAuth round trip. A session value belongs in no repository.
+.run/
+logs/

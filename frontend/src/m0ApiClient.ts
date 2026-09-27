@@ -221,6 +221,17 @@ export async function getNofoRequirements(
     `/grant-sparks/${sparkId}/nofo/requirements`,
   );
   const r = await fetch(`${baseUrl}${path}`, { headers: orgHeaderOnly(orgId) });
+  // 404 means no extraction run exists for this opportunity yet, which is the
+  // ordinary state of an opportunity nobody has read. Raising for it put an
+  // error on the workspace every time a customer opened a new opportunity.
+  //
+  // Returning no rows is safe precisely because the caller does not infer
+  // closure from the row count: `getNofoLatest` reports whether a read
+  // happened at all, and the Documents page keeps "read and found nothing"
+  // distinct from "never read" on that basis rather than on this one.
+  if (r.status === 404) {
+    return { requirements: [] };
+  }
   if (!r.ok) {
     throw new Error(await readHttpError(r));
   }
@@ -283,6 +294,28 @@ export async function openPursuit(
     headers: jsonHeaders(orgId),
     body: JSON.stringify({ notes: notes ?? "M0 workspace pursuit." }),
   });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
+/**
+ * Every pursuit this organization has open.
+ *
+ * Added because the workspace could only see a pursuit it had created during
+ * the current page's lifetime. Reload, and the product forgot a pursuit that
+ * plainly existed - then refused to open another, because the API correctly
+ * returns 409 for a second pursuit against the same opportunity. A customer
+ * saw "Something went wrong" on work NativeForge had already done for them.
+ */
+export async function listPursuits(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+): Promise<Record<string, unknown>[]> {
+  const path = buildM0Path(plane, orgId, "/pursuits");
+  const r = await fetch(`${baseUrl}${path}`, { headers: orgHeaderOnly(orgId) });
   if (!r.ok) {
     throw new Error(await readHttpError(r));
   }
@@ -433,6 +466,31 @@ export async function getOrgDataSnapshot(
   const r = await fetch(`${baseUrl}${url.pathname}${url.search}`, {
     headers: orgHeaderOnly(orgId),
   });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
+/**
+ * The most recent extraction run for an opportunity, or null when none exists.
+ *
+ * A 404 here means "nothing has read this notice yet", which is an ordinary
+ * state and not a failure. Returning null for it keeps the caller from having
+ * to distinguish an expected absence from a genuine error by inspecting the
+ * message text - the mistake that put raw payloads on the workspace.
+ */
+export async function getNofoLatest(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  sparkId: string,
+): Promise<Record<string, unknown> | null> {
+  const path = buildM0Path(plane, orgId, `/grant-sparks/${sparkId}/nofo/latest`);
+  const r = await fetch(`${baseUrl}${path}`, { headers: orgHeaderOnly(orgId) });
+  if (r.status === 404) {
+    return null;
+  }
   if (!r.ok) {
     throw new Error(await readHttpError(r));
   }

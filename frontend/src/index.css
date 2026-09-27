@@ -3467,9 +3467,19 @@ code,
   --nf-rail-w: 76px;
 }
 
+/* The rail's width changes instantly; only what is inside it fades.
+   `grid-template-columns` was transitioned here, which relayouts the entire
+   page on every frame of the animation - and because it is driven by animation
+   frames, a throttled tab freezes it partway. Caught in the browser: the rail
+   reported itself collapsed, dropped its labels, and stayed 248px wide, so a
+   1024px viewport spent a quarter of its width on eight icons. Opacity and
+   transform are composited, cost no layout, and a frame budget that cannot
+   afford them has larger problems. */
 @media (prefers-reduced-motion: no-preference) {
-  .nf-shell {
-    transition: grid-template-columns 200ms cubic-bezier(0.2, 0, 0, 1);
+  .nf-rail-label,
+  .nf-rail-group-label,
+  .nf-rail-wordmark {
+    transition: opacity 140ms ease-out;
   }
 }
 

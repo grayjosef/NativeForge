@@ -1,8 +1,12 @@
+import { humanRequirementType } from "../lib/requirementTypes";
+import type { CustomerState } from "../customerState";
+import { StateView } from "./StateView";
+
 export interface NofoRequirementsCardProps {
   sparkSelected: boolean;
   requirements: Record<string, unknown>[];
   busy: boolean;
-  error: string | null;
+  error: CustomerState | null;
   statusChip: string;
   locked: boolean;
   onExtract: () => void;
@@ -73,7 +77,7 @@ export function NofoRequirementsCard({
                 </span>
                 <span className="nf-req-meta">
                   <span className="nf-chip-sm">
-                    {str(r.requirement_type) || "—"}
+                    {humanRequirementType(str(r.requirement_type))}
                   </span>
                   {r.required ? (
                     <span className="nf-chip-sm nf-chip-sm--accent">
@@ -99,9 +103,7 @@ export function NofoRequirementsCard({
         </div>
       ) : null}
       {error ? (
-        <div className="nf-alert nf-alert--error" role="alert">
-          {error}
-        </div>
+        <StateView state={error} inline />
       ) : null}
     </section>
   );

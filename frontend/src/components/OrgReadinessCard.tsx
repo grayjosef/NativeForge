@@ -1,3 +1,4 @@
+import { humanEntity } from "../lib/entityTypes";
 import type { CustomerState } from "../customerState";
 import { StateView } from "./StateView";
 
@@ -70,7 +71,7 @@ export function OrgReadinessCard({
               </div>
               <div>
                 <dt>Entity type</dt>
-                <dd>{profileFields!.entityType ?? "—"}</dd>
+                <dd>{humanEntity(profileFields!.entityType ?? "") || "—"}</dd>
               </div>
               <div>
                 <dt>Location</dt>
