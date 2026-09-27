@@ -1,9 +1,16 @@
+export type BrandMode = "full" | "compact" | "emblem";
+
 export interface BrandLockupProps {
-  /** Rendered height of the lockup in pixels. Width follows the artwork. */
+  /** Rendered height of the artwork in pixels. Width follows the artwork. */
   size?: number;
-  /** Show the emblem alone, without the wordmark (tight headers, avatars). */
+  /**
+   * Which lockup to draw. Omit it and the component chooses from `size`,
+   * which is what keeps a caller from asking for a wordmark too small to read.
+   */
+  mode?: BrandMode;
+  /** Deprecated alias for `mode="emblem"`. */
   markOnly?: boolean;
-  /** Include the "Find. Pursue. Govern." tagline. Light surfaces only. */
+  /** Deprecated alias for `mode="full"`. */
   withTagline?: boolean;
   /**
    * Omit the visually hidden name because the caller already provides one.
@@ -20,56 +27,106 @@ export interface BrandLockupProps {
 /**
  * The NativeForge lockup, drawn from the canonical brand kit.
  *
+ * ## Three modes, because one piece of artwork cannot do three jobs
+ *
+ * ```text
+ * full     720x175 emblem + wordmark + tagline   sign-in, hero
+ * compact  720x175 emblem + wordmark             expanded sidebar, headers
+ * emblem   256x219 mark alone                    collapsed rail, favicon, tight
+ * ```
+ *
+ * ## Why a size floor, and not just smaller CSS
+ *
+ * The wordmark is bevelled, outlined artwork, not text. At `height: 32` the
+ * 720x175 lockup renders about 132px wide - a 5.5x downscale - and the anvil
+ * turns to mush while the wordmark becomes an illegible smear. That is what
+ * the onboarding card was showing.
+ *
+ * Shrinking artwork does not make a smaller logo; it makes a worse one. So
+ * below `MIN_WORDMARK_HEIGHT` this component stops drawing the wordmark and
+ * draws the emblem instead, which is a MARK and stays legible small because
+ * it was designed to. A caller asking for a tiny lockup gets the right logo
+ * for that size rather than a crushed version of the wrong one.
+ *
+ * An explicit `mode` is still honoured. The floor governs the automatic
+ * choice, which is the one that silently goes wrong.
+ *
  * ## Why this is artwork rather than styled text
  *
  * An earlier version set the wordmark as live text: two coloured spans, one
- * steel and one forge green. That was the right call while the identity was a
- * flat mark, and it bought crisp scaling and theme response for free.
+ * steel and one forge green. The canonical kit's wordmark is not reproducible
+ * that way - its bevelling, metallic gradient and outline are the identity,
+ * not decoration applied to it.
  *
- * The canonical kit's wordmark is not reproducible that way. Its bevelling,
- * metallic gradient and outline are the identity, not decoration applied to
- * it, and approximating them with a web font would ship something that is
- * recognisably not the logo. So the artwork is the artwork.
- *
- * ## What was kept from the text version
- *
- * The accessible name. Colouring two halves of a word needs two elements, and
- * two elements make assistive technology announce "Native Forge" with a
- * boundary the product does not have. The fix then was a visually hidden span
- * carrying the real name; the same span survives here, because an `alt` on a
- * decorative-looking mark is easy to lose in a later refactor and the name is
- * the part that must not drift.
+ * What was kept from the text version is the accessible name. An `alt` on a
+ * decorative-looking mark is easy to lose in a refactor, and the name is the
+ * part that must not drift.
  *
  * ## One asset for both themes
  *
  * The wordmark is silver and green over dark outlines, which holds on ivory
- * and on the deep forge ground alike, so there is no dark-mode variant to
- * keep in sync. The tagline is the exception: it is set in the kit's navy and
- * goes muddy on a dark field, so it is opt in and belongs on light surfaces
- * like sign-in, not in application chrome.
+ * and on the deep forge ground alike. The tagline is the exception: it is set
+ * in the kit's navy and goes muddy on a dark field, so `full` belongs on light
+ * surfaces like sign-in, not in application chrome.
  */
+
+/** Below this the wordmark is no longer legible, so it is not drawn. */
+export const MIN_WORDMARK_HEIGHT = 40;
+
+/** Below this even the tagline line in `full` stops being readable. */
+export const MIN_TAGLINE_HEIGHT = 72;
+
+const ART: Record<BrandMode, { src: string; w: number; h: number }> = {
+  // Intrinsic dimensions are declared so the browser reserves the right box
+  // before the image loads, and so a height-only rule can never stretch it.
+  full: { src: "/brand/nf-lockup.png", w: 960, h: 287 },
+  compact: { src: "/brand/nf-lockup-notag.png", w: 720, h: 175 },
+  emblem: { src: "/brand/nf-emblem.png", w: 256, h: 219 },
+};
+
+export function resolveBrandMode(
+  size: number,
+  requested?: BrandMode,
+): BrandMode {
+  if (requested) return requested;
+  if (size >= MIN_TAGLINE_HEIGHT) return "full";
+  if (size >= MIN_WORDMARK_HEIGHT) return "compact";
+  return "emblem";
+}
+
 export function BrandLockup({
-  size = 36,
+  size = 44,
+  mode,
   markOnly = false,
   withTagline = false,
   decorative = false,
   className = "",
 }: BrandLockupProps) {
-  const src = markOnly
-    ? "/brand/nf-emblem.png"
-    : withTagline
-      ? "/brand/nf-lockup.png"
-      : "/brand/nf-lockup-notag.png";
+  const requested: BrandMode | undefined = mode
+    ? mode
+    : markOnly
+      ? "emblem"
+      : withTagline
+        ? "full"
+        : undefined;
+
+  const resolved = resolveBrandMode(size, requested);
+  const art = ART[resolved];
 
   return (
     <span
       className={`nf-lockup ${className}`.trim()}
-      data-mark-only={markOnly}
-      data-tagline={withTagline}
+      data-brand-mode={resolved}
+      data-mark-only={resolved === "emblem"}
+      data-tagline={resolved === "full"}
     >
       <img
         className="nf-lockup-art"
-        src={src}
+        src={art.src}
+        width={art.w}
+        height={art.h}
+        // Height drives it and width stays `auto` in CSS, so the intrinsic
+        // ratio is preserved and the artwork can never be stretched.
         style={{ height: size }}
         alt=""
         aria-hidden

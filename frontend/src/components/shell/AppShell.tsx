@@ -267,7 +267,11 @@ export function AppShell({
               canonical tagline beneath the wordmark: restrained, letter-
               spaced, and clearly secondary to it. */}
           <h1 className="nf-rail-brand">
-            <BrandLockup size={collapsed ? 34 : 44} markOnly decorative={!collapsed} />
+            <BrandLockup
+              size={collapsed ? 34 : 44}
+              mode="emblem"
+              decorative={!collapsed}
+            />
             {collapsed ? null : (
               <span className="nf-rail-brand-text">
                 <span className="nf-rail-wordmark">NativeForge</span>
@@ -319,7 +323,7 @@ export function AppShell({
             onKeyDown={trapTab}
           >
             <div className="nf-drawer-head">
-              <BrandLockup size={30} markOnly />
+              <BrandLockup size={30} mode="emblem" />
               <button
                 type="button"
                 className="nf-btn nf-btn-ghost nf-btn-sm"
@@ -351,7 +355,7 @@ export function AppShell({
                     the drawer layout would otherwise have no top-level
                     heading at all. */}
                 <h1 className="nf-topbar-brand">
-                  <BrandLockup size={26} markOnly decorative />
+                  <BrandLockup size={26} mode="emblem" decorative />
                   <span className="nf-visually-hidden">NativeForge</span>
                 </h1>
               </>

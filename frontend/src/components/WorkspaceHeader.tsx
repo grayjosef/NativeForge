@@ -55,7 +55,7 @@ export function WorkspaceHeader({
               wordmark is bevelled and outlined, and below about 48px those
               details collapse into mush rather than reading as the logo. */}
           <h1 className="nf-wordmark">
-            <BrandLockup size={52} />
+            <BrandLockup size={52} mode="compact" />
           </h1>
           <p className="nf-header-promise">
             Review-ready pursuits — without auto-submitting applications.
