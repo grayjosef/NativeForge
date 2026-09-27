@@ -11,6 +11,7 @@ from nativeforge.api.activation_routes import (
     demo_activation_router,
     real_activation_router,
 )
+from nativeforge.api.apply_path_routes import demo_apply_router, real_apply_router
 from nativeforge.api.audit_replay_routes import (
     router as audit_replay_router,
 )
@@ -315,6 +316,11 @@ def create_app() -> FastAPI:
     # Gate 150: the customer beta reassessment. GET only - it compares two
     # decisions and reports the difference, which today is none.
     app.include_router(customer_beta_reassessment_router)
+    # Who to contact and where to submit. Two reads and one extract per
+    # plane; the extract reads the notice text already stored on the
+    # opportunity and fetches nothing.
+    app.include_router(demo_apply_router)
+    app.include_router(real_apply_router)
     app.include_router(auth_router)
     install_auth_security_scheme(app)
     _mount_frontend(app)

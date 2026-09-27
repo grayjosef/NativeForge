@@ -12,6 +12,8 @@ import {
   getFormPackage,
   getGrantSpark,
   getHealth,
+  extractApplyPath,
+  getApplyPath,
   getNofoLatest,
   getNofoRequirements,
   getOrgDataSnapshot,
@@ -150,6 +152,8 @@ export default function App() {
 
   const [surface, setSurfaceState] = useState<AppSurface>(() => readSurface());
   const [nofoLatest, setNofoLatest] = useState<Record<string, unknown> | null>(null);
+  const [applyPath, setApplyPath] = useState<Record<string, unknown> | null>(null);
+  const [applyBusy, setApplyBusy] = useState(false);
   const [session, setSession] = useState<{
     authenticated: boolean;
     organizationId: string | null;
@@ -465,6 +469,7 @@ export default function App() {
     setScore(null);
     setScoreErr(null);
     setNofoLatest(null);
+    setApplyPath(null);
   }, [sparkId]);
 
   // Everything already known about the selected opportunity, on arrival.
@@ -483,18 +488,20 @@ export default function App() {
     if (offlineDemoSurface || !sparkSelected) return;
     let cancelled = false;
     void (async () => {
-      const [reqs, latest, latestScore, openPursuits] = await Promise.all([
+      const [reqs, latest, latestScore, openPursuits, apply] = await Promise.all([
         getNofoRequirements(base, plane, o, sparkId.trim()).catch(() => null),
         getNofoLatest(base, plane, o, sparkId.trim()).catch(() => null),
         // A 404 here is "not scored yet", which is the ordinary state of a new
         // opportunity rather than a failure worth reporting on arrival.
         getScoreLatest(base, plane, o, sparkId.trim()).catch(() => null),
         listPursuits(base, plane, o).catch(() => null),
+        getApplyPath(base, plane, o, sparkId.trim()).catch(() => null),
       ]);
       if (cancelled) return;
       if (reqs) setRequirements(reqs.requirements ?? []);
       setNofoLatest(latest);
       if (latestScore) setScore(latestScore);
+      setApplyPath(apply);
 
       // Recover the pursuit that already exists for this opportunity.
       //
@@ -1015,6 +1022,26 @@ export default function App() {
     }
   }, [base, o, plane, sparkId, sparkSelected]);
 
+  /**
+   * Read the stored notice for contacts and a submission route.
+   *
+   * Separate from requirement extraction rather than folded into it: a
+   * customer often wants to know who to ask before deciding to work the
+   * checklist, and the two reads answer different questions.
+   */
+  const onExtractApplyPath = useCallback(async () => {
+    if (!sparkSelected) return;
+    setApplyBusy(true);
+    try {
+      await extractApplyPath(base, plane, o, sparkId.trim());
+      setApplyPath(await getApplyPath(base, plane, o, sparkId.trim()));
+    } catch (e) {
+      setNofoErr(interpretError(e));
+    } finally {
+      setApplyBusy(false);
+    }
+  }, [base, o, plane, sparkId, sparkSelected]);
+
   const onSignOut = useCallback(async () => {
     await signOut(base);
     setSession({ authenticated: false, organizationId: null });
@@ -1268,6 +1295,9 @@ export default function App() {
           onExtract={() => void onExtractAndLoad()}
           onReload={() => void onLoadRequirements()}
           onGoToOpportunities={() => setSurface("opportunities")}
+          applyPath={applyPath as never}
+          applyBusy={applyBusy}
+          onExtractApplyPath={() => void onExtractApplyPath()}
         />
       ) : surface === "pursuits" ? (
         <PursuitsPage

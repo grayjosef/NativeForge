@@ -1512,3 +1512,147 @@
   flex-wrap: wrap;
   margin: var(--nf-s2) 0 0;
 }
+
+/* ── how to apply, and who to ask ───────────────────────────────────── */
+
+.nf-apply {
+  margin: 0;
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+  overflow: hidden;
+}
+
+.nf-apply-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 190px) minmax(0, 1fr);
+  gap: var(--nf-s4);
+  align-items: center;
+  padding: var(--nf-s4);
+  border-bottom: 1px solid var(--nf-rule-fine);
+}
+
+.nf-apply-row:last-child {
+  border-bottom: 0;
+}
+
+.nf-apply-row dt {
+  font-size: var(--nf-t-xs);
+  font-weight: 700;
+  letter-spacing: var(--nf-track-eyebrow);
+  text-transform: uppercase;
+  color: var(--nf-faint);
+}
+
+.nf-apply-row dd {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+/* The two facts a customer opens this panel for. Sized so they are the first
+   thing read, because hunting for them in a notice is the problem it solves. */
+.nf-apply-strong {
+  font-family: var(--nf-font-display);
+  font-size: var(--nf-t-h3);
+  color: var(--nf-text);
+}
+
+.nf-apply-source {
+  font-size: var(--nf-t-xs);
+  color: var(--nf-muted2);
+}
+
+.nf-apply-gaps {
+  list-style: none;
+  margin: var(--nf-s3) 0 0;
+  padding: var(--nf-s3) var(--nf-s4);
+  border: 1px solid var(--nf-accent-line);
+  border-radius: var(--nf-radius);
+  background: var(--nf-warn-bg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s1);
+  font-size: var(--nf-t-sm);
+  color: var(--nf-muted);
+}
+
+.nf-contact-group + .nf-contact-group {
+  margin-top: var(--nf-s5);
+}
+
+.nf-contact-role {
+  margin: 0 0 var(--nf-s2);
+  font-size: var(--nf-t-xs);
+  font-weight: 700;
+  letter-spacing: var(--nf-track-eyebrow);
+  text-transform: uppercase;
+  color: var(--nf-muted2);
+}
+
+.nf-contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s2);
+}
+
+.nf-contact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s4);
+  padding: var(--nf-s3) var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+}
+
+.nf-contact-name {
+  margin: 0;
+  font-size: var(--nf-t-body);
+  font-weight: 650;
+  color: var(--nf-text);
+}
+
+.nf-contact-title {
+  margin: 1px 0 0;
+  font-size: var(--nf-t-xs);
+  color: var(--nf-muted2);
+}
+
+.nf-contact-source {
+  margin: 2px 0 0;
+  font-size: var(--nf-t-micro);
+  color: var(--nf-faint);
+}
+
+.nf-contact-reach {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+  flex-wrap: wrap;
+  flex: none;
+}
+
+.nf-contact-link {
+  font-size: var(--nf-t-sm);
+  color: var(--nf-forge);
+  text-decoration: underline;
+}
+
+@media (max-width: 720px) {
+  .nf-contact {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .nf-apply-row {
+    grid-template-columns: 1fr;
+    gap: var(--nf-s1);
+  }
+}

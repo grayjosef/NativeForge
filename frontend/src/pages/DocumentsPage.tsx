@@ -1,6 +1,7 @@
 import { EmptyState, StateView } from "../components/StateView";
 import type { CustomerState } from "../customerState";
 import { humanRequirementType } from "../lib/requirementTypes";
+import { ApplyPathPanel, type ApplyPath } from "../components/ApplyPathPanel";
 import {
   MetricCard,
   MetricRow,
@@ -55,6 +56,10 @@ export interface DocumentsPageProps {
   onExtract: () => void;
   onReload: () => void;
   onGoToOpportunities: () => void;
+  /** Who to contact and where to submit, once the notice has been read. */
+  applyPath: ApplyPath | null;
+  applyBusy: boolean;
+  onExtractApplyPath: () => void;
 }
 
 export function DocumentsPage(props: DocumentsPageProps) {
@@ -68,6 +73,9 @@ export function DocumentsPage(props: DocumentsPageProps) {
     onExtract,
     onReload,
     onGoToOpportunities,
+    applyPath,
+    applyBusy,
+    onExtractApplyPath,
   } = props;
 
   const run = (extraction?.extraction_run ?? null) as Record<string, unknown> | null;
@@ -174,6 +182,13 @@ export function DocumentsPage(props: DocumentsPageProps) {
               />
             </MetricRow>
           </Section>
+
+          <ApplyPathPanel
+            path={applyPath}
+            busy={applyBusy}
+            onExtract={onExtractApplyPath}
+            canExtract={sparkSelected}
+          />
 
           <Section
             title="Requirements"

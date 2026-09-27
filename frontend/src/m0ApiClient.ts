@@ -496,3 +496,43 @@ export async function getNofoLatest(
   }
   return parseJson(r);
 }
+
+/** Who to contact and where to submit, as NativeForge currently holds them. */
+export async function getApplyPath(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  sparkId: string,
+): Promise<Record<string, unknown> | null> {
+  const path = buildM0Path(plane, orgId, `/grant-sparks/${sparkId}/apply-path`);
+  const r = await fetch(`${baseUrl}${path}`, { headers: orgHeaderOnly(orgId) });
+  if (r.status === 404) {
+    return null;
+  }
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
+/** Re-read the stored notice for contacts and a submission route. */
+export async function extractApplyPath(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  sparkId: string,
+): Promise<Record<string, unknown>> {
+  const path = buildM0Path(
+    plane,
+    orgId,
+    `/grant-sparks/${sparkId}/apply-path/extract`,
+  );
+  const r = await fetch(`${baseUrl}${path}`, {
+    method: 'POST',
+    headers: orgHeaderOnly(orgId),
+  });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
