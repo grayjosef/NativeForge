@@ -164,29 +164,51 @@ export default function App() {
     }
   }, []);
 
-  /* SC and NM/WA are offline static demo bridges: they render entirely from
-     bundled JSON and never need the workspace API. Firing these requests from
-     the public demo means the viewer's browser probes http://127.0.0.1:8000 on
-     THEIR OWN machine — which can never succeed, is mixed content on an https
-     page, and puts eight red errors in front of a buyer who opens DevTools. */
+  /**
+   * When an organization-scoped request may be issued at all.
+   *
+   * SC, NM/WA and the beta cockpit render entirely from bundled JSON, so
+   * firing one makes a viewer's own browser probe 127.0.0.1:8000 - which can
+   * never succeed, is mixed content on an https page, and puts eight red
+   * errors in front of a buyer who opens DevTools.
+   *
+   * Sign-in has no organization yet, and neither does an unauthenticated
+   * visitor anywhere else: every data route resolves its organization from a
+   * membership row and refuses without one. Firing them anyway produced a
+   * workspace carrying three red "Problem" cards - profile, opportunities and
+   * trust - which is one missing cookie reported as three product failures.
+   *
+   * Unknown counts as not-yet. `session` is null until the check answers, and
+   * gating on "definitely unauthenticated" let everything fire on the first
+   * render, before the answer arrived: 51 refusals in the console of the
+   * first page a buyer opens. We do not know whether we may call, so we do
+   * not call.
+   */
+  const mayLoadOrgData = session?.authenticated === true;
   const offlineDemoSurface =
     surface === "sc_customer_demo" ||
     surface === "nm_wa_operator_demo" ||
     surface === "beta_onboarding_cockpit" ||
-    // Sign-in has no organization yet, so every org-scoped request it fired
-    // would be refused - eight red entries in the network tab of the first
-    // page a buyer ever opens.
-    surface === "sign_in";
+    surface === "sign_in" ||
+    !mayLoadOrgData;
 
   const setSurface = useCallback((s: AppSurface) => {
     setSurfaceState(s);
     writeSurface(s);
     // A destination change that leaves the page scrolled halfway down the
     // previous one reads as the navigation not having worked.
+    //
+    // Only when there is something to scroll. jsdom defines `scrollTo` and
+    // has it report "Not implemented" to stderr rather than throwing, so
+    // neither a try/catch nor an existence check stopped every test run
+    // printing a stack trace for something working exactly as intended. A
+    // page already at the top does not need scrolling anyway.
     try {
-      window.scrollTo({ top: 0 });
+      if (window.scrollY > 0) {
+        window.scrollTo({ top: 0 });
+      }
     } catch {
-      /* ignore */
+      /* a page that cannot be scrolled is still on the right destination */
     }
   }, []);
 
@@ -308,6 +330,33 @@ export default function App() {
       cancelled = true;
     };
   }, [base]);
+
+  /**
+   * First-run routing.
+   *
+   * An unauthenticated visitor cannot see anything: every data route resolves
+   * its organization from a membership row and refuses without a session. So
+   * they are sent to sign in rather than shown an empty workspace that
+   * reports three separate failures for one missing cookie.
+   *
+   * The operator and offline demo surfaces are exempt because they genuinely
+   * work without a session - they render from bundled data - and onboarding
+   * is exempt because it is where a signed-in visitor without a profile is
+   * sent next.
+   */
+  useEffect(() => {
+    if (session === null || session.authenticated) return;
+    if (
+      surface === "sign_in" ||
+      surface === "onboarding" ||
+      surface === "sc_customer_demo" ||
+      surface === "nm_wa_operator_demo" ||
+      surface === "beta_onboarding_cockpit"
+    ) {
+      return;
+    }
+    setSurface("sign_in");
+  }, [session, surface, setSurface]);
 
   const loadProfile = useCallback(async () => {
     if (!orgOk) {
@@ -1005,10 +1054,10 @@ export default function App() {
 
   if (surface === "sign_in") {
     return (
-      <SignInPage
-        notice={authNotice}
-        onContinueToDemo={() => setSurface("workspace")}
-      />
+      // No "continue to the demo workspace" link. It went to a workspace that
+      // cannot load anything without a session and would have bounced the
+      // visitor straight back here - an escape hatch that escapes nowhere.
+      <SignInPage notice={authNotice} />
     );
   }
 
