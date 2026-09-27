@@ -1,57 +1,60 @@
 import { useEffect, useState } from "react";
 
-import { BrandLockup } from "../components/BrandLockup";
-import { StateView } from "../components/StateView";
 import { ProviderMark } from "../components/ProviderMark";
 import { getAuthProviders, type AuthProvider } from "../authApiClient";
-import { interpretError, type CustomerState } from "../customerState";
+import { diagnosticsVisible, interpretError, type CustomerState } from "../customerState";
 
 /**
- * Sign in.
+ * The front door.
  *
- * ## The buttons are drawn from what the server says it can do
+ * ## What this replaced
  *
- * A hard-coded pair of provider buttons is a promise the deployment may not
- * be able to keep: pressing one when its credentials are absent sends the
- * customer to an error page at Google or Microsoft, which reads as
- * NativeForge being broken rather than as NativeForge not being finished.
+ * A 34px lockup floating in the middle of a half-screen void, a serif
+ * headline borrowed from nothing else in the product, two provider buttons
+ * each carrying the words "Not yet available", and an amber ACTION NEEDED
+ * card announcing that sign-in did not work. The first screen a buyer sees
+ * led with the product's own incompleteness, and the half of the page given
+ * to the brand did the least work on it.
  *
- * `/api/auth/providers` reports which are configured, in booleans. A provider
- * that is not configured still appears - hiding it would leave a customer
- * whose organization uses Microsoft wondering whether the product supports
- * them at all - but it is disabled and says why.
+ * ## The brand panel has a composition now
  *
- * ## Nothing on this page knows a secret
+ * The lockup is rendered at a size that occupies the panel it was given -
+ * around 440px against a 720px-wide asset, so it downscales and stays crisp -
+ * with the canonical tagline beneath it and one line saying what the product
+ * is.
  *
- * No client id, no issuer, no authorization URL. Pressing a provider button
- * is a plain navigation to a route on this same origin, and the server builds
- * the provider URL with the state and PKCE challenge it just issued. A
- * sign-in page that constructs its own authorization URL is a sign-in page
- * that has the client id in the bundle.
+ * The tagline is live text rather than the artwork that has it baked in. The
+ * kit's tagline is set in navy, which is close to unreadable on a dark
+ * ground; setting it as text puts it in the ember accent, in the canonical
+ * uppercase, and ties it to the mark instead of leaving it looking like a
+ * caption somebody added.
+ *
+ * ## Unconfigured is stated once, quietly
+ *
+ * A provider without credentials cannot sign anybody in, and dressing a dead
+ * button as a live one would be a lie the customer discovers by clicking it.
+ * So it is visibly inactive - but the reason is one muted line under the
+ * group, not an operational error card in the hero. Provider configuration is
+ * an administrator's problem, and the diagnostic detail appears only where
+ * diagnostics belong.
  */
 
-const AUTH_MESSAGES: Record<string, CustomerState> = {
+const TAGLINE = "Find. Pursue. Govern.";
+
+/** `?auth=` codes the callback leaves behind when it sends a browser back. */
+const NOTICES: Record<string, { tone: "info" | "warn"; text: string }> = {
   sign_in_incomplete: {
-    tone: "blocked",
-    title: "Sign-in did not complete",
-    body: "Your identity provider did not return everything NativeForge needs to start a session. Signing in again usually resolves it.",
-    actionLabel: "Try again",
+    tone: "warn",
+    text: "That sign-in did not finish. Trying again usually resolves it.",
   },
-  signed_out: {
-    tone: "success",
-    title: "You are signed out",
-    body: "Your session has ended on this device.",
-  },
+  signed_out: { tone: "info", text: "You are signed out on this device." },
 };
 
 export interface SignInPageProps {
-  /** A code from `?auth=`, set by the callback when it sends a browser back. */
   notice?: string | null;
-  /** Lets a viewer reach the demo without credentials. */
-  onContinueToDemo?: () => void;
 }
 
-export function SignInPage({ notice, onContinueToDemo }: SignInPageProps) {
+export function SignInPage({ notice }: SignInPageProps) {
   const [providers, setProviders] = useState<AuthProvider[] | null>(null);
   const [error, setError] = useState<CustomerState | null>(null);
 
@@ -73,103 +76,118 @@ export function SignInPage({ notice, onContinueToDemo }: SignInPageProps) {
     };
   }, []);
 
-  const configured = (providers ?? []).filter((p) => p.configured);
-  const unconfigured = (providers ?? []).filter((p) => !p.configured);
-  const noticeState = notice ? AUTH_MESSAGES[notice] : undefined;
+  const ready = providers !== null;
+  const anyConfigured = (providers ?? []).some((p) => p.configured);
+  const noticeState = notice ? NOTICES[notice] : undefined;
 
   return (
-    <div className="nf-signin">
-      {/* The brand surface. Restrained: the lockup is the expressive thing on
-          the page and it does not need help from a gradient. */}
-      <aside className="nf-signin-brand" aria-hidden="true">
-        <div className="nf-signin-brand-inner">
-          <BrandLockup size={68} decorative />
-          <p className="nf-signin-tagline">Find. Pursue. Govern.</p>
-          <p className="nf-signin-claim">
-            Grant intelligence, pursuit and award compliance, built for Tribal governments and
+    <div className="nf-login">
+      {/* ------------------------------------------------- brand panel */}
+      <aside className="nf-login-brand">
+        <div className="nf-login-brand-inner">
+          {/* aria-hidden: the sign-in heading names the product, and a second
+              accessible "NativeForge" here would make a screen reader read the
+              name twice before reaching anything actionable. */}
+          <img
+            className="nf-login-lockup"
+            src="/brand/nf-lockup-notag.png"
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+          />
+          <p className="nf-login-tagline">{TAGLINE}</p>
+          <p className="nf-login-claim">
+            Funding intelligence and pursuit operations for Tribal governments and
             Native-serving organizations.
           </p>
         </div>
       </aside>
 
-      <main className="nf-signin-panel">
-        <div className="nf-signin-card">
-          <div className="nf-signin-mobile-brand">
-            <BrandLockup size={40} />
-          </div>
+      {/* -------------------------------------------------- auth panel */}
+      <main className="nf-login-panel">
+        <div className="nf-login-card">
+          {/* Shown only where the brand panel is not: below the breakpoint it
+              collapses away, and the page would otherwise open on a bare
+              heading with no mark at all. */}
+          <img
+            className="nf-login-compact-mark"
+            src="/brand/nf-lockup-notag.png"
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+          />
 
-          {/* The document h1. The brand panel beside it is aria-hidden - it is
-              decoration - so without this the sign-in page would have no
-              top-level heading at all. */}
-          <h1 className="nf-signin-title">Sign in to NativeForge</h1>
-          <p className="nf-signin-lead">
-            Use the account your organization already works from. NativeForge never asks for a
-            separate password.
+          <h1 className="nf-login-title">Welcome to NativeForge</h1>
+          <p className="nf-login-lead">
+            Sign in with your organization account to continue.
           </p>
 
-          {noticeState ? <StateView state={noticeState} /> : null}
-          {error ? <StateView state={error} /> : null}
-
-          {providers === null ? (
-            <p className="nf-signin-loading" role="status">
-              Checking available sign-in methods…
-            </p>
-          ) : (
-            <>
-              <div className="nf-signin-providers">
-                {configured.map((p) => (
-                  // An anchor, not a button with a click handler. The server
-                  // issues state and PKCE and then redirects, so this has to
-                  // be a real navigation; an fetch would follow the redirect
-                  // to the provider in the background and get nowhere.
-                  <a key={p.key} className="nf-provider-btn" href={p.start_path}>
-                    <ProviderMark provider={p.key} />
-                    <span>Continue with {p.label}</span>
-                  </a>
-                ))}
-                {unconfigured.map((p) => (
-                  <button
-                    key={p.key}
-                    type="button"
-                    className="nf-provider-btn"
-                    disabled
-                    title={`${p.label} sign-in is not yet configured for this workspace`}
-                  >
-                    <ProviderMark provider={p.key} />
-                    <span>Continue with {p.label}</span>
-                    <span className="nf-provider-note">Not yet available</span>
-                  </button>
-                ))}
-              </div>
-
-              {configured.length === 0 ? (
-                <StateView
-                  state={{
-                    tone: "blocked",
-                    title: "Sign-in is not available yet",
-                    body: "This NativeForge workspace has not finished connecting to an identity provider. Your administrator can complete that setup.",
-                  }}
-                />
-              ) : null}
-            </>
-          )}
-
-          {onContinueToDemo ? (
-            <p className="nf-signin-alt">
-              <button type="button" className="nf-btn nf-btn-ghost" onClick={onContinueToDemo}>
-                Continue to the demo workspace
-              </button>
-              <span className="nf-signin-alt-note">
-                Demo data only. Nothing you do there touches a live organization.
-              </span>
+          {noticeState ? (
+            <p className="nf-login-notice" data-tone={noticeState.tone} role="status">
+              {noticeState.text}
             </p>
           ) : null}
 
-          <p className="nf-signin-legal">
-            NativeForge does not submit to Grants.gov. Application packages are prepared for
-            internal review.
-          </p>
+          <div className="nf-login-providers">
+            {!ready ? (
+              <>
+                <span className="nf-login-skeleton" aria-hidden="true" />
+                <span className="nf-login-skeleton" aria-hidden="true" />
+                <span className="nf-visually-hidden" role="status">
+                  Checking available sign-in methods
+                </span>
+              </>
+            ) : (
+              (providers ?? []).map((p) =>
+                p.configured ? (
+                  // An anchor, not a button: the server issues state and a
+                  // PKCE challenge and then redirects, so this has to be a
+                  // real navigation. A fetch would follow the redirect in the
+                  // background and arrive nowhere.
+                  <a key={p.key} className="nf-provider" href={p.start_path}>
+                    <ProviderMark provider={p.key} />
+                    <span>Continue with {p.label}</span>
+                  </a>
+                ) : (
+                  <button
+                    key={p.key}
+                    type="button"
+                    className="nf-provider"
+                    disabled
+                    aria-describedby="nf-login-status"
+                  >
+                    <ProviderMark provider={p.key} />
+                    <span>Continue with {p.label}</span>
+                  </button>
+                ),
+              )
+            )}
+          </div>
+
+          {/* One line, not a card. Whether an identity provider has been
+              connected is an administrator's problem; it should not be the
+              loudest thing on the first screen a customer ever sees. */}
+          {ready && !anyConfigured ? (
+            <p className="nf-login-status" id="nf-login-status">
+              Sign-in is not yet connected for this workspace. Your administrator can
+              complete the connection.
+            </p>
+          ) : null}
+
+          {/* Development only. The reason a provider is unconfigured is a
+              deployment fact, and it belongs where deployment facts belong. */}
+          {error && diagnosticsVisible() ? (
+            <details className="nf-login-diagnostic">
+              <summary>Provider diagnostic (development only)</summary>
+              <code>{error.technical ?? error.body}</code>
+            </details>
+          ) : null}
         </div>
+
+        <footer className="nf-login-footer">
+          NativeForge prepares application and pursuit materials for your review.
+          Submission remains under your organization&rsquo;s control.
+        </footer>
       </main>
     </div>
   );

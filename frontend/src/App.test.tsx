@@ -95,8 +95,11 @@ describe("App", () => {
     mockApi({ authenticated: false });
     render(<App />);
 
+    // The sign-in page's own h1. It greets rather than apologising, which is
+    // the point of the rebuild: the front door should not open on the
+    // product's configuration state.
     expect(
-      await screen.findByRole("heading", { level: 1, name: /sign in to nativeforge/i }),
+      await screen.findByRole("heading", { level: 1, name: /welcome to nativeforge/i }),
     ).toBeInTheDocument();
 
     // The URL follows, so a refresh does not bounce the visitor around.

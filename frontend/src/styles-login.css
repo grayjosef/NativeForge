@@ -1,0 +1,360 @@
+/* ══════════════════════════════════════════════════════════════════════
+   The front door.
+
+   Its own file. The previous sign-in styles lived among the application's
+   shared surfaces, which is how a page that shares no layout with anything
+   else ended up inheriting a serif heading from the workspace and a card
+   treatment from the onboarding wizard. This page has one job and one
+   composition.
+
+   Every value resolves to a token already on :root.
+   ══════════════════════════════════════════════════════════════════════ */
+
+.nf-login {
+  display: grid;
+  /* The brand takes the larger share. It is carrying a 440px lockup, a
+     tagline and a positioning line; the sign-in column is a heading, two
+     buttons and a footnote, and giving it half the screen is what left the
+     old page looking like a template with a logo dropped into it. */
+  grid-template-columns: 55fr 45fr;
+  min-height: 100vh;
+  background: var(--nf-page);
+}
+
+/* ── brand panel ────────────────────────────────────────────────────── */
+
+.nf-login-brand {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: var(--nf-s8) var(--nf-s7);
+  overflow: hidden;
+  /* Graphite with a forge-green undertone rather than flat green.
+     The wordmark is silver "Native" and green "Forge"; on the forge green
+     itself the second half of the product's own name measured about 1.2:1
+     and effectively vanished. */
+  background:
+    radial-gradient(
+      120% 90% at 50% 8%,
+      rgba(0, 64, 49, 0.55),
+      transparent 68%
+    ),
+    var(--nf-brand-graphite);
+  color: var(--nf-brand-ivory);
+}
+
+/* A single restrained warmth behind the mark, so the panel has depth without
+   a gradient sweeping across it. Sized in vmin so it scales with the panel
+   rather than blooming at one width and disappearing at another. */
+.nf-login-brand::before {
+  content: "";
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  width: 62vmin;
+  height: 62vmin;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(207, 144, 85, 0.13),
+    transparent 62%
+  );
+  pointer-events: none;
+}
+
+/* A hairline of ember where the two panels meet, so the composition reads as
+   one page rather than two screens pushed together. */
+.nf-login-brand::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--nf-forge-line) 22%,
+    var(--nf-forge-line) 78%,
+    transparent
+  );
+}
+
+.nf-login-brand-inner {
+  position: relative;
+  z-index: 1;
+  /* Wide enough that the lockup's own cap is what limits it. At 34rem the
+     inner column was the constraint and raising the lockup's width did
+     nothing at all. */
+  max-width: 40rem;
+  width: 100%;
+  text-align: center;
+}
+
+/* Large enough to carry the panel, and never larger than the artwork.
+   720px native: at a 440px cap it is always downscaling, so it stays crisp
+   at every width and on every pixel density. */
+.nf-login-lockup {
+  display: block;
+  width: min(500px, 80%);
+  height: auto;
+  margin-inline: auto;
+  user-select: none;
+}
+
+/* Canonical, uppercase, and tied to the mark by the ember it shares with the
+   emblem. Live text rather than the artwork that has the tagline baked in:
+   the kit sets it in navy, which is close to unreadable on a dark ground. */
+.nf-login-tagline {
+  margin: var(--nf-s5) 0 0;
+  font-size: clamp(0.82rem, 0.62rem + 0.5vw, 1.02rem);
+  font-weight: 700;
+  letter-spacing: 0.34em;
+  /* The tracking is applied to the right of each letter including the last,
+     which pushes a centred line left by half a space. */
+  text-indent: 0.34em;
+  text-transform: uppercase;
+  color: var(--nf-ember-lift);
+}
+
+.nf-login-claim {
+  margin: var(--nf-s5) auto 0;
+  max-width: 30rem;
+  font-size: clamp(0.95rem, 0.88rem + 0.25vw, 1.08rem);
+  line-height: 1.6;
+  color: rgba(245, 242, 234, 0.84);
+}
+
+/* ── sign-in panel ──────────────────────────────────────────────────── */
+
+.nf-login-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: var(--nf-s5);
+  padding: var(--nf-s7) var(--nf-s6);
+  /* A breath of warmth at the seam, so the light panel resolves out of the
+     dark one instead of starting abruptly at a hard edge. */
+  background:
+    linear-gradient(
+      to right,
+      rgba(0, 64, 49, 0.05),
+      transparent 18%
+    ),
+    var(--nf-page);
+}
+
+.nf-login-card {
+  width: 100%;
+  /* Wide enough for the product's own name to stay on one line. At 27rem,
+     less the card padding, "Welcome to NativeForge" broke across two lines
+     and split the brand name in half. */
+  max-width: 31rem;
+  display: flex;
+  flex-direction: column;
+  /* A contained surface rather than text floating on ivory.
+     Two halves of a page, one dark and one light, with nothing but centred
+     text on the light side, read as two screens pushed together. The card
+     echoes the panel it sits beside and gives the composition a second
+     deliberate shape. */
+  padding: var(--nf-s6);
+  border: 1px solid var(--nf-border);
+  border-radius: var(--nf-radius-lg);
+  background: var(--nf-card);
+  box-shadow: var(--nf-e3);
+  /* One rhythm for the whole column. The old page stacked six elements with
+     six different margins and read as parts rather than a composition. */
+  gap: var(--nf-s4);
+}
+
+.nf-login-compact-mark {
+  display: none;
+  width: 236px;
+  height: auto;
+  margin-bottom: var(--nf-s2);
+}
+
+/* Sans, not the display serif. The serif heading belonged to nothing else on
+   the page and read as a different product's front door. */
+.nf-login-title {
+  margin: 0;
+  font-family: var(--nf-font);
+  font-size: clamp(1.9rem, 1.5rem + 1vw, 2.15rem);
+  font-weight: 680;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  /* Sized so the product's own name stays on one line inside the card.
+     At 2.4rem it broke after "Welcome to", which splits the brand from the
+     sentence it belongs to and reads as a layout that gave up. Balance is
+     the fallback for the narrow widths where it must wrap. */
+  text-wrap: balance;
+  color: var(--nf-text);
+}
+
+.nf-login-lead {
+  margin: 0;
+  font-size: var(--nf-t-body);
+  line-height: 1.55;
+  color: var(--nf-muted);
+}
+
+.nf-login-notice {
+  margin: 0;
+  padding: var(--nf-s3) var(--nf-s4);
+  border: 1px solid var(--nf-border);
+  border-inline-start: 3px solid var(--nf-border-strong);
+  border-radius: var(--nf-radius-sm);
+  background: var(--nf-card);
+  font-size: var(--nf-t-sm);
+  color: var(--nf-muted);
+}
+
+.nf-login-notice[data-tone="warn"] {
+  border-inline-start-color: var(--nf-warn);
+}
+
+.nf-login-providers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s3);
+  margin-top: var(--nf-s2);
+}
+
+.nf-provider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nf-s3);
+  min-height: 52px;
+  padding: 0 var(--nf-s5);
+  border: 1px solid var(--nf-border-strong);
+  border-radius: var(--nf-radius);
+  background: var(--nf-card);
+  font: inherit;
+  font-size: var(--nf-t-body);
+  font-weight: 600;
+  color: var(--nf-text);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nf-provider:hover:not(:disabled) {
+  border-color: var(--nf-forge);
+  box-shadow: var(--nf-e2);
+  transform: translateY(-1px);
+}
+
+.nf-provider:focus-visible {
+  outline: 2px solid var(--nf-forge);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nf-provider {
+    transition:
+      border-color 140ms ease,
+      box-shadow 140ms ease,
+      transform 140ms ease;
+  }
+}
+
+/* Visibly inactive, without a word inside the button saying so. A label that
+   reads "Continue with Google Not yet available" makes the product look
+   broken; a control that plainly cannot be pressed makes it look unfinished
+   in one specific place, which is the truth. */
+.nf-provider:disabled {
+  border-color: var(--nf-border);
+  background: var(--nf-card-muted);
+  color: var(--nf-muted2);
+  cursor: not-allowed;
+}
+
+.nf-provider:disabled .nf-provider-mark {
+  opacity: 0.55;
+}
+
+.nf-provider-mark {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.nf-login-skeleton {
+  height: 52px;
+  border-radius: var(--nf-radius);
+  background: var(--nf-card-muted);
+  border: 1px solid var(--nf-border);
+}
+
+/* One quiet line, never a card. Whether a provider has been connected is an
+   administrator's problem and must not be the loudest thing on the page. */
+.nf-login-status {
+  margin: 0;
+  font-size: var(--nf-t-sm);
+  line-height: 1.5;
+  color: var(--nf-muted2);
+}
+
+.nf-login-diagnostic {
+  font-size: var(--nf-t-xs);
+  color: var(--nf-faint);
+}
+
+.nf-login-diagnostic code {
+  display: block;
+  margin-top: var(--nf-s2);
+  padding: var(--nf-s2);
+  border-radius: var(--nf-radius-sm);
+  background: var(--nf-card-muted);
+  word-break: break-word;
+}
+
+.nf-login-footer {
+  width: 100%;
+  max-width: 31rem;
+  font-size: var(--nf-t-xs);
+  line-height: 1.55;
+  color: var(--nf-faint);
+}
+
+/* ── narrower ───────────────────────────────────────────────────────── */
+
+@media (max-width: 1180px) {
+  .nf-login {
+    grid-template-columns: 50fr 50fr;
+  }
+
+  .nf-login-lockup {
+    width: min(360px, 82%);
+  }
+}
+
+/* Below this the brand panel would be a tall empty column beside a cramped
+   form, which is the failure it was rebuilt to escape. It becomes a compact
+   header instead, and the mark moves into the card. */
+@media (max-width: 900px) {
+  .nf-login {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 100dvh;
+  }
+
+  .nf-login-brand {
+    display: none;
+  }
+
+  .nf-login-compact-mark {
+    display: block;
+  }
+
+  .nf-login-panel {
+    justify-content: flex-start;
+    padding: var(--nf-s7) var(--nf-s4) var(--nf-s6);
+  }
+}
+
+@media (max-width: 420px) {
+  .nf-login-compact-mark {
+    width: 200px;
+  }
+}
