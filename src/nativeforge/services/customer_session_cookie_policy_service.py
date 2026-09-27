@@ -114,16 +114,29 @@ def _json_safe(x: Any) -> Any:
 
 
 def _production_environment(app_env: str | None = None) -> bool:
+    """Whether the cookie must be `Secure`.
+
+    This asks "is this reachable over the internet", not "is this the
+    production launch". `controlled-live` serves real people over HTTPS and
+    is not the launch, and the old spelling - `app_env in {prod, production}` -
+    would have answered no and dropped `Secure` from a live session cookie.
+
+    That is the direction of failure worth naming: describing the deployment
+    more honestly would have made it less safe. So the question moved to
+    `app_environment_service`, where `unknown` also counts as internet-facing
+    rather than as a laptop.
+    """
+    from nativeforge.services.app_environment_service import is_internet_facing
+
     if app_env is not None:
-        return str(app_env).strip().lower() in {"prod", "production"}
+        return is_internet_facing(app_env)
     try:
         from nativeforge.lib.settings import get_settings
 
-        return str(get_settings().app_env).strip().lower() in {"prod", "production"}
+        return is_internet_facing(get_settings().app_env)
     except Exception:  # pragma: no cover - settings always load here
-        # Unknown is not production. Claiming production would flip `secure`
-        # true and make a local policy look production-safe.
-        return False
+        # Unreadable configuration is not evidence of a laptop.
+        return True
 
 
 def build_session_cookie_policy(

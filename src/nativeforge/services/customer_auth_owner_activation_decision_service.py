@@ -65,6 +65,11 @@ import json
 import os
 from typing import Any
 
+from nativeforge.services.app_environment_service import (
+    APPROVAL_ELIGIBLE_ENVS,
+    normalize_app_env,
+)
+
 SCHEMA_VERSION = "nf_customer_auth_owner_activation_decision_v1"
 
 #: The one organization this decision covers. Gate 132's authorization named it.
@@ -76,9 +81,17 @@ REFUSED_ORGANIZATION_ID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 APPROVED_PROVIDER = "google"
 APPROVED_ISSUER = "https://accounts.google.com"
 
-#: Environments the decision covers. `production` and `unknown` are absent: a
-#: deployment that cannot say what it is does not get an approval.
-APPROVED_ENVIRONMENTS: frozenset[str] = frozenset({"local", "dev", "test"})
+#: Environments the decision covers, from the one place that spells them.
+#:
+#: `controlled-live` was added on the owner's explicit authorization for
+#: NativeForge at https://nativeforge.mayhem-nc.dev. It is ELIGIBILITY, not
+#: approval: every other required gate still has to pass, and this set is
+#: consulted per call against the environment the process is actually in.
+#:
+#: `production` and `unknown` remain absent. A full production launch is a
+#: separate explicit decision, and a deployment that cannot say what it is
+#: does not get an approval.
+APPROVED_ENVIRONMENTS: frozenset[str] = APPROVAL_ELIGIBLE_ENVS
 
 #: Off, and only off. There is no counterpart that turns the decision on.
 REVOCATION_ENV = "NF_DEMO_LOGIN_ACTIVATION_REVOKED"
@@ -165,11 +178,14 @@ def _revoked() -> bool:
 
 
 def _environment(app_env: str | None = None) -> str:
+    """Normalised through the canonical model, so `CONTROLLED_LIVE`,
+    `controlled live` and `controlled-live` are one environment rather than
+    three, and an unrecognised label becomes `unknown` rather than itself."""
     if app_env is not None:
-        return str(app_env).strip().lower()
+        return normalize_app_env(app_env)
     from nativeforge.lib.settings import get_settings
 
-    return str(get_settings().app_env or "").strip().lower()
+    return normalize_app_env(get_settings().app_env)
 
 
 def build_owner_activation_decision(
