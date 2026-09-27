@@ -1334,14 +1334,22 @@ export default function App() {
         />
       )}
 
-      <OperatorTools
-        open={operatorOpen}
-        onToggle={() => setOperatorOpen((v) => !v)}
-        runnerBusy={runnerBusy}
-        runnerSteps={runnerSteps}
-        orgOk={orgOk}
-        onRunSequence={runLiveSequence}
-      />
+      {/* Settings only. "Advanced · Operator" sat at the bottom of every
+          customer page - Workspace, Documents, Trust - offering to run an
+          internal demo sequence. A control whose own subtitle says it is "not
+          part of the grant workflow" does not belong on seven pages that are.
+          It is still one click away, from the page that collects the other
+          operator surfaces. */}
+      {surface === "settings" ? (
+        <OperatorTools
+          open={operatorOpen}
+          onToggle={() => setOperatorOpen((v) => !v)}
+          runnerBusy={runnerBusy}
+          runnerSteps={runnerSteps}
+          orgOk={orgOk}
+          onRunSequence={runLiveSequence}
+        />
+      ) : null}
 
       <p className="nf-footnote">
         NativeForge does not submit to Grants.gov. Previews are for internal
