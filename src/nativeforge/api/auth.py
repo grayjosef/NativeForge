@@ -154,6 +154,9 @@ from nativeforge.services.customer_session_format_service import (
 from nativeforge.services.customer_session_verifier_service import (
     verify_session_cookie,
 )
+from nativeforge.services.demo_bootstrap_tenant_context_service import (
+    open_demo_bootstrap_context,
+)
 from nativeforge.services.dev_org_membership_bootstrap_service import (
     insert_membership,
     upsert_identity,
@@ -818,6 +821,24 @@ def callback(
         target = str((_auth_env.get(BOOTSTRAP_ORG_ENV) or "").strip())
         if target:
             try:
+                # The membership table FORCEs RLS, and its policy asks for the
+                # tenant context that this membership is what would establish.
+                # So the context is opened first, for this one insert, under
+                # every condition in `demo_bootstrap_tenant_context_service` -
+                # configured org, demo-classified by its own row, zero existing
+                # memberships, verified identity binding itself.
+                #
+                # It is transaction-local: gone at commit or rollback. Nothing
+                # here bypasses the policy; it supplies what the policy asks
+                # for and lets the policy decide.
+                context = open_demo_bootstrap_context(
+                    connection=db.connection(),
+                    organization_id=target,
+                    identity_id=identity_id,
+                    membership_identity_id=identity_id,
+                    configured_organization_id=target,
+                    identity_verified=bool(identity_validated),
+                )
                 written = insert_membership(
                     connection=db.connection(),
                     organization_id=target,
@@ -841,6 +862,12 @@ def callback(
                     "rows_written": int(written.get("rows_written") or 0),
                     "blocked_reasons": sorted(written.get("blocked_reasons") or []),
                     "bootstrap_membership": bool(written.get("bootstrap_membership")),
+                    # Reported so a refusal names which half declined: the
+                    # context gate, or the membership service behind it.
+                    "tenant_context_opened": bool(context.get("context_opened")),
+                    "tenant_context_blocked_reasons": list(
+                        context.get("blocked_reasons") or []
+                    ),
                 }
                 if written.get("rows_written"):
                     db.commit()
