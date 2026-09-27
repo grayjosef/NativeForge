@@ -12,11 +12,15 @@
 
 .nf-login {
   display: grid;
-  /* The brand takes the larger share. It is carrying a 440px lockup, a
-     tagline and a positioning line; the sign-in column is a heading, two
-     buttons and a footnote, and giving it half the screen is what left the
-     old page looking like a template with a logo dropped into it. */
-  grid-template-columns: 55fr 45fr;
+  /* A proportional split makes both halves grow without limit. On a 1755px
+     window that produced two ~800px columns each holding a small centred
+     island, and the page read as two empty fields rather than a composition.
+
+     So the sign-in side is a RAIL with a real ceiling, and the brand takes
+     whatever is left. The card then fills its column instead of floating in
+     the middle of one, which is the whole difference between "a form on a
+     page" and "the sign-in side of the product". */
+  grid-template-columns: minmax(0, 1fr) clamp(26rem, 34vw, 34rem);
   min-height: 100vh;
   background: var(--nf-page);
 }
@@ -96,7 +100,7 @@
    at every width and on every pixel density. */
 .nf-login-lockup {
   display: block;
-  width: min(500px, 80%);
+  width: min(440px, 72%);
   height: auto;
   margin-inline: auto;
   user-select: none;
@@ -147,9 +151,11 @@
 
 .nf-login-card {
   width: 100%;
-  /* Wide enough for the product's own name to stay on one line. At 27rem,
-     less the card padding, "Welcome to NativeForge" broke across two lines
-     and split the brand name in half. */
+  /* The rail already bounds this. The cap is what keeps the card honest when
+     the layout collapses to one column and there is no rail left - wide
+     enough there for the product's own name to stay on one line, because at
+     27rem, less the card padding, "Welcome to NativeForge" broke across two
+     lines and split the brand name in half. */
   max-width: 31rem;
   display: flex;
   flex-direction: column;
@@ -320,9 +326,18 @@
 
 /* ── narrower ───────────────────────────────────────────────────────── */
 
+/* Between the rail's ceiling and the collapse point the brand column gets
+   narrow enough that a 40rem inner block stops being centred breathing room
+   and starts being the whole column. */
+@media (max-width: 1400px) {
+  .nf-login {
+    grid-template-columns: minmax(0, 1fr) clamp(24rem, 40vw, 30rem);
+  }
+}
+
 @media (max-width: 1180px) {
   .nf-login {
-    grid-template-columns: 50fr 50fr;
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, 26rem);
   }
 
   .nf-login-lockup {
