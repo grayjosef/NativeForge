@@ -5,6 +5,15 @@ export interface BrandLockupProps {
   markOnly?: boolean;
   /** Include the "Find. Pursue. Govern." tagline. Light surfaces only. */
   withTagline?: boolean;
+  /**
+   * Omit the visually hidden name because the caller already provides one.
+   *
+   * The shell pairs the emblem with its own wordmark, and both contributed a
+   * name, so the document heading announced "NativeForge NativeForge". The
+   * hidden name stays on by default: a lockup standing alone must still be
+   * announced, and forgetting that is the easier mistake to make.
+   */
+  decorative?: boolean;
   className?: string;
 }
 
@@ -43,6 +52,7 @@ export function BrandLockup({
   size = 36,
   markOnly = false,
   withTagline = false,
+  decorative = false,
   className = "",
 }: BrandLockupProps) {
   const src = markOnly
@@ -65,7 +75,7 @@ export function BrandLockup({
         aria-hidden
         draggable={false}
       />
-      <span className="nf-visually-hidden">NativeForge</span>
+      {decorative ? null : <span className="nf-visually-hidden">NativeForge</span>}
     </span>
   );
 }

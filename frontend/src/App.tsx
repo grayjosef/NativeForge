@@ -34,7 +34,7 @@ import {
 } from "./m0LiveDemoRunner";
 import { ProgressStrip } from "./components/ProgressStrip";
 import { WhatsNextCard } from "./components/WhatsNextCard";
-import { WorkspaceHeader } from "./components/WorkspaceHeader";
+import { AppShell } from "./components/shell/AppShell";
 import { OrgReadinessCard } from "./components/OrgReadinessCard";
 import { GrantSparkCard } from "./components/GrantSparkCard";
 import { NofoRequirementsCard } from "./components/NofoRequirementsCard";
@@ -827,21 +827,34 @@ export default function App() {
   ]);
 
   return (
-    <div className="nf-app" data-surface={surface}>
-      <WorkspaceHeader
-        plane={plane}
-        orgId={orgId}
-        onPlaneChange={setPlane}
-        onOrgChange={setOrgId}
-        backendOk={backendOk}
-        backendHint={offlineDemoSurface ? "" : backendHint}
-        offlineDemo={offlineDemoSurface}
-        trustVersion={trustVersion}
-        trustErr={trustErr}
-        onRefreshConnectivity={refreshConnectivity}
-        surface={surface}
-        onSurfaceChange={setSurface}
-      />
+    <AppShell
+      surface={surface}
+      onSurfaceChange={setSurface}
+      organization={profileFields?.legalName ?? null}
+      // The shell speaks in customer terms. "real" is the internal plane
+      // name; a customer is in their live organization or in the demo.
+      environment={plane === "demo" ? "demo" : "live"}
+      onEnvironmentChange={(next) => setPlane(next === "demo" ? "demo" : "real")}
+      // null means "not checked yet", which is not the same as unreachable.
+      // Treating unknown as offline would flash a failure banner on load.
+      online={backendOk !== false}
+      offlineHint={backendHint}
+      attention={{ trust: trustErr, organization: Boolean(orgErr) }}
+      topBarExtra={
+        <>
+          {trustVersion ? (
+            <span className="nf-topbar-meta">Trust {trustVersion}</span>
+          ) : null}
+          <button
+            type="button"
+            className="nf-btn nf-btn-ghost"
+            onClick={() => void refreshConnectivity()}
+          >
+            Refresh
+          </button>
+        </>
+      }
+    >
 
       {surface === "workspace" ? (
         <ProgressStrip steps={progressSteps} />
@@ -973,6 +986,6 @@ export default function App() {
         NativeForge does not submit to Grants.gov. Previews are for internal
         review only.
       </p>
-    </div>
+    </AppShell>
   );
 }

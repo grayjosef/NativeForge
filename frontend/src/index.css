@@ -82,14 +82,25 @@
     Arial, sans-serif;
   --nf-font-mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Menlo,
     Consolas, monospace;
-  --nf-t-display: clamp(2rem, 1.35rem + 2.3vw, 3rem);
-  --nf-t-h1: clamp(1.45rem, 1.2rem + 1vw, 1.9rem);
-  --nf-t-h2: clamp(1.02rem, 0.96rem + 0.3vw, 1.2rem);
-  --nf-t-h3: 0.95rem;
-  --nf-t-body: 0.95rem;
-  --nf-t-sm: 0.86rem;
-  --nf-t-xs: 0.78rem;
-  --nf-t-micro: 0.7rem;
+  /* A commercial scale, not a dense one.
+     The previous steps topped out at a 30px page title with 15px body and a
+     16px section heading, which read as a dashboard built for its authors:
+     everything legible, nothing ranked. Titles now start where headings used
+     to end, so a glance lands somewhere deliberate.
+
+       page title   28 to 34
+       section      20 to 24
+       card title   17
+       body         15 to 16
+       metadata     13 */
+  --nf-t-display: clamp(2.25rem, 1.6rem + 2.4vw, 3.25rem);
+  --nf-t-h1: clamp(1.75rem, 1.45rem + 1.1vw, 2.125rem);
+  --nf-t-h2: clamp(1.25rem, 1.1rem + 0.55vw, 1.5rem);
+  --nf-t-h3: 1.0625rem;
+  --nf-t-body: 0.975rem;
+  --nf-t-sm: 0.9rem;
+  --nf-t-xs: 0.8125rem;
+  --nf-t-micro: 0.72rem;
   --nf-track-eyebrow: 0.14em;
 
   /* — spacing — */
@@ -3438,4 +3449,347 @@ code,
   to {
     transform: rotate(360deg);
   }
+}
+
+/* ── application shell ─────────────────────────────────────────────────
+   A collapsible rail, a context bar and the page. Replaces a header strip
+   that mixed destinations, environment and status into one row of look-alike
+   buttons, where switching from real data to demo data looked exactly like
+   opening another page. */
+.nf-shell {
+  display: grid;
+  grid-template-columns: var(--nf-rail-w, 248px) minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--nf-page);
+}
+
+.nf-shell[data-collapsed="true"] {
+  --nf-rail-w: 76px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nf-shell {
+    transition: grid-template-columns 200ms cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+
+.nf-skip {
+  position: absolute;
+  left: -9999px;
+}
+
+.nf-skip:focus {
+  left: var(--nf-s4);
+  top: var(--nf-s4);
+  z-index: 50;
+  padding: var(--nf-s2) var(--nf-s4);
+  background: var(--nf-primary);
+  color: var(--nf-primary-fg);
+  border-radius: var(--nf-radius);
+}
+
+.nf-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nf-s2);
+  padding: var(--nf-s4) var(--nf-s3);
+  background: var(--nf-brand-graphite);
+  color: #e8efea;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.nf-rail-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+  padding: var(--nf-s2) var(--nf-s2) var(--nf-s4);
+  min-height: 56px;
+}
+
+.nf-rail-wordmark {
+  font-weight: 700;
+  font-size: 1.02rem;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: #f3f7f4;
+}
+
+.nf-rail-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.nf-rail-item {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+  width: 100%;
+  min-height: var(--nf-touch);
+  padding: var(--nf-s2) var(--nf-s2);
+  border: 0;
+  border-radius: var(--nf-radius);
+  background: transparent;
+  color: #c8d5cd;
+  font: inherit;
+  font-size: var(--nf-t-body);
+  text-align: start;
+  cursor: pointer;
+}
+
+.nf-rail-item:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.07);
+  color: #f3f7f4;
+}
+
+/* Active state carries a gold edge as well as a fill, so it does not rest on
+   colour alone. */
+.nf-rail-item[data-active="true"] {
+  background: var(--nf-forge);
+  color: #ffffff;
+  box-shadow: inset 3px 0 0 var(--nf-ember);
+}
+
+.nf-rail-item:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.nf-rail-item:focus-visible {
+  outline: 2px solid var(--nf-ember);
+  outline-offset: 2px;
+}
+
+.nf-rail-glyph {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--nf-radius-sm);
+  background: rgba(255, 255, 255, 0.08);
+  font-size: var(--nf-t-sm);
+  font-weight: 700;
+}
+
+.nf-rail-item[data-active="true"] .nf-rail-glyph {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.nf-rail-label {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s2);
+  white-space: nowrap;
+}
+
+.nf-rail-soon {
+  font-size: var(--nf-t-micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: var(--nf-radius-pill);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.nf-rail-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+  min-height: var(--nf-touch);
+  padding: var(--nf-s2);
+  border: 0;
+  border-radius: var(--nf-radius);
+  background: transparent;
+  color: #9fb2a7;
+  font: inherit;
+  font-size: var(--nf-t-sm);
+  cursor: pointer;
+}
+
+.nf-rail-toggle:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.07);
+  color: #f3f7f4;
+}
+
+.nf-rail-toggle:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.nf-shell-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.nf-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s4);
+  flex-wrap: wrap;
+  padding: var(--nf-s3) var(--nf-s6);
+  border-block-end: 1px solid var(--nf-border);
+  background: var(--nf-card);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.nf-topbar-context {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s4);
+  min-width: 0;
+}
+
+.nf-topbar-org {
+  font-weight: 650;
+  font-size: var(--nf-t-body);
+  color: var(--nf-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nf-env {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--nf-s2);
+  padding: 3px 10px;
+  border-radius: var(--nf-radius-pill);
+  border: 1px solid var(--nf-border-strong);
+  font-size: var(--nf-t-xs);
+  font-weight: 600;
+  color: var(--nf-muted);
+  white-space: nowrap;
+}
+
+.nf-env[data-env="demo"] {
+  border-color: var(--nf-forge-line);
+  background: var(--nf-forge-glow);
+}
+
+.nf-env-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--nf-radius-pill);
+  background: var(--nf-ember);
+}
+
+.nf-env[data-env="live"] .nf-env-dot {
+  background: var(--nf-verified);
+}
+
+.nf-env-switch {
+  border: 0;
+  background: transparent;
+  color: var(--nf-primary);
+  font: inherit;
+  font-size: var(--nf-t-xs);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: var(--nf-s1);
+}
+
+.nf-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--nf-s3);
+}
+
+.nf-topbar-offline {
+  font-size: var(--nf-t-xs);
+  font-weight: 600;
+  color: var(--nf-ember);
+}
+
+.nf-main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--nf-shell-max, 1480px);
+  margin-inline: auto;
+  padding: var(--nf-s7) var(--nf-s6) var(--nf-s8);
+}
+
+@media (max-width: 1100px) {
+  .nf-main {
+    padding: var(--nf-s6) var(--nf-s5) var(--nf-s7);
+  }
+
+  .nf-topbar {
+    padding-inline: var(--nf-s5);
+  }
+}
+
+.nf-rail-attention {
+  position: absolute;
+  inset-block-start: -3px;
+  inset-inline-end: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--nf-radius-pill);
+  background: var(--nf-ember);
+  border: 2px solid var(--nf-brand-graphite);
+}
+
+.nf-rail-glyph {
+  position: relative;
+}
+
+.nf-topbar-meta {
+  font-size: var(--nf-t-xs);
+  color: var(--nf-muted2);
+  white-space: nowrap;
+}
+
+.nf-btn-ghost {
+  border: 1px solid var(--nf-border-strong);
+  background: transparent;
+  color: var(--nf-text);
+}
+
+.nf-btn-ghost:hover {
+  background: var(--nf-card-muted);
+}
+
+.nf-next-step {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: var(--nf-s3) 0 0;
+  padding-block-start: var(--nf-s3);
+  border-block-start: 1px solid var(--nf-rule-fine);
+}
+
+.nf-next-step-label {
+  font-size: var(--nf-t-micro);
+  font-weight: 700;
+  letter-spacing: var(--nf-track-eyebrow);
+  text-transform: uppercase;
+  color: var(--nf-muted2);
+}
+
+.nf-next-step-name {
+  font-size: var(--nf-t-sm);
+  font-weight: 600;
+  color: var(--nf-text);
+}
+
+/* The rail brand is the document h1; reset the heading defaults so a
+   semantic choice does not become a layout surprise. */
+h1.nf-rail-brand {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
 }
