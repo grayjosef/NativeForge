@@ -823,7 +823,13 @@ def callback(
                     organization_id=target,
                     identity_id=identity_id,
                     state="active",
-                    role="owner",
+                    # `org_owner`, not `owner`. Migration 0024's CHECK lists
+                    # org_owner/org_admin/authorized_representative/grant_lead/
+                    # reviewer/viewer, so `owner` was refused as
+                    # `membership_role_not_storable` and this bootstrap could
+                    # never have written a row - on any deployment, with or
+                    # without tenant context.
+                    role="org_owner",
                     membership_source="org_owner_approved",
                     # Self-approval. Permitted by the service only when the
                     # organization has no memberships at all, and refused on
