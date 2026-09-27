@@ -80,11 +80,26 @@ IS_DEMO_KEY = "app.current_org_is_demo"
 #: The only classification this path will ever open context for.
 DEMO_ORG_TYPE = "demo"
 
+#: How a read went, kept separate from what it found.
+#:
+#: `NOT_FOUND` and `ACCESS_DENIED` are different facts and collapsing them is
+#: how a bootstrap that cannot SEE its organization reports that the
+#: organization does not exist. Under RLS a refused read returns no rows
+#: rather than an error, so "no rows" alone cannot tell them apart - the
+#: distinction has to be made from something else, and here that is whether
+#: the table is readable at all.
+FOUND = "FOUND"
+NOT_FOUND = "NOT_FOUND"
+ACCESS_DENIED = "ACCESS_DENIED"
+UNKNOWN = "UNKNOWN"
+
 RESULT_FIELDS: tuple[str, ...] = (
     "schema_version",
     "context_opened",
     "organization_id",
     "org_type",
+    "org_lookup",
+    "membership_count_lookup",
     "existing_membership_count",
     "blocked_reasons",
 )
@@ -108,6 +123,8 @@ def _result(
     organization_id: Any = None,
     org_type: str | None = None,
     memberships: int | None = None,
+    org_lookup: str = UNKNOWN,
+    membership_count_lookup: str = UNKNOWN,
     blocked_reasons: list[str] | None = None,
 ) -> dict[str, Any]:
     return _json_safe(
@@ -116,6 +133,8 @@ def _result(
             "context_opened": bool(opened),
             "organization_id": str(organization_id) if organization_id else None,
             "org_type": org_type,
+            "org_lookup": org_lookup,
+            "membership_count_lookup": membership_count_lookup,
             "existing_membership_count": memberships,
             "blocked_reasons": sorted(blocked_reasons or []),
         }
@@ -175,15 +194,38 @@ def open_demo_bootstrap_context(
         return _result(opened=False, organization_id=target, blocked_reasons=blocked)
 
     # -- the database's own account of this organization --------------------
+    #
+    # Each read reports HOW it went as well as what it saw, because under RLS
+    # a refusal and an absence look identical from the row count.
     org_type: str | None = None
     memberships: int | None = None
+    org_lookup = UNKNOWN
+    membership_count_lookup = UNKNOWN
+
     try:
         row = connection.execute(
             sa.text("SELECT org_type FROM organizations WHERE id = :i"),
             {"i": str(target)},
         ).first()
-        org_type = str(row[0]) if row is not None else None
+        if row is None:
+            # The query ran. Whether the row is absent or merely invisible is
+            # settled below by asking whether the table is readable at all.
+            probe = connection.execute(
+                sa.text("SELECT count(*) FROM organizations")
+            ).scalar_one()
+            org_lookup = NOT_FOUND if int(probe) else ACCESS_DENIED
+        else:
+            org_type = str(row[0])
+            org_lookup = FOUND
+    except Exception as exc:  # noqa: BLE001 - a read that errors is a refusal
+        return _result(
+            opened=False,
+            organization_id=target,
+            org_lookup=ACCESS_DENIED,
+            blocked_reasons=[f"organization_lookup_failed:{type(exc).__name__}"],
+        )
 
+    try:
         memberships = int(
             connection.execute(
                 sa.text(
@@ -193,15 +235,21 @@ def open_demo_bootstrap_context(
                 {"i": str(target)},
             ).scalar_one()
         )
-    except Exception as exc:  # noqa: BLE001 - a read that fails is a refusal
+        membership_count_lookup = FOUND
+    except Exception as exc:  # noqa: BLE001
+        # A count this cannot read is not a count of zero. Saying so is the
+        # whole reason these two fields exist.
         return _result(
             opened=False,
             organization_id=target,
-            blocked_reasons=[f"organization_lookup_failed:{type(exc).__name__}"],
+            org_type=org_type,
+            org_lookup=org_lookup,
+            membership_count_lookup=ACCESS_DENIED,
+            blocked_reasons=[f"membership_count_unreadable:{type(exc).__name__}"],
         )
 
     if org_type is None:
-        blocked.append("organization_row_does_not_exist")
+        blocked.append(f"organization_not_readable:{org_lookup}")
     elif org_type != DEMO_ORG_TYPE:
         # Read from the row, never inferred from the id. The real
         # organizations fail here on their own data.
@@ -217,6 +265,8 @@ def open_demo_bootstrap_context(
             organization_id=target,
             org_type=org_type,
             memberships=memberships,
+            org_lookup=org_lookup,
+            membership_count_lookup=membership_count_lookup,
             blocked_reasons=blocked,
         )
 
@@ -235,4 +285,6 @@ def open_demo_bootstrap_context(
         organization_id=target,
         org_type=org_type,
         memberships=memberships,
+        org_lookup=org_lookup,
+        membership_count_lookup=membership_count_lookup,
     )

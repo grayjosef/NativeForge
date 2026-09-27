@@ -55,6 +55,10 @@ class FakeConnection:
         if "set_config" in text:
             self.set_config_calls.append((params["k"], params["v"], True))
             return _Scalar(params["v"])
+        if "count(*) FROM organizations" in text:
+            # The probe that separates "this row is absent" from "this table
+            # is not readable at all".
+            return _Scalar(len(self.orgs))
         if "FROM organizations" in text:
             org_type = self.orgs.get(params["i"])
             return _Row((org_type,) if org_type is not None else None)
@@ -154,7 +158,20 @@ def test_an_organization_that_does_not_exist_is_refused():
     result = call(conn)
 
     assert result["context_opened"] is False
-    assert "organization_row_does_not_exist" in result["blocked_reasons"]
+    # ACCESS_DENIED, not NOT_FOUND: an empty table and an unreadable one look
+    # identical from a row count, so the refusal names the weaker claim rather
+    # than asserting an absence it cannot prove.
+    assert "organization_not_readable:ACCESS_DENIED" in result["blocked_reasons"]
+
+
+def test_a_missing_row_in_a_readable_table_is_reported_as_not_found():
+    """The other half of the distinction: the table reads, the row is absent."""
+    conn = FakeConnection(orgs={REAL_A: "real"}, membership_counts={})
+    result = call(conn)
+
+    assert result["context_opened"] is False
+    assert result["org_lookup"] == "NOT_FOUND"
+    assert "organization_not_readable:NOT_FOUND" in result["blocked_reasons"]
 
 
 def test_an_organization_other_than_the_configured_one_is_refused():
@@ -412,6 +429,8 @@ def test_the_result_is_json_safe_and_names_no_secret():
         "context_opened",
         "organization_id",
         "org_type",
+        "org_lookup",
+        "membership_count_lookup",
         "existing_membership_count",
         "blocked_reasons",
     }

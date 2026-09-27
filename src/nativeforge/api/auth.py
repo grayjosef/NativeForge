@@ -154,6 +154,9 @@ from nativeforge.services.customer_session_format_service import (
 from nativeforge.services.customer_session_verifier_service import (
     verify_session_cookie,
 )
+from nativeforge.services.demo_bootstrap_decision_log_service import (
+    emit as emit_bootstrap_decision,
+)
 from nativeforge.services.demo_bootstrap_tenant_context_service import (
     open_demo_bootstrap_context,
 )
@@ -868,6 +871,11 @@ def callback(
                     "tenant_context_blocked_reasons": list(
                         context.get("blocked_reasons") or []
                     ),
+                    "org_lookup": context.get("org_lookup"),
+                    "membership_count_lookup": context.get("membership_count_lookup"),
+                    "existing_membership_count": context.get(
+                        "existing_membership_count"
+                    ),
                 }
                 if written.get("rows_written"):
                     db.commit()
@@ -888,6 +896,45 @@ def callback(
         membership_verified = bool(resolution.get("membership_verified"))
 
     org_binding_missing = bool(identity_validated and not organization_id_resolved)
+
+    # Gate 176. One structured line per callback saying what the bootstrap
+    # decided, because the body that carries it is only returned to a
+    # non-HTML caller and a browser always asks for HTML. Booleans, enums and
+    # reason codes; the emitter withholds anything that is not one of those.
+    _ctx_reasons = bootstrap_result.get("tenant_context_blocked_reasons")
+    _count = bootstrap_result.get("existing_membership_count")
+    emit_bootstrap_decision(
+        correlation_id=None,
+        bootstrap_attempted=bool(bootstrap_result.get("attempted")),
+        bootstrap_org_env_present=bool(
+            str(_auth_env.get(BOOTSTRAP_ORG_ENV) or "").strip()
+        ),
+        target_org_matches_configured_demo_org=(
+            "PASS" if bootstrap_result.get("attempted") else "SKIPPED"
+        ),
+        identity_validated=bool(identity_validated),
+        identity_persisted=bool(identity_id),
+        self_bind_verified="PASS" if identity_id else "UNKNOWN",
+        target_org_lookup=bootstrap_result.get("org_lookup"),
+        target_org_is_demo=(
+            "PASS"
+            if bootstrap_result.get("tenant_context_opened")
+            else ("FAIL" if bootstrap_result.get("attempted") else "SKIPPED")
+        ),
+        membership_count_lookup=bootstrap_result.get("membership_count_lookup"),
+        existing_membership_count_zero=(_count == 0 if _count is not None else None),
+        tenant_context_open_attempted=bool(bootstrap_result.get("attempted")),
+        tenant_context_opened=bool(bootstrap_result.get("tenant_context_opened")),
+        tenant_context_blocked_reasons=_ctx_reasons,
+        insert_attempted=bool(bootstrap_result.get("attempted")),
+        insert_succeeded=bool(bootstrap_result.get("rows_written")),
+        insert_blocked_reasons=bootstrap_result.get("blocked_reasons"),
+        membership_verified_after_insert=bool(membership_verified),
+        organization_id_resolved=bool(organization_id_resolved),
+        callback_session_allowed=bool(
+            organization_id_resolved and membership_verified
+        ),
+    )
 
     # -- 5. the session, only once all of that holds ------------------------
     session_created = False
