@@ -100,6 +100,16 @@ PURPOSES = frozenset(
         "source_discovery",
         "identity_verification",
         "operational_alert",
+        # An authenticated tenant user named this exact public URL and asked
+        # NativeForge to read it. Authorized as a distinct purpose rather than
+        # borrowed from source_discovery, because the two are gated on
+        # different things: a source is authorized per host, in advance, by a
+        # recorded decision, and a customer's link has none of that and cannot.
+        #
+        # It authorizes ONE request to ONE address. Not a crawl, not the
+        # neighbouring pages, not an activation, and not global publication of
+        # whatever comes back.
+        "customer_supplied_url",
     }
 )
 
@@ -213,6 +223,25 @@ PURPOSE_REQUIREMENTS: dict[str, tuple[str, ...]] = {
         "host_permitted",
         "endpoint_configured",
     ),
+    # Politeness on somebody else's host still applies - a customer naming a
+    # URL does not make NativeForge welcome to ignore robots or hammer it.
+    #
+    # `terms_cleared`, `activation_allowed` and `collector_active` are
+    # deliberately absent: all three are per-source authorizations recorded in
+    # advance, and there is no recorded decision for an address a customer
+    # typed a moment ago. Requiring them would make the purpose unusable;
+    # pretending they were satisfied would be worse.
+    #
+    # `public_destination` replaces them, and is the one that matters here.
+    "customer_supplied_url": (
+        "live_fetch_opt_in",
+        "https_scheme",
+        "host_permitted",
+        "user_agent_canonical",
+        "rate_limit_policy",
+        "robots_permits",
+        "public_destination",
+    ),
 }
 
 # Hosts that route through Gate 77B's hermetic guard rather than this one.
@@ -318,6 +347,11 @@ def build_live_network_decision(
     collector_type: Any = None,
     issuer_configured: bool = False,
     endpoint_configured: bool = False,
+    #: "public" only when every resolved address passed
+    #: `customer_url_safety_service`. Anything else - including the default -
+    #: fails the check, so a caller that forgets to pass it is refused rather
+    #: than waved through.
+    destination_status: Any = None,
     consecutive_failures: int = 0,
 ) -> dict[str, Any]:
     """Decide whether one live request may proceed. Never performs it."""
@@ -451,6 +485,18 @@ def build_live_network_decision(
             else credential in CREDENTIAL_SATISFYING
         )
         record("credential", ok, f"credential_missing:{credential}")
+
+    if "public_destination" in required:
+        # Decided by `customer_url_safety_service` against the addresses the
+        # caller resolved, and passed in here. This guard performs no lookup:
+        # it is the module that decides whether a request may proceed, and a
+        # decision module that opens a socket is a network call site nobody
+        # audits.
+        record(
+            "public_destination",
+            destination_status == "public",
+            f"destination_not_public:{destination_status or 'unknown'}",
+        )
 
     if "issuer_configured" in required:
         record("issuer_configured", issuer_configured is True, "issuer_not_configured")
@@ -681,9 +727,7 @@ def guard_invariant_failures(decision: dict[str, Any]) -> list[str]:
     if resolved.get("robots_status") in {"fetch_failed", "unknown", "disallowed"}:
         if "robots_permits" in (decision.get("required_requirements") or []):
             if decision.get("allowed"):
-                fails.append(
-                    f"allowed_despite_robots:{resolved.get('robots_status')}"
-                )
+                fails.append(f"allowed_despite_robots:{resolved.get('robots_status')}")
 
     # Human review cannot be lifted by satisfying automated requirements.
     if decision.get("human_review_required") and decision.get("allowed"):

@@ -134,6 +134,18 @@ APPROVED_NETWORK_SITES: tuple[ApprovedSite, ...] = (
         "loopback port availability probe for the preview server; never egress",
         "not applicable - 127.0.0.1 only, no third-party contact",
     ),
+    ApprovedSite(
+        "customer_supplied_url_fetch_service",
+        "one public document at a URL a signed-in tenant user named, so an "
+        "opportunity they already have can be read into the same workspace "
+        "as a discovered one. Not a crawler: one request, one address, no "
+        "neighbouring pages, no source activation",
+        "live_network_guard_service (purpose=customer_supplied_url) AND "
+        "customer_url_safety_service, which refuses any host resolving to a "
+        "non-public address; every redirect hop is re-resolved and "
+        "re-validated, https and port 443 only, bounded size and timeout, "
+        "and no NativeForge cookie, header or credential is sent",
+    ),
 )
 
 APPROVED_MODULE_NAMES = frozenset(s.module for s in APPROVED_NETWORK_SITES)
