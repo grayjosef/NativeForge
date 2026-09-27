@@ -249,6 +249,9 @@ def upgrade() -> None:
     )
     for table in (CONTACTS, SUBMISSION):
         policy = f"{table}_org_isolation"
+        # Both halves, deliberately. USING alone lets a tenant INSERT a row
+        # stamped with another organization's id - see migration 0066, which
+        # exists because five tables shipped exactly that way.
         op.execute(f"ALTER TABLE {table} ENABLE ROW LEVEL SECURITY")
         op.execute(f"ALTER TABLE {table} FORCE ROW LEVEL SECURITY")
         op.execute(f"DROP POLICY IF EXISTS {policy} ON {table}")

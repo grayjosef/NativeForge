@@ -46,6 +46,8 @@ export interface OpportunitiesPageProps {
   canAdd: boolean;
   /** Why adding is unavailable, when it is. */
   addBlockedReason?: string;
+  /** Opens the intake wizard for an opportunity the customer already has. */
+  onAddYourOwn: () => void;
 }
 
 type Window = "all" | "30" | "90";
@@ -62,6 +64,7 @@ export function OpportunitiesPage(props: OpportunitiesPageProps) {
     onAddDemo,
     canAdd,
     addBlockedReason,
+    onAddYourOwn,
   } = props;
 
   const [query, setQuery] = useState("");
@@ -125,12 +128,21 @@ export function OpportunitiesPage(props: OpportunitiesPageProps) {
             </button>
             <button
               type="button"
-              className="nf-btn nf-btn-primary nf-btn-sm"
+              className="nf-btn nf-btn-secondary nf-btn-sm"
               onClick={onAddDemo}
               disabled={busy || !canAdd}
               title={canAdd ? undefined : addBlockedReason}
             >
               Add demo opportunity
+            </button>
+            <button
+              type="button"
+              className="nf-btn nf-btn-primary nf-btn-sm"
+              onClick={onAddYourOwn}
+              disabled={busy || !canAdd}
+              title={canAdd ? undefined : addBlockedReason}
+            >
+              Add an opportunity
             </button>
           </>
         }
@@ -195,9 +207,9 @@ export function OpportunitiesPage(props: OpportunitiesPageProps) {
         {sparks.length === 0 ? (
           <EmptyState
             title="No opportunities yet."
-            body="Add a demo opportunity to walk the pursuit workflow end to end, or connect a source to begin discovery."
-            actionLabel={canAdd ? "Add demo opportunity" : undefined}
-            onAction={canAdd ? onAddDemo : undefined}
+            body="Bring in a grant you already know about, or add a demo opportunity to walk the workflow end to end."
+            actionLabel={canAdd ? "Add an opportunity" : undefined}
+            onAction={canAdd ? onAddYourOwn : undefined}
           />
         ) : rows.length === 0 ? (
           <EmptyState

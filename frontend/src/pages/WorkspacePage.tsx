@@ -146,7 +146,22 @@ export function WorkspacePage(props: WorkspacePageProps) {
             : "Complete your organization profile and NativeForge can begin evaluating opportunities for you."
         }
         actions={
-          entityType ? <StatusBadge tone="info">{humanEntity(entityType)}</StatusBadge> : null
+          <>
+            {entityType ? (
+              <StatusBadge tone="info">{humanEntity(entityType)}</StatusBadge>
+            ) : null}
+            {/* The most common thing a customer arrives wanting to do:
+                put a grant they already know about into NativeForge. */}
+            {hasProfile ? (
+              <button
+                type="button"
+                className="nf-btn nf-btn-primary nf-btn-sm"
+                onClick={() => onGoTo("add_opportunity")}
+              >
+                Add an opportunity
+              </button>
+            ) : null}
+          </>
         }
       />
 

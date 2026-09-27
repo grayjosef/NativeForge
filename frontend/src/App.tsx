@@ -38,6 +38,8 @@ import {
 } from "./m0LiveDemoRunner";
 import { WorkspacePage } from "./pages/WorkspacePage";
 import { OpportunitiesPage } from "./pages/OpportunitiesPage";
+import { AddOpportunityPage } from "./pages/AddOpportunityPage";
+import { draftToCreateBody, type IntakeDraft } from "./lib/opportunityIntake";
 import { DiscoverPage } from "./pages/DiscoverPage";
 import { DocumentsPage } from "./pages/DocumentsPage";
 import { PursuitsPage } from "./pages/PursuitsPage";
@@ -61,7 +63,7 @@ import {
   buildWhatsNext,
   type NextActionId,
 } from "./workspaceProgress";
-import { readSurface, writeSurface, type AppSurface } from "./viewSurface";
+import { isSurface, readSurface, writeSurface, type AppSurface } from "./viewSurface";
 import { daysUntil } from "./lib/dates";
 import { surfaceForNav } from "./components/shell/navigation";
 import { getAuthSession, signOut } from "./authApiClient";
@@ -216,11 +218,23 @@ export default function App() {
     }
   }, []);
 
-  /** Navigate by nav id, for callers that only know where they want to go. */
+  /**
+   * Navigate by destination, for callers that only know where they want to go.
+   *
+   * Takes a navigation id or a surface name. Nav ids are tried first, because
+   * most destinations are rail items; surfaces cover the ones that are not.
+   * "Add an opportunity" is an action taken from two pages rather than a
+   * ninth entry in the rail, and a resolver that knew only nav ids silently
+   * did nothing when asked for it - a dead button with no error anywhere.
+   */
   const setSurfaceByNav = useCallback(
-    (navId: string) => {
-      const target = surfaceForNav(navId);
-      if (target) setSurface(target);
+    (destination: string) => {
+      const target = surfaceForNav(destination);
+      if (target) {
+        setSurface(target);
+      } else if (isSurface(destination)) {
+        setSurface(destination);
+      }
     },
     [setSurface],
   );
@@ -1042,6 +1056,44 @@ export default function App() {
     }
   }, [base, o, plane, sparkId, sparkSelected]);
 
+  /**
+   * Create an opportunity the customer already had.
+   *
+   * Goes through the ordinary create endpoint, so what comes out is an
+   * opportunity like any other - the same detail page, the same documents,
+   * the same pursuit. `source: "manual"` records where it came from without
+   * putting it anywhere different.
+   *
+   * When the customer pasted the notice, its contacts and submission route
+   * are extracted immediately: that is the answer they came for, and making
+   * them press a second button for it would be a strange way to deliver it.
+   */
+  const onCreateIntake = useCallback(
+    async (draft: IntakeDraft): Promise<string | null> => {
+      if (!orgOk) return null;
+      setSparkBusy(true);
+      setSparkErr(null);
+      try {
+        const row = await createGrantSpark(base, plane, o, draftToCreateBody(draft));
+        const id = str(row.id);
+        setSparkId(id);
+        setSparkDetail(row);
+        await loadSparksAndDetail();
+        if (draft.noticeText.trim()) {
+          await extractApplyPath(base, plane, o, id).catch(() => null);
+          setApplyPath(await getApplyPath(base, plane, o, id).catch(() => null));
+        }
+        return id;
+      } catch (e) {
+        setSparkErr(interpretError(e));
+        return null;
+      } finally {
+        setSparkBusy(false);
+      }
+    },
+    [base, loadSparksAndDetail, orgOk, o, plane],
+  );
+
   const onSignOut = useCallback(async () => {
     await signOut(base);
     setSession({ authenticated: false, organizationId: null });
@@ -1266,6 +1318,18 @@ export default function App() {
           onAddDemo={() => void onCreateDemoSpark()}
           canAdd={hasProfile && !anyBusy}
         />
+      ) : surface === "add_opportunity" ? (
+        <AddOpportunityPage
+          tracked={sparks}
+          busy={sparkBusy}
+          error={sparkErr}
+          onCreate={onCreateIntake}
+          onOpenExisting={(id) => {
+            setSparkId(id);
+            setSurface("documents");
+          }}
+          onCancel={() => setSurface("opportunities")}
+        />
       ) : surface === "opportunities" ? (
         <OpportunitiesPage
           sparks={sparks}
@@ -1281,6 +1345,7 @@ export default function App() {
           onAddDemo={() => void onCreateDemoSpark()}
           canAdd={hasProfile}
           addBlockedReason="Complete your organization profile first."
+          onAddYourOwn={() => setSurface("add_opportunity")}
         />
       ) : surface === "documents" ? (
         <DocumentsPage

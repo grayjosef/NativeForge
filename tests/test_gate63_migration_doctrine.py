@@ -96,7 +96,13 @@ DOCS = ROOT / "docs" / "operations"
 # empty: doc 683 records that a production write needs customer_auth_live and a
 # verified operational binding, and both are false. Object storage remains
 # unconfigured, so document_storage_live stays false too.
-CURRENT_HEAD = "0067"
+# 0068 adds nf_opportunity_contacts and nf_opportunity_submission_paths: who
+# to contact about a funding opportunity and where an application is sent.
+# Both carry organization_id and is_demo, so both get the two-GUC predicate
+# with FORCE and WITH CHECK - the isolation gate discovers tenant tables by
+# that column rather than from a list, so a table added without policies fails
+# coverage rather than passing unnoticed.
+CURRENT_HEAD = "0068"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

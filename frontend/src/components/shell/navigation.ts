@@ -129,6 +129,9 @@ export function activeNavId(surface: AppSurface): string {
   const match = NAV_ITEMS.find((item) => item.surface === surface);
   if (match) return match.id;
   if (surface === "sign_in" || surface === "onboarding") return "";
+  // Adding an opportunity belongs to Opportunities; the rail stays lit
+  // there rather than losing its active state mid-task.
+  if (surface === "add_opportunity") return "opportunities";
   return "settings";
 }
 

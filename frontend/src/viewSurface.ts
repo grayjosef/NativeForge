@@ -15,6 +15,7 @@ export type AppSurface =
   | "workspace"
   | "discover"
   | "opportunities"
+  | "add_opportunity"
   | "pursuits"
   | "documents"
   | "organization"
@@ -41,6 +42,7 @@ const SURFACES: ReadonlySet<string> = new Set<AppSurface>([
   "workspace",
   "discover",
   "opportunities",
+  "add_opportunity",
   "pursuits",
   "documents",
   "organization",
@@ -54,6 +56,11 @@ const SURFACES: ReadonlySet<string> = new Set<AppSurface>([
   "sc_customer_demo",
   "beta_onboarding_cockpit",
 ]);
+
+/** Whether a string names a surface this application can show. */
+export function isSurface(value: string): value is AppSurface {
+  return SURFACES.has(value);
+}
 
 export function readSurface(): AppSurface {
   try {
