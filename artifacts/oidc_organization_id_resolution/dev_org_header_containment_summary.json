@@ -2,7 +2,7 @@
   "backend_loopback_only": true,
   "backend_publicly_exposed": true,
   "backend_unit": "nativeforge-backend.service",
-  "backend_unit_active": true,
+  "backend_unit_active": false,
   "blocked_reasons": [
     "backend_reachable_from_outside_loopback",
     "unauthenticated_header_can_set_app_current_org_id"
