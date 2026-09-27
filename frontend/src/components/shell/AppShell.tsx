@@ -257,12 +257,29 @@ export function AppShell({
               had no h1 and no heading named NativeForge for a screen reader to
               land on. The emblem's visually hidden name carries it when the
               rail is collapsed and the wordmark is not drawn. */}
+          {/* A brand block, not a logo squeezed into a corner.
+              The emblem sat at 34px beside the wordmark on one line. Its
+              geometry was never distorted - the artwork's 1.169 ratio was
+              preserved exactly - but an anvil, a woven pattern and bevelled
+              edges rendered into 34 pixels of height read as mush, which is
+              what "skewed" looked like on screen.
+              It is given its own line and room to be legible, with the
+              canonical tagline beneath the wordmark: restrained, letter-
+              spaced, and clearly secondary to it. */}
           <h1 className="nf-rail-brand">
-            {/* Compact chrome gets the emblem. The full bevelled lockup turns
-                to mush below about 48px, so it is kept for sign-in and larger
-                branded surfaces. */}
-            <BrandLockup size={collapsed ? 30 : 34} markOnly decorative={!collapsed} />
-            {collapsed ? null : <span className="nf-rail-wordmark">NativeForge</span>}
+            <BrandLockup size={collapsed ? 34 : 44} markOnly decorative={!collapsed} />
+            {collapsed ? null : (
+              <span className="nf-rail-brand-text">
+                <span className="nf-rail-wordmark">NativeForge</span>
+                {/* Not part of the accessible name: a screen reader
+                    announcing "NativeForge Find. Pursue. Govern." every time
+                    it lands on the page heading is a slogan read aloud, not a
+                    heading. It stays visible and is hidden from the name. */}
+                <span className="nf-rail-tagline" aria-hidden="true">
+                  Find. Pursue. Govern.
+                </span>
+              </span>
+            )}
           </h1>
 
           {renderNav(!collapsed)}

@@ -175,18 +175,32 @@ export function ActionCard(props: {
   );
 }
 
-/** A responsive grid that does not need a column count at every call site. */
+/**
+ * A responsive grid that does not need a column count at every call site.
+ *
+ * `max` exists because `auto-fit` hands a lone card the whole row. On the
+ * workspace that produced a 1113px-wide card containing a four-word title and
+ * one sentence, with the rest of the viewport empty beside it. Capping the
+ * track keeps a single card at a width somebody would actually draw, and two
+ * or more still fill the row.
+ */
 export function CardGrid({
   children,
   min = 260,
+  max = 560,
 }: {
   children: ReactNode;
   min?: number;
+  /** Widest a single column may grow. Pass `null` to let it fill the row. */
+  max?: number | null;
 }) {
   return (
     <div
       className="nf-card-grid"
-      style={{ ["--nf-grid-min" as string]: `${min}px` }}
+      style={{
+        ["--nf-grid-min" as string]: `${min}px`,
+        ["--nf-grid-max" as string]: max === null ? "1fr" : `${max}px`,
+      }}
     >
       {children}
     </div>

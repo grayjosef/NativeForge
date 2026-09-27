@@ -26,11 +26,25 @@
   --nf-rule: #e3e1d7;
   --nf-rule-fine: #eceae2;
 
-  /* — ink — */
+  /* — ink —
+     Four levels, every one of which is readable.
+
+     `--nf-faint` was #7e8a82, which measures 3.21:1 on the page ground and
+     3.59:1 on a card. It carries the eyebrow above every page title, every
+     metric's explanatory note, the workflow step summaries, the deadline
+     dates and the muted badges - 23 failing elements on the workspace alone,
+     all from this one token. Restraint had become invisibility: subtle grey
+     placed on subtle grey.
+
+     Measured against #f5f2ea, the harder of the two grounds, rather than
+     against white. The three secondary levels now sit at roughly 9.7, 6.6
+     and 4.9 to 1, which keeps them distinguishable from each other as well
+     as legible - the first repair made faint and muted2 so close that the
+     hierarchy they exist to express disappeared instead. */
   --nf-text: #14201a;
-  --nf-muted: #3d4a43;
-  --nf-muted2: #5d6a62;
-  --nf-faint: #7e8a82;
+  --nf-muted: #33403a;
+  --nf-muted2: #4a564f;
+  --nf-faint: #5f6b64;
 
   /* — retained for non-demo surfaces — */
   --nf-navy: #1b2b22;
@@ -3515,8 +3529,34 @@ code,
   display: flex;
   align-items: center;
   gap: var(--nf-s3);
-  padding: var(--nf-s2) var(--nf-s2) var(--nf-s4);
-  min-height: 56px;
+  padding: var(--nf-s3) var(--nf-s2) var(--nf-s5);
+  min-height: 64px;
+}
+
+/* Collapsed, the emblem is the whole brand, so it centres in the 76px rail
+   instead of hugging the left edge where the wordmark used to start. */
+.nf-shell[data-collapsed="true"] .nf-rail-brand {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.nf-rail-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* Small, wide-tracked and quiet: the tagline supports the wordmark rather
+   than competing with it. 0.5 alpha would have put it at 2.4:1 against the
+   graphite rail, so it sits at 0.72 and clears 4.5. */
+.nf-rail-tagline {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(233, 240, 236, 0.72);
 }
 
 .nf-rail-wordmark {

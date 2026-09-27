@@ -233,10 +233,42 @@
 
 /* ── cards ──────────────────────────────────────────────────────────── */
 
+/* `auto-fit` collapses empty tracks, so a grid holding one card gives that
+   card the entire row - 1113px of mostly-empty card on a 1440px workspace.
+   Capping the track keeps a lone card at a width a person would actually
+   draw, and two or more still fill the row. */
 .nf-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--nf-grid-min, 260px), 1fr));
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--nf-grid-min, 260px), var(--nf-grid-max, 1fr))
+  );
+  justify-content: start;
   gap: var(--nf-s3);
+}
+
+/* ── workspace: attention beside measurement ────────────────────────── */
+
+.nf-workspace-top {
+  display: grid;
+  gap: var(--nf-s6);
+  align-items: start;
+}
+
+@media (min-width: 1200px) {
+  .nf-workspace-top {
+    /* Attention gets the wider column: it carries sentences and a control,
+       while the metrics beside it are a label and a number each. */
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: var(--nf-s6);
+  }
+
+  /* Two metrics per row in the narrower column, rather than four squeezed
+     into half the page. */
+  .nf-workspace-top .nf-metric-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
 }
 
 .nf-panel {
@@ -1278,7 +1310,12 @@
   font-weight: 700;
   letter-spacing: var(--nf-track-eyebrow);
   text-transform: uppercase;
-  color: rgba(232, 239, 234, 0.45);
+  /* 0.45 alpha measured 3.44:1 against the graphite rail. These name the
+     three jobs the navigation is organised around - finding funding,
+     pursuing it, governing the organization - so they are the labels that
+     make the grouping legible at all. 0.72 clears 4.5 and still reads as
+     secondary to the items beneath them. */
+  color: rgba(232, 239, 234, 0.72);
 }
 
 .nf-rail-glyph {

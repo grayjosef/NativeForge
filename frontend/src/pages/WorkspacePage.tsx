@@ -150,7 +150,15 @@ export function WorkspacePage(props: WorkspacePageProps) {
         }
       />
 
-      {/* ------------------------------------------------ action required */}
+      {/* ------------------------------------------ attention and measurement
+          Side by side above 1200px.
+          Stacked, "Action required" was a single card stretched to 1113px
+          holding a four-word title and one sentence, with the rest of the
+          viewport empty to its right; then "At a glance" repeated the shape
+          below it. Two half-empty full-width bands where one dense row of
+          answers belongs. Below 1200px they stack, because two columns of
+          260px cards is the cramped failure rather than the empty one. */}
+      <div className="nf-workspace-top">
       <Section
         title="Action required"
         lead="Everything here is waiting on a decision or a step from you."
@@ -160,7 +168,7 @@ export function WorkspacePage(props: WorkspacePageProps) {
           ) : null
         }
       >
-        <CardGrid min={280}>
+        <CardGrid min={260} max={null}>
           {nextActionLabel ? (
             <ActionCard
               title={nextHeadline}
@@ -224,6 +232,7 @@ export function WorkspacePage(props: WorkspacePageProps) {
           />
         </MetricRow>
       </Section>
+      </div>
 
       {/* ---------------------------------------------------- organization */}
       <Section
