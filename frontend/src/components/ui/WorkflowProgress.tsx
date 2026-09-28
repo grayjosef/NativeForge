@@ -52,9 +52,15 @@ export interface WorkflowProgressProps {
   steps: ProgressStep[];
   /** Heading above the track. Omitted when the track sits inside a section. */
   title?: string;
+  /** Open a stage's real destination. Locked stages are not clickable. */
+  onStepActivate?: (step: ProgressStep) => void;
 }
 
-export function WorkflowProgress({ steps, title }: WorkflowProgressProps) {
+export function WorkflowProgress({
+  steps,
+  title,
+  onStepActivate,
+}: WorkflowProgressProps) {
   const firstIncomplete = steps.findIndex((s) => s.state !== "complete");
   const currentIndex = firstIncomplete === -1 ? steps.length - 1 : firstIncomplete;
   const completed = steps.filter((s) => s.state === "complete").length;
@@ -72,6 +78,8 @@ export function WorkflowProgress({ steps, title }: WorkflowProgressProps) {
         {steps.map((s, index) => {
           const tone = TONE[s.state];
           const isCurrent = index === currentIndex && tone !== "done";
+          const canOpen =
+            Boolean(onStepActivate && s.view) && s.state !== "locked";
           return (
             <li
               key={s.id}
@@ -80,18 +88,33 @@ export function WorkflowProgress({ steps, title }: WorkflowProgressProps) {
               data-current={isCurrent}
               aria-current={isCurrent ? "step" : undefined}
             >
-              {/* The connector belongs to the step that follows it, so the
-                  track ends cleanly instead of trailing a line into nothing. */}
               {index > 0 ? <span className="nf-flow-link" aria-hidden="true" /> : null}
 
-              <span className="nf-flow-marker" aria-hidden="true">
-                {tone === "done" ? "✓" : tone === "bad" ? "!" : index + 1}
-              </span>
-
-              <span className="nf-flow-text">
-                <span className="nf-flow-label">{s.shortLabel}</span>
-                <span className="nf-flow-summary">{s.lineSummary}</span>
-              </span>
+              {canOpen ? (
+                <button
+                  type="button"
+                  className="nf-flow-activate"
+                  onClick={() => onStepActivate?.(s)}
+                >
+                  <span className="nf-flow-marker" aria-hidden="true">
+                    {tone === "done" ? "✓" : tone === "bad" ? "!" : index + 1}
+                  </span>
+                  <span className="nf-flow-text">
+                    <span className="nf-flow-label">{s.shortLabel}</span>
+                    <span className="nf-flow-summary">{s.lineSummary}</span>
+                  </span>
+                </button>
+              ) : (
+                <>
+                  <span className="nf-flow-marker" aria-hidden="true">
+                    {tone === "done" ? "✓" : tone === "bad" ? "!" : index + 1}
+                  </span>
+                  <span className="nf-flow-text">
+                    <span className="nf-flow-label">{s.shortLabel}</span>
+                    <span className="nf-flow-summary">{s.lineSummary}</span>
+                  </span>
+                </>
+              )}
 
               <span className="nf-visually-hidden">
                 {s.label}: {TONE_WORD[tone]}

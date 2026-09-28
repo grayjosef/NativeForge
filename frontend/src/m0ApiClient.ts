@@ -574,7 +574,49 @@ export async function readOpportunityDocument(
   return parseJson(r);
 }
 
-/** Re-read the stored notice for contacts and a submission route. */
+export async function getCommandCenter(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  sparkId: string,
+): Promise<Record<string, unknown> | null> {
+  const path = buildM0Path(
+    plane,
+    orgId,
+    `/grant-sparks/${sparkId}/command-center`,
+  );
+  const r = await fetch(`${baseUrl}${path}`, { headers: orgHeaderOnly(orgId) });
+  if (r.status === 404) {
+    return null;
+  }
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
+export async function recordFunderInteraction(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  sparkId: string,
+  body: Record<string, unknown>,
+): Promise<Record<string, unknown>> {
+  const path = buildM0Path(
+    plane,
+    orgId,
+    `/grant-sparks/${sparkId}/interactions`,
+  );
+  const r = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    headers: jsonHeaders(orgId),
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
 export async function extractApplyPath(
   baseUrl: string,
   plane: Plane,

@@ -14,6 +14,8 @@ import {
   getHealth,
   extractApplyPath,
   getApplyPath,
+  getCommandCenter,
+  recordFunderInteraction,
   readOpportunityDocument,
   readOpportunityUrl,
   getNofoLatest,
@@ -164,6 +166,7 @@ export default function App() {
   const [surface, setSurfaceState] = useState<AppSurface>(() => readSurface());
   const [nofoLatest, setNofoLatest] = useState<Record<string, unknown> | null>(null);
   const [applyPath, setApplyPath] = useState<Record<string, unknown> | null>(null);
+  const [commandCenter, setCommandCenter] = useState<Record<string, unknown> | null>(null);
   const [applyBusy, setApplyBusy] = useState(false);
   const [session, setSession] = useState<{
     authenticated: boolean;
@@ -515,6 +518,7 @@ export default function App() {
     setScoreErr(null);
     setNofoLatest(null);
     setApplyPath(null);
+    setCommandCenter(null);
   }, [sparkId]);
 
   // Everything already known about the selected opportunity, on arrival.
@@ -533,20 +537,20 @@ export default function App() {
     if (offlineDemoSurface || !sparkSelected) return;
     let cancelled = false;
     void (async () => {
-      const [reqs, latest, latestScore, openPursuits, apply] = await Promise.all([
+      const [reqs, latest, latestScore, openPursuits, apply, center] = await Promise.all([
         getNofoRequirements(base, plane, o, sparkId.trim()).catch(() => null),
         getNofoLatest(base, plane, o, sparkId.trim()).catch(() => null),
-        // A 404 here is "not scored yet", which is the ordinary state of a new
-        // opportunity rather than a failure worth reporting on arrival.
         getScoreLatest(base, plane, o, sparkId.trim()).catch(() => null),
         listPursuits(base, plane, o).catch(() => null),
         getApplyPath(base, plane, o, sparkId.trim()).catch(() => null),
+        getCommandCenter(base, plane, o, sparkId.trim()).catch(() => null),
       ]);
       if (cancelled) return;
       if (reqs) setRequirements(reqs.requirements ?? []);
       setNofoLatest(latest);
       if (latestScore) setScore(latestScore);
       setApplyPath(apply);
+      setCommandCenter(center);
 
       // Recover the pursuit that already exists for this opportunity.
       //
@@ -677,6 +681,9 @@ export default function App() {
       const id = str(p.id);
       setPursuitId(id);
       setPursuit(p);
+      setCommandCenter(
+        await getCommandCenter(base, plane, o, sparkId.trim()).catch(() => null),
+      );
     } catch (e) {
       setPursuitErr(interpretError(e));
     } finally {
@@ -1067,19 +1074,38 @@ export default function App() {
     }
   }, [base, o, plane, sparkId, sparkSelected]);
 
-  /**
-   * Read the stored notice for contacts and a submission route.
-   *
-   * Separate from requirement extraction rather than folded into it: a
-   * customer often wants to know who to ask before deciding to work the
-   * checklist, and the two reads answer different questions.
-   */
+  const onRecordInteraction = useCallback(
+    async (body: {
+      interaction_type: string;
+      subject?: string;
+      notes?: string;
+      owner_label?: string;
+      follow_up_at?: string;
+      contact_id?: string;
+      status?: string;
+    }) => {
+      if (!sparkSelected) return;
+      const center = await recordFunderInteraction(
+        base,
+        plane,
+        o,
+        sparkId.trim(),
+        body as Record<string, unknown>,
+      );
+      setCommandCenter(center);
+    },
+    [base, o, plane, sparkId, sparkSelected],
+  );
+
   const onExtractApplyPath = useCallback(async () => {
     if (!sparkSelected) return;
     setApplyBusy(true);
     try {
       await extractApplyPath(base, plane, o, sparkId.trim());
       setApplyPath(await getApplyPath(base, plane, o, sparkId.trim()));
+      setCommandCenter(
+        await getCommandCenter(base, plane, o, sparkId.trim()).catch(() => null),
+      );
     } catch (e) {
       setNofoErr(interpretError(e));
     } finally {
@@ -1451,6 +1477,11 @@ export default function App() {
           applyPath={applyPath as never}
           applyBusy={applyBusy}
           onExtractApplyPath={() => void onExtractApplyPath()}
+          commandCenter={commandCenter as never}
+          onGoTo={setSurfaceByNav}
+          onStartPursuit={() => void onOpenPursuit()}
+          canStartPursuit={hasScore}
+          onRecordInteraction={onRecordInteraction}
         />
       ) : surface === "pursuits" ? (
         <PursuitsPage
@@ -1469,6 +1500,9 @@ export default function App() {
           onRefresh={() => void onRefreshPursuit()}
           onCreateFormPackage={() => void onCreateFormPackage()}
           onGoToOpportunities={() => setSurface("opportunities")}
+          commandCenter={commandCenter as never}
+          onGoTo={setSurfaceByNav}
+          onRecordInteraction={onRecordInteraction}
         />
       ) : surface === "trust" ? (
         <TrustPage

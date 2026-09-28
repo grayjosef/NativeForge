@@ -17,9 +17,6 @@ from nativeforge.api.audit_replay_routes import (
 )
 from nativeforge.api.auth import install_auth_security_scheme
 from nativeforge.api.auth import router as auth_router
-from nativeforge.services.application_logging_service import (
-    configure_application_logging,
-)
 
 # Gate 139. The four post-award lanes, demo-scoped.
 #
@@ -96,6 +93,10 @@ from nativeforge.api.pursuit_brief_routes import (
     demo_pursuit_brief_router,
     real_pursuit_brief_router,
 )
+from nativeforge.api.pursuit_command_center_routes import (
+    demo_command_router,
+    real_command_router,
+)
 from nativeforge.api.pursuit_routes import demo_pursuit_router, real_pursuit_router
 from nativeforge.api.source_authorization_routes import (
     router as source_authorization_router,
@@ -150,6 +151,9 @@ from nativeforge.api.verified_binding_readiness_routes import (
     router as verified_binding_readiness_router,
 )
 from nativeforge.lib.settings import get_settings
+from nativeforge.services.application_logging_service import (
+    configure_application_logging,
+)
 from nativeforge.services.backend_lifespan_hook_service import (
     record_shutdown,
     record_startup,
@@ -337,6 +341,8 @@ def create_app() -> FastAPI:
     # opportunity and fetches nothing.
     app.include_router(demo_apply_router)
     app.include_router(real_apply_router)
+    app.include_router(demo_command_router)
+    app.include_router(real_command_router)
     # Read one public page a signed-in customer named. The only route on the
     # customer_supplied_url purpose, and it stores nothing: what it finds goes
     # back for review and through the ordinary create path.

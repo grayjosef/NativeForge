@@ -1,9 +1,8 @@
-# NativeForge Handoff — product completion (not demo freeze)
+# NativeForge Handoff — Individual pursuit command center
 
 **Date:** 2026-09-28
 **Path:** `/home/josefgray/projects/nativeforge`
 **Live:** `https://nativeforge.mayhem-nc.dev`
-**HEAD at write:** `d9b705ac` plus operator-Settings gating (this commit)
 **Protected stash:** `stash@{0}: wip-sprint8-ui-redesign-do-not-commit` — never drop
 **Push policy:** commits and pushes allowed after tests; never force-push; never prune
 
@@ -12,52 +11,38 @@
 Finish NativeForge as a product. Demo is a live checkpoint, not a freeze line.
 Controlled-customer launch is the finish line. Collectors stay off unless Mayhem authorizes activation. Do not touch real tenants / Carolina Fire Protection Microsoft / Auth0.
 
-## Repo / deploy state
+## This run — flagship individual pursuit workspace
 
-| Item | Value |
-|------|--------|
-| Live `/health` (last verified) | `git_sha=82033c28` (logo commit), `source_dirty=false` |
-| Logo on live sign-in | Compact kit artwork (desktop dark panel + mobile card). CSS fake wordmark removed from expanded rail in `82033c28`. |
-| Auth path | Sentinel `after_begin`, returning-member lookup, unsigned onboarding bounce — shipped `56b470b3` / `a6e9c54d` / `df4bf3e5`. Live Workspace after Google not re-proven this run. |
-| Collectors | `collector_activated: false` |
+The individual grant page is now a pursuit command center, not an information display.
 
-## Gates 173–180 (from repo + ops docs, not old pending assumptions)
+- **Canonical reuse:** opportunity = `nf_grant_sparks`; pursuit = `nf_grant_pursuits` (1:1 per spark, org-scoped). Workflow stages are derived from the same persisted objects as Workspace Guided Pursuit (profile → opportunity → requirements → eligibility → pursuit → package → trust). No second stage column.
+- **Discovered vs pursuing:** an opportunity without a pursuit row shows "Opportunity discovered" and does not present chase progress. Starting a pursuit initializes the same workflow for uploaded (`source=manual`) and discovered (`source=grants_gov`) records.
+- **Contacts:** 0068 `nf_opportunity_contacts` via the apply-path service, with provenance. Missing names are not invented.
+- **New durable entity (0069):** `nf_funder_interactions` — tenant-private questions, calls, clarifications, webinars, follow-ups. RLS FORCE + WITH CHECK. Agency matching for institutional memory is exact normalized string; people are never fuzzy-merged.
+- **UX:** command center sits at the top of Documents and Pursuits. Workspace Guided Pursuit remains and is now clickable into real destinations.
 
-| Gate | Classification | Evidence |
-|------|----------------|----------|
-| 173 Native relevance + coverage | **PARTIAL** | Tests complete. Ops: BUILT-UNPROVEN; keyword-built catalogue; real graph still thin. |
-| 174 Eligibility intelligence | **COMPLETE** | PROVEN at verifier (deny-by-default, typed requirements). No real opportunity has fully normalized requirements in customer UX. |
-| 175 Document / NOFO / attachment | **PARTIAL** | Tests complete. BUILT-UNPROVEN against a real NOFO corpus. Gate 182 OCR exists. Tranche 2 made this load-bearing for EPA, still not customer-fed. |
-| 176 Early signals + award/recurrence/miss | **PARTIAL** | Tests complete. DEMO-ONLY: near-zero real input; award rows are fixtures; recurrence needs ≥3 real cycles. |
-| 177 Tribal authority + onboarding + tenant admin | **PARTIAL** | Service layer PROVEN. Workspace identity tier was hardcoded unverified (`3edbea74`). Session org id is now read from `/api/auth/session` and Settings locks it. Invites not built (Organization page states that honestly). |
-| 178 Commercial entitlements / licence | **COMPLETE** | PROVEN (consortium refuses an unjustified price). Not a live billing integration. |
-| 179 Customer experience + customization + scale | **PARTIAL** | Isolation and customization PROVEN in tests. Customer workflow PROVEN on demo data. No Tranche 2 source feeds a customer. Operator tools still sit on Settings. |
-| 180 World-class reassessment + controlled launch | **COMPLETE as reassessment; launch NOT STARTED** | Docs-only gate. Verdict: fabric built, not pointed at the world. Not `CUSTOMER_LAUNCH_READY`. |
+Alembic head is **0069**. Head pins updated in Gate 63 doctrine and the membership-directory expected head.
 
-## Post-180 boundary (actual)
+## Tests this run
 
-Gates **181** (deployment identity, logical opportunity, Grants.gov eligibility discovery, publishers) and **182** (OCR bounds, regulatory classifier, programme roster, ALN, entity classes, funding channel, certification/zero) exist as **COMPLETE tests**. Tranche 2 measured five live publishers and added **zero** customer-visible opportunities because collectors are not activated.
+- `ruff check` on sprint files: pass. `ruff format --check` on sprint files: pass.
+- `pytest -q` command-center + apply-path + Sprint 5 pursuit + Sprint 20 discovery + Gates 60/118/132 + identity presentation + Microsoft login: **194 passed**.
+- Frontend: `vitest` `PursuitCommandCenter.test.tsx` **4 passed**; App + Add Opportunity + Stage 12 smoke also green in the same run (29 passed / 1 later-fixed command-center assertion).
+- Stash `stash@{0}` still present.
 
-**Current coding boundary:** customer-facing auth/session/tenant/UX + branding, with engines proven in tests and unactivated in production.
+## Remaining launch-critical
 
-## This run
-
-- Rail/sign-in draw compact kit artwork instead of CSS “NativeForge” (`82033c28`, live).
-- Workspace reports signed-in identity as verified (`3edbea74`).
-- Session client now reads `organization_id` from the `/api/auth/session` envelope (it was looking in a nested blob that does not exist). Settings locks the org identifier to that membership.
-- Operator workbench/demos are off customer Settings unless `?ops=1`; `?view=` still reaches them. Demo/live switching is operator-only the same way.
-
-## Remaining launch-critical (do not treat as done)
-
-- Live Google → Workspace re-verify after latest SHAs.
+- Microsoft Entra app + Railway `NF_OIDC_MICROSOFT_*` (demo blocker if Microsoft is required). Code already refuses to send Microsoft starts to Google.
+- No first-class funder *entity* table: agency is still a string on the spark. Institutional memory is same-tenant exact-agency continuity, which is enough to start a future Funder Profile without a second contact system.
+- Question dates/methods only when notice text matches; no mailbox ingestion.
+- Apply-path `extraction_performed` is true only when a contact or submission row exists, so a notice that was read and named nobody is indistinguishable from unread unless a submission path was stored.
 - Real non-demo observations in customer UX (blocked on authorized collector activation).
 - Discover remains empty by design until activation.
-- Support runbook ABSENT. Adversarial tenant isolation campaign unrun. Privacy / Indigenous data governance framework incomplete.
-- Remaining UNKNOWNs stay documented, not guessed.
+- Pre-existing: `tests/test_sprint0_naming_guard.py::test_nf_sources_avoid_contractforge_table_names` (false positives from `FROM contracts` prose).
 
 ## Proposed next
 
-1. Re-verify live login → Workspace → compact rail lockup after this SHA deploys.
-2. Continue customer UX (pursuits, documents, intake) against the engines that already exist.
-3. Continue customer UX (pursuits, documents, intake) against the engines that already exist.
-4. Do not activate collectors without explicit authorization.
+1. Open two demo pursuits on live after deploy and confirm independent workflow, contacts, and a recorded interaction survive reload.
+2. Set Railway `NF_OIDC_MICROSOFT_*` when Microsoft sign-in is required.
+3. Do not activate collectors without explicit authorization.
+4. Do not add a separate funder CRM; the next safe expansion is a read-model Funder Profile over exact-agency memory already stored.

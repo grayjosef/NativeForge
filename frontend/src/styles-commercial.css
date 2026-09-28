@@ -1544,3 +1544,80 @@
     gap: var(--nf-s1);
   }
 }
+
+.nf-command {
+  display: grid;
+  gap: var(--nf-s5);
+  margin-bottom: var(--nf-s6);
+}
+
+.nf-command-next {
+  margin: 0 0 var(--nf-s3);
+  font-size: var(--nf-t-md);
+  font-weight: 650;
+}
+
+.nf-command-list {
+  margin: var(--nf-s3) 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: var(--nf-s2);
+}
+
+.nf-command-contacts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--nf-s3);
+}
+
+.nf-command-contact {
+  padding: var(--nf-s3) 0;
+  border-bottom: 1px solid var(--nf-rule);
+}
+
+.nf-command-contact-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--nf-s3);
+}
+
+.nf-command-form {
+  display: grid;
+  gap: var(--nf-s3);
+  margin-top: var(--nf-s4);
+  max-width: 36rem;
+}
+
+.nf-command-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: var(--nf-t-sm);
+}
+
+.nf-command-form input,
+.nf-command-form select,
+.nf-command-form textarea {
+  font: inherit;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--nf-rule);
+  border-radius: 6px;
+  background: var(--nf-card);
+  color: var(--nf-text);
+}
+
+.nf-flow-activate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nf-s2);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: center;
+}

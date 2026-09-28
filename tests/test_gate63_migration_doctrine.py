@@ -102,7 +102,9 @@ DOCS = ROOT / "docs" / "operations"
 # with FORCE and WITH CHECK - the isolation gate discovers tenant tables by
 # that column rather than from a list, so a table added without policies fails
 # coverage rather than passing unnoticed.
-CURRENT_HEAD = "0068"
+# 0069 adds nf_funder_interactions: what this organization asked a funder,
+# heard back, and still owes. Tenant-scoped, RLS-forced, no people merge.
+CURRENT_HEAD = "0069"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

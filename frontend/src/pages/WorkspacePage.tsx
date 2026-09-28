@@ -356,7 +356,13 @@ export function WorkspacePage(props: WorkspacePageProps) {
         title="Guided pursuit workflow"
         lead="The sequence from organization profile to a reviewable application package."
       >
-        <WorkflowProgress steps={steps} title="Pursuit workflow" />
+        <WorkflowProgress
+          steps={steps}
+          title="Pursuit workflow"
+          onStepActivate={(step) => {
+            if (step.view) onGoTo(step.view);
+          }}
+        />
         <div className="nf-layout">
           <div className="nf-workflow">{workflow}</div>
           <aside className="nf-sidecol" aria-label="Guidance and trust">

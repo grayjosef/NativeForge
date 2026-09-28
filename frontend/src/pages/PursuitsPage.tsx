@@ -9,6 +9,7 @@ import {
 } from "../components/ui/primitives";
 import { deadlineTone, formatDeadline } from "../lib/dates";
 import { humanDisqualification } from "../lib/entityTypes";
+import { PursuitCommandCenter, type CommandCenter } from "../components/PursuitCommandCenter";
 
 /**
  * The pursuit workspace: one application, and what it is waiting on.
@@ -46,6 +47,17 @@ export interface PursuitsPageProps {
   onRefresh: () => void;
   onCreateFormPackage: () => void;
   onGoToOpportunities: () => void;
+  commandCenter: CommandCenter | null;
+  onGoTo: (view: string) => void;
+  onRecordInteraction: (body: {
+    interaction_type: string;
+    subject?: string;
+    notes?: string;
+    owner_label?: string;
+    follow_up_at?: string;
+    contact_id?: string;
+    status?: string;
+  }) => Promise<void>;
 }
 
 export function PursuitsPage(props: PursuitsPageProps) {
@@ -63,6 +75,9 @@ export function PursuitsPage(props: PursuitsPageProps) {
     onRefresh,
     onCreateFormPackage,
     onGoToOpportunities,
+    commandCenter,
+    onGoTo,
+    onRecordInteraction,
   } = props;
 
   // The detail endpoint answers `{pursuit, tasks, calendar_events}`, so the
@@ -112,6 +127,16 @@ export function PursuitsPage(props: PursuitsPageProps) {
       />
 
       {error ? <StateView state={error} /> : null}
+
+      {commandCenter ? (
+        <PursuitCommandCenter
+          center={commandCenter}
+          onGoTo={onGoTo}
+          onStartPursuit={onOpenPursuit}
+          canStartPursuit={canOpen}
+          onRecordInteraction={onRecordInteraction}
+        />
+      ) : null}
 
       {!pursuit ? (
         <EmptyState

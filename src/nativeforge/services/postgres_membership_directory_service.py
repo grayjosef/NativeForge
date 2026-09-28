@@ -129,7 +129,12 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # key *targets*, which alters neither. Neither nf_org_memberships nor
 # nf_identities gains, loses or changes a column, and the 0027 policies this
 # adapter relies on are untouched. The adapter's schema is unchanged.
-EXPECTED_MIGRATION_HEAD = "0068"
+# 0069 adds nf_funder_interactions: tenant-private correspondence about a
+# funder/opportunity. It reads organizations, nf_grant_sparks,
+# nf_grant_pursuits and nf_opportunity_contacts only as foreign key targets.
+# Neither nf_org_memberships nor nf_identities changes. The adapter's schema
+# is unchanged.
+EXPECTED_MIGRATION_HEAD = "0069"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.

@@ -15,6 +15,8 @@ export interface ProgressStep {
   state: ProgressStepState;
   /** Short status line under the step label */
   lineSummary: string;
+  /** Workspace surface this step opens, when one exists. */
+  view?: string | null;
 }
 
 /** User-facing spine labels — avoid “Error” unless something actually failed */

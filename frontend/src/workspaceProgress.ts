@@ -44,8 +44,9 @@ function step(
   label: string,
   state: ProgressStepState,
   lineSummary: string,
+  view?: string | null,
 ): ProgressStep {
-  return { id, shortLabel: short, label, state, lineSummary };
+  return { id, shortLabel: short, label, state, lineSummary, view: view ?? null };
 }
 
 export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
@@ -75,6 +76,7 @@ export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
         : hasProfile
           ? "On file"
           : "Ready to start",
+      "organization",
     ),
     step(
       "spark",
@@ -94,6 +96,7 @@ export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
           : !hasSpark
             ? "Ready to add"
             : "Selected",
+      "opportunities",
     ),
     step(
       "nofo",
@@ -113,6 +116,7 @@ export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
           : !hasReq
             ? "Extract when ready"
             : "Checklist ready",
+      "documents",
     ),
     step(
       "score",
@@ -136,6 +140,7 @@ export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
             : !hasScore
               ? "Run when ready"
               : "Scored",
+      "documents",
     ),
     step(
       "pursuit",
@@ -155,6 +160,7 @@ export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
           : !hasPursuit
             ? "Open when ready"
             : "Active",
+      "pursuits",
     ),
     step(
       "forms",
@@ -174,6 +180,7 @@ export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
           : !hasForm
             ? "Create when ready"
             : "Preview ready",
+      "pursuits",
     ),
     step(
       "trust",
@@ -189,6 +196,7 @@ export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
         : hasTrust
           ? "Current"
           : "Refresh to load",
+      "trust",
     ),
   ];
 }

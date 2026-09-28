@@ -2,6 +2,7 @@ import { EmptyState, StateView } from "../components/StateView";
 import type { CustomerState } from "../customerState";
 import { humanRequirementType } from "../lib/requirementTypes";
 import { ApplyPathPanel, type ApplyPath } from "../components/ApplyPathPanel";
+import { PursuitCommandCenter } from "../components/PursuitCommandCenter";
 import {
   MetricCard,
   MetricRow,
@@ -60,6 +61,19 @@ export interface DocumentsPageProps {
   applyPath: ApplyPath | null;
   applyBusy: boolean;
   onExtractApplyPath: () => void;
+  commandCenter: import("../components/PursuitCommandCenter").CommandCenter | null;
+  onGoTo: (view: string) => void;
+  onStartPursuit: () => void;
+  canStartPursuit: boolean;
+  onRecordInteraction: (body: {
+    interaction_type: string;
+    subject?: string;
+    notes?: string;
+    owner_label?: string;
+    follow_up_at?: string;
+    contact_id?: string;
+    status?: string;
+  }) => Promise<void>;
 }
 
 export function DocumentsPage(props: DocumentsPageProps) {
@@ -76,6 +90,11 @@ export function DocumentsPage(props: DocumentsPageProps) {
     applyPath,
     applyBusy,
     onExtractApplyPath,
+    commandCenter,
+    onGoTo,
+    onStartPursuit,
+    canStartPursuit,
+    onRecordInteraction,
   } = props;
 
   const run = (extraction?.extraction_run ?? null) as Record<string, unknown> | null;
@@ -149,6 +168,14 @@ export function DocumentsPage(props: DocumentsPageProps) {
         />
       ) : (
         <>
+          <PursuitCommandCenter
+            center={commandCenter}
+            onGoTo={onGoTo}
+            onStartPursuit={onStartPursuit}
+            canStartPursuit={canStartPursuit}
+            onRecordInteraction={onRecordInteraction}
+          />
+
           <Section
             title={opportunityTitle || "Selected opportunity"}
             lead="Evidence closure for this notice."
