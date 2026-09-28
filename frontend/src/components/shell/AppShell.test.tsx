@@ -58,4 +58,47 @@ describe("AppShell brand", () => {
       );
     });
   });
+
+  it("shows the provider photo when the session has one", async () => {
+    render(
+      <AppShell
+        surface="workspace"
+        environment="demo"
+        account={{
+          name: "Josef Gray",
+          pictureUrl: "https://lh3.googleusercontent.com/a/photo",
+          organization: "Basilisk Technology",
+          provider: "google",
+        }}
+      >
+        page
+      </AppShell>,
+    );
+
+    const photo = await screen.findByRole("button", {
+      name: /account menu for josef gray/i,
+    });
+    const img = photo.querySelector("img.nf-avatar");
+    expect(img).toHaveAttribute("src", "https://lh3.googleusercontent.com/a/photo");
+    expect(photo.textContent).toMatch(/Josef Gray/);
+    expect(photo.textContent).toMatch(/Basilisk Technology/);
+    expect(photo.textContent).not.toMatch(/^A$/);
+  });
+
+  it("falls back to initials, never a hardcoded A, when there is no photo", async () => {
+    render(
+      <AppShell
+        surface="workspace"
+        environment="demo"
+        account={{ name: "Josef Gray" }}
+      >
+        page
+      </AppShell>,
+    );
+
+    const btn = await screen.findByRole("button", {
+      name: /account menu for josef gray/i,
+    });
+    expect(btn.querySelector(".nf-avatar")?.textContent).toBe("JG");
+  });
 });

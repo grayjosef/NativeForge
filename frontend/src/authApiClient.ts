@@ -31,6 +31,9 @@ export interface SessionResponse {
   authenticated: boolean;
   organization_id: string | null;
   roles: string[];
+  display_name: string | null;
+  picture_url: string | null;
+  identity_provider: string | null;
 }
 
 export async function getAuthProviders(
@@ -84,6 +87,12 @@ export async function getAuthSession(
     authenticated: Boolean(raw.authenticated) || raw.status === "authenticated",
     organization_id: organizationId,
     roles,
+    display_name: typeof raw.display_name === "string" ? raw.display_name : null,
+    picture_url: typeof raw.picture_url === "string" ? raw.picture_url : null,
+    identity_provider:
+      raw.identity_provider === "google" || raw.identity_provider === "microsoft"
+        ? raw.identity_provider
+        : null,
   };
 }
 

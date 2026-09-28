@@ -82,6 +82,9 @@ def _result(
     audience: str | None = None,
     kid: str | None = None,
     algorithm: str | None = None,
+    display_name: str | None = None,
+    picture_url: str | None = None,
+    identity_provider: str | None = None,
 ) -> dict[str, Any]:
     """Build a verification result. Raw token material is never included."""
     st = state if state in VERIFICATION_STATES else "unknown"
@@ -98,6 +101,11 @@ def _result(
             "audience": audience,
             "kid": kid,
             "algorithm": algorithm,
+            # Presentation only. Sanitised before they land here so a later
+            # caller cannot put an arbitrary URL in an <img>.
+            "display_name": display_name if verified else None,
+            "picture_url": picture_url if verified else None,
+            "identity_provider": identity_provider if verified else None,
             "verification_source": "oidc_token_signature" if verified else "none",
             "failure_reason": failure_reason,
             # Verifying a token is not logging a customer in.
@@ -313,6 +321,11 @@ def verify_oidc_token(
             algorithm=alg,
         )
 
+    from nativeforge.services.identity_presentation_service import (
+        presentation_from_claims,
+    )
+
+    presented = presentation_from_claims(claims)
     return _result(
         "verified",
         subject=str(subject),
@@ -322,6 +335,9 @@ def verify_oidc_token(
         audience=expected_audience,
         kid=resolved_kid,
         algorithm=alg,
+        display_name=presented["display_name"],
+        picture_url=presented["picture_url"],
+        identity_provider=presented["identity_provider"],
     )
 
 

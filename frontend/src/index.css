@@ -3492,7 +3492,7 @@ code,
    opening another page. */
 .nf-shell {
   display: grid;
-  grid-template-columns: var(--nf-rail-w, 248px) minmax(0, 1fr);
+  grid-template-columns: var(--nf-rail-w, 268px) minmax(0, 1fr);
   min-height: 100vh;
   background: var(--nf-page);
 }
@@ -3550,17 +3550,24 @@ code,
   flex-direction: column;
   align-items: stretch;
   gap: 6px;
-  padding: var(--nf-s3) var(--nf-s2) var(--nf-s5);
-  min-height: 72px;
+  padding: var(--nf-s4) var(--nf-s3) var(--nf-s5);
+  min-height: 84px;
 }
 
 .nf-rail-brand .nf-lockup {
+  display: block;
+  width: 100%;
   max-width: 100%;
 }
 
 .nf-rail-brand .nf-lockup-art {
+  display: block;
+  width: 100%;
+  height: auto;
   max-width: 100%;
   object-fit: contain;
+  object-position: left center;
+  image-rendering: auto;
 }
 
 /* Collapsed, the emblem is the whole brand, so it centres in the 76px rail
@@ -3570,6 +3577,15 @@ code,
   justify-content: center;
   align-items: center;
   padding-inline: 0;
+}
+
+.nf-shell[data-collapsed="true"] .nf-rail-brand .nf-lockup {
+  width: 44px;
+}
+
+.nf-shell[data-collapsed="true"] .nf-rail-brand .nf-lockup-art {
+  width: 44px;
+  object-position: center;
 }
 
 .nf-rail-brand-text {
@@ -3787,7 +3803,13 @@ code,
 .nf-topbar-actions {
   display: flex;
   align-items: center;
-  gap: var(--nf-s3);
+  gap: var(--nf-s2);
+}
+
+.nf-topbar-actions .nf-btn-ghost {
+  min-height: 36px;
+  padding: 0 var(--nf-s3);
+  border-radius: var(--nf-radius-pill);
 }
 
 .nf-topbar-offline {

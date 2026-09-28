@@ -35,7 +35,7 @@ export interface BrandLockupProps {
  * ## Three modes, because one piece of artwork cannot do three jobs
  *
  * ```text
- * full     720x175 emblem + wordmark + tagline   sign-in, hero
+ * full     960x287 emblem + wordmark + tagline   sign-in, hero
  * compact  720x175 emblem + wordmark             expanded sidebar, headers
  * emblem   256x219 mark alone                    collapsed rail, favicon, tight
  * ```
@@ -138,6 +138,7 @@ export function BrandLockup({
         alt=""
         aria-hidden
         draggable={false}
+        decoding="async"
       />
       {decorative ? null : <span className="nf-visually-hidden">NativeForge</span>}
     </span>

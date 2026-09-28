@@ -115,17 +115,17 @@ describe("SignInPage", () => {
     expect(lines.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("draws compact kit artwork on a dark panel with a live readable tagline", async () => {
+  it("draws the full kit lockup on ivory, with the tagline in the artwork", async () => {
     render(<SignInPage />);
     await screen.findByRole("heading", { level: 1, name: /welcome to nativeforge/i });
     const lockup = document.querySelector(".nf-login-lockup");
-    expect(lockup).toHaveAttribute("data-brand-mode", "compact");
-    expect(lockup?.querySelector("img")?.getAttribute("src")).toBe(
-      "/brand/nf-lockup-notag.png",
-    );
-    const tagline = document.querySelector(".nf-login-brand .nf-login-tagline");
-    expect(tagline?.textContent).toBe("Find. Pursue. Govern.");
-    expect(tagline).not.toHaveClass("nf-visually-hidden");
+    expect(lockup).toHaveAttribute("data-brand-mode", "full");
+    expect(lockup?.querySelector("img")?.getAttribute("src")).toBe("/brand/nf-lockup.png");
+    expect(screen.getAllByText("Find. Pursue. Govern.").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("Funding intelligence for a stronger tomorrow.")).toBeInTheDocument();
+    expect(screen.getByText("Find")).toBeInTheDocument();
+    expect(screen.getByText("Pursue")).toBeInTheDocument();
+    expect(screen.getByText("Govern")).toBeInTheDocument();
   });
 
   it("keeps the submission doctrine in the footer, worded exactly", async () => {

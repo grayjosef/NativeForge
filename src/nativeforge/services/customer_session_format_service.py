@@ -155,6 +155,9 @@ def build_session_payload(
     expires_at: int | None = None,
     auth_source: Any = None,
     session_id: Any = None,
+    display_name: Any = None,
+    picture_url: Any = None,
+    identity_provider: Any = None,
 ) -> dict[str, Any]:
     """The payload a session value carries. No email is included, deliberately.
 
@@ -162,8 +165,18 @@ def build_session_payload(
     route, readable by anything that can see the cookie jar. The subject and
     the organization are what a route needs; the email is looked up when it is
     actually wanted.
+
+    ``dn`` / ``pic`` / ``idp`` are the chrome the signed-in shell needs: a
+    name, an allowlisted profile-photo URL, and which provider vouched. They
+    are already sanitised before they arrive here.
     """
-    return {
+    from nativeforge.services.identity_presentation_service import (
+        present_display_name,
+        present_identity_provider,
+        present_picture_url,
+    )
+
+    payload = {
         "v": SESSION_FORMAT_VERSION,
         "sid": str(session_id or ""),
         "pid": str(principal_id or ""),
@@ -176,6 +189,16 @@ def build_session_payload(
         # Recorded so a verifier can see what was *not* carried.
         "email_omitted": True,
     }
+    name = present_display_name(name=display_name)
+    photo = present_picture_url(picture_url)
+    idp = present_identity_provider(identity_provider)
+    if name:
+        payload["dn"] = name
+    if photo:
+        payload["pic"] = photo
+    if idp:
+        payload["idp"] = idp
+    return payload
 
 
 def build_session(
@@ -189,6 +212,9 @@ def build_session(
     expires_at: int | None = None,
     auth_source: Any = None,
     session_id: Any = None,
+    display_name: Any = None,
+    picture_url: Any = None,
+    identity_provider: Any = None,
     signing_key: str | None = None,
     is_demo_fixture: bool = False,
     now: int | None = None,
@@ -236,6 +262,9 @@ def build_session(
         expires_at=expires_at,
         auth_source=auth_source,
         session_id=session_id,
+        display_name=display_name,
+        picture_url=picture_url,
+        identity_provider=identity_provider,
     )
 
     # -- the fields a session must carry -----------------------------------

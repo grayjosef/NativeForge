@@ -63,11 +63,64 @@ export interface AppShellProps {
    */
   attention?: Record<string, boolean>;
   /** Signed-in person, when there is one. */
-  account?: { name: string; email?: string } | null;
+  account?: {
+    name: string;
+    pictureUrl?: string | null;
+    organization?: string | null;
+    provider?: string | null;
+    email?: string;
+  } | null;
   onSignIn?: () => void;
   onSignOut?: () => void;
   topBarExtra?: ReactNode;
   children: ReactNode;
+}
+
+function initialsFrom(name: string): string {
+  const parts = name
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (parts.length === 0) return "";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function AccountAvatar({
+  name,
+  pictureUrl,
+}: {
+  name: string;
+  pictureUrl?: string | null;
+}) {
+  const [broken, setBroken] = useState(false);
+  const initials = initialsFrom(name);
+
+  if (pictureUrl && !broken) {
+    return (
+      <img
+        className="nf-avatar nf-avatar--photo"
+        src={pictureUrl}
+        alt=""
+        referrerPolicy="no-referrer"
+        onError={() => setBroken(true)}
+      />
+    );
+  }
+
+  if (initials) {
+    return (
+      <span className="nf-avatar" aria-hidden="true">
+        {initials}
+      </span>
+    );
+  }
+
+  return (
+    <span className="nf-avatar nf-avatar--icon" aria-hidden="true">
+      <NavIcon id="people" />
+    </span>
+  );
 }
 
 function readStoredRail(): boolean {
@@ -263,12 +316,12 @@ export function AppShell({
           <h1 className="nf-rail-brand">
             {collapsed ? (
               <>
-                <BrandLockup size={40} mode="emblem" decorative />
+                <BrandLockup size={44} mode="emblem" fit="width" decorative />
                 <span className="nf-visually-hidden">NativeForge</span>
               </>
             ) : (
               <>
-                <BrandLockup size={56} mode="compact" decorative />
+                <BrandLockup size={56} mode="compact" fit="width" decorative />
                 <span className="nf-visually-hidden">NativeForge</span>
               </>
             )}
@@ -311,7 +364,7 @@ export function AppShell({
             onKeyDown={trapTab}
           >
             <div className="nf-drawer-head">
-              <BrandLockup size={52} mode="compact" />
+              <BrandLockup size={52} mode="compact" fit="width" />
               <button
                 type="button"
                 className="nf-btn nf-btn-ghost nf-btn-sm"
@@ -343,7 +396,7 @@ export function AppShell({
                     the drawer layout would otherwise have no top-level
                     heading at all. */}
                 <h1 className="nf-topbar-brand">
-                  <BrandLockup size={32} mode="emblem" decorative />
+                  <BrandLockup size={32} mode="emblem" fit="width" decorative />
                   <span className="nf-visually-hidden">NativeForge</span>
                 </h1>
               </>
@@ -382,17 +435,33 @@ export function AppShell({
                   onClick={() => setMenuOpen((v) => !v)}
                   aria-expanded={menuOpen}
                   aria-haspopup="menu"
+                  aria-label={
+                    account.name
+                      ? `Account menu for ${account.name}`
+                      : "Account menu"
+                  }
                 >
-                  <span className="nf-avatar" aria-hidden="true">
-                    {account.name.slice(0, 1).toUpperCase()}
+                  <AccountAvatar name={account.name} pictureUrl={account.pictureUrl} />
+                  <span className="nf-account-meta">
+                    {account.name ? (
+                      <span className="nf-account-name">{account.name}</span>
+                    ) : (
+                      <span className="nf-account-name">Signed in</span>
+                    )}
+                    {account.organization ? (
+                      <span className="nf-account-org">{account.organization}</span>
+                    ) : null}
                   </span>
-                  <span className="nf-account-name">{account.name}</span>
                 </button>
                 {menuOpen ? (
                   <div className="nf-menu" role="menu">
                     <p className="nf-menu-head">
-                      <span className="nf-menu-name">{account.name}</span>
-                      {account.email ? (
+                      <span className="nf-menu-name">
+                        {account.name || "Signed in"}
+                      </span>
+                      {account.organization ? (
+                        <span className="nf-menu-email">{account.organization}</span>
+                      ) : account.email ? (
                         <span className="nf-menu-email">{account.email}</span>
                       ) : null}
                     </p>

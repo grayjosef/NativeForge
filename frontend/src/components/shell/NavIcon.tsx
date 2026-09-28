@@ -37,6 +37,9 @@ const PATHS: Record<string, string> = {
   trust: "M12 3l7 3v6c0 4.2-2.8 7.6-7 9-4.2-1.4-7-4.8-7-9V6z",
   // Settings: a slider bank. A cog at 20px turns to porridge.
   settings: "M4 7h10M18 7h2M4 17h4M12 17h8M16 4v6M8 14v6",
+  // Sign-in trust items. Same stroke as the rail, not a second icon language.
+  lock: "M7 11V8a5 5 0 0 1 10 0v3M6 11h12v10H6z",
+  people: "M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zM4 21v-1a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v1",
 };
 
 export function NavIcon({ id }: { id: string }) {

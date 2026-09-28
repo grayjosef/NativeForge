@@ -1197,6 +1197,8 @@
 }
 
 .nf-drawer-head .nf-lockup-art {
+  width: 100%;
+  height: auto;
   max-width: 100%;
   object-fit: contain;
 }
@@ -1235,39 +1237,85 @@
   align-items: center;
   gap: var(--nf-s2);
   min-height: 36px;
-  padding: 0 var(--nf-s2);
-  border: 1px solid transparent;
+  padding: 2px 10px 2px 2px;
+  border: 1px solid var(--nf-border);
   border-radius: var(--nf-radius-pill);
-  background: transparent;
+  background: var(--nf-card);
   font: inherit;
   font-size: var(--nf-t-sm);
-  color: var(--nf-muted);
+  color: var(--nf-text);
   cursor: pointer;
 }
 
 .nf-account-btn:hover {
-  border-color: var(--nf-border);
+  border-color: var(--nf-border-strong);
   background: var(--nf-card);
 }
 
 .nf-avatar {
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--nf-forge);
   color: #ffffff;
-  font-size: var(--nf-t-xs);
+  font-size: 0.68rem;
   font-weight: 700;
   flex: none;
+  overflow: hidden;
+}
+
+.nf-avatar--photo {
+  object-fit: cover;
+  background: var(--nf-card-muted);
+}
+
+.nf-avatar--icon {
+  background: var(--nf-forge);
+  color: #ffffff;
+}
+
+.nf-avatar--icon .nf-nav-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.nf-account-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  line-height: 1.15;
 }
 
 .nf-account-name {
-  max-width: 14ch;
+  max-width: 16ch;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-weight: 650;
+}
+
+.nf-account-org {
+  max-width: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.68rem;
+  color: var(--nf-muted2);
+}
+
+@media (max-width: 720px) {
+  .nf-account-org {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .nf-account-meta {
+    display: none;
+  }
 }
 
 .nf-menu {

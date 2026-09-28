@@ -328,6 +328,9 @@ def _session_decision(
             "rls_context_allowed": verification["rls_context_allowed"],
             "blocked_reasons": verification["blocked_reasons"],
             "principal_id": verification["principal_id"],
+            "display_name": verification.get("display_name"),
+            "picture_url": verification.get("picture_url"),
+            "identity_provider": verification.get("identity_provider"),
             # The organization and the roles come from the **membership row**,
             # not from the cookie that claims them.
             #
@@ -996,6 +999,9 @@ def callback(
             expires_at=issued + int(policy["max_age_seconds"]),
             auth_source="oidc_authorization_code",
             session_id=str(uuid.uuid4()),
+            display_name=verification.get("display_name"),
+            picture_url=verification.get("picture_url"),
+            identity_provider=verification.get("identity_provider"),
         )
         session_blocked_reasons = list(built["blocked_reasons"])
         if built["session_cookie_valid"]:
@@ -1203,6 +1209,11 @@ def session(
             "organization_id": verification["organization_id"],
             "roles": list(verification["roles"]),
             "expires_at": None,
+            # Chrome identity. Name and an allowlisted photo URL from the
+            # verified ID token; never the email, never a token.
+            "display_name": verification.get("display_name"),
+            "picture_url": verification.get("picture_url"),
+            "identity_provider": verification.get("identity_provider"),
         }
     )
     return body
@@ -1248,6 +1259,9 @@ def current_user(
             # The least privilege the caller holds, not the most. An empty role
             # list is `unknown` rather than a default that grants anything.
             "least_privilege_role": roles[0] if len(roles) == 1 else "unknown",
+            "display_name": verification.get("display_name"),
+            "picture_url": verification.get("picture_url"),
+            "identity_provider": verification.get("identity_provider"),
         }
     )
     return body

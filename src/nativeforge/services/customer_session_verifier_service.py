@@ -231,6 +231,12 @@ def verify_session_cookie(
     if customer_auth_live is None:
         customer_auth_live = _customer_auth_live()
 
+    from nativeforge.services.identity_presentation_service import (
+        present_display_name,
+        present_identity_provider,
+        present_picture_url,
+    )
+
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -252,6 +258,9 @@ def verify_session_cookie(
             "principal_id": principal_id or None,
             "principal_resolved": principal_resolved,
             "roles": list(payload.get("roles") or []),
+            "display_name": present_display_name(name=payload.get("dn")),
+            "picture_url": present_picture_url(payload.get("pic")),
+            "identity_provider": present_identity_provider(payload.get("idp")),
             "session_id": str(payload.get("sid") or "") or None,
             "expires_at": expires or None,
             "membership_required": membership_required,

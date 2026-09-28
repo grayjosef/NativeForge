@@ -168,6 +168,9 @@ export default function App() {
   const [session, setSession] = useState<{
     authenticated: boolean;
     organizationId: string | null;
+    displayName: string | null;
+    pictureUrl: string | null;
+    identityProvider: string | null;
   } | null>(null);
 
   /** The `?auth=` code the callback leaves behind when it returns a browser. */
@@ -347,10 +350,21 @@ export default function App() {
           setSession({
             authenticated: res.authenticated,
             organizationId: res.organization_id,
+            displayName: res.display_name,
+            pictureUrl: res.picture_url,
+            identityProvider: res.identity_provider,
           });
         }
       } catch {
-        if (!cancelled) setSession({ authenticated: false, organizationId: null });
+        if (!cancelled) {
+          setSession({
+            authenticated: false,
+            organizationId: null,
+            displayName: null,
+            pictureUrl: null,
+            identityProvider: null,
+          });
+        }
       }
     })();
     return () => {
@@ -1150,7 +1164,13 @@ export default function App() {
 
   const onSignOut = useCallback(async () => {
     await signOut(base);
-    setSession({ authenticated: false, organizationId: null });
+    setSession({
+      authenticated: false,
+      organizationId: null,
+      displayName: null,
+      pictureUrl: null,
+      identityProvider: null,
+    });
     setSurface("sign_in");
   }, [base, setSurface]);
 
@@ -1237,12 +1257,16 @@ export default function App() {
       online={backendOk !== false}
       offlineHint={backendHint}
       attention={{ trust: trustErr, organization: Boolean(orgErr) }}
-      // The account menu is about a person, and the organization's name was
-      // standing in for one - so a signed-in user saw their Tribe's name in
-      // an avatar circle, which reads as being logged in as the organization.
-      // `/api/auth/session` reports no display name or email today, so the
-      // menu says "Account" rather than naming the wrong thing.
-      account={session?.authenticated ? { name: "Account" } : null}
+      account={
+        session?.authenticated
+          ? {
+              name: session.displayName ?? "",
+              pictureUrl: session.pictureUrl,
+              organization: profileFields?.legalName ?? null,
+              provider: session.identityProvider,
+            }
+          : null
+      }
       onSignIn={() => setSurface("sign_in")}
       onSignOut={onSignOut}
       topBarExtra={
