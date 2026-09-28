@@ -358,9 +358,9 @@ code,
 }
 
 /* — the lockup ——————————————————————————————————————————————————
-   Mark plus live text. The wordmark is not an image: it stays crisp at any
-   zoom, re-keys itself in dark mode, and a screen reader announces a product
-   name rather than alt text. */
+   Canonical kit artwork. Three files, three jobs: full (hero), compact
+   (sidebar / headers), emblem (collapsed / tiny). The wordmark is not live
+   CSS text — its bevel and metallic gradient are the identity. */
 .nf-lockup {
   display: inline-flex;
   align-items: center;
@@ -3542,8 +3542,9 @@ code,
 
 .nf-rail-brand {
   display: flex;
-  align-items: center;
-  gap: var(--nf-s3);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
   padding: var(--nf-s3) var(--nf-s2) var(--nf-s5);
   min-height: 64px;
 }
@@ -3551,7 +3552,9 @@ code,
 /* Collapsed, the emblem is the whole brand, so it centres in the 76px rail
    instead of hugging the left edge where the wordmark used to start. */
 .nf-shell[data-collapsed="true"] .nf-rail-brand {
+  flex-direction: row;
   justify-content: center;
+  align-items: center;
   padding-inline: 0;
 }
 

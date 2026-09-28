@@ -257,32 +257,28 @@ export function AppShell({
               had no h1 and no heading named NativeForge for a screen reader to
               land on. The emblem's visually hidden name carries it when the
               rail is collapsed and the wordmark is not drawn. */}
-          {/* A brand block, not a logo squeezed into a corner.
-              The emblem sat at 34px beside the wordmark on one line. Its
-              geometry was never distorted - the artwork's 1.169 ratio was
-              preserved exactly - but an anvil, a woven pattern and bevelled
-              edges rendered into 34 pixels of height read as mush, which is
-              what "skewed" looked like on screen.
-              It is given its own line and room to be legible, with the
-              canonical tagline beneath the wordmark: restrained, letter-
-              spaced, and clearly secondary to it. */}
+          {/* Compact artwork in the expanded rail; emblem only when collapsed.
+              Live CSS "NativeForge" next to the emblem used to fight the kit
+              and fail the quality bar on authenticated surfaces. */}
           <h1 className="nf-rail-brand">
-            <BrandLockup
-              size={collapsed ? 34 : 44}
-              mode="emblem"
-              decorative={!collapsed}
-            />
-            {collapsed ? null : (
-              <span className="nf-rail-brand-text">
-                <span className="nf-rail-wordmark">NativeForge</span>
-                {/* Not part of the accessible name: a screen reader
-                    announcing "NativeForge Find. Pursue. Govern." every time
-                    it lands on the page heading is a slogan read aloud, not a
-                    heading. It stays visible and is hidden from the name. */}
+            {collapsed ? (
+              <>
+                <BrandLockup size={34} mode="emblem" decorative />
+                <span className="nf-visually-hidden">NativeForge</span>
+              </>
+            ) : (
+              <>
+                {/* Compact artwork carries the wordmark. Live CSS text here
+                    used to fight the lockup and fail the quality bar on the
+                    authenticated surfaces. The tagline stays live because
+                    the compact file has no tagline and the kit tagline is
+                    navy on a graphite rail. */}
+                <BrandLockup size={44} mode="compact" decorative />
+                <span className="nf-visually-hidden">NativeForge</span>
                 <span className="nf-rail-tagline" aria-hidden="true">
                   Find. Pursue. Govern.
                 </span>
-              </span>
+              </>
             )}
           </h1>
 
@@ -323,7 +319,7 @@ export function AppShell({
             onKeyDown={trapTab}
           >
             <div className="nf-drawer-head">
-              <BrandLockup size={30} mode="emblem" />
+              <BrandLockup size={44} mode="compact" />
               <button
                 type="button"
                 className="nf-btn nf-btn-ghost nf-btn-sm"

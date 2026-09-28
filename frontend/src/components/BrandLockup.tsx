@@ -15,13 +15,18 @@ export interface BrandLockupProps {
   /**
    * Omit the visually hidden name because the caller already provides one.
    *
-   * The shell pairs the emblem with its own wordmark, and both contributed a
-   * name, so the document heading announced "NativeForge NativeForge". The
-   * hidden name stays on by default: a lockup standing alone must still be
-   * announced, and forgetting that is the easier mistake to make.
+   * The shell heading carries the product name; a second hidden name on the
+   * lockup announced "NativeForge NativeForge". The hidden name stays on by
+   * default: a lockup standing alone must still be announced.
    */
   decorative?: boolean;
   className?: string;
+  /**
+   * Height-driven is the default so a caller cannot stretch the artwork.
+   * Width-driven is for surfaces that already cap the lockup in CSS (sign-in).
+   * `size` still governs automatic mode selection even when width drives.
+   */
+  fit?: "height" | "width";
 }
 
 /**
@@ -101,6 +106,7 @@ export function BrandLockup({
   withTagline = false,
   decorative = false,
   className = "",
+  fit = "height",
 }: BrandLockupProps) {
   const requested: BrandMode | undefined = mode
     ? mode
@@ -126,8 +132,9 @@ export function BrandLockup({
         width={art.w}
         height={art.h}
         // Height drives it and width stays `auto` in CSS, so the intrinsic
-        // ratio is preserved and the artwork can never be stretched.
-        style={{ height: size }}
+        // ratio is preserved and the artwork can never be stretched. Width
+        // fit omits the inline height so a CSS width cap can own the box.
+        style={fit === "height" ? { height: size } : undefined}
         alt=""
         aria-hidden
         draggable={false}

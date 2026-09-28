@@ -100,10 +100,13 @@
    at every width and on every pixel density. */
 .nf-login-lockup {
   display: block;
-  width: min(440px, 72%);
-  height: auto;
   margin-inline: auto;
   user-select: none;
+}
+
+.nf-login-lockup .nf-lockup-art {
+  width: min(440px, 72%);
+  height: auto;
 }
 
 /* Canonical, uppercase, and tied to the mark by the ember it shares with the
@@ -176,9 +179,12 @@
 
 .nf-login-compact-mark {
   display: none;
+  margin-bottom: var(--nf-s2);
+}
+
+.nf-login-compact-mark .nf-lockup-art {
   width: 236px;
   height: auto;
-  margin-bottom: var(--nf-s2);
 }
 
 /* Sans, not the display serif. The serif heading belonged to nothing else on
@@ -340,7 +346,7 @@
     grid-template-columns: minmax(0, 1fr) minmax(22rem, 26rem);
   }
 
-  .nf-login-lockup {
+  .nf-login-lockup .nf-lockup-art {
     width: min(360px, 82%);
   }
 }
@@ -369,7 +375,7 @@
 }
 
 @media (max-width: 420px) {
-  .nf-login-compact-mark {
+  .nf-login-compact-mark .nf-lockup-art {
     width: 200px;
   }
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { BrandLockup } from "../components/BrandLockup";
 import { ProviderMark } from "../components/ProviderMark";
 import { getAuthProviders, type AuthProvider } from "../authApiClient";
 import { diagnosticsVisible, interpretError, type CustomerState } from "../customerState";
@@ -88,12 +89,12 @@ export function SignInPage({ notice }: SignInPageProps) {
           {/* aria-hidden: the sign-in heading names the product, and a second
               accessible "NativeForge" here would make a screen reader read the
               name twice before reaching anything actionable. */}
-          <img
+          <BrandLockup
             className="nf-login-lockup"
-            src="/brand/nf-lockup-notag.png"
-            alt=""
-            aria-hidden="true"
-            draggable={false}
+            size={108}
+            mode="compact"
+            fit="width"
+            decorative
           />
           <p className="nf-login-tagline">{TAGLINE}</p>
           <p className="nf-login-claim">
@@ -109,12 +110,12 @@ export function SignInPage({ notice }: SignInPageProps) {
           {/* Shown only where the brand panel is not: below the breakpoint it
               collapses away, and the page would otherwise open on a bare
               heading with no mark at all. */}
-          <img
+          <BrandLockup
             className="nf-login-compact-mark"
-            src="/brand/nf-lockup-notag.png"
-            alt=""
-            aria-hidden="true"
-            draggable={false}
+            size={48}
+            mode="compact"
+            fit="width"
+            decorative
           />
 
           <h1 className="nf-login-title">Welcome to NativeForge</h1>
