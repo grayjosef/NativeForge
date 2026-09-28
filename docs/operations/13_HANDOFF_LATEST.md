@@ -45,7 +45,7 @@ Gates **181** (deployment identity, logical opportunity, Grants.gov eligibility 
 - Rail/sign-in draw compact kit artwork instead of CSS “NativeForge” (`82033c28`, live).
 - Workspace reports signed-in identity as verified (`3edbea74`).
 - Session client now reads `organization_id` from the `/api/auth/session` envelope (it was looking in a nested blob that does not exist). Settings locks the org identifier to that membership.
-- Operator workbench/demos are off customer Settings unless `?ops=1`; `?view=` still reaches them.
+- Operator workbench/demos are off customer Settings unless `?ops=1`; `?view=` still reaches them. Demo/live switching is operator-only the same way.
 
 ## Remaining launch-critical (do not treat as done)
 

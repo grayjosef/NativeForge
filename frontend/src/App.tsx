@@ -1216,6 +1216,9 @@ export default function App() {
     );
   }
 
+  const operatorMode =
+    new URLSearchParams(window.location.search).get("ops") === "1";
+
   return (
     <AppShell
       surface={surface}
@@ -1224,7 +1227,11 @@ export default function App() {
       // The shell speaks in customer terms. "real" is the internal plane
       // name; a customer is in their live organization or in the demo.
       environment={plane === "demo" ? "demo" : "live"}
-      onEnvironmentChange={(next) => setPlane(next === "demo" ? "demo" : "real")}
+      onEnvironmentChange={
+        operatorMode
+          ? (next) => setPlane(next === "demo" ? "demo" : "real")
+          : undefined
+      }
       // null means "not checked yet", which is not the same as unreachable.
       // Treating unknown as offline would flash a failure banner on load.
       online={backendOk !== false}
@@ -1469,9 +1476,7 @@ export default function App() {
           organizationLocked={Boolean(session?.authenticated && session.organizationId)}
           onOpen={(view) => setSurface(view as AppSurface)}
           onSignOut={session?.authenticated ? onSignOut : undefined}
-          showOperatorTools={
-            new URLSearchParams(window.location.search).get("ops") === "1"
-          }
+          showOperatorTools={operatorMode}
         />
       ) : surface === "workbench" ? (
         <WorkbenchPage plane={plane} orgId={orgId.trim()} orgOk={orgOk} />

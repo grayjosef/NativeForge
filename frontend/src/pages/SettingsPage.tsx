@@ -72,7 +72,7 @@ export function SettingsPage(props: SettingsPageProps) {
       <PageHeader
         eyebrow="Govern"
         title="Settings"
-        lead="Workspace preferences, environment, and operator tools."
+        lead="Workspace preferences and this session."
       />
 
       <Section
@@ -86,17 +86,22 @@ export function SettingsPage(props: SettingsPageProps) {
       >
         <p className="nf-note">
           Demo data is separate from live organization data at the database level, not by a filter
-          in the application. Switching here changes which one every page reads.
+          in the application.
+          {showOperatorTools
+            ? " Switching here changes which one every page reads."
+            : " This session stays on the environment it signed into."}
         </p>
-        <div className="nf-card-actions">
-          <button
-            type="button"
-            className="nf-btn nf-btn-secondary"
-            onClick={() => onEnvironmentChange(environment === "demo" ? "live" : "demo")}
-          >
-            Switch to {environment === "demo" ? "live organization" : "demo environment"}
-          </button>
-        </div>
+        {showOperatorTools ? (
+          <div className="nf-card-actions">
+            <button
+              type="button"
+              className="nf-btn nf-btn-secondary"
+              onClick={() => onEnvironmentChange(environment === "demo" ? "live" : "demo")}
+            >
+              Switch to {environment === "demo" ? "live organization" : "demo environment"}
+            </button>
+          </div>
+        ) : null}
       </Section>
 
       <Section

@@ -95,6 +95,7 @@ describe("App", () => {
     // to say what NativeForge already knows about them.
     const identity = await screen.findByText("Identity");
     expect(identity.closest(".nf-tier")).toHaveAttribute("data-state", "verified");
+    expect(screen.queryByRole("button", { name: /switch to/i })).toBeNull();
   });
 
   it("sends an unauthenticated visitor to sign in", async () => {

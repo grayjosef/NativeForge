@@ -34,6 +34,7 @@ describe("SettingsPage organization context", () => {
   it("keeps operator surfaces off the customer Settings path", () => {
     renderSettings(false);
     expect(screen.queryByText(/operator workbench/i)).toBeNull();
+    expect(screen.queryByRole("button", { name: /switch to/i })).toBeNull();
   });
 
   it("still lists operator surfaces when they are explicitly requested", () => {
@@ -49,5 +50,6 @@ describe("SettingsPage organization context", () => {
       />,
     );
     expect(screen.getByText(/operator workbench/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /switch to live organization/i })).toBeInTheDocument();
   });
 });
