@@ -50,6 +50,16 @@ class Settings(BaseSettings):
     nf_git_sha: str = Field(default="unknown", validation_alias="NF_GIT_SHA")
     nf_source_dirty: str = Field(default="unknown", validation_alias="NF_SOURCE_DIRTY")
 
+    @field_validator("nf_git_sha", mode="after")
+    @classmethod
+    def fill_provider_deployment_sha(cls, value: str) -> str:
+        raw = (value or "").strip()
+        if raw and raw.lower() != "unknown":
+            return raw
+        from nativeforge.lib.deployment_identity import resolve_deployment_sha
+
+        return resolve_deployment_sha()
+
     #: Directory of the built frontend, served by the API from the same origin.
     #: Empty means no frontend is bundled, which is how the test suite and the
     #: SQLite development lane run.

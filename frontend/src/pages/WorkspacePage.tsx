@@ -147,7 +147,7 @@ export function WorkspacePage(props: WorkspacePageProps) {
         title={organizationName?.trim() || "Your organization"}
         lead={
           hasProfile
-            ? "What needs your attention, what matches you, and what is due."
+            ? "This platform knows where the organization is, what funding matters, what you are pursuing, and what must happen next."
             : "Complete your organization profile and NativeForge can begin evaluating opportunities for you."
         }
         actions={
@@ -155,17 +155,20 @@ export function WorkspacePage(props: WorkspacePageProps) {
             {entityType ? (
               <StatusBadge tone="info">{humanEntity(entityType)}</StatusBadge>
             ) : null}
-            {/* The most common thing a customer arrives wanting to do:
-                put a grant they already know about into NativeForge. */}
-            {hasProfile ? (
-              <button
-                type="button"
-                className="nf-btn nf-btn-primary nf-btn-sm"
-                onClick={() => onGoTo("add_opportunity")}
-              >
-                Add an opportunity
-              </button>
-            ) : null}
+            <button
+              type="button"
+              className="nf-btn nf-btn-primary nf-btn-sm"
+              onClick={() => onGoTo("discover")}
+            >
+              Find opportunities
+            </button>
+            <button
+              type="button"
+              className="nf-btn nf-btn-secondary nf-btn-sm"
+              onClick={() => onGoTo("pursuits")}
+            >
+              View Mission Control
+            </button>
           </>
         }
       />

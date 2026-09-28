@@ -52,7 +52,8 @@ import {
   type IntakeDraft,
   type UrlReadResult,
 } from "./lib/opportunityIntake";
-import { DiscoverPage } from "./pages/DiscoverPage";
+import { DiscoverPage, type LiveFederalRow } from "./pages/DiscoverPage";
+import { getLiveFederalSearch } from "./discoveryApiClient";
 import { DocumentsPage } from "./pages/DocumentsPage";
 import { PursuitsPage } from "./pages/PursuitsPage";
 import { TrustPage } from "./pages/TrustPage";
@@ -632,6 +633,47 @@ export default function App() {
       setSparkBusy(false);
     }
   }, [base, orgOk, plane, o, loadSparksAndDetail]);
+
+  const onSearchLiveFederal = useCallback(async () => {
+    if (!orgOk) {
+      throw new Error("Sign in and bind an organization before searching live federal opportunities.");
+    }
+    return getLiveFederalSearch(base, plane, o);
+  }, [base, orgOk, plane, o]);
+
+  const onPursueLiveFederal = useCallback(
+    async (row: LiveFederalRow) => {
+      if (!orgOk) return;
+      setSparkBusy(true);
+      setSparkErr(null);
+      try {
+        const deadline = row.deadline
+          ? new Date(row.deadline).toISOString()
+          : new Date(Date.now() + 50 * 86_400_000).toISOString();
+        const created = await createGrantSpark(base, plane, o, {
+          source: "grants.gov",
+          source_id: row.opportunity_number || `live-${crypto.randomUUID()}`,
+          agency: row.funder || "Unknown agency",
+          opportunity_title: row.title || "Untitled federal opportunity",
+          award_type: "grant",
+          opportunity_number: row.opportunity_number || "",
+          application_deadline: deadline,
+          tribal_eligible: false,
+          raw_nofo_text: row.why_it_matches || "",
+        });
+        const id = str(created.id);
+        setSparkId(id);
+        setSparkDetail(created);
+        await loadSparksAndDetail();
+        setSurface("pursuits");
+      } catch (e) {
+        setSparkErr(interpretError(e));
+      } finally {
+        setSparkBusy(false);
+      }
+    },
+    [base, orgOk, plane, o, loadSparksAndDetail],
+  );
 
   const onExtractNofo = useCallback(async () => {
     if (!sparkSelected) {
@@ -1483,6 +1525,8 @@ export default function App() {
           onGoToOpportunities={() => setSurface("opportunities")}
           onAddDemo={() => void onCreateDemoSpark()}
           canAdd={hasProfile && !anyBusy}
+          onSearchLive={onSearchLiveFederal}
+          onPursue={(row) => void onPursueLiveFederal(row)}
         />
       ) : surface === "add_opportunity" ? (
         <AddOpportunityPage

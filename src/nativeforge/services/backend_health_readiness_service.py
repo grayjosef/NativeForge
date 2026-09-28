@@ -147,8 +147,10 @@ def _stamped_identity() -> dict[str, Any] | None:
     process. The stamp is used only when it is a 40-character commit. Anything
     else stays unknown: a health field must not invent an identity.
     """
-    sha = os.environ.get("NF_GIT_SHA", "").strip().lower()
-    if len(sha) != 40 or any(c not in "0123456789abcdef" for c in sha):
+    from nativeforge.lib.deployment_identity import resolve_deployment_sha
+
+    sha = resolve_deployment_sha()
+    if sha == "unknown":
         return None
     dirty_raw = os.environ.get("NF_SOURCE_DIRTY", "").strip().lower()
     if dirty_raw in {"true", "1", "yes", "y", "on"}:

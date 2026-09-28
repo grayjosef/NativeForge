@@ -40,6 +40,7 @@ SCHEMA_VERSION = "nf_hermetic_test_guard_v1"
 # Named to be conspicuous in a CI config or a shell history. Someone reading
 # `NATIVEFORGE_ALLOW_LIVE_GRANTS_GOV_TESTS=1` should feel it.
 ENV_ALLOW_LIVE_NETWORK = "NATIVEFORGE_ALLOW_LIVE_GRANTS_GOV_TESTS"
+ENV_CUSTOMER_LIVE_FEDERAL_SEARCH = "NF_CUSTOMER_LIVE_FEDERAL_SEARCH"
 ENV_ALLOW_CORPUS_WRITEBACK = "NATIVEFORGE_ALLOW_CORPUS_WRITEBACK"
 ENV_ALLOW_SOURCE_FIXTURE_OVERWRITE = "NATIVEFORGE_ALLOW_SOURCE_FIXTURE_OVERWRITE"
 
@@ -86,6 +87,15 @@ def live_network_allowed() -> bool:
     return _flag(ENV_ALLOW_LIVE_NETWORK)
 
 
+def customer_live_federal_search_allowed() -> bool:
+    """Customer-initiated public Grants.gov search, still opt-in.
+
+    Distinct from the test/corpus live flag. Collectors stay off. This only
+    permits a user-driven search of the public search2 API.
+    """
+    return _flag(ENV_CUSTOMER_LIVE_FEDERAL_SEARCH)
+
+
 def corpus_writeback_allowed() -> bool:
     return _flag(ENV_ALLOW_CORPUS_WRITEBACK)
 
@@ -108,12 +118,13 @@ def assert_live_network_allowed(*, url: str = "", caller: str = "") -> None:
     be indistinguishable from a genuine no-results response — which is exactly
     how the corpus fixture got overwritten with a placeholder.
     """
-    if live_network_allowed():
+    if live_network_allowed() or customer_live_federal_search_allowed():
         return
     raise LiveNetworkBlockedError(
         "live HTTP is disabled by default. "
         f"caller={caller or 'unknown'} url={url or 'unknown'}. "
-        f"Set {ENV_ALLOW_LIVE_NETWORK}=1 to permit a deliberate live fetch. "
+        f"Set {ENV_ALLOW_LIVE_NETWORK}=1 to permit a deliberate live fetch, "
+        f"or {ENV_CUSTOMER_LIVE_FEDERAL_SEARCH}=1 for customer federal search. "
         "Tests should inject a recorded transport instead — see "
         "docs/operations/429_GATE77B_HERMETIC_GRANTS_GOV_TEST_POLICY.md"
     )

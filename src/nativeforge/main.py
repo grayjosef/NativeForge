@@ -58,6 +58,10 @@ from nativeforge.api.customer_url_intake_routes import (
     demo_url_intake_router,
     real_url_intake_router,
 )
+from nativeforge.api.customer_live_federal_search_routes import (
+    demo_live_federal_search_router,
+    real_live_federal_search_router,
+)
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
 )
@@ -228,6 +232,8 @@ def create_app() -> FastAPI:
     app.include_router(real_grant_spark_router)
     app.include_router(demo_discovery_router)
     app.include_router(real_discovery_router)
+    app.include_router(demo_live_federal_search_router)
+    app.include_router(real_live_federal_search_router)
     app.include_router(demo_nofo_router)
     app.include_router(real_nofo_router)
     app.include_router(demo_spark_scoring_router)

@@ -50,7 +50,12 @@ UNKNOWN_SHA = "unknown"
 
 
 def _git_sha(raw: str) -> str:
-    return (raw or "").strip() or UNKNOWN_SHA
+    value = (raw or "").strip() or UNKNOWN_SHA
+    if value != UNKNOWN_SHA:
+        return value
+    from nativeforge.lib.deployment_identity import resolve_deployment_sha
+
+    return resolve_deployment_sha()
 
 
 @router.get("/health")

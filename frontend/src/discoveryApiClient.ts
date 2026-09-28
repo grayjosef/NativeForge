@@ -157,6 +157,20 @@ export async function getCoverageGapIntelligence(
   return raw as Record<string, unknown>;
 }
 
+export async function getLiveFederalSearch(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+): Promise<Record<string, unknown>> {
+  const raw = await discoveryFetchJson(
+    baseUrl,
+    plane,
+    orgId,
+    "/discovery/live-federal-search",
+  );
+  return raw as Record<string, unknown>;
+}
+
 export async function getSourceRecommendations(
   baseUrl: string,
   plane: Plane,

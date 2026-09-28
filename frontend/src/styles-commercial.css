@@ -536,6 +536,13 @@
   gap: var(--nf-s2);
 }
 
+.nf-source-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nf-s2);
+  align-items: center;
+}
+
 .nf-deadline {
   display: flex;
   align-items: center;
