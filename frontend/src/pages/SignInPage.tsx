@@ -19,9 +19,11 @@ import { diagnosticsVisible, interpretError, type CustomerState } from "../custo
  *
  * ## The brand panel has a composition now
  *
- * The hero uses the FULL lockup, including the kit's navy FIND. PURSUE.
- * GOVERN. That colour stays. Black behind it is what made the line
- * disappear, so the panel is kit ivory — the ground the navy was drawn for.
+ * Compact lockup at hero scale on kit-dark graphite. Ivory made the metal
+ * look pasted on; black hid the navy tagline; a forge-green wash hid
+ * "Forge". Graphite is dark enough for the mark and not those three
+ * failures. FIND. PURSUE. GOVERN. is live ivory on this ground — the kit
+ * navy is for ivory surfaces, which this is not.
  *
  * ## Unconfigured is stated once, quietly
  *
@@ -84,12 +86,12 @@ export function SignInPage({ notice }: SignInPageProps) {
               name twice before reaching anything actionable. */}
           <BrandLockup
             className="nf-login-lockup"
-            size={200}
-            mode="full"
+            size={175}
+            mode="compact"
             fit="width"
             decorative
           />
-          <p className="nf-visually-hidden">{TAGLINE}</p>
+          <p className="nf-login-tagline">{TAGLINE}</p>
           <p className="nf-login-claim">
             Funding intelligence and pursuit operations for Tribal governments and
             Native-serving organizations.
@@ -105,11 +107,12 @@ export function SignInPage({ notice }: SignInPageProps) {
               heading with no mark at all. */}
           <BrandLockup
             className="nf-login-compact-mark"
-            size={96}
-            mode="full"
+            size={56}
+            mode="compact"
             fit="width"
             decorative
           />
+          <p className="nf-login-tagline nf-login-tagline--on-card">{TAGLINE}</p>
 
           <h1 className="nf-login-title">Welcome to NativeForge</h1>
           <p className="nf-login-lead">
