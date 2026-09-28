@@ -49,6 +49,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 import uuid
+from contextlib import contextmanager
 from typing import Any
 
 SCHEMA_VERSION = "nf_source_runtime_lane_exerciser_v1"
@@ -100,6 +101,35 @@ NOT_IMPLIED: tuple[str, ...] = (
 
 def _json_safe(value: Any) -> Any:
     return json.loads(json.dumps(value, default=str, sort_keys=True))
+
+
+def _org_uuid(organization_id: Any) -> uuid.UUID:
+    if isinstance(organization_id, uuid.UUID):
+        return organization_id
+    return uuid.UUID(str(organization_id))
+
+
+@contextmanager
+def _tenant_transaction(engine: Any, organization_id: Any):
+    """Committed probe writes with the demo-org RLS anchor set."""
+    from nativeforge.db.rls import apply_org_rls_gucs
+
+    with engine.begin() as connection:
+        if organization_id is not None:
+            apply_org_rls_gucs(connection, _org_uuid(organization_id), "demo")
+        yield connection
+
+
+@contextmanager
+def _tenant_connection(engine: Any, organization_id: Any):
+    """Read-back connections that must see tenant-scoped rows under RLS."""
+    from nativeforge.db.rls import apply_org_rls_gucs
+
+    with engine.connect() as connection:
+        if organization_id is not None:
+            apply_org_rls_gucs(connection, _org_uuid(organization_id), "demo")
+        with connection.begin():
+            yield connection
 
 
 def _table_exists(engine: Any, table: str) -> bool:
@@ -234,7 +264,7 @@ def _exercise_worker(
     evidence: dict[str, Any] = {}
     cleaned = 0
     try:
-        with engine.begin() as connection:
+        with _tenant_transaction(engine, organization_id) as connection:
             first = claim_job(
                 connection=connection,
                 organization_id=organization_id,
@@ -243,7 +273,7 @@ def _exercise_worker(
                 worker_id=f"{FIXTURE_PREFIX}{stamp}.worker.a",
                 now=now,
             )
-        with engine.begin() as connection:
+        with _tenant_transaction(engine, organization_id) as connection:
             duplicate = claim_job(
                 connection=connection,
                 organization_id=organization_id,
@@ -252,7 +282,7 @@ def _exercise_worker(
                 worker_id=f"{FIXTURE_PREFIX}{stamp}.worker.b",
                 now=now,
             )
-        with engine.begin() as connection:
+        with _tenant_transaction(engine, organization_id) as connection:
             reclaim = claim_job(
                 connection=connection,
                 organization_id=organization_id,
@@ -271,7 +301,7 @@ def _exercise_worker(
             now=now,
         )
 
-        with engine.begin() as connection:
+        with _tenant_transaction(engine, organization_id) as connection:
             cycle = run_worker_cycle(
                 connection=connection,
                 organization_id=organization_id,
@@ -330,7 +360,7 @@ def _exercise_worker(
     finally:
         # AFTER the last probe write of this lane, by this run's ids only.
         try:
-            with engine.begin() as connection:
+            with _tenant_transaction(engine, organization_id) as connection:
                 cleaned = int(
                     connection.execute(
                         sa.text(
@@ -387,7 +417,7 @@ def _exercise_job_store(
         def enqueue() -> dict[str, Any]:
             # Each in its OWN committed transaction, so the second meets a row
             # that is really there rather than one its own session holds open.
-            with engine.begin() as connection:
+            with _tenant_transaction(engine, organization_id) as connection:
                 return enqueue_job(
                     connection=connection,
                     organization_id=organization_id,
@@ -410,7 +440,7 @@ def _exercise_job_store(
 
         # A genuinely new connection. This is the evidence a request cannot
         # produce, and the reason this lane cannot run inside a savepoint.
-        with engine.connect() as connection:
+        with _tenant_connection(engine, organization_id) as connection:
             listed = list_jobs(
                 connection=connection,
                 organization_id=organization_id,
@@ -419,7 +449,7 @@ def _exercise_job_store(
         reread = dict(listed)
         reread["job"] = (listed.get("jobs") or [None])[0]
 
-        with engine.begin() as connection:
+        with _tenant_transaction(engine, organization_id) as connection:
             illegal = transition_job(
                 connection=connection,
                 organization_id=organization_id,
@@ -429,7 +459,7 @@ def _exercise_job_store(
                 now=now,
             )
 
-        with engine.connect() as connection:
+        with _tenant_connection(engine, organization_id) as connection:
             backlog = count_backlog(
                 connection=connection, organization_id=organization_id
             )
@@ -468,7 +498,7 @@ def _exercise_job_store(
         exercised = False
     finally:
         try:
-            with engine.begin() as connection:
+            with _tenant_transaction(engine, organization_id) as connection:
                 cleaned = int(
                     connection.execute(
                         sa.text(
@@ -531,7 +561,7 @@ def _exercise_payloads(
             identity = build_attempt_identity(
                 job_id=job_id, source_id=source_id, attempt_number=attempt
             )
-            with engine.begin() as connection:
+            with _tenant_transaction(engine, organization_id) as connection:
                 # Hermetic: `collector_invoked` and `live_fetch_performed` stay
                 # 0, so these rows are never counted by
                 # `unauthorized_live_rows` however many are written.
@@ -549,7 +579,7 @@ def _exercise_payloads(
 
         written = write(1, PROBE_BODY)
 
-        with engine.connect() as connection:
+        with _tenant_connection(engine, organization_id) as connection:
             read = get_payload(
                 connection=connection,
                 organization_id=organization_id,
@@ -558,7 +588,7 @@ def _exercise_payloads(
             )
         round_tripped = read.get("body_bytes") == PROBE_BODY
 
-        with engine.connect() as connection:
+        with _tenant_connection(engine, organization_id) as connection:
             replayed = replay_payload(
                 connection=connection,
                 organization_id=organization_id,
@@ -571,14 +601,14 @@ def _exercise_payloads(
         oversize = write(2, b"x" * (MAX_PAYLOAD_BYTES + 1))
 
         archived_written = write(3, PROBE_BODY + b" third")
-        with engine.begin() as connection:
+        with _tenant_transaction(engine, organization_id) as connection:
             archive_payload(
                 connection=connection,
                 organization_id=organization_id,
                 attempt_id=archived_written["attempt_id"],
                 now=now,
             )
-        with engine.connect() as connection:
+        with _tenant_connection(engine, organization_id) as connection:
             archived_replay = replay_payload(
                 connection=connection,
                 organization_id=organization_id,
@@ -587,7 +617,7 @@ def _exercise_payloads(
 
         # Corrupt a row this lane created, and prove the replay notices.
         tamper_target = write(4, PROBE_BODY + b" fourth")
-        with engine.begin() as connection:
+        with _tenant_transaction(engine, organization_id) as connection:
             connection.execute(
                 sa.text(
                     "UPDATE nf_source_collection_raw_payloads "
@@ -595,14 +625,14 @@ def _exercise_payloads(
                 ),
                 {"body": b"tampered", "attempt": tamper_target["attempt_id"]},
             )
-        with engine.connect() as connection:
+        with _tenant_connection(engine, organization_id) as connection:
             tampered = replay_payload(
                 connection=connection,
                 organization_id=organization_id,
                 attempt_id=tamper_target["attempt_id"],
             )
 
-        with engine.connect() as connection:
+        with _tenant_connection(engine, organization_id) as connection:
             counts = count_payloads(
                 connection=connection, organization_id=organization_id
             )
@@ -651,7 +681,7 @@ def _exercise_payloads(
         exercised = False
     finally:
         try:
-            with engine.begin() as connection:
+            with _tenant_transaction(engine, organization_id) as connection:
                 cleaned = int(
                     connection.execute(
                         sa.text(
@@ -697,6 +727,11 @@ def exercise_runtime_lanes(
     moment = now or dt.datetime.now(dt.UTC)
     if isinstance(moment, str):
         moment = dt.datetime.fromisoformat(moment.replace("Z", "+00:00"))
+
+    if connection is not None and organization_id is not None:
+        from nativeforge.db.rls import apply_org_rls_gucs
+
+        apply_org_rls_gucs(connection, _org_uuid(organization_id), "demo")
 
     if engine is None:
         try:
@@ -745,7 +780,7 @@ def exercise_runtime_lanes(
     # measured.
     residue = 0
     try:
-        with engine.connect() as probe:
+        with _tenant_connection(engine, organization_id) as probe:
             for table, column in (
                 ("nf_source_collection_raw_payloads", "source_id"),
                 ("nf_source_collection_jobs", "source_id"),
