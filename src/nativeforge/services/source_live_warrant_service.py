@@ -88,6 +88,13 @@ GOVERNANCE_PERMITTING_STATES: frozenset[str] = frozenset(
     {"live_opted_in", "authorized_for_live"}
 )
 
+#: A robots preflight may run once activation is signed. It resolves the
+#: robots fact that collection requires; demanding live-fetch opt-in first would
+#: make that fetch unreachable.
+PREFLIGHT_AUTHORITY_STATES: frozenset[str] = frozenset(
+    {"activated", "live_opted_in", "authorized_for_live"}
+)
+
 #: The only path a robots preflight may request.
 ROBOTS_PATH = "/robots.txt"
 
@@ -320,7 +327,12 @@ def evaluate_live_request(
             )
             authority_state = authority.get("state")
             authority_reasons = list(authority.get("reasons") or [])
-            if not authority.get("governance_complete"):
+            if kind == WARRANT_ROBOTS_PREFLIGHT:
+                if authority_state not in PREFLIGHT_AUTHORITY_STATES:
+                    reasons.append(
+                        f"{REFUSE_SOURCE_NOT_AUTHORIZED}:{authority_state}"
+                    )
+            elif not authority.get("governance_complete"):
                 reasons.append(f"{REFUSE_SOURCE_NOT_AUTHORIZED}:{authority_state}")
         except Exception:  # noqa: BLE001 - an underivable authority is none
             reasons.append(f"{REFUSE_SOURCE_NOT_AUTHORIZED}:authority_underivable")
@@ -452,7 +464,13 @@ def warrant_invariant_failures(decision: dict[str, Any]) -> list[str]:
         # Gate 166B: the check is on the DERIVED authority the decision
         # carries, not on membership of a list this module holds.
         state = decision.get("source_authority_state")
-        if state not in GOVERNANCE_PERMITTING_STATES:
+        kind = decision.get("warrant_kind")
+        permitting = (
+            PREFLIGHT_AUTHORITY_STATES
+            if kind == WARRANT_ROBOTS_PREFLIGHT
+            else GOVERNANCE_PERMITTING_STATES
+        )
+        if state not in permitting:
             fails.append(f"permitted_without_a_permitting_authority_state:{state}")
         if decision.get("authorization_derived_from_source_code_constant"):
             fails.append("authorization_came_from_a_source_code_constant")

@@ -64,6 +64,7 @@ sys.path.insert(0, "src")
 
 import sqlalchemy as sa  # noqa: E402
 
+from nativeforge.db.rls import apply_org_rls_gucs  # noqa: E402
 from nativeforge.db.session import SessionLocal  # noqa: E402
 from nativeforge.services.live_source_transport_service import (  # noqa: E402
     LiveTransportRefused,
@@ -76,6 +77,9 @@ from nativeforge.services.source_collection_transport_service import (  # noqa: 
     LIVE,
     TransportRequest,
     execute_request,
+)
+from nativeforge.services.source_live_warrant_service import (  # noqa: E402
+    WARRANT_ROBOTS_PREFLIGHT,
 )
 from nativeforge.services.source_monitoring_approved_source_service import (  # noqa: E402,E501
     load_registry_rows,
@@ -194,6 +198,7 @@ def main() -> int:
     }
 
     session = SessionLocal()
+    apply_org_rls_gucs(session, DEMO_ORG, "demo")
     try:
         resolution = resolve_source_authorization_facts(
             connection=session,
@@ -240,21 +245,14 @@ def main() -> int:
             print("\nDRY RUN - no network request made. Pass --apply to fetch.")
             return 0
 
-        # ---- the request ------------------------------------------------
-        #
-        # A preflight authorization: approved for THIS source, scoped to the
-        # robots path. `build_live_transport` checks source and host at
-        # construction, so a transport that exists cannot be re-pointed.
-        preflight_authorization = {
-            "authorized": True,
-            "source_id": source_id,
-            "authorization_status": "robots_preflight",
-        }
         try:
             transport = build_live_transport(
                 authorized_source_id=source_id,
-                authorization=preflight_authorization,
                 authorized_url=robots_url,
+                warrant_kind=WARRANT_ROBOTS_PREFLIGHT,
+                connection=session,
+                organization_id=DEMO_ORG,
+                method="GET",
                 timeout_seconds=20.0,
             )
         except LiveTransportRefused as refused:
@@ -268,54 +266,50 @@ def main() -> int:
             timeout_seconds=20.0,
             body_bytes=None,
         )
-
-        # A policy that permits LIVE for this named source. The boundary
-        # re-checks; this is the warrant it checks against.
-        policy = {
-            "execution_allowed": True,
-            "live_transport_allowed": True,
-            "hermetic_transport_allowed": False,
-            "authorized_source_id": source_id,
-        }
+        fetched_at = dt.datetime.now(dt.UTC)
+        attempt_id = f"gate163-robots-{source_id}-{fetched_at:%Y%m%dT%H%M%SZ}"
 
         print(f"\n--- REQUESTING {robots_url}")
         result = execute_request(
             request=request,
             transport_kind=LIVE,
             transport=transport,
-            policy=policy,
+            policy={
+                "live_transport_allowed": True,
+                "authorized_source_id": source_id,
+            },
         )
-        body = result.pop("body_bytes", b"") or b""
 
-        print(f"  dispatched     {result['dispatched']}")
-        print(f"  outcome        {result['outcome']}")
-        print(f"  http_status    {result['status_code']}")
-        print(f"  bytes          {result['bytes_received']}")
-        print(f"  elapsed        {result['elapsed_seconds']:.3f}s")
-        if result["blocked_reasons"]:
-            print(f"  blocked        {result['blocked_reasons']}")
-
-        if not result["dispatched"]:
+        blocked_reasons = list(result.get("blocked_reasons") or [])
+        dispatched = bool(result.get("dispatched"))
+        if blocked_reasons or not dispatched:
             print("\nNOT DISPATCHED - stopping, no evidence to record")
+            print(f"  blocked_reasons      {blocked_reasons}")
+            print(f"  dispatched           {dispatched}")
             return 1
 
+        status = result.get("status_code")
+        body = bytes(result.get("body_bytes") or b"")
         digest = hashlib.sha256(body).hexdigest()
+
+        print(f"  outcome        {result['outcome']}")
+        print(f"  http_status    {status}")
+        print(f"  bytes          {len(body)}")
+        print(f"  elapsed        {result['elapsed_seconds']:.3f}s")
         print(f"  sha256         {digest}")
         print()
         print("--- body")
         print(body.decode("utf-8", errors="replace")[:600])
 
         verdict = derive_robots_verdict(
-            status=result["status_code"], body=body, path=collection_path
+            status=status, body=body, path=collection_path
         )
-        status = result["status_code"]
 
         print()
         print(f"--- robots verdict for {collection_path}: {verdict['decision']}")
         print(f"    matched group: {verdict['matched_group']}")
         print(f"    rules:         {verdict['rules']}")
 
-        now = dt.datetime.now(dt.UTC)
         session.execute(
             sa.delete(ROBOTS_TABLE).where(
                 sa.and_(
@@ -332,18 +326,18 @@ def main() -> int:
                 is_demo=True,
                 host=robots_host,
                 fetched_for_source_id=source_id,
-                fetched_at=now,
+                fetched_at=fetched_at,
                 http_status=status,
-                decision=verdict["decision"],
+                decision=str(verdict["decision"]),
                 evaluated_path=collection_path,
                 user_agent_scope="*",
-                payload_sha256=digest if body else None,
-                attempt_id=f"gate163-robots-{uuid.uuid4().hex[:12]}",
-                evidence_ref=robots_url,
+                payload_sha256=digest,
+                attempt_id=attempt_id,
+                evidence_ref=f"{robots_url}#gate163-{verdict['decision']}",
                 recheck_due_at=None,
                 fact_status="live_fetch",
-                created_at=now,
-                updated_at=now,
+                created_at=fetched_at,
+                updated_at=fetched_at,
             )
         )
         session.commit()
@@ -351,6 +345,9 @@ def main() -> int:
         print(f"RECORDED robots evidence for {robots_host}{collection_path}")
         print(f"  decision  {verdict['decision']}")
         print(f"  sha256    {digest}")
+        if verdict.get("restricts_collection"):
+            print("  RESTRICTS COLLECTION - stop this source, do not work around it.")
+            return 2
         return 0
     except Exception as exc:  # noqa: BLE001 - report honestly, do not retry
         session.rollback()
