@@ -168,6 +168,27 @@ def test_google_is_named_as_non_conventional() -> None:
     assert GOOGLE in KNOWN_NON_CONVENTIONAL_ISSUERS
 
 
+def test_microsoft_v2_issuer_uses_entra_paths_not_auth0() -> None:
+    """{issuer}/authorize is a 404 on Entra. The v2 oauth2 paths are not."""
+    issuer = "https://login.microsoftonline.com/a-tenant-id/v2.0"
+    result = build_provider_endpoints(issuer, allow_network=False)
+    assert result["endpoints_available"] is True
+    assert result["endpoints_are_conventional"] is True
+    assert (
+        result["authorization_endpoint"]
+        == "https://login.microsoftonline.com/a-tenant-id/oauth2/v2.0/authorize"
+    )
+    assert (
+        result["token_endpoint"]
+        == "https://login.microsoftonline.com/a-tenant-id/oauth2/v2.0/token"
+    )
+    assert (
+        result["jwks_uri"]
+        == "https://login.microsoftonline.com/a-tenant-id/discovery/v2.0/keys"
+    )
+    assert provider_discovery_invariant_failures(result) == []
+
+
 def test_a_metadata_document_missing_an_endpoint_is_not_discovery() -> None:
     """A partial document is not a discovered document.
 

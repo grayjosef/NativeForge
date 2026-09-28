@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 
+import { MissionControl, type MissionControlPayload } from "../components/MissionControl";
 import type { ProgressStep } from "../components/ProgressStrip";
+import { VerificationTiers, buildTiers } from "../components/VerificationTiers";
 import { WorkflowProgress } from "../components/ui/WorkflowProgress";
 import {
   ActionCard,
@@ -11,8 +13,6 @@ import {
   Section,
   StatusBadge,
 } from "../components/ui/primitives";
-import { EmptyState } from "../components/StateView";
-import { VerificationTiers, buildTiers } from "../components/VerificationTiers";
 import { deadlineTone, formatDeadline, daysUntil } from "../lib/dates";
 import { humanEntity } from "../lib/entityTypes";
 
@@ -85,6 +85,8 @@ export interface WorkspacePageProps {
   aside: ReactNode;
 
   onGoTo: (navId: string) => void;
+  missionControl?: MissionControlPayload | null;
+  onOpenOpportunity?: (sparkId: string) => void;
 }
 
 export function WorkspacePage(props: WorkspacePageProps) {
@@ -112,6 +114,8 @@ export function WorkspacePage(props: WorkspacePageProps) {
     workflow,
     aside,
     onGoTo,
+    missionControl = null,
+    onOpenOpportunity,
   } = props;
 
   const attention = steps.filter(
@@ -163,6 +167,12 @@ export function WorkspacePage(props: WorkspacePageProps) {
             ) : null}
           </>
         }
+      />
+
+      <MissionControl
+        data={missionControl}
+        onGoTo={onGoTo}
+        onOpenOpportunity={onOpenOpportunity ?? (() => undefined)}
       />
 
       {/* ------------------------------------------ attention and measurement

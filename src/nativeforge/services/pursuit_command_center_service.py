@@ -184,6 +184,97 @@ def _mark_current(stages: list[dict[str, Any]]) -> str | None:
     return current_id
 
 
+def build_pursuit_stages(
+    *,
+    has_profile: bool,
+    has_req: bool,
+    has_score: bool,
+    disqualified: bool,
+    has_pursuit: bool,
+    has_form: bool,
+    blocked_tasks: bool,
+) -> tuple[list[dict[str, Any]], str | None]:
+    """Same seven stages the Workspace and the command center both show."""
+    stages = [
+        _stage(
+            "profile",
+            "Profile",
+            "Organization profile",
+            complete=has_profile,
+            locked=False,
+            blocked=False,
+            summary="On file" if has_profile else "Needed before a pursuit can start",
+        ),
+        _stage(
+            "spark",
+            "Opportunity",
+            "Opportunity review",
+            complete=True,
+            locked=not has_profile,
+            blocked=False,
+            summary="This record",
+        ),
+        _stage(
+            "nofo",
+            "Requirements",
+            "Requirements",
+            complete=has_req,
+            locked=False,
+            blocked=False,
+            summary="Checklist ready" if has_req else "Extract when ready",
+        ),
+        _stage(
+            "score",
+            "Eligibility",
+            "Eligibility / fit",
+            complete=has_score and not disqualified,
+            locked=not has_req,
+            blocked=disqualified,
+            summary=(
+                "Review flags"
+                if disqualified
+                else "Scored"
+                if has_score
+                else "Run when ready"
+            ),
+        ),
+        _stage(
+            "pursuit",
+            "Pursuit",
+            "Pursuit decision",
+            complete=has_pursuit,
+            locked=not has_score,
+            blocked=False,
+            summary="Active" if has_pursuit else "Open when ready",
+        ),
+        _stage(
+            "forms",
+            "Package",
+            "Application package",
+            complete=has_form,
+            locked=not has_pursuit,
+            blocked=blocked_tasks,
+            summary=(
+                "Blocked"
+                if blocked_tasks
+                else "Preview ready"
+                if has_form
+                else "Create when ready"
+            ),
+        ),
+        _stage(
+            "trust",
+            "Review",
+            "Review / trust",
+            complete=False,
+            locked=not has_form,
+            blocked=False,
+            summary="Refresh in Trust" if has_form else "After the package",
+        ),
+    ]
+    return stages, _mark_current(stages)
+
+
 def assemble_command_center(
     *,
     session: Session,
@@ -278,86 +369,15 @@ def assemble_command_center(
     has_form = form_pkg is not None
     has_req = int(req_count) > 0
 
-    stages = [
-        _stage(
-            "profile",
-            "Profile",
-            "Organization profile",
-            complete=has_profile_row,
-            locked=False,
-            blocked=False,
-            summary="On file"
-            if has_profile_row
-            else "Needed before a pursuit can start",
-        ),
-        _stage(
-            "spark",
-            "Opportunity",
-            "Opportunity review",
-            complete=True,
-            locked=not has_profile_row,
-            blocked=False,
-            summary="This record",
-        ),
-        _stage(
-            "nofo",
-            "Requirements",
-            "Requirements",
-            complete=has_req,
-            locked=False,
-            blocked=False,
-            summary="Checklist ready" if has_req else "Extract when ready",
-        ),
-        _stage(
-            "score",
-            "Eligibility",
-            "Eligibility / fit",
-            complete=has_score and not disqualified,
-            locked=not has_req,
-            blocked=disqualified,
-            summary=(
-                "Review flags"
-                if disqualified
-                else "Scored"
-                if has_score
-                else "Run when ready"
-            ),
-        ),
-        _stage(
-            "pursuit",
-            "Pursuit",
-            "Pursuit decision",
-            complete=has_pursuit,
-            locked=not has_score,
-            blocked=False,
-            summary="Active" if has_pursuit else "Open when ready",
-        ),
-        _stage(
-            "forms",
-            "Package",
-            "Application package",
-            complete=has_form,
-            locked=not has_pursuit,
-            blocked=bool(blocked_tasks),
-            summary=(
-                "Blocked"
-                if blocked_tasks
-                else "Preview ready"
-                if has_form
-                else "Create when ready"
-            ),
-        ),
-        _stage(
-            "trust",
-            "Review",
-            "Review / trust",
-            complete=False,
-            locked=not has_form,
-            blocked=False,
-            summary="Refresh in Trust" if has_form else "After the package",
-        ),
-    ]
-    current_id = _mark_current(stages)
+    stages, current_id = build_pursuit_stages(
+        has_profile=has_profile_row,
+        has_req=has_req,
+        has_score=has_score,
+        disqualified=disqualified,
+        has_pursuit=has_pursuit,
+        has_form=has_form,
+        blocked_tasks=bool(blocked_tasks),
+    )
 
     mode = "active_pursuit" if has_pursuit else "discovered"
     if mode == "discovered":
@@ -483,6 +503,9 @@ def _task(task: NfPursuitTask) -> dict[str, Any]:
         "status": task.status,
         "due_at": _iso(task.due_at),
         "owner_label": None,
+        "owner_membership_id": str(task.owner_membership_id)
+        if getattr(task, "owner_membership_id", None)
+        else None,
     }
 
 

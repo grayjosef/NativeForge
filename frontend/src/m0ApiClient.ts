@@ -595,6 +595,22 @@ export async function getCommandCenter(
   return parseJson(r);
 }
 
+export async function getMissionControl(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+): Promise<Record<string, unknown> | null> {
+  const path = buildM0Path(plane, orgId, "/mission-control");
+  const r = await fetch(`${baseUrl}${path}`, { headers: orgHeaderOnly(orgId) });
+  if (r.status === 404) {
+    return null;
+  }
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
 export async function recordFunderInteraction(
   baseUrl: string,
   plane: Plane,

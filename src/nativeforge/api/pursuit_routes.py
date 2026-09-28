@@ -53,6 +53,7 @@ class TaskCreateBody(BaseModel):
     title: str = Field(min_length=1, max_length=512)
     description: str | None = Field(default=None, max_length=8192)
     due_at: datetime | None = None
+    owner_membership_id: uuid.UUID | None = None
 
 
 class TaskPatchBody(BaseModel):
@@ -60,6 +61,7 @@ class TaskPatchBody(BaseModel):
     description: str | None = Field(default=None, max_length=8192)
     status: PursuitTaskStatus | None = None
     due_at: datetime | None = None
+    owner_membership_id: uuid.UUID | None = None
 
 
 class CalendarCreateBody(BaseModel):
@@ -245,12 +247,15 @@ def demo_create_task(
             title=body.title,
             description=body.description,
             due_at=body.due_at,
+            owner_membership_id=body.owner_membership_id,
             actor_id=actor_id,
         )
         db.commit()
         db.refresh(row)
     except psvc.PursuitNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
+    except psvc.PursuitTaskOwnerError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
     return psvc.task_to_dict(row)
 
 
@@ -278,6 +283,8 @@ def demo_patch_task(
         patch["status"] = raw["status"].value
     if "due_at" in raw:
         patch["due_at"] = raw["due_at"]
+    if "owner_membership_id" in raw:
+        patch["owner_membership_id"] = raw["owner_membership_id"]
     try:
         row = psvc.update_task(
             db,
@@ -292,6 +299,8 @@ def demo_patch_task(
         db.refresh(row)
     except psvc.PursuitTaskNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
+    except psvc.PursuitTaskOwnerError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
     return psvc.task_to_dict(row)
 
 
@@ -548,12 +557,15 @@ def real_create_task(
             title=body.title,
             description=body.description,
             due_at=body.due_at,
+            owner_membership_id=body.owner_membership_id,
             actor_id=actor_id,
         )
         db.commit()
         db.refresh(row)
     except psvc.PursuitNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
+    except psvc.PursuitTaskOwnerError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
     return psvc.task_to_dict(row)
 
 
@@ -581,6 +593,8 @@ def real_patch_task(
         patch["status"] = raw["status"].value
     if "due_at" in raw:
         patch["due_at"] = raw["due_at"]
+    if "owner_membership_id" in raw:
+        patch["owner_membership_id"] = raw["owner_membership_id"]
     try:
         row = psvc.update_task(
             db,
@@ -595,6 +609,8 @@ def real_patch_task(
         db.refresh(row)
     except psvc.PursuitTaskNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
+    except psvc.PursuitTaskOwnerError as e:
+        raise HTTPException(status_code=422, detail=str(e)) from e
     return psvc.task_to_dict(row)
 
 

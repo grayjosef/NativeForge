@@ -71,6 +71,10 @@ from nativeforge.api.grant_spark_routes import (
 )
 from nativeforge.api.health import router as health_router
 from nativeforge.api.isolation_routes import router as isolation_router
+from nativeforge.api.mission_control_routes import (
+    demo_mission_router,
+    real_mission_router,
+)
 from nativeforge.api.nofo_extraction_routes import demo_nofo_router, real_nofo_router
 from nativeforge.api.operational_backup_routes import (
     router as operational_backup_router,
@@ -343,6 +347,8 @@ def create_app() -> FastAPI:
     app.include_router(real_apply_router)
     app.include_router(demo_command_router)
     app.include_router(real_command_router)
+    app.include_router(demo_mission_router)
+    app.include_router(real_mission_router)
     # Read one public page a signed-in customer named. The only route on the
     # customer_supplied_url purpose, and it stores nothing: what it finds goes
     # back for review and through the ordinary create path.

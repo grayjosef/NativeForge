@@ -15,6 +15,7 @@ import {
   extractApplyPath,
   getApplyPath,
   getCommandCenter,
+  getMissionControl,
   recordFunderInteraction,
   readOpportunityDocument,
   readOpportunityUrl,
@@ -167,6 +168,7 @@ export default function App() {
   const [nofoLatest, setNofoLatest] = useState<Record<string, unknown> | null>(null);
   const [applyPath, setApplyPath] = useState<Record<string, unknown> | null>(null);
   const [commandCenter, setCommandCenter] = useState<Record<string, unknown> | null>(null);
+  const [missionControl, setMissionControl] = useState<Record<string, unknown> | null>(null);
   const [applyBusy, setApplyBusy] = useState(false);
   const [session, setSession] = useState<{
     authenticated: boolean;
@@ -432,6 +434,21 @@ export default function App() {
     if (offlineDemoSurface) return;
     void loadProfile();
   }, [loadProfile, offlineDemoSurface]);
+
+  useEffect(() => {
+    if (offlineDemoSurface || !orgOk) return;
+    let cancelled = false;
+    void getMissionControl(base, plane, o)
+      .then((row) => {
+        if (!cancelled) setMissionControl(row);
+      })
+      .catch(() => {
+        if (!cancelled) setMissionControl(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [base, plane, o, orgOk, offlineDemoSurface, commandCenter, pursuit]);
 
   const profileFields = useMemo(() => {
     if (!profileRecord) {
@@ -1335,6 +1352,8 @@ export default function App() {
         onNextAction={runPrimaryNext}
         busy={anyBusy}
         onGoTo={setSurfaceByNav}
+        missionControl={missionControl as never}
+        onOpenOpportunity={setSparkId}
         aside={
           <>
             <WhatsNextCard

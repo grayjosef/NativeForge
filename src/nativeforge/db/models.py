@@ -488,9 +488,7 @@ class NfOpportunitySource(Base):
         DateTime(timezone=True), nullable=True
     )
     seed_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
-    canonical_source_id: Mapped[str | None] = mapped_column(
-        String(256), nullable=True
-    )
+    canonical_source_id: Mapped[str | None] = mapped_column(String(256), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -646,9 +644,7 @@ class NfActiveOpportunitySource(Base):
         DateTime(timezone=True), nullable=True
     )
     activation_notes: Mapped[str | None] = mapped_column(Text(), nullable=True)
-    rollback_contract_id: Mapped[str | None] = mapped_column(
-        String(512), nullable=True
-    )
+    rollback_contract_id: Mapped[str | None] = mapped_column(String(512), nullable=True)
     disabled_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
@@ -1503,6 +1499,12 @@ class NfPursuitTask(Base):
         nullable=True,
         index=True,
     )
+    # Alembic 0070 holds the database FK. nf_org_memberships is not an ORM model.
+    owner_membership_id: Mapped[uuid.UUID | None] = mapped_column(
+        Uuid(as_uuid=True),
+        nullable=True,
+        index=True,
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -1775,9 +1777,7 @@ class NfActivationState(Base):
     updated_by_actor_id: Mapped[uuid.UUID | None] = mapped_column(
         Uuid(as_uuid=True), nullable=True
     )
-    updated_by_actor_role: Mapped[str | None] = mapped_column(
-        String(32), nullable=True
-    )
+    updated_by_actor_role: Mapped[str | None] = mapped_column(String(32), nullable=True)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),

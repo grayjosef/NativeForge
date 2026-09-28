@@ -50,6 +50,28 @@ class PursuitTaskNotFoundError(Exception):
     """Scoped task missing."""
 
 
+class PursuitTaskOwnerError(Exception):
+    """Owner is not an active membership of this organization."""
+
+
+def _checked_owner(
+    session: Session,
+    organization_id: uuid.UUID,
+    owner_membership_id: uuid.UUID | None,
+) -> uuid.UUID | None:
+    if owner_membership_id is None:
+        return None
+    from nativeforge.services.mission_control_service import membership_belongs_to_org
+
+    if not membership_belongs_to_org(
+        connection=session.connection(),
+        organization_id=organization_id,
+        membership_id=owner_membership_id,
+    ):
+        raise PursuitTaskOwnerError("owner_not_in_this_organization")
+    return owner_membership_id
+
+
 _DEFAULT_TASKS: tuple[tuple[str, int], ...] = (
     ("Review NOFO checklist against tribal capacity", 0),
     ("Gather required attachments and certifications", 1),
@@ -95,6 +117,9 @@ def task_to_dict(row: NfPursuitTask) -> dict[str, Any]:
         "sort_order": row.sort_order,
         "due_at": _dt(row.due_at),
         "completed_at": _dt(row.completed_at),
+        "owner_membership_id": str(row.owner_membership_id)
+        if getattr(row, "owner_membership_id", None)
+        else None,
         "spark_requirement_id": str(row.spark_requirement_id)
         if row.spark_requirement_id
         else None,
@@ -405,6 +430,7 @@ def create_task(
     description: str | None,
     due_at: datetime | None,
     actor_id: uuid.UUID | None,
+    owner_membership_id: uuid.UUID | None = None,
 ) -> NfPursuitTask:
     p = pursuit_repo.get_grant_pursuit_scoped(
         session=session,
@@ -422,6 +448,7 @@ def create_task(
     )
     next_order = max((t.sort_order for t in existing), default=-1) + 1
     is_demo = is_demo_for_org_type(org.org_type)
+    owner_id = _checked_owner(session, org.id, owner_membership_id)
     row = NfPursuitTask(
         id=uuid.uuid4(),
         organization_id=org.id,
@@ -434,6 +461,7 @@ def create_task(
         due_at=due_at,
         completed_at=None,
         spark_requirement_id=None,
+        owner_membership_id=owner_id,
     )
     session.add(row)
     session.flush()
@@ -492,6 +520,10 @@ def update_task(
             t.completed_at = None
     if "due_at" in patch:
         t.due_at = patch["due_at"]
+    if "owner_membership_id" in patch:
+        t.owner_membership_id = _checked_owner(
+            session, org.id, patch["owner_membership_id"]
+        )
     session.flush()
     after = {
         "title": t.title,

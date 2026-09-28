@@ -94,6 +94,27 @@ def _normalise_issuer(issuer: Any) -> str:
     return str(issuer or "").strip().rstrip("/")
 
 
+def _microsoft_v2_endpoints(issuer: str) -> dict[str, str] | None:
+    """Entra ID v2 endpoints. Auth0 concatenation under the issuer is wrong here.
+
+    Issuer shape: ``https://login.microsoftonline.com/{tenant}/v2.0``
+    Authorize is ``.../{tenant}/oauth2/v2.0/authorize``, not ``.../v2.0/authorize``.
+    """
+    parsed = urlsplit(issuer)
+    host = (parsed.hostname or "").lower()
+    if host != "login.microsoftonline.com":
+        return None
+    path = (parsed.path or "").rstrip("/")
+    if not path.endswith("/v2.0"):
+        return None
+    authority = f"{parsed.scheme}://{parsed.netloc}{path[: -len('/v2.0')]}"
+    return {
+        "authorization_endpoint": f"{authority}/oauth2/v2.0/authorize",
+        "token_endpoint": f"{authority}/oauth2/v2.0/token",
+        "jwks_uri": f"{authority}/discovery/v2.0/keys",
+    }
+
+
 def discovery_url(issuer: Any) -> str:
     """Where the provider publishes its metadata. Empty if no issuer."""
     root = _normalise_issuer(issuer)
@@ -201,8 +222,14 @@ def build_provider_endpoints(
 
     conventional = False
     if not discovered:
+        microsoft = _microsoft_v2_endpoints(root)
         if not root:
             blocked_reasons.append("no_issuer_configured")
+        elif microsoft:
+            # Entra v2 is not Auth0: {issuer}/authorize 404s. These paths are
+            # the documented v2 endpoints, used when discovery is off.
+            endpoints = microsoft
+            conventional = True
         elif root in KNOWN_NON_CONVENTIONAL_ISSUERS:
             # Known to not follow the convention. Guessing here is how a login
             # reaches a 404 with every gate reporting ready.

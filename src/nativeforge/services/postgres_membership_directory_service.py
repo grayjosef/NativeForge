@@ -134,7 +134,10 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # nf_grant_pursuits and nf_opportunity_contacts only as foreign key targets.
 # Neither nf_org_memberships nor nf_identities changes. The adapter's schema
 # is unchanged.
-EXPECTED_MIGRATION_HEAD = "0069"
+# 0070 adds owner_membership_id on nf_pursuit_tasks. The membership table is
+# a foreign-key target only; nf_org_memberships and nf_identities do not
+# change. The adapter's schema is unchanged.
+EXPECTED_MIGRATION_HEAD = "0070"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.

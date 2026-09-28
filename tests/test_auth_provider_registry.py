@@ -108,18 +108,34 @@ def test_both_configured_when_both_are_supplied():
         NF_OIDC_MICROSOFT_CALLBACK_URL=(
             "https://nativeforge.example/api/auth/callback/microsoft"
         ),
+        NF_OIDC_MICROSOFT_AUDIENCE="ms-client",
     )
     assert provider_configured("google", env) is True
     assert provider_configured("microsoft", env) is True
 
 
-def test_half_a_configuration_is_not_configured():
+def test_microsoft_must_set_its_own_audience():
+    """A Microsoft start that borrowed Google's audience would fail at callback."""
+    env = _base(
+        NF_OIDC_MICROSOFT_ISSUER=MICROSOFT_ISSUER,
+        NF_OIDC_MICROSOFT_CLIENT_ID="ms-client",
+        NF_OIDC_MICROSOFT_CLIENT_SECRET="ms-secret",
+        NF_OIDC_MICROSOFT_CALLBACK_URL=(
+            "https://nativeforge.example/api/auth/callback/microsoft"
+        ),
+    )
+    assert provider_configured("microsoft", env) is False
+    listing = available_providers(env)
+    microsoft = next(e for e in listing["providers"] if e["key"] == "microsoft")
+    assert "NF_OIDC_MICROSOFT_AUDIENCE" in microsoft["missing_env"]
+    assert microsoft["configured"] is False
     """A missing secret fails at the token endpoint, not at the button."""
     for missing in (
         "OIDC_ISSUER",
         "OIDC_CLIENT_ID",
         "OIDC_CLIENT_SECRET",
         "OIDC_CALLBACK_URL",
+        "OIDC_AUDIENCE",
     ):
         env = _base()
         env[missing] = ""
@@ -150,6 +166,11 @@ def test_the_listing_reports_every_known_provider_not_only_the_ready_ones():
     keys = {entry["key"] for entry in listing["providers"]}
     assert keys == {"google", "microsoft"}
     assert listing["any_configured"] is True
+    microsoft = next(e for e in listing["providers"] if e["key"] == "microsoft")
+    assert microsoft["configured"] is False
+    assert "NF_OIDC_MICROSOFT_ISSUER" in microsoft["missing_env"]
+    assert "NF_OIDC_MICROSOFT_CLIENT_SECRET" in microsoft["missing_env"]
+    assert "NF_OIDC_MICROSOFT_AUDIENCE" in microsoft["missing_env"]
 
 
 def test_each_provider_returns_to_its_own_path():

@@ -1608,6 +1608,36 @@
   color: var(--nf-text);
 }
 
+.nf-mission {
+  display: grid;
+  gap: var(--nf-s5);
+  margin-bottom: var(--nf-s6);
+}
+
+.nf-mission-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nf-s2);
+  margin-bottom: var(--nf-s3);
+}
+
+.nf-mission-filters [data-active="true"] {
+  border-color: var(--nf-text);
+  background: var(--nf-card-muted);
+}
+
+.nf-mission-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
 .nf-flow-activate {
   display: flex;
   flex-direction: column;

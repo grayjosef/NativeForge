@@ -138,34 +138,63 @@ def provider_env(
     return resolved
 
 
+#: Token verification refuses an empty audience. A Microsoft start that
+#: borrowed Google's audience would 302, then fail at the callback.
+_CONFIG_KEYS: tuple[str, ...] = (
+    "OIDC_ISSUER",
+    "OIDC_CLIENT_ID",
+    "OIDC_CLIENT_SECRET",
+    "OIDC_AUDIENCE",
+    "OIDC_CALLBACK_URL",
+)
+
+
+def provider_missing_env(
+    provider_key: str,
+    environ: dict[str, str] | None = None,
+) -> list[str]:
+    """Prefixed variable names this provider still needs. Names only."""
+    base = auth_environment_overlay(environ)
+    missing: list[str] = []
+    for auth_key in _CONFIG_KEYS:
+        name = _env_name(provider_key, auth_key)
+        if not str(base.get(name) or "").strip():
+            missing.append(name)
+    return missing
+
+
 def provider_configured(
     provider_key: str,
     environ: dict[str, str] | None = None,
 ) -> bool:
     """Whether this provider could complete a sign-in today.
 
-    All four of issuer, client id, secret and callback, because a flow missing
-    any one of them fails at a different stage and every one of those stages
-    looks, to a customer, like the product not working.
+    Issuer, client id, secret, audience and callback: a flow missing any one
+    of them fails at a different stage and every one of those stages looks,
+    to a customer, like the product not working.
+
+    A named provider that has started its own prefix (``NF_OIDC_MICROSOFT_*``)
+    must finish it. Borrowing another provider's audience is how a Microsoft
+    callback verifies a Google client id.
     """
-    env = provider_env(provider_key, environ)
-    required = (
-        "OIDC_ISSUER",
-        "OIDC_CLIENT_ID",
-        "OIDC_CLIENT_SECRET",
-        "OIDC_CALLBACK_URL",
-    )
-    if not all(str(env.get(k) or "").strip() for k in required):
+    base = auth_environment_overlay(environ)
+    hint = next((p.issuer_hint for p in PROVIDERS if p.key == provider_key), "")
+    if not hint:
         return False
 
-    # A provider entry is only configured *for that provider* if the issuer it
-    # resolves to is actually that provider's. Without this check, a
-    # deployment with base Google credentials and no Microsoft ones reports
-    # Microsoft as configured - the fall-through makes every provider look
-    # available the moment any one of them is.
+    prefixed_issuer = str(
+        base.get(_env_name(provider_key, "OIDC_ISSUER")) or ""
+    ).strip()
+    if prefixed_issuer:
+        if hint not in prefixed_issuer.lower():
+            return False
+        return not provider_missing_env(provider_key, environ)
+
+    env = provider_env(provider_key, environ)
+    if not all(str(env.get(k) or "").strip() for k in _CONFIG_KEYS):
+        return False
     issuer = str(env.get("OIDC_ISSUER") or "").strip().lower()
-    hint = next((p.issuer_hint for p in PROVIDERS if p.key == provider_key), "")
-    return bool(hint) and hint in issuer
+    return hint in issuer
 
 
 def callback_path(provider_key: str) -> str:
@@ -188,11 +217,13 @@ def available_providers(
     entries = []
     for provider in PROVIDERS:
         configured = provider_configured(provider.key, environ)
+        missing = [] if configured else provider_missing_env(provider.key, environ)
         entries.append(
             {
                 "key": provider.key,
                 "label": provider.label,
                 "configured": configured,
+                "missing_env": missing,
                 # A relative path. The browser resolves it against the origin
                 # it is already on, so a stale absolute URL cannot send a
                 # customer's authorization code to a host this deployment no
