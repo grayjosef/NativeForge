@@ -128,8 +128,14 @@ def _tenant_connection(engine: Any, organization_id: Any):
     with engine.connect() as connection:
         if organization_id is not None:
             apply_org_rls_gucs(connection, _org_uuid(organization_id), "demo")
-        with connection.begin():
+        try:
             yield connection
+            if connection.in_transaction():
+                connection.commit()
+        except Exception:
+            if connection.in_transaction():
+                connection.rollback()
+            raise
 
 
 def _table_exists(engine: Any, table: str) -> bool:
