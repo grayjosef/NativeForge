@@ -19,13 +19,10 @@ import { diagnosticsVisible, interpretError, type CustomerState } from "../custo
  *
  * ## The brand panel has a composition now
  *
- * The hero uses the FULL lockup at a size that fills the panel, on black,
- * matching the kit sheet. A 440px width cap on the compact file is what
- * rendered a 107px-tall smear with a fake gold tagline under it.
- *
- * The kit tagline lives in the full artwork. A second live-text tagline
- * under it was a caption, not the brand. Screen readers still get the
- * words from a visually hidden copy.
+ * Compact kit artwork at hero scale, on black, with FIND. PURSUE. GOVERN.
+ * as live ivory text. The full PNG bakes that line in navy, which vanishes
+ * on this panel. The words do not change; only the colour that can actually
+ * be read on black does.
  *
  * ## Unconfigured is stated once, quietly
  *
@@ -88,12 +85,12 @@ export function SignInPage({ notice }: SignInPageProps) {
               name twice before reaching anything actionable. */}
           <BrandLockup
             className="nf-login-lockup"
-            size={200}
-            mode="full"
+            size={175}
+            mode="compact"
             fit="width"
             decorative
           />
-          <p className="nf-visually-hidden">{TAGLINE}</p>
+          <p className="nf-login-tagline">{TAGLINE}</p>
           <p className="nf-login-claim">
             Funding intelligence and pursuit operations for Tribal governments and
             Native-serving organizations.

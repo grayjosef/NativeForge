@@ -96,27 +96,27 @@
   user-select: none;
 }
 
-/* Full lockup on the hero: width-capping at 440px was what crushed it to
-   ~107px tall in a 900px panel. The kit sheet is a large lockup on black. */
+/* Compact kit lockup at hero scale. The full file's navy tagline cannot
+   be read on this panel, so the words sit as live ivory text beneath. */
 .nf-login-lockup .nf-lockup-art {
   width: min(720px, 100%);
   height: auto;
   object-fit: contain;
 }
 
-/* Canonical, uppercase, and tied to the mark by the ember it shares with the
-   emblem. Live text rather than the artwork that has the tagline baked in:
-   the kit sets it in navy, which is close to unreadable on a dark ground. */
+/* Ivory on black, not the kit navy. Same words, a colour that survives
+   this ground. Tracking matches the kit's uppercase line. */
 .nf-login-tagline {
-  margin: var(--nf-s5) 0 0;
-  font-size: clamp(0.82rem, 0.62rem + 0.5vw, 1.02rem);
+  margin: var(--nf-s4) auto 0;
+  width: fit-content;
+  font-size: clamp(0.95rem, 0.75rem + 0.55vw, 1.18rem);
   font-weight: 700;
-  letter-spacing: 0.34em;
-  /* The tracking is applied to the right of each letter including the last,
-     which pushes a centred line left by half a space. */
-  text-indent: 0.34em;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
   text-transform: uppercase;
-  color: var(--nf-ember-lift);
+  color: var(--nf-brand-ivory);
+  padding-bottom: 0.4em;
+  border-bottom: 2px solid var(--nf-forge-lift);
 }
 
 .nf-login-claim {
