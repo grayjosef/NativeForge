@@ -125,6 +125,20 @@ def apply_org_rls_gucs(
     _set(connection_or_session, str(org_id), org_type == "demo")
 
 
+def reapply_org_rls_after_commit(
+    connection_or_session: Session | Any, org_id: uuid.UUID, org_type: OrgType
+) -> None:
+    """Re-stamp tenant GUCs after ``commit()`` on the same session.
+
+    ``set_config(..., is_local => true)`` lasts one transaction. ``commit()``
+    ends it; the session's ``after_begin`` listener then writes the no-tenant
+    sentinel, so the next read under RLS sees zero rows even though the write
+    committed. Operator scripts must call this before any post-commit
+    verification query.
+    """
+    apply_org_rls_gucs(connection_or_session, org_id, org_type)
+
+
 def clear_org_rls_gucs(connection_or_session: Session | Any) -> None:
     """State that this transaction has no authorized tenant.
 

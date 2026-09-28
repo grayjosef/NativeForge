@@ -40,7 +40,10 @@ import uuid
 sys.path.insert(0, "src")
 sys.path.insert(0, ".")
 
-from nativeforge.db.rls import apply_org_rls_gucs  # noqa: E402
+from nativeforge.db.rls import (  # noqa: E402
+    apply_org_rls_gucs,
+    reapply_org_rls_after_commit,
+)
 from nativeforge.db.session import SessionLocal  # noqa: E402
 from nativeforge.repositories.source_authorization_decision_repository import (  # noqa: E402
     LIVE_FETCH,
@@ -189,55 +192,53 @@ def main() -> int:
             print("Dry run only. Re-run with --apply to record the opt-in.")
             return 0
 
-        now = dt.datetime.now(dt.UTC)
-        fingerprint = hashlib.sha256(
-            f"gate163:live_fetch_opt_in:{AUTHORIZED}:{handle}".encode()
-        ).hexdigest()
-
-        written = record_decision(
-            connection=session,
-            organization_id=DEMO,
-            source_id=AUTHORIZED,
-            decision_kind=LIVE_FETCH,
-            decision="approved",
-            # Migration 0052 requires exactly this for a live_fetch row: the
-            # guard said nothing about terms, and recording a terms status
-            # would imply it had.
-            guard_status="NOT_APPLICABLE",
-            reviewed_by=f"operator:{handle}",
-            reviewed_at=now,
-            review_authority="gate163_human_activation",
-            evidence_fingerprint=fingerprint,
-            evidence_ref="gate163:operator_live_fetch_opt_in",
-            notes_classification="unclassified",
-            # A member of FACT_STATUSES, and the same one MAYHEM's terms and
-            # human-review decisions for this source carry. An invented value
-            # is refused outright, which is how it should be: `operator_decision`
-            # looked reasonable and was not in the vocabulary.
-            fact_status="tenant_supplied",
-            now=now,
+        already_opted = is_live_fetch_opted_in(
+            connection=session, organization_id=DEMO, source_id=AUTHORIZED
         )
-        session.commit()
+        if not already_opted:
+            now = dt.datetime.now(dt.UTC)
+            fingerprint = hashlib.sha256(
+                f"gate163:live_fetch_opt_in:{AUTHORIZED}:{handle}".encode()
+            ).hexdigest()
 
-        if written.get("blocked_reasons"):
-            print(f"REFUSED BY THE REPOSITORY: {written['blocked_reasons']}")
-            return 1
+            written = record_decision(
+                connection=session,
+                organization_id=DEMO,
+                source_id=AUTHORIZED,
+                decision_kind=LIVE_FETCH,
+                decision="approved",
+                # Migration 0052 requires exactly this for a live_fetch row: the
+                # guard said nothing about terms, and recording a terms status
+                # would imply it had.
+                guard_status="NOT_APPLICABLE",
+                reviewed_by=f"operator:{handle}",
+                reviewed_at=now,
+                review_authority="gate163_human_activation",
+                evidence_fingerprint=fingerprint,
+                evidence_ref="gate163:operator_live_fetch_opt_in",
+                notes_classification="unclassified",
+                # A member of FACT_STATUSES, and the same one MAYHEM's terms and
+                # human-review decisions for this source carry. An invented value
+                # is refused outright, which is how it should be: `operator_decision`
+                # looked reasonable and was not in the vocabulary.
+                fact_status="tenant_supplied",
+                now=now,
+            )
+            if written.get("blocked_reasons") or not written.get("recorded"):
+                session.rollback()
+                print(f"REFUSED BY THE REPOSITORY: {written.get('blocked_reasons')}")
+                return 1
+            session.commit()
 
-        # ---- read it back, and prove it is the only one ----------------
+        # commit() ends the transaction-local GUCs; after_begin restores the
+        # nil-tenant anchor. Re-stamp demo context before any read-back.
+        reapply_org_rls_after_commit(session, DEMO, "demo")
+
         opted = is_live_fetch_opted_in(
             connection=session, organization_id=DEMO, source_id=AUTHORIZED
         )
         state = describe_opt_in_state(connection=session, organization_id=DEMO)
         failures = opt_in_invariant_failures(state)
-
-        print("RECORDED.")
-        print(f"    opted in             {opted}")
-        print(f"    opted_in_count       {state['opted_in_count']}")
-        listed = [entry["source_id"] for entry in state["opted_in_sources"]]
-        print(f"    opted_in_sources     {listed}")
-        print(f"    invariant failures   {failures or 'clean'}")
-
-        # And the collection warrant must now be valid for search2 specifically.
         warrant = evaluate_live_request(
             warrant_kind=WARRANT_SOURCE_COLLECTION,
             authorized_source_id=AUTHORIZED,
@@ -246,12 +247,42 @@ def main() -> int:
             connection=session,
             organization_id=DEMO,
         )
-        print(f"    collection warrant   permitted={warrant['permitted']}")
-        print(f"    refusal_reasons      {warrant['refusal_reasons'] or 'none'}")
 
-        if not opted or state["opted_in_count"] != 1 or failures:
+        verification_failures: list[str] = []
+        if not opted:
+            verification_failures.append("live_fetch_opt_in_not_visible_after_write")
+        if state["opted_in_count"] != 1:
+            verification_failures.append(
+                f"opted_in_count_not_one:{state['opted_in_count']}"
+            )
+        if failures:
+            verification_failures.extend(failures)
+        if not warrant["permitted"]:
+            verification_failures.extend(
+                list(warrant.get("refusal_reasons") or ["collection_warrant_not_permitted"])
+            )
+
+        if verification_failures:
+            print("POST-WRITE VERIFICATION FAILED:")
+            for item in verification_failures:
+                print(f"    - {item}")
+            print(f"    opted in             {opted}")
+            print(f"    opted_in_count       {state['opted_in_count']}")
+            listed = [entry["source_id"] for entry in state["opted_in_sources"]]
+            print(f"    opted_in_sources     {listed}")
+            print(f"    collection warrant   permitted={warrant['permitted']}")
+            print(f"    refusal_reasons      {warrant['refusal_reasons'] or 'none'}")
             return 1
-        return 0 if warrant["permitted"] else 1
+
+        print("RECORDED." if not already_opted else "ALREADY OPTED IN — verified.")
+        print(f"    opted in             {opted}")
+        print(f"    opted_in_count       {state['opted_in_count']}")
+        listed = [entry["source_id"] for entry in state["opted_in_sources"]]
+        print(f"    opted_in_sources     {listed}")
+        print("    invariant failures   clean")
+        print(f"    collection warrant   permitted={warrant['permitted']}")
+        print("    refusal_reasons      none")
+        return 0
     finally:
         session.close()
 
