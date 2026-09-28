@@ -831,6 +831,35 @@ def callback(
     organization_id_resolved = bool(resolution.get("organization_id_resolved"))
     membership_verified = bool(resolution.get("membership_verified"))
 
+    # -- 4a. an invite that already named this sign-in ----------------------
+    #
+    # The invited person has no membership yet, so they cannot hold an org
+    # session. The token just proved their address. If an approved invite
+    # stored that address as a fingerprint, activate it here rather than
+    # inventing an unauthenticated accept URL.
+    if identity_validated and identity_id and not organization_id_resolved:
+        try:
+            from nativeforge.services.customer_invite_signin_activation_service import (
+                activate_invites_matching_signin,
+            )
+
+            invite_signin = activate_invites_matching_signin(
+                connection=db.connection(),
+                identity_id=identity_id,
+                email=verification.get("email"),
+            )
+            if invite_signin.get("membership_activated"):
+                db.commit()
+                resolution = resolve_session_organization(
+                    connection=db.connection(), identity_id=identity_id
+                )
+            else:
+                db.rollback()
+        except Exception:
+            db.rollback()
+        organization_id_resolved = bool(resolution.get("organization_id_resolved"))
+        membership_verified = bool(resolution.get("membership_verified"))
+
     # -- 4b. the first membership in a demo organization --------------------
     #
     # Without this, a verified identity with no membership is a dead end. The

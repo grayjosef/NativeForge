@@ -163,6 +163,37 @@ describe("PursuitCommandCenter", () => {
     );
   });
 
+  it("labels model-extracted facts as needing review", () => {
+    render(
+      <PursuitCommandCenter
+        center={center({
+          contacts: {
+            extraction_performed: true,
+            empty_message: null,
+            items: [
+              {
+                id: "c-ai",
+                role: "program",
+                name: "Suggested contact",
+                title: null,
+                office: null,
+                email: null,
+                phone: null,
+                website: null,
+                provenance_kind: "extracted",
+                source_document: null,
+                source_section: null,
+              },
+            ],
+          },
+        })}
+        onGoTo={vi.fn()}
+        onRecordInteraction={vi.fn(async () => undefined)}
+      />,
+    );
+    expect(screen.getByText("Suggested — needs review")).toBeInTheDocument();
+  });
+
   it("says so when the notice was read and named nobody", () => {
     render(
       <PursuitCommandCenter

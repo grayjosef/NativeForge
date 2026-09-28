@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { EmptyState, StateView } from "../components/StateView";
 import type { CustomerState } from "../customerState";
 import { PageHeader, Section, StatusBadge } from "../components/ui/primitives";
@@ -15,17 +17,23 @@ import { humanEntity } from "../lib/entityTypes";
  * the missing half is what NativeForge will have to report as unknown when a
  * funder asks.
  *
- * ## Members and invitations are absent on purpose
+ * ## People are listed without mailboxes
  *
- * There is a membership table and a bootstrap path, and no invite flow a
- * customer can drive. Drawing a member list with a disabled "Invite" button
- * would imply the feature exists and is switched off. The section says what
- * is true instead: one member, created at first sign-in, and invitations are
- * not built.
+ * Members and pending invites come from the membership tables. NativeForge
+ * never shows the invited address, never stores it, and never sends it.
+ * An invitation is a fingerprint plus an invite id you hand to the person
+ * yourself. They bind when they sign in with that address.
  */
 
 function str(v: unknown): string {
   return typeof v === "string" ? v : v != null ? String(v) : "";
+}
+
+export interface OrganizationPeople {
+  members: Record<string, unknown>[];
+  invites: Record<string, unknown>[];
+  member_count?: number;
+  invite_count?: number;
 }
 
 export interface OrganizationPageProps {
@@ -35,10 +43,29 @@ export interface OrganizationPageProps {
   error: CustomerState | null;
   onEditProfile: () => void;
   onRefresh: () => void;
+  people?: OrganizationPeople | null;
+  peopleBusy?: boolean;
+  lastIssuedInviteId?: string | null;
+  onIssueInvite?: (email: string, role: string) => Promise<void>;
+}
+
+function roleLabel(role: string): string {
+  return role.replace(/_/g, " ");
 }
 
 export function OrganizationPage(props: OrganizationPageProps) {
-  const { profile, identityVerified, busy, error, onEditProfile, onRefresh } = props;
+  const {
+    profile,
+    identityVerified,
+    busy,
+    error,
+    onEditProfile,
+    onRefresh,
+    people = null,
+    peopleBusy = false,
+    lastIssuedInviteId = null,
+    onIssueInvite,
+  } = props;
 
   const address = (profile?.physical_address ?? null) as Record<string, unknown> | null;
   const rep = (profile?.authorized_representative ?? null) as Record<string, unknown> | null;
@@ -136,13 +163,147 @@ export function OrganizationPage(props: OrganizationPageProps) {
         )}
       </Section>
 
-      <Section title="People" lead="Who can act in this workspace.">
-        <p className="nf-note">
-          This workspace has one member: the account that first signed in and bootstrapped the
-          organization. Inviting colleagues is not built yet — when it is, an invitation will have
-          to be approved by an existing member rather than accepted by anybody holding the link.
-        </p>
+      <Section
+        title="People"
+        lead="Who can act in this workspace. Addresses are never shown."
+      >
+        {!people ? (
+          <p className="nf-note">
+            Member list loads for a signed-in organization session. NativeForge
+            will not invent a roster.
+          </p>
+        ) : (
+          <>
+            {people.members.length === 0 ? (
+              <EmptyState
+                title="No members recorded."
+                body="The first person to sign in becomes the owner. Until that happens, this list stays empty."
+                inline
+              />
+            ) : (
+              <ul className="nf-source-list">
+                {people.members.map((member) => {
+                  const id = str(member.membership_id);
+                  const role = str(member.role);
+                  const state = str(member.state);
+                  return (
+                    <li key={id || role} className="nf-source">
+                      <p className="nf-source-name">
+                        {member.is_viewer ? "You" : roleLabel(role) || "Member"}
+                      </p>
+                      <p className="nf-note">
+                        {roleLabel(role)}
+                        {state ? ` · ${state}` : ""}
+                        {member.invite_id ? " · joined by invitation" : ""}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+
+            {people.invites.filter((row) => !row.accepted && !row.revoked).length > 0 ? (
+              <div className="nf-stack" style={{ marginTop: "1rem" }}>
+                <p className="nf-note">Pending invitations — domain only, never the mailbox.</p>
+                <ul className="nf-source-list">
+                  {people.invites
+                    .filter((row) => !row.accepted && !row.revoked)
+                    .map((invite) => (
+                      <li key={str(invite.invite_id)} className="nf-source">
+                        <p className="nf-source-name">{str(invite.invite_id)}</p>
+                        <p className="nf-note">
+                          {roleLabel(str(invite.requested_role))}
+                          {invite.invited_email_domain
+                            ? ` · ${str(invite.invited_email_domain)}`
+                            : ""}
+                          {invite.invite_state ? ` · ${str(invite.invite_state)}` : ""}
+                        </p>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {onIssueInvite ? (
+              <IssueInviteForm
+                busy={busy || peopleBusy}
+                lastIssuedInviteId={lastIssuedInviteId}
+                onIssueInvite={onIssueInvite}
+              />
+            ) : (
+              <p className="nf-note">
+                Issuing an invitation requires an owner or admin session.
+                NativeForge does not email the person.
+              </p>
+            )}
+          </>
+        )}
       </Section>
     </div>
+  );
+}
+
+function IssueInviteForm(props: {
+  busy: boolean;
+  lastIssuedInviteId: string | null;
+  onIssueInvite: (email: string, role: string) => Promise<void>;
+}) {
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("grant_lead");
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  return (
+    <form
+      className="nf-stack"
+      style={{ marginTop: "1.25rem" }}
+      onSubmit={(event) => {
+        event.preventDefault();
+        setLocalError(null);
+        const address = email.trim();
+        if (!address.includes("@")) {
+          setLocalError("Enter the address you will tell them out of band.");
+          return;
+        }
+        void props.onIssueInvite(address, role).then(() => setEmail(""));
+      }}
+    >
+      <p className="nf-note">
+        NativeForge does not send the invitation. You tell the person the invite
+        id. They sign in with this address; the mailbox itself is never stored.
+      </p>
+      <label className="nf-field">
+        <span>Colleague address</span>
+        <input
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          disabled={props.busy}
+          autoComplete="off"
+        />
+      </label>
+      <label className="nf-field">
+        <span>Role</span>
+        <select
+          value={role}
+          onChange={(event) => setRole(event.target.value)}
+          disabled={props.busy}
+        >
+          <option value="grant_lead">Grant lead</option>
+          <option value="reviewer">Reviewer</option>
+          <option value="viewer">Viewer</option>
+          <option value="org_admin">Admin</option>
+          <option value="authorized_representative">Authorized representative</option>
+        </select>
+      </label>
+      {localError ? <p className="nf-note">{localError}</p> : null}
+      {props.lastIssuedInviteId ? (
+        <p className="nf-note">
+          Invitation issued. Give them this id: <strong>{props.lastIssuedInviteId}</strong>
+        </p>
+      ) : null}
+      <button type="submit" className="nf-btn nf-btn-primary nf-btn-sm" disabled={props.busy}>
+        {props.busy ? "Working…" : "Issue invitation"}
+      </button>
+    </form>
   );
 }

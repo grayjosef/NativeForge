@@ -16,6 +16,8 @@ import {
   getApplyPath,
   getCommandCenter,
   getMissionControl,
+  getOrganizationPeople,
+  issueOrganizationInvite,
   recordFunderInteraction,
   readOpportunityDocument,
   readOpportunityUrl,
@@ -145,6 +147,9 @@ export default function App() {
   > | null>(null);
   const [orgBusy, setOrgBusy] = useState(false);
   const [orgErr, setOrgErr] = useState<CustomerState | null>(null);
+  const [people, setPeople] = useState<Record<string, unknown> | null>(null);
+  const [peopleBusy, setPeopleBusy] = useState(false);
+  const [lastIssuedInviteId, setLastIssuedInviteId] = useState<string | null>(null);
 
   const [sparks, setSparks] = useState<Record<string, unknown>[]>([]);
   const [sparkDetail, setSparkDetail] = useState<Record<string, unknown> | null>(
@@ -458,6 +463,43 @@ export default function App() {
     if (offlineDemoSurface) return;
     void loadProfile();
   }, [loadProfile, offlineDemoSurface]);
+
+  const loadPeople = useCallback(async () => {
+    if (!orgOk || !mayLoadOrgData) {
+      setPeople(null);
+      return;
+    }
+    try {
+      const row = await getOrganizationPeople(base, plane, o);
+      setPeople(row);
+    } catch {
+      setPeople(null);
+    }
+  }, [base, orgOk, mayLoadOrgData, plane, o]);
+
+  useEffect(() => {
+    if (offlineDemoSurface) return;
+    void loadPeople();
+  }, [loadPeople, offlineDemoSurface]);
+
+  const onIssueInvite = useCallback(
+    async (email: string, role: string) => {
+      if (!orgOk) return;
+      setPeopleBusy(true);
+      setOrgErr(null);
+      try {
+        const issued = await issueOrganizationInvite(base, plane, o, { email, role });
+        const inviteId = str(issued.invite_id);
+        setLastIssuedInviteId(inviteId || null);
+        await loadPeople();
+      } catch (e) {
+        setOrgErr(interpretError(e));
+      } finally {
+        setPeopleBusy(false);
+      }
+    },
+    [base, orgOk, plane, o, loadPeople],
+  );
 
   useEffect(() => {
     if (offlineDemoSurface || !orgOk) return;
@@ -1039,6 +1081,31 @@ export default function App() {
   );
 
   const hasProfile = profileRecord !== null;
+  const attentionItems = useMemo(() => {
+    const items: Array<{ id: string; title: string; detail: string; href?: string }> = [];
+    if (!hasProfile) {
+      items.push({
+        id: "org-profile-incomplete",
+        title: "Complete the organization profile",
+        detail: "Eligibility stays incomplete until identity facts are filled.",
+        href: "organization",
+      });
+    }
+    const tasks = Array.isArray(pursuit?.tasks)
+      ? (pursuit?.tasks as Record<string, unknown>[])
+      : [];
+    for (const task of tasks) {
+      if (str(task.status) === "blocked" || task.blocked) {
+        items.push({
+          id: `blocker:${str(task.id)}`,
+          title: str(task.title) || "Pursuit blocked",
+          detail: str(task.blocker) || "A required step is blocked.",
+          href: "pursuits",
+        });
+      }
+    }
+    return items;
+  }, [hasProfile, pursuit]);
   const hasSpark = sparkDetail !== null;
   const hasReq = requirements.length > 0;
   const hasScore = score !== null;
@@ -1431,6 +1498,7 @@ export default function App() {
         onGoTo={setSurfaceByNav}
         missionControl={missionControl as never}
         onOpenOpportunity={setSparkId}
+        attentionItems={attentionItems}
         aside={
           <>
             <WhatsNextCard
@@ -1617,10 +1685,28 @@ export default function App() {
         <OrganizationPage
           profile={profileRecord}
           identityVerified={Boolean(session?.authenticated)}
-          busy={orgBusy}
+          busy={orgBusy || peopleBusy}
           error={orgErr}
           onEditProfile={() => setSurface("onboarding")}
-          onRefresh={() => void loadProfile()}
+          onRefresh={() => {
+            void loadProfile();
+            void loadPeople();
+          }}
+          people={
+            people
+              ? {
+                  members: Array.isArray(people.members)
+                    ? (people.members as Record<string, unknown>[])
+                    : [],
+                  invites: Array.isArray(people.invites)
+                    ? (people.invites as Record<string, unknown>[])
+                    : [],
+                }
+              : null
+          }
+          peopleBusy={peopleBusy}
+          lastIssuedInviteId={lastIssuedInviteId}
+          onIssueInvite={session?.authenticated ? onIssueInvite : undefined}
         />
       ) : surface === "settings" ? (
         <SettingsPage

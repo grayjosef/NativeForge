@@ -62,6 +62,10 @@ from nativeforge.api.customer_live_federal_search_routes import (
     demo_live_federal_search_router,
     real_live_federal_search_router,
 )
+from nativeforge.api.customer_membership_routes import (
+    demo_membership_router,
+    real_membership_router,
+)
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
 )
@@ -355,6 +359,8 @@ def create_app() -> FastAPI:
     app.include_router(real_command_router)
     app.include_router(demo_mission_router)
     app.include_router(real_mission_router)
+    app.include_router(demo_membership_router)
+    app.include_router(real_membership_router)
     # Read one public page a signed-in customer named. The only route on the
     # customer_supplied_url purpose, and it stores nothing: what it finds goes
     # back for review and through the ordinary create path.

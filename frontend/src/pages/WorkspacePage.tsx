@@ -88,6 +88,7 @@ export interface WorkspacePageProps {
   onGoTo: (navId: string) => void;
   missionControl?: MissionControlPayload | null;
   onOpenOpportunity?: (sparkId: string) => void;
+  attentionItems?: Array<{ id: string; title: string; detail: string; href?: string }>;
 }
 
 export function WorkspacePage(props: WorkspacePageProps) {
@@ -117,6 +118,7 @@ export function WorkspacePage(props: WorkspacePageProps) {
     onGoTo,
     missionControl = null,
     onOpenOpportunity,
+    attentionItems = [],
   } = props;
 
   const attention = steps.filter(
@@ -218,7 +220,18 @@ export function WorkspacePage(props: WorkspacePageProps) {
               badge={s.state === "error" ? "Problem" : "Attention"}
             />
           ))}
-          {!nextActionLabel && attention.length === 0 ? (
+          {attentionItems.map((item) => (
+            <ActionCard
+              key={item.id}
+              title={item.title}
+              body={item.detail}
+              tone="warn"
+              badge="Attention"
+              onAction={item.href ? () => onGoTo(item.href as string) : undefined}
+              actionLabel={item.href ? "Open" : undefined}
+            />
+          ))}
+          {!nextActionLabel && attention.length === 0 && attentionItems.length === 0 ? (
             <EmptyState
               title="Nothing is waiting on you."
               body="Every step NativeForge can take on its own is current."

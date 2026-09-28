@@ -595,6 +595,41 @@ export async function getCommandCenter(
   return parseJson(r);
 }
 
+export async function getOrganizationPeople(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+): Promise<Record<string, unknown>> {
+  const path = buildM0Path(plane, orgId, "/members");
+  const r = await fetch(`${baseUrl}${path}`, {
+    headers: orgHeaderOnly(orgId),
+    credentials: "include",
+  });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
+export async function issueOrganizationInvite(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  body: { email: string; role?: string },
+): Promise<Record<string, unknown>> {
+  const path = buildM0Path(plane, orgId, "/invites");
+  const r = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    headers: jsonHeaders(orgId),
+    credentials: "include",
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
 export async function getMissionControl(
   baseUrl: string,
   plane: Plane,

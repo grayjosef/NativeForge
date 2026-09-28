@@ -149,11 +149,14 @@ const STAGE_STATE: Record<CommandStage["status"], ProgressStepState> = {
 const INTERACTION_TYPES = Object.keys(TYPE_LABEL);
 
 function provenanceTone(kind: string): { label: string; tone: BadgeTone } {
-  if (kind === "source_document" || kind === "source_page") {
+  if (kind === "source_document" || kind === "source_page" || kind === "evidence") {
     return { label: "From the notice", tone: "positive" };
   }
-  if (kind === "customer_provided") {
+  if (kind === "customer_provided" || kind === "human") {
     return { label: "Recorded by us", tone: "neutral" };
+  }
+  if (kind === "model" || kind === "extracted" || kind === "ai") {
+    return { label: "Suggested — needs review", tone: "warn" };
   }
   return { label: "Needs review", tone: "warn" };
 }
