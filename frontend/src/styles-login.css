@@ -33,10 +33,10 @@
   place-items: center;
   padding: var(--nf-s8) var(--nf-s7);
   overflow: hidden;
-  /* True black, matching the kit sheet. A forge-green wash behind the
-     lockup made "Forge" disappear: the wordmark's second half is that green. */
-  background: #05070a;
-  color: var(--nf-brand-ivory);
+  /* Kit ivory, not black. The full lockup's tagline is navy; that colour
+     stays. Ivory is the ground it was drawn to sit on. */
+  background: var(--nf-brand-ivory);
+  color: var(--nf-brand-navy);
 }
 
 /* A single restrained warmth behind the mark, so the panel has depth without
@@ -53,7 +53,7 @@
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(207, 144, 85, 0.09),
+    rgba(207, 144, 85, 0.08),
     transparent 64%
   );
   pointer-events: none;
@@ -96,27 +96,11 @@
   user-select: none;
 }
 
-/* Compact kit lockup at hero scale. The full file's navy tagline cannot
-   be read on this panel, so the words sit as live ivory text beneath. */
+/* Full lockup at hero scale. Width follows the 960×287 kit file. */
 .nf-login-lockup .nf-lockup-art {
   width: min(720px, 100%);
   height: auto;
   object-fit: contain;
-}
-
-/* Ivory on black, not the kit navy. Same words, a colour that survives
-   this ground. Tracking matches the kit's uppercase line. */
-.nf-login-tagline {
-  margin: var(--nf-s4) auto 0;
-  width: fit-content;
-  font-size: clamp(0.95rem, 0.75rem + 0.55vw, 1.18rem);
-  font-weight: 700;
-  letter-spacing: 0.28em;
-  text-indent: 0.28em;
-  text-transform: uppercase;
-  color: var(--nf-brand-ivory);
-  padding-bottom: 0.4em;
-  border-bottom: 2px solid var(--nf-forge-lift);
 }
 
 .nf-login-claim {
@@ -124,7 +108,7 @@
   max-width: 30rem;
   font-size: clamp(0.95rem, 0.88rem + 0.25vw, 1.08rem);
   line-height: 1.6;
-  color: rgba(245, 242, 234, 0.84);
+  color: var(--nf-brand-graphite);
 }
 
 /* ── sign-in panel ──────────────────────────────────────────────────── */
