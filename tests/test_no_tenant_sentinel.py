@@ -354,3 +354,106 @@ def test_the_context_does_not_survive_its_transaction(tenant_table):
             sa.text(f"SELECT current_setting('{ORG_ID_GUC}', true)")
         ).scalar_one()
         assert after in ("", None)
+
+
+# ------------------------------- per TRANSACTION, not per request
+
+# The sentinel shipped first at request granularity: written once when a
+# request picked up its session. Controlled-live then produced, on a real
+# login, all three of
+#
+#     invalid input syntax for type uuid: ""
+#     invalid input syntax for type boolean: ""
+#     current transaction is aborted, commands ignored ...
+#
+# because `is_local => true` lasts one transaction and the OAuth callback
+# commits mid-request. Everything after that commit saw the empty string
+# again. These tests hold the unit at the transaction.
+
+
+def test_the_listener_is_registered_on_the_session_class():
+    """Registered on Session itself, so every session gets it - including
+    ones built somewhere that never heard of the dependency."""
+    from sqlalchemy import event as sa_event
+    from sqlalchemy.orm import Session as OrmSession
+
+    from nativeforge.db import session as session_module  # noqa: F401
+
+    assert sa_event.contains(
+        OrmSession, "after_begin", session_module._anchor_every_transaction
+    )
+
+
+def test_a_first_transaction_is_anchored_without_anyone_asking(tenant_table):
+    """No dependency, no explicit call. Opening a transaction is enough."""
+    from sqlalchemy.orm import Session as OrmSession
+
+    from nativeforge.db import session as session_module  # noqa: F401
+
+    with OrmSession(bind=tenant_table) as s:
+        assert s.execute(sa.text("SELECT count(*) FROM rls_probe")).scalar_one() == 0
+
+
+def test_the_anchor_survives_a_commit(tenant_table):
+    """The regression, stated exactly. Request granularity failed here."""
+    from sqlalchemy.orm import Session as OrmSession
+
+    from nativeforge.db import session as session_module  # noqa: F401
+
+    with OrmSession(bind=tenant_table) as s:
+        s.execute(sa.text("SELECT count(*) FROM rls_probe")).scalar_one()
+        s.commit()
+        # Second transaction on the same connection. Previously  here.
+        assert s.execute(sa.text("SELECT count(*) FROM rls_probe")).scalar_one() == 0
+        s.commit()
+        assert s.execute(sa.text("SELECT 1")).scalar_one() == 1
+
+
+def test_the_anchor_survives_a_rollback(tenant_table):
+    """The callback rolls back when the bootstrap declines, then keeps going."""
+    from sqlalchemy.orm import Session as OrmSession
+
+    from nativeforge.db import session as session_module  # noqa: F401
+
+    with OrmSession(bind=tenant_table) as s:
+        s.execute(sa.text("SELECT count(*) FROM rls_probe")).scalar_one()
+        s.rollback()
+        assert s.execute(sa.text("SELECT count(*) FROM rls_probe")).scalar_one() == 0
+
+
+def test_both_gucs_are_anchored_not_just_the_uuid(tenant_table):
+    """Production raised on the boolean too. Half a fix is not one."""
+    from sqlalchemy.orm import Session as OrmSession
+
+    from nativeforge.db import session as session_module  # noqa: F401
+
+    with OrmSession(bind=tenant_table) as s:
+        s.commit()
+        org = s.execute(
+            sa.text("SELECT current_setting(:n, true)"), {"n": ORG_ID_GUC}
+        ).scalar_one()
+        demo = s.execute(
+            sa.text("SELECT current_setting(:n, true)"), {"n": IS_DEMO_GUC}
+        ).scalar_one()
+    assert org == str(NO_TENANT_ORG_ID)
+    assert demo == "false"
+
+
+def test_a_real_organization_still_overrides_the_anchor(tenant_table):
+    """The listener must not fight the routes that have a real tenant."""
+    from sqlalchemy.orm import Session as OrmSession
+
+    from nativeforge.db import session as session_module  # noqa: F401
+
+    org = uuid.uuid4()
+    with OrmSession(bind=tenant_table) as s:
+        s.execute(sa.text("SELECT 1"))
+        apply_org_rls_gucs(s, org, "demo")
+        s.execute(
+            sa.text(
+                "INSERT INTO rls_probe (organization_id, is_demo) VALUES (:o, true)"
+            ),
+            {"o": str(org)},
+        )
+        assert s.execute(sa.text("SELECT count(*) FROM rls_probe")).scalar_one() == 1
+        s.rollback()

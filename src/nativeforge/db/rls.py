@@ -49,6 +49,7 @@ coverage. This is the application-side half, and it needs no migration.
 from __future__ import annotations
 
 import uuid
+from typing import Any
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -68,6 +69,30 @@ NO_TENANT_ORG_ID: uuid.UUID = uuid.UUID("00000000-0000-0000-0000-000000000000")
 
 def _postgres(session: Session) -> bool:
     return session.bind is not None and session.bind.dialect.name == "postgresql"
+
+
+def set_no_tenant_anchor(connection: Any) -> None:
+    """Write the sentinel straight onto a Connection.
+
+    Separate from `clear_org_rls_gucs` because the thing that has to do this
+    on every transaction is a SQLAlchemy `after_begin` listener, and what that
+    listener is handed is a Connection, not a Session.
+
+    Why every transaction and not once per request: `is_local => true` means
+    one transaction. Setting it when a request picks up its session covers
+    that request's first transaction only, and the OAuth callback commits
+    mid-request - after which the anchor is the empty string again and the
+    next cast raises. Request granularity was the wrong unit; this is the
+    right one.
+    """
+    connection.execute(
+        text(f"SELECT set_config('{ORG_ID_GUC}', :oid, true)"),
+        {"oid": str(NO_TENANT_ORG_ID)},
+    )
+    connection.execute(
+        text(f"SELECT set_config('{IS_DEMO_GUC}', :d, true)"),
+        {"d": "false"},
+    )
 
 
 def _set(session: Session, org_id: str, is_demo: bool) -> None:
