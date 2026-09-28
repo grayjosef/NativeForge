@@ -163,6 +163,14 @@ def provider_missing_env(
     return missing
 
 
+def _prefix_started(provider_key: str, environ: dict[str, str] | None) -> bool:
+    base = auth_environment_overlay(environ)
+    return any(
+        str(base.get(_env_name(provider_key, auth_key)) or "").strip()
+        for auth_key in _CONFIG_KEYS
+    )
+
+
 def provider_configured(
     provider_key: str,
     environ: dict[str, str] | None = None,
@@ -173,22 +181,25 @@ def provider_configured(
     of them fails at a different stage and every one of those stages looks,
     to a customer, like the product not working.
 
-    A named provider that has started its own prefix (``NF_OIDC_MICROSOFT_*``)
-    must finish it. Borrowing another provider's audience is how a Microsoft
-    callback verifies a Google client id.
+    Microsoft that has started ``NF_OIDC_MICROSOFT_*`` must finish all five
+    keys. Borrowing Google's audience is how a Microsoft callback verifies a
+    Google client id.
+
+    Google may keep using the unprefixed ``OIDC_*`` stack even if a Google
+    prefix is incomplete: that prefix overlay is how a single-provider
+    deployment was configured, and refusing it signs every customer out.
     """
-    base = auth_environment_overlay(environ)
     hint = next((p.issuer_hint for p in PROVIDERS if p.key == provider_key), "")
     if not hint:
         return False
 
-    prefixed_issuer = str(
-        base.get(_env_name(provider_key, "OIDC_ISSUER")) or ""
-    ).strip()
-    if prefixed_issuer:
-        if hint not in prefixed_issuer.lower():
+    if provider_key != "google" and _prefix_started(provider_key, environ):
+        missing = provider_missing_env(provider_key, environ)
+        if missing:
             return False
-        return not provider_missing_env(provider_key, environ)
+        base = auth_environment_overlay(environ)
+        issuer = str(base.get(_env_name(provider_key, "OIDC_ISSUER")) or "").strip()
+        return hint in issuer.lower()
 
     env = provider_env(provider_key, environ)
     if not all(str(env.get(k) or "").strip() for k in _CONFIG_KEYS):

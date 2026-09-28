@@ -129,6 +129,23 @@ def test_microsoft_must_set_its_own_audience():
     microsoft = next(e for e in listing["providers"] if e["key"] == "microsoft")
     assert "NF_OIDC_MICROSOFT_AUDIENCE" in microsoft["missing_env"]
     assert microsoft["configured"] is False
+
+
+def test_google_keeps_the_base_secret_if_its_prefix_is_incomplete():
+    """Live Google used OIDC_CLIENT_SECRET, not NF_OIDC_GOOGLE_CLIENT_SECRET."""
+    env = _base(
+        NF_OIDC_GOOGLE_ISSUER=GOOGLE_ISSUER,
+        NF_OIDC_GOOGLE_CLIENT_ID="google-client",
+        NF_OIDC_GOOGLE_AUDIENCE="google-client",
+        NF_OIDC_GOOGLE_CALLBACK_URL=(
+            "https://nativeforge.example/api/auth/callback/google"
+        ),
+    )
+    assert provider_configured("google", env) is True
+    assert provider_configured("microsoft", env) is False
+
+
+def test_half_a_configuration_is_not_configured():
     """A missing secret fails at the token endpoint, not at the button."""
     for missing in (
         "OIDC_ISSUER",
