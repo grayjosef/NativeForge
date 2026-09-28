@@ -1192,6 +1192,15 @@
   padding: var(--nf-s2) var(--nf-s2) var(--nf-s4);
 }
 
+.nf-drawer-head .nf-lockup {
+  max-width: min(220px, calc(100% - 5.5rem));
+}
+
+.nf-drawer-head .nf-lockup-art {
+  max-width: 100%;
+  object-fit: contain;
+}
+
 .nf-shell[data-drawer="true"] {
   grid-template-columns: minmax(0, 1fr);
 }

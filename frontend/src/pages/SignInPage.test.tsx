@@ -111,18 +111,16 @@ describe("SignInPage", () => {
 
   it("carries the canonical tagline", async () => {
     render(<SignInPage />);
-    // Uppercased in CSS so the text stays readable to assistive technology,
-    // which reads letter-spaced capitals poorly.
     expect(await screen.findByText("Find. Pursue. Govern.")).toBeInTheDocument();
   });
 
-  it("draws the brand panel through compact kit artwork, not a raw img", async () => {
+  it("draws the brand panel as the full kit lockup, not a crushed compact", async () => {
     render(<SignInPage />);
     await screen.findByRole("heading", { level: 1, name: /welcome to nativeforge/i });
     const lockup = document.querySelector(".nf-login-lockup");
-    expect(lockup).toHaveAttribute("data-brand-mode", "compact");
+    expect(lockup).toHaveAttribute("data-brand-mode", "full");
     expect(lockup?.querySelector("img")?.getAttribute("src")).toBe(
-      "/brand/nf-lockup-notag.png",
+      "/brand/nf-lockup.png",
     );
   });
 

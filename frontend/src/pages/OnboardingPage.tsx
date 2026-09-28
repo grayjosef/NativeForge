@@ -298,7 +298,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
     return (
       <div className="nf-onboard">
         <div className="nf-onboard-card nf-onboard-card--done">
-          <BrandLockup size={80} mode="full" />
+          <BrandLockup size={110} mode="full" />
           <h1 className="nf-onboard-title">Your organization is set up</h1>
           <p className="nf-onboard-lead">
             NativeForge can now evaluate opportunities against {draft.legal_name.trim()} and prepare
@@ -321,7 +321,7 @@ export function OnboardingPage(props: OnboardingPageProps) {
     <div className="nf-onboard">
       <div className="nf-onboard-card">
         <div className="nf-onboard-head">
-          <BrandLockup size={44} mode="compact" />
+          <BrandLockup size={52} mode="compact" />
           <nav className="nf-onboard-nav" aria-label="Leave setup">
             <button type="button" className="nf-btn nf-btn-ghost nf-btn-sm" onClick={onSignIn}>
               Sign in

@@ -19,16 +19,13 @@ import { diagnosticsVisible, interpretError, type CustomerState } from "../custo
  *
  * ## The brand panel has a composition now
  *
- * The lockup is rendered at a size that occupies the panel it was given -
- * around 440px against a 720px-wide asset, so it downscales and stays crisp -
- * with the canonical tagline beneath it and one line saying what the product
- * is.
+ * The hero uses the FULL lockup at a size that fills the panel, on black,
+ * matching the kit sheet. A 440px width cap on the compact file is what
+ * rendered a 107px-tall smear with a fake gold tagline under it.
  *
- * The tagline is live text rather than the artwork that has it baked in. The
- * kit's tagline is set in navy, which is close to unreadable on a dark
- * ground; setting it as text puts it in the ember accent, in the canonical
- * uppercase, and ties it to the mark instead of leaving it looking like a
- * caption somebody added.
+ * The kit tagline lives in the full artwork. A second live-text tagline
+ * under it was a caption, not the brand. Screen readers still get the
+ * words from a visually hidden copy.
  *
  * ## Unconfigured is stated once, quietly
  *
@@ -91,12 +88,12 @@ export function SignInPage({ notice }: SignInPageProps) {
               name twice before reaching anything actionable. */}
           <BrandLockup
             className="nf-login-lockup"
-            size={108}
-            mode="compact"
+            size={200}
+            mode="full"
             fit="width"
             decorative
           />
-          <p className="nf-login-tagline">{TAGLINE}</p>
+          <p className="nf-visually-hidden">{TAGLINE}</p>
           <p className="nf-login-claim">
             Funding intelligence and pursuit operations for Tribal governments and
             Native-serving organizations.
@@ -112,7 +109,7 @@ export function SignInPage({ notice }: SignInPageProps) {
               heading with no mark at all. */}
           <BrandLockup
             className="nf-login-compact-mark"
-            size={48}
+            size={56}
             mode="compact"
             fit="width"
             decorative

@@ -35,9 +35,7 @@ describe("AppShell brand", () => {
       "/brand/nf-lockup-notag.png",
     );
     expect(heading.querySelector(".nf-rail-wordmark")).toBeNull();
-    expect(heading.querySelector(".nf-rail-tagline")?.textContent).toMatch(
-      /find\. pursue\. govern\./i,
-    );
+    expect(heading.querySelector(".nf-rail-tagline")).toBeNull();
   });
 
   it("drops to the emblem when the rail is collapsed", async () => {

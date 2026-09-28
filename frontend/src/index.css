@@ -373,7 +373,12 @@ code,
 .nf-lockup-art {
   display: block;
   flex: none;
+  flex-shrink: 0;
   width: auto;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
   user-select: none;
 }
 
@@ -3543,10 +3548,19 @@ code,
 .nf-rail-brand {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 6px;
   padding: var(--nf-s3) var(--nf-s2) var(--nf-s5);
-  min-height: 64px;
+  min-height: 72px;
+}
+
+.nf-rail-brand .nf-lockup {
+  max-width: 100%;
+}
+
+.nf-rail-brand .nf-lockup-art {
+  max-width: 100%;
+  object-fit: contain;
 }
 
 /* Collapsed, the emblem is the whole brand, so it centres in the 76px rail

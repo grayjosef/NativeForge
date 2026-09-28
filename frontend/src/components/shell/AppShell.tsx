@@ -263,21 +263,13 @@ export function AppShell({
           <h1 className="nf-rail-brand">
             {collapsed ? (
               <>
-                <BrandLockup size={34} mode="emblem" decorative />
+                <BrandLockup size={40} mode="emblem" decorative />
                 <span className="nf-visually-hidden">NativeForge</span>
               </>
             ) : (
               <>
-                {/* Compact artwork carries the wordmark. Live CSS text here
-                    used to fight the lockup and fail the quality bar on the
-                    authenticated surfaces. The tagline stays live because
-                    the compact file has no tagline and the kit tagline is
-                    navy on a graphite rail. */}
-                <BrandLockup size={44} mode="compact" decorative />
+                <BrandLockup size={56} mode="compact" decorative />
                 <span className="nf-visually-hidden">NativeForge</span>
-                <span className="nf-rail-tagline" aria-hidden="true">
-                  Find. Pursue. Govern.
-                </span>
               </>
             )}
           </h1>
@@ -319,7 +311,7 @@ export function AppShell({
             onKeyDown={trapTab}
           >
             <div className="nf-drawer-head">
-              <BrandLockup size={44} mode="compact" />
+              <BrandLockup size={52} mode="compact" />
               <button
                 type="button"
                 className="nf-btn nf-btn-ghost nf-btn-sm"
@@ -351,7 +343,7 @@ export function AppShell({
                     the drawer layout would otherwise have no top-level
                     heading at all. */}
                 <h1 className="nf-topbar-brand">
-                  <BrandLockup size={26} mode="emblem" decorative />
+                  <BrandLockup size={32} mode="emblem" decorative />
                   <span className="nf-visually-hidden">NativeForge</span>
                 </h1>
               </>

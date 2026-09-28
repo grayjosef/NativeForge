@@ -33,17 +33,9 @@
   place-items: center;
   padding: var(--nf-s8) var(--nf-s7);
   overflow: hidden;
-  /* Graphite with a forge-green undertone rather than flat green.
-     The wordmark is silver "Native" and green "Forge"; on the forge green
-     itself the second half of the product's own name measured about 1.2:1
-     and effectively vanished. */
-  background:
-    radial-gradient(
-      120% 90% at 50% 8%,
-      rgba(0, 64, 49, 0.55),
-      transparent 68%
-    ),
-    var(--nf-brand-graphite);
+  /* True black, matching the kit sheet. A forge-green wash behind the
+     lockup made "Forge" disappear: the wordmark's second half is that green. */
+  background: #05070a;
   color: var(--nf-brand-ivory);
 }
 
@@ -53,16 +45,16 @@
 .nf-login-brand::before {
   content: "";
   position: absolute;
-  top: 34%;
+  top: 18%;
   left: 50%;
-  width: 62vmin;
-  height: 62vmin;
+  width: 48vmin;
+  height: 48vmin;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(207, 144, 85, 0.13),
-    transparent 62%
+    rgba(207, 144, 85, 0.09),
+    transparent 64%
   );
   pointer-events: none;
 }
@@ -99,14 +91,18 @@
    720px native: at a 440px cap it is always downscaling, so it stays crisp
    at every width and on every pixel density. */
 .nf-login-lockup {
-  display: block;
-  margin-inline: auto;
+  display: flex;
+  justify-content: center;
+  width: 100%;
   user-select: none;
 }
 
+/* Full lockup on the hero: width-capping at 440px was what crushed it to
+   ~107px tall in a 900px panel. The kit sheet is a large lockup on black. */
 .nf-login-lockup .nf-lockup-art {
-  width: min(440px, 72%);
+  width: min(720px, 92%);
   height: auto;
+  object-fit: contain;
 }
 
 /* Canonical, uppercase, and tied to the mark by the ember it shares with the
@@ -183,8 +179,9 @@
 }
 
 .nf-login-compact-mark .nf-lockup-art {
-  width: 236px;
+  width: min(280px, 100%);
   height: auto;
+  object-fit: contain;
 }
 
 /* Sans, not the display serif. The serif heading belonged to nothing else on
@@ -344,10 +341,6 @@
 @media (max-width: 1180px) {
   .nf-login {
     grid-template-columns: minmax(0, 1fr) minmax(22rem, 26rem);
-  }
-
-  .nf-login-lockup .nf-lockup-art {
-    width: min(360px, 82%);
   }
 }
 
