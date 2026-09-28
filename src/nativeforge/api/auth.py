@@ -91,6 +91,7 @@ from nativeforge.services.auth_provider_registry_service import (
     PROVIDER_KEYS_KNOWN,
     available_providers,
     callback_path,
+    provider_configured,
     provider_env,
 )
 from nativeforge.services.customer_auth_activation_gate_service import (
@@ -464,7 +465,15 @@ def login(db: DbSession, provider: str | None = None) -> Any:
     """
     gate = _gate(db)
     flow = build_redirect_flow_contract()
-    configured = bool(gate["provider_configured"] and gate["secret_present"])
+    # A named provider is ready only when THAT provider is configured.
+    # The activation gate's `provider_configured` is the default (Google)
+    # stack. Using it for `?provider=microsoft` issued a Google authorize
+    # URL, which is how a disabled Microsoft button's start_path still 302'd
+    # to accounts.google.com on the live host.
+    if provider in PROVIDER_KEYS_KNOWN:
+        configured = provider_configured(provider)
+    else:
+        configured = bool(gate["provider_configured"] and gate["secret_present"])
 
     route_status = "auth_not_configured"
     if configured and not gate["login_live"]:
@@ -543,7 +552,21 @@ def login(db: DbSession, provider: str | None = None) -> Any:
     # module-level import doing it.
     signing = build_signing_key_readiness()
 
+    _issuer = (_auth_env.get("OIDC_ISSUER") or "").strip()
+    _client_id = (_auth_env.get("OIDC_CLIENT_ID") or "").strip()
+    _audience = (_auth_env.get("OIDC_AUDIENCE") or "").strip()
+    if provider in PROVIDER_KEYS_KNOWN and not configured:
+        # Empty string, not None: None re-reads the Google overlay.
+        # provider_env fall-through would otherwise build a Google
+        # authorize URL for a Microsoft button that is not configured.
+        _issuer = ""
+        _client_id = ""
+        _audience = ""
+
     url = build_authorization_url(
+        issuer=_issuer,
+        client_id=_client_id,
+        audience=_audience,
         redirect_uri=_configured_callback or None,
         state=issued["state"],
         code_challenge=issued["code_challenge"],
