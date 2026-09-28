@@ -222,6 +222,9 @@ def create_grant_spark(
     session.add(row)
     try:
         with session.begin_nested():
+            from nativeforge.db.rls import apply_org_rls_gucs
+
+            apply_org_rls_gucs(session, org.id, org.org_type)
             session.flush()
     except IntegrityError as e:
         raise DuplicateGrantSparkError from e

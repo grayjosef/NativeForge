@@ -312,9 +312,12 @@ def ingest_grants_gov_search2_payload(
             )
         )
 
+    from nativeforge.db.rls import reapply_org_rls_after_commit
+
     canonical_metrics = persist_observations(
         connection=connection, observations=observations, now=stamp
     )
+    reapply_org_rls_after_commit(session, organization_id, org_type)
     spark_metrics = project_grant_sparks_from_hits(
         session,
         org=org,
