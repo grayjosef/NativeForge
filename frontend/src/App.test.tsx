@@ -89,6 +89,12 @@ describe("App", () => {
       await screen.findByRole("heading", { level: 1, name: /nativeforge/i }),
     ).toBeInTheDocument();
     expect(window.location.search).not.toContain("sign_in");
+
+    // Identity is a session fact. Hardcoding it false on Workspace made a
+    // signed-in customer look unverified on the one page that is supposed
+    // to say what NativeForge already knows about them.
+    const identity = await screen.findByText("Identity");
+    expect(identity.closest(".nf-tier")).toHaveAttribute("data-state", "verified");
   });
 
   it("sends an unauthenticated visitor to sign in", async () => {

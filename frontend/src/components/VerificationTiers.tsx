@@ -20,9 +20,9 @@ import { StatusBadge, type BadgeTone } from "./ui/primitives";
  *
  * Honest, and mostly negative:
  *
- * - **Identity** is unverified until a customer signs in through a provider.
- *   Production reports `provider_configured: false`, so today it is unknown
- *   for everybody rather than assumed.
+ * - **Identity** is verified when a customer has signed in through a
+ *   provider. The session is the evidence; the Workspace used to hardcode
+ *   the opposite and show every signed-in operator as unverified.
  * - **Affiliation** is self-declared from the organization profile. A
  *   profile that exists is a claim, not a confirmation.
  * - **Authority** has no scalable verification path. Saying otherwise would

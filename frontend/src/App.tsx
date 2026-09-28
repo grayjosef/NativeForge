@@ -1250,7 +1250,7 @@ export default function App() {
       <WorkspacePage
         organizationName={profileFields?.legalName ?? null}
         entityType={profileFields?.entityType ?? null}
-        identityVerified={false}
+        identityVerified={Boolean(session?.authenticated)}
         hasProfile={hasProfile}
         steps={progressSteps}
         sparks={sparks}
