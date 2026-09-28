@@ -1469,6 +1469,9 @@ export default function App() {
           organizationLocked={Boolean(session?.authenticated && session.organizationId)}
           onOpen={(view) => setSurface(view as AppSurface)}
           onSignOut={session?.authenticated ? onSignOut : undefined}
+          showOperatorTools={
+            new URLSearchParams(window.location.search).get("ops") === "1"
+          }
         />
       ) : surface === "workbench" ? (
         <WorkbenchPage plane={plane} orgId={orgId.trim()} orgOk={orgOk} />

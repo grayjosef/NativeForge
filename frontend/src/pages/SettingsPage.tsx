@@ -7,9 +7,8 @@ import { PageHeader, Section, StatusBadge } from "../components/ui/primitives";
  *
  * Workbench, Activation and the two demo walkthroughs were four of the six
  * buttons in the old header strip, given the same weight as the workspace
- * itself. They are operator tools; a grants manager has no reason to see
- * them on every page. They live here, grouped and labelled, and remain
- * reachable by direct link as they always were.
+ * itself. They are operator tools. They stay reachable by `?view=` and by
+ * Settings when `?ops=1` is present; they are not on the customer path.
  */
 
 export interface SettingsPageProps {
@@ -22,6 +21,8 @@ export interface SettingsPageProps {
   organizationLocked?: boolean;
   onOpen: (view: string) => void;
   onSignOut?: () => void;
+  /** Operator workbench / demos. Off the customer Settings path; still reachable by `?view=`. */
+  showOperatorTools?: boolean;
   children?: ReactNode;
 }
 
@@ -63,6 +64,7 @@ export function SettingsPage(props: SettingsPageProps) {
     organizationLocked = false,
     onOpen,
     onSignOut,
+    showOperatorTools = false,
   } = props;
 
   return (
@@ -128,6 +130,7 @@ export function SettingsPage(props: SettingsPageProps) {
         </div>
       </Section>
 
+      {showOperatorTools ? (
       <Section
         title="Operator tools"
         lead="Internal surfaces. Not part of the customer workspace."
@@ -150,6 +153,7 @@ export function SettingsPage(props: SettingsPageProps) {
           ))}
         </ul>
       </Section>
+      ) : null}
 
       {onSignOut ? (
         <Section title="Session" lead="This device only.">

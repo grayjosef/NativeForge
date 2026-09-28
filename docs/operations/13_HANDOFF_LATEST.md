@@ -3,7 +3,7 @@
 **Date:** 2026-09-28
 **Path:** `/home/josefgray/projects/nativeforge`
 **Live:** `https://nativeforge.mayhem-nc.dev`
-**HEAD at write:** pending commit on session-bound org (follows `3edbea74`)
+**HEAD at write:** `d9b705ac` plus operator-Settings gating (this commit)
 **Protected stash:** `stash@{0}: wip-sprint8-ui-redesign-do-not-commit` — never drop
 **Push policy:** commits and pushes allowed after tests; never force-push; never prune
 
@@ -45,11 +45,11 @@ Gates **181** (deployment identity, logical opportunity, Grants.gov eligibility 
 - Rail/sign-in draw compact kit artwork instead of CSS “NativeForge” (`82033c28`, live).
 - Workspace reports signed-in identity as verified (`3edbea74`).
 - Session client now reads `organization_id` from the `/api/auth/session` envelope (it was looking in a nested blob that does not exist). Settings locks the org identifier to that membership.
+- Operator workbench/demos are off customer Settings unless `?ops=1`; `?view=` still reaches them.
 
 ## Remaining launch-critical (do not treat as done)
 
 - Live Google → Workspace re-verify after latest SHAs.
-- Hide or gate operator surfaces for customer sessions.
 - Real non-demo observations in customer UX (blocked on authorized collector activation).
 - Discover remains empty by design until activation.
 - Support runbook ABSENT. Adversarial tenant isolation campaign unrun. Privacy / Indigenous data governance framework incomplete.
@@ -58,6 +58,6 @@ Gates **181** (deployment identity, logical opportunity, Grants.gov eligibility 
 ## Proposed next
 
 1. Re-verify live login → Workspace → compact rail lockup after this SHA deploys.
-2. Gate operator surfaces so they are not in the customer Settings path.
+2. Continue customer UX (pursuits, documents, intake) against the engines that already exist.
 3. Continue customer UX (pursuits, documents, intake) against the engines that already exist.
 4. Do not activate collectors without explicit authorization.

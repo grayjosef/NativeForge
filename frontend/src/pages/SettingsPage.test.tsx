@@ -30,4 +30,24 @@ describe("SettingsPage organization context", () => {
     renderSettings(false);
     expect(screen.getByLabelText(/organization identifier/i)).not.toBeDisabled();
   });
+
+  it("keeps operator surfaces off the customer Settings path", () => {
+    renderSettings(false);
+    expect(screen.queryByText(/operator workbench/i)).toBeNull();
+  });
+
+  it("still lists operator surfaces when they are explicitly requested", () => {
+    render(
+      <SettingsPage
+        environment="demo"
+        onEnvironmentChange={vi.fn()}
+        organizationId="bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
+        onOrganizationIdChange={vi.fn()}
+        organizationIdValid
+        showOperatorTools
+        onOpen={vi.fn()}
+      />,
+    );
+    expect(screen.getByText(/operator workbench/i)).toBeInTheDocument();
+  });
 });
