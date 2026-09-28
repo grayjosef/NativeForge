@@ -17,6 +17,9 @@ from nativeforge.api.audit_replay_routes import (
 )
 from nativeforge.api.auth import install_auth_security_scheme
 from nativeforge.api.auth import router as auth_router
+from nativeforge.services.application_logging_service import (
+    configure_application_logging,
+)
 
 # Gate 139. The four post-award lanes, demo-scoped.
 #
@@ -200,6 +203,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 
 def create_app() -> FastAPI:
     settings = get_settings()
+    # Before anything else that might want to say something. An unconfigured
+    # `nativeforge` logger has no handler, so its INFO records fall through to
+    # logging.lastResort and are dropped at WARNING - which is why Gate 176's
+    # demo-bootstrap decision event ran on controlled-live and printed nothing.
+    configure_application_logging()
     app = FastAPI(title=settings.app_name, lifespan=lifespan)
     app.include_router(health_router)
     app.include_router(backend_runtime_router)
