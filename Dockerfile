@@ -91,6 +91,7 @@ COPY scripts/check_postgres_tenant_isolation.py ./scripts/check_postgres_tenant_
 COPY scripts/record_gate163_grants_gov_decisions.py ./scripts/record_gate163_grants_gov_decisions.py
 COPY scripts/record_gate163_live_fetch_opt_in.py ./scripts/record_gate163_live_fetch_opt_in.py
 COPY scripts/run_gate163_robots_preflight.py ./scripts/run_gate163_robots_preflight.py
+COPY scripts/run_gate163_grants_gov_bounded_corpus_collection.py ./scripts/run_gate163_grants_gov_bounded_corpus_collection.py
 COPY fixtures/source_ingestion/NF_SOURCE_SEED_2026.csv ./fixtures/source_ingestion/NF_SOURCE_SEED_2026.csv
 COPY tests/fixtures/document_ocr/ ./fixtures/document_ocr/
 
