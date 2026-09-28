@@ -11,7 +11,7 @@ from typing import Any
 import sqlalchemy as sa
 
 from nativeforge.db.models import NfActiveOpportunitySource, Organization
-from nativeforge.db.rls import apply_org_rls_gucs
+from nativeforge.db.rls import reapply_org_rls_after_commit
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.services.grants_gov_corpus_ingest_service import (
     ingest_grants_gov_search2_payload,
@@ -268,8 +268,7 @@ def run_grants_gov_bounded_live_collection(
         body = body.encode("utf-8")
     body = body or b""
     now = dt.datetime.now(dt.UTC)
-    # Authorization and runtime exercise may commit; restamp demo RLS before writes.
-    apply_org_rls_gucs(session, organization_id, org_type)
+    reapply_org_rls_after_commit(session, organization_id, org_type)
     persisted = persist_raw_payload(
         connection=connection,
         organization_id=organization_id,

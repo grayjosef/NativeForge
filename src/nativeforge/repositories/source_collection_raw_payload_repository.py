@@ -408,6 +408,13 @@ def persist_payload(
 
     try:
         with connection.begin_nested():
+            # SAVEPOINT resets transaction-local GUCs on PostgreSQL; restamp
+            # tenant context so RLS WITH CHECK passes inside the nested write.
+            from nativeforge.db.rls import apply_org_rls_gucs
+
+            apply_org_rls_gucs(
+                connection, org, "demo" if bool(is_demo) else "real"
+            )
             connection.execute(
                 sa.insert(PAYLOADS).values(
                     id=uuid.uuid4(),
