@@ -1,33 +1,29 @@
-# NativeForge Handoff — customer-launch completion, slice 1
+# NativeForge Handoff — customer-launch block 2, slice 1
 
 **Date:** 2026-09-28
 **Path:** `/home/josefgray/projects/nativeforge`
-**Live before this slice:** `https://nativeforge.mayhem-nc.dev`
-**HEAD at start:** `1a534f1245e255cb9352ed8b232f4fd824536ddc`
 **Protected stash:** `stash@{0}: wip-sprint8-ui-redesign-do-not-commit` — never drop
 
-## Baseline re-established
+## Baseline at start
 
-- `main` and `origin/main` were `1a534f12` (EmptyState import). Worktree clean of that fix.
-- Live root HTTP 200 and rendered the workspace, including the deadlines empty state that previously crashed.
-- `/backend/health` status `ok`, `git_sha` `unknown`, `production_ready` false.
-- `/backend/readiness`: `database_ready` true, `persistent_backend_live` false, `customer_auth_live` false, `controlled_customer_pilot` false.
-- `/api/auth/providers`: Google and Microsoft `configured: true`. `login_live` false. `customer_auth_live` false.
-- Login GETs 302 to accounts.google.com and login.microsoftonline.com.
-- Unauthenticated `/api/auth/session` is `unauthenticated`. Activation blockers include callback session, dev-header gate, invite binding, org binding, role mapping, and owner approval.
-- Repo Alembic head `0070` (`0070_pursuit_task_owner`). Local sqlite current `0068`. Production revision not exposed by health.
+- HEAD and origin/main: `930a720b8a9cda2bf6aa05d8a3be0cc9dd85f953`
+- `/health` already reported that SHA, `source_dirty: false`, `deployment_identity_known: true`
+- `/backend/health` reported `git_sha: unknown` because it only asked git, and the container has none
+- Google and Microsoft configured. `login_live` false. `customer_auth_live` false
+- Alembic head `0070`. Local sqlite `0068`
 
 ## This slice
 
-Unsigned visitors were painting the full workspace (demo chrome, empty organization) until the session request returned. Customer workflow copy still said “Grant Spark”.
-
-- Hold on “Opening NativeForge” until the session is known. Unsigned customer surfaces render the sign-in page. Bundled demo surfaces stay public.
-- Guided-workflow and opportunity-card copy say Opportunity / Opportunities.
+- `/backend/health` uses `NF_GIT_SHA` when git cannot answer, and only when the value is a 40-character commit. An unstamped process still reports `unknown`.
+- Card and hover shadows are off. Menus and the mobile drawer keep one shared elevation token.
+- Navigation labels a customer can use: Home, Discovery, My Pursuits. No new dead destinations.
+- The supplied brand kit is stored at `frontend/public/brand/kit/`. The lockup the app already serves (`frontend/public/brand/nf-lockup.png`) is the same canonical mark and is cleaner than the chat-transcoded copies, whose tagline is damaged. The served artwork was not replaced with the damaged files.
 
 ## Tests
 
-- `npx vitest run src/App.test.tsx src/pages/WorkspacePage.test.tsx src/pages/SignInPage.test.tsx` — 16 passed.
+- `pytest tests/test_gate101_persistent_backend_process.py -q` — 99 passed
+- `npx vitest run src/App.test.tsx src/components/BrandLockup.test.tsx src/pages/SignInPage.test.tsx` — 22 passed
 
-## Customer-launch status
+## Still blocking launch
 
-NOT READY. Auth activation is still false, live sign-in was not completed, discovery collectors are not switched on, invitations are not a customer flow, and no second-organization boundary was exercised this run.
+Interactive sign-in, organization binding after callback, live discovery inventory, and a two-organization browser proof were not completed. Readiness still requires `collectors_live` to be 0.

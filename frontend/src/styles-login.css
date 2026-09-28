@@ -196,7 +196,7 @@
   border: 1px solid var(--nf-border);
   border-radius: 1.25rem;
   background: var(--nf-card);
-  box-shadow: var(--nf-e3);
+  box-shadow: none;
   gap: var(--nf-s3);
 }
 
@@ -289,7 +289,6 @@
 
 .nf-provider:hover:not(:disabled) {
   border-color: var(--nf-forge);
-  box-shadow: var(--nf-e2);
 }
 
 .nf-provider:focus-visible {
@@ -299,9 +298,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
   .nf-provider {
-    transition:
-      border-color 140ms ease,
-      box-shadow 140ms ease;
+    transition: border-color 140ms ease;
   }
 }
 

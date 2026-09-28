@@ -40,7 +40,7 @@ export interface NavItem {
 export const NAV_ITEMS: NavItem[] = [
   {
     id: "workspace",
-    label: "Workspace",
+    label: "Home",
     surface: "workspace",
     hint: "What needs your attention today",
     group: "Overview",
@@ -48,7 +48,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     id: "discover",
-    label: "Discover",
+    label: "Discovery",
     surface: "discover",
     hint: "Funding matched to your organization",
     group: "Find funding",
@@ -64,7 +64,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     id: "pursuits",
-    label: "Pursuits",
+    label: "My Pursuits",
     surface: "pursuits",
     hint: "Applications in progress",
     group: "Pursue",

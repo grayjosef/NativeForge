@@ -189,7 +189,6 @@
 
 .nf-metric.is-clickable:hover {
   border-color: var(--nf-border-strong);
-  box-shadow: var(--nf-e2);
 }
 
 .nf-metric.is-clickable:focus-visible {
@@ -915,7 +914,6 @@
   border: 1px solid var(--nf-border);
   border-radius: var(--nf-radius-lg);
   background: var(--nf-card);
-  box-shadow: var(--nf-e3);
 }
 
 .nf-onboard-card--done {
@@ -1181,7 +1179,7 @@
   inset-inline-start: 0;
   z-index: 41;
   width: min(288px, 84vw);
-  box-shadow: var(--nf-e3);
+  box-shadow: var(--nf-elevate);
 }
 
 .nf-drawer-head {
@@ -1328,7 +1326,7 @@
   border: 1px solid var(--nf-border);
   border-radius: var(--nf-radius);
   background: var(--nf-card);
-  box-shadow: var(--nf-e3);
+  box-shadow: var(--nf-elevate);
 }
 
 .nf-menu-head {

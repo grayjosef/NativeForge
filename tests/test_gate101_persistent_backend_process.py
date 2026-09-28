@@ -307,12 +307,32 @@ def test_the_health_contract_carries_git_sha_and_source_dirty() -> None:
     assert not health_invariant_failures(health)
 
 
-def test_a_sha_we_could_not_read_is_unknown_not_invented(tmp_path: Path) -> None:
+def test_a_sha_we_could_not_read_is_unknown_not_invented(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("NF_GIT_SHA", raising=False)
+    monkeypatch.delenv("NF_SOURCE_DIRTY", raising=False)
     identity = detect_git_identity(repo_root=tmp_path)
     assert identity["git_sha"] == UNKNOWN_SHA
     assert identity["source_dirty"] is None
     health = build_backend_health(repo_root=tmp_path, now="2026-01-01T00:00:00+00:00")
     assert health["git_sha"] == UNKNOWN_SHA
+    assert not health_invariant_failures(health)
+
+
+def test_a_container_without_git_reports_the_stamped_commit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    stamped = "930a720b8a9cda2bf6aa05d8a3be0cc9dd85f953"
+    monkeypatch.setenv("NF_GIT_SHA", stamped)
+    monkeypatch.setenv("NF_SOURCE_DIRTY", "false")
+    identity = detect_git_identity(repo_root=tmp_path)
+    assert identity["git_sha"] == stamped
+    assert identity["source_dirty"] is False
+    assert identity["detection_method"] == "NF_GIT_SHA"
+    health = build_backend_health(repo_root=tmp_path, now="2026-01-01T00:00:00+00:00")
+    assert health["git_sha"] == stamped
+    assert health["source_dirty"] is False
     assert not health_invariant_failures(health)
 
 

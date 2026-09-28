@@ -127,12 +127,15 @@
   --nf-s7: 48px;
   --nf-s8: 64px;
 
-  /* — elevation / radius — */
-  --nf-e1: 0 1px 2px rgba(16, 32, 46, 0.05), 0 1px 1px rgba(16, 32, 46, 0.04);
-  --nf-e2: 0 2px 4px rgba(16, 32, 46, 0.06),
-    0 10px 28px -14px rgba(16, 32, 46, 0.2);
-  --nf-e3: 0 16px 44px -18px rgba(16, 32, 46, 0.3);
-  --nf-shadow: var(--nf-e1);
+  /* — elevation / radius —
+     Cards separate with border and tone, not shadow. One overlay token
+     exists for a menu or a drawer, where something actually sits above
+     the page. Nothing else should invent its own shadow. */
+  --nf-e1: none;
+  --nf-e2: none;
+  --nf-e3: none;
+  --nf-shadow: none;
+  --nf-elevate: 0 8px 20px -14px rgba(0, 23, 49, 0.45);
   --nf-radius-sm: 6px;
   --nf-radius: 10px;
   --nf-radius-lg: 14px;
@@ -210,9 +213,11 @@
     --nf-blocked-bg: rgba(224, 162, 78, 0.10);
     --nf-blocked-line: rgba(224, 162, 78, 0.38);
     --nf-error: #e88a91;
-    --nf-e1: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --nf-e2: 0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 30px -16px rgba(0, 0, 0, 0.7);
-    --nf-e3: 0 18px 48px -20px rgba(0, 0, 0, 0.8);
+    --nf-e1: none;
+    --nf-e2: none;
+    --nf-e3: none;
+    --nf-shadow: none;
+    --nf-elevate: 0 8px 20px -14px rgba(0, 0, 0, 0.55);
   }
 }
 
@@ -542,7 +547,6 @@ code,
   border: 1px solid var(--nf-border);
   background: var(--nf-card);
   padding: 2px;
-  box-shadow: var(--nf-e1);
   /* fade the right edge so a cut-off control reads as "scroll me" */
   -webkit-mask-image: linear-gradient(
     to right,

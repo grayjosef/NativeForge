@@ -70,6 +70,7 @@ invariant scans both records for credential-shaped keys.
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -136,14 +137,41 @@ def _json_safe(x: Any) -> Any:
     return x
 
 
+def _stamped_identity() -> dict[str, Any] | None:
+    """The commit the image was told it is, when git cannot be asked.
+
+    A container has no `.git` and no git binary. `/health` already reads
+    `NF_GIT_SHA`, which the entrypoint fills from the provider's per-deploy
+    commit. `/backend/health` used to ignore that and report `unknown` from
+    the failed git call, so the two health surfaces disagreed about the same
+    process. The stamp is used only when it is a 40-character commit. Anything
+    else stays unknown: a health field must not invent an identity.
+    """
+    sha = os.environ.get("NF_GIT_SHA", "").strip().lower()
+    if len(sha) != 40 or any(c not in "0123456789abcdef" for c in sha):
+        return None
+    dirty_raw = os.environ.get("NF_SOURCE_DIRTY", "").strip().lower()
+    if dirty_raw in {"true", "1", "yes", "y", "on"}:
+        dirty: bool | None = True
+    elif dirty_raw in {"false", "0", "no", "n", "off"}:
+        dirty = False
+    else:
+        dirty = None
+    return {
+        "git_sha": sha,
+        "source_dirty": dirty,
+        "detection_method": "NF_GIT_SHA",
+    }
+
+
 def detect_git_identity(*, repo_root: Path | None = None) -> dict[str, Any]:
     """The commit this process is running, and whether the tree was dirty.
 
     The same two facts `build_frontend_stamped.sh` writes into the SPA, so a
     mismatch between the two surfaces is detectable. Any failure - no git, not a
-    repository, a timeout - reports `unknown` rather than raising: a health
-    endpoint that 500s because git is missing is worse than one that admits it
-    does not know which code it is running.
+    repository, a timeout - falls through to the stamped environment, and only
+    then reports `unknown`. A health endpoint that 500s because git is missing
+    is worse than one that admits it does not know which code it is running.
     """
     root = repo_root or REPO_ROOT
 
@@ -174,12 +202,25 @@ def detect_git_identity(*, repo_root: Path | None = None) -> dict[str, Any]:
     # modifications do, so those are what it reports.
     status = _run(["git", "status", "--porcelain", "--untracked-files=no"])
 
+    if sha:
+        return _json_safe(
+            {
+                "git_sha": sha,
+                "source_dirty": None if status is None else bool(status.strip()),
+                "detection_method": "git rev-parse + git status --porcelain",
+            }
+        )
+
+    stamped = _stamped_identity()
+    if stamped is not None:
+        return _json_safe(stamped)
+
     return _json_safe(
         {
-            "git_sha": sha or UNKNOWN_SHA,
+            "git_sha": UNKNOWN_SHA,
             # `None` means we could not tell. Reporting `False` for "we could
             # not check" would be claiming a clean tree we never looked at.
-            "source_dirty": None if status is None else bool(status.strip()),
+            "source_dirty": None,
             "detection_method": "git rev-parse + git status --porcelain",
         }
     )
