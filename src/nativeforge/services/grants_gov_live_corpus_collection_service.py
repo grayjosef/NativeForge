@@ -10,7 +10,7 @@ from typing import Any
 
 import sqlalchemy as sa
 
-from nativeforge.db.models import NfActiveOpportunitySource, Organization
+from nativeforge.db.models import Organization
 from nativeforge.db.rls import reapply_org_rls_after_commit
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.services.grants_gov_corpus_ingest_service import (
@@ -128,21 +128,22 @@ def stamp_active_source_success(
     source_id: str,
     at: dt.datetime,
 ) -> bool:
-    row = session.scalar(
-        sa.select(NfActiveOpportunitySource).where(
-            sa.and_(
-                NfActiveOpportunitySource.organization_id == organization_id,
-                NfActiveOpportunitySource.source_id == source_id,
-            )
-        )
+    updated = session.execute(
+        sa.text(
+            """
+            UPDATE nf_active_opportunity_sources
+            SET last_checked_at = :at,
+                last_success_at = :at,
+                consecutive_failure_count = 0,
+                updated_at = :at
+            WHERE organization_id = :org
+              AND source_id = :source_id
+            """
+        ),
+        {"at": at, "org": organization_id, "source_id": source_id},
     )
-    if row is None:
-        return False
-    row.last_checked_at = at
-    row.last_success_at = at
-    row.consecutive_failure_count = 0
     session.flush()
-    return True
+    return int(updated.rowcount or 0) > 0
 
 
 def run_grants_gov_bounded_live_collection(
