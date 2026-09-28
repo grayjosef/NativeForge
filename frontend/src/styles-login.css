@@ -8,7 +8,7 @@
 
 .nf-login {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(24rem, 30rem);
+  grid-template-columns: minmax(0, 1fr) minmax(28rem, 38rem);
   min-height: 100vh;
   background: var(--nf-brand-ivory);
 }
@@ -18,8 +18,8 @@
 .nf-login-brand {
   position: relative;
   display: flex;
-  align-items: center;
-  padding: var(--nf-s8) clamp(1.5rem, 4vw, 4.5rem) var(--nf-s7);
+  align-items: flex-start;
+  padding: clamp(2.75rem, 7vh, 5.5rem) clamp(2rem, 5vw, 5rem) var(--nf-s7);
   overflow: hidden;
   background: var(--nf-brand-ivory);
   color: var(--nf-brand-navy);
@@ -48,7 +48,7 @@
 .nf-login-brand-inner {
   position: relative;
   z-index: 1;
-  max-width: 40rem;
+  max-width: 48rem;
   width: 100%;
   text-align: left;
 }
@@ -377,11 +377,11 @@
 
 @media (max-width: 1400px) {
   .nf-login {
-    grid-template-columns: minmax(0, 1fr) minmax(22rem, 28rem);
+    grid-template-columns: minmax(0, 1fr) minmax(24rem, 32rem);
   }
 
   .nf-login-lockup .nf-lockup-art {
-    width: min(640px, 100%);
+    width: min(680px, 100%);
   }
 }
 
