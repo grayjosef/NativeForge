@@ -51,7 +51,7 @@ production_raw_payload_store_available false
 scheduler_runtime                      dry_run_in_process
 background_worker_available            false
 source_monitoring_live                 false
-collectors_live                        0
+collectors_live                        derived from fleet gate evidence
 ```
 
 Every value is bridged from the service that owns it - Gate 98E for the
@@ -79,6 +79,9 @@ from nativeforge.services.backend_runtime_contract_service import (
     HEALTHCHECK_PATH,
     READINESS_PATH,
     build_backend_runtime_contract,
+)
+from nativeforge.services.source_fleet_live_readiness_service import (
+    derive_collectors_live,
 )
 
 SCHEMA_VERSION = "nf_backend_health_readiness_v1"
@@ -110,6 +113,7 @@ READINESS_FIELDS: tuple[str, ...] = (
     "background_worker_available",
     "source_monitoring_live",
     "collectors_live",
+    "fleet_live_sources",
     "blocked_reasons",
 )
 
@@ -318,6 +322,7 @@ def build_backend_readiness(
         _detect_database_ready() if database_ready is None else bool(database_ready)
     )
 
+    fleet = derive_collectors_live()
     blocked_reasons: list[str] = []
     if not backend["persistent_backend_live"]:
         blocked_reasons.append("persistent_backend_not_live")
@@ -344,7 +349,8 @@ def build_backend_readiness(
                 scheduler.get("background_worker_available")
             ),
             "source_monitoring_live": bool(scheduler.get("source_monitoring_live")),
-            "collectors_live": 0,
+            "collectors_live": fleet["collectors_live"],
+            "fleet_live_sources": fleet["fleet_live_sources"],
             "blocked_reasons": sorted(set(blocked_reasons)),
             # The boundaries this endpoint must never soften.
             "ready_to_start_monitoring": bool(
@@ -437,12 +443,22 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
     ):
         if readiness.get(constant) is not False:
             fails.append(f"readiness_claimed:{constant}")
-    if readiness.get("collectors_live") != 0:
+    claimed = readiness.get("collectors_live")
+    evidence = readiness.get("fleet_live_sources")
+    # A live count is the length of the evidenced source list. A bare number,
+    # including the old construction constant, is not evidence.
+    if type(claimed) is not int or claimed < 0 or not isinstance(evidence, list):
+        fails.append("readiness_claimed_live_collectors")
+    elif claimed != len(evidence):
         fails.append("readiness_claimed_live_collectors")
 
     # A backend runtime is not a licence for anything downstream.
     if readiness.get("backend_runtime_available"):
-        if readiness.get("collectors_live"):
+        if (
+            type(claimed) is int
+            and claimed > 0
+            and (not isinstance(evidence, list) or claimed != len(evidence))
+        ):
             fails.append("backend_runtime_read_as_live_collectors")
         if readiness.get("customer_auth_live"):
             fails.append("backend_runtime_read_as_customer_auth")

@@ -42,6 +42,7 @@
     "background_worker_available",
     "source_monitoring_live",
     "collectors_live",
+    "fleet_live_sources",
     "blocked_reasons"
   ],
   "readiness_path": "/backend/readiness",

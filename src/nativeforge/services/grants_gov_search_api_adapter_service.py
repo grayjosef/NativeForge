@@ -565,6 +565,90 @@ def search_grants_gov_by_eligibility(
     )
 
 
+def build_grants_gov_broad_search_body(
+    *,
+    opp_statuses: str = DEFAULT_STATUSES,
+    rows: int = 25,
+    start_record_num: int = 0,
+) -> dict[str, Any]:
+    """Posted and forecasted notices, with no applicant-class filter.
+
+    The eligibility facet is a lane, not the universe. This body asks
+    Grants.gov for the open and forecasted index. It does not decide who
+    may apply.
+    """
+    return {
+        "rows": int(rows),
+        "startRecordNum": int(start_record_num),
+        "oppStatuses": str(opp_statuses),
+    }
+
+
+def search_grants_gov_broad(
+    *,
+    opp_statuses: str = DEFAULT_STATUSES,
+    rows: int = 25,
+    start_record_num: int = 0,
+    http_post: HttpPostJson | None = None,
+    fetch_mode: FetchMode = FETCH_MODE_LIVE,
+) -> dict[str, Any]:
+    """Broad search2. A refusal or a transport error is not an empty index."""
+    do_post = http_post or default_grants_gov_http_post
+    body = build_grants_gov_broad_search_body(
+        opp_statuses=opp_statuses,
+        rows=rows,
+        start_record_num=start_record_num,
+    )
+    try:
+        raw = do_post(SEARCH2_URL, body)
+    except _authorization_refusals() as refusal:
+        raise refusal
+    except Exception as exc:  # noqa: BLE001 - transport failure is not refusal
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "search_body": body,
+                "hit_count": 0,
+                "opp_hits": [],
+                "search_live": False,
+                "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FETCH_ERROR,
+                "api_error": str(exc),
+                "never_synthesized": True,
+            }
+        )
+    if raw.get("errorcode") != 0:
+        return _json_safe(
+            {
+                "schema_version": SCHEMA_VERSION,
+                "search_body": body,
+                "hit_count": 0,
+                "opp_hits": [],
+                "search_live": False,
+                "fetch_mode": fetch_mode,
+                "outcome": OUTCOME_FETCH_ERROR,
+                "api_error": str(raw.get("msg") or raw.get("errorcode")),
+                "never_synthesized": True,
+            }
+        )
+    data = raw.get("data") or {}
+    hits = [hit for hit in (data.get("oppHits") or []) if isinstance(hit, dict)]
+    return _json_safe(
+        {
+            "schema_version": SCHEMA_VERSION,
+            "search_body": body,
+            "hit_count": len(hits),
+            "total_hit_count": data.get("hitCount"),
+            "opp_hits": hits,
+            "search_live": True,
+            "fetch_mode": fetch_mode,
+            "outcome": OUTCOME_HITS if hits else OUTCOME_EMPTY,
+            "api_error": None,
+            "never_synthesized": True,
+        }
+    )
+
+
 #: Discovery by PROGRAMME, for the money the applicant-type facet cannot see.
 #:
 #: Measured on 2026-09-25: a posted opportunity whose eligibility text reads

@@ -83,6 +83,7 @@
     "controlled_customer_pilot": false,
     "customer_auth_live": false,
     "fabricated": false,
+    "fleet_live_sources": [],
     "live_fetch_performed": false,
     "live_source_coverage": false,
     "persistent_backend_live": false,

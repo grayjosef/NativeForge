@@ -17,6 +17,7 @@ export interface LiveFederalRow {
   funding?: string;
   deadline?: string;
   eligibility_label?: string;
+  coverage_lane?: string;
   why_it_matches?: string;
   source?: string;
   source_url?: string;
@@ -60,7 +61,7 @@ export function DiscoverPage(props: DiscoverPageProps) {
       <PageHeader
         eyebrow="Find funding"
         title="Discover"
-        lead="Live public federal opportunities, plus the opportunities you already track. Collectors stay off."
+        lead="Public federal opportunities from Grants.gov, plus the opportunities you already track. Publisher applicant classes and broadly posted or forecasted notices. NativeForge has not decided relevance."
         actions={
           <>
             <button type="button" className="nf-btn nf-btn-primary nf-btn-sm" onClick={() => void search()} disabled={!onSearchLive || busy}>
@@ -75,7 +76,12 @@ export function DiscoverPage(props: DiscoverPageProps) {
 
       <Section title="At a glance" lead="Measured, not projected.">
         <MetricRow>
-          <MetricCard label="Sources collecting" value="0" tone="muted" note="Collector fleet is not authorized" />
+          <MetricCard
+            label="Sources collecting"
+            value={String(Number(payload?.collectors_live || 0))}
+            tone="muted"
+            note="Live only when every collection gate is true"
+          />
           <MetricCard
             label="Live federal results"
             value={payload ? String(results.length) : "—"}
@@ -89,7 +95,12 @@ export function DiscoverPage(props: DiscoverPageProps) {
             onClick={onGoToOpportunities}
             note="Added by you"
           />
-          <MetricCard label="Collectors live" value="No" tone="muted" note={collectorsOff ? "By design" : ""} />
+          <MetricCard
+            label="Collectors live"
+            value={Number(payload?.collectors_live || 0) > 0 ? String(payload?.collectors_live) : "No"}
+            tone="muted"
+            note={collectorsOff ? "No source has passed every gate" : "Gate evidence"}
+          />
         </MetricRow>
       </Section>
 
@@ -116,14 +127,14 @@ export function DiscoverPage(props: DiscoverPageProps) {
         <StateView
           state={{
             tone: "empty",
-            title: "No posted Tribal-class opportunities in this query",
-            body: "Grants.gov returned no current rows for the three publisher applicant classes NativeForge is allowed to search.",
+            title: "No opportunities in this query",
+            body: "Grants.gov returned no rows for the publisher applicant classes or the broad posted and forecasted index.",
           }}
         />
       ) : null}
 
       {results.length > 0 ? (
-        <Section title="Live federal inventory" lead="Publisher eligibility class only. NativeForge has not decided relevance or tenant eligibility.">
+        <Section title="Live federal inventory" lead="Publisher class and broad posted or forecasted notices. NativeForge has not decided relevance or tenant eligibility.">
           <ul className="nf-source-list">
             {results.map((row) => (
               <li key={`${row.opportunity_number}-${row.title}`} className="nf-source">
@@ -137,7 +148,12 @@ export function DiscoverPage(props: DiscoverPageProps) {
                   <p className="nf-source-detail">{row.why_it_matches}</p>
                 </div>
                 <div className="nf-source-actions">
-                  <StatusBadge tone="info">{row.eligibility_label || "Grants.gov"}</StatusBadge>
+                  <StatusBadge tone="info">
+                    {row.eligibility_label ||
+                      (row.coverage_lane === "broad_posted_or_forecasted"
+                        ? "Broad posted or forecasted"
+                        : "Grants.gov")}
+                  </StatusBadge>
                   {row.source_url ? (
                     <a className="nf-btn nf-btn-ghost nf-btn-sm" href={row.source_url} target="_blank" rel="noreferrer">
                       Open
@@ -160,7 +176,7 @@ export function DiscoverPage(props: DiscoverPageProps) {
           state={{
             tone: "empty",
             title: "No live search has been run in this session",
-            body: "Automatic collectors are built and remain unauthorized. Search live Grants.gov to see current public federal opportunities, or track one you already know.",
+            body: "Search live Grants.gov for publisher applicant classes and the broad posted and forecasted index, or track an opportunity you already know. A collector runs only after every gate is true.",
             actionLabel: onSearchLive ? "Search live Grants.gov" : undefined,
           }}
           onAction={onSearchLive ? () => void search() : undefined}
