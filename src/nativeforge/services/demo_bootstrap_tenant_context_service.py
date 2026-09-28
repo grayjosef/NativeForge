@@ -141,6 +141,43 @@ def _result(
     )
 
 
+def open_demo_org_lookup_context(
+    *,
+    connection: Any,
+    organization_id: Any,
+    identity_id: Any,
+    membership_identity_id: Any,
+    configured_organization_id: Any,
+    identity_verified: bool,
+) -> dict[str, Any]:
+    """Set tenant context so an existing demo membership can be seen.
+
+    FORCE RLS hides every membership while the no-tenant sentinel is the
+    anchor. A returning demo member therefore looks like a stranger; the
+    callback tries to bootstrap a first membership and is then refused
+    because one already exists. Controlled-live produced exactly:
+
+        existing_membership_count_zero: true
+        insert_blocked_reasons: [self_approval_permitted_only_for_the_first_membership]
+
+    The count was zero because it was taken under the sentinel, not because
+    the organization was empty.
+
+    This door still only opens for the configured demo org and a verified
+    identity binding itself. It does not insert and it does not mint a
+    session. It makes the row visible so the callback can resolve it.
+    """
+    return _open_demo_org_context(
+        connection=connection,
+        organization_id=organization_id,
+        identity_id=identity_id,
+        membership_identity_id=membership_identity_id,
+        configured_organization_id=configured_organization_id,
+        identity_verified=identity_verified,
+        require_empty_membership=False,
+    )
+
+
 def open_demo_bootstrap_context(
     *,
     connection: Any,
@@ -157,6 +194,27 @@ def open_demo_bootstrap_context(
     before, which is the point: this never becomes the thing that authorises
     the write.
     """
+    return _open_demo_org_context(
+        connection=connection,
+        organization_id=organization_id,
+        identity_id=identity_id,
+        membership_identity_id=membership_identity_id,
+        configured_organization_id=configured_organization_id,
+        identity_verified=identity_verified,
+        require_empty_membership=True,
+    )
+
+
+def _open_demo_org_context(
+    *,
+    connection: Any,
+    organization_id: Any,
+    identity_id: Any,
+    membership_identity_id: Any,
+    configured_organization_id: Any,
+    identity_verified: bool,
+    require_empty_membership: bool,
+) -> dict[str, Any]:
     blocked: list[str] = []
 
     configured = _uuid_or_none(configured_organization_id)
@@ -164,7 +222,10 @@ def open_demo_bootstrap_context(
     ident = _uuid_or_none(identity_id)
     member_ident = _uuid_or_none(membership_identity_id)
 
-    if configured_organization_id is None or not str(configured_organization_id).strip():
+    if (
+        configured_organization_id is None
+        or not str(configured_organization_id).strip()
+    ):
         # The deployment never named an organization, so there is no bootstrap
         # to authorise. This is the default state and it is not an error.
         blocked.append("no_bootstrap_organization_configured")
@@ -229,8 +290,7 @@ def open_demo_bootstrap_context(
         memberships = int(
             connection.execute(
                 sa.text(
-                    "SELECT count(*) FROM nf_org_memberships "
-                    "WHERE organization_id = :i"
+                    "SELECT count(*) FROM nf_org_memberships WHERE organization_id = :i"
                 ),
                 {"i": str(target)},
             ).scalar_one()
@@ -255,8 +315,10 @@ def open_demo_bootstrap_context(
         # organizations fail here on their own data.
         blocked.append(f"organization_is_not_demo_classified:{org_type}")
 
-    if memberships:
-        # The door closes after the first member, permanently.
+    if require_empty_membership and memberships:
+        # The insert door closes after the first member, permanently.
+        # Lookup still opens: a returning member has to be able to see
+        # their own row, and that is not an insert.
         blocked.append(f"organization_already_has_memberships:{memberships}")
 
     if blocked:

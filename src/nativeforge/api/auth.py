@@ -159,6 +159,7 @@ from nativeforge.services.demo_bootstrap_decision_log_service import (
 )
 from nativeforge.services.demo_bootstrap_tenant_context_service import (
     open_demo_bootstrap_context,
+    open_demo_org_lookup_context,
 )
 from nativeforge.services.dev_org_membership_bootstrap_service import (
     insert_membership,
@@ -824,17 +825,13 @@ def callback(
         target = str((_auth_env.get(BOOTSTRAP_ORG_ENV) or "").strip())
         if target:
             try:
-                # The membership table FORCEs RLS, and its policy asks for the
-                # tenant context that this membership is what would establish.
-                # So the context is opened first, for this one insert, under
-                # every condition in `demo_bootstrap_tenant_context_service` -
-                # configured org, demo-classified by its own row, zero existing
-                # memberships, verified identity binding itself.
-                #
-                # It is transaction-local: gone at commit or rollback. Nothing
-                # here bypasses the policy; it supplies what the policy asks
-                # for and lets the policy decide.
-                context = open_demo_bootstrap_context(
+                # FORCE RLS plus the no-tenant sentinel hides every membership
+                # until tenant context is the demo org. A returning member
+                # therefore looks unbound. Open lookup context first - same
+                # configured-demo-org gate, but it does not require an empty
+                # organization - and resolve again. Insert remains the first
+                # membership only.
+                lookup = open_demo_org_lookup_context(
                     connection=db.connection(),
                     organization_id=target,
                     identity_id=identity_id,
@@ -842,48 +839,98 @@ def callback(
                     configured_organization_id=target,
                     identity_verified=bool(identity_validated),
                 )
-                written = insert_membership(
-                    connection=db.connection(),
-                    organization_id=target,
-                    identity_id=identity_id,
-                    state="active",
-                    # `org_owner`, not `owner`. Migration 0024's CHECK lists
-                    # org_owner/org_admin/authorized_representative/grant_lead/
-                    # reviewer/viewer, so `owner` was refused as
-                    # `membership_role_not_storable` and this bootstrap could
-                    # never have written a row - on any deployment, with or
-                    # without tenant context.
-                    role="org_owner",
-                    membership_source="org_owner_approved",
-                    # Self-approval. Permitted by the service only when the
-                    # organization has no memberships at all, and refused on
-                    # every attempt after the first.
-                    approved_by=identity_id,
-                )
-                bootstrap_result = {
-                    "attempted": True,
-                    "rows_written": int(written.get("rows_written") or 0),
-                    "blocked_reasons": sorted(written.get("blocked_reasons") or []),
-                    "bootstrap_membership": bool(written.get("bootstrap_membership")),
-                    # Reported so a refusal names which half declined: the
-                    # context gate, or the membership service behind it.
-                    "tenant_context_opened": bool(context.get("context_opened")),
-                    "tenant_context_blocked_reasons": list(
-                        context.get("blocked_reasons") or []
-                    ),
-                    "org_lookup": context.get("org_lookup"),
-                    "membership_count_lookup": context.get("membership_count_lookup"),
-                    "existing_membership_count": context.get(
-                        "existing_membership_count"
-                    ),
-                }
-                if written.get("rows_written"):
-                    db.commit()
+                if lookup.get("context_opened"):
                     resolution = resolve_session_organization(
                         connection=db.connection(), identity_id=identity_id
                     )
+                    organization_id_resolved = bool(
+                        resolution.get("organization_id_resolved")
+                    )
+                    membership_verified = bool(resolution.get("membership_verified"))
+
+                returning_member = bool(
+                    organization_id_resolved and membership_verified
+                )
+                if returning_member:
+                    bootstrap_result = {
+                        "attempted": False,
+                        "rows_written": 0,
+                        "blocked_reasons": [],
+                        "tenant_context_opened": True,
+                        "tenant_context_blocked_reasons": [],
+                        "org_lookup": lookup.get("org_lookup"),
+                        "membership_count_lookup": lookup.get(
+                            "membership_count_lookup"
+                        ),
+                        "existing_membership_count": lookup.get(
+                            "existing_membership_count"
+                        ),
+                    }
                 else:
-                    db.rollback()
+                    # The membership table FORCEs RLS, and its policy asks for the
+                    # tenant context that this membership is what would establish.
+                    # So the context is opened first, for this one insert, under
+                    # every condition in `demo_bootstrap_tenant_context_service` -
+                    # configured org, demo-classified by its own row, zero existing
+                    # memberships, verified identity binding itself.
+                    #
+                    # It is transaction-local: gone at commit or rollback. Nothing
+                    # here bypasses the policy; it supplies what the policy asks
+                    # for and lets the policy decide.
+                    context = open_demo_bootstrap_context(
+                        connection=db.connection(),
+                        organization_id=target,
+                        identity_id=identity_id,
+                        membership_identity_id=identity_id,
+                        configured_organization_id=target,
+                        identity_verified=bool(identity_validated),
+                    )
+                    written = insert_membership(
+                        connection=db.connection(),
+                        organization_id=target,
+                        identity_id=identity_id,
+                        state="active",
+                        # `org_owner`, not `owner`. Migration 0024's CHECK lists
+                        # org_owner/org_admin/authorized_representative/grant_lead/
+                        # reviewer/viewer, so `owner` was refused as
+                        # `membership_role_not_storable` and this bootstrap could
+                        # never have written a row - on any deployment, with or
+                        # without tenant context.
+                        role="org_owner",
+                        membership_source="org_owner_approved",
+                        # Self-approval. Permitted by the service only when the
+                        # organization has no memberships at all, and refused on
+                        # every attempt after the first.
+                        approved_by=identity_id,
+                    )
+                    bootstrap_result = {
+                        "attempted": True,
+                        "rows_written": int(written.get("rows_written") or 0),
+                        "blocked_reasons": sorted(written.get("blocked_reasons") or []),
+                        "bootstrap_membership": bool(
+                            written.get("bootstrap_membership")
+                        ),
+                        # Reported so a refusal names which half declined: the
+                        # context gate, or the membership service behind it.
+                        "tenant_context_opened": bool(context.get("context_opened")),
+                        "tenant_context_blocked_reasons": list(
+                            context.get("blocked_reasons") or []
+                        ),
+                        "org_lookup": context.get("org_lookup"),
+                        "membership_count_lookup": context.get(
+                            "membership_count_lookup"
+                        ),
+                        "existing_membership_count": context.get(
+                            "existing_membership_count"
+                        ),
+                    }
+                    if written.get("rows_written"):
+                        db.commit()
+                        resolution = resolve_session_organization(
+                            connection=db.connection(), identity_id=identity_id
+                        )
+                    else:
+                        db.rollback()
             except Exception:
                 db.rollback()
                 bootstrap_result = {
@@ -931,9 +978,7 @@ def callback(
         insert_blocked_reasons=bootstrap_result.get("blocked_reasons"),
         membership_verified_after_insert=bool(membership_verified),
         organization_id_resolved=bool(organization_id_resolved),
-        callback_session_allowed=bool(
-            organization_id_resolved and membership_verified
-        ),
+        callback_session_allowed=bool(organization_id_resolved and membership_verified),
     )
 
     # -- 5. the session, only once all of that holds ------------------------

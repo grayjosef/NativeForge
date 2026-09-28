@@ -28,6 +28,7 @@ from nativeforge.services.demo_bootstrap_tenant_context_service import (
     IS_DEMO_KEY,
     ORG_ID_KEY,
     open_demo_bootstrap_context,
+    open_demo_org_lookup_context,
 )
 
 DEMO = "bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
@@ -217,8 +218,7 @@ def test_binding_somebody_else_is_refused():
 
     assert result["context_opened"] is False
     assert (
-        "membership_identity_is_not_the_verified_identity"
-        in result["blocked_reasons"]
+        "membership_identity_is_not_the_verified_identity" in result["blocked_reasons"]
     )
 
 
@@ -308,6 +308,57 @@ def test_the_service_has_no_non_local_variant():
 
 
 # -------------------------------------- 11-12. the surrounding contract
+
+
+def test_lookup_context_opens_when_the_demo_org_already_has_members():
+    """Returning members have to be able to see their own row."""
+    conn = connection(memberships=1)
+    result = open_demo_org_lookup_context(
+        connection=conn,
+        organization_id=DEMO,
+        identity_id=IDENT,
+        membership_identity_id=IDENT,
+        configured_organization_id=DEMO,
+        identity_verified=True,
+    )
+
+    assert result["context_opened"] is True
+    assert result["blocked_reasons"] == []
+    assert result["existing_membership_count"] == 1
+    assert conn.set_config_calls == [
+        (ORG_ID_KEY, DEMO, True),
+        (IS_DEMO_KEY, "true", True),
+    ]
+
+
+def test_lookup_context_still_refuses_a_real_organization():
+    conn = connection()
+    result = open_demo_org_lookup_context(
+        connection=conn,
+        organization_id=REAL_A,
+        identity_id=IDENT,
+        membership_identity_id=IDENT,
+        configured_organization_id=REAL_A,
+        identity_verified=True,
+    )
+
+    assert result["context_opened"] is False
+    assert "organization_is_not_demo_classified:real" in result["blocked_reasons"]
+    assert conn.set_config_calls == []
+
+
+def test_the_callback_looks_up_an_existing_membership_before_inserting():
+    """The live defect: insert-first hid a returning member behind a refusal."""
+    from pathlib import Path
+
+    source = Path("src/nativeforge/api/auth.py").read_text(encoding="utf-8")
+    assert "lookup = open_demo_org_lookup_context(" in source
+    assert source.index("lookup = open_demo_org_lookup_context(") < source.index(
+        "written = insert_membership("
+    )
+    assert source.index("lookup = open_demo_org_lookup_context(") < source.index(
+        "context = open_demo_bootstrap_context("
+    )
 
 
 def test_the_callback_opens_context_before_inserting():
@@ -444,5 +495,5 @@ def test_sqlalchemy_text_is_parameterised_not_interpolated():
 
     source = Path(mod.__file__).read_text(encoding="utf-8")
     assert 'sa.text("SELECT set_config(:k, :v, true)")' in source
-    assert "f\"SELECT set_config" not in source
+    assert 'f"SELECT set_config' not in source
     assert isinstance(sa.text("SELECT 1"), sa.sql.elements.TextClause)
