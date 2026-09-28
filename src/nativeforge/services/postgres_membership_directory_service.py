@@ -121,7 +121,15 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # *targets*, which alters none of them. Neither nf_org_memberships nor
 # nf_identities gains, loses or changes a column, and the 0027 policies this
 # adapter relies on are untouched. The adapter's schema is unchanged.
-EXPECTED_MIGRATION_HEAD = "0067"
+# Gate 172 moved it 0067 -> 0068, under the same standard. The review: 0068's
+# upgrade() performs two create_table calls (nf_opportunity_contacts and
+# nf_submission_paths) with their check constraints and indexes, then installs
+# ENABLE, FORCE and an org-isolation policy on each of those two new tables and
+# on nothing else. It reads organizations and nf_grant_sparks only as foreign
+# key *targets*, which alters neither. Neither nf_org_memberships nor
+# nf_identities gains, loses or changes a column, and the 0027 policies this
+# adapter relies on are untouched. The adapter's schema is unchanged.
+EXPECTED_MIGRATION_HEAD = "0068"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.

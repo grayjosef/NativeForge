@@ -240,6 +240,17 @@
     "a successful hermetic execution is not an approved source",
     "an execution proof is not an approved source"
   ],
+  "per_request_guard_inputs": [
+    {
+      "guard_input": "destination_status",
+      "measured_by": "customer_url_safety_service.evaluate_url",
+      "permitting": [
+        "public"
+      ],
+      "why_not_a_fact": "publicness belongs to one URL and the addresses it resolved to at fetch time, not to a source. DNS can change between two requests to the same host, so a recorded answer would be a stale claim about the wrong thing."
+    }
+  ],
+  "per_request_is_not_weaker": "a per-request input is measured at fetch time instead of recorded per source. The guard defaults it to None and None refuses, so forgetting to measure it is a refusal.",
   "permitting_fact_statuses": [
     "recorded"
   ],

@@ -230,13 +230,43 @@ def _authorize(session, source_id):
 
 
 def test_every_guard_status_input_is_modelled():
-    """Parsed from the guard's own signature, not from a list kept in step."""
+    """Parsed from the guard's own signature, not from a list kept in step.
+
+    Accounted for means one of two things, and the model has to say which:
+    a recorded per-source fact, or a per-request measurement. What it may not
+    be is absent - a status input nobody classified is answerable by a
+    caller's boolean, which is the thing this gate exists to prevent.
+    """
     guard_params = set(inspect.signature(build_live_network_decision).parameters)
     wanted = {p for p in guard_params if p.endswith("_status")}
     model = describe_fact_model()
     mapped = {spec["guard_input"] for spec in model["facts"] if spec.get("guard_input")}
+    per_request = {
+        entry["guard_input"] for entry in model["per_request_guard_inputs"]
+    }
     assert wanted, "the guard declares no status inputs"
-    assert wanted <= mapped, sorted(wanted - mapped)
+    assert wanted <= mapped | per_request, sorted(wanted - (mapped | per_request))
+
+
+def test_a_guard_input_is_a_fact_or_a_measurement_and_not_both():
+    """The two categories mean opposite things about durability. An input in
+    both would let a stale record answer a question that must be measured."""
+    model = describe_fact_model()
+    mapped = {spec["guard_input"] for spec in model["facts"] if spec.get("guard_input")}
+    per_request = {
+        entry["guard_input"] for entry in model["per_request_guard_inputs"]
+    }
+    assert mapped & per_request == set(), sorted(mapped & per_request)
+
+
+def test_the_per_request_list_cannot_outlive_the_guard():
+    """A declaration for an input the guard no longer takes is a claim about
+    nothing, and it would silently absorb a future input of the same name."""
+    guard_params = set(inspect.signature(build_live_network_decision).parameters)
+    for entry in describe_fact_model()["per_request_guard_inputs"]:
+        assert entry["guard_input"] in guard_params, entry["guard_input"]
+        assert entry["measured_by"], entry["guard_input"]
+        assert entry["why_not_a_fact"], entry["guard_input"]
 
 
 def test_the_model_reads_the_guards_vocabularies_rather_than_restating_them():

@@ -12,6 +12,7 @@
   "organization_scope": {
     "approved": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
     "environments": [
+      "controlled-live",
       "dev",
       "local",
       "test"

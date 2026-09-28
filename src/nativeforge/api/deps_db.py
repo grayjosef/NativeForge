@@ -41,12 +41,28 @@ from collections.abc import Generator
 
 from sqlalchemy.orm import Session
 
+from nativeforge.db.rls import clear_org_rls_gucs
 from nativeforge.db.session import SessionLocal
 
 
 def get_db_session() -> Generator[Session, None, None]:
+    """A session that starts with no authorized tenant, stated explicitly.
+
+    Saying "no tenant" out loud matters because the alternative is not silence.
+    A pooled connection that served a tenant-scoped request earlier leaves
+    `app.current_org_id` as the empty string once its transaction-local value
+    reverts, and the RLS policies cast that anchor to `uuid` - so the next
+    request's first tenant-scoped read raises `invalid input syntax for type
+    uuid: ""` and aborts the transaction rather than simply returning nothing.
+
+    `clear_org_rls_gucs` writes the nil-UUID sentinel instead. The policies
+    evaluate and deny, which is the behaviour every route below already
+    expects. A route that has a real organization overwrites it through
+    `apply_org_rls_gucs` in the ordinary way.
+    """
     db = SessionLocal()
     try:
+        clear_org_rls_gucs(db)
         yield db
     finally:
         db.close()

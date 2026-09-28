@@ -312,6 +312,46 @@ FRESHNESS_FACTS: tuple[str, ...] = tuple(
     spec["fact_name"] for spec in FACT_SPECS if spec["freshness_required"]
 )
 
+#: Guard status inputs that are measured per REQUEST, not recorded per SOURCE.
+#:
+#: The facts above are durable answers about a source: somebody reviewed these
+#: terms, this collector is activated, this host declares a rate limit. They
+#: are resolved once and they stay true until something changes them.
+#:
+#: `destination_status` is not that kind of answer. Whether a destination is
+#: public is a property of one URL and the addresses it resolved to at the
+#: instant of the fetch - `customer_url_safety_service.evaluate_url` decides it
+#: there, and a host that resolved to a public address a minute ago can resolve
+#: to an internal one now. Recording it per source would be recording something
+#: that was never true of the source.
+#:
+#: It is listed here rather than left out, because "not a fact" and "forgotten"
+#: look identical to a reader and identical to a test. A guard status input
+#: that appears in neither FACT_SPECS nor this tuple is a hole, and Gate 162's
+#: mapping test fails on it by name.
+#:
+#: Being per-request does not make it weaker. The guard defaults it to None and
+#: None refuses, so a caller that forgets to measure it is turned away rather
+#: than waved through.
+PER_REQUEST_GUARD_INPUTS: tuple[dict[str, Any], ...] = (
+    {
+        "guard_input": "destination_status",
+        "measured_by": "customer_url_safety_service.evaluate_url",
+        "permitting": ("public",),
+        "why_not_a_fact": (
+            "publicness belongs to one URL and the addresses it resolved to at "
+            "fetch time, not to a source. DNS can change between two requests "
+            "to the same host, so a recorded answer would be a stale claim "
+            "about the wrong thing."
+        ),
+    },
+)
+
+#: Just the names, for the mapping test and the artifacts.
+PER_REQUEST_GUARD_INPUT_NAMES: tuple[str, ...] = tuple(
+    entry["guard_input"] for entry in PER_REQUEST_GUARD_INPUTS
+)
+
 #: Said once, here, because every artifact and doc in this gate repeats it.
 NOT_AN_APPROVAL: tuple[str, ...] = (
     "a registered source is not an approved source",
@@ -484,6 +524,14 @@ def describe_fact_model() -> dict[str, Any]:
             "refusal_meaning": REFUSAL_MEANING,
             "decision_facts": list(DECISION_FACTS),
             "freshness_facts": list(FRESHNESS_FACTS),
+            "per_request_guard_inputs": [
+                dict(entry) for entry in PER_REQUEST_GUARD_INPUTS
+            ],
+            "per_request_is_not_weaker": (
+                "a per-request input is measured at fetch time instead of "
+                "recorded per source. The guard defaults it to None and None "
+                "refuses, so forgetting to measure it is a refusal."
+            ),
             "not_an_approval": list(NOT_AN_APPROVAL),
             "vocabularies_are_read_from": (
                 "live_network_guard_service. This module restates none of them; "

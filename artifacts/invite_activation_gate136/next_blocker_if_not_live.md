@@ -30,7 +30,7 @@ call against the organization, the provider and the environment, so:
 organization_outside_the_approved_scope   not bbbbbbbb-cccc-dddd-eeee-ffffffffffff
 provider_outside_the_approved_scope       OIDC_ISSUER is not Google
 environment_outside_the_approved_scope    NF_APP_ENV is not one of
-                                          ['dev', 'local', 'test']
+                                          ['controlled-live', 'dev', 'local', 'test']
 decision_revoked_by_environment           the revocation variable is set
 ```
 
