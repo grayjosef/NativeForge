@@ -67,8 +67,18 @@ IS_DEMO_GUC = "app.current_org_is_demo"
 NO_TENANT_ORG_ID: uuid.UUID = uuid.UUID("00000000-0000-0000-0000-000000000000")
 
 
-def _postgres(session: Session) -> bool:
-    return session.bind is not None and session.bind.dialect.name == "postgresql"
+def _dialect_name(connection_or_session: Any) -> str | None:
+    bind = getattr(connection_or_session, "bind", None)
+    if bind is not None:
+        return bind.dialect.name
+    dialect = getattr(connection_or_session, "dialect", None)
+    if dialect is not None:
+        return dialect.name
+    return None
+
+
+def _postgres(connection_or_session: Any) -> bool:
+    return _dialect_name(connection_or_session) == "postgresql"
 
 
 def set_no_tenant_anchor(connection: Any) -> None:
@@ -95,25 +105,27 @@ def set_no_tenant_anchor(connection: Any) -> None:
     )
 
 
-def _set(session: Session, org_id: str, is_demo: bool) -> None:
-    session.execute(
+def _set(connection_or_session: Any, org_id: str, is_demo: bool) -> None:
+    connection_or_session.execute(
         text(f"SELECT set_config('{ORG_ID_GUC}', :oid, true)"),
         {"oid": org_id},
     )
-    session.execute(
+    connection_or_session.execute(
         text(f"SELECT set_config('{IS_DEMO_GUC}', :d, true)"),
         {"d": "true" if is_demo else "false"},
     )
 
 
-def apply_org_rls_gucs(session: Session, org_id: uuid.UUID, org_type: OrgType) -> None:
+def apply_org_rls_gucs(
+    connection_or_session: Session | Any, org_id: uuid.UUID, org_type: OrgType
+) -> None:
     """Set per-transaction GUCs expected by nf_* RLS policies (PostgreSQL only)."""
-    if not _postgres(session):
+    if not _postgres(connection_or_session):
         return
-    _set(session, str(org_id), org_type == "demo")
+    _set(connection_or_session, str(org_id), org_type == "demo")
 
 
-def clear_org_rls_gucs(session: Session) -> None:
+def clear_org_rls_gucs(connection_or_session: Session | Any) -> None:
     """State that this transaction has no authorized tenant.
 
     Not the same as leaving the GUC alone. On a pooled connection "alone" can
@@ -125,6 +137,6 @@ def clear_org_rls_gucs(session: Session) -> None:
     a sentinel organization that claimed to be a demo would be a stranger
     combination than either field on its own.
     """
-    if not _postgres(session):
+    if not _postgres(connection_or_session):
         return
-    _set(session, str(NO_TENANT_ORG_ID), False)
+    _set(connection_or_session, str(NO_TENANT_ORG_ID), False)
