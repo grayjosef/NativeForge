@@ -123,7 +123,9 @@ describe("SignInPage", () => {
     await screen.findByRole("heading", { level: 1, name: /welcome to nativeforge/i });
     const lockup = document.querySelector(".nf-login-lockup");
     expect(lockup).toHaveAttribute("data-brand-mode", "full");
-    expect(lockup?.querySelector("img")?.getAttribute("src")).toBe("/brand/nf-lockup.png");
+    expect(lockup?.querySelector("img")?.getAttribute("src")).toBe(
+      "/brand/nf-lockup-dark.png",
+    );
     expect(screen.getAllByText("Find. Pursue. Govern.").length).toBeGreaterThanOrEqual(1);
     expect(
       screen.getByRole("heading", { level: 2, name: /funding intelligence/i }),
@@ -132,6 +134,17 @@ describe("SignInPage", () => {
     expect(screen.getByText("Find")).toBeInTheDocument();
     expect(screen.getByText("Pursue")).toBeInTheDocument();
     expect(screen.getByText("Govern")).toBeInTheDocument();
+    expect(
+      screen.getByText("Discover and qualify the right opportunities."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Move every opportunity from decision to submission."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Keep the work accountable, compliant, and under control."),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/with AI/i)).toBeNull();
+    expect(screen.queryByText(/grant writing/i)).toBeNull();
   });
 
   it("keeps the submission doctrine in the footer, worded exactly", async () => {

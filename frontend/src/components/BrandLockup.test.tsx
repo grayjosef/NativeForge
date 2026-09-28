@@ -48,6 +48,15 @@ describe("BrandLockup", () => {
     );
   });
 
+  it("draws the dark-field lockup when the tagline is included", () => {
+    const { container } = render(<BrandLockup size={120} mode="full" />);
+    expect(container.querySelector("img")?.getAttribute("src")).toBe(
+      "/brand/nf-lockup-dark.png",
+    );
+    expect(container.querySelector("img")?.getAttribute("width")).toBe("960");
+    expect(container.querySelector("img")?.getAttribute("height")).toBe("287");
+  });
+
   it("does not pin height when width is allowed to drive", () => {
     const { container } = render(
       <BrandLockup size={108} mode="compact" fit="width" />,

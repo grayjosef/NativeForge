@@ -98,6 +98,49 @@ def contain(img: Image.Image, box: int, inset: float) -> Image.Image:
     )
 
 
+# Product teal (--nf-teal). Flat ink only: the tagline pixels change color
+# and keep their alpha. Nothing else in the lockup is touched.
+TAGLINE_TEAL = (63, 156, 143)
+PUBLISHED_LOCKUP = (960, 287)
+
+
+def dark_field_lockup(lockup: Image.Image) -> Image.Image:
+    """FIND. PURSUE. GOVERN. in teal, for the midnight shell.
+
+    The kit sets that line in navy, which disappears on the product field.
+    This recolors only those ink pixels on the published 960×287 lockup.
+    A different size is refused so a crop change cannot paint the wordmark.
+    """
+    img = lockup.convert("RGBA")
+    if img.size != PUBLISHED_LOCKUP:
+        width = PUBLISHED_LOCKUP[0]
+        if img.width != width:
+            img = img.resize(
+                (width, round(img.height * width / img.width)), Image.LANCZOS
+            )
+    if img.size != PUBLISHED_LOCKUP:
+        raise SystemExit(
+            f"dark lockup expects {PUBLISHED_LOCKUP[0]}x{PUBLISHED_LOCKUP[1]}, got {img.size}"
+        )
+    out = img.copy()
+    src, dst = img.load(), out.load()
+    w, h = img.size
+    y0, y1 = 242, 268
+    x0, x1 = 350, 940
+    for y in range(y0, y1):
+        for x in range(x0, min(x1, w)):
+            r, g, b, a = src[x, y]
+            if a < 12:
+                continue
+            if g > 70 and g > r and g > b:
+                continue
+            if r > 70 and r > g and r > b:
+                continue
+            if r < 90 and g < 90 and b < 120 and (b + 15 >= g) and max(r, g, b) < 100:
+                dst[x, y] = (*TAGLINE_TEAL, a)
+    return out
+
+
 def save(img: Image.Image, name: str) -> None:
     width = WIDTHS.get(name)
     if width and img.width > width:
@@ -119,6 +162,10 @@ def main() -> None:
 
     save(emblem.copy(), "nf-emblem.png")
     save(lockup.copy(), "nf-lockup.png")
+    # Same crop as nf-lockup.png. Only the tagline ink is teal.
+    published = Image.open(OUT / "nf-lockup.png")
+    dark = dark_field_lockup(published)
+    save(dark, "nf-lockup-dark.png")
     save(trim(cut_background(board.crop(REGIONS["stacked"]))), "nf-lockup-stacked.png")
     for key in ("mono-dark", "mono-light"):
         save(trim(cut_background(board.crop(REGIONS[key]))), f"nf-emblem-{key}.png")

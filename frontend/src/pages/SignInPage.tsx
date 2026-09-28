@@ -20,17 +20,17 @@ const PRINCIPLES = [
   {
     id: "discover",
     title: "Find",
-    copy: "Discover relevant opportunities faster.",
+    copy: "Discover and qualify the right opportunities.",
   },
   {
     id: "pursuits",
     title: "Pursue",
-    copy: "Build stronger applications with AI.",
+    copy: "Move every opportunity from decision to submission.",
   },
   {
     id: "trust",
     title: "Govern",
-    copy: "Stay compliant and in control.",
+    copy: "Keep the work accountable, compliant, and under control.",
   },
 ] as const;
 

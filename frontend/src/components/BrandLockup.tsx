@@ -67,12 +67,14 @@ export interface BrandLockupProps {
  * decorative-looking mark is easy to lose in a refactor, and the name is the
  * part that must not drift.
  *
- * ## One asset for both themes
+ * ## Tagline on the dark product field
  *
- * The wordmark is silver and green over dark outlines, which holds on ivory
- * and on the deep forge ground alike. The tagline is the exception: it is set
- * in the kit's navy and goes muddy on a dark field, so `full` belongs on light
- * surfaces like sign-in, not in application chrome.
+ * The wordmark is silver and green over dark outlines, which holds on the
+ * midnight shell. The tagline in `nf-lockup.png` is the kit's navy and
+ * disappears on that field. `full` therefore draws `nf-lockup-dark.png`: the
+ * same artwork, with only the FIND. PURSUE. GOVERN. ink recolored to the
+ * product teal (`--nf-teal`, #3f9c8f). Anvil, wordmark, and spark are the
+ * original pixels. No shadow, glow, stroke, or gradient is applied.
  */
 
 /** Below this the wordmark is no longer legible, so it is not drawn. */
@@ -82,9 +84,9 @@ export const MIN_WORDMARK_HEIGHT = 40;
 export const MIN_TAGLINE_HEIGHT = 72;
 
 const ART: Record<BrandMode, { src: string; w: number; h: number }> = {
-  // Clean lockup already in the repo. The chat-imported kit copies damage
-  // the FIND. PURSUE. GOVERN. tagline, so they are not what the product draws.
-  full: { src: "/brand/nf-lockup.png", w: 960, h: 287 },
+  // Same geometry as nf-lockup.png. Tagline ink is product teal so it
+  // reads on the midnight shell. Kit copies damage the tagline and are unused.
+  full: { src: "/brand/nf-lockup-dark.png", w: 960, h: 287 },
   compact: { src: "/brand/nf-lockup-notag.png", w: 720, h: 175 },
   emblem: { src: "/brand/nf-emblem.png", w: 256, h: 219 },
 };
