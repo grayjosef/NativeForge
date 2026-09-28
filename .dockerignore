@@ -46,10 +46,13 @@ ops
 .github
 .claude
 
-# ...except the three things the image verifies itself with. Negations must
-# follow the exclusion that would otherwise swallow them, and a directory
-# cannot be re-included once its parent is excluded, so each path is named.
+# ...except the runtime verifier and the two Gate 163 operator scripts.
+# Negations must follow the exclusion that would otherwise swallow them, and
+# a directory cannot be re-included once its parent is excluded, so each
+# path is named. The rest of scripts/ stays out of the image.
 !scripts/check_postgres_tenant_isolation.py
+!scripts/record_gate163_grants_gov_decisions.py
+!scripts/record_gate163_live_fetch_opt_in.py
 !tests/fixtures
 !tests/fixtures/document_ocr
 !tests/fixtures/document_ocr/**

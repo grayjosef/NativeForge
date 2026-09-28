@@ -85,6 +85,12 @@ RUN chmod +x /usr/local/bin/nativeforge-entrypoint
 COPY deploy/verify_managed_runtime.py ./deploy/verify_managed_runtime.py
 COPY deploy/bootstrap_runtime_role.py ./deploy/bootstrap_runtime_role.py
 COPY scripts/check_postgres_tenant_isolation.py ./scripts/check_postgres_tenant_isolation.py
+# Gate 163 operator tools. Dry-run by default; --apply is the human write.
+# The seed file is what those scripts use to confirm the one public source.
+# Nothing else under scripts/ or fixtures/ is copied.
+COPY scripts/record_gate163_grants_gov_decisions.py ./scripts/record_gate163_grants_gov_decisions.py
+COPY scripts/record_gate163_live_fetch_opt_in.py ./scripts/record_gate163_live_fetch_opt_in.py
+COPY fixtures/source_ingestion/NF_SOURCE_SEED_2026.csv ./fixtures/source_ingestion/NF_SOURCE_SEED_2026.csv
 COPY tests/fixtures/document_ocr/ ./fixtures/document_ocr/
 
 # Stamped at build time. A container has no `.git` and no git binary, so the
