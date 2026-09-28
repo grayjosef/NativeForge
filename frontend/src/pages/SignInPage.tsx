@@ -77,15 +77,15 @@ export function SignInPage({ notice }: SignInPageProps) {
     <div className="nf-login">
       <div className="nf-login-frame">
       <aside className="nf-login-brand">
+        {/* Sibling of the copy column so it centers on the brand zone, not the text. */}
+        <BrandLockup
+          className="nf-login-lockup"
+          size={287}
+          mode="full"
+          fit="width"
+          decorative
+        />
         <div className="nf-login-brand-inner">
-          {/* aria-hidden: the sign-in heading names the product. */}
-          <BrandLockup
-            className="nf-login-lockup"
-            size={287}
-            mode="full"
-            fit="width"
-            decorative
-          />
           <p className="nf-visually-hidden">{TAGLINE}</p>
           <h2 className="nf-login-headline">
             Funding intelligence.

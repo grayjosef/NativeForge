@@ -54,7 +54,9 @@
 .nf-login-brand {
   position: relative;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
   padding: clamp(2rem, 4vw, 4.25rem);
   overflow: hidden;
   background:
@@ -71,16 +73,18 @@
 
 .nf-login-lockup {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   width: 100%;
+  margin: 0 0 0.5rem;
   user-select: none;
 }
 
 .nf-login-lockup .nf-lockup-art {
-  width: min(34rem, 100%);
+  /* ~30% larger than the previous 34rem mark. 100% keeps it inside the zone. */
+  width: min(44.2rem, 100%);
   height: auto;
   object-fit: contain;
-  object-position: left center;
+  object-position: center;
 }
 
 .nf-login-headline {
@@ -380,7 +384,7 @@
   }
 
   .nf-login-lockup .nf-lockup-art {
-    width: min(28rem, 100%);
+    width: min(36.4rem, 100%);
   }
 }
 
@@ -397,6 +401,10 @@
 
   .nf-login-brand {
     padding: 1.5rem 1.25rem 1.25rem;
+  }
+
+  .nf-login-lockup .nf-lockup-art {
+    width: min(20rem, 92%);
   }
 
   .nf-login-panel {
