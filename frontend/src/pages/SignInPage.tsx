@@ -19,10 +19,9 @@ import { diagnosticsVisible, interpretError, type CustomerState } from "../custo
  *
  * ## The brand panel has a composition now
  *
- * The hero uses the FULL lockup, including the kit's navy FIND. PURSUE.
- * GOVERN. That colour is the one we keep. Black behind it is what made the
- * line disappear, so the panel is kit ivory — the ground the navy was
- * drawn for.
+ * Compact kit artwork at hero scale, on black, with FIND. PURSUE. GOVERN.
+ * as live ivory text. The full PNG bakes that line in navy, which does not
+ * survive this panel. The words do not change.
  *
  * ## Unconfigured is stated once, quietly
  *
@@ -85,12 +84,12 @@ export function SignInPage({ notice }: SignInPageProps) {
               name twice before reaching anything actionable. */}
           <BrandLockup
             className="nf-login-lockup"
-            size={200}
-            mode="full"
+            size={175}
+            mode="compact"
             fit="width"
             decorative
           />
-          <p className="nf-visually-hidden">{TAGLINE}</p>
+          <p className="nf-login-tagline">{TAGLINE}</p>
           <p className="nf-login-claim">
             Funding intelligence and pursuit operations for Tribal governments and
             Native-serving organizations.
@@ -111,6 +110,9 @@ export function SignInPage({ notice }: SignInPageProps) {
             fit="width"
             decorative
           />
+          <p className="nf-login-tagline nf-login-tagline--on-card" aria-hidden="true">
+            {TAGLINE}
+          </p>
 
           <h1 className="nf-login-title">Welcome to NativeForge</h1>
           <p className="nf-login-lead">
