@@ -358,6 +358,15 @@ export default function App() {
     };
   }, [base]);
 
+  // The session membership is the organization. Local storage used to keep a
+  // typed UUID that Settings still let you edit after Google sign-in — the
+  // copy said it would lock, and the input never did.
+  useEffect(() => {
+    const bound = session?.organizationId?.trim() ?? "";
+    if (!session?.authenticated || !looksLikeUuid(bound)) return;
+    setOrgId(bound);
+  }, [session]);
+
   /**
    * First-run routing.
    *
@@ -1457,6 +1466,7 @@ export default function App() {
           organizationId={orgId}
           onOrganizationIdChange={setOrgId}
           organizationIdValid={orgOk}
+          organizationLocked={Boolean(session?.authenticated && session.organizationId)}
           onOpen={(view) => setSurface(view as AppSurface)}
           onSignOut={session?.authenticated ? onSignOut : undefined}
         />

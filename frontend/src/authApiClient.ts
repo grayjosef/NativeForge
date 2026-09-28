@@ -65,12 +65,25 @@ export async function getAuthSession(
   });
   if (!res.ok) throw new Error(await readHttpError(res));
   const raw = (await res.json()) as Record<string, unknown>;
-  const verification = (raw.session_verification ?? {}) as Record<string, unknown>;
+  // The route puts organization and roles on the envelope itself. An earlier
+  // reader looked only inside `session_verification`, which this endpoint
+  // does not nest, so a signed-in browser never learned which org it was in.
+  const nested = (raw.session_verification ?? {}) as Record<string, unknown>;
+  const organizationId =
+    typeof raw.organization_id === "string"
+      ? raw.organization_id
+      : typeof nested.organization_id === "string"
+        ? nested.organization_id
+        : null;
+  const roles = Array.isArray(raw.roles)
+    ? (raw.roles as string[])
+    : Array.isArray(nested.roles)
+      ? (nested.roles as string[])
+      : [];
   return {
-    authenticated: raw.status === "authenticated",
-    organization_id:
-      typeof verification.organization_id === "string" ? verification.organization_id : null,
-    roles: Array.isArray(verification.roles) ? (verification.roles as string[]) : [],
+    authenticated: Boolean(raw.authenticated) || raw.status === "authenticated",
+    organization_id: organizationId,
+    roles,
   };
 }
 

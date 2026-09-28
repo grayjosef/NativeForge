@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import App from "./App";
@@ -110,5 +110,14 @@ describe("App", () => {
 
     // The URL follows, so a refresh does not bounce the visitor around.
     await waitFor(() => expect(window.location.search).toContain("view=sign_in"));
+  });
+
+  it("binds the signed-in organization and stops Settings from editing it", async () => {
+    mockApi({ authenticated: true });
+    render(<App />);
+    fireEvent.click(await screen.findByRole("button", { name: "Settings" }));
+    await waitFor(() => {
+      expect(screen.getByLabelText(/organization identifier/i)).toBeDisabled();
+    });
   });
 });

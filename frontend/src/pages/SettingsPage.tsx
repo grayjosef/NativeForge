@@ -18,6 +18,8 @@ export interface SettingsPageProps {
   organizationId: string;
   onOrganizationIdChange: (value: string) => void;
   organizationIdValid: boolean;
+  /** Session membership owns the org; the identifier is displayed, not edited. */
+  organizationLocked?: boolean;
   onOpen: (view: string) => void;
   onSignOut?: () => void;
   children?: ReactNode;
@@ -58,6 +60,7 @@ export function SettingsPage(props: SettingsPageProps) {
     organizationId,
     onOrganizationIdChange,
     organizationIdValid,
+    organizationLocked = false,
     onOpen,
     onSignOut,
   } = props;
@@ -106,14 +109,20 @@ export function SettingsPage(props: SettingsPageProps) {
             value={organizationId}
             onChange={(e) => onOrganizationIdChange(e.target.value)}
             spellCheck={false}
+            readOnly={organizationLocked}
+            disabled={organizationLocked}
           />
-          {!organizationIdValid ? (
+          {organizationLocked ? (
+            <p className="nf-field-help">
+              This comes from your sign-in session. It cannot be changed from the browser.
+            </p>
+          ) : !organizationIdValid ? (
             <p className="nf-field-help nf-field-help--warn">
               This does not look like a valid organization identifier, so requests will be refused.
             </p>
           ) : (
             <p className="nf-field-help">
-              Once sign-in is connected, this comes from your session and stops being editable.
+              Once you sign in, this comes from your session and stops being editable.
             </p>
           )}
         </div>
