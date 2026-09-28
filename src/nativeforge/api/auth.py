@@ -161,6 +161,7 @@ from nativeforge.services.demo_bootstrap_decision_log_service import (
 from nativeforge.services.demo_bootstrap_tenant_context_service import (
     open_demo_bootstrap_context,
     open_demo_org_lookup_context,
+    reveal_configured_demo_membership,
 )
 from nativeforge.services.dev_org_membership_bootstrap_service import (
     insert_membership,
@@ -292,6 +293,11 @@ def _session_decision(
     resolution: dict[str, Any] = {}
     if db is not None and parsed["session_cookie_valid"] and parsed["principal_id"]:
         try:
+            reveal_configured_demo_membership(
+                connection=db.connection(),
+                claimed_organization_id=parsed["organization_id"],
+                identity_id=parsed["principal_id"],
+            )
             resolution = resolve_session_organization(
                 connection=db.connection(),
                 identity_id=parsed["principal_id"],

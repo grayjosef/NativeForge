@@ -29,6 +29,7 @@ from nativeforge.services.demo_bootstrap_tenant_context_service import (
     ORG_ID_KEY,
     open_demo_bootstrap_context,
     open_demo_org_lookup_context,
+    reveal_configured_demo_membership,
 )
 
 DEMO = "bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
@@ -325,6 +326,36 @@ def test_lookup_context_opens_when_the_demo_org_already_has_members():
     assert result["context_opened"] is True
     assert result["blocked_reasons"] == []
     assert result["existing_membership_count"] == 1
+    assert conn.set_config_calls == [
+        (ORG_ID_KEY, DEMO, True),
+        (IS_DEMO_KEY, "true", True),
+    ]
+
+
+def test_a_later_request_can_see_only_the_configured_demo_membership(monkeypatch):
+    conn = connection()
+    monkeypatch.setenv("NF_BOOTSTRAP_DEMO_ORG_ID", DEMO)
+    opened = reveal_configured_demo_membership(
+        connection=conn,
+        claimed_organization_id=DEMO,
+        identity_id=IDENT,
+    )
+    assert opened["context_opened"] is True
+    assert conn.set_config_calls == [
+        (ORG_ID_KEY, DEMO, True),
+        (IS_DEMO_KEY, "true", True),
+    ]
+
+    refused = reveal_configured_demo_membership(
+        connection=conn,
+        claimed_organization_id=REAL_A,
+        identity_id=IDENT,
+    )
+    assert refused["context_opened"] is False
+    assert (
+        "claimed_organization_is_not_the_configured_demo_org"
+        in refused["blocked_reasons"]
+    )
     assert conn.set_config_calls == [
         (ORG_ID_KEY, DEMO, True),
         (IS_DEMO_KEY, "true", True),

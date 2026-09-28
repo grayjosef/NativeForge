@@ -102,6 +102,9 @@ def resolve_session_org_context(
     from nativeforge.services.customer_session_verifier_service import (
         verify_session_cookie,
     )
+    from nativeforge.services.demo_bootstrap_tenant_context_service import (
+        reveal_configured_demo_membership,
+    )
     from nativeforge.services.demo_org_classification_service import (
         classify_organization,
     )
@@ -123,6 +126,11 @@ def resolve_session_org_context(
         }
 
     try:
+        reveal_configured_demo_membership(
+            connection=db.connection(),
+            claimed_organization_id=parsed["organization_id"],
+            identity_id=parsed["principal_id"],
+        )
         resolution = resolve_session_organization(
             connection=db.connection(), identity_id=parsed["principal_id"]
         )

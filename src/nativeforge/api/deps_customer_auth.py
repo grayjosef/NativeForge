@@ -145,11 +145,19 @@ def evaluate_request_org_context(
     membership_verified = False
     resolution: dict[str, Any] = {}
     if db is not None and parsed["session_cookie_valid"] and parsed["principal_id"]:
+        from nativeforge.services.demo_bootstrap_tenant_context_service import (
+            reveal_configured_demo_membership,
+        )
         from nativeforge.services.identity_org_session_resolution_service import (
             resolve_session_organization,
         )
 
         try:
+            reveal_configured_demo_membership(
+                connection=db.connection(),
+                claimed_organization_id=parsed["organization_id"],
+                identity_id=parsed["principal_id"],
+            )
             resolution = resolve_session_organization(
                 connection=db.connection(),
                 identity_id=parsed["principal_id"],

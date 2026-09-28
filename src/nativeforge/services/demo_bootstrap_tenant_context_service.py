@@ -141,6 +141,46 @@ def _result(
     )
 
 
+def reveal_configured_demo_membership(
+    *,
+    connection: Any,
+    claimed_organization_id: Any,
+    identity_id: Any,
+) -> dict[str, Any]:
+    """Let a later request see the demo membership the callback already proved.
+
+    The lookup door is transaction-local. The callback opens it, resolves the
+    membership, and mints a session. The next request is a new transaction, so
+    FORCE RLS hides that same row and a valid session looks unbound.
+
+    This opens the lookup door only when the signed session names the
+    deployment's configured demo organization. Any other claimed organization
+    is refused and no tenant context is set.
+    """
+    import os
+
+    configured = os.environ.get("NF_BOOTSTRAP_DEMO_ORG_ID", "").strip()
+    claimed = str(claimed_organization_id or "").strip()
+    if not configured or claimed != configured:
+        return _result(
+            opened=False,
+            organization_id=claimed or None,
+            blocked_reasons=(
+                ["claimed_organization_is_not_the_configured_demo_org"]
+                if claimed
+                else ["no_claimed_organization"]
+            ),
+        )
+    return open_demo_org_lookup_context(
+        connection=connection,
+        organization_id=claimed,
+        identity_id=identity_id,
+        membership_identity_id=identity_id,
+        configured_organization_id=configured,
+        identity_verified=True,
+    )
+
+
 def open_demo_org_lookup_context(
     *,
     connection: Any,
