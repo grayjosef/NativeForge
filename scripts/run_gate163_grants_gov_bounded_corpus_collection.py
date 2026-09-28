@@ -59,6 +59,8 @@ def main() -> int:
     session = SessionLocal()
     try:
         apply_org_rls_gucs(session, DEMO, "demo")
+        if args.apply:
+            reapply_org_rls_after_commit(session, DEMO, "demo")
         result = run_grants_gov_bounded_live_collection(
             session,
             session,
