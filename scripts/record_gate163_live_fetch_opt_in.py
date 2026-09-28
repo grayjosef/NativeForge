@@ -40,6 +40,7 @@ import uuid
 sys.path.insert(0, "src")
 sys.path.insert(0, ".")
 
+from nativeforge.db.rls import apply_org_rls_gucs  # noqa: E402
 from nativeforge.db.session import SessionLocal  # noqa: E402
 from nativeforge.repositories.source_authorization_decision_repository import (  # noqa: E402
     LIVE_FETCH,
@@ -103,6 +104,7 @@ def main() -> int:
         refusals.append("--single-source-acknowledged was not given")
 
     session = SessionLocal()
+    apply_org_rls_gucs(session, DEMO, "demo")
     try:
         # Gate 166B: the source must already be ACTIVATED before it may be
         # opted in. This replaces a membership test against the constant

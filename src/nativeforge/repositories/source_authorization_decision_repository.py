@@ -96,6 +96,28 @@ BLOCK_UNSIGNED_DENIAL = "a_denial_needs_reviewed_by"
 BLOCK_CONTRADICTORY = "an_approval_cannot_carry_a_blocking_guard_status"
 BLOCK_WRITE_FAILED = "the_write_was_refused_by_the_database"
 
+
+def describe_write_failure(exc: Exception) -> str:
+    """A database refusal an operator can act on, without a connection string."""
+    orig = getattr(exc, "orig", None)
+    sqlstate = getattr(orig, "sqlstate", None)
+    message = str(orig or exc).splitlines()[0].strip()
+    if orig is not None:
+        args = getattr(orig, "args", ())
+        if args and isinstance(args[0], str) and args[0].strip():
+            message = args[0].strip().splitlines()[0]
+    lowered = message.lower()
+    if "://" in message or "password" in lowered or "database_url" in lowered:
+        message = "database_error_redacted"
+    message = message.replace("\n", " ")[:240]
+    parts = [BLOCK_WRITE_FAILED, type(exc).__name__]
+    if sqlstate:
+        parts.append(str(sqlstate))
+    if message:
+        parts.append(message)
+    return ":".join(parts)
+
+
 _METADATA = sa.MetaData()
 
 DECISIONS_TABLE = sa.Table(
@@ -373,7 +395,7 @@ def record_decision(
             )
     except Exception as exc:  # noqa: BLE001 - the refusal is the result
         return _result(
-            blocked_reasons=[f"{BLOCK_WRITE_FAILED}:{type(exc).__name__}"],
+            blocked_reasons=[describe_write_failure(exc)],
             replaced=replaced,
         )
 

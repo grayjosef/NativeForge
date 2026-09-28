@@ -44,6 +44,7 @@ sys.path.insert(0, "src")
 
 import sqlalchemy as sa  # noqa: E402
 
+from nativeforge.db.rls import apply_org_rls_gucs  # noqa: E402
 from nativeforge.db.session import SessionLocal  # noqa: E402
 from nativeforge.repositories.source_authorization_decision_repository import (  # noqa: E402,E501
     HUMAN_REVIEW,
@@ -180,6 +181,9 @@ def main() -> int:
         return 0
 
     session = SessionLocal()
+    # The session anchor is the nil tenant. These rows belong to the demo
+    # organization, and the table's row-level policy rejects any other stamp.
+    apply_org_rls_gucs(session, DEMO_ORG, "demo")
     written: list[str] = []
     try:
         terms = record_decision(
