@@ -1263,7 +1263,7 @@ BOOTSTRAP_ORG_ENV = "NF_BOOTSTRAP_DEMO_ORG_ID"
 #: deployment's own origin, so a misconfigured value cannot send a customer to
 #: another host.
 APP_AFTER_SIGN_IN = "/?view=workspace"
-APP_NEEDS_ORG = "/?view=onboarding"
+APP_NEEDS_ORG = "/?view=sign_in&auth=sign_in_incomplete"
 APP_SIGN_IN = "/?view=sign_in"
 
 

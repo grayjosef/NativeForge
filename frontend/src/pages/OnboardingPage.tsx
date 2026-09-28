@@ -238,12 +238,13 @@ export interface OnboardingPageProps {
   /** Saves the profile. Resolves true when it was written. */
   onSubmit: (body: Record<string, unknown>) => Promise<boolean>;
   onEnterWorkspace: () => void;
+  onSignIn: () => void;
   /** Prefills from an existing profile, when there is one. */
   initial?: Partial<OnboardingDraft>;
 }
 
 export function OnboardingPage(props: OnboardingPageProps) {
-  const { busy, error, onSubmit, onEnterWorkspace, initial } = props;
+  const { busy, error, onSubmit, onEnterWorkspace, onSignIn, initial } = props;
 
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<OnboardingDraft>(() => ({
@@ -303,9 +304,14 @@ export function OnboardingPage(props: OnboardingPageProps) {
             NativeForge can now evaluate opportunities against {draft.legal_name.trim()} and prepare
             application packages for your review.
           </p>
-          <button type="button" className="nf-btn nf-btn-primary" onClick={onEnterWorkspace}>
-            Enter NativeForge
-          </button>
+          <div className="nf-onboard-actions">
+            <button type="button" className="nf-btn nf-btn-ghost" onClick={onSignIn}>
+              Sign in
+            </button>
+            <button type="button" className="nf-btn nf-btn-primary" onClick={onEnterWorkspace}>
+              Enter NativeForge
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -316,10 +322,22 @@ export function OnboardingPage(props: OnboardingPageProps) {
       <div className="nf-onboard-card">
         <div className="nf-onboard-head">
           <BrandLockup size={44} mode="compact" />
-          <p className="nf-onboard-step">
-            Step {step + 1} of {STEPS.length} · {STEPS[step].title}
-          </p>
+          <nav className="nf-onboard-nav" aria-label="Leave setup">
+            <button type="button" className="nf-btn nf-btn-ghost nf-btn-sm" onClick={onSignIn}>
+              Sign in
+            </button>
+            <button
+              type="button"
+              className="nf-btn nf-btn-ghost nf-btn-sm"
+              onClick={onEnterWorkspace}
+            >
+              Enter NativeForge
+            </button>
+          </nav>
         </div>
+        <p className="nf-onboard-step">
+          Step {step + 1} of {STEPS.length} · {STEPS[step].title}
+        </p>
 
         <ol className="nf-onboard-track" aria-label="Setup progress">
           {STEPS.map((s, i) => (

@@ -361,6 +361,15 @@ def test_the_callback_looks_up_an_existing_membership_before_inserting():
     )
 
 
+def test_a_callback_without_an_org_does_not_trap_the_browser_in_onboarding():
+    """Onboarding has no shell. Sending an unsigned visitor there is a dead end."""
+    from pathlib import Path
+
+    source = Path("src/nativeforge/api/auth.py").read_text(encoding="utf-8")
+    assert 'APP_NEEDS_ORG = "/?view=sign_in&auth=sign_in_incomplete"' in source
+    assert 'APP_NEEDS_ORG = "/?view=onboarding"' not in source
+
+
 def test_the_callback_opens_context_before_inserting():
     """Wiring, read from the source.
 

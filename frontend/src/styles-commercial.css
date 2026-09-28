@@ -930,6 +930,13 @@
   gap: var(--nf-s4);
 }
 
+.nf-onboard-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--nf-s2);
+}
+
 .nf-onboard-step {
   margin: 0;
   font-size: var(--nf-t-xs);

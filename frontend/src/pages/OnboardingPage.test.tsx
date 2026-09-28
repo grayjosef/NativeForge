@@ -19,15 +19,51 @@ function noop() {
 
 describe("OnboardingPage", () => {
   it("gives the page a top-level heading", async () => {
-    render(<OnboardingPage busy={false} error={null} onSubmit={noop} onEnterWorkspace={vi.fn()} />);
+    render(
+      <OnboardingPage
+        busy={false}
+        error={null}
+        onSubmit={noop}
+        onEnterWorkspace={vi.fn()}
+        onSignIn={vi.fn()}
+      />,
+    );
     const heading = await screen.findByRole("heading", { level: 1 });
     expect(heading).toBeInTheDocument();
     expect(heading.textContent).toMatch(/what is your organization called/i);
   });
 
   it("announces the step a customer is on", async () => {
-    render(<OnboardingPage busy={false} error={null} onSubmit={noop} onEnterWorkspace={vi.fn()} />);
+    render(
+      <OnboardingPage
+        busy={false}
+        error={null}
+        onSubmit={noop}
+        onEnterWorkspace={vi.fn()}
+        onSignIn={vi.fn()}
+      />,
+    );
     expect(await screen.findByText(/step 1 of 6/i)).toBeInTheDocument();
+  });
+
+  it("lets a customer leave setup without finishing the wizard", async () => {
+    const onEnterWorkspace = vi.fn();
+    const onSignIn = vi.fn();
+    render(
+      <OnboardingPage
+        busy={false}
+        error={null}
+        onSubmit={noop}
+        onEnterWorkspace={onEnterWorkspace}
+        onSignIn={onSignIn}
+      />,
+    );
+    const leave = await screen.findByRole("navigation", { name: /leave setup/i });
+    expect(leave).toBeInTheDocument();
+    (await screen.findByRole("button", { name: /enter nativeforge/i })).click();
+    (await screen.findByRole("button", { name: /^sign in$/i })).click();
+    expect(onEnterWorkspace).toHaveBeenCalledTimes(1);
+    expect(onSignIn).toHaveBeenCalledTimes(1);
   });
 });
 

@@ -367,15 +367,14 @@ export default function App() {
    * reports three separate failures for one missing cookie.
    *
    * The operator and offline demo surfaces are exempt because they genuinely
-   * work without a session - they render from bundled data - and onboarding
-   * is exempt because it is where a signed-in visitor without a profile is
-   * sent next.
+   * work without a session - they render from bundled data. Onboarding is not:
+   * it cannot save a profile without a membership, and leaving it reachable
+   * unsigned is a dead end with no shell navigation.
    */
   useEffect(() => {
     if (session === null || session.authenticated) return;
     if (
       surface === "sign_in" ||
-      surface === "onboarding" ||
       surface === "sc_customer_demo" ||
       surface === "nm_wa_operator_demo" ||
       surface === "beta_onboarding_cockpit"
@@ -1193,6 +1192,7 @@ export default function App() {
         error={orgErr}
         onSubmit={onSaveProfile}
         onEnterWorkspace={() => setSurface("workspace")}
+        onSignIn={() => setSurface("sign_in")}
         initial={
           profileFields
             ? {
