@@ -82,8 +82,8 @@ export const MIN_WORDMARK_HEIGHT = 40;
 export const MIN_TAGLINE_HEIGHT = 72;
 
 const ART: Record<BrandMode, { src: string; w: number; h: number }> = {
-  // Intrinsic dimensions are declared so the browser reserves the right box
-  // before the image loads, and so a height-only rule can never stretch it.
+  // Clean lockup already in the repo. The chat-imported kit copies damage
+  // the FIND. PURSUE. GOVERN. tagline, so they are not what the product draws.
   full: { src: "/brand/nf-lockup.png", w: 960, h: 287 },
   compact: { src: "/brand/nf-lockup-notag.png", w: 720, h: 175 },
   emblem: { src: "/brand/nf-emblem.png", w: 256, h: 219 },

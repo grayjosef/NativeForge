@@ -1,5 +1,6 @@
-/* NativeForge — executive institutional surface.
-   Light-first: warm paper field, forge-green ink, ember-gold accent.
+/* NativeForge — dark product shell.
+   Midnight navy field, pine and copper from the lockup, ivory as ink.
+   Ivory is not the application background.
 
    Palette sampled from the brand artwork, not chosen: forge green #023620
    (basket weave and the "Forge" wordmark), ember gold #C7781A (anvil rim and
@@ -13,18 +14,32 @@
    No external font/CDN requests — the app must stay self-contained. */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
+
+  /* Canonical product surfaces. Existing names alias these so a page that
+     already says --nf-page or --nf-card joins the same system. */
+  --nf-bg-primary: #071018;
+  --nf-bg-secondary: #0c1826;
+  --nf-surface: #122033;
+  --nf-surface-raised: #18283d;
+  --nf-text-muted: #9aafc2;
+  --nf-green: #1f8f68;
+  --nf-teal: #3f9c8f;
+  --nf-copper: #cf9055;
+  --nf-warning: #d4a054;
+  --nf-danger: #e07078;
+  --nf-success: #3e9c68;
 
   /* — surfaces — */
-  --nf-page: #f5f2ea;
-  --nf-page-accent: #f0efe8;
-  --nf-card: #ffffff;
-  --nf-card-muted: #f5f4ee;
-  --nf-border: #e3e1d7;
-  --nf-border-strong: #cfcdbf;
+  --nf-page: var(--nf-bg-primary);
+  --nf-page-accent: var(--nf-bg-secondary);
+  --nf-card: var(--nf-surface);
+  --nf-card-muted: var(--nf-bg-secondary);
+  --nf-border: #243648;
+  --nf-border-strong: #3c556c;
   /* editorial hairlines */
-  --nf-rule: #e3e1d7;
-  --nf-rule-fine: #eceae2;
+  --nf-rule: #243648;
+  --nf-rule-fine: #1b2c3d;
 
   /* — ink —
      Four levels, every one of which is readable.
@@ -41,34 +56,35 @@
      and 4.9 to 1, which keeps them distinguishable from each other as well
      as legible - the first repair made faint and muted2 so close that the
      hierarchy they exist to express disappeared instead. */
-  --nf-text: #14201a;
-  --nf-muted: #33403a;
-  --nf-muted2: #4a564f;
-  --nf-faint: #5f6b64;
+  --nf-text: #f3efe4;
+  --nf-muted: #c9d3dc;
+  --nf-muted2: var(--nf-text-muted);
+  --nf-faint: #7f93a6;
 
-  /* — retained for non-demo surfaces — */
-  --nf-navy: #1b2b22;
-  --nf-navy-deep: #0f1c15;
-  --nf-navy-fg: #f8f7f3;
+  /* Headings historically used --nf-navy as ink. On the dark shell that
+     name is the light ink, and --nf-navy-fg is the dark fill behind it. */
+  --nf-navy: var(--nf-text);
+  --nf-navy-deep: #d5dce4;
+  --nf-navy-fg: var(--nf-bg-primary);
 
   /* — actions —
      Primary is the emblem's own green. Hover lifts rather than darkens: the
      previous hover was darker than the resting state, which reads as a press
      rather than a hover and left the two nearly indistinguishable at depth. */
-  --nf-primary: var(--nf-forge);
-  --nf-primary-hover: #0a5a45;
-  --nf-primary-fg: var(--nf-brand-ivory);
+  --nf-primary: var(--nf-green);
+  --nf-primary-hover: #27a478;
+  --nf-primary-fg: #f6f3ea;
 
   /* — ochre accent — */
-  --nf-accent: #a6650f;
-  --nf-accent-hover: #85510c;
-  --nf-accent-deep: #85510c;
-  --nf-accent-soft: rgba(199, 120, 26, 0.10);
-  --nf-accent-line: rgba(199, 120, 26, 0.34);
+  --nf-accent: var(--nf-copper);
+  --nf-accent-hover: #e0a36a;
+  --nf-accent-deep: #b5783d;
+  --nf-accent-soft: rgba(207, 144, 85, 0.16);
+  --nf-accent-line: rgba(207, 144, 85, 0.45);
 
   /* — status dots — */
-  --nf-sage: #1f6b45;
-  --nf-dot-neutral: #c2c0b2;
+  --nf-sage: var(--nf-success);
+  --nf-dot-neutral: #45566a;
   /* legacy aliases — existing selectors depend on these */
   --nf-trust: var(--nf-accent);
   --nf-trust-bg: var(--nf-accent-soft);
@@ -77,17 +93,17 @@
   /* — semantic status —
      "Held" is ochre, never red and never green: a held gate is a deliberate
      decision at the same visual weight as a passing one, not a failure. */
-  --nf-verified: #1f6b45;
-  --nf-verified-bg: rgba(31, 107, 69, 0.10);
-  --nf-held: #a6650f;
-  --nf-warn: #a6650f;
-  --nf-warn-bg: rgba(199, 120, 26, 0.10);
-  --nf-blocked: #a6650f;
-  --nf-blocked-bg: rgba(199, 120, 26, 0.07);
-  --nf-blocked-line: rgba(199, 120, 26, 0.34);
-  --nf-success: var(--nf-verified);
+  --nf-verified: var(--nf-success);
+  --nf-verified-bg: rgba(62, 156, 104, 0.16);
+  --nf-held: var(--nf-warning);
+  --nf-warn: var(--nf-warning);
+  --nf-warn-bg: rgba(212, 160, 84, 0.16);
+  --nf-blocked: var(--nf-warning);
+  --nf-blocked-bg: rgba(212, 160, 84, 0.12);
+  --nf-blocked-line: rgba(212, 160, 84, 0.4);
+  --nf-success: #3e9c68;
   /* genuine failures elsewhere in the app still read red */
-  --nf-error: #a32530;
+  --nf-error: var(--nf-danger);
 
   /* — type — */
   --nf-font-display: "Iowan Old Style", Georgia, "Palatino Linotype",
@@ -135,7 +151,7 @@
   --nf-e2: none;
   --nf-e3: none;
   --nf-shadow: none;
-  --nf-elevate: 0 8px 20px -14px rgba(0, 23, 49, 0.45);
+  --nf-elevate: none;
   --nf-radius-sm: 6px;
   --nf-radius: 10px;
   --nf-radius-lg: 14px;
@@ -176,50 +192,8 @@
   --nf-touch: 44px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --nf-page: #0d1310;
-    --nf-page-accent: #111a15;
-    --nf-card: #141d18;
-    --nf-card-muted: #111a15;
-    --nf-border: #22302a;
-    --nf-border-strong: #31443b;
-    --nf-rule: #22302a;
-    --nf-rule-fine: #1b2721;
-    --nf-text: #eef2ef;
-    --nf-muted: #c3d0c8;
-    --nf-muted2: #93a49a;
-    --nf-faint: #7d8d84;
-    --nf-navy: #eef2ef;
-    --nf-navy-deep: #c3d0c8;
-    --nf-navy-fg: #0d1310;
-    --nf-primary: #3e9c68;
-    --nf-primary-hover: #54b67f;
-    --nf-primary-fg: #04160d;
-    --nf-accent: #e0a24e;
-    --nf-accent-hover: #eeb668;
-    --nf-accent-deep: #c7781a;
-    --nf-accent-soft: rgba(224, 162, 78, 0.14);
-    --nf-accent-line: rgba(224, 162, 78, 0.38);
-    --nf-sage: #5fb287;
-    --nf-dot-neutral: #455349;
-    --nf-verified: #5fb287;
-    --nf-verified-bg: rgba(95, 178, 135, 0.14);
-    --nf-held: #e0a24e;
-    --nf-warn: #e0a24e;
-    --nf-warn-bg: rgba(224, 162, 78, 0.14);
-    --nf-blocked: #e0a24e;
-    --nf-blocked-bg: rgba(224, 162, 78, 0.10);
-    --nf-blocked-line: rgba(224, 162, 78, 0.38);
-    --nf-error: #e88a91;
-    --nf-e1: none;
-    --nf-e2: none;
-    --nf-e3: none;
-    --nf-shadow: none;
-    --nf-elevate: 0 8px 20px -14px rgba(0, 0, 0, 0.55);
-  }
-}
+/* The shell is dark in every color scheme. This block used to swap in a
+   second green-black palette and made the product disagree with itself. */
 
 *,
 *::before,
@@ -3541,8 +3515,8 @@ code,
   flex-direction: column;
   gap: var(--nf-s2);
   padding: var(--nf-s4) var(--nf-s3);
-  background: var(--nf-brand-graphite);
-  color: #e8efea;
+  background: #050c14;
+  color: var(--nf-text);
   position: sticky;
   top: 0;
   height: 100vh;
@@ -3656,9 +3630,9 @@ code,
 /* Active state carries a gold edge as well as a fill, so it does not rest on
    colour alone. */
 .nf-rail-item[data-active="true"] {
-  background: var(--nf-forge);
-  color: #ffffff;
-  box-shadow: inset 3px 0 0 var(--nf-ember);
+  background: rgba(63, 156, 143, 0.16);
+  color: var(--nf-text);
+  box-shadow: inset 3px 0 0 var(--nf-copper);
 }
 
 .nf-rail-item:disabled {

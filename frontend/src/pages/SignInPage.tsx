@@ -9,12 +9,9 @@ import { diagnosticsVisible, interpretError, type CustomerState } from "../custo
 /**
  * The front door.
  *
- * Ivory field, full horizontal lockup, kit navy tagline baked into the
- * artwork. Compact-on-graphite and ivory-tagline experiments are gone: the
- * kit is navy-on-ivory, and that is what this page is.
- *
- * The left column carries the product. The right column is the sign-in
- * card. Dead-centred lockup-in-a-void is the layout this replaced.
+ * A dark two-zone composition. The brand zone carries the canonical lockup
+ * and what the product does. The auth zone is a panel of the same surface
+ * system, not a small card floating on an ivory field.
  */
 
 const TAGLINE = "Find. Pursue. Govern.";
@@ -78,6 +75,7 @@ export function SignInPage({ notice }: SignInPageProps) {
 
   return (
     <div className="nf-login">
+      <div className="nf-login-frame">
       <aside className="nf-login-brand">
         <div className="nf-login-brand-inner">
           {/* aria-hidden: the sign-in heading names the product. */}
@@ -90,7 +88,8 @@ export function SignInPage({ notice }: SignInPageProps) {
           />
           <p className="nf-visually-hidden">{TAGLINE}</p>
           <h2 className="nf-login-headline">
-            Funding intelligence for a stronger tomorrow.
+            Funding intelligence.
+            <span>Built for Native nations.</span>
           </h2>
           <p className="nf-login-claim">
             NativeForge helps Tribal governments and Native-serving organizations
@@ -214,6 +213,7 @@ export function SignInPage({ notice }: SignInPageProps) {
           ) : null}
         </div>
       </main>
+      </div>
     </div>
   );
 }

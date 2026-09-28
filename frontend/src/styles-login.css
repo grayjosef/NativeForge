@@ -1,80 +1,72 @@
 /* ══════════════════════════════════════════════════════════════════════
    The front door.
 
-   Ivory field. Full horizontal lockup. Navy tagline stays in the artwork.
-   The left column is the product; the right column is identity. This file
-   used to centre a compact mark in a dark void. That composition is gone.
+   Midnight field. Two zones inside one frame: the brand, then the sign-in.
+   Richness comes from tone, border, and a copper edge. Not from shadow,
+   and not from a diagonal wallpaper.
    ══════════════════════════════════════════════════════════════════════ */
 
-/* Shown only while the session check is in flight. Ivory, like the front
-   door, so the product does not flash the workspace and then replace it. */
 .nf-boot {
   min-height: 100vh;
   display: grid;
   place-items: center;
   align-content: center;
   gap: 0.35rem;
-  background: var(--nf-brand-ivory);
-  color: var(--nf-brand-navy);
+  background: var(--nf-bg-primary);
+  color: var(--nf-text);
   text-align: center;
 }
 
 .nf-boot-title {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.35rem;
+  font-weight: 650;
 }
 
 .nf-boot-hint {
   margin: 0;
-  color: var(--nf-ink-muted, #5c6570);
+  color: var(--nf-text-muted);
 }
 
 .nf-login {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(28rem, 38rem);
   min-height: 100vh;
-  background: var(--nf-brand-ivory);
+  display: grid;
+  padding: clamp(1rem, 2.4vw, 2.25rem);
+  background:
+    radial-gradient(ellipse 48% 42% at 12% 100%, rgba(207, 144, 85, 0.16), transparent 62%),
+    radial-gradient(ellipse 36% 32% at 78% 0%, rgba(63, 156, 143, 0.12), transparent 58%),
+    var(--nf-bg-primary);
+  color: var(--nf-text);
 }
 
-/* ── brand panel ────────────────────────────────────────────────────── */
+.nf-login-frame {
+  width: min(1620px, 100%);
+  margin: auto;
+  min-height: calc(100vh - clamp(2rem, 4.8vw, 4.5rem));
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(22rem, 0.82fr);
+  border: 1px solid var(--nf-border);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: var(--nf-bg-secondary);
+}
 
 .nf-login-brand {
   position: relative;
   display: flex;
-  align-items: flex-start;
-  padding: clamp(2.75rem, 7vh, 5.5rem) clamp(2rem, 5vw, 5rem) var(--nf-s7);
+  align-items: center;
+  padding: clamp(2rem, 4vw, 4.25rem);
   overflow: hidden;
-  background: var(--nf-brand-ivory);
-  color: var(--nf-brand-navy);
-}
-
-/* Brand chevrons, not a photograph: institutional, not decorative-Native. */
-.nf-login-brand::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
   background:
-    radial-gradient(
-      ellipse 70% 45% at 12% 108%,
-      rgba(207, 144, 85, 0.14),
-      transparent 62%
-    ),
-    repeating-linear-gradient(
-      135deg,
-      transparent 0 46px,
-      rgba(0, 64, 49, 0.035) 46px 47px
-    );
-  opacity: 1;
+    radial-gradient(ellipse 70% 55% at 0% 100%, rgba(207, 144, 85, 0.2), transparent 60%),
+    linear-gradient(165deg, #102033 0%, #071018 72%);
+  color: var(--nf-text);
 }
 
 .nf-login-brand-inner {
   position: relative;
   z-index: 1;
-  max-width: 48rem;
-  width: 100%;
-  text-align: left;
+  width: min(40rem, 100%);
 }
 
 .nf-login-lockup {
@@ -84,195 +76,181 @@
   user-select: none;
 }
 
-/* Native 960×287. Cap below intrinsic so a 2x display still downscales. */
 .nf-login-lockup .nf-lockup-art {
-  width: min(720px, 100%);
+  width: min(34rem, 100%);
   height: auto;
   object-fit: contain;
-  image-rendering: auto;
+  object-position: left center;
 }
 
 .nf-login-headline {
-  margin: var(--nf-s6) 0 0;
-  font-family: var(--nf-font);
-  font-size: clamp(1.85rem, 1.4rem + 1.4vw, 2.55rem);
-  font-weight: 680;
-  line-height: 1.15;
+  margin: 1.75rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-family: var(--nf-font-display);
+  font-size: clamp(2.15rem, 1.5rem + 1.8vw, 3.35rem);
+  font-weight: 600;
+  line-height: 1.08;
   letter-spacing: -0.03em;
-  color: var(--nf-brand-navy);
+  color: var(--nf-text);
+}
+
+.nf-login-headline span {
+  color: var(--nf-text);
 }
 
 .nf-login-claim {
-  margin: var(--nf-s4) 0 0;
-  max-width: 34rem;
-  font-size: clamp(0.98rem, 0.9rem + 0.2vw, 1.08rem);
-  line-height: 1.6;
+  margin: 1.1rem 0 0;
+  max-width: 36rem;
+  font-size: 1.08rem;
+  line-height: 1.55;
   color: var(--nf-muted);
 }
 
 .nf-login-principles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--nf-s4);
-  margin: var(--nf-s6) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.75rem 0 0;
   padding: 0;
   list-style: none;
 }
 
 .nf-login-principle {
-  display: flex;
-  flex-direction: column;
-  gap: var(--nf-s2);
-  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--nf-border);
+  border-radius: 0.9rem;
+  background: rgba(7, 16, 24, 0.45);
 }
 
 .nf-login-principle-icon {
   display: grid;
   place-items: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  border-radius: 999px;
-  background: rgba(0, 64, 49, 0.08);
-  color: var(--nf-forge);
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.7rem;
+  border: 1px solid var(--nf-border-strong);
+  background: var(--nf-bg-primary);
+  color: var(--nf-teal);
 }
 
 .nf-login-principle-icon .nf-nav-icon {
-  width: 1.15rem;
-  height: 1.15rem;
+  width: 1.2rem;
+  height: 1.2rem;
 }
 
 .nf-login-principle-copy {
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.15rem;
 }
 
 .nf-login-principle-copy strong {
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--nf-brand-navy);
+  letter-spacing: -0.01em;
+  color: var(--nf-text);
 }
 
 .nf-login-principle-copy span {
-  font-size: 0.82rem;
+  font-size: 0.98rem;
   line-height: 1.4;
-  color: var(--nf-muted);
+  color: var(--nf-text-muted);
 }
-
-.nf-login-tagline {
-  margin: var(--nf-s3) auto 0;
-  width: fit-content;
-  font-size: clamp(0.72rem, 0.62rem + 0.35vw, 0.85rem);
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-indent: 0.22em;
-  text-transform: uppercase;
-  color: var(--nf-brand-navy);
-  padding-bottom: 0.35em;
-  border-bottom: 2px solid var(--nf-forge);
-}
-
-.nf-login-tagline--on-card {
-  display: none;
-}
-
-/* ── sign-in panel ──────────────────────────────────────────────────── */
 
 .nf-login-panel {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: stretch;
-  padding: var(--nf-s7) var(--nf-s6);
+  align-items: center;
+  padding: clamp(1.75rem, 3vw, 3rem);
+  background: var(--nf-surface-raised);
+  border-left: 1px solid var(--nf-border);
+  box-shadow: inset 3px 0 0 rgba(207, 144, 85, 0.7);
 }
 
 .nf-login-card {
   width: 100%;
-  max-width: 28rem;
-  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  padding: var(--nf-s6) var(--nf-s5);
-  border: 1px solid var(--nf-border);
-  border-radius: 1.25rem;
-  background: var(--nf-card);
+  gap: 0.9rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
   box-shadow: none;
-  gap: var(--nf-s3);
 }
 
-.nf-login-compact-mark {
+.nf-login-compact-mark,
+.nf-login-tagline,
+.nf-login-tagline--on-card {
   display: none;
-  margin-bottom: var(--nf-s2);
-}
-
-.nf-login-compact-mark .nf-lockup-art {
-  width: min(280px, 100%);
-  height: auto;
-  object-fit: contain;
 }
 
 .nf-login-kicker {
   display: block;
-  margin: 0 0 0.15rem;
-  font-size: 0.72rem;
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: var(--nf-muted2);
+  color: var(--nf-copper);
 }
 
 .nf-login-title {
   margin: 0;
   font-family: var(--nf-font);
-  font-size: clamp(1.85rem, 1.5rem + 0.8vw, 2.2rem);
-  font-weight: 720;
-  line-height: 1.1;
+  font-size: clamp(1.85rem, 1.4rem + 1vw, 2.35rem);
+  font-weight: 680;
+  line-height: 1.12;
   letter-spacing: -0.03em;
-  color: var(--nf-brand-navy);
+  color: var(--nf-text);
 }
 
 .nf-login-lead {
   margin: 0;
-  font-size: var(--nf-t-body);
-  line-height: 1.55;
+  font-size: 1.05rem;
+  line-height: 1.5;
   color: var(--nf-muted);
 }
 
 .nf-login-notice {
   margin: 0;
-  padding: var(--nf-s3) var(--nf-s4);
+  padding: 0.75rem 0.9rem;
   border: 1px solid var(--nf-border);
   border-inline-start: 3px solid var(--nf-border-strong);
   border-radius: var(--nf-radius-sm);
-  background: var(--nf-card);
-  font-size: var(--nf-t-sm);
+  background: var(--nf-bg-primary);
+  font-size: 0.95rem;
   color: var(--nf-muted);
 }
 
 .nf-login-notice[data-tone="warn"] {
-  border-inline-start-color: var(--nf-warn);
+  border-inline-start-color: var(--nf-warning);
 }
 
 .nf-login-providers {
   display: flex;
   flex-direction: column;
-  gap: var(--nf-s3);
-  margin-top: var(--nf-s2);
+  gap: 0.75rem;
+  margin-top: 0.4rem;
 }
 
 .nf-provider {
   display: flex;
   align-items: center;
-  gap: var(--nf-s3);
-  min-height: 52px;
-  padding: 0 var(--nf-s4);
+  gap: 0.85rem;
+  min-height: 3.25rem;
+  padding: 0 1rem;
   border: 1px solid var(--nf-border-strong);
   border-radius: 0.85rem;
-  background: var(--nf-card);
+  background: var(--nf-bg-primary);
   font: inherit;
-  font-size: var(--nf-t-body);
-  font-weight: 600;
-  color: var(--nf-brand-navy);
+  font-size: 1.02rem;
+  font-weight: 650;
+  color: var(--nf-text);
   text-decoration: none;
   cursor: pointer;
 }
@@ -283,29 +261,30 @@
 }
 
 .nf-provider-arrow {
-  color: var(--nf-muted2);
+  color: var(--nf-text-muted);
   font-weight: 500;
 }
 
 .nf-provider:hover:not(:disabled) {
-  border-color: var(--nf-forge);
+  border-color: var(--nf-teal);
+  background: #0c1a28;
 }
 
 .nf-provider:focus-visible {
-  outline: 2px solid var(--nf-forge);
+  outline: 2px solid var(--nf-teal);
   outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .nf-provider {
-    transition: border-color 140ms ease;
+    transition: border-color 140ms ease, background 140ms ease;
   }
 }
 
 .nf-provider:disabled {
   border-color: var(--nf-border);
-  background: var(--nf-card-muted);
-  color: var(--nf-muted2);
+  background: var(--nf-bg-secondary);
+  color: var(--nf-faint);
   cursor: not-allowed;
 }
 
@@ -314,70 +293,71 @@
 }
 
 .nf-provider-mark {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   flex: none;
 }
 
 .nf-login-skeleton {
-  height: 52px;
+  height: 3.25rem;
   border-radius: 0.85rem;
-  background: var(--nf-card-muted);
+  background: var(--nf-bg-primary);
   border: 1px solid var(--nf-border);
 }
 
 .nf-login-status {
   margin: 0;
-  font-size: var(--nf-t-sm);
+  font-size: 0.95rem;
   line-height: 1.5;
-  color: var(--nf-muted2);
+  color: var(--nf-text-muted);
 }
 
 .nf-login-trust {
   display: flex;
   flex-direction: column;
-  gap: var(--nf-s4);
-  margin: var(--nf-s3) 0 0;
-  padding: var(--nf-s4) 0 0;
-  border-top: 1px solid var(--nf-rule-fine);
+  gap: 1rem;
+  margin: 0.6rem 0 0;
+  padding: 1.1rem 0 0;
+  border-top: 1px solid var(--nf-border);
   list-style: none;
 }
 
 .nf-login-trust li {
   display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr);
-  gap: var(--nf-s3);
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: 0.75rem;
   align-items: start;
 }
 
 .nf-login-trust-icon {
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 999px;
-  background: var(--nf-card-muted);
-  color: var(--nf-forge);
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.65rem;
+  border: 1px solid var(--nf-border);
+  background: var(--nf-bg-primary);
+  color: var(--nf-copper);
 }
 
 .nf-login-trust-icon .nf-nav-icon {
-  width: 1rem;
-  height: 1rem;
+  width: 1.05rem;
+  height: 1.05rem;
 }
 
 .nf-login-trust strong {
   display: block;
-  margin-bottom: 0.15rem;
-  font-size: 0.82rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.98rem;
   font-weight: 700;
-  color: var(--nf-brand-navy);
+  color: var(--nf-text);
 }
 
 .nf-login-trust span span,
 .nf-login-trust li > span:last-child {
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   line-height: 1.45;
-  color: var(--nf-muted);
+  color: var(--nf-text-muted);
 }
 
 .nf-login-diagnostic {
@@ -387,79 +367,45 @@
 
 .nf-login-diagnostic code {
   display: block;
-  margin-top: var(--nf-s2);
-  padding: var(--nf-s2);
+  margin-top: 0.4rem;
+  padding: 0.5rem;
   border-radius: var(--nf-radius-sm);
-  background: var(--nf-card-muted);
+  background: var(--nf-bg-primary);
   word-break: break-word;
 }
 
-/* ── narrower ───────────────────────────────────────────────────────── */
-
-@media (max-width: 1400px) {
-  .nf-login {
-    grid-template-columns: minmax(0, 1fr) minmax(24rem, 32rem);
+@media (max-width: 1100px) {
+  .nf-login-frame {
+    grid-template-columns: minmax(0, 1.15fr) minmax(20rem, 0.9fr);
   }
 
   .nf-login-lockup .nf-lockup-art {
-    width: min(680px, 100%);
+    width: min(28rem, 100%);
   }
 }
 
-@media (max-width: 1180px) {
-  .nf-login-principles {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Brand first, sign-in second. The full lockup stays; it is not crushed
-   into the card. */
-@media (max-width: 900px) {
+@media (max-width: 860px) {
   .nf-login {
-    grid-template-columns: minmax(0, 1fr);
-    min-height: 100dvh;
+    padding: 0.75rem;
+  }
+
+  .nf-login-frame {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    border-radius: 1.1rem;
   }
 
   .nf-login-brand {
-    padding: var(--nf-s6) var(--nf-s4) var(--nf-s5);
-  }
-
-  .nf-login-brand-inner {
-    max-width: 32rem;
-    margin-inline: auto;
-  }
-
-  .nf-login-lockup {
-    justify-content: center;
-  }
-
-  .nf-login-headline,
-  .nf-login-claim {
-    text-align: center;
-    margin-inline: auto;
-  }
-
-  .nf-login-principles {
-    grid-template-columns: 1fr;
-  }
-
-  .nf-login-principle {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: var(--nf-s3);
+    padding: 1.5rem 1.25rem 1.25rem;
   }
 
   .nf-login-panel {
-    justify-content: flex-start;
-    padding: 0 var(--nf-s4) var(--nf-s6);
+    border-left: 0;
+    box-shadow: inset 0 3px 0 rgba(207, 144, 85, 0.7);
+    padding: 1.5rem 1.25rem 1.75rem;
   }
 
-  .nf-login-card {
-    max-width: 32rem;
-  }
-
-  .nf-login-compact-mark,
-  .nf-login-tagline--on-card {
-    display: none;
+  .nf-login-headline {
+    font-size: clamp(1.85rem, 1.4rem + 2vw, 2.4rem);
   }
 }

@@ -53,6 +53,9 @@ describe("SignInPage", () => {
     expect(
       await screen.findByRole("heading", { level: 1, name: /welcome to nativeforge/i }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: /funding intelligence/i }),
+    ).toBeInTheDocument();
   });
 
   it("never puts 'not yet available' inside a provider button", async () => {
@@ -115,14 +118,17 @@ describe("SignInPage", () => {
     expect(lines.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("draws the full kit lockup on ivory, with the tagline in the artwork", async () => {
+  it("draws the full kit lockup, with the tagline in the artwork", async () => {
     render(<SignInPage />);
     await screen.findByRole("heading", { level: 1, name: /welcome to nativeforge/i });
     const lockup = document.querySelector(".nf-login-lockup");
     expect(lockup).toHaveAttribute("data-brand-mode", "full");
     expect(lockup?.querySelector("img")?.getAttribute("src")).toBe("/brand/nf-lockup.png");
     expect(screen.getAllByText("Find. Pursue. Govern.").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("Funding intelligence for a stronger tomorrow.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: /funding intelligence/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Built for Native nations.")).toBeInTheDocument();
     expect(screen.getByText("Find")).toBeInTheDocument();
     expect(screen.getByText("Pursue")).toBeInTheDocument();
     expect(screen.getByText("Govern")).toBeInTheDocument();
