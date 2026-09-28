@@ -53,12 +53,12 @@ export function GrantSparkCard({
     >
       <div className="nf-card-head-row">
         <h2 id="nf-spark-heading" className="nf-card-title">
-          Grant Sparks
+          Opportunities
         </h2>
         <span className="nf-chip nf-chip--rail">{statusChip}</span>
       </div>
       <p className="nf-card-one-liner">
-        Start with a demo opportunity or select an existing Spark.
+        Select an opportunity you are tracking, or add a sample to walk the workflow.
       </p>
       {locked ? (
         <p className="nf-locked-note">

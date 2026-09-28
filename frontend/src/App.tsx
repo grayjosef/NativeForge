@@ -93,6 +93,29 @@ const DEFAULT_ORG = "bbbbbbbb-cccc-dddd-eeee-ffffffffffff";
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/**
+ * Surfaces that render without a customer session.
+ *
+ * The three demos are bundled data. Sign-in is the front door. Everything
+ * else waits: the workspace used to paint first, with the demo organization
+ * chrome, and only afterwards notice that nobody was signed in.
+ */
+const SESSION_FREE_SURFACES: ReadonlySet<AppSurface> = new Set([
+  "sign_in",
+  "sc_customer_demo",
+  "nm_wa_operator_demo",
+  "beta_onboarding_cockpit",
+]);
+
+function SessionHold() {
+  return (
+    <div className="nf-boot" role="status" aria-live="polite" aria-label="Opening NativeForge">
+      <p className="nf-boot-title">Opening NativeForge</p>
+      <p className="nf-boot-hint">Checking your sign-in.</p>
+    </div>
+  );
+}
+
 function looksLikeUuid(s: string): boolean {
   return UUID_RE.test(s.trim());
 }
@@ -1247,6 +1270,18 @@ export default function App() {
     onExportDownload,
     refreshTrustCenter,
   ]);
+
+  // Hold the product until the session answers. A null session is "not yet",
+  // and rendering the workspace in that gap is how an unsigned visitor sees
+  // "Demo environment" and an empty organization before the front door.
+  if (!SESSION_FREE_SURFACES.has(surface)) {
+    if (session === null) {
+      return <SessionHold />;
+    }
+    if (!session.authenticated) {
+      return <SignInPage notice={authNotice} />;
+    }
+  }
 
   if (surface === "sign_in") {
     return (

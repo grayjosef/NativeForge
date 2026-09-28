@@ -1,53 +1,33 @@
-# NativeForge Handoff — Mission Control + Microsoft auth precheck
+# NativeForge Handoff — customer-launch completion, slice 1
 
 **Date:** 2026-09-28
 **Path:** `/home/josefgray/projects/nativeforge`
-**Live:** `https://nativeforge.mayhem-nc.dev`
+**Live before this slice:** `https://nativeforge.mayhem-nc.dev`
+**HEAD at start:** `1a534f1245e255cb9352ed8b232f4fd824536ddc`
 **Protected stash:** `stash@{0}: wip-sprint8-ui-redesign-do-not-commit` — never drop
-**Push policy:** commits and pushes allowed after tests; never force-push; never prune
 
-## Operating objective
+## Baseline re-established
 
-Finish NativeForge as a product. Demo is a live checkpoint, not a freeze line.
-Controlled-customer launch is the finish line. Collectors stay off unless Mayhem authorizes activation. Do not touch real tenants / Carolina Fire Protection Microsoft / Auth0.
+- `main` and `origin/main` were `1a534f12` (EmptyState import). Worktree clean of that fix.
+- Live root HTTP 200 and rendered the workspace, including the deadlines empty state that previously crashed.
+- `/backend/health` status `ok`, `git_sha` `unknown`, `production_ready` false.
+- `/backend/readiness`: `database_ready` true, `persistent_backend_live` false, `customer_auth_live` false, `controlled_customer_pilot` false.
+- `/api/auth/providers`: Google and Microsoft `configured: true`. `login_live` false. `customer_auth_live` false.
+- Login GETs 302 to accounts.google.com and login.microsoftonline.com.
+- Unauthenticated `/api/auth/session` is `unauthenticated`. Activation blockers include callback session, dev-header gate, invite binding, org binding, role mapping, and owner approval.
+- Repo Alembic head `0070` (`0070_pursuit_task_owner`). Local sqlite current `0068`. Production revision not exposed by health.
 
-## This run
+## This slice
 
-### Microsoft auth
+Unsigned visitors were painting the full workspace (demo chrome, empty organization) until the session request returned. Customer workflow copy still said “Grant Spark”.
 
-Live production still reports `microsoft.configured=false`. Login `?provider=microsoft` returns HTTP 200 `auth_not_configured` (not a 302 to Google). This is **deployment configuration**, not a code regression. Tests were green because they mock dispatch/callback and never talk to Entra.
+- Hold on “Opening NativeForge” until the session is known. Unsigned customer surfaces render the sign-in page. Bundled demo surfaces stay public.
+- Guided-workflow and opportunity-card copy say Opportunity / Opportunities.
 
-Code this run:
+## Tests
 
-- Prefixed Microsoft config must include all five keys, including `NF_OIDC_MICROSOFT_AUDIENCE` (token verify refuses empty audience; borrowing Google's audience would 302 then fail at callback).
-- `/api/auth/providers` now lists `missing_env` names only (no values).
-- Entra v2 conventional endpoints when discovery is off: `{tenant}/oauth2/v2.0/authorize` not `{issuer}/authorize`.
+- `npx vitest run src/App.test.tsx src/pages/WorkspacePage.test.tsx src/pages/SignInPage.test.tsx` — 16 passed.
 
-Exact production callback from code + live origin:
+## Customer-launch status
 
-`https://nativeforge.mayhem-nc.dev/api/auth/callback/microsoft`
-
-Human action remaining: create/register the Entra Web redirect URI and paste the five Railway variables, then sign in. Do not paste secrets into chat.
-
-### Mission Control
-
-Workspace now aggregates canonical org state into one read model (`GET /{org_id}/mission-control`). No second task table. Nullable `nf_pursuit_tasks.owner_membership_id` (Alembic **0070**) is the smallest org-scoped assignment. Workflow stages stay derived via `build_pursuit_stages` shared with Pursuit Command Center.
-
-## Tests this run
-
-- `ruff check src tests`: pass
-- pytest subset (mission control, command center, Sprint 5, Sprint 20 head pin, Gates 60/118/132, identity presentation, Microsoft dispatch, Gate 130 Entra paths, auth registry): **248 passed**
-- Frontend vitest MissionControl + PursuitCommandCenter: **8 passed**
-- Stash `stash@{0}` still present
-
-## Remaining launch-critical
-
-- Microsoft Entra app + Railway `NF_OIDC_MICROSOFT_*` — **HUMAN ACTION REQUIRED** (copy/paste in the completion report).
-- Discover remains empty until collector activation.
-- Pre-existing: `tests/test_sprint0_naming_guard.py::test_nf_sources_avoid_contractforge_table_names`.
-
-## Proposed next
-
-1. Operator: complete Entra + Railway Microsoft variables, then open live sign-in and report the landing page.
-2. After deploy, confirm Workspace Mission Control on two demo pursuits.
-3. Do not activate collectors without authorization.
+NOT READY. Auth activation is still false, live sign-in was not completed, discovery collectors are not switched on, invitations are not a customer flow, and no second-organization boundary was exercised this run.

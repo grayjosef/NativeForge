@@ -81,7 +81,7 @@ export function buildProgressSteps(i: ProgressInputs): ProgressStep[] {
     step(
       "spark",
       "Opportunity",
-      "Grant Spark",
+      "Opportunity",
       i.sparkApiErr
         ? "error"
         : !hasProfile

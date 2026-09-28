@@ -6,6 +6,30 @@
    used to centre a compact mark in a dark void. That composition is gone.
    ══════════════════════════════════════════════════════════════════════ */
 
+/* Shown only while the session check is in flight. Ivory, like the front
+   door, so the product does not flash the workspace and then replace it. */
+.nf-boot {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.35rem;
+  background: var(--nf-brand-ivory);
+  color: var(--nf-brand-navy);
+  text-align: center;
+}
+
+.nf-boot-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.nf-boot-hint {
+  margin: 0;
+  color: var(--nf-ink-muted, #5c6570);
+}
+
 .nf-login {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(28rem, 38rem);

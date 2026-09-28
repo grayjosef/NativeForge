@@ -102,6 +102,12 @@ describe("App", () => {
     mockApi({ authenticated: false });
     render(<App />);
 
+    // First paint is the hold, not the workspace. The session check is async,
+    // and painting "Your organization" in that gap is the empty demo the
+    // front door exists to prevent.
+    expect(screen.queryByRole("heading", { name: /your organization/i })).toBeNull();
+    expect(screen.getByRole("status", { name: /opening nativeforge/i })).toBeInTheDocument();
+
     // The sign-in page's own h1. It greets rather than apologising, which is
     // the point of the rebuild: the front door should not open on the
     // product's configuration state.
