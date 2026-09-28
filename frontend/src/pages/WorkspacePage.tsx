@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { MissionControl, type MissionControlPayload } from "../components/MissionControl";
 import type { ProgressStep } from "../components/ProgressStrip";
+import { EmptyState } from "../components/StateView";
 import { VerificationTiers, buildTiers } from "../components/VerificationTiers";
 import { WorkflowProgress } from "../components/ui/WorkflowProgress";
 import {
