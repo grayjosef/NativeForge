@@ -94,6 +94,7 @@ COPY scripts/run_gate163_robots_preflight.py ./scripts/run_gate163_robots_prefli
 COPY scripts/run_gate163_grants_gov_bounded_corpus_collection.py ./scripts/run_gate163_grants_gov_bounded_corpus_collection.py
 COPY scripts/reconcile_grants_gov_spark_graph.py ./scripts/reconcile_grants_gov_spark_graph.py
 COPY scripts/verify_gate163_block5c_production.py ./scripts/verify_gate163_block5c_production.py
+COPY scripts/inventory_source_fleet.py ./scripts/inventory_source_fleet.py
 COPY fixtures/source_ingestion/NF_SOURCE_SEED_2026.csv ./fixtures/source_ingestion/NF_SOURCE_SEED_2026.csv
 COPY tests/fixtures/document_ocr/ ./fixtures/document_ocr/
 
