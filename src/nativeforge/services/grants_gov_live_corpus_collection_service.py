@@ -37,14 +37,10 @@ from nativeforge.services.source_collection_transport_service import (
     LIVE,
     execute_request,
 )
-from nativeforge.services.source_live_authorization_service import (
-    authorize_source_for_live_access,
+from nativeforge.services.source_live_collection_policy_service import (
+    assert_bounded_collection_permitted,
 )
-from nativeforge.services.source_live_fetch_opt_in_service import is_live_fetch_opted_in
-from nativeforge.services.source_live_warrant_service import (
-    WARRANT_SOURCE_COLLECTION,
-    evaluate_live_request,
-)
+from nativeforge.services.source_live_warrant_service import WARRANT_SOURCE_COLLECTION
 from nativeforge.services.source_raw_payload_persistence_service import (
     persist_raw_payload,
 )
@@ -93,38 +89,16 @@ def assert_collection_permitted(
     organization_id: uuid.UUID,
     source_id: str,
 ) -> CollectionRefusal | None:
-    authorization = authorize_source_for_live_access(
-        connection=connection,
+    refusal = assert_bounded_collection_permitted(
+        connection,
         organization_id=organization_id,
         source_id=source_id,
-        purpose="source_collection",
-        method="POST",
-        exercise_runtime=True,
-    )
-    if str(authorization.get("authorization_status") or "") != "approved":
-        return CollectionRefusal(
-            reasons=[
-                f"authorization:{authorization.get('authorization_status')}",
-                *(authorization.get("refusal_reasons") or []),
-            ]
-        )
-    if not is_live_fetch_opted_in(
-        connection=connection, organization_id=organization_id, source_id=source_id
-    ):
-        return CollectionRefusal(reasons=["live_fetch_not_opted_in"])
-    warrant = evaluate_live_request(
-        warrant_kind=WARRANT_SOURCE_COLLECTION,
-        authorized_source_id=source_id,
         request_url=SEARCH2_URL,
         method="POST",
-        connection=connection,
-        organization_id=organization_id,
     )
-    if not warrant.get("permitted"):
-        return CollectionRefusal(
-            reasons=list(warrant.get("refusal_reasons") or ["warrant_not_permitted"])
-        )
-    return None
+    if refusal is None:
+        return None
+    return CollectionRefusal(reasons=list(refusal.reasons))
 
 
 def stamp_active_source_success(

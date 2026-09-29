@@ -37,7 +37,10 @@ ADAPTER_CLASS: dict[str, tuple[str, str]] = {
     "foundation_org_page": ("ADAPTER_SUPPORTED", "html_listing"),
     "state_portal_generic": ("NEEDS_RESEARCH", "html_listing_unconfirmed"),
     "bia_program_page_html": ("NEW_ADAPTER_REQUIRED", "html_detail_scaffold"),
-    "federal_register_documents_json": ("NEW_ADAPTER_REQUIRED", "rest_json_scaffold"),
+    "federal_register_documents_json": (
+        "ADAPTER_SUPPORTED",
+        "structured_federal_api",
+    ),
 }
 
 LOGIN_BUCKETS = frozenset({"blocked_login_portal", "members_gated", "login_gated"})

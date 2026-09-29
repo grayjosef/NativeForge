@@ -114,8 +114,11 @@ def test_warrant_refusal_blocks_before_transport() -> None:
     try:
         with patch(
             "nativeforge.services.grants_gov_live_corpus_collection_service"
-            ".authorize_source_for_live_access",
-            return_value={"authorization_status": "refused"},
+            ".assert_bounded_collection_permitted",
+            return_value=__import__(
+                "nativeforge.services.source_live_collection_policy_service",
+                fromlist=["CollectionRefusal"],
+            ).CollectionRefusal(reasons=["authorization:refused"]),
         ):
             refusal = assert_collection_permitted(
                 session, organization_id=DEMO, source_id=SOURCE
