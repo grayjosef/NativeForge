@@ -18,6 +18,13 @@ def sql_bool_literal(connection: sa.engine.Connection, *, value: bool) -> str:
     return "true" if value else "false"
 
 
+def sql_bool_param(connection: sa.engine.Connection, *, value: bool) -> bool | int:
+    """Bind-parameter form of :func:`sql_bool_literal` for INSERT/UPDATE rows."""
+    if dialect_name(connection) == "sqlite":
+        return 1 if value else 0
+    return bool(value)
+
+
 def is_current_active_sql(
     connection: sa.engine.Connection, *, column: str = "is_current"
 ) -> str:

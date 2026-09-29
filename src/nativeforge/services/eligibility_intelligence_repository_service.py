@@ -15,6 +15,7 @@ from nativeforge.services.intelligence_sql_dialect_service import (
     insert_or_replace_rows,
     is_current_active_sql,
     sql_bool_literal,
+    sql_bool_param,
 )
 
 SCHEMA_VERSION = "nf_eligibility_intelligence_repository_v1"
@@ -70,11 +71,15 @@ def write_requirements(
             "source_id": r.get("source_id"),
             "raw_payload_sha256": r.get("raw_payload_sha256"),
             "confidence_class": r.get("confidence_class"),
-            "is_structural": 1 if r.get("is_structural") else 0,
-            "is_addressable": 1 if r.get("is_addressable") else 0,
+            "is_structural": sql_bool_param(
+                connection, value=bool(r.get("is_structural"))
+            ),
+            "is_addressable": sql_bool_param(
+                connection, value=bool(r.get("is_addressable"))
+            ),
             "model_version": r.get("model_version") or ELIGIBILITY_MODEL_VERSION,
             "superseded_at": None,
-            "is_current": 1,
+            "is_current": sql_bool_param(connection, value=True),
             "created_at": stamp,
         }
         for r in requirements
@@ -136,9 +141,9 @@ def write_capability_profile(
         "fields_json": _json(profile.get("fields") or {}),
         "answered_count": int(profile.get("answered_count") or 0),
         "unanswered_count": int(profile.get("unanswered_count") or 0),
-        "authority_verification_performed": 0,
+        "authority_verification_performed": sql_bool_param(connection, value=False),
         "superseded_at": None,
-        "is_current": 1,
+        "is_current": sql_bool_param(connection, value=True),
         "recorded_at": profile.get("recorded_at") or stamp,
         "created_at": stamp,
     }
@@ -189,10 +194,12 @@ def write_matches(
             "applied_exclusion_count": int(m.get("applied_exclusion_count") or 0),
             "requirement_count": int(m.get("requirement_count") or 0),
             "conditions_to_obtain_json": _json(m.get("conditions_to_obtain") or []),
-            "review_required": 1 if m.get("review_required") else 0,
-            "consumed_global_normalization": 1,
+            "review_required": sql_bool_param(
+                connection, value=bool(m.get("review_required"))
+            ),
+            "consumed_global_normalization": sql_bool_param(connection, value=True),
             "evaluated_at": m.get("evaluated_at") or stamp,
-            "is_current": 1,
+            "is_current": sql_bool_param(connection, value=True),
             "created_at": stamp,
         }
         for m in matches

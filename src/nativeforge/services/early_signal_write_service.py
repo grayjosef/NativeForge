@@ -9,6 +9,7 @@ import sqlalchemy as sa
 
 from nativeforge.services.early_funding_signal_service import signal_invariant_failures
 from nativeforge.services.early_signal_repository_service import SIGNALS
+from nativeforge.services.intelligence_sql_dialect_service import sql_bool_param
 
 SCHEMA_VERSION = "nf_early_signal_write_v1"
 
@@ -35,13 +36,19 @@ def upsert_signal(
         "possible_opportunity_number": signal.get("possible_opportunity_number"),
         "confidence_class": signal.get("confidence_class"),
         "ambiguity_class": signal.get("ambiguity_class"),
-        "review_required": 1 if signal.get("review_required") else 0,
-        "is_miss_evidence": 1 if signal.get("is_miss_evidence") else 0,
-        "is_forward_looking": 1 if signal.get("is_forward_looking") else 0,
+        "review_required": sql_bool_param(
+            connection, value=bool(signal.get("review_required"))
+        ),
+        "is_miss_evidence": sql_bool_param(
+            connection, value=bool(signal.get("is_miss_evidence"))
+        ),
+        "is_forward_looking": sql_bool_param(
+            connection, value=bool(signal.get("is_forward_looking"))
+        ),
         "linked_canonical_id": signal.get("linked_canonical_id"),
         "linked_gap_id": signal.get("linked_gap_id"),
-        "creates_opportunity": 0,
-        "auto_onboarding_permitted": 0,
+        "creates_opportunity": sql_bool_param(connection, value=False),
+        "auto_onboarding_permitted": sql_bool_param(connection, value=False),
         "observed_at": signal.get("observed_at") or now,
         "model_version": signal.get("model_version"),
         "created_at": now,

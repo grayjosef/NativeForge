@@ -30,6 +30,7 @@ from nativeforge.services.intelligence_sql_dialect_service import (
     insert_or_replace_rows,
     is_current_active_sql,
     sql_bool_literal,
+    sql_bool_param,
 )
 from nativeforge.services.native_relevance_ontology_service import (
     ONTOLOGY_VERSION,
@@ -232,7 +233,9 @@ def write_assessments(
             "relevance_class": a["relevance_class"],
             "candidate_state": a["candidate_state"],
             "confidence": a["confidence"],
-            "review_required": 1 if a.get("review_required") else 0,
+            "review_required": sql_bool_param(
+                connection, value=bool(a.get("review_required"))
+            ),
             "review_reasons_json": _json(a.get("review_reasons") or []),
             "reasons_json": _json(a.get("reasons") or []),
             "entity_classes_json": _json(a.get("entity_classes") or []),
@@ -242,7 +245,7 @@ def write_assessments(
             "scope": a.get("scope") or "GLOBAL",
             "computed_at": a.get("computed_at") or stamp,
             "superseded_at": None,
-            "is_current": 1,
+            "is_current": sql_bool_param(connection, value=True),
             "created_at": stamp,
         }
         for a in assessments
