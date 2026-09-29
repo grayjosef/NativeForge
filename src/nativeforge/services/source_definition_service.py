@@ -121,9 +121,14 @@ def _host_of(url: Any) -> str:
 
 
 def _row_for(
-    *, connection: Any, table_name: str, columns: dict[str, Any], source_id: str
+    *,
+    connection: Any,
+    table_name: str,
+    columns: dict[str, Any],
+    source_id: str,
+    match_column: str = "source_id",
 ) -> dict[str, Any] | None:
-    """Read one row by `source_id`. An unreadable table contributes nothing."""
+    """Read one row by key column. An unreadable table contributes nothing."""
     if connection is None or not source_id:
         return None
     try:
@@ -133,16 +138,18 @@ def _row_for(
             metadata,
             *(sa.Column(name, kind) for name, kind in columns.items()),
         )
-        found = connection.execute(
-            sa.select(table).where(table.c.source_id == source_id)
-        ).first()
+        key_col = table.c[match_column]
+        # A failed statement aborts the Postgres transaction unless rolled back.
+        with connection.begin_nested():
+            found = connection.execute(
+                sa.select(table).where(key_col == source_id)
+            ).first()
     except Exception:  # noqa: BLE001 - an unreadable store states nothing
         return None
     return dict(found._mapping) if found is not None else None
 
 
 _OPPORTUNITY_COLUMNS: dict[str, Any] = {
-    "source_id": sa.Text(),
     "seed_id": sa.Text(),
     "source_name": sa.Text(),
     "check_interval_days": sa.Integer(),
@@ -226,6 +233,7 @@ def build_source_definition(
         table_name=OPPORTUNITY_SOURCES_TABLE,
         columns=_OPPORTUNITY_COLUMNS,
         source_id=key,
+        match_column="seed_id",
     )
     activation = _row_for(
         connection=connection,

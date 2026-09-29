@@ -11,6 +11,16 @@ AUTHORIZED_SOURCE = "nf-seed-2026-api-grants-gov-search2"
 
 
 def fetch_catalog_source(connection: Any, *, source_id: str) -> bool:
+    """Registered = code seed catalog row and/or legacy health-registry row."""
+    try:
+        from nativeforge.services.source_monitoring_approved_source_service import (
+            load_registry_rows,
+        )
+
+        if source_id in load_registry_rows():
+            return True
+    except Exception:  # noqa: BLE001 - unreadable catalog is not registration
+        pass
     row = connection.execute(
         sa.text("SELECT 1 FROM nf_opportunity_sources WHERE seed_id = :sid LIMIT 1"),
         {"sid": source_id},

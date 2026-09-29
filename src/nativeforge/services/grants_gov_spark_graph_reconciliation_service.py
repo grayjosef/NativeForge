@@ -7,15 +7,15 @@ import hashlib
 import uuid
 from typing import Any
 
+import sqlalchemy as sa
+
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories import grant_sparks as gs_repo
 from nativeforge.repositories.canonical_opportunity_batch_repository import (
     NormalizedSourceObservation,
     persist_observations,
 )
-from nativeforge.services.opportunity_identity_versioning_service import (
-    build_opportunity_identity,
-)
+from nativeforge.services.source_adapter_contract_service import identity_for_normalized
 
 SCHEMA_VERSION = "nf_grants_gov_spark_graph_reconciliation_v1"
 SOURCE = "nf-seed-2026-api-grants-gov-search2"
@@ -71,6 +71,45 @@ def _normalized_from_spark_row(row: Any) -> dict[str, Any]:
     }
 
 
+def _purge_spark_reconcile_l1_shell_observations(
+    connection: Any, *, source_id: str
+) -> int:
+    """Remove bogus L1: rows from an earlier reconcile missing doc_type."""
+    result = connection.execute(
+        sa.text(
+            """
+            DELETE FROM nf_opportunity_field_provenance
+            WHERE source_id = :sid AND canonical_id = 'L1:'
+            """
+        ),
+        {"sid": source_id},
+    )
+    prov = int(result.rowcount or 0)
+    result = connection.execute(
+        sa.text(
+            """
+            DELETE FROM nf_opportunity_source_observations
+            WHERE source_id = :sid AND canonical_id = 'L1:'
+            """
+        ),
+        {"sid": source_id},
+    )
+    obs = int(result.rowcount or 0)
+    connection.execute(
+        sa.text(
+            """
+            DELETE FROM nf_canonical_opportunities
+            WHERE canonical_id = 'L1:'
+              AND NOT EXISTS (
+                SELECT 1 FROM nf_opportunity_source_observations o
+                WHERE o.canonical_id = nf_canonical_opportunities.canonical_id
+              )
+            """
+        )
+    )
+    return obs + prov
+
+
 def reconcile_grants_gov_sparks_to_canonical_graph(
     connection: Any,
     *,
@@ -81,6 +120,9 @@ def reconcile_grants_gov_sparks_to_canonical_graph(
 ) -> dict[str, Any]:
     """No network. Idempotent graph backfill from persisted sparks."""
     stamp = now or dt.datetime.now(dt.UTC)
+    shells_removed = _purge_spark_reconcile_l1_shell_observations(
+        connection, source_id=source_id
+    )
     rows = gs_repo.list_grant_sparks_for_org(
         session=connection, org_id=organization_id, org_type=org_type
     )
@@ -95,13 +137,14 @@ def reconcile_grants_gov_sparks_to_canonical_graph(
         if not normalized.get("parseable"):
             continue
         fields = normalized["fields"]
-        identity = build_opportunity_identity(
-            opportunity_number=fields.get("opportunity_number"),
-            doc_type=fields.get("doc_type"),
-            opportunity_id=fields.get("source_record_id"),
-            aln_list=fields.get("assistance_listings"),
-            agency_code=fields.get("funder_agency_code"),
-        )
+        meta = row.applicant_types_json if isinstance(row.applicant_types_json, dict) else {}
+        if meta.get("grants_gov_doc_type"):
+            fields["doc_type"] = str(meta["grants_gov_doc_type"])
+        elif meta.get("grants_gov_opp_status") in ("posted", "forecasted"):
+            fields["doc_type"] = (
+                "synopsis" if meta.get("grants_gov_opp_status") == "posted" else "forecast"
+            )
+        identity = identity_for_normalized(normalized, source_id=source_id)
         dup = str(row.duplicate_key or row.id)
         observations.append(
             NormalizedSourceObservation(
@@ -120,5 +163,6 @@ def reconcile_grants_gov_sparks_to_canonical_graph(
         "schema_version": SCHEMA_VERSION,
         "sparks_considered": len(grants_gov),
         "observations_built": len(observations),
+        "l1_shell_rows_removed": shells_removed,
         "canonical_metrics": metrics,
     }

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 import uuid
 from dataclasses import dataclass
@@ -13,6 +14,10 @@ import sqlalchemy as sa
 from nativeforge.db.models import Organization
 from nativeforge.db.rls import reapply_org_rls_after_commit
 from nativeforge.lib.demo_isolation import OrgType
+from nativeforge.repositories.source_collection_raw_payload_repository import (
+    BLOCK_DIFFERENT_BYTES,
+    get_payload,
+)
 from nativeforge.services.grants_gov_corpus_ingest_service import (
     _canonical_batch_metrics,
     ingest_grants_gov_search2_payload,
@@ -287,24 +292,61 @@ def run_grants_gov_bounded_live_collection(
         collector_invoked=True,
         authorized_source_id=source_id,
     )
-    if not persisted.get("persisted"):
-        return LiveCollectionResult(
-            permitted=True,
-            dispatched=True,
-            http_status=dispatched.get("status_code"),
-            search_body=search_body,
-            metrics={},
-            canonical_metrics={},
-            payload_sha256=persisted.get("payload_sha256"),
-            attempt_id=persisted.get("attempt_id"),
-            refusal=CollectionRefusal(
-                reasons=list(persisted.get("blocked_reasons") or ["payload_not_persisted"])
-            ),
-        )
+    ingest_body = body
+    payload_meta = persisted
+    upstream_offer_sha256 = None
+    if not (persisted.get("persisted") or persisted.get("deduplicated")):
+        blocked = list(persisted.get("blocked_reasons") or [])
+        if any(BLOCK_DIFFERENT_BYTES in str(reason) for reason in blocked):
+            upstream_offer_sha256 = hashlib.sha256(body).hexdigest()
+            stored = get_payload(
+                connection=connection,
+                organization_id=organization_id,
+                attempt_id=persisted.get("attempt_id"),
+                include_body=True,
+            )
+            if stored.get("body_bytes") and stored.get("hash_verified"):
+                ingest_body = stored["body_bytes"]
+                payload_meta = {
+                    **persisted,
+                    "payload_sha256": stored.get("readback_sha256")
+                    or (stored.get("payload") or {}).get("payload_sha256"),
+                    "using_stored_raw_after_upstream_change": True,
+                    "upstream_offer_sha256": upstream_offer_sha256,
+                }
+            else:
+                return LiveCollectionResult(
+                    permitted=True,
+                    dispatched=True,
+                    http_status=dispatched.get("status_code"),
+                    search_body=search_body,
+                    metrics={},
+                    canonical_metrics={},
+                    payload_sha256=persisted.get("payload_sha256"),
+                    attempt_id=persisted.get("attempt_id"),
+                    refusal=CollectionRefusal(
+                        reasons=blocked or ["payload_not_persisted"]
+                    ),
+                )
+        else:
+            return LiveCollectionResult(
+                permitted=True,
+                dispatched=True,
+                http_status=dispatched.get("status_code"),
+                search_body=search_body,
+                metrics={},
+                canonical_metrics={},
+                payload_sha256=persisted.get("payload_sha256"),
+                attempt_id=persisted.get("attempt_id"),
+                refusal=CollectionRefusal(
+                    reasons=blocked or ["payload_not_persisted"]
+                ),
+            )
 
     # Durable raw evidence must survive canonical batch rollbacks.
-    session.commit()
-    reapply_org_rls_after_commit(session, organization_id, org_type)
+    if persisted.get("persisted"):
+        session.commit()
+        reapply_org_rls_after_commit(session, organization_id, org_type)
 
     org = session.get(Organization, organization_id)
     if org is None:
@@ -317,9 +359,9 @@ def run_grants_gov_bounded_live_collection(
         org=org,
         org_type=org_type,
         source_id=source_id,
-        body_bytes=body,
-        payload_sha256=str(persisted.get("payload_sha256") or ""),
-        attempt_id=str(persisted.get("attempt_id") or "") or None,
+        body_bytes=ingest_body,
+        payload_sha256=str(payload_meta.get("payload_sha256") or ""),
+        attempt_id=str(payload_meta.get("attempt_id") or "") or None,
         now=now,
     )
     if int(_canonical_batch_metrics(ingest.canonical).get("batch_failures") or 0) > 0:
@@ -330,8 +372,8 @@ def run_grants_gov_bounded_live_collection(
             search_body=search_body,
             metrics=rollup_collection_metrics(ingest),
             canonical_metrics=ingest.canonical,
-            payload_sha256=str(persisted.get("payload_sha256") or ""),
-            attempt_id=str(persisted.get("attempt_id") or "") or None,
+            payload_sha256=str(payload_meta.get("payload_sha256") or ""),
+            attempt_id=str(payload_meta.get("attempt_id") or "") or None,
             refusal=CollectionRefusal(
                 reasons=["canonical_batch_failed_after_raw_payload_persisted"]
             ),
@@ -343,6 +385,12 @@ def run_grants_gov_bounded_live_collection(
         at=now,
     )
     metrics = rollup_collection_metrics(ingest)
+    if upstream_offer_sha256:
+        metrics = {
+            **metrics,
+            "upstream_offer_sha256": upstream_offer_sha256,
+            "ingested_stored_raw_after_upstream_change": True,
+        }
     return LiveCollectionResult(
         permitted=True,
         dispatched=True,
@@ -350,7 +398,7 @@ def run_grants_gov_bounded_live_collection(
         search_body=search_body,
         metrics=metrics,
         canonical_metrics=ingest.canonical,
-        payload_sha256=str(persisted.get("payload_sha256") or ""),
-        attempt_id=str(persisted.get("attempt_id") or "") or None,
+        payload_sha256=str(payload_meta.get("payload_sha256") or ""),
+        attempt_id=str(payload_meta.get("attempt_id") or "") or None,
         refusal=None,
     )

@@ -110,6 +110,20 @@ def test_raw_payload_survives_canonical_batch_failure() -> None:
             pass
 
 
+def test_build_source_definition_does_not_abort_db_transaction() -> None:
+    """Postgres aborts the txn on a bad health-registry SELECT; must not."""
+    from nativeforge.services.source_definition_service import build_source_definition
+
+    soh.ensure_org(DEMO, "demo")
+    session = SessionLocal()
+    conn = session.connection()
+    build_source_definition(
+        source_id=SOURCE, connection=conn, organization_id=DEMO
+    )
+    assert conn.execute(sa.text("SELECT 1")).scalar() == 1
+    session.close()
+
+
 def test_canonical_batch_succeeds_for_parseable_hit() -> None:
     sha = "b" * 64
     soh.ensure_org(DEMO, "demo")
