@@ -26,6 +26,8 @@ def main() -> int:
             limit=args.limit,
             dry_run=args.dry_run,
         )
+        if not args.dry_run:
+            session.commit()
         print(json.dumps(out, default=str, indent=2))
         return 0
     finally:
