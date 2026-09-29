@@ -143,6 +143,21 @@ export async function createOrUpdateTribalProfile(
   return { mode: "created", profile: await parseJson(res) };
 }
 
+export async function getCustomerOpportunityFeed(
+  baseUrl: string,
+  plane: Plane,
+  orgId: string,
+  opts: { limit?: number } = {},
+): Promise<Record<string, unknown>> {
+  const q = opts.limit != null ? `?limit=${opts.limit}` : "";
+  const path = buildM0Path(plane, orgId, `/discovery/customer-opportunity-feed${q}`);
+  const r = await fetch(`${baseUrl}${path}`, { headers: orgHeaderOnly(orgId) });
+  if (!r.ok) {
+    throw new Error(await readHttpError(r));
+  }
+  return parseJson(r);
+}
+
 export async function listGrantSparks(
   baseUrl: string,
   plane: Plane,

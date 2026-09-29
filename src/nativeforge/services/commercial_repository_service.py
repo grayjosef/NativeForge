@@ -215,6 +215,44 @@ def explain_critical_query(connection: Any, name: str) -> dict[str, Any]:
     }
 
 
+def load_entitlement_material(
+    connection: Any, *, organization_id: str
+) -> dict[str, Any]:
+    """Ledger + extensions for one organisation (mutation guard path only)."""
+    from nativeforge.services.commercial_ledger_service import replay
+
+    events = [
+        dict(r)
+        for r in connection.execute(
+            sa.text(
+                f"SELECT event_id, event_type, occurred_at, amount_cents, "
+                f"paid_through, organization_id "
+                f"FROM {EVENTS} WHERE organization_id = :org "
+                f"ORDER BY occurred_at, event_id"
+            ),
+            {"org": organization_id},
+        ).mappings()
+    ]
+    extensions = [
+        dict(r)
+        for r in connection.execute(
+            sa.text(
+                f"SELECT extension_id, organization_id, granted_by, "
+                f"granted_by_role, granted_at, duration_days, expires_at, "
+                f"reason, underlying_license_state, underlying_maintenance_state, "
+                f"underlying_delinquency_days, revoked_at, revoked_by, is_demo "
+                f"FROM {EXTENSIONS} WHERE organization_id = :org"
+            ),
+            {"org": organization_id},
+        ).mappings()
+    ]
+    return {
+        "ledger_events": events,
+        "ledger": replay(events),
+        "extensions": extensions,
+    }
+
+
 def explain_is_falsifiable(connection: Any) -> dict[str, Any]:
     """Prove the scan detector still fires, on a query nothing can serve."""
     sql = (

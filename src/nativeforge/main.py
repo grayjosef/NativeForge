@@ -97,6 +97,10 @@ from nativeforge.api.operator_workbench_advisory_routes import (
     demo_workbench_advisory_router,
     real_workbench_advisory_router,
 )
+from nativeforge.api.customer_opportunity_feed_routes import (
+    demo_feed_router,
+    real_feed_router,
+)
 from nativeforge.api.opportunity_discovery_routes import (
     demo_discovery_router,
     real_discovery_router,
@@ -236,6 +240,8 @@ def create_app() -> FastAPI:
     app.include_router(real_grant_spark_router)
     app.include_router(demo_discovery_router)
     app.include_router(real_discovery_router)
+    app.include_router(demo_feed_router)
+    app.include_router(real_feed_router)
     app.include_router(demo_live_federal_search_router)
     app.include_router(real_live_federal_search_router)
     app.include_router(demo_nofo_router)

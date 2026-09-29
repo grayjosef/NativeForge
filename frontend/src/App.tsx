@@ -30,6 +30,7 @@ import {
   getScoreLatest,
   getTribalProfile,
   getTrustManifest,
+  getCustomerOpportunityFeed,
   listGrantSparks,
   openPursuit,
   patchPursuitTask,
@@ -565,7 +566,32 @@ export default function App() {
     setSparkErr(null);
     setSparkBusy(true);
     try {
-      const list = await listGrantSparks(base, plane, o);
+      let list = await listGrantSparks(base, plane, o);
+      try {
+        const feedPayload = await getCustomerOpportunityFeed(base, plane, o, { limit: 80 });
+        const feed = feedPayload.feed as Record<string, unknown> | undefined;
+        const recs = Array.isArray(feed?.recommendations)
+          ? (feed.recommendations as Record<string, unknown>[])
+          : [];
+        if (recs.length > 0 && feedPayload.sourced_from_canonical_graph === true) {
+          const fromFeed = recs.map((rec) => ({
+            id: String(rec.canonical_id ?? rec.recommendation_id ?? ""),
+            title: rec.title,
+            agency: rec.funder_name,
+            application_deadline: rec.deadline,
+            authoritative_feed: true,
+            relevance_class: rec.relevance_class,
+            eligibility_view: rec.eligibility_view,
+            known_unknowns: rec.known_unknowns,
+            canonical_id: rec.canonical_id,
+          }));
+          const seen = new Set(fromFeed.map((r) => r.id));
+          const merged = [...fromFeed, ...list.filter((s) => !seen.has(String(s.id ?? "")))];
+          list = merged;
+        }
+      } catch {
+        /* grant-sparks remain the fallback when the canonical feed is unavailable */
+      }
       setSparks(list);
       const sid = sparkId.trim();
       if (!sid) {
