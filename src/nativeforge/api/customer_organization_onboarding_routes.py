@@ -75,11 +75,11 @@ def _subject_id(cookie: str | None, body_subject: str | None) -> str:
     )
 
 
-def _profile_get(org_id: uuid.UUID, ctx: OrgContext, session: Session) -> dict[str, Any]:
+def _profile_get(
+    org_id: uuid.UUID, ctx: OrgContext, session: Session
+) -> dict[str, Any]:
     guard_same_org_403(org_id, ctx)
-    profile = load_latest_profile(
-        session.connection(), organization_id=str(ctx.org_id)
-    )
+    profile = load_latest_profile(session.connection(), organization_id=str(ctx.org_id))
     return {"profile": profile, "has_profile": profile is not None}
 
 

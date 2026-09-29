@@ -16,10 +16,13 @@ from nativeforge.services.customer_auth_activation_gate_service import (  # noqa
     build_customer_auth_activation_gate,
 )
 
+
 def main() -> None:
     auth = build_customer_auth_activation_gate()
     assessment = build_launch_assessment()
-    feed_routes = (ROOT / "src/nativeforge/api/customer_opportunity_feed_routes.py").is_file()
+    feed_routes = (
+        ROOT / "src/nativeforge/api/customer_opportunity_feed_routes.py"
+    ).is_file()
     onboarding_routes = (
         ROOT / "src/nativeforge/api/customer_organization_onboarding_routes.py"
     ).is_file()

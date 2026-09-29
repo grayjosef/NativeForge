@@ -309,15 +309,11 @@ def build_authority_dimension_status(
         organization_id=organization_id,
         identity_id=subject_identity_id,
     )
-    identity_status = (
-        str(grant["identity_status"]) if grant else IDENTITY_UNVERIFIED
-    )
+    identity_status = str(grant["identity_status"]) if grant else IDENTITY_UNVERIFIED
     affiliation_status = (
         str(grant["affiliation_status"]) if grant else AFFILIATION_UNVERIFIED
     )
-    authority_status = (
-        str(grant["authority_status"]) if grant else AUTHORITY_UNVERIFIED
-    )
+    authority_status = str(grant["authority_status"]) if grant else AUTHORITY_UNVERIFIED
     return {
         "schema_version": SCHEMA_VERSION,
         "organization_id": organization_id,
