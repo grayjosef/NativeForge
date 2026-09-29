@@ -75,6 +75,18 @@ def _purge_spark_reconcile_l1_shell_observations(
     connection: Any, *, source_id: str
 ) -> int:
     """Remove bogus L1: rows from an earlier reconcile missing doc_type."""
+    connection.execute(
+        sa.text(
+            """
+            DELETE FROM nf_opportunity_versions
+            WHERE observation_id IN (
+                SELECT observation_id FROM nf_opportunity_source_observations
+                WHERE source_id = :sid AND canonical_id = 'L1:'
+            )
+            """
+        ),
+        {"sid": source_id},
+    )
     result = connection.execute(
         sa.text(
             """
