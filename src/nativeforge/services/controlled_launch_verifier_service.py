@@ -14,7 +14,7 @@ from nativeforge.services.customer_auth_activation_gate_service import (
 )
 
 SCHEMA_VERSION = "nf_controlled_launch_verifier_v1"
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[3]
 
 GATE_SCRIPTS: tuple[tuple[str, str], ...] = (
     ("native_relevance_gate173", "scripts/verify_nativeforge_native_relevance_gate173.sh"),
