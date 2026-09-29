@@ -51,6 +51,12 @@ SCHEMA_VERSION = "nf_grants_gov_corpus_ingest_v1"
 GRANTS_GOV_DETAIL_URL = "https://www.grants.gov/search-results-detail/{opp_id}"
 
 
+def _canonical_batch_metrics(canonical: dict[str, Any]) -> dict[str, Any]:
+    """``persist_observations`` nests counters under ``metrics``."""
+    nested = canonical.get("metrics")
+    return nested if isinstance(nested, dict) else canonical
+
+
 @dataclass(frozen=True)
 class SparkProjectionMetrics:
     inserted: int = 0
@@ -317,6 +323,21 @@ def ingest_grants_gov_search2_payload(
     canonical_metrics = persist_observations(
         connection=connection, observations=observations, now=stamp
     )
+    batch = _canonical_batch_metrics(canonical_metrics)
+    batch_failures = int(batch.get("batch_failures") or 0)
+    obs_failed = int(batch.get("observations_failed") or 0)
+    if batch_failures > 0 or (
+        observations and obs_failed >= len(observations)
+    ):
+        return CorpusIngestReport(
+            fetched=fetched,
+            normalized=len(observations),
+            rejected_unparseable=rejected_unparseable,
+            canonical=canonical_metrics,
+            sparks=SparkProjectionMetrics(rejected=len(observations)),
+            payload_sha256=payload_sha256,
+            attempt_id=attempt_id,
+        )
     reapply_org_rls_after_commit(session, organization_id, org_type)
     spark_metrics = project_grant_sparks_from_hits(
         session,
@@ -341,7 +362,7 @@ def ingest_grants_gov_search2_payload(
 
 def rollup_collection_metrics(report: CorpusIngestReport) -> dict[str, int]:
     """Map internal outcomes to Block 5B operator vocabulary."""
-    cm = report.canonical
+    cm = _canonical_batch_metrics(report.canonical)
     sm = report.sparks
     inserted = int(cm.get("observations_inserted") or 0) + int(sm.inserted)
     updated = int(cm.get("observations_versioned") or 0) + int(sm.updated)

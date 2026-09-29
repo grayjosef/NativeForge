@@ -361,15 +361,17 @@ def persist_observations(
         metrics["batches"] += 1
         metrics["observations_attempted"] += len(chunk)
         try:
-            chunk_results = _persist_chunk(
-                connection=connection,
-                records=chunk,
-                stamp=stamp,
-                metrics=metrics,
-            )
+            # SAVEPOINT so a failed chunk does not roll back unrelated work in the
+            # same outer transaction (e.g. a raw payload row written earlier).
+            with connection.begin_nested():
+                chunk_results = _persist_chunk(
+                    connection=connection,
+                    records=chunk,
+                    stamp=stamp,
+                    metrics=metrics,
+                )
             connection.commit()
         except Exception as exc:  # noqa: BLE001 - the batch is the unit of atomicity
-            connection.rollback()
             metrics["batch_failures"] += 1
             chunk_results = [
                 {

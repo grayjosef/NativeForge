@@ -14,6 +14,7 @@ from nativeforge.db.models import Organization
 from nativeforge.db.rls import reapply_org_rls_after_commit
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.services.grants_gov_corpus_ingest_service import (
+    _canonical_batch_metrics,
     ingest_grants_gov_search2_payload,
     rollup_collection_metrics,
 )
@@ -301,6 +302,10 @@ def run_grants_gov_bounded_live_collection(
             ),
         )
 
+    # Durable raw evidence must survive canonical batch rollbacks.
+    session.commit()
+    reapply_org_rls_after_commit(session, organization_id, org_type)
+
     org = session.get(Organization, organization_id)
     if org is None:
         return _refuse("organization_not_found")
@@ -317,6 +322,20 @@ def run_grants_gov_bounded_live_collection(
         attempt_id=str(persisted.get("attempt_id") or "") or None,
         now=now,
     )
+    if int(_canonical_batch_metrics(ingest.canonical).get("batch_failures") or 0) > 0:
+        return LiveCollectionResult(
+            permitted=True,
+            dispatched=True,
+            http_status=dispatched.get("status_code"),
+            search_body=search_body,
+            metrics=rollup_collection_metrics(ingest),
+            canonical_metrics=ingest.canonical,
+            payload_sha256=str(persisted.get("payload_sha256") or ""),
+            attempt_id=str(persisted.get("attempt_id") or "") or None,
+            refusal=CollectionRefusal(
+                reasons=["canonical_batch_failed_after_raw_payload_persisted"]
+            ),
+        )
     stamp_active_source_success(
         session,
         organization_id=organization_id,

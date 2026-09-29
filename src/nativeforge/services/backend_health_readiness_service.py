@@ -323,6 +323,28 @@ def build_backend_readiness(
     )
 
     fleet = derive_collectors_live()
+    if resolved_db:
+        try:
+            import uuid
+
+            from nativeforge.db.rls import apply_org_rls_gucs
+            from nativeforge.db.session import SessionLocal
+            from nativeforge.services.grants_gov_collector_gate_evidence_service import (
+                fleet_live_source_rows,
+            )
+
+            demo_org = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
+            measure_session = SessionLocal()
+            try:
+                apply_org_rls_gucs(measure_session, demo_org, "demo")
+                sources = fleet_live_source_rows(
+                    measure_session, organization_id=demo_org
+                )
+                fleet = derive_collectors_live(sources=sources)
+            finally:
+                measure_session.close()
+        except Exception:  # noqa: BLE001 - unmeasured fleet stays zero
+            fleet = derive_collectors_live()
     blocked_reasons: list[str] = []
     if not backend["persistent_backend_live"]:
         blocked_reasons.append("persistent_backend_not_live")

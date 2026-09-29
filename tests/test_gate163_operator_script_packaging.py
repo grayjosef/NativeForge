@@ -18,6 +18,8 @@ OPERATOR_SCRIPTS = (
     "scripts/record_gate163_live_fetch_opt_in.py",
     "scripts/run_gate163_robots_preflight.py",
     "scripts/run_gate163_grants_gov_bounded_corpus_collection.py",
+    "scripts/reconcile_grants_gov_spark_graph.py",
+    "scripts/verify_gate163_block5c_production.py",
 )
 
 DECISIONS = [
