@@ -79,14 +79,25 @@ def _purge_spark_reconcile_l1_shell_observations(
         SELECT observation_id FROM nf_opportunity_source_observations
         WHERE source_id = :sid AND canonical_id = 'L1:'
     """
+    version_ids_sub = f"""
+        SELECT version_id FROM nf_opportunity_versions
+        WHERE observation_id IN ({shell_obs})
+    """
+    connection.execute(
+        sa.text(
+            f"""
+            DELETE FROM nf_opportunity_change_events
+            WHERE new_version_id IN ({version_ids_sub})
+               OR prior_version_id IN ({version_ids_sub})
+            """
+        ),
+        {"sid": source_id},
+    )
     prov_result = connection.execute(
         sa.text(
             f"""
             DELETE FROM nf_opportunity_field_provenance
-            WHERE version_id IN (
-                SELECT version_id FROM nf_opportunity_versions
-                WHERE observation_id IN ({shell_obs})
-            )
+            WHERE version_id IN ({version_ids_sub})
             OR observation_id IN ({shell_obs})
             """
         ),

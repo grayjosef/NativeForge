@@ -26,6 +26,7 @@ from typing import Any
 
 import sqlalchemy as sa
 
+from nativeforge.services.intelligence_sql_dialect_service import insert_or_replace_rows
 from nativeforge.services.native_relevance_ontology_service import (
     ONTOLOGY_VERSION,
     UNCERTAIN,
@@ -154,21 +155,31 @@ def write_evidence(
         }
         for item in items
     ]
-    connection.execute(
-        sa.text(
-            f"INSERT OR REPLACE INTO {EVIDENCE} ("
-            "evidence_id, canonical_id, evidence_type, source_id, "
-            "raw_payload_sha256, observation_id, version_id, field_name, "
-            "section_ref, page_ref, document_ref, evidence_value_json, "
-            "confidence_class, ambiguity_class, supports_classes_json, "
-            "ontology_version, observed_at, created_at) VALUES ("
-            ":evidence_id, :canonical_id, :evidence_type, :source_id, "
-            ":raw_payload_sha256, :observation_id, :version_id, :field_name, "
-            ":section_ref, :page_ref, :document_ref, :evidence_value_json, "
-            ":confidence_class, :ambiguity_class, :supports_classes_json, "
-            ":ontology_version, :observed_at, :created_at)"
+    insert_or_replace_rows(
+        connection,
+        table=EVIDENCE,
+        columns=(
+            "evidence_id",
+            "canonical_id",
+            "evidence_type",
+            "source_id",
+            "raw_payload_sha256",
+            "observation_id",
+            "version_id",
+            "field_name",
+            "section_ref",
+            "page_ref",
+            "document_ref",
+            "evidence_value_json",
+            "confidence_class",
+            "ambiguity_class",
+            "supports_classes_json",
+            "ontology_version",
+            "observed_at",
+            "created_at",
         ),
-        rows,
+        rows=rows,
+        primary_key="evidence_id",
     )
     return len(rows)
 
@@ -230,21 +241,31 @@ def write_assessments(
         }
         for a in assessments
     ]
-    connection.execute(
-        sa.text(
-            f"INSERT OR REPLACE INTO {ASSESSMENTS} ("
-            "assessment_id, canonical_id, ontology_version, relevance_class, "
-            "candidate_state, confidence, review_required, review_reasons_json, "
-            "reasons_json, entity_classes_json, sectors_json, evidence_count, "
-            "ranking_score, scope, computed_at, superseded_at, is_current, "
-            "created_at) VALUES ("
-            ":assessment_id, :canonical_id, :ontology_version, :relevance_class, "
-            ":candidate_state, :confidence, :review_required, :review_reasons_json, "
-            ":reasons_json, :entity_classes_json, :sectors_json, :evidence_count, "
-            ":ranking_score, :scope, :computed_at, :superseded_at, :is_current, "
-            ":created_at)"
+    insert_or_replace_rows(
+        connection,
+        table=ASSESSMENTS,
+        columns=(
+            "assessment_id",
+            "canonical_id",
+            "ontology_version",
+            "relevance_class",
+            "candidate_state",
+            "confidence",
+            "review_required",
+            "review_reasons_json",
+            "reasons_json",
+            "entity_classes_json",
+            "sectors_json",
+            "evidence_count",
+            "ranking_score",
+            "scope",
+            "computed_at",
+            "superseded_at",
+            "is_current",
+            "created_at",
         ),
-        rows,
+        rows=rows,
+        primary_key="assessment_id",
     )
     return len(rows)
 

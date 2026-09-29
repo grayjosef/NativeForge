@@ -692,7 +692,9 @@ def demo_discovery_intelligence(
     )
     if spark is None:
         raise HTTPException(status_code=404, detail="grant spark not found")
-    return ods.opportunity_intelligence_summary(spark)
+    return ods.opportunity_intelligence_summary(
+        spark, session=db, organization_id=ctx.org_id
+    )
 
 
 @demo_discovery_router.post(
@@ -1429,7 +1431,9 @@ def real_discovery_intelligence(
     )
     if spark is None:
         raise HTTPException(status_code=404, detail="grant spark not found")
-    return ods.opportunity_intelligence_summary(spark)
+    return ods.opportunity_intelligence_summary(
+        spark, session=db, organization_id=ctx.org_id
+    )
 
 
 @real_discovery_router.post(

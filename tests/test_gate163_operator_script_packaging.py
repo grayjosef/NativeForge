@@ -21,6 +21,7 @@ OPERATOR_SCRIPTS = (
     "scripts/reconcile_grants_gov_spark_graph.py",
     "scripts/verify_gate163_block5c_production.py",
     "scripts/inventory_source_fleet.py",
+    "scripts/project_canonical_intelligence.py",
 )
 
 DECISIONS = [

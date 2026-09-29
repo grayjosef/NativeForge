@@ -9,6 +9,9 @@ sys.path.insert(0, "src")
 
 from nativeforge.db.rls import apply_org_rls_gucs, reapply_org_rls_after_commit
 from nativeforge.db.session import SessionLocal
+from nativeforge.services.canonical_intelligence_projection_service import (
+    project_all_canonical_opportunities,
+)
 from nativeforge.services.grants_gov_spark_graph_reconciliation_service import (
     reconcile_grants_gov_sparks_to_canonical_graph,
 )
@@ -23,9 +26,12 @@ def main() -> int:
         report = reconcile_grants_gov_sparks_to_canonical_graph(
             session, organization_id=DEMO, org_type="demo"
         )
+        projection = project_all_canonical_opportunities(
+            session.connection(), dry_run=False
+        )
         session.commit()
         reapply_org_rls_after_commit(session, DEMO, "demo")
-        print(report)
+        print({"reconcile": report, "intelligence_projection": projection})
         return 0
     finally:
         session.close()

@@ -504,6 +504,9 @@ def create_spark_from_discovery(
 
 def opportunity_intelligence_summary(
     spark: NfGrantSpark,
+    *,
+    session: Session | None = None,
+    organization_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
     """Compact opportunity intelligence view for a Grant Spark."""
 
@@ -512,23 +515,57 @@ def opportunity_intelligence_summary(
             return None
         return dt.isoformat()
 
+    unified: dict[str, Any] | None = None
+    if session is not None:
+        from nativeforge.services.customer_intelligence_read_model_service import (
+            build_customer_intelligence_payload,
+        )
+
+        unified = build_customer_intelligence_payload(
+            session.connection(),
+            spark=spark,
+            organization_id=organization_id,
+            tenant_id=str(organization_id) if organization_id else None,
+        )
+
     elig_fit: dict[str, Any] = {}
     if spark.eligibility_tags_json is not None:
         elig_fit["structured"] = spark.eligibility_tags_json
     if spark.eligibility_tags:
         elig_fit["tags"] = spark.eligibility_tags
 
+    canonical_id = (
+        (unified or {}).get("identity", {}).get("canonical_id") if unified else None
+    )
+    if canonical_id and unified:
+        nr = unified["native_relevance"]
+        native_relevance: dict[str, Any] = {
+            "authoritative": True,
+            "classification": nr.get("classification"),
+            "confidence": nr.get("confidence"),
+            "review_required": nr.get("review_required"),
+            "evidence_count": len(nr.get("evidence") or []),
+            "unknowns": nr.get("unknowns") or [],
+            "reasons": nr.get("reasons"),
+            "legacy_keyword_score_compat": spark.native_relevance_score,
+        }
+    else:
+        native_relevance = {
+            "authoritative": False,
+            "score": spark.native_relevance_score,
+            "reasons": spark.native_relevance_reasons_json,
+        }
+
     return {
         "opportunity_intelligence_version": INTELLIGENCE_VERSION,
         "grant_spark_id": str(spark.id),
+        "canonical_id": canonical_id,
+        "unified_intelligence": unified,
         "duplicate_key": spark.duplicate_key,
         "duplicate_cluster_id": str(spark.duplicate_cluster_id)
         if spark.duplicate_cluster_id
         else None,
-        "native_relevance": {
-            "score": spark.native_relevance_score,
-            "reasons": spark.native_relevance_reasons_json,
-        },
+        "native_relevance": native_relevance,
         "freshness": {
             "freshness_status": spark.freshness_status,
             "application_deadline": _d(spark.application_deadline),
