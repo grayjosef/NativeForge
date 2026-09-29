@@ -108,6 +108,7 @@ def project_recent_change_events_to_signals(
     ).mappings().all()
 
     inserted = 0
+    unchanged = 0
     skipped = 0
     for row in rows:
         signal = propose_signal_from_change_event(dict(row))
@@ -117,9 +118,12 @@ def project_recent_change_events_to_signals(
         result = upsert_signal(connection, signal=signal)
         if result.get("written"):
             inserted += 1
+        elif result.get("unchanged"):
+            unchanged += 1
     return {
         "schema_version": SCHEMA_VERSION,
         "examined": len(rows),
-        "signals_written": inserted,
-        "skipped": skipped,
+        "signals_inserted": inserted,
+        "signals_unchanged": unchanged,
+        "events_ignored": skipped,
     }

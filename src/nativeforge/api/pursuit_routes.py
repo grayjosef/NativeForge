@@ -10,6 +10,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from nativeforge.api.commercial_entitlement_dependency import (
+    require_substantive_commercial_benefit,
+)
 from nativeforge.api.customer_org_context_dependency import (
     require_demo_org_session,
     require_real_org_session,
@@ -81,6 +84,10 @@ real_pursuit_router = APIRouter(
     tags=["pursuits-real"],
 )
 
+_demo_open_pursuit, _real_open_pursuit = require_substantive_commercial_benefit(
+    "OPEN_PURSUIT"
+)
+
 
 def _handle_pursuit_create_exc(exc: Exception) -> None:
     if isinstance(exc, psvc.PursuitAlreadyExistsError):
@@ -101,6 +108,7 @@ def demo_create_pursuit(
     spark_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_open_pursuit)],
     body: CreatePursuitBody | None = None,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -163,6 +171,7 @@ def demo_patch_pursuit(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_open_pursuit)],
     body: PursuitPatchBody,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -231,6 +240,7 @@ def demo_create_task(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_open_pursuit)],
     body: TaskCreateBody,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -266,6 +276,7 @@ def demo_patch_task(
     task_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_open_pursuit)],
     body: TaskPatchBody,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -340,6 +351,7 @@ def demo_create_calendar(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_open_pursuit)],
     body: CalendarCreateBody,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -410,6 +422,7 @@ def real_create_pursuit(
     spark_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_open_pursuit)],
     body: CreatePursuitBody | None = None,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -473,6 +486,7 @@ def real_patch_pursuit(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_open_pursuit)],
     body: PursuitPatchBody,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -541,6 +555,7 @@ def real_create_task(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_open_pursuit)],
     body: TaskCreateBody,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -576,6 +591,7 @@ def real_patch_task(
     task_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_open_pursuit)],
     body: TaskPatchBody,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
@@ -650,6 +666,7 @@ def real_create_calendar(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_open_pursuit)],
     body: CalendarCreateBody,
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:

@@ -36,6 +36,9 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 
+from nativeforge.api.commercial_entitlement_dependency import (
+    require_substantive_commercial_benefit,
+)
 from nativeforge.api.customer_org_context_dependency import (
     require_demo_org_session,
     require_real_org_session,
@@ -61,6 +64,10 @@ demo_document_intake_router = APIRouter(
 )
 real_document_intake_router = APIRouter(
     prefix="/v1/nf/real/orgs", tags=["customer-document-intake-real"]
+)
+
+_demo_discovery, _real_discovery = require_substantive_commercial_benefit(
+    "RUN_DISCOVERY"
 )
 
 #: base64 is four characters per three bytes, plus padding and any newlines a
@@ -166,6 +173,7 @@ def demo_read_document(
     org_id: uuid.UUID,
     body: DocumentIntakeBody,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_discovery)],
 ) -> dict[str, Any]:
     return _read(org_id, ctx, body)
 
@@ -175,5 +183,6 @@ def real_read_document(
     org_id: uuid.UUID,
     body: DocumentIntakeBody,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_discovery)],
 ) -> dict[str, Any]:
     return _read(org_id, ctx, body)

@@ -8,6 +8,9 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from nativeforge.api.commercial_entitlement_dependency import (
+    require_substantive_commercial_benefit,
+)
 from nativeforge.api.customer_org_context_dependency import (
     require_demo_org_session,
     require_real_org_session,
@@ -46,6 +49,10 @@ real_form_pkg_router = APIRouter(
     tags=["form-packages-real"],
 )
 
+_demo_form_pkg, _real_form_pkg = require_substantive_commercial_benefit(
+    "GENERATE_APPLICATION_PACKAGE"
+)
+
 
 @demo_form_pkg_router.post(
     "/{org_id}/pursuits/{pursuit_id}/form-package",
@@ -56,6 +63,7 @@ def demo_create_form_package(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_form_pkg)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -107,6 +115,7 @@ def demo_regenerate_preview(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_form_pkg)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -141,6 +150,7 @@ def real_create_form_package(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_form_pkg)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)
@@ -192,6 +202,7 @@ def real_regenerate_preview(
     pursuit_id: uuid.UUID,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_form_pkg)],
     actor_id: uuid.UUID | None = None,
 ) -> dict[str, Any]:
     _same_org(org_id, ctx)

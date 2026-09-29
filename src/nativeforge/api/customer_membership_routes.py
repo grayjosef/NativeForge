@@ -9,6 +9,9 @@ from fastapi import APIRouter, Cookie, Depends, HTTPException, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from nativeforge.api.commercial_entitlement_dependency import (
+    require_substantive_commercial_benefit,
+)
 from nativeforge.api.customer_org_context_dependency import (
     SESSION_COOKIE_NAME,
     require_demo_org_session,
@@ -35,6 +38,8 @@ real_membership_router = APIRouter(
     prefix="/v1/nf/real/orgs",
     tags=["customer-membership-real"],
 )
+
+_demo_invite, _real_invite = require_substantive_commercial_benefit("INVITE_MEMBERS")
 
 
 class IssueInviteBody(BaseModel):
@@ -122,6 +127,7 @@ def demo_issue_invite(
     body: IssueInviteBody,
     ctx: Annotated[OrgContext, Depends(require_demo_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_demo_invite)],
     nf_session: Annotated[str | None, Cookie(alias=SESSION_COOKIE_NAME)] = None,
 ) -> dict[str, Any]:
     return _issue(org_id, ctx, db, nf_session, body)
@@ -133,6 +139,7 @@ def real_issue_invite(
     body: IssueInviteBody,
     ctx: Annotated[OrgContext, Depends(require_real_org_session)],
     db: Annotated[Session, Depends(get_db_session)],
+    _benefit: Annotated[dict[str, Any], Depends(_real_invite)],
     nf_session: Annotated[str | None, Cookie(alias=SESSION_COOKIE_NAME)] = None,
 ) -> dict[str, Any]:
     return _issue(org_id, ctx, db, nf_session, body)

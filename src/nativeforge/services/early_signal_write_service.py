@@ -49,11 +49,16 @@ def upsert_signal(
 
     cols = ", ".join(row.keys())
     vals = ", ".join(f":{k}" for k in row)
-    connection.execute(
+    result = connection.execute(
         sa.text(
             f"INSERT INTO {SIGNALS} ({cols}) VALUES ({vals}) "
             f"ON CONFLICT(signal_id) DO NOTHING"
         ),
         row,
     )
-    return {"written": True, "signal_id": signal["signal_id"]}
+    inserted = bool(getattr(result, "rowcount", 0))
+    return {
+        "written": inserted,
+        "unchanged": not inserted,
+        "signal_id": signal["signal_id"],
+    }

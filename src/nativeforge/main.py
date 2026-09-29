@@ -54,10 +54,6 @@ from nativeforge.api.customer_document_intake_routes import (
     demo_document_intake_router,
     real_document_intake_router,
 )
-from nativeforge.api.customer_url_intake_routes import (
-    demo_url_intake_router,
-    real_url_intake_router,
-)
 from nativeforge.api.customer_live_federal_search_routes import (
     demo_live_federal_search_router,
     real_live_federal_search_router,
@@ -65,6 +61,18 @@ from nativeforge.api.customer_live_federal_search_routes import (
 from nativeforge.api.customer_membership_routes import (
     demo_membership_router,
     real_membership_router,
+)
+from nativeforge.api.customer_opportunity_feed_routes import (
+    demo_feed_router,
+    real_feed_router,
+)
+from nativeforge.api.customer_organization_onboarding_routes import (
+    demo_onboarding_router,
+    real_onboarding_router,
+)
+from nativeforge.api.customer_url_intake_routes import (
+    demo_url_intake_router,
+    real_url_intake_router,
 )
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
@@ -96,10 +104,6 @@ from nativeforge.api.operational_health_routes import (
 from nativeforge.api.operator_workbench_advisory_routes import (
     demo_workbench_advisory_router,
     real_workbench_advisory_router,
-)
-from nativeforge.api.customer_opportunity_feed_routes import (
-    demo_feed_router,
-    real_feed_router,
 )
 from nativeforge.api.opportunity_discovery_routes import (
     demo_discovery_router,
@@ -241,7 +245,9 @@ def create_app() -> FastAPI:
     app.include_router(demo_discovery_router)
     app.include_router(real_discovery_router)
     app.include_router(demo_feed_router)
+    app.include_router(demo_onboarding_router)
     app.include_router(real_feed_router)
+    app.include_router(real_onboarding_router)
     app.include_router(demo_live_federal_search_router)
     app.include_router(real_live_federal_search_router)
     app.include_router(demo_nofo_router)

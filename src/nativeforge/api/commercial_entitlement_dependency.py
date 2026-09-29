@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import uuid
 from typing import Annotated, Any
 
 from fastapi import Depends, HTTPException, status
@@ -15,6 +16,7 @@ from nativeforge.api.customer_org_context_dependency import (
 from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.lib.demo_isolation import OrgType  # noqa: TC001 — literal alias
+from nativeforge.lib.settings import demo_org_uuid_set
 from nativeforge.services.commercial_entitlement_service import derive_entitlement
 from nativeforge.services.commercial_license_model_service import (
     BENEFIT_WORKING,
@@ -49,15 +51,20 @@ def _check_workflow(
     benefit = str(entitlement.get("benefit_access") or "")
     working = benefit in BENEFIT_WORKING
 
-    # Hermetic/demo tenants without a licence row: allow read paths elsewhere;
-    # mutations still require an explicit licence unless demo plane (M0).
+    # M0 demo orgs (explicit allowlist only): substantive mutations without a
+    # licence row. Real tenants and non-allowlisted orgs never receive this.
     if not working and org_type == "demo" and not material.get("ledger_events"):
-        return {
-            "allowed": True,
-            "benefit_access": benefit,
-            "demo_without_licence_row": True,
-            "workflow": workflow,
-        }
+        try:
+            org_uuid = uuid.UUID(str(organization_id))
+        except ValueError:
+            org_uuid = None
+        if org_uuid is not None and org_uuid in demo_org_uuid_set():
+            return {
+                "allowed": True,
+                "benefit_access": benefit,
+                "demo_m0_allowlisted_bypass": True,
+                "workflow": workflow,
+            }
 
     return {
         "allowed": working,
