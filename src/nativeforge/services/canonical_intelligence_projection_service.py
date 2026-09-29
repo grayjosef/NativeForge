@@ -43,6 +43,7 @@ from nativeforge.services.native_relevance_evidence_service import (
     evidence_invariant_failures,
 )
 from nativeforge.services.native_relevance_ontology_service import ONTOLOGY_VERSION
+from nativeforge.services.intelligence_sql_dialect_service import is_current_active_sql
 from nativeforge.services.native_relevance_repository_service import (
     ASSESSMENTS,
     write_assessments,
@@ -270,7 +271,7 @@ def _current_assessment_fingerprint(
     row = connection.execute(
         sa.text(
             f"SELECT reasons_json FROM {ASSESSMENTS} "
-            "WHERE canonical_id = :cid AND is_current = 1"
+            f"WHERE canonical_id = :cid AND {is_current_active_sql(connection)}"
         ),
         {"cid": canonical_id},
     ).fetchone()
@@ -445,7 +446,7 @@ def reevaluate_tenant_matches_for_organization(
     rows = connection.execute(
         sa.text(
             "SELECT DISTINCT canonical_id FROM nf_tenant_eligibility_matches "
-            "WHERE organization_id = :oid AND is_current = 1"
+            f"WHERE organization_id = :oid AND {is_current_active_sql(connection)}"
         ),
         {"oid": organization_id},
     ).fetchall()

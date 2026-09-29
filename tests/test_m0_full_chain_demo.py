@@ -13,7 +13,10 @@ from nativeforge.db.session import SessionLocal
 from nativeforge.domain.enums import AuditAction, GrantAwardType, GrantSparkSource
 from nativeforge.lib.settings import get_settings
 from nativeforge.main import create_app
+from tests.commercial_test_helpers import persist_working_license
 from tests.session_org_helper import session_headers
+
+HERMETIC_DEMO_ORG = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
 
 
 def _hdr(oid: uuid.UUID) -> dict[str, str]:
@@ -78,12 +81,14 @@ def _run_m0_chain(
     assert plane in ("real", "demo")
     assert org_type in ("real", "demo")
 
-    oid = uuid.uuid4()
+    oid = HERMETIC_DEMO_ORG if plane == "demo" else uuid.uuid4()
     actor = uuid.uuid4()
     base = f"/v1/nf/{plane}/orgs/{oid}"
 
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type=org_type))
+        if plane == "real":
+            persist_working_license(s.connection(), organization_id=oid)
         s.commit()
 
     pr = client_nf.post(f"{base}/tribal-profile", json=_profile(), headers=_hdr(oid))

@@ -31,6 +31,7 @@ from nativeforge.services.customer_repository_service import (
     DECISIONS,
     q_my_dismissed,
 )
+from nativeforge.services.intelligence_sql_dialect_service import is_current_active_sql
 from nativeforge.services.eligibility_intelligence_repository_service import (
     load_current_match,
     load_current_requirements,
@@ -87,7 +88,8 @@ def _load_assessment(
         sa.text(
             f"SELECT relevance_class, confidence, review_required, reasons_json, "
             f"candidate_state, evidence_count, computed_at "
-            f"FROM {ASSESSMENTS} WHERE canonical_id = :cid AND is_current = 1"
+            f"FROM {ASSESSMENTS} WHERE canonical_id = :cid AND "
+            f"{is_current_active_sql(connection)}"
         ),
         {"cid": canonical_id},
     ).fetchone()

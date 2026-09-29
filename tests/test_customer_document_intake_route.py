@@ -19,7 +19,7 @@ from tests import session_org_helper as soh
 from tests.test_customer_url_notice_text import CONTACT_LINES, build_pdf
 
 DEMO = "bbbbbbbb-cccc-dddd-eeee-ffffffffffff"
-OTHER = "cccccccc-dddd-eeee-ffff-00000000d172"
+OTHER = "cccccccc-dddd-eeee-ffff-000000000001"
 
 NOTICE_HTML = b"""<html><body>
 <h1>Indian Housing Block Grant Competitive</h1>

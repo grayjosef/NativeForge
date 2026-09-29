@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import uuid
+
+import pytest
 from datetime import UTC, datetime, timedelta
 
 import sqlalchemy as sa
@@ -245,10 +247,14 @@ def test_tenant_cannot_read_another_orgs_mission_control():
     assert theirs.status_code == 403
 
 
-def test_foreign_owner_is_refused():
+def test_foreign_owner_is_refused(monkeypatch: pytest.MonkeyPatch):
     soh.ensure_signing_key()
     org_a = uuid.uuid4()
     org_b = uuid.uuid4()
+    monkeypatch.setenv("NF_DEMO_ORG_IDS", f"{org_a},{org_b}")
+    from nativeforge.lib.settings import get_settings
+
+    get_settings.cache_clear()
     soh.ensure_org(org_a, "demo")
     soh.ensure_org(org_b, "demo")
     soh.ensure_member(org_a)

@@ -12,6 +12,14 @@ from sqlalchemy import text
 _tmp = Path(tempfile.mkdtemp(prefix="nf_pytest_"))
 os.environ["DATABASE_URL"] = f"sqlite+pysqlite:///{(_tmp / 'nf.sqlite3').as_posix()}"
 
+# Gate 178 M0 demo bypass is allowlist-scoped; the hermetic demo org id is the
+# default for the suite unless a test clears NF_DEMO_ORG_IDS deliberately.
+os.environ.setdefault(
+    "NF_DEMO_ORG_IDS",
+    "bbbbbbbb-cccc-dddd-eeee-ffffffffffff,"
+    "cccccccc-dddd-eeee-ffff-000000000001",
+)
+
 # Gate 130. The suite must not read whoever's provider happens to be configured
 # on the machine running it.
 #

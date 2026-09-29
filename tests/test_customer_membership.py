@@ -21,6 +21,9 @@ from nativeforge.services.customer_membership_invite_issue_service import (
 from nativeforge.services.dev_org_membership_bootstrap_service import upsert_identity
 from tests import session_org_helper as soh
 
+DEMO_ORG_A = uuid.UUID("bbbbbbbb-cccc-dddd-eeee-ffffffffffff")
+DEMO_ORG_B = uuid.UUID("cccccccc-dddd-eeee-ffff-000000000001")
+
 
 def _assert_no_mailbox(payload: dict) -> None:
     blob = json.dumps(payload)
@@ -31,7 +34,7 @@ def _assert_no_mailbox(payload: dict) -> None:
 
 def test_directory_lists_the_viewer_without_an_address() -> None:
     soh.ensure_signing_key()
-    org_id = uuid.uuid4()
+    org_id = DEMO_ORG_A
     soh.ensure_org(org_id, "demo")
     identity_id = soh.ensure_member(org_id)
     with SessionLocal() as session:
@@ -48,7 +51,7 @@ def test_directory_lists_the_viewer_without_an_address() -> None:
 
 def test_issue_invite_keeps_the_mailbox_out_of_storage_and_payload() -> None:
     soh.ensure_signing_key()
-    org_id = uuid.uuid4()
+    org_id = DEMO_ORG_A
     soh.ensure_org(org_id, "demo")
     identity_id = soh.ensure_member(org_id)
     with SessionLocal() as session:
@@ -76,7 +79,7 @@ def test_issue_invite_keeps_the_mailbox_out_of_storage_and_payload() -> None:
 
 def test_signin_activation_binds_the_matching_identity() -> None:
     soh.ensure_signing_key()
-    org_id = uuid.uuid4()
+    org_id = DEMO_ORG_A
     soh.ensure_org(org_id, "demo")
     owner_id = soh.ensure_member(org_id)
     with SessionLocal() as session:
@@ -117,8 +120,8 @@ def test_signin_activation_binds_the_matching_identity() -> None:
 
 def test_http_member_list_is_tenant_isolated() -> None:
     soh.ensure_signing_key()
-    org_a = uuid.uuid4()
-    org_b = uuid.uuid4()
+    org_a = DEMO_ORG_A
+    org_b = DEMO_ORG_B
     soh.ensure_org(org_a, "demo")
     soh.ensure_org(org_b, "demo")
     soh.ensure_member(org_a)
@@ -140,7 +143,7 @@ def test_http_member_list_is_tenant_isolated() -> None:
 
 def test_http_issue_invite_returns_id_without_mailbox() -> None:
     soh.ensure_signing_key()
-    org_id = uuid.uuid4()
+    org_id = DEMO_ORG_A
     soh.ensure_org(org_id, "demo")
     soh.ensure_member(org_id)
     client = TestClient(create_app(), raise_server_exceptions=False)
@@ -166,7 +169,7 @@ def test_http_issue_invite_returns_id_without_mailbox() -> None:
 
 def test_viewer_cannot_issue_an_invite() -> None:
     soh.ensure_signing_key()
-    org_id = uuid.uuid4()
+    org_id = DEMO_ORG_A
     soh.ensure_org(org_id, "demo")
     viewer = soh.ensure_member(org_id, role="viewer")
     with SessionLocal() as session:

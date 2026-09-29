@@ -11,6 +11,25 @@ def dialect_name(connection: sa.engine.Connection) -> str:
     return str(connection.dialect.name or "default")
 
 
+def sql_bool_literal(connection: sa.engine.Connection, *, value: bool) -> str:
+    """SQLite stores booleans as 0/1; Postgres uses true/false."""
+    if dialect_name(connection) == "sqlite":
+        return "1" if value else "0"
+    return "true" if value else "false"
+
+
+def is_current_active_sql(
+    connection: sa.engine.Connection, *, column: str = "is_current"
+) -> str:
+    return f"{column} = {sql_bool_literal(connection, value=True)}"
+
+
+def is_current_inactive_sql(
+    connection: sa.engine.Connection, *, column: str = "is_current"
+) -> str:
+    return f"{column} = {sql_bool_literal(connection, value=False)}"
+
+
 def insert_or_replace_rows(
     connection: sa.engine.Connection,
     *,

@@ -26,7 +26,11 @@ from typing import Any
 
 import sqlalchemy as sa
 
-from nativeforge.services.intelligence_sql_dialect_service import insert_or_replace_rows
+from nativeforge.services.intelligence_sql_dialect_service import (
+    insert_or_replace_rows,
+    is_current_active_sql,
+    sql_bool_literal,
+)
 from nativeforge.services.native_relevance_ontology_service import (
     ONTOLOGY_VERSION,
     UNCERTAIN,
@@ -202,10 +206,12 @@ def write_assessments(
 
     canonical_ids = sorted({str(a["canonical_id"]) for a in assessments})
     # One statement, not one per opportunity.
+    inactive = sql_bool_literal(connection, value=False)
+    active = is_current_active_sql(connection)
     connection.execute(
         sa.text(
-            f"UPDATE {ASSESSMENTS} SET is_current = 0, superseded_at = :stamp "
-            f"WHERE is_current = 1 AND canonical_id IN "
+            f"UPDATE {ASSESSMENTS} SET is_current = {inactive}, superseded_at = :stamp "
+            f"WHERE {active} AND canonical_id IN "
             f"({', '.join(':c' + str(i) for i in range(len(canonical_ids)))})"
         ),
         {

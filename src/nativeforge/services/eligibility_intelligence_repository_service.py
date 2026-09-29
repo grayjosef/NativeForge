@@ -11,7 +11,11 @@ import sqlalchemy as sa
 from nativeforge.services.eligibility_requirement_model_service import (
     ELIGIBILITY_MODEL_VERSION,
 )
-from nativeforge.services.intelligence_sql_dialect_service import insert_or_replace_rows
+from nativeforge.services.intelligence_sql_dialect_service import (
+    insert_or_replace_rows,
+    is_current_active_sql,
+    sql_bool_literal,
+)
 
 SCHEMA_VERSION = "nf_eligibility_intelligence_repository_v1"
 
@@ -39,10 +43,12 @@ def write_requirements(
     stamp = _now(now)
     canonical_ids = sorted({str(r["canonical_id"]) for r in requirements})
     placeholders = ", ".join(f":c{i}" for i in range(len(canonical_ids)))
+    inactive = sql_bool_literal(connection, value=False)
+    active = is_current_active_sql(connection)
     connection.execute(
         sa.text(
-            f"UPDATE {REQUIREMENTS} SET is_current = 0, superseded_at = :stamp "
-            f"WHERE is_current = 1 AND canonical_id IN ({placeholders})"
+            f"UPDATE {REQUIREMENTS} SET is_current = {inactive}, superseded_at = :stamp "
+            f"WHERE {active} AND canonical_id IN ({placeholders})"
         ),
         {"stamp": stamp, **{f"c{i}": v for i, v in enumerate(canonical_ids)}},
     )
@@ -112,10 +118,12 @@ def write_capability_profile(
 ) -> int:
     stamp = _now(now)
     org_id = str(profile["organization_id"])
+    inactive = sql_bool_literal(connection, value=False)
+    active = is_current_active_sql(connection)
     connection.execute(
         sa.text(
-            f"UPDATE {PROFILES} SET is_current = 0, superseded_at = :stamp "
-            "WHERE is_current = 1 AND organization_id = :oid"
+            f"UPDATE {PROFILES} SET is_current = {inactive}, superseded_at = :stamp "
+            f"WHERE {active} AND organization_id = :oid"
         ),
         {"stamp": stamp, "oid": org_id},
     )
@@ -155,10 +163,12 @@ def write_matches(
     stamp = _now(now)
     keys = sorted({(str(m["canonical_id"]), str(m["tenant_id"])) for m in matches})
     for canonical_id, tenant_id in keys:
+        inactive = sql_bool_literal(connection, value=False)
+        active = is_current_active_sql(connection)
         connection.execute(
             sa.text(
-                f"UPDATE {MATCHES} SET is_current = 0 "
-                "WHERE is_current = 1 AND canonical_id = :cid AND tenant_id = :tid"
+                f"UPDATE {MATCHES} SET is_current = {inactive} "
+                f"WHERE {active} AND canonical_id = :cid AND tenant_id = :tid"
             ),
             {"cid": canonical_id, "tid": tenant_id},
         )
@@ -204,7 +214,8 @@ def load_current_requirements(
         sa.text(
             f"SELECT requirement_id, requirement_kind, polarity, normalized_value_json, "
             f"original_text, applies_to_entity_classes_json, evidence_ids_json "
-            f"FROM {REQUIREMENTS} WHERE canonical_id = :cid AND is_current = 1"
+            f"FROM {REQUIREMENTS} WHERE canonical_id = :cid AND "
+            f"{is_current_active_sql(connection)}"
         ),
         {"cid": canonical_id},
     ).fetchall()
@@ -236,7 +247,7 @@ def load_current_match(
             f"SELECT eligibility_result, reason, conditions_to_obtain_json, "
             f"review_required, profile_version, unknown_count "
             f"FROM {MATCHES} WHERE canonical_id = :cid AND tenant_id = :tid "
-            "AND is_current = 1"
+            f"AND {is_current_active_sql(connection)}"
         ),
         {"cid": canonical_id, "tid": tenant_id},
     ).fetchone()

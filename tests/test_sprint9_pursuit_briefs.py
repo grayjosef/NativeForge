@@ -14,6 +14,7 @@ from nativeforge.db.session import SessionLocal
 from nativeforge.domain.enums import AuditAction, GrantAwardType, GrantSparkSource
 from nativeforge.lib.settings import get_settings
 from nativeforge.main import create_app
+from tests.commercial_test_helpers import persist_working_license
 from tests.session_org_helper import session_headers
 
 
@@ -62,6 +63,7 @@ def test_pursuit_brief_post_and_get_latest(client_nf: TestClient) -> None:
     actor = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
 
     client_nf.post(
@@ -139,6 +141,7 @@ def test_pursuit_brief_without_pursuit_ok(client_nf: TestClient) -> None:
     oid = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
 
     client_nf.post(
@@ -164,6 +167,7 @@ def test_pursuit_brief_mismatch_bad_request(client_nf: TestClient) -> None:
     oid = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
 
     client_nf.post(

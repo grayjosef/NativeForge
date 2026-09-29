@@ -14,6 +14,7 @@ from nativeforge.db.session import SessionLocal
 from nativeforge.domain.enums import AuditAction, GrantAwardType, GrantSparkSource
 from nativeforge.lib.settings import get_settings
 from nativeforge.main import create_app
+from tests.commercial_test_helpers import persist_working_license
 from tests.session_org_helper import session_headers
 
 
@@ -82,6 +83,7 @@ def test_create_pursuit_requires_score(client_nf: TestClient) -> None:
     oid = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
     client_nf.post(
         f"/v1/nf/real/orgs/{oid}/tribal-profile",
@@ -110,6 +112,7 @@ def test_pursuit_seeds_tasks_and_calendar_and_audit(client_nf: TestClient) -> No
     actor = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
     spark_id = _seed_scored_spark(client_nf, oid)
 
@@ -154,6 +157,7 @@ def test_org_calendar_window(client_nf: TestClient) -> None:
     oid = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
     spark_id = _seed_scored_spark(client_nf, oid)
     pursuit_id = client_nf.post(
@@ -178,6 +182,7 @@ def test_patch_task_to_done_sets_completed_at(client_nf: TestClient) -> None:
     oid = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
     spark_id = _seed_scored_spark(client_nf, oid)
     pursuit_id = client_nf.post(

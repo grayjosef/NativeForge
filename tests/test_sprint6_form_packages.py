@@ -14,6 +14,7 @@ from nativeforge.db.session import SessionLocal
 from nativeforge.domain.enums import AuditAction, GrantAwardType, GrantSparkSource
 from nativeforge.lib.settings import get_settings
 from nativeforge.main import create_app
+from tests.commercial_test_helpers import persist_working_license
 from tests.session_org_helper import session_headers
 
 
@@ -97,6 +98,7 @@ def test_form_package_sf424_preview(client_nf: TestClient) -> None:
     actor = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
     _, pursuit_id = _open_pursuit(client_nf, oid)
 
@@ -149,6 +151,7 @@ def test_get_form_package_missing_returns_404(client_nf: TestClient) -> None:
     oid = uuid.uuid4()
     with SessionLocal() as s:
         s.add(Organization(id=oid, org_type="real"))
+        persist_working_license(s.connection(), organization_id=oid)
         s.commit()
     _, pursuit_id = _open_pursuit(client_nf, oid)
     r = client_nf.get(
