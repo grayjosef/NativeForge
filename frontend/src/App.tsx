@@ -240,7 +240,6 @@ export default function App() {
    * first page a buyer opens. We do not know whether we may call, so we do
    * not call.
    */
-  const isDemoLane = session?.workspaceLane === "demo";
   const isOrgLane = session?.workspaceLane === "organization";
   const mayLoadOrgData = session?.authenticated === true && isOrgLane;
   const offlineDemoSurface =

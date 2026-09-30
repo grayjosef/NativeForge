@@ -3,6 +3,7 @@ import {
   getDemoWorkspaceSummary,
   type DemoWorkspaceSummary,
 } from "../demoWorkspaceApiClient";
+import type { CustomerState } from "../customerState";
 import { interpretError } from "../friendlyError";
 
 type Props = {
@@ -13,7 +14,7 @@ type Props = {
 
 export function DemoWorkspacePage({ baseUrl, displayName, onUpgrade }: Props) {
   const [summary, setSummary] = useState<DemoWorkspaceSummary | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<CustomerState | null>(null);
   const [openHelp, setOpenHelp] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,8 +35,8 @@ export function DemoWorkspacePage({ baseUrl, displayName, onUpgrade }: Props) {
   if (error) {
     return (
       <section className="nf-panel">
-        <h2>Demo workspace unavailable</h2>
-        <p>{error}</p>
+        <h2>{error.title}</h2>
+        <p>{error.body}</p>
       </section>
     );
   }
