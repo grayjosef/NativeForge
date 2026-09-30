@@ -22,6 +22,7 @@ from nativeforge.services.eligibility_requirement_model_service import (
     build_requirement,
     expand_class_group,
 )
+from nativeforge.services.intelligence_sql_dialect_service import is_current_active_sql
 from nativeforge.services.native_eligibility_code_classification_service import (
     DIRECT_TRIBAL_CODES,
     classify_native_eligibility,
@@ -42,8 +43,13 @@ from nativeforge.services.native_relevance_evidence_service import (
     build_evidence,
     evidence_invariant_failures,
 )
-from nativeforge.services.native_relevance_ontology_service import ONTOLOGY_VERSION
-from nativeforge.services.intelligence_sql_dialect_service import is_current_active_sql
+from nativeforge.services.native_relevance_ontology_service import (
+    BROADLY_ELIGIBLE_NATIVE_RELEVANT,
+    NATIVE_ELIGIBLE,
+    NATIVE_PRIORITY,
+    NATIVE_SPECIFIC,
+    ONTOLOGY_VERSION,
+)
 from nativeforge.services.native_relevance_repository_service import (
     ASSESSMENTS,
     write_assessments,
@@ -120,7 +126,7 @@ def _load_provenance_rows(
         sa.text(
             f"""
             SELECT field_name, field_value, source_id, raw_payload_sha256,
-                   observation_id, version_id
+                   observation_id, version_id, is_current_canonical
             FROM {PROVENANCE}
             WHERE canonical_id = :cid
             """
@@ -135,9 +141,49 @@ def _load_provenance_rows(
             "raw_payload_sha256": r[3],
             "observation_id": r[4],
             "version_id": r[5],
+            "is_current_canonical": r[6],
         }
         for r in rows
     ]
+
+
+def _current_field_map(provenance_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Prefer current canonical provenance values for structured candidate inputs."""
+    current: dict[str, Any] = {}
+    fallback: dict[str, Any] = {}
+    for row in provenance_rows:
+        name = str(row.get("field_name") or "")
+        if not name:
+            continue
+        fallback[name] = row.get("field_value")
+        if row.get("is_current_canonical") in (True, 1, "1", "true"):
+            current[name] = row.get("field_value")
+    return current or fallback
+
+
+def _supports_classes_for_applicant_codes(raw: Any) -> list[str]:
+    codes: list[str] = []
+    if isinstance(raw, list):
+        codes = [str(v) for v in raw]
+    elif isinstance(raw, str):
+        text = raw.strip()
+        if text.isdigit():
+            codes = [text]
+        elif "," in text:
+            codes = [p.strip() for p in text.split(",") if p.strip()]
+        else:
+            codes = [text] if text else []
+    if not codes:
+        return []
+    band = str(
+        classify_native_eligibility(eligible_applicant_codes=codes).get("confidence")
+        or ""
+    )
+    if band == "direct":
+        return [NATIVE_ELIGIBLE, NATIVE_SPECIFIC, NATIVE_PRIORITY]
+    if band == "requires_reading":
+        return [BROADLY_ELIGIBLE_NATIVE_RELEVANT]
+    return []
 
 
 def _build_evidence_items(
@@ -154,6 +200,9 @@ def _build_evidence_items(
         if not kind or not row["field_value"]:
             continue
         confidence = OBSERVED if kind == APPLICANT_ELIGIBILITY else DERIVED
+        supports: list[str] = []
+        if row["field_name"] == "eligible_applicant_codes":
+            supports = _supports_classes_for_applicant_codes(row["field_value"])
         item = build_evidence(
             canonical_id=canonical_id,
             evidence_type=kind,
@@ -165,6 +214,7 @@ def _build_evidence_items(
             observation_id=row["observation_id"],
             version_id=row["version_id"],
             ontology_version=ONTOLOGY_VERSION,
+            supports_classes=supports or None,
         )
         failures.extend(evidence_invariant_failures(item))
         items.append(item)
@@ -295,12 +345,15 @@ def project_canonical_opportunity(
 ) -> dict[str, Any]:
     stamp = now or dt.datetime.now(dt.UTC)
     provenance_rows = _load_provenance_rows(connection, canonical_id=canonical_id)
+    field_map = _current_field_map(provenance_rows)
     evidence_items, ev_failures = _build_evidence_items(
         canonical_id=canonical_id, provenance_rows=provenance_rows
     )
     source_ids = {r["source_id"] for r in provenance_rows if r.get("source_id")}
     candidate = detect_candidate(
         canonical_id=canonical_id,
+        eligible_applicant_codes=field_map.get("eligible_applicant_codes"),
+        additional_eligibility_text=field_map.get("eligibility_text"),
         source_is_native_serving=bool(source_ids & NATIVE_SERVING_SOURCES),
         evidence_items=evidence_items,
     )

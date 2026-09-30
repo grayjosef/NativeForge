@@ -33,10 +33,37 @@ export interface OrgFunnelResponse {
     };
     pursuing?: StageMetrics;
   };
-  funding_landscape_v3?: {
-    expiring_value?: {
-      windows?: Record<string, ExpiringWindowMetrics>;
-    };
+  funding_landscape_v3?: DecisionAdvantagePayload;
+  decision_advantage?: DecisionAdvantagePayload;
+}
+
+export interface DecisionAdvantagePayload {
+  accessibility_model?: Record<string, StageMetrics & { label?: string }>;
+  gap_closure?: {
+    supported?: boolean;
+    condition_slices_non_additive?: boolean;
+    by_condition?: Record<
+      string,
+      {
+        condition?: string;
+        opportunity_count?: number;
+        known_value_count?: number;
+        known_value_by_currency?: Record<string, string>;
+      }
+    >;
+  };
+  expiring_value?: {
+    windows?: Record<
+      string,
+      { active?: ExpiringWindowMetrics; eligible?: StageMetrics }
+    >;
+  };
+  not_currently_pursued?: StageMetrics & { supported?: boolean };
+  pursuit_coverage?: {
+    supported?: boolean;
+    numerator?: number;
+    denominator?: number;
+    denominator_semantics?: string;
   };
 }
 

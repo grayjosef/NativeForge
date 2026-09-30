@@ -359,38 +359,19 @@ def compute_org_funnel_aggregate(
         },
     }
 
-    from nativeforge.services.funding_landscape_blocked_value_service import (
-        compute_org_blocked_known_value,
-    )
-    from nativeforge.services.funding_landscape_composition_service import (
-        compute_expiring_known_value,
-    )
-    from nativeforge.services.funding_landscape_velocity_service import (
-        compute_partial_velocity,
+    from nativeforge.services.funding_landscape_decision_advantage_service import (
+        compute_org_decision_advantage,
     )
 
     pursuing_stage = payload["stages"]["pursuing"]
     active_stage = payload["stages"]["active"]
-    payload["funding_landscape_v3"] = {
-        "blocked_value": compute_org_blocked_known_value(
-            connection, tenant_id=tid
-        ),
-        "expiring_value": compute_expiring_known_value(connection, now=stamp),
-        "velocity": compute_partial_velocity(connection, now=stamp),
-        "pursuit_coverage": {
-            "supported": pursuing_stage.get("supported"),
-            "pursuing_count": pursuing_stage.get("count"),
-            "pursuing_known_value_count": pursuing_stage.get("known_count"),
-            "pursuing_known_value_coverage_pct": pursuing_stage.get(
-                "known_value_coverage_pct"
-            ),
-            "pursuing_known_value_by_currency": pursuing_stage.get(
-                "totals_by_currency"
-            ),
-            "active_known_value_count": active_stage.get("known_count"),
-            "note": "pursuit_coverage is not market share; denominators differ by stage",
-        },
-    }
+    payload["decision_advantage"] = compute_org_decision_advantage(
+        connection,
+        organization_id=organization_id,
+        tenant_id=tid,
+        now=stamp,
+    )
+    payload["funding_landscape_v3"] = payload["decision_advantage"]
 
     if use_cache:
         _org_cache[cache_key] = {

@@ -15,9 +15,16 @@ from nativeforge.services.funding_landscape_composition_service import (
 from nativeforge.services.funding_landscape_velocity_service import (
     compute_partial_velocity,
 )
+from nativeforge.services.gate173_active_corpus_audit_service import (
+    audit_active_corpus_native_signals,
+    production_relevance_class_distribution,
+)
 from nativeforge.services.gate173_active_corpus_projection_service import (
     gate173_root_cause,
     run_bounded_active_relevance_projection,
+)
+from nativeforge.services.gate173_calibration_service import (
+    build_gate173_calibration_report,
 )
 from nativeforge.services.grants_gov_active_funding_enrichment_service import (
     run_bounded_active_funding_enrichment,
@@ -79,9 +86,32 @@ def operator_opportunity_value_diagnostics(
     base = compute_operator_diagnostics(conn)
     composition = compute_known_value_composition(conn)
     base["gate173"] = gate173_root_cause()
+    base["gate173_calibration"] = build_gate173_calibration_report()
+    base["gate173_production"] = {
+        "relevance_class_distribution": production_relevance_class_distribution(
+            conn
+        ),
+        "corpus_audit": audit_active_corpus_native_signals(conn),
+    }
     base["composition"] = composition
     base["velocity"] = compute_partial_velocity(conn)
     return base
+
+
+@operator_router.get("/gate173/calibration")
+def operator_gate173_calibration() -> dict[str, Any]:
+    return build_gate173_calibration_report()
+
+
+@operator_router.get("/gate173/production-audit")
+def operator_gate173_production_audit(
+    session: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    conn = session.connection()
+    return {
+        "relevance_class_distribution": production_relevance_class_distribution(conn),
+        "corpus_audit": audit_active_corpus_native_signals(conn),
+    }
 
 
 @operator_router.post("/gate173/active-projection")
