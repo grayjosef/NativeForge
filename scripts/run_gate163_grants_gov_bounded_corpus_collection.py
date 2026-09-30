@@ -107,7 +107,10 @@ def main() -> int:
             print("DRY RUN. Re-run with --apply to collect.")
             return 0
 
-        session.commit()
+        if not result.persistence_committed:
+            print()
+            print("PERSISTENCE NOT FINALIZED — refusing exit 0.", file=sys.stderr)
+            return 1
         reapply_org_rls_after_commit(session, DEMO, "demo")
         print()
         print("COMMITTED.")

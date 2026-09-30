@@ -12,6 +12,7 @@ from typing import Any
 import sqlalchemy as sa
 
 from nativeforge.db.models import Organization
+from nativeforge.db.operator_session import commit_bounded_operator_session
 from nativeforge.db.rls import reapply_org_rls_after_commit
 from nativeforge.lib.demo_isolation import OrgType
 from nativeforge.repositories.source_collection_raw_payload_repository import (
@@ -67,6 +68,7 @@ class LiveCollectionResult:
     payload_sha256: str | None
     attempt_id: str | None
     refusal: CollectionRefusal | None = None
+    persistence_committed: bool = False
 
 
 def _refuse(*reasons: str) -> LiveCollectionResult:
@@ -358,6 +360,8 @@ def run_grants_gov_bounded_live_collection(
         source_id=source_id,
         at=now,
     )
+    commit_bounded_operator_session(session)
+    reapply_org_rls_after_commit(session, organization_id, org_type)
     metrics = rollup_collection_metrics(ingest)
     if upstream_offer_sha256:
         metrics = {
@@ -375,4 +379,5 @@ def run_grants_gov_bounded_live_collection(
         payload_sha256=str(payload_meta.get("payload_sha256") or ""),
         attempt_id=str(payload_meta.get("attempt_id") or "") or None,
         refusal=None,
+        persistence_committed=True,
     )
