@@ -144,6 +144,11 @@ from nativeforge.services.customer_session_format_service import (
 from nativeforge.services.customer_session_verifier_service import (
     verify_session_cookie,
 )
+from nativeforge.services.customer_workspace_lane_service import (
+    DEMO_WORKSPACE_SESSION_ORGANIZATION_ID,
+    build_commercial_entitlement_read_model,
+    resolve_workspace_lane,
+)
 from nativeforge.services.demo_bootstrap_decision_log_service import (
     emit as emit_bootstrap_decision,
 )
@@ -256,12 +261,27 @@ def _session_decision(
         else parsed
     )
 
-    return evaluate_auth_dependency(
+    decision = evaluate_auth_dependency(
         dependency_mode=mode,
         session_verification=verification,
-    ) | {
+    )
+    lane = resolve_workspace_lane(
+        authenticated=bool(decision.get("authenticated")),
+        session_cookie_valid=bool(decision.get("session_cookie_valid")),
+        principal_id=verification.get("principal_id"),
+        organization_id=parsed.get("organization_id"),
+        membership_verified=membership_verified,
+    )
+    return decision | {
         "cookie_name": policy["cookie_name"],
         "membership_lookup_performed": db is not None,
+        "session_organization_claim": parsed.get("organization_id"),
+        "workspace_lane": lane["workspace_lane"],
+        "affiliated": lane["affiliated"],
+        "commercial_entitlement": build_commercial_entitlement_read_model(
+            workspace_lane=lane["workspace_lane"],
+            affiliated=lane["affiliated"],
+        ),
         "membership_resolution_blocked_reasons": sorted(
             resolution.get("blocked_reasons") or []
         ),
@@ -984,6 +1004,7 @@ def callback(
 
     # -- 5. the session, only once all of that holds ------------------------
     session_created = False
+    demo_workspace_session = False
     session_blocked_reasons: list[str] = []
     if organization_id_resolved and membership_verified:
         policy = build_session_cookie_policy()
@@ -1014,6 +1035,36 @@ def callback(
                 samesite=policy["same_site"],
             )
             session_created = True
+    elif identity_validated and identity_id:
+        policy = build_session_cookie_policy()
+        issued = int(time.time())
+        built = build_session(
+            principal_id=identity_id,
+            subject=identity_id,
+            organization_id=DEMO_WORKSPACE_SESSION_ORGANIZATION_ID,
+            roles=["demo_visitor"],
+            issued_at=issued,
+            expires_at=issued + int(policy["max_age_seconds"]),
+            auth_source="oidc_authorization_code",
+            session_id=str(uuid.uuid4()),
+            display_name=verification.get("display_name"),
+            picture_url=verification.get("picture_url"),
+            identity_provider=verification.get("identity_provider"),
+        )
+        session_blocked_reasons = list(built["blocked_reasons"])
+        if built["session_cookie_valid"]:
+            response.set_cookie(
+                key=policy["cookie_name"],
+                value=built["session_cookie_value"],
+                max_age=int(policy["max_age_seconds"]),
+                path=policy["path"],
+                domain=policy["domain"],
+                secure=bool(policy["secure"]),
+                httponly=bool(policy["http_only"]),
+                samesite=policy["same_site"],
+            )
+            session_created = True
+            demo_workspace_session = True
 
     exchange = evaluate_token_exchange_boundary(
         callback_code_present=bool(returned_code),
@@ -1041,6 +1092,7 @@ def callback(
     body.update(
         {
             "session_created": session_created,
+            "demo_workspace_session": demo_workspace_session,
             "session_creation_allowed": bool(flow["session_creation_allowed"]),
             # Gate 132. The identity is a row now; the membership is not
             # created here, and the session waits on one that already exists.
@@ -1204,8 +1256,13 @@ def session(
             # `_session_decision` started performing the membership lookup. A
             # caller that has a session needs to know which organization it is
             # for, and the alternative was every client keeping its own copy.
-            "organization_id": verification["organization_id"],
+            "organization_id": (
+                verification.get("organization_id") if decision.get("affiliated") else None
+            ),
             "roles": list(verification["roles"]),
+            "affiliated": bool(decision.get("affiliated")),
+            "workspace_lane": decision.get("workspace_lane"),
+            "commercial_entitlement": decision.get("commercial_entitlement"),
             "expires_at": None,
             # Chrome identity. Name and an allowlisted photo URL from the
             # verified ID token; never the email, never a token.
@@ -1275,6 +1332,7 @@ BOOTSTRAP_ORG_ENV = "NF_BOOTSTRAP_DEMO_ORG_ID"
 #: deployment's own origin, so a misconfigured value cannot send a customer to
 #: another host.
 APP_AFTER_SIGN_IN = "/?view=workspace"
+APP_DEMO_WORKSPACE = "/?view=demo_workspace"
 APP_NEEDS_ORG = "/?view=sign_in&auth=sign_in_incomplete"
 APP_SIGN_IN = "/?view=sign_in"
 
@@ -1353,7 +1411,11 @@ def provider_callback(
         return body
 
     if body.get("session_created"):
-        destination = APP_AFTER_SIGN_IN
+        destination = (
+            APP_DEMO_WORKSPACE
+            if body.get("demo_workspace_session")
+            else APP_AFTER_SIGN_IN
+        )
     elif body.get("org_binding_missing"):
         destination = APP_NEEDS_ORG
     else:

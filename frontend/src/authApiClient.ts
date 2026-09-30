@@ -27,8 +27,12 @@ export interface ProvidersResponse {
   customer_auth_live: boolean;
 }
 
+export type WorkspaceLane = "none" | "demo" | "organization";
+
 export interface SessionResponse {
   authenticated: boolean;
+  affiliated: boolean;
+  workspace_lane: WorkspaceLane;
   organization_id: string | null;
   roles: string[];
   display_name: string | null;
@@ -83,8 +87,15 @@ export async function getAuthSession(
     : Array.isArray(nested.roles)
       ? (nested.roles as string[])
       : [];
+  const laneRaw = raw.workspace_lane;
+  const workspace_lane: WorkspaceLane =
+    laneRaw === "demo" || laneRaw === "organization" || laneRaw === "none"
+      ? laneRaw
+      : "none";
   return {
     authenticated: Boolean(raw.authenticated) || raw.status === "authenticated",
+    affiliated: Boolean(raw.affiliated),
+    workspace_lane,
     organization_id: organizationId,
     roles,
     display_name: typeof raw.display_name === "string" ? raw.display_name : null,

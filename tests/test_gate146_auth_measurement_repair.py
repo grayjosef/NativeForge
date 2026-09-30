@@ -19,6 +19,9 @@ from nativeforge.services.customer_auth_activation_measurement_service import (
 from nativeforge.services.customer_auth_owner_activation_decision_service import (
     APPROVED_ORGANIZATION_ID,
 )
+from nativeforge.services.customer_workspace_lane_service import (
+    DEMO_WORKSPACE_SESSION_ORGANIZATION_ID,
+)
 from nativeforge.services.dev_header_exposure_matrix_service import (
     build_dev_header_exposure_matrix,
 )
@@ -34,7 +37,9 @@ def client():
     return TestClient(create_app(), raise_server_exceptions=False)
 
 
-def _unaffiliated_session_cookie(*, claimed_org: str = DEMO) -> str:
+def _unaffiliated_session_cookie(
+    *, claimed_org: str = DEMO_WORKSPACE_SESSION_ORGANIZATION_ID
+) -> str:
     """Valid signed session for an identity with no membership row."""
     from nativeforge.db.session import SessionLocal
     from nativeforge.services.customer_session_format_service import build_session
@@ -97,8 +102,14 @@ def test_authenticated_unaffiliated_user_is_not_a_member(client):
 
 def test_unaffiliated_authenticated_user_cannot_read_demo_org_feed(client):
     cookie = _unaffiliated_session_cookie()
-    response = client.get(FEED, cookies={"nf_session": cookie})
-    assert response.status_code == 403
+    assert client.get(FEED, cookies={"nf_session": cookie}).status_code == 403
+
+
+def test_unaffiliated_demo_lane_can_load_demo_workspace_summary(client):
+    cookie = _unaffiliated_session_cookie()
+    res = client.get("/api/demo-workspace/summary", cookies={"nf_session": cookie})
+    assert res.status_code == 200
+    assert res.json()["fixture_feed"] is True
 
 
 def test_unaffiliated_user_cannot_use_dev_header_bypass(client):

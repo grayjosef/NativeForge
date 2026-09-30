@@ -23,6 +23,7 @@ export type AppSurface =
   | "settings"
   // Entry and setup.
   | "sign_in"
+  | "demo_workspace"
   | "onboarding"
   // Operator and demo surfaces. Not in primary navigation for customers.
   | "workbench"
@@ -49,6 +50,7 @@ const SURFACES: ReadonlySet<string> = new Set<AppSurface>([
   "trust",
   "settings",
   "sign_in",
+  "demo_workspace",
   "onboarding",
   "workbench",
   "activation",

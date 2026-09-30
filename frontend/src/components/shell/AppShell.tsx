@@ -49,6 +49,8 @@ export interface AppShellProps {
   onSurfaceChange?: (surface: AppSurface) => void;
   /** Organisation name, when one is known. */
   organization?: string | null;
+  /** Overrides top-bar org label (demo workspace title). */
+  workspaceTitle?: string | null;
   /** "Demo" or "Live". Environment, never a navigation item. */
   environment: "demo" | "live";
   onEnvironmentChange?: (environment: "demo" | "live") => void;
@@ -135,6 +137,7 @@ export function AppShell({
   surface,
   onSurfaceChange,
   organization,
+  workspaceTitle,
   environment,
   onEnvironmentChange,
   online = true,
@@ -401,7 +404,11 @@ export function AppShell({
                 </h1>
               </>
             ) : null}
-            <span className="nf-topbar-org">{organization?.trim() || "No organization"}</span>
+            <span className="nf-topbar-org">
+              {workspaceTitle?.trim() ||
+                organization?.trim() ||
+                "No organization"}
+            </span>
             {/* Environment is stated, not offered as a tab. Changing it is a
                 deliberate act with a different affordance from navigating. */}
             <span className="nf-env" data-env={environment}>

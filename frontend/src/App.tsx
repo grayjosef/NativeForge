@@ -63,6 +63,7 @@ import { TrustPage } from "./pages/TrustPage";
 import { OrganizationPage } from "./pages/OrganizationPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SignInPage } from "./pages/SignInPage";
+import { DemoWorkspacePage } from "./pages/DemoWorkspacePage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { WhatsNextCard } from "./components/WhatsNextCard";
 import { AppShell } from "./components/shell/AppShell";
@@ -202,6 +203,8 @@ export default function App() {
   const [applyBusy, setApplyBusy] = useState(false);
   const [session, setSession] = useState<{
     authenticated: boolean;
+    affiliated: boolean;
+    workspaceLane: "none" | "demo" | "organization";
     organizationId: string | null;
     displayName: string | null;
     pictureUrl: string | null;
@@ -237,7 +240,9 @@ export default function App() {
    * first page a buyer opens. We do not know whether we may call, so we do
    * not call.
    */
-  const mayLoadOrgData = session?.authenticated === true;
+  const isDemoLane = session?.workspaceLane === "demo";
+  const isOrgLane = session?.workspaceLane === "organization";
+  const mayLoadOrgData = session?.authenticated === true && isOrgLane;
   const offlineDemoSurface =
     surface === "sc_customer_demo" ||
     surface === "nm_wa_operator_demo" ||
@@ -384,6 +389,8 @@ export default function App() {
         if (!cancelled) {
           setSession({
             authenticated: res.authenticated,
+            affiliated: res.affiliated,
+            workspaceLane: res.workspace_lane,
             organizationId: res.organization_id,
             displayName: res.display_name,
             pictureUrl: res.picture_url,
@@ -394,6 +401,8 @@ export default function App() {
         if (!cancelled) {
           setSession({
             authenticated: false,
+            affiliated: false,
+            workspaceLane: "none",
             organizationId: null,
             displayName: null,
             pictureUrl: null,
@@ -440,6 +449,13 @@ export default function App() {
       return;
     }
     setSurface("sign_in");
+  }, [session, surface, setSurface]);
+
+  useEffect(() => {
+    if (!session?.authenticated || session.workspaceLane !== "demo") return;
+    if (surface === "workspace") {
+      setSurface("demo_workspace");
+    }
   }, [session, surface, setSurface]);
 
   const loadProfile = useCallback(async () => {
@@ -1367,6 +1383,8 @@ export default function App() {
     await signOut(base);
     setSession({
       authenticated: false,
+      affiliated: false,
+      workspaceLane: "none",
       organizationId: null,
       displayName: null,
       pictureUrl: null,
@@ -1424,6 +1442,38 @@ export default function App() {
       // cannot load anything without a session and would have bounced the
       // visitor straight back here - an escape hatch that escapes nowhere.
       <SignInPage notice={authNotice} />
+    );
+  }
+
+  if (surface === "demo_workspace") {
+    return (
+      <AppShell
+        surface={surface}
+        onSurfaceChange={setSurface}
+        workspaceTitle="NativeForge Demo Workspace"
+        organization={null}
+        environment="demo"
+        online={backendOk !== false}
+        offlineHint={backendHint}
+        account={
+          session?.authenticated
+            ? {
+                name: session.displayName ?? "",
+                pictureUrl: session.pictureUrl,
+                organization: null,
+                provider: session.identityProvider,
+              }
+            : null
+        }
+        onSignIn={() => setSurface("sign_in")}
+        onSignOut={onSignOut}
+      >
+        <DemoWorkspacePage
+          baseUrl={base}
+          displayName={session?.displayName ?? null}
+          onUpgrade={() => setSurface("settings")}
+        />
+      </AppShell>
     );
   }
 
