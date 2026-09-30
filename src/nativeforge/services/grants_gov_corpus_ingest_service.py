@@ -13,6 +13,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
+from nativeforge.db.rls import reapply_org_rls_after_commit
 from nativeforge.domain.enums import (
     GrantAwardType,
     GrantSparkSource,
@@ -315,8 +316,6 @@ def ingest_grants_gov_search2_payload(
             )
         )
 
-    from nativeforge.db.rls import reapply_org_rls_after_commit
-
     canonical_metrics = persist_observations(
         connection=connection, observations=observations, now=stamp
     )
@@ -356,6 +355,9 @@ def ingest_grants_gov_search2_payload(
             dry_run=False,
             limit=10,
         )
+    # persist_observations / detail enrich commit via connection.commit(), which
+    # resets local GUCs to ''. Re-stamp demo org context before FORCE RLS reads.
+    reapply_org_rls_after_commit(session, organization_id, org_type)
     spark_metrics = project_grant_sparks_from_hits(
         session,
         org=org,
