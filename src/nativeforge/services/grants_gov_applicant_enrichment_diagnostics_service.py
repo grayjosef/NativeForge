@@ -9,6 +9,7 @@ from nativeforge.services.gate173_active_corpus_audit_service import (
 )
 from nativeforge.services.grants_gov_detail_enrichment_service import (
     DETAIL_ENRICHMENT_VERSION,
+    list_active_canonical_applicant_evidence_gaps,
 )
 from nativeforge.services.intelligence_sql_dialect_service import sql_bool_literal
 from nativeforge.services.opportunity_value_intelligence_service import (
@@ -79,6 +80,7 @@ def compute_applicant_enrichment_diagnostics(
     structured_n = int(structured or 0)
     coverage = round(100.0 * structured_n / active_n, 2) if active_n else 0.0
     dist = production_relevance_class_distribution(connection)
+    gap_sample = list_active_canonical_applicant_evidence_gaps(connection, limit=5)
     return {
         "schema_version": SCHEMA_VERSION,
         "enrichment_version": DETAIL_ENRICHMENT_VERSION,
@@ -92,4 +94,12 @@ def compute_applicant_enrichment_diagnostics(
         "applicant_evidence_coverage_pct": coverage,
         "gate173_distribution": dist,
         "applicant_relevant_count": dist.get("applicant_relevant_count"),
+        "applicant_evidence_gap_sample": [
+            {
+                "canonical_id": row.get("canonical_id"),
+                "source_record_id": row.get("source_record_id"),
+                "opportunity_number": row.get("opportunity_number"),
+            }
+            for row in gap_sample
+        ],
     }
