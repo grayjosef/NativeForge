@@ -1,0 +1,197 @@
+{
+  "commercial_handoff": {
+    "human_or_operator_input_required": "NF_COMMERCIAL_OPERATOR_APPROVAL + operator_fulfill_provisioning_request (legitimate Gate 178 RECORD_LICENSE_PURCHASE)",
+    "must_not_fabricate_in_production_smoke": true,
+    "software_states": [
+      "commercial_intent",
+      "entitlement_pending"
+    ]
+  },
+  "failure_rollback_matrix": [
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "identity_mismatch",
+      "data_rollback_needed": "none \u2014 no write",
+      "fail_closed": true,
+      "operator_action": "reconcile identity / invite binding",
+      "user_state": "blocked"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "duplicate_organization",
+      "data_rollback_needed": "none if no org created",
+      "fail_closed": true,
+      "operator_action": "claim existing org explicitly",
+      "user_state": "entitlement_pending or blocked"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "ambiguous_organization",
+      "data_rollback_needed": "none",
+      "fail_closed": true,
+      "operator_action": "human match resolution",
+      "user_state": "blocked_ambiguous_org"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "invalid_entitlement",
+      "data_rollback_needed": "ledger correction event (178)",
+      "fail_closed": true,
+      "operator_action": "correct ledger via controlling company tools",
+      "user_state": "entitlement_pending"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "entitlement_revoked_or_frozen",
+      "data_rollback_needed": "not automatic",
+      "fail_closed": true,
+      "operator_action": "commercial operator",
+      "user_state": "organization lane may persist; mutations 402"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "membership_failure",
+      "data_rollback_needed": "none partial org possible \u2014 human review",
+      "fail_closed": true,
+      "operator_action": "fix provisioning request",
+      "user_state": "demo lane"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "profile_incomplete",
+      "data_rollback_needed": "none",
+      "fail_closed": false,
+      "operator_action": "customer completes Gate 177 profile",
+      "user_state": "organization_setup"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "affiliation_rejected",
+      "data_rollback_needed": "none",
+      "fail_closed": true,
+      "operator_action": "affiliation reviewer",
+      "user_state": "workspace may load; affiliation-limited per policy"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "authority_rejected",
+      "data_rollback_needed": "none",
+      "fail_closed": true,
+      "operator_action": "authority reviewer",
+      "user_state": "no authority_verified flag"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "feed_access_failure",
+      "data_rollback_needed": "none",
+      "fail_closed": true,
+      "operator_action": "membership / org context / entitlement",
+      "user_state": "organization member"
+    },
+    {
+      "audit_evidence": "provisioning request + ledger + membership rows",
+      "condition": "pursuit_creation_failure",
+      "data_rollback_needed": "none",
+      "fail_closed": true,
+      "operator_action": "seed spark / entitlement / profile",
+      "user_state": "prior steps unchanged"
+    }
+  ],
+  "human_handoffs": {
+    "affiliation_review": {
+      "input_required": [
+        "reviewer_decision_on_pending_affiliation_evidence",
+        "organization_id",
+        "subject_identity_id"
+      ],
+      "software_must_not_infer": [
+        "commercial_entitlement",
+        "payment_received",
+        "mailbox_domain_ownership_as_authority"
+      ],
+      "state_after": "affiliation_verified OR affiliation_rejected (canonical grant tables)",
+      "state_before": "affiliation_unverified, evidence may be pending",
+      "who_acts": "UNKNOWN \u2014 designated affiliation reviewer (not software)"
+    },
+    "authority_review": {
+      "input_required": [
+        "controlling_company_or_delegated_authority_reviewer_decision",
+        "accepted_authority_evidence_bundle"
+      ],
+      "software_must_not_infer": [
+        "identity_sign_in",
+        "organization_membership",
+        "commercial_entitlement",
+        "affiliation_from_email_alone"
+      ],
+      "state_after": "authority_verified OR authority_rejected",
+      "state_before": "authority_unverified",
+      "who_acts": "UNKNOWN \u2014 Tribal authority review owner (not software)"
+    },
+    "commercial_entitlement": {
+      "input_required": [
+        "legitimate_license_agreement_and_operator_RECORD_LICENSE_PURCHASE",
+        "NF_COMMERCIAL_OPERATOR_APPROVAL header matching env"
+      ],
+      "software_must_not_infer": [
+        "customer_clicked_activate",
+        "demo_workspace_access"
+      ],
+      "state_after": "ledger events + entitlement material (Gate 178)",
+      "state_before": "entitlement_pending",
+      "who_acts": "UNKNOWN \u2014 controlling company commercial operator"
+    },
+    "schema_version": "nf_controlled_customer_human_handoffs_v1"
+  },
+  "passed": true,
+  "recorded_at": "2026-09-30T00:51:38.509341+00:00",
+  "rehearsal_mode": "dry_run",
+  "schema_version": "nf_controlled_customer_onboarding_rehearsal_v1",
+  "steps": [
+    {
+      "status": "dry_run",
+      "step": "authenticated_demo_lane",
+      "would_use": "canonical_services"
+    },
+    {
+      "status": "dry_run",
+      "step": "commercial_intent",
+      "would_use": "canonical_services"
+    },
+    {
+      "status": "dry_run",
+      "step": "operator_entitlement_and_provisioning",
+      "would_use": "canonical_services"
+    },
+    {
+      "status": "dry_run",
+      "step": "membership_lane_organization",
+      "would_use": "canonical_services"
+    },
+    {
+      "status": "dry_run",
+      "step": "profile_revision",
+      "would_use": "canonical_services"
+    },
+    {
+      "status": "dry_run",
+      "step": "affiliation_authority_boundary",
+      "would_use": "canonical_services"
+    },
+    {
+      "status": "dry_run",
+      "step": "existing_org_claim",
+      "would_use": "canonical_services"
+    },
+    {
+      "status": "dry_run",
+      "step": "ambiguous_org_fail_closed",
+      "would_use": "canonical_services"
+    },
+    {
+      "status": "dry_run",
+      "step": "demo_real_separation",
+      "would_use": "canonical_services"
+    }
+  ]
+}
