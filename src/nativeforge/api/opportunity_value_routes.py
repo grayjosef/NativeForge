@@ -12,6 +12,10 @@ from nativeforge.services.grants_gov_active_funding_enrichment_service import (
     run_bounded_active_funding_enrichment,
     source_priority_policy,
 )
+from nativeforge.services.opportunity_value_funnel_service import (
+    compute_corpus_funnel_aggregate,
+    public_corpus_funnel_view,
+)
 from nativeforge.services.opportunity_value_intelligence_service import (
     compute_active_opportunity_value_aggregate,
     compute_operator_diagnostics,
@@ -27,6 +31,15 @@ operator_router = APIRouter(
     prefix="/backend/opportunity-value",
     tags=["opportunity-value-operator"],
 )
+
+
+@public_router.get("/funnel")
+def public_opportunity_value_funnel_corpus(
+    session: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    """Public-safe corpus funnel slices (active + native-relevant)."""
+    full = compute_corpus_funnel_aggregate(session.connection())
+    return public_corpus_funnel_view(full)
 
 
 @public_router.get("/active")

@@ -173,6 +173,33 @@ def _load_active_opportunity_rows(
     return [dict(r) for r in rows]
 
 
+def enumerate_active_opportunity_values(
+    connection: sa.engine.Connection,
+) -> list[dict[str, Any]]:
+    """One row per active canonical opportunity with V1 value selection applied."""
+    rows = _load_active_opportunity_rows(connection)
+    out: list[dict[str, Any]] = []
+    for row in rows:
+        sel = _select_monetary_value(
+            min_raw=row.get("min_val"),
+            max_raw=row.get("max_val"),
+            has_field_conflicts=bool(row.get("has_field_conflicts")),
+            min_conflict=row.get("min_conflict"),
+            max_conflict=row.get("max_conflict"),
+        )
+        out.append(
+            {
+                "canonical_id": row["canonical_id"],
+                "lifecycle_state": row["lifecycle_state"],
+                "value_status": sel["value_status"],
+                "selected_amount": sel.get("selected_amount"),
+                "currency": sel.get("currency"),
+                "semantic": sel.get("semantic"),
+            }
+        )
+    return out
+
+
 def compute_active_opportunity_value_aggregate(
     connection: sa.engine.Connection,
     *,

@@ -31,6 +31,7 @@ from nativeforge.services.grants_gov_synopsis_funding_service import (
     map_synopsis_funding_to_canonical,
 )
 from nativeforge.services.intelligence_sql_dialect_service import sql_bool_literal
+from nativeforge.services.opportunity_value_funnel_service import invalidate_funnel_cache
 from nativeforge.services.opportunity_value_intelligence_service import (
     ACTIVE_LIFECYCLE_STATES,
     CANONICAL,
@@ -250,6 +251,7 @@ def run_bounded_active_funding_enrichment(
             stats["parse_failures"] += 1
 
     invalidate_public_cache()
+    invalidate_funnel_cache()
     after = compute_active_opportunity_value_aggregate(connection, use_cache=False)
     stats["after"] = {
         "known_value_count": after.get("known_value_count"),

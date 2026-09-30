@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 
+import { FundingLandscape } from "../components/FundingLandscape";
 import { MissionControl, type MissionControlPayload } from "../components/MissionControl";
+import type { OrgFunnelResponse } from "../fundingLandscapeApiClient";
 import type { ProgressStep } from "../components/ProgressStrip";
 import { EmptyState } from "../components/StateView";
 import { VerificationTiers, buildTiers } from "../components/VerificationTiers";
@@ -87,6 +89,7 @@ export interface WorkspacePageProps {
 
   onGoTo: (navId: string) => void;
   missionControl?: MissionControlPayload | null;
+  fundingLandscape?: OrgFunnelResponse | null;
   onOpenOpportunity?: (sparkId: string) => void;
   attentionItems?: Array<{ id: string; title: string; detail: string; href?: string }>;
 }
@@ -117,6 +120,7 @@ export function WorkspacePage(props: WorkspacePageProps) {
     aside,
     onGoTo,
     missionControl = null,
+    fundingLandscape = null,
     onOpenOpportunity,
     attentionItems = [],
   } = props;
@@ -180,6 +184,8 @@ export function WorkspacePage(props: WorkspacePageProps) {
         onGoTo={onGoTo}
         onOpenOpportunity={onOpenOpportunity ?? (() => undefined)}
       />
+
+      <FundingLandscape data={fundingLandscape ?? null} />
 
       {/* ------------------------------------------ attention and measurement
           Side by side above 1200px.

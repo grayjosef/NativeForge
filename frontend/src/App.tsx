@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  fetchOrgOpportunityValueFunnel,
+  type OrgFunnelResponse,
+} from "./fundingLandscapeApiClient";
 import { WorkbenchPage } from "./pages/WorkbenchPage";
 import { ActivationPage } from "./pages/ActivationPage";
 import type { Plane } from "./m0Flow";
@@ -201,6 +205,7 @@ export default function App() {
   const [applyPath, setApplyPath] = useState<Record<string, unknown> | null>(null);
   const [commandCenter, setCommandCenter] = useState<Record<string, unknown> | null>(null);
   const [missionControl, setMissionControl] = useState<Record<string, unknown> | null>(null);
+  const [fundingLandscape, setFundingLandscape] = useState<OrgFunnelResponse | null>(null);
   const [applyBusy, setApplyBusy] = useState(false);
   const [session, setSession] = useState<{
     authenticated: boolean;
@@ -532,6 +537,21 @@ export default function App() {
       cancelled = true;
     };
   }, [base, plane, o, orgOk, offlineDemoSurface, commandCenter, pursuit]);
+
+  useEffect(() => {
+    if (offlineDemoSurface || !orgOk) return;
+    let cancelled = false;
+    void fetchOrgOpportunityValueFunnel(base, plane, o)
+      .then((row) => {
+        if (!cancelled) setFundingLandscape(row);
+      })
+      .catch(() => {
+        if (!cancelled) setFundingLandscape(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [base, plane, o, orgOk, offlineDemoSurface]);
 
   const profileFields = useMemo(() => {
     if (!profileRecord) {
@@ -1604,6 +1624,7 @@ export default function App() {
         busy={anyBusy}
         onGoTo={setSurfaceByNav}
         missionControl={missionControl as never}
+        fundingLandscape={fundingLandscape}
         onOpenOpportunity={setSparkId}
         attentionItems={attentionItems}
         aside={

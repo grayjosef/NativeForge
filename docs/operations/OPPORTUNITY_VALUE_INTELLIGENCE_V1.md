@@ -53,6 +53,14 @@ Public endpoint uses a short in-process TTL cache (120s). Authoritative state up
 
 `GET /api/public/opportunity-value/active` — public-safe fields only (no per-opportunity list, no tenant data).
 
+## V2 funnel (`nativeforge.opportunity_value_funnel.v1`)
+
+Corpus (public): `GET /api/public/opportunity-value/funnel` — `active`, `native_relevant` slices only.
+
+Organization (authenticated): `GET /v1/nf/{demo|real}/orgs/{org_id}/intelligence/opportunity-value-funnel` — adds Gate 174 eligibility partitions, pursuing, submitted (workflow). Stages are **not additive**.
+
+Value selection remains `nativeforge.opportunity_value.v1`.
+
 ## V1.1 enrichment (Grants.gov detail)
 
 Parser/enrichment version: `nf_grants_gov_synopsis_funding_v1` (aggregate methodology unchanged: `nativeforge.opportunity_value.v1`).
