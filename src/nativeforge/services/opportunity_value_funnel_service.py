@@ -363,8 +363,6 @@ def compute_org_funnel_aggregate(
         compute_org_decision_advantage,
     )
 
-    pursuing_stage = payload["stages"]["pursuing"]
-    active_stage = payload["stages"]["active"]
     payload["decision_advantage"] = compute_org_decision_advantage(
         connection,
         organization_id=organization_id,

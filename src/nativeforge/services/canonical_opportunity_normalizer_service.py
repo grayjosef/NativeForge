@@ -152,6 +152,42 @@ OPPORTUNITY_PARSERS: dict[str, dict[str, Any]] = {
             "funding_amount_max": "funding_amount_max",
         },
     },
+    "grants_gov_fetch_opportunity_detail": {
+        "parser_name": "grants_gov_fetch_opportunity_detail_v1",
+        "record_path": (),
+        "record_id_field": "source_record_id",
+        "supported": (
+            "opportunity_number",
+            "source_record_id",
+            "doc_type",
+            "status",
+            "funding_amount_min",
+            "funding_amount_max",
+            "eligible_applicant_codes",
+            "eligibility_text",
+            "applicant_enrichment_terminal",
+        ),
+        "not_supported": (
+            "title",
+            "funder_agency_name",
+            "funder_agency_code",
+            "open_date",
+            "close_date",
+            "assistance_listings",
+            "source_url",
+        ),
+        "field_map": {
+            "opportunity_number": "opportunity_number",
+            "source_record_id": "source_record_id",
+            "doc_type": "doc_type",
+            "status": "status",
+            "funding_amount_min": "funding_amount_min",
+            "funding_amount_max": "funding_amount_max",
+            "eligible_applicant_codes": "eligible_applicant_codes",
+            "eligibility_text": "eligibility_text",
+            "applicant_enrichment_terminal": "applicant_enrichment_terminal",
+        },
+    },
 }
 
 #: Source status strings mapped onto the canonical lifecycle. Anything not

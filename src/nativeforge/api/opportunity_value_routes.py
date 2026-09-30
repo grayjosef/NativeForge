@@ -30,6 +30,12 @@ from nativeforge.services.grants_gov_active_funding_enrichment_service import (
     run_bounded_active_funding_enrichment,
     source_priority_policy,
 )
+from nativeforge.services.grants_gov_applicant_enrichment_diagnostics_service import (
+    compute_applicant_enrichment_diagnostics,
+)
+from nativeforge.services.grants_gov_detail_enrichment_service import (
+    run_bounded_active_applicant_enrichment,
+)
 from nativeforge.services.opportunity_value_funnel_service import (
     compute_corpus_funnel_aggregate,
     public_corpus_funnel_view,
@@ -95,6 +101,7 @@ def operator_opportunity_value_diagnostics(
     }
     base["composition"] = composition
     base["velocity"] = compute_partial_velocity(conn)
+    base["applicant_enrichment"] = compute_applicant_enrichment_diagnostics(conn)
     return base
 
 
@@ -144,11 +151,38 @@ def operator_run_grants_gov_active_enrichment(
 ) -> dict[str, Any]:
     """Bounded detail enrichment; default dry_run avoids accidental live fetch from UI."""
     lim = max(1, min(int(limit), 200))
-    return run_bounded_active_funding_enrichment(
+    stats = run_bounded_active_funding_enrichment(
         session.connection(),
         limit=lim,
         dry_run=dry_run,
     )
+    if not dry_run:
+        session.commit()
+    return stats
+
+
+@operator_router.get("/enrichment/applicant-diagnostics")
+def operator_applicant_enrichment_diagnostics(
+    session: Annotated[Session, Depends(get_db_session)],
+) -> dict[str, Any]:
+    return compute_applicant_enrichment_diagnostics(session.connection())
+
+
+@operator_router.post("/enrichment/grants-gov-applicant")
+def operator_run_grants_gov_applicant_enrichment(
+    session: Annotated[Session, Depends(get_db_session)],
+    limit: int = 75,
+    dry_run: bool = True,
+) -> dict[str, Any]:
+    lim = max(1, min(int(limit), 250))
+    stats = run_bounded_active_applicant_enrichment(
+        session.connection(),
+        limit=lim,
+        dry_run=dry_run,
+    )
+    if not dry_run:
+        session.commit()
+    return stats
 
 
 @operator_router.get("/provenance/{canonical_id}")

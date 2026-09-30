@@ -117,11 +117,7 @@ def _spark_fields_from_hit(
     record_id = str(fields.get("source_record_id") or raw_hit.get("id") or "").strip()
     if not record_id:
         return None
-    url = (
-        GRANTS_GOV_DETAIL_URL.format(opp_id=record_id)
-        if record_id
-        else None
-    )
+    url = GRANTS_GOV_DETAIL_URL.format(opp_id=record_id) if record_id else None
     cfda_list = fields.get("assistance_listings")
     cfda: str | None = None
     if isinstance(cfda_list, list) and cfda_list:
@@ -326,9 +322,7 @@ def ingest_grants_gov_search2_payload(
     batch = _canonical_batch_metrics(canonical_metrics)
     batch_failures = int(batch.get("batch_failures") or 0)
     obs_failed = int(batch.get("observations_failed") or 0)
-    if batch_failures > 0 or (
-        observations and obs_failed >= len(observations)
-    ):
+    if batch_failures > 0 or (observations and obs_failed >= len(observations)):
         return CorpusIngestReport(
             fetched=fetched,
             normalized=len(observations),
@@ -356,6 +350,16 @@ def ingest_grants_gov_search2_payload(
             canonical_ids=touched_ids[:50],
             dry_run=False,
             now=stamp,
+        )
+        from nativeforge.services.grants_gov_detail_enrichment_service import (
+            enrich_canonical_ids_missing_applicant,
+        )
+
+        enrich_canonical_ids_missing_applicant(
+            session.connection(),
+            canonical_ids=touched_ids,
+            dry_run=False,
+            limit=10,
         )
     spark_metrics = project_grant_sparks_from_hits(
         session,
