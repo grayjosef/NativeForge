@@ -8,6 +8,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from nativeforge.api.deps_db import get_db_session
+from nativeforge.services.grants_gov_active_funding_enrichment_service import (
+    run_bounded_active_funding_enrichment,
+    source_priority_policy,
+)
 from nativeforge.services.opportunity_value_intelligence_service import (
     compute_active_opportunity_value_aggregate,
     compute_operator_diagnostics,
@@ -39,6 +43,26 @@ def operator_opportunity_value_diagnostics(
     session: Annotated[Session, Depends(get_db_session)],
 ) -> dict[str, Any]:
     return compute_operator_diagnostics(session.connection())
+
+
+@operator_router.get("/enrichment/policy")
+def operator_enrichment_policy() -> dict[str, Any]:
+    return source_priority_policy()
+
+
+@operator_router.post("/enrichment/grants-gov-active")
+def operator_run_grants_gov_active_enrichment(
+    session: Annotated[Session, Depends(get_db_session)],
+    limit: int = 50,
+    dry_run: bool = True,
+) -> dict[str, Any]:
+    """Bounded detail enrichment; default dry_run avoids accidental live fetch from UI."""
+    lim = max(1, min(int(limit), 200))
+    return run_bounded_active_funding_enrichment(
+        session.connection(),
+        limit=lim,
+        dry_run=dry_run,
+    )
 
 
 @operator_router.get("/provenance/{canonical_id}")

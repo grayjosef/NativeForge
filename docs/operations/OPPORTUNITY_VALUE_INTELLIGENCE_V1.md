@@ -53,11 +53,28 @@ Public endpoint uses a short in-process TTL cache (120s). Authoritative state up
 
 `GET /api/public/opportunity-value/active` — public-safe fields only (no per-opportunity list, no tenant data).
 
+## V1.1 enrichment (Grants.gov detail)
+
+Parser/enrichment version: `nf_grants_gov_synopsis_funding_v1` (aggregate methodology unchanged: `nativeforge.opportunity_value.v1`).
+
+Synopsis field mapping:
+
+| Source field | Canonical | Aggregate (V1) |
+|--------------|-----------|----------------|
+| `estimatedFunding` | min = max (program total point) | KNOWN point |
+| `awardFloor` + `awardCeiling` | min / max | KNOWN floor (range) |
+| `awardFloor` only | min | KNOWN floor |
+| `awardCeiling` only | *(absent)* | UNKNOWN |
+| `numberOfAwards` | metadata only | never multiplied |
+
+Operator bounded run: `POST /backend/opportunity-value/enrichment/grants-gov-active?dry_run=false&limit=N` or `scripts/run_grants_gov_active_funding_enrichment.py --apply --limit N`.
+
 ## Limitations (V1)
 
 - Eligibility-value breakdown deferred (Gate 174 funnel → V2).
 - Native-relevant value subset when current Gate 173 assessments exist.
 - Blocked-value-by-reason not fabricated; seam documented in service payload.
+- NOFO/document funding (Gate 175 pilot) not wired to canonical provenance in V1.1.
 
 ## Operator diagnostics
 

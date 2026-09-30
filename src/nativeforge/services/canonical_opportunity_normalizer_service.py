@@ -121,6 +121,37 @@ OPPORTUNITY_PARSERS: dict[str, dict[str, Any]] = {
             "assistance_listings": "cfdaList",
         },
     },
+    "grants_gov_fetch_opportunity_funding": {
+        "parser_name": "grants_gov_fetch_opportunity_synopsis_funding",
+        "record_path": (),
+        "record_id_field": "source_record_id",
+        "supported": (
+            "opportunity_number",
+            "source_record_id",
+            "doc_type",
+            "status",
+            "funding_amount_min",
+            "funding_amount_max",
+        ),
+        "not_supported": (
+            "title",
+            "funder_agency_name",
+            "funder_agency_code",
+            "open_date",
+            "close_date",
+            "assistance_listings",
+            "eligibility_text",
+            "source_url",
+        ),
+        "field_map": {
+            "opportunity_number": "opportunity_number",
+            "source_record_id": "source_record_id",
+            "doc_type": "doc_type",
+            "status": "status",
+            "funding_amount_min": "funding_amount_min",
+            "funding_amount_max": "funding_amount_max",
+        },
+    },
 }
 
 #: Source status strings mapped onto the canonical lifecycle. Anything not
