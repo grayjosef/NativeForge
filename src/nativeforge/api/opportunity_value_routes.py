@@ -22,6 +22,7 @@ from nativeforge.services.gate173_active_corpus_audit_service import (
 from nativeforge.services.gate173_active_corpus_projection_service import (
     gate173_root_cause,
     run_bounded_active_relevance_projection,
+    run_bounded_active_relevance_reassessment,
 )
 from nativeforge.services.gate173_calibration_service import (
     build_gate173_calibration_report,
@@ -34,6 +35,7 @@ from nativeforge.services.grants_gov_applicant_enrichment_diagnostics_service im
     compute_applicant_enrichment_diagnostics,
 )
 from nativeforge.services.grants_gov_detail_enrichment_service import (
+    close_active_applicant_evidence_gaps,
     run_bounded_active_applicant_enrichment,
 )
 from nativeforge.services.opportunity_value_funnel_service import (
@@ -129,6 +131,40 @@ def operator_gate173_active_projection(
 ) -> dict[str, Any]:
     lim = max(1, min(int(limit), 500))
     stats = run_bounded_active_relevance_projection(
+        session.connection(),
+        limit=lim,
+        dry_run=dry_run,
+    )
+    if not dry_run:
+        session.commit()
+    return stats
+
+
+@operator_router.post("/gate173/active-reassessment")
+def operator_gate173_active_reassessment(
+    session: Annotated[Session, Depends(get_db_session)],
+    limit: int = 250,
+    dry_run: bool = True,
+) -> dict[str, Any]:
+    lim = max(1, min(int(limit), 500))
+    stats = run_bounded_active_relevance_reassessment(
+        session.connection(),
+        limit=lim,
+        dry_run=dry_run,
+    )
+    if not dry_run:
+        session.commit()
+    return stats
+
+
+@operator_router.post("/enrichment/applicant-gap-closure")
+def operator_applicant_gap_closure(
+    session: Annotated[Session, Depends(get_db_session)],
+    limit: int = 50,
+    dry_run: bool = True,
+) -> dict[str, Any]:
+    lim = max(1, min(int(limit), 200))
+    stats = close_active_applicant_evidence_gaps(
         session.connection(),
         limit=lim,
         dry_run=dry_run,

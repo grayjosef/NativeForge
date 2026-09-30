@@ -146,8 +146,20 @@ def _json_safe(x: Any) -> Any:
 def _clean_codes(raw: Any) -> list[str]:
     if raw is None:
         return []
-    if isinstance(raw, str):
-        parts = raw.replace("|", ",").split(",")
+    if isinstance(raw, list):
+        parts = list(raw)
+    elif isinstance(raw, str):
+        text = raw.strip()
+        if not text:
+            return []
+        if text.startswith("["):
+            try:
+                parsed = json.loads(text)
+                parts = parsed if isinstance(parsed, list) else [text]
+            except json.JSONDecodeError:
+                parts = text.replace("|", ",").split(",")
+        else:
+            parts = text.replace("|", ",").split(",")
     else:
         parts = list(raw)
     return [str(p).strip().upper() for p in parts if str(p).strip()]

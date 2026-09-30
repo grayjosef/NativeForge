@@ -13,6 +13,7 @@ from nativeforge.services.intelligence_sql_dialect_service import (
 from nativeforge.services.native_eligibility_code_classification_service import (
     DIRECT_TRIBAL_CODES,
     NATIVE_RECALL_CODES,
+    _clean_codes,
     classify_native_eligibility,
 )
 from nativeforge.services.native_relevance_ontology_service import APPLICANT_RELEVANT
@@ -27,16 +28,7 @@ SCHEMA_VERSION = "nf_gate173_active_corpus_audit_v1"
 
 
 def _parse_codes(raw: Any) -> list[str]:
-    if raw is None:
-        return []
-    if isinstance(raw, list):
-        return [str(v).strip() for v in raw if str(v).strip()]
-    text = str(raw).strip()
-    if not text:
-        return []
-    if "," in text:
-        return [p.strip() for p in text.split(",") if p.strip()]
-    return [text]
+    return _clean_codes(raw)
 
 
 def production_relevance_class_distribution(

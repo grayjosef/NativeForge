@@ -67,7 +67,10 @@ def compute_applicant_enrichment_diagnostics(
               ON p.canonical_id = c.canonical_id
              AND p.field_name = 'applicant_enrichment_terminal'
              AND p.is_current_canonical = {current}
-             AND p.field_value = 'no_applicant_fields'
+             AND p.field_value IN (
+               'no_applicant_fields',
+               'detail_unavailable_no_source_record_id'
+             )
             WHERE c.lifecycle_state IN ({active_list})
             """
         )

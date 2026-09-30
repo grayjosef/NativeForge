@@ -25,6 +25,7 @@ from nativeforge.services.gate173_calibration_service import (
     build_gate173_calibration_report,
 )
 from nativeforge.services.grants_gov_detail_enrichment_service import (
+    close_active_applicant_evidence_gaps,
     enrich_one_active_detail,
     run_bounded_active_applicant_enrichment,
 )
@@ -180,6 +181,30 @@ def test_enrichment_path_gate173_applicant_relevant(db):
         {"cid": cid},
     ).fetchone()
     assert codes is not None
+
+
+def test_gap_closure_terminal_without_source_record_id(db):
+    conn = db.connection()
+    cid = _seed(conn, "no-grants-id", "888001")
+    conn.execute(
+        sa.text(
+            "UPDATE nf_opportunity_field_provenance SET field_value = '' "
+            "WHERE canonical_id = :cid AND field_name = 'source_record_id'"
+        ),
+        {"cid": cid},
+    )
+    gaps = close_active_applicant_evidence_gaps(conn, limit=10, dry_run=False)
+    assert gaps["detail_unavailable_no_source_record_id"] >= 1
+    term = conn.execute(
+        sa.text(
+            "SELECT field_value FROM nf_opportunity_field_provenance "
+            "WHERE canonical_id = :cid AND field_name = 'applicant_enrichment_terminal' "
+            "AND is_current_canonical = 1"
+        ),
+        {"cid": cid},
+    ).fetchone()
+    assert term is not None
+    assert term[0] == "detail_unavailable_no_source_record_id"
 
 
 def test_code_99_broad_eligibility(db):

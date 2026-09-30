@@ -25,6 +25,7 @@ from nativeforge.services.eligibility_requirement_model_service import (
 from nativeforge.services.intelligence_sql_dialect_service import is_current_active_sql
 from nativeforge.services.native_eligibility_code_classification_service import (
     DIRECT_TRIBAL_CODES,
+    _clean_codes,
     classify_native_eligibility,
 )
 from nativeforge.services.native_relevance_candidate_service import (
@@ -162,17 +163,7 @@ def _current_field_map(provenance_rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def _supports_classes_for_applicant_codes(raw: Any) -> list[str]:
-    codes: list[str] = []
-    if isinstance(raw, list):
-        codes = [str(v) for v in raw]
-    elif isinstance(raw, str):
-        text = raw.strip()
-        if text.isdigit():
-            codes = [text]
-        elif "," in text:
-            codes = [p.strip() for p in text.split(",") if p.strip()]
-        else:
-            codes = [text] if text else []
+    codes = _clean_codes(raw)
     if not codes:
         return []
     band = str(
@@ -186,6 +177,26 @@ def _supports_classes_for_applicant_codes(raw: Any) -> list[str]:
     return []
 
 
+def _is_current_provenance(row: dict[str, Any]) -> bool:
+    return row.get("is_current_canonical") in (True, 1, "1", "true")
+
+
+def _provenance_rows_for_projection(
+    provenance_rows: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """One row per field_name, preferring current canonical provenance."""
+    by_field: dict[str, dict[str, Any]] = {}
+    for row in provenance_rows:
+        name = str(row.get("field_name") or "")
+        if not name:
+            continue
+        if _is_current_provenance(row):
+            by_field[name] = row
+        elif name not in by_field:
+            by_field[name] = row
+    return list(by_field.values())
+
+
 def _build_evidence_items(
     *,
     canonical_id: str,
@@ -194,7 +205,8 @@ def _build_evidence_items(
     items: list[dict[str, Any]] = []
     source_ids: set[str] = set()
     failures: list[str] = []
-    for row in provenance_rows:
+    active_rows = _provenance_rows_for_projection(provenance_rows)
+    for row in active_rows:
         source_ids.add(row["source_id"])
         kind = FIELD_TO_EVIDENCE.get(row["field_name"])
         if not kind or not row["field_value"]:
@@ -252,13 +264,12 @@ def _requirements_from_evidence(
         if str(item.get("evidence_type")) != APPLICANT_ELIGIBILITY:
             continue
         value = item.get("evidence_value")
-        codes: list[str] = []
-        if isinstance(value, list):
-            codes = [str(v) for v in value]
-        elif isinstance(value, str) and value.strip().isdigit():
-            codes = [value.strip()]
-        elif isinstance(value, str) and "," in value:
-            codes = [p.strip() for p in value.split(",") if p.strip()]
+        field_name = str(item.get("field_name") or "")
+        codes = (
+            _clean_codes(value)
+            if field_name == "eligible_applicant_codes"
+            else []
+        )
         classification = (
             classify_native_eligibility(eligible_applicant_codes=codes)
             if codes
@@ -315,6 +326,44 @@ def _projection_fingerprint(
     return hashlib.sha256(_json(payload).encode()).hexdigest()
 
 
+def _evidence_material_key(item: dict[str, Any]) -> str:
+    value = item.get("evidence_value")
+    if isinstance(value, (list, dict)):
+        val_digest = hashlib.sha256(_json(value).encode()).hexdigest()[:16]
+    else:
+        val_digest = hashlib.sha256(str(value or "").encode()).hexdigest()[:16]
+    supports = ",".join(sorted(str(s) for s in (item.get("supports_classes") or [])))
+    return "|".join(
+        [
+            str(item.get("field_name") or ""),
+            str(item.get("evidence_type") or ""),
+            str(item.get("confidence_class") or ""),
+            val_digest,
+            str(item.get("observation_id") or ""),
+            str(item.get("version_id") or ""),
+            supports,
+        ]
+    )
+
+
+def _gate173_material_input_fingerprint(
+    *,
+    field_map: dict[str, Any],
+    candidate: dict[str, Any],
+    evidence_items: list[dict[str, Any]],
+) -> str:
+    """Hash Gate 173 inputs only — outputs must not suppress reassessment."""
+    elig = str(field_map.get("eligibility_text") or "")
+    payload = {
+        "ontology": ONTOLOGY_VERSION,
+        "eligible_applicant_codes": sorted(_clean_codes(field_map.get("eligible_applicant_codes"))),
+        "eligibility_text_sha256": hashlib.sha256(elig.encode()).hexdigest(),
+        "candidate_signals": sorted(candidate.get("signal_names") or []),
+        "evidence_material": sorted(_evidence_material_key(i) for i in evidence_items),
+    }
+    return hashlib.sha256(_json(payload).encode()).hexdigest()
+
+
 def _current_assessment_fingerprint(
     connection: sa.engine.Connection, *, canonical_id: str
 ) -> str | None:
@@ -332,7 +381,11 @@ def _current_assessment_fingerprint(
     except json.JSONDecodeError:
         return None
     if isinstance(reasons, dict):
-        return str(reasons.get("projection_fingerprint") or "") or None
+        stored = str(reasons.get("input_fingerprint") or "").strip()
+        if stored:
+            return stored
+        # Legacy rows used output-only fingerprints; treat as stale once.
+        return None
     return None
 
 
@@ -352,7 +405,8 @@ def project_canonical_opportunity(
     source_ids = {r["source_id"] for r in provenance_rows if r.get("source_id")}
     candidate = detect_candidate(
         canonical_id=canonical_id,
-        eligible_applicant_codes=field_map.get("eligible_applicant_codes"),
+        eligible_applicant_codes=_clean_codes(field_map.get("eligible_applicant_codes"))
+        or field_map.get("eligible_applicant_codes"),
         additional_eligibility_text=field_map.get("eligibility_text"),
         source_is_native_serving=bool(source_ids & NATIVE_SERVING_SOURCES),
         evidence_items=evidence_items,
@@ -364,14 +418,20 @@ def project_canonical_opportunity(
         computed_at=stamp,
     )
     evidence_ids = [str(i["evidence_id"]) for i in evidence_items]
-    fingerprint = _projection_fingerprint(
+    input_fingerprint = _gate173_material_input_fingerprint(
+        field_map=field_map,
+        candidate=candidate,
+        evidence_items=evidence_items,
+    )
+    output_fingerprint = _projection_fingerprint(
         assessment=assessment, evidence_ids=evidence_ids
     )
     prior = _current_assessment_fingerprint(connection, canonical_id=canonical_id)
-    skipped = prior == fingerprint and bool(prior)
+    skipped = prior == input_fingerprint and bool(prior)
     human_reasons = assessment.get("reasons") or []
     assessment["reasons"] = {
-        "projection_fingerprint": fingerprint,
+        "input_fingerprint": input_fingerprint,
+        "projection_fingerprint": output_fingerprint,
         "items": human_reasons,
     }
     assessment["candidate_state"] = candidate.get("candidate_state")

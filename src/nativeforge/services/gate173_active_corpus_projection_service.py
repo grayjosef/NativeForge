@@ -110,6 +110,51 @@ def project_intelligence_for_canonical_ids(
     }
 
 
+def list_active_canonical_ids(
+    connection: sa.engine.Connection,
+    *,
+    limit: int = DEFAULT_BOUND,
+) -> list[str]:
+    active_list = ", ".join(f"'{s}'" for s in sorted(ACTIVE_LIFECYCLE_STATES))
+    rows = connection.execute(
+        sa.text(
+            f"""
+            SELECT canonical_id FROM {CANONICAL}
+            WHERE lifecycle_state IN ({active_list})
+            ORDER BY last_seen_at DESC
+            LIMIT :lim
+            """
+        ),
+        {"lim": int(limit)},
+    ).fetchall()
+    return [str(r[0]) for r in rows if str(r[0]) and str(r[0]) != "L1:"]
+
+
+def run_bounded_active_relevance_reassessment(
+    connection: sa.engine.Connection,
+    *,
+    limit: int = DEFAULT_BOUND,
+    dry_run: bool = True,
+    now: dt.datetime | None = None,
+) -> dict[str, Any]:
+    """Reproject Gate 173 for the active corpus (input-fingerprint idempotent)."""
+    cohort = list_active_canonical_ids(connection, limit=limit)
+    stats: dict[str, Any] = {
+        "schema_version": SCHEMA_VERSION,
+        "dry_run": dry_run,
+        "active_reassessment_count": len(cohort),
+        "limit": int(limit),
+    }
+    if dry_run:
+        stats["cohort_sample"] = cohort[:10]
+        return stats
+    batch = project_intelligence_for_canonical_ids(
+        connection, canonical_ids=cohort, dry_run=False, now=now
+    )
+    stats.update(batch)
+    return stats
+
+
 def run_bounded_active_relevance_projection(
     connection: sa.engine.Connection,
     *,

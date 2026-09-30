@@ -57,6 +57,7 @@ SCHEMA_VERSION = "nf_grants_gov_detail_enrichment_v1"
 DEFAULT_BOUND = 75
 
 TERMINAL_NO_APPLICANT = "no_applicant_fields"
+TERMINAL_NO_SOURCE_RECORD = "detail_unavailable_no_source_record_id"
 
 
 def _sha256(text: str) -> str:
@@ -165,6 +166,164 @@ def list_active_canonical_missing_applicant_provenance(
         if len(out) >= limit:
             break
     return out
+
+
+def list_active_canonical_applicant_evidence_gaps(
+    connection: sa.engine.Connection,
+    *,
+    limit: int = DEFAULT_BOUND,
+) -> list[dict[str, Any]]:
+    """Active rows lacking applicant codes and any terminal disposition."""
+    active_list = ", ".join(f"'{s}'" for s in sorted(ACTIVE_LIFECYCLE_STATES))
+    current = sql_bool_literal(connection, value=True)
+    terminals = (
+        TERMINAL_NO_APPLICANT,
+        TERMINAL_NO_SOURCE_RECORD,
+    )
+    terminal_list = ", ".join(f"'{t}'" for t in terminals)
+    rows = connection.execute(
+        sa.text(
+            f"""
+            SELECT c.canonical_id, c.lifecycle_state, c.doc_type,
+                   rid.field_value AS source_record_id,
+                   num.field_value AS opportunity_number
+            FROM {CANONICAL} c
+            LEFT JOIN {PROVENANCE} pcodes
+              ON pcodes.canonical_id = c.canonical_id
+             AND pcodes.field_name = 'eligible_applicant_codes'
+             AND pcodes.is_current_canonical = {current}
+            LEFT JOIN {PROVENANCE} pterm
+              ON pterm.canonical_id = c.canonical_id
+             AND pterm.field_name = 'applicant_enrichment_terminal'
+             AND pterm.is_current_canonical = {current}
+            LEFT JOIN {PROVENANCE} rid
+              ON rid.canonical_id = c.canonical_id
+             AND rid.field_name = 'source_record_id'
+             AND rid.is_current_canonical = {current}
+            LEFT JOIN {PROVENANCE} num
+              ON num.canonical_id = c.canonical_id
+             AND num.field_name = 'opportunity_number'
+             AND num.is_current_canonical = {current}
+            WHERE c.lifecycle_state IN ({active_list})
+              AND (pcodes.field_value IS NULL OR TRIM(pcodes.field_value) = '')
+              AND (pterm.field_value IS NULL OR pterm.field_value NOT IN ({terminal_list}))
+            ORDER BY c.last_seen_at DESC
+            LIMIT :lim
+            """
+        ),
+        {"lim": int(limit)},
+    ).mappings()
+    return [dict(row) for row in rows]
+
+
+def persist_applicant_enrichment_terminal(
+    connection: sa.engine.Connection,
+    *,
+    row: dict[str, Any],
+    terminal: str,
+    stamp: dt.datetime | None = None,
+) -> dict[str, Any]:
+    """Record a fail-closed terminal applicant-enrichment outcome."""
+    now = stamp or dt.datetime.now(dt.UTC)
+    cid = str(row.get("canonical_id") or "").strip()
+    binding = _canonical_binding(connection, canonical_id=cid) if cid else None
+    if not binding:
+        return {
+            "canonical_id": cid,
+            "persisted": False,
+            "error": "canonical_binding_unavailable",
+        }
+    opp_num, doc_type = binding
+    grants_id = str(row.get("source_record_id") or "").strip()
+    status = _lifecycle_to_status(str(row.get("lifecycle_state") or "posted"))
+    flat: dict[str, Any] = {
+        "source_record_id": grants_id or f"terminal-{cid[:12]}",
+        "opportunity_number": opp_num,
+        "doc_type": doc_type,
+        "status": status,
+        "title": f"Applicant enrichment terminal ({terminal})",
+        "applicant_enrichment_terminal": terminal,
+        "detail_enrichment_meta": {
+            "enrichment_version": DETAIL_ENRICHMENT_VERSION,
+            "applicant_outcome": terminal,
+        },
+    }
+    body = json.dumps(flat, sort_keys=True, default=str)
+    payload_sha = _sha256(body)
+    attempt_id = _sha256(f"terminal-applicant:{cid}:{terminal}:{payload_sha[:16]}")
+    normalized = normalize_record(record=flat, adapter_key=ADAPTER_KEY)
+    normalized["parser_version"] = DETAIL_ENRICHMENT_VERSION
+    if not normalized.get("parseable"):
+        return {
+            "canonical_id": cid,
+            "persisted": False,
+            "error": "terminal_record_not_parseable",
+        }
+    identity = identity_for_normalized(normalized, source_id=GRANTS_GOV_SOURCE)
+    persist_observations(
+        connection=connection,
+        observations=[
+            NormalizedSourceObservation(
+                source_id=GRANTS_GOV_SOURCE,
+                normalized=normalized,
+                raw_payload_sha256=payload_sha,
+                identity=identity,
+                raw_payload_attempt_id=attempt_id,
+                source_authority_host="api.grants.gov",
+                observed_at=now,
+            )
+        ],
+    )
+    return {
+        "canonical_id": cid,
+        "persisted": True,
+        "terminal": terminal,
+        "applicant_outcome": terminal,
+    }
+
+
+def close_active_applicant_evidence_gaps(
+    connection: sa.engine.Connection,
+    *,
+    limit: int = DEFAULT_BOUND,
+    dry_run: bool = True,
+) -> dict[str, Any]:
+    """Fail-closed terminal states for gaps that cannot be detail-enriched."""
+    gaps = list_active_canonical_applicant_evidence_gaps(connection, limit=limit)
+    stats: dict[str, Any] = {
+        "schema_version": SCHEMA_VERSION,
+        "dry_run": dry_run,
+        "gap_count": len(gaps),
+        "detail_unavailable_no_source_record_id": 0,
+        "skipped_has_source_record_id": 0,
+        "results": [],
+    }
+    for row in gaps:
+        grants_id = str(row.get("source_record_id") or "").strip()
+        if grants_id:
+            stats["skipped_has_source_record_id"] += 1
+            continue
+        if dry_run:
+            stats["results"].append(
+                {
+                    "canonical_id": row.get("canonical_id"),
+                    "would_terminal": TERMINAL_NO_SOURCE_RECORD,
+                }
+            )
+            stats["detail_unavailable_no_source_record_id"] += 1
+            continue
+        outcome = persist_applicant_enrichment_terminal(
+            connection,
+            row=row,
+            terminal=TERMINAL_NO_SOURCE_RECORD,
+        )
+        stats["results"].append(outcome)
+        if outcome.get("persisted"):
+            stats["detail_unavailable_no_source_record_id"] += 1
+    if not dry_run and stats["detail_unavailable_no_source_record_id"]:
+        invalidate_public_cache()
+        invalidate_funnel_cache()
+    return stats
 
 
 def _canonical_binding(

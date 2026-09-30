@@ -87,3 +87,31 @@ curl -sS -o /dev/null -w '%{http_code}\n' https://nativeforge.mayhem-nc.dev/api/
 ```
 
 Do **not** run `--hermetic --apply` against production.
+
+## Post-deploy intelligence repair (operator, production)
+
+After shipping Gate 173 input-fingerprint reassessment:
+
+1. **Applicant gap closure** (fail-closed terminal for rows with no Grants.gov id):
+   `POST /backend/opportunity-value/enrichment/applicant-gap-closure?limit=50&dry_run=false`
+2. **Gate 173 active reassessment** (reproject all active rows; fixes stale
+   INDIRECT assessments when direct tribal codes exist):
+   `POST /backend/opportunity-value/gate173/active-reassessment?limit=250&dry_run=false`
+3. **Verify** (read-only):
+   `GET /backend/opportunity-value/gate173/production-audit`
+   `GET /backend/opportunity-value/enrichment/applicant-diagnostics`
+
+Expect: `direct_code_assessment_mismatches=[]`, applicant evidence gaps explained
+via terminal states (not silent missing rows).
+
+## Customer #1 execution order (summary)
+
+1. Customer authenticates → demo lane until entitled org exists.
+2. Commercial intent → operator fulfill (licence) → org + membership.
+3. Customer re-login → organization workspace.
+4. Profile completion → **human** affiliation review → **human** authority review
+   (software never infers authority from entitlement).
+5. Verify discovery feed + decision advantage + pursuit smoke on real canonical
+   intelligence (not demo records).
+6. On failure: use commercial rollback matrix in rehearsal evidence JSON; do not
+   drop git stash or fabricate authority/entitlement.
