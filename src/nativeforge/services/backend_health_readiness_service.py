@@ -357,6 +357,18 @@ def build_backend_readiness(
     if not scheduler.get("ready_to_start_monitoring"):
         blocked_reasons.append("not_ready_to_start_monitoring")
 
+    auth_measurement: dict[str, Any] = {}
+    if resolved_db:
+        try:
+            from nativeforge.services.customer_auth_activation_measurement_service import (
+                build_measured_customer_auth_activation_gate,
+            )
+
+            auth_measurement = build_measured_customer_auth_activation_gate()
+        except Exception:  # noqa: BLE001 - unmeasured auth stays conservative
+            auth_measurement = {}
+
+    customer_auth_live = bool(auth_measurement.get("customer_auth_live"))
     return _json_safe(
         {
             "schema_version": SCHEMA_VERSION,
@@ -378,7 +390,16 @@ def build_backend_readiness(
             "ready_to_start_monitoring": bool(
                 scheduler.get("ready_to_start_monitoring")
             ),
-            "customer_auth_live": False,
+            "customer_auth_live": customer_auth_live,
+            "customer_auth_infrastructure_ready": bool(
+                auth_measurement.get("customer_auth_infrastructure_ready")
+            ),
+            "customer_auth_owner_activation_approved": bool(
+                auth_measurement.get("customer_auth_owner_activation_approved")
+            ),
+            "customer_auth_measurement_performed": bool(
+                auth_measurement.get("measurement_performed")
+            ),
             "production_rollout": False,
             "controlled_customer_pilot": False,
             "live_source_coverage": False,
@@ -457,7 +478,6 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
 
     # The boundaries this gate may not soften.
     for constant in (
-        "customer_auth_live",
         "production_rollout",
         "controlled_customer_pilot",
         "live_source_coverage",
@@ -465,6 +485,12 @@ def readiness_invariant_failures(readiness: dict[str, Any]) -> list[str]:
     ):
         if readiness.get(constant) is not False:
             fails.append(f"readiness_claimed:{constant}")
+
+    if readiness.get("customer_auth_live"):
+        if not readiness.get("customer_auth_measurement_performed"):
+            fails.append("customer_auth_live_without_measurement")
+        if not readiness.get("customer_auth_owner_activation_approved"):
+            fails.append("customer_auth_live_without_owner_activation")
     claimed = readiness.get("collectors_live")
     evidence = readiness.get("fleet_live_sources")
     # A live count is the length of the evidenced source list. A bare number,

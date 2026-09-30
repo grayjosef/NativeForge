@@ -94,14 +94,11 @@ from nativeforge.services.auth_provider_registry_service import (
     provider_configured,
     provider_env,
 )
-from nativeforge.services.customer_auth_activation_gate_service import (
-    build_customer_auth_activation_gate,
+from nativeforge.services.customer_auth_activation_measurement_service import (
+    build_measured_customer_auth_activation_gate,
 )
 from nativeforge.services.customer_auth_authorization_url_service import (
     build_authorization_url,
-)
-from nativeforge.services.customer_auth_binding_evidence_service import (
-    build_binding_evidence,
 )
 from nativeforge.services.customer_auth_dependency_contract_service import (
     evaluate_auth_dependency,
@@ -110,12 +107,7 @@ from nativeforge.services.customer_auth_environment_preflight_service import (
     CALLBACK_ROUTE_PATH,
 )
 from nativeforge.services.customer_auth_jwks_validation_evidence_service import (
-    build_jwks_validation_evidence,
     record_validation_evidence,
-)
-from nativeforge.services.customer_auth_owner_activation_decision_service import (
-    build_customer_auth_activation_decision,
-    build_owner_activation_decision,
 )
 from nativeforge.services.customer_auth_redirect_flow_service import (
     build_redirect_flow_contract,
@@ -133,9 +125,6 @@ from nativeforge.services.customer_auth_redirect_state_store_service import (
 from nativeforge.services.customer_auth_redirect_state_store_service import (
     consume_state,
     store_state,
-)
-from nativeforge.services.customer_auth_role_mapping_evidence_service import (
-    build_role_mapping_evidence,
 )
 from nativeforge.services.customer_auth_signing_key_readiness_service import (
     build_signing_key_readiness,
@@ -170,9 +159,6 @@ from nativeforge.services.dev_org_membership_bootstrap_service import (
 from nativeforge.services.identity_org_session_resolution_service import (
     resolve_session_organization,
 )
-from nativeforge.services.membership_invite_repository_service import (
-    build_invite_binding_evidence,
-)
 from nativeforge.services.oidc_provider_discovery_service import (
     build_provider_endpoints,
 )
@@ -200,59 +186,13 @@ SECURITY_SCHEME_NAME = "nf_session_cookie"
 def _gate(db: Session | None = None) -> dict[str, Any]:
     """The activation gate, for the two fields every response carries.
 
-    Gate 132G: a route with a session hands over what the database says, so
-    `org_binding_passed` and `callback_session_validated` are measured rather
-    than assumed false. A caller without one gets the deterministic answer.
-
-    Gate 133 adds two more measurements and one decision. The decision is
-    checked against the organization that actually has a mapped membership,
-    read out of the role-mapping evidence - not against an id this function
-    supplies. When the mapping is ambiguous (nought or several organizations)
-    no organization is offered and the decision refuses by name, which is the
-    deny-by-default branch rather than a fallback.
+    System activation is measured under the owner-approved demo organization
+    with tenant RLS applied (`customer_auth_activation_measurement_service`).
+    That is separate from whether *this* caller holds a membership: a valid
+    external identity may authenticate without belonging to a customer org yet.
     """
-    evidence = None
-    jwks_evidence = None
-    role_evidence = None
-    invite_evidence = None
-    decision = None
-    customer_auth_decision = None
-
-    if db is not None:
-        try:
-            connection = db.connection()
-            evidence = build_binding_evidence(connection=connection)
-            jwks_evidence = build_jwks_validation_evidence(connection=connection)
-            role_evidence = build_role_mapping_evidence(connection=connection)
-            invite_evidence = build_invite_binding_evidence(connection=connection)
-        except Exception:
-            db.rollback()
-            evidence = jwks_evidence = role_evidence = None
-            invite_evidence = None
-
-    if role_evidence is not None:
-        mapped = list(role_evidence.get("mapped_organizations") or [])
-        organization = mapped[0] if len(mapped) == 1 else None
-        provider = (auth_environment_overlay().get("OIDC_ISSUER") or "").strip()
-        decision = build_owner_activation_decision(
-            organization_id=organization, provider=provider
-        )
-        # Gate 135D. The second decision, checked against the same
-        # organization the membership resolved to - not one this function
-        # supplies. Approving a login is not approving customer auth, and
-        # these two say so separately.
-        customer_auth_decision = build_customer_auth_activation_decision(
-            organization_id=organization, provider=provider
-        )
-
-    return build_customer_auth_activation_gate(
-        binding_evidence=evidence,
-        jwks_validation_evidence=jwks_evidence,
-        role_mapping_evidence=role_evidence,
-        login_activation_decision=decision,
-        invite_binding_evidence=invite_evidence,
-        customer_auth_activation_decision=customer_auth_decision,
-    )
+    del db  # per-request DB is not used for global activation measurement
+    return build_measured_customer_auth_activation_gate()
 
 
 def _session_decision(

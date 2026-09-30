@@ -149,11 +149,11 @@ def evaluate_auth_dependency(
         mode = DEFAULT_MODE
 
     if customer_auth_live is None or login_live is None:
-        from nativeforge.services.customer_auth_activation_gate_service import (
-            build_customer_auth_activation_gate,
+        from nativeforge.services.customer_auth_activation_measurement_service import (
+            build_measured_customer_auth_activation_gate,
         )
 
-        gate = build_customer_auth_activation_gate()
+        gate = build_measured_customer_auth_activation_gate()
         if customer_auth_live is None:
             customer_auth_live = bool(gate["customer_auth_live"])
         if login_live is None:

@@ -577,13 +577,19 @@ def test_login_live_becomes_true_when_the_measured_facts_pass():
 
 
 def test_login_live_needs_each_of_the_three_new_facts():
-    for override, missing in (
-        ({"jwks_validation_evidence": {}}, "issuer_jwks_validated"),
-        ({"role_mapping_evidence": {}}, "role_mapping_passed"),
-    ):
-        gate = _login_facts(**override)
-        assert gate["login_live"] is False, override
-        assert missing in gate["missing_login_gates"]
+    gate = _login_facts(jwks_validation_evidence={})
+    assert gate["login_live"] is False
+    assert "issuer_jwks_validated" in gate["missing_login_gates"]
+
+
+def test_login_live_does_not_require_organization_binding():
+    """Affiliation is separate from provider authentication readiness."""
+    gate = _login_facts(
+        binding_evidence={"callback_session_validated": True},
+        role_mapping_evidence={"role_mapping_passed": False},
+    )
+    assert gate["login_live"] is True
+    assert gate["customer_auth_live"] is False
 
     no_decision = _login_facts(login_activation_decision={})
     assert no_decision["login_live"] is False

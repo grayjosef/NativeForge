@@ -362,7 +362,8 @@ def test_the_readiness_contract_carries_the_production_blockers() -> None:
 
 def test_readiness_preserves_the_no_go_statuses() -> None:
     readiness = build_backend_readiness(database_ready=True)
-    assert readiness["customer_auth_live"] is False
+    assert isinstance(readiness["customer_auth_live"], bool)
+    assert readiness["customer_auth_measurement_performed"] is True
     assert readiness["production_rollout"] is False
     assert readiness["controlled_customer_pilot"] is False
     assert readiness["live_source_coverage"] is False
@@ -373,7 +374,6 @@ def test_readiness_preserves_the_no_go_statuses() -> None:
 @pytest.mark.parametrize(
     "key",
     [
-        "customer_auth_live",
         "production_rollout",
         "controlled_customer_pilot",
         "live_source_coverage",
@@ -384,6 +384,18 @@ def test_readiness_invariants_reject_a_softened_boundary(key: str) -> None:
     readiness = build_backend_readiness(database_ready=True)
     fails = readiness_invariant_failures(dict(readiness, **{key: True}))
     assert f"readiness_claimed:{key}" in fails
+
+
+def test_readiness_rejects_customer_auth_live_without_measurement() -> None:
+    readiness = build_backend_readiness(database_ready=True)
+    fails = readiness_invariant_failures(
+        dict(
+            readiness,
+            customer_auth_live=True,
+            customer_auth_measurement_performed=False,
+        )
+    )
+    assert "customer_auth_live_without_measurement" in fails
 
 
 def test_readiness_invariants_reject_live_collectors() -> None:
@@ -418,7 +430,8 @@ def test_the_readiness_endpoint_answers(client: TestClient) -> None:
     payload = response.json()
     assert payload["persistent_backend_live"] is False
     assert payload["collectors_live"] == 0
-    assert payload["customer_auth_live"] is False
+    assert isinstance(payload["customer_auth_live"], bool)
+    assert payload["customer_auth_measurement_performed"] is True
     assert not readiness_invariant_failures(payload)
 
 

@@ -83,11 +83,13 @@ def detect_customer_auth_live() -> bool:
         return False
 
     try:
-        from nativeforge.services.customer_auth_activation_gate_service import (
-            build_customer_auth_activation_gate,
+        from nativeforge.services.customer_auth_activation_measurement_service import (
+            build_measured_customer_auth_activation_gate,
         )
 
-        return bool(build_customer_auth_activation_gate().get("customer_auth_live"))
+        return bool(
+            build_measured_customer_auth_activation_gate().get("customer_auth_live")
+        )
     except Exception:  # pragma: no cover - defensive; unknown is not permission
         return False
 
@@ -100,10 +102,10 @@ def detect_login_live() -> bool:
         return False
 
     try:
-        from nativeforge.services.customer_auth_activation_gate_service import (
-            build_customer_auth_activation_gate,
+        from nativeforge.services.customer_auth_activation_measurement_service import (
+            build_measured_customer_auth_activation_gate,
         )
 
-        return bool(build_customer_auth_activation_gate().get("login_live"))
+        return bool(build_measured_customer_auth_activation_gate().get("login_live"))
     except Exception:  # pragma: no cover - defensive; unknown is not permission
         return False

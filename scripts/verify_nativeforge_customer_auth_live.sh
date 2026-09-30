@@ -77,22 +77,20 @@ def flag(name):
     return (session.get("activation_gate") or {}).get(name)
 
 
-out = {
-    "login_live": bool(flag("login_live")),
-    "customer_auth_live": bool(flag("customer_auth_live")),
-    "gate_blocked_reasons": list(flag("blocked_reasons") or []),
-}
-
-from nativeforge.db.session import engine
-from nativeforge.services.customer_auth_owner_activation_decision_service import (
-    APPROVED_ORGANIZATION_ID,
-    build_customer_auth_activation_decision,
+from nativeforge.services.customer_auth_activation_measurement_service import (
+    build_measured_customer_auth_activation_gate,
 )
+
+measured_gate = build_measured_customer_auth_activation_gate()
+out = {
+    "login_live": bool(measured_gate.get("login_live")),
+    "customer_auth_live": bool(measured_gate.get("customer_auth_live")),
+    "gate_blocked_reasons": list(measured_gate.get("blocked_reasons") or []),
+    "session_route_login_live": bool(flag("login_live")),
+    "session_route_customer_auth_live": bool(flag("customer_auth_live")),
+}
 from nativeforge.services.dev_org_header_shutdown_readiness_service import (
     build_dev_header_shutdown_readiness,
-)
-from nativeforge.services.membership_invite_repository_service import (
-    build_invite_binding_evidence,
 )
 from nativeforge.lib.settings import get_settings
 
@@ -101,16 +99,36 @@ out["dev_header_route_consumers"] = int(readiness["dev_header_used_by_routes"])
 out["dev_header_provider_modules"] = len(readiness["dev_header_provider_modules"])
 out["nf_dev_org_headers"] = bool(get_settings().nf_dev_org_headers)
 
-provider = (get_settings().oidc_issuer or "").strip()
-decision = build_customer_auth_activation_decision(
-    organization_id=APPROVED_ORGANIZATION_ID, provider=provider
+out["owner_activation_recorded"] = bool(
+    measured_gate.get("customer_auth_owner_activation_approved")
 )
-out["owner_activation_recorded"] = bool(decision["decision_recorded"])
-out["owner_activation_approves"] = bool(decision["approves_customer_auth_live"])
-out["owner_activation_blocked"] = list(decision["blocked_reasons"])
+out["owner_activation_approves"] = bool(
+    measured_gate.get("customer_auth_owner_activation_approved")
+)
+out["owner_activation_blocked"] = list(
+    measured_gate.get("blocked_reasons") or []
+    if not measured_gate.get("customer_auth_owner_activation_approved")
+    else []
+)
 
-with engine.connect() as connection:
-    evidence = build_invite_binding_evidence(connection=connection)
+from nativeforge.services.membership_invite_repository_service import (
+    build_invite_binding_evidence,
+)
+from nativeforge.db.rls import apply_org_rls_gucs
+from nativeforge.db.session import SessionLocal
+from nativeforge.services.customer_auth_owner_activation_decision_service import (
+    APPROVED_ORGANIZATION_ID,
+)
+import uuid
+
+measure_session = SessionLocal()
+try:
+    apply_org_rls_gucs(
+        measure_session, uuid.UUID(APPROVED_ORGANIZATION_ID), "demo"
+    )
+    evidence = build_invite_binding_evidence(connection=measure_session.connection())
+finally:
+    measure_session.close()
 
 for key in (
     "invite_rows",

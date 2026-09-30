@@ -120,9 +120,8 @@ REQUIRED_LOGIN_GATES: tuple[str, ...] = (
     "callback_route_available",
     "callback_session_validated",
     "session_cookie_policy_available",
-    "org_binding_passed",
-    "role_mapping_passed",
-    # Login is the act of issuing a session, so it needs the key that signs one.
+    # Organization affiliation is verified per session on org-scoped routes,
+    # not as a universal login prerequisite (Demo Workspace architecture).
     "session_signing_key_ready",
 )
 
