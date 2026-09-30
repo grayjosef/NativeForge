@@ -12,11 +12,29 @@ import { SignInPage } from "./SignInPage";
  * cannot come back quietly.
  */
 
+const DEFAULT_VALUE_INTEL = {
+  schema_version: "nf_opportunity_value_intelligence_v1",
+  methodology_version: "nativeforge.opportunity_value.v1",
+  active_opportunity_count: 200,
+  known_value_count: 166,
+  unknown_value_count: 34,
+  conflicting_value_count: 0,
+  known_value_coverage_pct: 83,
+  totals_by_currency: { USD: "57400000.00" },
+  active_known_value_total_usd: "57400000.00",
+  calculated_at: "2026-09-30T00:00:00+00:00",
+  label: "known active opportunity value",
+};
+
 function mockProviders(entries: Array<{ key: string; label: string; configured: boolean }>) {
   vi.stubGlobal(
     "fetch",
-    vi.fn(async () =>
-      new Response(
+    vi.fn(async (input: RequestInfo | URL) => {
+      const url = typeof input === "string" ? input : input.toString();
+      if (url.includes("/api/public/opportunity-value/active")) {
+        return new Response(JSON.stringify(DEFAULT_VALUE_INTEL), { status: 200 });
+      }
+      return new Response(
         JSON.stringify({
           providers: entries.map((e) => ({
             ...e,
@@ -29,8 +47,8 @@ function mockProviders(entries: Array<{ key: string; label: string; configured: 
           customer_auth_live: false,
         }),
         { status: 200 },
-      ),
-    ),
+      );
+    }),
   );
 }
 
@@ -160,8 +178,56 @@ describe("SignInPage", () => {
     expect(notice.textContent).toMatch(/did not finish/i);
   });
 
+  it("shows live known active value from the public API", async () => {
+    render(<SignInPage />);
+    expect(await screen.findByText("$57.4M")).toBeInTheDocument();
+    expect(screen.getByText(/known value across/i)).toBeInTheDocument();
+    expect(screen.getByText(/83% coverage/i)).toBeInTheDocument();
+  });
+
+  it("does not invent a dollar figure when value API fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = typeof input === "string" ? input : input.toString();
+        if (url.includes("/api/public/opportunity-value/active")) {
+          return new Response("nope", { status: 503 });
+        }
+        return new Response(
+          JSON.stringify({
+            providers: NEITHER.map((e) => ({
+              ...e,
+              start_path: `/api/auth/login?provider=${e.key}`,
+              redirect_uri: "",
+              scopes: "openid profile email",
+            })),
+            any_configured: false,
+            login_live: false,
+            customer_auth_live: false,
+          }),
+          { status: 200 },
+        );
+      }),
+    );
+    render(<SignInPage />);
+    await screen.findByRole("heading", { level: 1, name: /welcome to nativeforge/i });
+    expect(screen.queryByText(/\$\d/)).toBeNull();
+    expect(
+      screen.getByText(/live funding value metrics are temporarily unavailable/i),
+    ).toBeInTheDocument();
+  });
+
   it("survives a provider list that cannot be fetched", async () => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("nope", { status: 500 })));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (input: RequestInfo | URL) => {
+        const url = typeof input === "string" ? input : input.toString();
+        if (url.includes("/api/public/opportunity-value/active")) {
+          return new Response(JSON.stringify(DEFAULT_VALUE_INTEL), { status: 200 });
+        }
+        return new Response("nope", { status: 500 });
+      }),
+    );
     render(<SignInPage />);
     // The page still renders its heading rather than collapsing to nothing.
     expect(

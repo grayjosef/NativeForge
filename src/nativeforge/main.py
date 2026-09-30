@@ -78,6 +78,10 @@ from nativeforge.api.customer_url_intake_routes import (
     real_url_intake_router,
 )
 from nativeforge.api.demo_workspace_routes import router as demo_workspace_router
+from nativeforge.api.opportunity_value_routes import (
+    operator_router as opportunity_value_operator_router,
+    public_router as opportunity_value_public_router,
+)
 from nativeforge.api.digest_delivery_routes import (
     router as digest_delivery_router,
 )
@@ -390,6 +394,8 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(commercial_provisioning_router)
     app.include_router(demo_workspace_router)
+    app.include_router(opportunity_value_public_router)
+    app.include_router(opportunity_value_operator_router)
     install_auth_security_scheme(app)
     _mount_frontend(app)
     return app

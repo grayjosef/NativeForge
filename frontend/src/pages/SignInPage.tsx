@@ -5,6 +5,11 @@ import { ProviderMark } from "../components/ProviderMark";
 import { NavIcon } from "../components/shell/NavIcon";
 import { getAuthProviders, type AuthProvider } from "../authApiClient";
 import { diagnosticsVisible, interpretError, type CustomerState } from "../customerState";
+import {
+  fetchActiveOpportunityValuePublic,
+  formatKnownActiveValueUsd,
+  type ActiveOpportunityValuePublic,
+} from "../opportunityValueApiClient";
 
 /**
  * The front door.
@@ -50,6 +55,9 @@ export interface SignInPageProps {
 export function SignInPage({ notice }: SignInPageProps) {
   const [providers, setProviders] = useState<AuthProvider[] | null>(null);
   const [error, setError] = useState<CustomerState | null>(null);
+  const [valueIntel, setValueIntel] = useState<ActiveOpportunityValuePublic | "loading" | "unavailable">(
+    "loading",
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -69,9 +77,28 @@ export function SignInPage({ notice }: SignInPageProps) {
     };
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const agg = await fetchActiveOpportunityValuePublic();
+        if (!cancelled) setValueIntel(agg);
+      } catch {
+        if (!cancelled) setValueIntel("unavailable");
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const ready = providers !== null;
   const anyConfigured = (providers ?? []).some((p) => p.configured);
   const noticeState = notice ? NOTICES[notice] : undefined;
+  const valueDisplay =
+    valueIntel !== "loading" && valueIntel !== "unavailable"
+      ? formatKnownActiveValueUsd(valueIntel.active_known_value_total_usd)
+      : null;
 
   return (
     <div className="nf-login">
@@ -96,6 +123,42 @@ export function SignInPage({ notice }: SignInPageProps) {
             find, pursue, and govern funding opportunities with clarity, speed, and
             confidence.
           </p>
+          <div className="nf-login-value" aria-live="polite">
+            {valueIntel === "loading" ? (
+              <p className="nf-login-value-copy nf-login-value-copy--muted">
+                Measuring known active opportunity value…
+              </p>
+            ) : valueIntel === "unavailable" ? (
+              <p className="nf-login-value-copy nf-login-value-copy--muted">
+                Live funding value metrics are temporarily unavailable.
+              </p>
+            ) : (
+              <>
+                {valueDisplay ? (
+                  <p className="nf-login-value-figure">{valueDisplay}</p>
+                ) : null}
+                <p className="nf-login-value-copy">
+                  {valueDisplay ? (
+                    <>
+                      Known value across{" "}
+                      <strong>{valueIntel.active_opportunity_count.toLocaleString()}</strong> active
+                      funding opportunities
+                    </>
+                  ) : (
+                    <>
+                      Tracking{" "}
+                      <strong>{valueIntel.active_opportunity_count.toLocaleString()}</strong> active
+                      opportunities — funding value coverage is still being enriched
+                    </>
+                  )}
+                </p>
+                <p className="nf-login-value-meta">
+                  {valueIntel.known_value_count.toLocaleString()} with known funding value ·{" "}
+                  {valueIntel.known_value_coverage_pct.toFixed(0)}% coverage
+                </p>
+              </>
+            )}
+          </div>
           <ul className="nf-login-principles">
             {PRINCIPLES.map((item) => (
               <li key={item.id} className="nf-login-principle">
