@@ -126,3 +126,25 @@ def test_warrant_refusal_blocks_before_transport() -> None:
         assert refusal is not None
     finally:
         session.close()
+
+
+def test_persist_batch_contract_extracts_canonical_ids_from_results() -> None:
+    from nativeforge.repositories.canonical_opportunity_batch_repository import (
+        canonical_ids_from_persist_batch,
+    )
+
+    batch = {
+        "schema_version": "nf_canonical_opportunity_batch_v1",
+        "metrics": {"observations_inserted": 2},
+        "results": [
+            {"outcome": "inserted", "canonical_id": "L1:PAR25156|synopsis"},
+            {"outcome": "idempotent", "canonical_id": "L1:PAR25157|synopsis"},
+            {"outcome": "rejected", "canonical_id": None},
+        ],
+    }
+    assert canonical_ids_from_persist_batch(batch) == [
+        "L1:PAR25156|synopsis",
+        "L1:PAR25157|synopsis",
+    ]
+    # Top-level batch keys are str metadata — must not be treated as result rows.
+    assert canonical_ids_from_persist_batch({"schema_version": "x"}) == []

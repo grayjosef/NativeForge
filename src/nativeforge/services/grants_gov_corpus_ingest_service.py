@@ -27,6 +27,7 @@ from nativeforge.repositories.canonical_opportunity_batch_repository import (
     REJECTED,
     VERSIONED,
     NormalizedSourceObservation,
+    canonical_ids_from_persist_batch,
     persist_observations,
 )
 from nativeforge.services.canonical_opportunity_normalizer_service import (
@@ -337,13 +338,7 @@ def ingest_grants_gov_search2_payload(
         project_intelligence_for_canonical_ids,
     )
 
-    touched_ids = sorted(
-        {
-            str(r.get("canonical_id"))
-            for r in (canonical_metrics or [])
-            if r.get("canonical_id")
-        }
-    )
+    touched_ids = canonical_ids_from_persist_batch(canonical_metrics)
     if touched_ids:
         project_intelligence_for_canonical_ids(
             session.connection(),

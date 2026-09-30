@@ -417,6 +417,28 @@ def persist_observations(
     )
 
 
+def canonical_ids_from_persist_batch(batch: dict[str, Any] | None) -> list[str]:
+    """Return canonical ids from ``persist_observations`` batch report.
+
+    Contract: ``persist_observations`` returns a mapping with a ``results`` list
+    of per-record outcome rows (each may include ``canonical_id``). Callers
+    must not iterate the top-level batch dict — that yields string keys only.
+    """
+    if not batch or not isinstance(batch, dict):
+        return []
+    rows = batch.get("results")
+    if not isinstance(rows, list):
+        return []
+    ids: set[str] = set()
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        cid = row.get("canonical_id")
+        if cid:
+            ids.add(str(cid))
+    return sorted(ids)
+
+
 def _persist_chunk(
     *,
     connection: Any,
