@@ -135,6 +135,9 @@ from nativeforge.services.customer_auth_state_pkce_service import (
 from nativeforge.services.customer_auth_token_exchange_boundary_service import (
     evaluate_token_exchange_boundary,
 )
+from nativeforge.services.customer_commercial_provisioning_service import (
+    load_status_for_identity,
+)
 from nativeforge.services.customer_session_cookie_policy_service import (
     build_session_cookie_policy,
 )
@@ -272,15 +275,25 @@ def _session_decision(
         organization_id=parsed.get("organization_id"),
         membership_verified=membership_verified,
     )
+    provisioning_status = None
+    if db is not None and verification.get("principal_id"):
+        try:
+            provisioning_status = load_status_for_identity(
+                db.connection(), identity_id=str(verification["principal_id"])
+            )
+        except Exception:
+            provisioning_status = None
     return decision | {
         "cookie_name": policy["cookie_name"],
         "membership_lookup_performed": db is not None,
         "session_organization_claim": parsed.get("organization_id"),
         "workspace_lane": lane["workspace_lane"],
         "affiliated": lane["affiliated"],
+        "commercial_provisioning": provisioning_status,
         "commercial_entitlement": build_commercial_entitlement_read_model(
             workspace_lane=lane["workspace_lane"],
             affiliated=lane["affiliated"],
+            provisioning_status=provisioning_status,
         ),
         "membership_resolution_blocked_reasons": sorted(
             resolution.get("blocked_reasons") or []
@@ -1263,6 +1276,7 @@ def session(
             "affiliated": bool(decision.get("affiliated")),
             "workspace_lane": decision.get("workspace_lane"),
             "commercial_entitlement": decision.get("commercial_entitlement"),
+            "commercial_provisioning": decision.get("commercial_provisioning"),
             "expires_at": None,
             # Chrome identity. Name and an allowlisted photo URL from the
             # verified ID token; never the email, never a token.

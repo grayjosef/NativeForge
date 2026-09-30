@@ -78,15 +78,20 @@ def resolve_workspace_lane(
 
 
 def build_commercial_entitlement_read_model(
-    *, workspace_lane: WorkspaceLane, affiliated: bool
+    *,
+    workspace_lane: WorkspaceLane,
+    affiliated: bool,
+    provisioning_status: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Minimal seam only — no payment state is invented."""
+    prov = provisioning_status or {}
     if workspace_lane == "organization" and affiliated:
         return {
             "schema_version": "nf_commercial_entitlement_read_model_v1",
             "benefit_access": "unknown",
             "purchase_required_for_real_workspace": False,
             "authority_verified": False,
+            "provisioning_status_label": prov.get("customer_status_label"),
             "note": (
                 "Organization workspace access is gated by membership and existing "
                 "commercial entitlement services on org-scoped routes."
@@ -97,6 +102,8 @@ def build_commercial_entitlement_read_model(
         "benefit_access": "none",
         "purchase_required_for_real_workspace": True,
         "authority_verified": False,
+        "provisioning_status_label": prov.get("customer_status_label") or "Demo",
+        "commercial_intent_recorded": bool(prov.get("has_request")),
         "note": "Demo workspace is illustrative; purchase and provisioning unlock a real organization workspace.",
     }
 

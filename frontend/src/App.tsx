@@ -63,6 +63,7 @@ import { TrustPage } from "./pages/TrustPage";
 import { OrganizationPage } from "./pages/OrganizationPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SignInPage } from "./pages/SignInPage";
+import { CommercialActivationPage } from "./pages/CommercialActivationPage";
 import { DemoWorkspacePage } from "./pages/DemoWorkspacePage";
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { WhatsNextCard } from "./components/WhatsNextCard";
@@ -1470,7 +1471,38 @@ export default function App() {
         <DemoWorkspacePage
           baseUrl={base}
           displayName={session?.displayName ?? null}
-          onUpgrade={() => setSurface("settings")}
+          onUpgrade={() => setSurface("commercial_activation")}
+        />
+      </AppShell>
+    );
+  }
+
+  if (surface === "commercial_activation") {
+    return (
+      <AppShell
+        surface={surface}
+        onSurfaceChange={setSurface}
+        workspaceTitle="Activate your organization"
+        organization={null}
+        environment="demo"
+        online={backendOk !== false}
+        offlineHint={backendHint}
+        account={
+          session?.authenticated
+            ? {
+                name: session.displayName ?? "",
+                pictureUrl: session.pictureUrl,
+                organization: null,
+                provider: session.identityProvider,
+              }
+            : null
+        }
+        onSignIn={() => setSurface("sign_in")}
+        onSignOut={onSignOut}
+      >
+        <CommercialActivationPage
+          baseUrl={base}
+          onBackToDemo={() => setSurface("demo_workspace")}
         />
       </AppShell>
     );

@@ -35,6 +35,9 @@ from nativeforge.api.backend_runtime_routes import router as backend_runtime_rou
 from nativeforge.api.beta_onboarding_cockpit_routes import (
     router as beta_cockpit_router,
 )
+from nativeforge.api.commercial_provisioning_routes import (
+    router as commercial_provisioning_router,
+)
 from nativeforge.api.controlled_beta_readiness_routes import (
     router as controlled_beta_router,
 )
@@ -385,6 +388,7 @@ def create_app() -> FastAPI:
     app.include_router(demo_document_intake_router)
     app.include_router(real_document_intake_router)
     app.include_router(auth_router)
+    app.include_router(commercial_provisioning_router)
     app.include_router(demo_workspace_router)
     install_auth_security_scheme(app)
     _mount_frontend(app)
