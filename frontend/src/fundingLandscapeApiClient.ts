@@ -11,6 +11,12 @@ export interface StageMetrics {
   supported?: boolean;
 }
 
+export interface ExpiringWindowMetrics {
+  expiring_opportunity_count?: number;
+  expiring_known_count?: number;
+  expiring_known_value_by_currency?: Record<string, string>;
+}
+
 export interface OrgFunnelResponse {
   funnel_methodology_version: string;
   value_methodology_version: string;
@@ -26,6 +32,11 @@ export interface OrgFunnelResponse {
       unknown_eligibility?: StageMetrics;
     };
     pursuing?: StageMetrics;
+  };
+  funding_landscape_v3?: {
+    expiring_value?: {
+      windows?: Record<string, ExpiringWindowMetrics>;
+    };
   };
 }
 

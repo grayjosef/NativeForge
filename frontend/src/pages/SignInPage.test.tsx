@@ -181,7 +181,7 @@ describe("SignInPage", () => {
   it("shows live known active value from the public API", async () => {
     render(<SignInPage />);
     expect(await screen.findByText("$57.4M")).toBeInTheDocument();
-    expect(screen.getByText(/known value across/i)).toBeInTheDocument();
+    expect(screen.getByText(/source-supported known value across/i)).toBeInTheDocument();
     expect(screen.getByText(/83% coverage/i)).toBeInTheDocument();
   });
 

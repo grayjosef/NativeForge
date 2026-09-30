@@ -140,9 +140,9 @@ export function SignInPage({ notice }: SignInPageProps) {
                 <p className="nf-login-value-copy">
                   {valueDisplay ? (
                     <>
-                      Known value across{" "}
+                      Source-supported known value across{" "}
                       <strong>{valueIntel.active_opportunity_count.toLocaleString()}</strong> active
-                      funding opportunities
+                      funding opportunities — not an estimate of funds available to your Tribe
                     </>
                   ) : (
                     <>
@@ -153,8 +153,9 @@ export function SignInPage({ notice }: SignInPageProps) {
                   )}
                 </p>
                 <p className="nf-login-value-meta">
-                  {valueIntel.known_value_count.toLocaleString()} with known funding value ·{" "}
-                  {valueIntel.known_value_coverage_pct.toFixed(0)}% coverage
+                  {valueIntel.known_value_count.toLocaleString()} of{" "}
+                  {valueIntel.active_opportunity_count.toLocaleString()} with defensible monetary
+                  values · {valueIntel.known_value_coverage_pct.toFixed(0)}% coverage
                 </p>
               </>
             )}

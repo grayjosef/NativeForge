@@ -31,6 +31,9 @@ from nativeforge.services.grants_gov_synopsis_funding_service import (
     map_synopsis_funding_to_canonical,
 )
 from nativeforge.services.intelligence_sql_dialect_service import sql_bool_literal
+from nativeforge.services.gate173_active_corpus_projection_service import (
+    project_intelligence_for_canonical_ids,
+)
 from nativeforge.services.opportunity_value_funnel_service import invalidate_funnel_cache
 from nativeforge.services.opportunity_value_intelligence_service import (
     ACTIVE_LIFECYCLE_STATES,
@@ -200,6 +203,17 @@ def enrich_one_active_opportunity(
     metrics = persist_observations(connection=connection, observations=[obs])
     outcome["observation_persisted"] = True
     outcome["canonical_metrics"] = metrics
+    cid = str(row.get("canonical_id") or "").strip()
+    if not cid and metrics:
+        cid = str(metrics[0].get("canonical_id") or "").strip()
+    if cid:
+        proj = project_intelligence_for_canonical_ids(
+            connection, canonical_ids=[cid], dry_run=False, now=now
+        )
+        outcome["gate173_projection"] = {
+            "projected": proj.get("projected"),
+            "skipped_unchanged": proj.get("skipped_unchanged"),
+        }
     return outcome
 
 

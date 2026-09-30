@@ -339,6 +339,24 @@ def ingest_grants_gov_search2_payload(
             attempt_id=attempt_id,
         )
     reapply_org_rls_after_commit(session, organization_id, org_type)
+    from nativeforge.services.gate173_active_corpus_projection_service import (
+        project_intelligence_for_canonical_ids,
+    )
+
+    touched_ids = sorted(
+        {
+            str(r.get("canonical_id"))
+            for r in (canonical_metrics or [])
+            if r.get("canonical_id")
+        }
+    )
+    if touched_ids:
+        project_intelligence_for_canonical_ids(
+            session.connection(),
+            canonical_ids=touched_ids[:50],
+            dry_run=False,
+            now=stamp,
+        )
     spark_metrics = project_grant_sparks_from_hits(
         session,
         org=org,
