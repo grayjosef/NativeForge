@@ -37,12 +37,25 @@ human/operator path without fabricating payment, licence, authority, or affiliat
 
 ## 6. Affiliation review (HUMAN — UNKNOWN owner)
 
-- Input: reviewer decision on pending affiliation evidence.
-- Software does not set `affiliation_verified` without review.
+- Customer submits evidence: `POST /v1/nf/real/orgs/{org_id}/authority/evidence`
+  (decision is always `PENDING`; self-judgment is refused).
+- Customer sees queue state: `GET .../authority/review-state`.
+- **Operator lists pending:** `GET /api/authority-review/operator/pending-evidence`
+  with header `X-NF-Authority-Review-Operator-Approval` matching env
+  `NF_AUTHORITY_REVIEW_OPERATOR_APPROVAL` (value is set in Railway; never commit it).
+- **Operator decides:** `POST /api/authority-review/operator/evidence/decide` with
+  `evidence_id`, `decision` (`ACCEPTED` or `REJECTED`), `reviewer`, `reason`,
+  `operator_actor`. Self-approval (reviewer = subject) is refused.
+- Grant row syncs from accepted evidence; affiliation can reach `VERIFIED` without
+  implying authority.
 
 ## 7. Authority review (HUMAN — UNKNOWN owner)
 
-- Input: controlling-company or delegated Tribal authority reviewer.
+- Same operator evidence endpoints for authority-establishing types (e.g.
+  `TRIBAL_RESOLUTION`, `GOVERNING_AUTHORIZATION`).
+- **First-customer manual path (controlling company):**
+  `POST /api/authority-review/operator/authority/manual-verify` with
+  `organization_id`, `identity_id`, `verified_by`, `reason`, `operator_actor`.
 - **Entitlement ≠ authority.** Membership ≠ authority.
 
 ## 8. Workspace activation

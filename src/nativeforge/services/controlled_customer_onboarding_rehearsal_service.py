@@ -47,6 +47,10 @@ def human_review_handoffs() -> dict[str, Any]:
                 "subject_identity_id",
             ],
             "who_acts": "UNKNOWN — designated affiliation reviewer (not software)",
+            "operator_software_path": (
+                "GET/POST /api/authority-review/operator/* with "
+                "NF_AUTHORITY_REVIEW_OPERATOR_APPROVAL"
+            ),
             "state_before": "affiliation_unverified, evidence may be pending",
             "state_after": "affiliation_verified OR affiliation_rejected (canonical grant tables)",
             "software_must_not_infer": [
@@ -61,6 +65,10 @@ def human_review_handoffs() -> dict[str, Any]:
                 "accepted_authority_evidence_bundle",
             ],
             "who_acts": "UNKNOWN — Tribal authority review owner (not software)",
+            "operator_software_path": (
+                "POST /api/authority-review/operator/evidence/decide or "
+                "POST /api/authority-review/operator/authority/manual-verify"
+            ),
             "state_before": "authority_unverified",
             "state_after": "authority_verified OR authority_rejected",
             "software_must_not_infer": [

@@ -14,13 +14,27 @@ from nativeforge.services.organization_profile_service import (
     revise_profile,
 )
 from nativeforge.services.tribal_authority_evidence_service import (
+    DECISION_ACCEPTED,
+    DECISION_PENDING,
+    TYPE_SUPPORTS_AUTHORITY_STATE,
+    effective_decision,
     evidence_invariant_failures,
     grade_evidence_set,
 )
 from nativeforge.services.tribal_authority_model_service import (
+    AFFILIATION_EVIDENCE_PROVIDED,
+    AFFILIATION_REVIEW_REQUIRED,
     AFFILIATION_UNVERIFIED,
+    AFFILIATION_VERIFIED,
+    AUTHORITY_REVIEW_REQUIRED,
     AUTHORITY_UNVERIFIED,
+    IDENTITY_REVIEW_REQUIRED,
     IDENTITY_UNVERIFIED,
+    IDENTITY_VERIFIED,
+    SCOPE_ADMINISTER_TENANT,
+    build_authority_grant,
+    build_authority_id,
+    grant_invariant_failures,
 )
 
 PROFILES = "nf_organization_profile_versions"
@@ -269,6 +283,277 @@ def persist_evidence(
         },
     )
     return {"persisted": True, "evidence_id": evidence["evidence_id"]}
+
+
+def load_evidence_by_id(
+    connection: sa.engine.Connection, *, evidence_id: str
+) -> dict[str, Any] | None:
+    row = (
+        connection.execute(
+            sa.text(f"SELECT * FROM {EVIDENCE} WHERE evidence_id = :eid"),
+            {"eid": evidence_id},
+        )
+        .mappings()
+        .first()
+    )
+    if not row:
+        return None
+    return {
+        "evidence_id": row["evidence_id"],
+        "evidence_type": row["evidence_type"],
+        "organization_id": row["organization_id"],
+        "subject_identity_id": row["subject_identity_id"],
+        "issuer": row["issuer"],
+        "source_ref": row["source_ref"],
+        "artifact_ref": row["artifact_ref"],
+        "reviewer": row["reviewer"],
+        "decision": row["decision"],
+        "decided_at": row["decided_at"],
+        "recorded_at": row["recorded_at"],
+        "expires_at": row["expires_at"],
+        "reason": row["reason"],
+        "establishes_identity": bool(row["establishes_identity"]),
+        "establishes_affiliation": bool(row["establishes_affiliation"]),
+        "establishes_authority": bool(row["establishes_authority"]),
+        "is_demo": bool(row["is_demo"]),
+        "model_version": row["model_version"],
+    }
+
+
+def list_pending_evidence(
+    connection: sa.engine.Connection,
+    *,
+    organization_id: str | None = None,
+    limit: int = 50,
+) -> list[dict[str, Any]]:
+    limit = max(1, min(int(limit), 500))
+    if organization_id:
+        rows = (
+            connection.execute(
+                sa.text(
+                    f"SELECT * FROM {EVIDENCE} WHERE decision = :pending "
+                    f"AND organization_id = :org ORDER BY recorded_at ASC LIMIT :lim"
+                ),
+                {"pending": DECISION_PENDING, "org": organization_id, "lim": limit},
+            )
+            .mappings()
+            .all()
+        )
+    else:
+        rows = (
+            connection.execute(
+                sa.text(
+                    f"SELECT * FROM {EVIDENCE} WHERE decision = :pending "
+                    f"ORDER BY recorded_at ASC LIMIT :lim"
+                ),
+                {"pending": DECISION_PENDING, "lim": limit},
+            )
+            .mappings()
+            .all()
+        )
+    out: list[dict[str, Any]] = []
+    for row in rows:
+        out.append(
+            {
+                "evidence_id": row["evidence_id"],
+                "evidence_type": row["evidence_type"],
+                "organization_id": row["organization_id"],
+                "subject_identity_id": row["subject_identity_id"],
+                "source_ref": row["source_ref"],
+                "artifact_ref": row["artifact_ref"],
+                "recorded_at": row["recorded_at"],
+                "establishes_identity": bool(row["establishes_identity"]),
+                "establishes_affiliation": bool(row["establishes_affiliation"]),
+                "establishes_authority": bool(row["establishes_authority"]),
+                "is_demo": bool(row["is_demo"]),
+            }
+        )
+    return out
+
+
+def update_evidence_decision(
+    connection: sa.engine.Connection, *, evidence: dict[str, Any]
+) -> dict[str, Any]:
+    failures = evidence_invariant_failures(evidence)
+    if failures:
+        return {"updated": False, "failures": failures}
+    decided_at = _parse_dt(evidence.get("decided_at"))
+    result = connection.execute(
+        sa.text(
+            f"UPDATE {EVIDENCE} SET reviewer = :rev, decision = :dec, "
+            f"decided_at = :dat, reason = :reason "
+            f"WHERE evidence_id = :eid AND decision = :pending"
+        ),
+        {
+            "rev": evidence.get("reviewer"),
+            "dec": evidence["decision"],
+            "dat": decided_at,
+            "reason": evidence.get("reason"),
+            "eid": evidence["evidence_id"],
+            "pending": DECISION_PENDING,
+        },
+    )
+    updated = bool(getattr(result, "rowcount", 0))
+    return {"updated": updated, "evidence_id": evidence["evidence_id"]}
+
+
+def persist_authority_grant(
+    connection: sa.engine.Connection, *, grant: dict[str, Any]
+) -> dict[str, Any]:
+    failures = grant_invariant_failures(grant)
+    if failures:
+        return {"persisted": False, "failures": failures}
+
+    verified_at = _parse_dt(grant.get("verified_at"))
+    expires_at = _parse_dt(grant.get("expires_at"))
+    revoked_at = _parse_dt(grant.get("revoked_at"))
+    evidence_ids_json = json.dumps(sorted(grant.get("evidence_ids") or []))
+    now = dt.datetime.now(dt.UTC)
+    authority_id = grant.get("authority_id") or build_authority_id(
+        organization_id=grant.get("organization_id"),
+        identity_id=grant.get("identity_id"),
+        scope=grant.get("scope"),
+    )
+
+    connection.execute(
+        sa.text(
+            f"INSERT INTO {GRANTS} "
+            f"(authority_id, organization_id, identity_id, identity_status, "
+            f"affiliation_status, authority_status, authority_method, scope, "
+            f"verified_by, verified_at, expires_at, revoked_at, revoked_by, "
+            f"revoked_reason, reason, evidence_ids_json, is_demo, model_version, "
+            f"created_at) VALUES "
+            f"(:aid, :org, :ident, :is, :as, :aus, :am, :scope, :vb, :vat, "
+            f":exp, :rat, :rb, :rr, :reason, :eids, :demo, :mv, :created) "
+            f"ON CONFLICT(authority_id) DO UPDATE SET "
+            f"identity_status = excluded.identity_status, "
+            f"affiliation_status = excluded.affiliation_status, "
+            f"authority_status = excluded.authority_status, "
+            f"authority_method = excluded.authority_method, "
+            f"verified_by = excluded.verified_by, "
+            f"verified_at = excluded.verified_at, "
+            f"expires_at = excluded.expires_at, "
+            f"reason = excluded.reason, "
+            f"evidence_ids_json = excluded.evidence_ids_json, "
+            f"is_demo = excluded.is_demo, "
+            f"model_version = excluded.model_version"
+        ),
+        {
+            "aid": authority_id,
+            "org": grant["organization_id"],
+            "ident": grant["identity_id"],
+            "is": grant["identity_status"],
+            "as": grant["affiliation_status"],
+            "aus": grant["authority_status"],
+            "am": grant.get("authority_method"),
+            "scope": grant.get("scope") or SCOPE_ADMINISTER_TENANT,
+            "vb": grant.get("verified_by"),
+            "vat": verified_at,
+            "exp": expires_at,
+            "rat": revoked_at,
+            "rb": grant.get("revoked_by"),
+            "rr": grant.get("revoked_reason"),
+            "reason": grant.get("reason"),
+            "eids": evidence_ids_json,
+            "demo": 1 if grant.get("is_demo") else 0,
+            "mv": grant.get("model_version"),
+            "created": now,
+        },
+    )
+    return {"persisted": True, "authority_id": authority_id}
+
+
+def sync_authority_grant_from_evidence(
+    connection: sa.engine.Connection,
+    *,
+    organization_id: str,
+    subject_identity_id: str,
+) -> dict[str, Any]:
+    evidence = load_evidence_for_subject(
+        connection,
+        organization_id=organization_id,
+        subject_identity_id=subject_identity_id,
+    )
+    graded = grade_evidence_set(evidence=evidence)
+    is_demo = any(bool(row.get("is_demo")) for row in evidence)
+
+    identity_status = IDENTITY_UNVERIFIED
+    affiliation_status = AFFILIATION_UNVERIFIED
+    authority_status = AUTHORITY_UNVERIFIED
+    authority_method = None
+    verified_by = None
+    verified_at = None
+    reason = None
+
+    if graded.get("review_required"):
+        identity_status = IDENTITY_REVIEW_REQUIRED
+        affiliation_status = AFFILIATION_REVIEW_REQUIRED
+        authority_status = AUTHORITY_REVIEW_REQUIRED
+    else:
+        if graded.get("supports_identity"):
+            identity_status = IDENTITY_VERIFIED
+        if graded.get("supports_affiliation"):
+            affiliation_status = AFFILIATION_VERIFIED
+        elif graded.get("pending_count", 0) > 0:
+            affiliation_status = AFFILIATION_EVIDENCE_PROVIDED
+
+        states = list(graded.get("authority_states_supported") or [])
+        if len(states) == 1:
+            authority_status = states[0]
+            auth_rows = [
+                row
+                for row in evidence
+                if row.get("establishes_authority")
+                and effective_decision(row) == DECISION_ACCEPTED
+                and str(row.get("evidence_type")) in TYPE_SUPPORTS_AUTHORITY_STATE
+                and TYPE_SUPPORTS_AUTHORITY_STATE[str(row.get("evidence_type"))]
+                == authority_status
+            ]
+            if auth_rows:
+                picked = auth_rows[0]
+                authority_method = str(picked.get("evidence_type"))
+                verified_by = picked.get("reviewer")
+                verified_at = picked.get("decided_at")
+                reason = picked.get("reason")
+        elif len(states) > 1:
+            authority_status = AUTHORITY_REVIEW_REQUIRED
+
+    all_usable_ids = sorted(
+        set(
+            graded.get("identity_evidence_ids") or []
+        ).union(graded.get("affiliation_evidence_ids") or [])
+        .union(graded.get("authority_evidence_ids") or [])
+    )
+
+    grant = build_authority_grant(
+        organization_id=organization_id,
+        identity_id=subject_identity_id,
+        identity_status=identity_status,
+        affiliation_status=affiliation_status,
+        authority_status=authority_status,
+        authority_method=authority_method,
+        scope=SCOPE_ADMINISTER_TENANT,
+        verified_by=verified_by,
+        verified_at=verified_at,
+        reason=reason,
+        evidence_ids=all_usable_ids,
+        is_demo=is_demo,
+    )
+    persisted = persist_authority_grant(connection, grant=grant)
+    if not persisted.get("persisted"):
+        return {
+            "accepted": False,
+            "why": "grant_invariant_or_db_refused",
+            "failures": persisted.get("failures"),
+            "grant": grant,
+        }
+    return {
+        "accepted": True,
+        "authority_id": persisted.get("authority_id"),
+        "identity_status": identity_status,
+        "affiliation_status": affiliation_status,
+        "authority_status": authority_status,
+    }
 
 
 def load_authority_grant(
