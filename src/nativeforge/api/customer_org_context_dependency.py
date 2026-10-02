@@ -68,7 +68,7 @@ from typing import Annotated, Any
 from fastapi import Cookie, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from nativeforge.api.deps import get_db
+from nativeforge.api.deps_db import get_db_session
 from nativeforge.api.org_context import OrgContext
 from nativeforge.db.rls import apply_org_rls_gucs
 from nativeforge.lib.demo_isolation import OrgType
@@ -222,7 +222,21 @@ def _refuse(decision: dict[str, Any]) -> None:
 
 
 def get_org_context_from_session(
-    db: Annotated[Session, Depends(get_db)],
+    # `get_db_session`, deliberately, and not `deps.get_db`.
+    #
+    # The two are the same function with different names, but FastAPI caches
+    # dependencies per request BY CALLABLE. Asking for `get_db` here while
+    # every org-scoped route asks for `get_db_session` produced two Sessions
+    # on two connections, and `apply_org_rls_gucs` below stamped the tenant
+    # onto the one that does no tenant work. Reads still looked fine - the
+    # unstamped connection just returns nothing where RLS applies - but the
+    # first INSERT died with `new row violates row-level security policy for
+    # table "nf_customer_opportunity_decisions"`, and only in production,
+    # because SQLite does not enforce RLS at all.
+    #
+    # Sharing the callable makes the stamp land on the connection the handler
+    # writes through. 54 route modules pair this with `get_db_session`.
+    db: Annotated[Session, Depends(get_db_session)],
     nf_session: Annotated[str | None, Cookie()] = None,
 ) -> OrgContext:
     """The organization this session belongs to, or a refusal."""
