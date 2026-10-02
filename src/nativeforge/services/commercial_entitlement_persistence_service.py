@@ -91,7 +91,7 @@ def _insert_event(connection: sa.engine.Connection, event: dict[str, Any]) -> No
             "reason": event.get("reason"),
             "corr": event.get("corrects_event_id"),
             "pv": event["policy_version"],
-            "demo": 1 if event.get("is_demo") else 0,
+            "demo": bool(event.get("is_demo")),
         },
     )
 
@@ -130,9 +130,9 @@ def _upsert_state(
             "days": int(entitlement.get("days_until_license_expiration") or 0),
             "ext": entitlement.get("active_extension_id"),
             "extexp": entitlement.get("extension_expires_at"),
-            "forgiven": 1 if entitlement.get("maintenance_forgiven") else 0,
+            "forgiven": bool(entitlement.get("maintenance_forgiven")),
             "pv": entitlement.get("policy_version") or POLICY_VERSION,
             "computed": dt.datetime.now(dt.UTC),
-            "demo": 1 if is_demo else 0,
+            "demo": bool(is_demo),
         },
     )

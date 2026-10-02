@@ -101,7 +101,9 @@ def q_award_misses(*, real_only: bool = True) -> tuple[str, dict[str, Any]]:
         f"SELECT miss_id, award_ref, program_key, resolution "
         f"FROM {MISSES} WHERE resolution = :resolution "
         f"AND counts_toward_real_metrics = :real_only LIMIT 200",
-        {"resolution": "UNRESOLVED", "real_only": 1 if real_only else 0},
+        # bool, not 1/0: `counts_toward_real_metrics` is boolean, and
+        # PostgreSQL will not compare it to a smallint.
+        {"resolution": "UNRESOLVED", "real_only": bool(real_only)},
     )
 
 

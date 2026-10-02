@@ -79,7 +79,13 @@ def persist_decision(
                 "at": previous.get("decided_at"),
                 "reason": previous.get("reason"),
                 "sup_at": now,
-                "demo": 1 if is_demo else 0,
+                # A real bool, not 1/0. `is_demo` is `boolean` in PostgreSQL,
+                # and psycopg binds a Python int as smallint, so the integer
+                # form raises DatatypeMismatch there while SQLite accepts it
+                # silently. The suite runs on SQLite, so this reached
+                # controlled-live and 500'd the first substantive demo write
+                # that got past the entitlement gate.
+                "demo": bool(is_demo),
                 "mv": previous.get("model_version") or decision.get("model_version"),
             },
         )
@@ -107,7 +113,8 @@ def persist_decision(
             "actor": decision.get("actor_id"),
             "at": decision.get("decided_at"),
             "reason": decision.get("reason"),
-            "demo": 1 if is_demo else 0,
+            # See the history insert above: bool, not 1/0.
+            "demo": bool(is_demo),
             "mv": decision.get("model_version"),
         },
     )

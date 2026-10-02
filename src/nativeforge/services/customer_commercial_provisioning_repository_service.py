@@ -56,7 +56,7 @@ def insert_request(
             "op": operator_actor,
             "blocked": _json_dumps(sorted(set(blocked_reasons or []))),
             "meta": _json_dumps(metadata or {}),
-            "demo": 1 if is_demo else 0,
+            "demo": bool(is_demo),
             "created": moment,
             "updated": moment,
         },
