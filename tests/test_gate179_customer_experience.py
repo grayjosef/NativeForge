@@ -788,3 +788,26 @@ def test_the_absence_classifier_moves_rather_than_sits():
     assert observed["absence_state"] == "LATE"
     assert observed["absence_state_after_a_further_cadence"] == "MISSING"
     assert observed["absence_clears_when_the_cycle_reopens"] == "ON_TIME"
+
+
+@pytest.fixture(autouse=True)
+def _m0_demo_allowlist(monkeypatch):
+    """The M0 demo bypass is allowlist-scoped, and this module depends on it.
+
+    commercial_entitlement_dependency lets a demo organization perform
+    substantive workflows without a licence row ONLY when that organization
+    is named in NF_DEMO_ORG_IDS. Unlisted, every such call is a 402 and the
+    chain under test stops at the first mutation.
+
+    Set here rather than in conftest. A suite-wide default looks harmless and
+    is not: a CONFIGURED allowlist that omits an organization is a
+    disagreement, not silence, so every other test that builds a demo org
+    under a different UUID starts failing settings_says_real_database_says_
+    demo. That cost 273 of them. Scoped to the files that need it, both sets
+    pass.
+    """
+    monkeypatch.setenv(
+        "NF_DEMO_ORG_IDS",
+        "bbbbbbbb-cccc-dddd-eeee-ffffffffffff,"
+        "cccccccc-dddd-eeee-ffff-000000000001",
+    )

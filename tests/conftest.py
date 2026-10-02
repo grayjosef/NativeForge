@@ -12,13 +12,23 @@ from sqlalchemy import text
 _tmp = Path(tempfile.mkdtemp(prefix="nf_pytest_"))
 os.environ["DATABASE_URL"] = f"sqlite+pysqlite:///{(_tmp / 'nf.sqlite3').as_posix()}"
 
-# Gate 178 M0 demo bypass is allowlist-scoped; the hermetic demo org id is the
-# default for the suite unless a test clears NF_DEMO_ORG_IDS deliberately.
-os.environ.setdefault(
-    "NF_DEMO_ORG_IDS",
-    "bbbbbbbb-cccc-dddd-eeee-ffffffffffff,"
-    "cccccccc-dddd-eeee-ffff-000000000001",
-)
+# NF_DEMO_ORG_IDS is deliberately NOT defaulted here.
+#
+# A suite-wide default was added for the Gate 178 M0 demo bypass, and it cost
+# 273 failures in files that have nothing to do with entitlements. The reason
+# is in `demo_org_classification_service`: an EMPTY allowlist is silence, but a
+# CONFIGURED one that omits an organization is a disagreement -
+# `settings_says_real_database_says_demo` - so every older test that builds a
+# demo organization under some other UUID started refusing itself.
+#
+# It bought nothing. Every test that needs the allowlist already sets it with
+# `monkeypatch.setenv`, scoped to itself: gate178's firewall, gate132's
+# classification, mission control, and isolation routes. All of them pass with
+# no default here, and so do gates 178 and 179 entire.
+#
+# Empty is also what the deployment actually runs with, which `test_isolation_
+# routes` states in so many words. A suite that configures an allowlist the
+# product does not have is testing a machine nobody is running.
 
 # Gate 130. The suite must not read whoever's provider happens to be configured
 # on the machine running it.

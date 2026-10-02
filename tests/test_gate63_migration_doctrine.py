@@ -104,7 +104,13 @@ DOCS = ROOT / "docs" / "operations"
 # coverage rather than passing unnoticed.
 # 0070 adds owner_membership_id on nf_pursuit_tasks so Mission Control can
 # name who owns open work. Existing task rows stay valid (nullable).
-CURRENT_HEAD = "0070"
+# 0071 creates nf_commercial_provisioning_requests, identity-scoped, with its
+# own index. One create_table and nothing else; no existing table changes.
+# 0072 adds no table and no column. It replaces the nf_grant_sparks policy so
+# an EMPTY app.current_org_is_demo reads as "not demo" instead of raising on
+# the boolean cast - the same empty-string hazard the nil-UUID anchor answers
+# for app.current_org_id, fixed here in the policy where it belongs.
+CURRENT_HEAD = "0072"
 
 # Migrations added by the approved Gate 62 storage path.
 GATE62_MIGRATIONS = ("0023", "0024", "0025", "0026", "0027")

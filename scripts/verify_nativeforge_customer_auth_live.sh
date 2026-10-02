@@ -161,8 +161,21 @@ getlist() {
     "import json,sys;print(' '.join(json.load(sys.stdin).get('$1') or []))"
 }
 
-LOGIN_LIVE="$(get login_live)"
-CUSTOMER_AUTH_LIVE="$(get customer_auth_live)"
+# The verdict follows the DEPLOYMENT this verifier was pointed at, not the
+# machine running it.
+#
+# Gate 146 moved these two onto `build_measured_customer_auth_activation_gate()`,
+# which measures locally. That is the right source for the local lane and the
+# wrong one here: an operator running this against production from a laptop got
+# the laptop's answer, and `issuer_jwks_validated` / `callback_session_validated`
+# can never pass on a laptop, so the script reported BLOCKED about a deployment
+# it never asked. Three Gate 136 tests that stub a backend and expect the script
+# to report that backend's state failed for exactly this reason.
+#
+# The measured gate is still computed and still printed below as
+# `measured_*`; it is diagnosis, not the verdict.
+LOGIN_LIVE="$(get session_route_login_live)"
+CUSTOMER_AUTH_LIVE="$(get session_route_customer_auth_live)"
 CONSUMERS="$(get dev_header_route_consumers)"
 PROVIDERS="$(get dev_header_provider_modules)"
 HEADERS_ON="$(get nf_dev_org_headers)"

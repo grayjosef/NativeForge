@@ -49,11 +49,53 @@ def _css() -> str:
     return CSS_PATH.read_text(encoding="utf-8")
 
 
+#: How many `var()` hops to follow before giving up. The brand layer is one
+#: hop today; the cap stops a cycle from hanging the suite.
+_MAX_INDIRECTION = 8
+
+
 def _token(name: str) -> str:
-    match = re.search(rf"{re.escape(name)}:\s*(#[0-9a-fA-F]{{3,8}})\s*;", _css())
-    if match is None:
-        raise AssertionError(f"token {name} not found in {CSS_PATH.name}")
-    return match.group(1)
+    """Resolve a token to a hex literal, following `var()` indirection.
+
+    The brand work put a palette layer underneath these names, so the ground
+    tokens stopped being hex and became aliases:
+
+    ```css
+    --nf-page: var(--nf-bg-primary);
+    --nf-card: var(--nf-surface);
+    ```
+
+    The first version of this reader matched a hex literal only, so it raised
+    "token not found" for every ground and took thirteen contrast assertions
+    down with it. That failure looked like a palette regression and was not
+    one - and worse, while it stood, the ratios were never measured at all.
+    A readability test that cannot find the colours is not a passing test or a
+    failing one; it is an absent one.
+    """
+    css = _css()
+    seen: set[str] = set()
+    current = name
+    for _ in range(_MAX_INDIRECTION):
+        if current in seen:
+            raise AssertionError(f"token {name} resolves in a cycle at {current}")
+        seen.add(current)
+        match = re.search(
+            rf"{re.escape(current)}:\s*([^;]+);",
+            css,
+        )
+        if match is None:
+            raise AssertionError(f"token {current} not found in {CSS_PATH.name}")
+        value = match.group(1).strip()
+        if value.startswith("#"):
+            return value
+        alias = re.fullmatch(r"var\(\s*(--[a-zA-Z0-9-]+)\s*\)", value)
+        if alias is None:
+            raise AssertionError(
+                f"token {current} is {value!r}, which is neither a hex colour "
+                "nor a plain var() alias this reader can follow"
+            )
+        current = alias.group(1)
+    raise AssertionError(f"token {name} exceeded {_MAX_INDIRECTION} var() hops")
 
 
 def _rgb(value: str) -> tuple[int, int, int]:
@@ -89,19 +131,43 @@ def test_every_ink_token_is_readable_on_every_ground(ink: str, ground: str) -> N
     )
 
 
-def test_the_four_levels_stay_distinguishable_from_each_other() -> None:
-    """A repair that darkened everything equally would pass and be useless.
+#: How far apart two adjacent ink levels must be, as a luminance ratio.
+SEPARATION = 1.3
 
-    The first attempt at the fix did exactly that: it pushed `--nf-faint`
-    until it cleared the floor and left it a hair from `--nf-muted2`, so the
-    hierarchy the levels exist to express disappeared instead.
+
+def test_the_four_levels_stay_distinguishable_from_each_other() -> None:
+    """A repair that moved everything equally would pass and be useless.
+
+    An early attempt did exactly that: it pushed `--nf-faint` until it cleared
+    the contrast floor and left it a hair from `--nf-muted2`, so the hierarchy
+    the levels exist to express disappeared instead.
+
+    The direction is read from the palette rather than assumed. This scale was
+    authored for dark ink on a light page, where each level is LIGHTER than the
+    last; the product now paints light ink on a dark shell, where the same
+    hierarchy runs the other way. Hard-coding "lighter" asserted the theme, not
+    the property - and it broke on a legitimate redesign while the thing worth
+    protecting, four steps you can actually tell apart, still held.
     """
     levels = [_luminance(_token(name)) for name in INK]
+    descending = levels[-1] < levels[0]
+
     for index in range(1, len(levels)):
-        assert levels[index] > levels[index - 1], (
-            f"{INK[index]} is not lighter than {INK[index - 1]}"
-        )
-        assert levels[index] > levels[index - 1] * 1.3, (
+        previous, current = levels[index - 1], levels[index]
+        if descending:
+            assert current < previous, (
+                f"{INK[index]} is not dimmer than {INK[index - 1]} on a dark "
+                "shell, so the ink scale is not monotonic"
+            )
+            brighter, dimmer = previous, current
+        else:
+            assert current > previous, (
+                f"{INK[index]} is not lighter than {INK[index - 1]} on a light "
+                "page, so the ink scale is not monotonic"
+            )
+            brighter, dimmer = current, previous
+
+        assert brighter > dimmer * SEPARATION, (
             f"{INK[index]} and {INK[index - 1]} are too close to tell apart"
         )
 

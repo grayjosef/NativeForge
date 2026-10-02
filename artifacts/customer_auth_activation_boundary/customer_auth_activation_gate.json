@@ -83,8 +83,6 @@
     "issuer_jwks_validated",
     "audience_configured",
     "callback_session_validated",
-    "org_binding_passed",
-    "role_mapping_passed",
     "session_signing_key_ready"
   ],
   "network_calls": false,

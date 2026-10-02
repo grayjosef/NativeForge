@@ -137,7 +137,15 @@ MEMBERSHIP_TABLE = "nf_org_memberships"
 # 0070 adds owner_membership_id on nf_pursuit_tasks. The membership table is
 # a foreign-key target only; nf_org_memberships and nf_identities do not
 # change. The adapter's schema is unchanged.
-EXPECTED_MIGRATION_HEAD = "0070"
+# Gate 181 moved it 0070 -> 0072, under the same standard. The review: 0071's
+# upgrade() performs one create_table (nf_commercial_provisioning_requests)
+# with one index, reading nf_identities only as a foreign key *target*. 0072
+# adds no table and no column at all; it drops and recreates one policy on
+# nf_grant_sparks so an empty app.current_org_is_demo reads as "not demo"
+# rather than raising on the boolean cast. Neither nf_org_memberships nor
+# nf_identities gains, loses or changes a column, and the 0027 policies this
+# adapter relies on are untouched. The adapter's schema is unchanged.
+EXPECTED_MIGRATION_HEAD = "0072"
 
 # Sources of "membership" that are never membership, restated here so the
 # production path enforces them rather than inheriting them by assumption.

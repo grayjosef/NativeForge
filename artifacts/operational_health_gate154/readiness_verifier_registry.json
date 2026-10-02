@@ -27,6 +27,7 @@
       "commercial_entitlements_gate178",
       "controlled_beta_readiness",
       "controlled_customer_pilot_activation_package",
+      "controlled_launch_gate180",
       "cross_source_identity",
       "customer_auth_live",
       "customer_auth_second_person_event",
@@ -85,7 +86,7 @@
   "schema_version": "nf_readiness_verifier_registry_v1",
   "scope": "controlled_dev_demo",
   "shell_executed": false,
-  "verifier_count": 51,
+  "verifier_count": 52,
   "verifier_names": [
     "audit_replay_readiness",
     "awarded_operational_tracking",
@@ -99,6 +100,7 @@
     "commercial_entitlements_gate178",
     "controlled_beta_readiness",
     "controlled_customer_pilot_activation_package",
+    "controlled_launch_gate180",
     "cross_source_identity",
     "customer_auth_live",
     "customer_auth_second_person_event",
@@ -919,6 +921,19 @@
       "production": true,
       "script": "scripts/verify_nativeforge_backup_restore.sh",
       "verifier": "backup_restore"
+    },
+    {
+      "blocking": false,
+      "controlled_dev_demo_only": true,
+      "depends_on": [],
+      "expected_result": "PASS",
+      "gate": "180",
+      "kind": "readiness_lane",
+      "lane": "controlled_customer_launch",
+      "note": "re-runs the Gate 180 phase proof. Non-blocking on purpose: it reports whether the launch reassessment still holds, and the thing it reports on is corpus coverage, which no verifier can fix. It shipped unregistered, which is how a verifier becomes a script nobody runs",
+      "production": false,
+      "script": "scripts/verify_nativeforge_controlled_launch_gate180.sh",
+      "verifier": "controlled_launch_gate180"
     }
   ]
 }

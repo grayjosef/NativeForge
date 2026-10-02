@@ -33,6 +33,7 @@ from nativeforge.services.app_environment_service import (
     normalize_app_env,
 )
 from nativeforge.services.customer_auth_activation_gate_service import (
+    REQUIRED_AUTH_GATES,
     REQUIRED_LOGIN_GATES,
     build_customer_auth_activation_gate,
 )
@@ -196,8 +197,8 @@ def test_owner_authorization_does_not_bypass_a_failed_gate():
 
 
 def test_controlled_live_still_requires_every_login_gate():
-    """The list is unchanged by this work. Named individually so removing one
-    fails here rather than quietly widening what a login means."""
+    """Named individually so removing one fails here rather than quietly
+    widening what a login means."""
     assert set(REQUIRED_LOGIN_GATES) >= {
         "provider_configured",
         "secret_present",
@@ -207,7 +208,25 @@ def test_controlled_live_still_requires_every_login_gate():
         "callback_route_available",
         "callback_session_validated",
         "session_cookie_policy_available",
-        "org_binding_passed",
-        "role_mapping_passed",
         "session_signing_key_ready",
     }
+
+
+def test_affiliation_moved_off_the_login_gate_but_did_not_disappear():
+    """`org_binding_passed` and `role_mapping_passed` left REQUIRED_LOGIN_GATES
+    when the Demo Workspace let an unaffiliated person sign in and see a demo.
+
+    That is a real change in what a login means, and the first version of this
+    test simply asserted they were still there - so it failed, correctly, and
+    the lazy repair would have been to delete the two names and move on.
+
+    They did not disappear; they moved. Affiliation is now proven per session
+    on org-scoped routes instead of as a universal login prerequisite, and it
+    is still required for `customer_auth_live`. Asserting the destination is
+    what keeps this honest: delete them from there and this fails, which is
+    the regression the original test was really guarding against.
+    """
+    assert {"org_binding_passed", "role_mapping_passed"} <= set(REQUIRED_AUTH_GATES)
+    assert {"org_binding_passed", "role_mapping_passed"} & set(
+        REQUIRED_LOGIN_GATES
+    ) == set()

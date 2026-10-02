@@ -1464,6 +1464,21 @@ VERIFIERS: tuple[dict[str, Any], ...] = (
             "`backup_restore_readiness`, which is the data path and returns PASS"
         ),
     ),
+    # ---- controlled customer launch -------------------------------------
+    _verifier(
+        "controlled_launch_gate180",
+        lane="controlled_customer_launch",
+        kind=KIND_READINESS,
+        gate="180",
+        blocking=False,
+        note=(
+            "re-runs the Gate 180 phase proof. Non-blocking on purpose: it "
+            "reports whether the launch reassessment still holds, and the "
+            "thing it reports on is corpus coverage, which no verifier can "
+            "fix. It shipped unregistered, which is how a verifier becomes a "
+            "script nobody runs"
+        ),
+    ),
 )
 
 #: The pair a reader is most likely to conflate, named explicitly so a test can

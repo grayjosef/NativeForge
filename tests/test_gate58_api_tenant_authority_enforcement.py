@@ -335,6 +335,33 @@ TENANT_PRIMITIVES = {
 ROUTE_METHODS = {"get", "post", "put", "patch", "delete"}
 ORG_PARAMS = {"org_id", "organization_id"}
 
+#: Operator routes that are deliberately cross-organization.
+#:
+#: There is a real category the tenant invariant cannot express: a NativeForge
+#: operator reviewing pending authority evidence has to see every organization
+#: at once, so `organization_id` is an optional FILTER for them rather than the
+#: tenant they are confined to. Asking such a route to prove same-org access
+#: would be asking it not to do its job.
+#:
+#: Enumerated rather than inferred, so adding one is a deliberate act that
+#: shows up in review. And the exemption is not a free pass: the companion test
+#: below requires every handler named here to reach the operator-approval
+#: check, so "cross-org" can never quietly mean "unguarded".
+OPERATOR_CROSS_ORG_EXEMPT: dict[str, str] = {
+    "authority_review_operator_routes.py::list_pending": (
+        "operator evidence queue; organization_id is a filter, not a tenant. "
+        "Gated by the NF_AUTHORITY_REVIEW_OPERATOR_APPROVAL token."
+    ),
+}
+
+#: What an exempt route must reach instead of a tenant primitive.
+OPERATOR_APPROVAL_PRIMITIVES = {
+    "operator_list_pending",
+    "operator_decide_evidence",
+    "verify_operator_approval",
+    "operator_approval_configured",
+}
+
 
 def _called_names(node: ast.AST) -> set[str]:
     out: set[str] = set()
@@ -415,6 +442,28 @@ def _reaches_primitive(
     return False
 
 
+def _reaches_named(names, calls_map, aliases, targets, depth=0, seen=None):
+    """`_reaches_primitive`, but for an arbitrary target set.
+
+    Used to prove a cross-org exemption reaches the operator-approval check.
+    Same bounded traversal and same alias handling, so an exemption cannot be
+    satisfied by a call the real detector would not have followed either.
+    """
+    if depth > 5:
+        return False
+    seen = seen or set()
+    for raw in names:
+        n = aliases.get(raw, raw)
+        if raw in targets or n in targets:
+            return True
+        if n in seen or n not in calls_map:
+            continue
+        seen.add(n)
+        if _reaches_named(calls_map[n], calls_map, aliases, targets, depth + 1, seen):
+            return True
+    return False
+
+
 def test_every_org_scoped_route_handler_reaches_tenant_enforcement() -> None:
     """Fails if a handler takes an org path param but skips tenant enforcement.
 
@@ -429,6 +478,7 @@ def test_every_org_scoped_route_handler_reaches_tenant_enforcement() -> None:
         f"{f}::{n}"
         for f, n, _, calls in org_scoped
         if not _reaches_primitive(calls, calls_map, aliases)
+        and f"{f}::{n}" not in OPERATOR_CROSS_ORG_EXEMPT
     ]
     assert unenforced == [], (
         "org-scoped route handlers without tenant enforcement: "
@@ -521,3 +571,29 @@ def test_guard_records_denial_and_preserves_status_codes() -> None:
         "modeled audit events must not claim persistence"
     )
     reset_recent_denials()
+
+
+def test_every_cross_org_exemption_is_approval_gated() -> None:
+    """An exemption may say "not tenant-scoped". It may not say "unguarded".
+
+    Without this, OPERATOR_CROSS_ORG_EXEMPT would be a hole in the anti-bypass
+    invariant that anyone could widen by adding a line. A route that sees every
+    organization has to prove it checked the operator approval token instead.
+    """
+    calls_map, aliases, handlers = _build_api_index()
+    by_key = {f"{f}::{n}": calls for f, n, _, calls in handlers}
+
+    for key in OPERATOR_CROSS_ORG_EXEMPT:
+        assert key in by_key, f"exemption names a handler that no longer exists: {key}"
+        reached = _reaches_primitive(
+            by_key[key], calls_map, aliases
+        ) or _reaches_named(
+            by_key[key], calls_map, aliases, OPERATOR_APPROVAL_PRIMITIVES
+        )
+        assert reached, f"cross-org exemption is not approval gated: {key}"
+
+
+def test_every_cross_org_exemption_states_a_reason() -> None:
+    """A bare name in an allowlist tells the next reader nothing."""
+    for key, reason in OPERATOR_CROSS_ORG_EXEMPT.items():
+        assert len(reason.strip()) > 40, key
