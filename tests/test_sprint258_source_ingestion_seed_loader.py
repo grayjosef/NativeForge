@@ -28,4 +28,6 @@ def test_all_candidates_inactive() -> None:
     # publishers, and none is authorized - which is why the assertion above
     # this one, that every candidate is still inactive, is the one that
     # matters here.
-    assert bundle["tier_counts"][1] == 68
+    # 68 -> 69: Phase 1A's Denali WordPress binding, the second adapter
+    # family, also tier 1.
+    assert bundle["tier_counts"][1] == 69

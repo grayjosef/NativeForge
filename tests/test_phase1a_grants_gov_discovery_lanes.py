@@ -84,10 +84,19 @@ def test_the_already_working_grants_gov_row_still_dispatches():
     assert [n for n in ADAPTER_CHECKS if not measured.get(n)] == []
 
 
-def test_the_capability_map_gained_only_the_lane_keys():
+def test_the_capability_map_holds_exactly_the_declared_adapters():
     """A capability entry is a dispatch permission. Adding one quietly is how
-    a source starts being reachable without anybody deciding it should be."""
-    assert set(ADAPTER_CAPABILITIES) == {"grants_gov_search2", *LANE_ADAPTER_KEYS}
+    a source starts being reachable without anybody deciding it should be.
+
+    Enumerated rather than counted, so a swap is as visible as an addition.
+    `denali_wp_posts` is Phase 1A's second adapter family; this assertion
+    caught it the moment it was registered, which is the point.
+    """
+    assert set(ADAPTER_CAPABILITIES) == {
+        "grants_gov_search2",
+        *LANE_ADAPTER_KEYS,
+        "denali_wp_posts",
+    }
 
 
 # ------------------------------------------------------- authorization

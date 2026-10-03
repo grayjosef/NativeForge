@@ -1157,7 +1157,12 @@ def test_the_registry_blocked_counts_are_preserved():
     # REGISTRY's own view - `evaluate_registry` does not read the decision
     # table, so an operator-approved source still counts as terms-blocked
     # here. That is the boundary working, not a regression.
-    assert evaluated["terms_blocked_count"] == 172
+    #
+    # 172 -> 173. Phase 1A's Denali row. It lands in the TERMS bucket while
+    # the five Grants.gov lanes landed in human review, which is the registry
+    # classifying a new host differently from new lanes on a host it already
+    # knows - and is worth leaving visible rather than smoothing over.
+    assert evaluated["terms_blocked_count"] == 173
     # 6 -> 7. The Grants.gov API row is `access_posture_hint: public`, so
     # registry-level evaluation classes it `human_review_blocked` - a person
     # must look first. MAYHEM's recorded decisions live in the database, which

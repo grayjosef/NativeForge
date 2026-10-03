@@ -57,6 +57,11 @@ POST_BASELINE_SEED_IDS: Final[tuple[str, ...]] = (
     "nf-seed-2026-api-grants-gov-ihs",
     "nf-seed-2026-api-grants-gov-epa",
     "nf-seed-2026-api-grants-gov-cdfi",
+    # Phase 1A, second adapter family. Denali Commission publishes a public
+    # WordPress REST listing: no baseline row had this host and none was
+    # WordPress-shaped, so the binding needed a row of its own. Also NOT
+    # APPROVED - registered so its capability can be measured, nothing more.
+    "nf-seed-2026-api-denali-wp-posts",
 )
 
 #: Derived, so the count follows the named additions instead of being a magic

@@ -66,9 +66,9 @@
   "runtime_derivation_repaired": true,
   "schema_version": "nf_source_authorization_gate162_artifacts_v1",
   "second_activation_system_created": false,
-  "shipped_registry_count": 184,
+  "shipped_registry_count": 185,
   "source_monitoring_live": false,
-  "sources_evaluated": 186,
-  "terms_blocked_count": 172,
+  "sources_evaluated": 187,
+  "terms_blocked_count": 173,
   "terms_decisions_persisted": true
 }

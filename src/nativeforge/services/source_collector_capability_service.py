@@ -118,6 +118,18 @@ ADAPTER_CAPABILITIES: dict[str, dict[str, str]] = {
         "transport_parameter": "http_post",
         "method": "POST",
     },
+    # Phase 1A. Denali Commission's public WordPress REST listing. A second
+    # adapter FAMILY rather than a second lane: different protocol, different
+    # host, different record shape. ARC and NBRC would be another constant and
+    # another key in the same binding module, not another adapter.
+    "denali_wp_posts": {
+        "module": "nativeforge.services.denali_wp_binding_service",
+        "request_builder": "build_denali_listing_request",
+        "executor": "fetch_denali_listing",
+        "endpoint_constant": "DENALI_POSTS_URL",
+        "transport_parameter": "http_get",
+        "method": "GET",
+    },
 }
 
 #: The measurements a capable adapter must pass, in the order a reader wants

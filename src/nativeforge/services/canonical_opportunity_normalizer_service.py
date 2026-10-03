@@ -121,6 +121,51 @@ OPPORTUNITY_PARSERS: dict[str, dict[str, Any]] = {
             "assistance_listings": "cfdaList",
         },
     },
+    # Phase 1A. Denali Commission, via its public WordPress REST listing.
+    #
+    # A post is a notice, not a solicitation record. It carries no opportunity
+    # number, no close date, no eligibility prose and no dollar amounts, so
+    # four of the six provenance-required fields are `not_supported` for every
+    # record this source will ever produce. That is a property of the
+    # publisher, and naming it keeps "cannot answer" distinct from "did not
+    # say this time".
+    #
+    # `denali_wp_binding_service` flattens WordPress's {"rendered": ...}
+    # wrapper before this runs, because the nesting is that publisher's wire
+    # shape rather than a canonical concept.
+    "denali_wp_posts": {
+        "parser_name": "denali_wordpress_post_listing",
+        "record_path": ("posts",),
+        "record_id_field": "id",
+        "supported": (
+            "title",
+            "source_record_id",
+            "open_date",
+            "source_url",
+        ),
+        "not_supported": (
+            "funder_agency_name",
+            "funder_agency_code",
+            "opportunity_number",
+            "close_date",
+            "status",
+            "doc_type",
+            "assistance_listings",
+            "eligibility_text",
+            "funding_amount_min",
+            "funding_amount_max",
+        ),
+        "field_map": {
+            "title": "title",
+            "source_record_id": "id",
+            # The post's publication date. Explicitly NOT an application
+            # opening date - WordPress has no such concept, and treating a
+            # publication timestamp as an open date would invent a deadline
+            # the publisher never set.
+            "open_date": "date",
+            "source_url": "link",
+        },
+    },
     "grants_gov_fetch_opportunity_funding": {
         "parser_name": "grants_gov_fetch_opportunity_synopsis_funding",
         "record_path": (),
