@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import Session
 
 from nativeforge.api.deps_db import get_db_session
@@ -57,6 +58,30 @@ operator_router = APIRouter(
     prefix="/backend/opportunity-value",
     tags=["opportunity-value-operator"],
 )
+
+
+def _commit_if_still_ours(session: Session) -> None:
+    """Commit, unless something downstream already did.
+
+    `persist_observations` commits the connection it was handed after each
+    chunk SAVEPOINT - deliberately, the batch is its unit of atomicity. By the
+    time an enrichment returns, the work is durable and this transaction is
+    gone, and committing it raises.
+
+    `Session.in_transaction()` does NOT catch this: it reports the ORM
+    session's own state, which still reads True after the underlying
+    connection was committed out from under it. That was the first attempt at
+    this fix and it changed nothing in production.
+
+    So the condition is matched on the exact error, narrowly. Anything else
+    re-raises: a real commit failure must not be swallowed by a handler
+    written for a different problem.
+    """
+    try:
+        session.commit()
+    except InvalidRequestError as exc:
+        if "transaction is inactive" not in str(exc).lower():
+            raise
 
 
 @public_router.get("/funnel")
@@ -136,15 +161,7 @@ def operator_gate173_active_projection(
         dry_run=dry_run,
     )
     if not dry_run:
-        # Only if one is still open. `persist_observations` commits the
-        # connection it was handed, after each chunk's SAVEPOINT, so by
-        # the time an enrichment returns the work is already durable and
-        # this transaction is gone. Committing unconditionally raised
-        # InvalidRequestError: This transaction is inactive, which turned
-        # a successful enrichment into a 500 the caller read as total
-        # failure - the enrichment had run, and the 500 said it had not.
-        if session.in_transaction():
-            session.commit()
+        _commit_if_still_ours(session)
     return stats
 
 
@@ -161,15 +178,7 @@ def operator_gate173_active_reassessment(
         dry_run=dry_run,
     )
     if not dry_run:
-        # Only if one is still open. `persist_observations` commits the
-        # connection it was handed, after each chunk's SAVEPOINT, so by
-        # the time an enrichment returns the work is already durable and
-        # this transaction is gone. Committing unconditionally raised
-        # InvalidRequestError: This transaction is inactive, which turned
-        # a successful enrichment into a 500 the caller read as total
-        # failure - the enrichment had run, and the 500 said it had not.
-        if session.in_transaction():
-            session.commit()
+        _commit_if_still_ours(session)
     return stats
 
 
@@ -186,15 +195,7 @@ def operator_applicant_gap_closure(
         dry_run=dry_run,
     )
     if not dry_run:
-        # Only if one is still open. `persist_observations` commits the
-        # connection it was handed, after each chunk's SAVEPOINT, so by
-        # the time an enrichment returns the work is already durable and
-        # this transaction is gone. Committing unconditionally raised
-        # InvalidRequestError: This transaction is inactive, which turned
-        # a successful enrichment into a 500 the caller read as total
-        # failure - the enrichment had run, and the 500 said it had not.
-        if session.in_transaction():
-            session.commit()
+        _commit_if_still_ours(session)
     return stats
 
 
@@ -217,15 +218,7 @@ def operator_run_grants_gov_active_enrichment(
         dry_run=dry_run,
     )
     if not dry_run:
-        # Only if one is still open. `persist_observations` commits the
-        # connection it was handed, after each chunk's SAVEPOINT, so by
-        # the time an enrichment returns the work is already durable and
-        # this transaction is gone. Committing unconditionally raised
-        # InvalidRequestError: This transaction is inactive, which turned
-        # a successful enrichment into a 500 the caller read as total
-        # failure - the enrichment had run, and the 500 said it had not.
-        if session.in_transaction():
-            session.commit()
+        _commit_if_still_ours(session)
     return stats
 
 
@@ -249,15 +242,7 @@ def operator_run_grants_gov_applicant_enrichment(
         dry_run=dry_run,
     )
     if not dry_run:
-        # Only if one is still open. `persist_observations` commits the
-        # connection it was handed, after each chunk's SAVEPOINT, so by
-        # the time an enrichment returns the work is already durable and
-        # this transaction is gone. Committing unconditionally raised
-        # InvalidRequestError: This transaction is inactive, which turned
-        # a successful enrichment into a 500 the caller read as total
-        # failure - the enrichment had run, and the 500 said it had not.
-        if session.in_transaction():
-            session.commit()
+        _commit_if_still_ours(session)
     return stats
 
 
