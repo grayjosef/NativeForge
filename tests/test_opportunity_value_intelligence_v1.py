@@ -126,7 +126,19 @@ def test_unknown_not_treated_as_zero():
     assert sel["selected_amount"] is None
 
 
-def test_ceiling_only_excluded_from_aggregate():
+def test_ceiling_only_is_known_but_stays_out_of_the_total():
+    """The contract changed on 2026-10-03, in both directions.
+
+    A ceiling alone used to be UNKNOWN. It is monetary intelligence - "up to
+    $5,000,000" is decision-useful - and reporting it as UNKNOWN hid amounts
+    the publisher had actually announced.
+
+    What did NOT change is the part worth keeping: it carries the ceiling
+    semantic rather than being promoted to a point estimate, and the
+    aggregate keeps it out of the summed program dollars. A per-award maximum
+    is a different kind of number from program funding and adding them would
+    overstate money nobody announced.
+    """
     sel = _select_monetary_value(
         min_raw=None,
         max_raw="5000000",
@@ -134,8 +146,9 @@ def test_ceiling_only_excluded_from_aggregate():
         min_conflict=None,
         max_conflict=None,
     )
-    assert sel["value_status"] == VALUE_UNKNOWN
+    assert sel["value_status"] == VALUE_KNOWN
     assert sel["semantic"] == "award_ceiling_excluded_from_aggregate"
+    assert sel["selected_amount"] is not None
 
 
 def test_equal_min_max_point_estimate():
@@ -161,8 +174,16 @@ def test_aggregate_exact_with_fixtures(db):
     agg = compute_active_opportunity_value_aggregate(conn, use_cache=False)
     assert agg["methodology_version"] == METHODOLOGY_VERSION
     assert agg["active_opportunity_count"] == before["active_opportunity_count"] + 3
-    assert agg["known_value_count"] == before["known_value_count"] + 2
-    assert agg["unknown_value_count"] == before["unknown_value_count"] + 1
+    # All three active fixtures now count as monetary intelligence: two point
+    # values and the ceiling-only record "c". Before 2026-10-03 the ceiling
+    # was UNKNOWN, which hid an amount the publisher had announced.
+    assert agg["known_value_count"] == before["known_value_count"] + 3
+    assert agg["unknown_value_count"] == before["unknown_value_count"] + 0
+
+    # The assertion this test really exists for, and the one that did NOT
+    # change: the $9,000,000 ceiling must not reach the program total. Only
+    # the two point values do. If a ceiling ever starts summing, the total
+    # becomes a number nobody published.
     delta = Decimal(agg["active_known_value_total_usd"] or "0") - Decimal(
         before["active_known_value_total_usd"] or "0"
     )

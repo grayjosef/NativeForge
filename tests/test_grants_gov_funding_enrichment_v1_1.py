@@ -108,9 +108,16 @@ def test_program_total_from_estimated_funding():
     assert m["funding_amount_min"] == m["funding_amount_max"] == "6800000"
 
 
-def test_ceiling_alone_does_not_populate_canonical():
+def test_ceiling_alone_is_carried_as_a_ceiling():
+    """Superseded contract: a ceiling alone used to map to NONE.
+
+    It now carries AWARD_CEILING_ONLY. The min stays None on purpose - a
+    ceiling says what the maximum is and says nothing about the floor, and
+    inventing one would be the fabrication this model refuses.
+    """
     m = map_synopsis_funding_to_canonical({"awardCeiling": "5000000"})
-    assert m["funding_semantic"] == "NONE"
+    assert m["funding_semantic"] == "AWARD_CEILING_ONLY"
+    assert m["funding_amount_max"] == "5000000"
     assert m["funding_amount_min"] is None
 
 

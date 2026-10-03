@@ -128,9 +128,17 @@ def _select_monetary_value(
             "semantic": SEMANTIC_PROGRAM_FLOOR,
         }
     if max_amt is not None:
+        # KNOWN, because "up to $350,000" is monetary intelligence a user can
+        # act on, and reporting it as UNKNOWN hid real published amounts.
+        #
+        # The amount is carried so the UI can show the ceiling, but the
+        # aggregate does NOT add it to the program-dollar total: a per-award
+        # maximum is not program funding, and summing the two kinds together
+        # would produce exactly the single misleading number this model
+        # exists to avoid.
         return {
-            "value_status": VALUE_UNKNOWN,
-            "selected_amount": None,
+            "value_status": VALUE_KNOWN,
+            "selected_amount": max_amt,
             "currency": DEFAULT_CURRENCY,
             "semantic": SEMANTIC_CEILING_ONLY,
             "reason": "award_ceiling_without_program_floor",
@@ -228,8 +236,13 @@ def compute_active_opportunity_value_aggregate(
         status = sel["value_status"]
         if status == VALUE_KNOWN and sel["selected_amount"] is not None:
             known += 1
-            cur = str(sel["currency"] or DEFAULT_CURRENCY)
-            totals[cur] = totals.get(cur, Decimal(0)) + sel["selected_amount"]
+            # Ceilings count as intelligence but are deliberately excluded
+            # from the summed total: a per-award maximum is a different kind
+            # of number from program funding, and adding them would overstate
+            # money that was never announced as available.
+            if sel.get("semantic") != SEMANTIC_CEILING_ONLY:
+                cur = str(sel["currency"] or DEFAULT_CURRENCY)
+                totals[cur] = totals.get(cur, Decimal(0)) + sel["selected_amount"]
         elif status == VALUE_CONFLICTING:
             conflicting += 1
         else:

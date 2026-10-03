@@ -88,7 +88,24 @@ def map_synopsis_funding_to_canonical(
         result["funding_amount_min"] = str(floor)
         return result
 
-    # Ceiling alone → no canonical funding (V1 aggregate treats max-only as UNKNOWN).
+    if ceiling is not None:
+        # A ceiling alone IS monetary intelligence: "up to $350,000" tells an
+        # applicant something real and decision-useful. It was previously
+        # discarded because the V1 aggregate treated max-only as UNKNOWN.
+        #
+        # Measured 2026-10-03: of 200 active records lacking monetary
+        # intelligence, the publisher supplied at least one monetary field for
+        # 160, and the dominant shape was a real awardCeiling beside an
+        # awardFloor of the literal string "none".
+        #
+        # It is NOT promoted to a point value. The semantic says ceiling, only
+        # the max is set, and the aggregate deliberately keeps it out of the
+        # summed program total - a per-award maximum is not program money and
+        # adding them together would be the misleading single number.
+        result["funding_semantic"] = "AWARD_CEILING_ONLY"
+        result["funding_amount_max"] = str(ceiling)
+        return result
+
     return result
 
 
@@ -146,4 +163,4 @@ def build_fetch_opportunity_funding_record(
 
 def funding_record_has_aggregate_signal(record: dict[str, Any]) -> bool:
     """True when projection could yield KNOWN under opportunity_value.v1."""
-    return bool(record.get("funding_amount_min"))
+    return bool(record.get("funding_amount_min") or record.get("funding_amount_max"))

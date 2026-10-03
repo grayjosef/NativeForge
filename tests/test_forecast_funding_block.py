@@ -83,9 +83,14 @@ def test_unknown_forecast_field_names_degrade_to_none_rather_than_guessing():
     assert r["funding_enrichment_meta"]["funding_semantic"] == "NONE"
 
 
-def test_a_ceiling_alone_is_still_not_a_known_value():
-    """Pre-existing semantics, re-asserted for the forecast path: V1 treats
-    max-only as UNKNOWN, and the fallback must not quietly widen that."""
+def test_a_forecast_ceiling_alone_is_carried_as_a_ceiling():
+    """I wrote this test hours before the contract changed, asserting that a
+    ceiling alone stays NONE. Mayhem then set the standard that an award
+    ceiling IS monetary intelligence, so the assertion is restated rather
+    than deleted - and it still pins the part that matters: no invented
+    floor, and the ceiling semantic is preserved rather than flattened.
+    """
     r = _record({"forecast": {"awardCeiling": "450000"}})
     assert "funding_amount_min" not in r
-    assert r["funding_enrichment_meta"]["funding_semantic"] == "NONE"
+    assert r["funding_amount_max"] == "450000"
+    assert r["funding_enrichment_meta"]["funding_semantic"] == "AWARD_CEILING_ONLY"
