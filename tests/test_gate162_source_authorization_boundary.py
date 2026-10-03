@@ -1162,7 +1162,13 @@ def test_the_registry_blocked_counts_are_preserved():
     # registry-level evaluation classes it `human_review_blocked` - a person
     # must look first. MAYHEM's recorded decisions live in the database, which
     # `evaluate_registry` does not read, so the row cannot arrive approved.
-    assert evaluated["human_review_blocked_count"] == 7
+    #
+    # 7 -> 12. Phase 1A's five Grants.gov discovery lanes, also `public`, and
+    # so also `human_review_blocked`. That is the correct landing bucket for
+    # them: they are dispatchable and nobody has decided they may run. The two
+    # assertions below are the ones that would catch it if registering a
+    # capability had leaked into an approval - neither moved.
+    assert evaluated["human_review_blocked_count"] == 12
     assert evaluated["activation_approved_count"] == 0
     assert evaluated["monitorable_count"] == 0
 

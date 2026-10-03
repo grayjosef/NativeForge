@@ -22,4 +22,10 @@ def test_all_candidates_inactive() -> None:
     # 61 -> 62 -> 63: Gate 163's Grants.gov API row and Gate 171's Federal
     # Register row are both tier 1. The corpus gained tier-1 sources, which is
     # a real property of the corpus and not a drift.
-    assert bundle["tier_counts"][1] == 63
+    #
+    # 63 -> 68: Phase 1A's five Grants.gov discovery lanes, also tier 1. They
+    # are query lanes on an endpoint already in the corpus rather than new
+    # publishers, and none is authorized - which is why the assertion above
+    # this one, that every candidate is still inactive, is the one that
+    # matters here.
+    assert bundle["tier_counts"][1] == 68

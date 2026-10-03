@@ -6,14 +6,14 @@
     "terms"
   ],
   "gate": "162",
-  "human_review_blocked_count": 7,
+  "human_review_blocked_count": 12,
   "live_source_call": false,
   "migration": "0048",
   "monitorable_count": 0,
-  "registry_row_count": 179,
+  "registry_row_count": 184,
   "schema_version": "nf_source_authorization_gate162_artifacts_v1",
   "second_activation_system_created": false,
-  "shipped_registry_count": 179,
+  "shipped_registry_count": 184,
   "source_monitoring_live": false,
   "terms_blocked_count": 172,
   "what_already_existed": {

@@ -24,7 +24,7 @@
     "human_review_status",
     "robots_status"
   ],
-  "human_review_blocked_count": 7,
+  "human_review_blocked_count": 12,
   "human_review_decisions_persisted": true,
   "live_fetch_opted_in": false,
   "live_source_calls": 0,
@@ -66,9 +66,9 @@
   "runtime_derivation_repaired": true,
   "schema_version": "nf_source_authorization_gate162_artifacts_v1",
   "second_activation_system_created": false,
-  "shipped_registry_count": 179,
+  "shipped_registry_count": 184,
   "source_monitoring_live": false,
-  "sources_evaluated": 181,
+  "sources_evaluated": 186,
   "terms_blocked_count": 172,
   "terms_decisions_persisted": true
 }

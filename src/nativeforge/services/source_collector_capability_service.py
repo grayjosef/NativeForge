@@ -78,6 +78,46 @@ ADAPTER_CAPABILITIES: dict[str, dict[str, str]] = {
         "transport_parameter": "http_post",
         "method": "POST",
     },
+    # ---- Phase 1A: discovery lanes on the same Grants.gov endpoint --------
+    #
+    # HUD ONAP, IHS, EPA and CDFI do not publish machine-readable opportunity
+    # feeds; each Tranche 2 close says "Grants.gov owns the records", and
+    # their commits added semantic services rather than transports. Forecasts
+    # are a fifth lane on the same endpoint. They are therefore query lanes,
+    # not collectors, and they share one builder and one executor.
+    #
+    # Three keys rather than five: IHS, EPA and CDFI differ only by which
+    # agency code they ask for, which is a row parameter rather than a
+    # program. Capability is still measured per ROW, so each publisher is
+    # evaluated - and authorized - on its own.
+    #
+    # Capability is not authorization. Registering these makes them
+    # dispatchable; every one still refuses at the warrant without a signed
+    # decision.
+    "grants_gov_search2_agency": {
+        "module": "nativeforge.services.grants_gov_lane_binding_service",
+        "request_builder": "build_grants_gov_lane_search_body",
+        "executor": "search_grants_gov_lane",
+        "endpoint_constant": "SEARCH2_URL",
+        "transport_parameter": "http_post",
+        "method": "POST",
+    },
+    "grants_gov_search2_assistance_listing": {
+        "module": "nativeforge.services.grants_gov_lane_binding_service",
+        "request_builder": "build_grants_gov_lane_search_body",
+        "executor": "search_grants_gov_lane",
+        "endpoint_constant": "SEARCH2_URL",
+        "transport_parameter": "http_post",
+        "method": "POST",
+    },
+    "grants_gov_search2_forecast": {
+        "module": "nativeforge.services.grants_gov_lane_binding_service",
+        "request_builder": "build_grants_gov_lane_search_body",
+        "executor": "search_grants_gov_lane",
+        "endpoint_constant": "SEARCH2_URL",
+        "transport_parameter": "http_post",
+        "method": "POST",
+    },
 }
 
 #: The measurements a capable adapter must pass, in the order a reader wants

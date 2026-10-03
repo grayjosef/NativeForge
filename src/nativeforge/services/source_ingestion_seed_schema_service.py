@@ -36,6 +36,27 @@ POST_BASELINE_SEED_IDS: Final[tuple[str, ...]] = (
     # in the corpus as nf-seed-2026-fed-007, and minting a parallel id for a
     # source already registered is how a second registry starts.
     "nf-seed-2026-api-federal-register-documents",
+    # Phase 1A. Five discovery lanes on the Grants.gov search2 endpoint.
+    #
+    # NOT APPROVED BY ANYBODY, and that is the point of adding them. HUD ONAP,
+    # IHS, EPA and CDFI do not publish machine-readable feeds - each Tranche 2
+    # close says "Grants.gov owns the records" - so they are query lanes on an
+    # endpoint the corpus already has, not new publishers. Forecasts are a
+    # fifth lane on the same endpoint.
+    #
+    # They need rows because capability is measured against a row and
+    # authorization is recorded on one. One row per lane is what lets Mayhem
+    # authorize HUD ONAP without thereby authorizing EPA.
+    #
+    # Their `health_evidence` reads
+    # `phase1a:capability_registered:awaiting_human_authorization`, never
+    # `operator_approved`. A grep for approval still finds exactly the two
+    # rows that have it.
+    "nf-seed-2026-api-grants-gov-forecast",
+    "nf-seed-2026-api-grants-gov-hud-onap",
+    "nf-seed-2026-api-grants-gov-ihs",
+    "nf-seed-2026-api-grants-gov-epa",
+    "nf-seed-2026-api-grants-gov-cdfi",
 )
 
 #: Derived, so the count follows the named additions instead of being a magic
