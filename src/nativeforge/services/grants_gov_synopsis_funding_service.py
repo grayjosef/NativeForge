@@ -101,8 +101,30 @@ def build_fetch_opportunity_funding_record(
     lifecycle_status: str,
 ) -> dict[str, Any]:
     """Flat record for ``normalize_record`` with adapter ``grants_gov_fetch_opportunity_funding``."""
+    # Grants.gov publishes a posted notice under `synopsis` and a forecast
+    # under `forecast`. This read only ever looked at `synopsis`, so every
+    # forecast record resolved to funding_semantic NONE whatever the
+    # publisher had published - 85 of the 200 active records measured in the
+    # 2026-10-03 value autopsy, none of which could ever gain a value.
+    #
+    # The forecast block is tried ONLY when the synopsis yields nothing, and
+    # with the same field names. Those names are a hypothesis: the committed
+    # fetchOpportunity fixture is a synopsis record carrying no forecast
+    # block, so nothing in this repository evidences them. Holding the
+    # hypothesis this way cannot invent a value - absent or differently named
+    # fields return NONE exactly as before - and `funding_block` records
+    # which block answered, so production data settles it rather than this
+    # comment.
     synopsis = detail.get("synopsis") or {}
     funding = map_synopsis_funding_to_canonical(synopsis)
+    funding_block = "synopsis"
+    if funding.get("funding_semantic") == "NONE":
+        forecast = detail.get("forecast") or {}
+        if forecast:
+            forecast_funding = map_synopsis_funding_to_canonical(forecast)
+            if forecast_funding.get("funding_semantic") != "NONE":
+                funding = forecast_funding
+                funding_block = "forecast"
     record: dict[str, Any] = {
         "opportunity_number": opportunity_number,
         "source_record_id": source_record_id,
@@ -110,6 +132,7 @@ def build_fetch_opportunity_funding_record(
         "status": lifecycle_status,
         "funding_enrichment_meta": {
             "funding_semantic": funding["funding_semantic"],
+            "funding_block": funding_block,
             "enrichment_version": ENRICHMENT_VERSION,
             "grants_gov_opportunity_id": detail.get("id"),
         },
